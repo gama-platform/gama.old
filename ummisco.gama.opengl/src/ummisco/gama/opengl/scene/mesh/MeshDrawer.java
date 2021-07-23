@@ -120,9 +120,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		initializeBuffers();
 		fillBuffers();
 		finalizeBuffers();
-
+		gl.pushMatrix();
 		try {
-			gl.pushMatrix();
 			applyTranslation(object);
 			if (object.getAttributes().getScale() != null) {
 				double zScale = object.getAttributes().getScale();

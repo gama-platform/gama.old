@@ -28,14 +28,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFilter;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFilter;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -87,23 +90,16 @@ public class GeometryCache {
 		}
 
 		private BuiltInGeometry(final Integer bottom, final Integer top, final Integer faces) {
-			super();
 			this.bottom = bottom;
 			this.top = top;
 			this.faces = faces;
 		}
 
 		public void draw(final OpenGL gl) {
-			if (bottom != null) {
-				gl.drawList(bottom);
-			}
-			if (top != null) {
-				gl.drawList(top);
-			}
+			if (bottom != null) { gl.drawList(bottom); }
+			if (top != null) { gl.drawList(top); }
 			gl.enableAlternateTexture();
-			if (faces != null) {
-				gl.drawList(faces);
-			}
+			if (faces != null) { gl.drawList(faces); }
 		}
 	}
 
@@ -117,11 +113,11 @@ public class GeometryCache {
 
 	public GeometryCache(final IOpenGLRenderer renderer) {
 		this.scope = renderer.getSurface().getScope().copy("in opengl geometry cache");
-		this.drawer = g -> renderer.getOpenGLHelper().getGeometryDrawer().drawGeometry(g, true, null, 0, getTypeOf(g));
+		this.drawer = g -> renderer.getOpenGLHelper().getGeometryDrawer().drawGeometry(g, null, 0, getTypeOf(g));
 		envelopes = newBuilder().expireAfterAccess(10, MINUTES).build();
 		builtInCache = newBuilder().concurrencyLevel(2).initialCapacity(10).build();
-		fileCache = newBuilder().expireAfterAccess(10, MINUTES).initialCapacity(10).removalListener((notif) -> {
-			if (renderer.isDisposed()) { return; }
+		fileCache = newBuilder().expireAfterAccess(10, MINUTES).initialCapacity(10).removalListener(notif -> {
+			if (renderer.isDisposed()) return;
 			renderer.getOpenGLHelper().getGL().glDeleteLists((Integer) notif.getValue(), 1);
 
 		}).build(new CacheLoader<String, Integer>() {
@@ -138,8 +134,7 @@ public class GeometryCache {
 	}
 
 	public BuiltInGeometry get(final IShape.Type id) {
-		final BuiltInGeometry index = builtInCache.getIfPresent(id);
-		return index;
+		return builtInCache.getIfPresent(id);
 	}
 
 	Integer buildList(final OpenGL gl, final String name) {
@@ -147,7 +142,7 @@ public class GeometryCache {
 		final GamaGeometryFile file = fileMap.get(name);
 		// We generate the list first
 
-		final Integer index = gl.compileAsList(() -> {
+		return gl.compileAsList(() -> {
 			// We draw the file in the list
 			if (file instanceof GamaObjFile) {
 				final GamaObjFile f = (GamaObjFile) file;
@@ -155,7 +150,7 @@ public class GeometryCache {
 				f.drawToOpenGL(gl);
 			} else {
 				final IShape shape = file.getGeometry(scope);
-				if (shape == null) { return; }
+				if (shape == null) return;
 				try {
 					drawSimpleGeometry(gl, shape.getInnerGeometry());
 				} catch (final ExecutionException e) {
@@ -163,12 +158,10 @@ public class GeometryCache {
 				}
 			}
 		});
-
-		return index;
 	}
 
 	void drawSimpleGeometry(final OpenGL gl, final Geometry geom) throws ExecutionException {
-		geom.apply((GeometryFilter) (g) -> drawer.accept(g));
+		geom.apply((GeometryFilter) g -> drawer.accept(g));
 	}
 
 	public void dispose() {
@@ -184,13 +177,11 @@ public class GeometryCache {
 	}
 
 	public void process(final GamaGeometryFile file) {
-		if (file == null) { return; }
+		if (file == null) return;
 		final String path = file.getPath(scope);
-		if (fileCache.getIfPresent(path) != null) { return; }
+		if (fileCache.getIfPresent(path) != null) return;
 		fileMap.putIfAbsent(path, file);
-		if (!geometriesToProcess.containsKey(path)) {
-			geometriesToProcess.put(path, file);
-		}
+		if (!geometriesToProcess.containsKey(path)) { geometriesToProcess.put(path, file); }
 	}
 
 	public Envelope3D getEnvelope(final GamaGeometryFile file) {
@@ -206,7 +197,6 @@ public class GeometryCache {
 	}
 
 	public void initialize(final OpenGL gl) {
-
 		final int slices = GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
 		put(SPHERE, BuiltInGeometry.assemble().faces(gl.compileAsList(() -> {
@@ -233,16 +223,16 @@ public class GeometryCache {
 		baseVertices.setTo(-0.5, 0.5, 0, 0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, -0.5, 0, -0.5, 0.5, 0);
 
 		put(CUBE, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
-			gl.drawSimpleShape(baseVertices, 4, true, false, true, null);
+			gl.drawSimpleShape(baseVertices, 4, false, true, null);
 		})).top(gl.compileAsList(() -> {
 			baseVertices.translateBy(0, 0, 1);
-			gl.drawSimpleShape(baseVertices, 4, true, true, true, null);
+			gl.drawSimpleShape(baseVertices, 4, true, true, null);
 			baseVertices.translateBy(0, 0, -1);
 		})).faces(gl.compileAsList(() -> {
 			baseVertices.visit((pj, pk) -> {
 				faceVertices.setTo(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + 1, pj.x, pj.y, pj.z + 1, pj.x, pj.y, pj.z, pk.x,
 						pk.y, pk.z);
-				gl.drawSimpleShape(faceVertices, 4, true, true, true, null);
+				gl.drawSimpleShape(faceVertices, 4, true, true, null);
 			});
 		})));
 		put(POINT, BuiltInGeometry.assemble().faces(gl.compileAsList(() -> {
@@ -253,7 +243,7 @@ public class GeometryCache {
 			drawRoundedRectangle(gl.getGL());
 		})));
 		put(SQUARE, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
-			gl.drawSimpleShape(baseVertices, 4, true, true, true, null);
+			gl.drawSimpleShape(baseVertices, 4, true, true, null);
 		})));
 		put(CIRCLE, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
 			drawDisk(gl, 0.0, 1.0, slices, 1);
@@ -262,12 +252,12 @@ public class GeometryCache {
 		final ICoordinates vertices = ICoordinates.ofLength(5);
 		vertices.setTo(-0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0, 0.5, -0.5, 0, -0.5, -0.5, 0);
 		put(PYRAMID, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
-			gl.drawSimpleShape(vertices, 4, true, false, true, null);
+			gl.drawSimpleShape(vertices, 4, false, true, null);
 		})).faces(gl.compileAsList(() -> {
 			final GamaPoint top = new GamaPoint(0, 0, 1);
 			vertices.visit((pj, pk) -> {
 				triangleVertices.setTo(pj.x, pj.y, pj.z, top.x, top.y, top.z, pk.x, pk.y, pk.z, pj.x, pj.y, pj.z);
-				gl.drawSimpleShape(triangleVertices, 3, true, true, true, null);
+				gl.drawSimpleShape(triangleVertices, 3, true, true, null);
 
 			});
 		})));
@@ -275,10 +265,10 @@ public class GeometryCache {
 	}
 
 	public void drawRoundedRectangle(final GL2 gl) {
-		gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(2, GL2.GL_DOUBLE, 0, db);
-		gl.glDrawArrays(GL2.GL_TRIANGLE_FAN, 0, 40);
-		gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+		gl.glVertexPointer(2, GL2GL3.GL_DOUBLE, 0, db);
+		gl.glDrawArrays(GL.GL_TRIANGLE_FAN, 0, 40);
+		gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 	}
 
 	public void drawDisk(final OpenGL gl, final double inner, final double outer, final int slices, final int loops) {

@@ -17,7 +17,8 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 
 import com.google.common.collect.ImmutableList;
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -106,7 +107,7 @@ public class LayerObject {
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.POSITION);
 
 		if (expr != null) {
-			final boolean containsPixels = expr.findAny((e) -> e instanceof PixelUnitExpression);
+			final boolean containsPixels = expr.findAny(e -> e instanceof PixelUnitExpression);
 			offset.setLocation(Cast.asPoint(scope, expr.value(scope)));
 			if (Math.abs(offset.x) <= 1 && !containsPixels) { offset.x *= renderer.getEnvWidth(); }
 			if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
@@ -145,7 +146,7 @@ public class LayerObject {
 	private void drawWithoutShader(final OpenGL gl) {
 
 		if (overlay) {
-			gl.getGL().glDisable(GL2.GL_DEPTH_TEST);
+			gl.getGL().glDisable(GL.GL_DEPTH_TEST);
 			// Addition to fix #2228 and #2222
 			gl.suspendZTranslation();
 			//
@@ -155,18 +156,18 @@ public class LayerObject {
 			final double worldHeight = gl.getWorldHeight();
 			final double worldWidth = gl.getWorldWidth();
 			final double maxDim = worldHeight > worldWidth ? worldHeight : worldWidth;
-			gl.pushIdentity(GL2.GL_PROJECTION);
+			gl.pushIdentity(GLMatrixFunc.GL_PROJECTION);
 			if (viewRatio >= 1.0) {
 				gl.getGL().glOrtho(0, maxDim * viewRatio, -maxDim, 0, -1, 1);
 			} else {
 				gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
 			}
-			gl.pushIdentity(GL2.GL_MODELVIEW);
+			gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW);
 		} else {
-			gl.getGL().glEnable(GL2.GL_DEPTH_TEST);
+			gl.getGL().glEnable(GL.GL_DEPTH_TEST);
 		}
 		try {
-			gl.push(GL2.GL_MODELVIEW);
+			gl.push(GLMatrixFunc.GL_MODELVIEW);
 			final GamaPoint nonNullOffset = getOffset();
 			gl.translateBy(nonNullOffset.x, -nonNullOffset.y, overlay ? 0 : nonNullOffset.z);
 			final GamaPoint nonNullScale = getScale();
@@ -175,23 +176,19 @@ public class LayerObject {
 			final boolean picking = renderer.getPickingHelper().isPicking() && isPickable();
 			if (picking) {
 				if (!overlay) { gl.runWithNames(() -> drawAllObjects(gl, true)); }
+			} else if (isAnimated || overlay) {
+				drawAllObjects(gl, false);
 			} else {
-				if (isAnimated || overlay) {
-					drawAllObjects(gl, false);
-				} else {
-					if (openGLListIndex == null) {
-						openGLListIndex = gl.compileAsList(() -> drawAllObjects(gl, false));
-					}
-					gl.drawList(openGLListIndex);
-				}
+				if (openGLListIndex == null) { openGLListIndex = gl.compileAsList(() -> drawAllObjects(gl, false)); }
+				gl.drawList(openGLListIndex);
 			}
 		} finally {
-			gl.pop(GL2.GL_MODELVIEW);
+			gl.pop(GLMatrixFunc.GL_MODELVIEW);
 			if (overlay) {
 				// Addition to fix #2228 and #2222
 				gl.resumeZTranslation();
-				gl.pop(GL2.GL_MODELVIEW);
-				gl.pop(GL2.GL_PROJECTION);
+				gl.pop(GLMatrixFunc.GL_MODELVIEW);
+				gl.pop(GLMatrixFunc.GL_PROJECTION);
 			}
 		}
 
@@ -211,7 +208,7 @@ public class LayerObject {
 		gl.scaleBy(size.x, size.y, 1);
 		gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope));
 		gl.setCurrentObjectAlpha(1 - layer.getData().getTransparency(scope));
-		gl.drawCachedGeometry(IShape.Type.ROUNDED, true, null);
+		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
 		gl.popMatrix();
 	}
 
@@ -397,7 +394,7 @@ public class LayerObject {
 			gl.deleteList(openGLListIndex);
 			openGLListIndex = null;
 		}
-		layer.draw(renderer.getSurface().getScope(), renderer);
+		// layer.draw(renderer.getSurface().getScope(), renderer);
 
 	}
 

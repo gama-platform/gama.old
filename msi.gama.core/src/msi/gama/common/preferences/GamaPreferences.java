@@ -427,9 +427,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
 				IType.BOOL, true).in(NAME, RENDERING);
-		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
-				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
-						.in(NAME, RENDERING);
+		// public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
+		// "Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
+		// .in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
 				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true).in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
@@ -563,9 +563,7 @@ public class GamaPreferences {
 			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
 			else if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
-			if (os.startsWith("Windows")) {
-				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
-			}
+			if (os.startsWith("Windows")) return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			return "";
 		}
 	}

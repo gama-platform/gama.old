@@ -16,8 +16,6 @@ import static com.jogamp.opengl.glu.GLU.gluTessEndContour;
 import static com.jogamp.opengl.glu.GLU.gluTessEndPolygon;
 import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
 import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
-import static msi.gama.common.geometry.GeometryUtils.getYNegatedCoordinates;
-import static msi.gama.common.geometry.GeometryUtils.iterateOverTriangles;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -25,6 +23,7 @@ import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 
+import org.eclipse.swt.internal.DPIUtil;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
@@ -82,7 +81,7 @@ import ummisco.gama.opengl.scene.text.TextDrawer;
 public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 		GamaPreferences.Displays.DRAW_ROTATE_HELPER.onChange(v -> SHOULD_DRAW_ROTATION_SPHERE = v);
 	}
 
@@ -147,7 +146,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
 	private volatile boolean ZTranslationSuspended;
-	private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
+	// private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
 	private final Pass endScene = this::endScene;
 
 	public OpenGL(final IOpenGLRenderer renderer) {
@@ -258,6 +257,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		ratios.setLocation(xRatio, yRatio, 0d);
 	}
 
+	@SuppressWarnings ("restriction")
 	private void debugSizes(final int width, final int height, final double initialEnvWidth,
 			final double initialEnvHeight, final double envWidth, final double envHeight, final double zoomLevel,
 			final double xRatio, final double yRatio) {
@@ -271,7 +271,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		DEBUG.OUT("Ratio width/height in pixels ", 35, envWidth / envHeight);
 		DEBUG.OUT("Window pixels/env pixels ", 35, width / envWidth + " | " + height / envHeight);
 		DEBUG.OUT("Current XRatio pixels/env in units ", 35, xRatio + " | " + yRatio);
-
+		DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
+		DEBUG.OUT("AutoScale down = ", false);
+		DEBUG.OUT(DPIUtil.autoScaleDown(new int[] { width, height }));
+		// DEBUG.OUT("Client area of window:" + getRenderer().getCanvas().getClientArea());
 	}
 
 	public void updatePerspective(final GL2 gl) {
@@ -507,9 +510,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param border
 	 *            if not null, will be used to draw the contour
 	 */
-	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, final boolean solid,
+	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, /* final boolean solid, */
 			final boolean clockwise, final boolean computeNormal, final Color border) {
-		if (solid) {
+		if (!isWireframe()) {
 			if (computeNormal) { setNormal(yNegatedVertices, clockwise); }
 			final int style = number == 4 ? GL2ES3.GL_QUADS : number == -1 ? GL2.GL_POLYGON : GL.GL_TRIANGLES;
 			drawVertices(style, yNegatedVertices, number, clockwise);
@@ -526,21 +529,20 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param drawer
 	 */
 	public void drawPolygon(final Polygon p, final ICoordinates yNegatedVertices, final boolean clockwise) {
-		if (useJTSTriangulation) {
-			iterateOverTriangles(p,
-					tri -> drawSimpleShape(getYNegatedCoordinates(tri), 3, true, clockwise, false, null));
-		} else {
-			gluTessBeginPolygon(tobj, null);
+		// if (useJTSTriangulation) {
+		// iterateOverTriangles(p, tri -> drawSimpleShape(getYNegatedCoordinates(tri), 3, clockwise, false, null));
+		// } else {
+		gluTessBeginPolygon(tobj, null);
+		gluTessBeginContour(tobj);
+		yNegatedVertices.visitClockwise(glTesselatorDrawer);
+		gluTessEndContour(tobj);
+		applyToInnerGeometries(p, geom -> {
 			gluTessBeginContour(tobj);
-			yNegatedVertices.visitClockwise(glTesselatorDrawer);
+			getContourCoordinates(geom).visitYNegatedCounterClockwise(glTesselatorDrawer);
 			gluTessEndContour(tobj);
-			applyToInnerGeometries(p, geom -> {
-				gluTessBeginContour(tobj);
-				getContourCoordinates(geom).visitYNegatedCounterClockwise(glTesselatorDrawer);
-				gluTessEndContour(tobj);
-			});
-			gluTessEndPolygon(tobj);
-		}
+		});
+		gluTessEndPolygon(tobj);
+		// }
 	}
 
 	public void drawClosedLine(final ICoordinates yNegatedVertices, final int number) {
@@ -817,14 +819,17 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	public void setDisplayWireframe(final boolean wireframe) {
+		if (wireframe == displayIsWireframe) return;
 		displayIsWireframe = wireframe;
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !isWireframe() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
 	}
 
 	public void setObjectWireframe(final boolean wireframe) {
-		if (wireframe == (displayIsWireframe || objectIsWireframe)) return;
+		if (wireframe == objectIsWireframe) return;
 		objectIsWireframe = wireframe;
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !isWireframe() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE);
+		if (!displayIsWireframe) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, wireframe ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
+		}
 	}
 
 	public boolean isWireframe() {
@@ -869,28 +874,35 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void drawCachedGeometry(final GamaGeometryFile file, final Color border) {
 		if (file == null) return;
 		final Integer index = geometryCache.get(file);
-		if (index != null) { drawList(index); }
-		if (border != null && !isWireframe() && index != null) {
-			final Color old = swapCurrentColor(border);
-			getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+		if (index != null) {
 			drawList(index);
-			setCurrentColor(old);
-			getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+			if (border != null || isWireframe()) {
+				final Color old = swapCurrentColor(border);
+				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+				try {
+					drawList(index);
+				} finally {
+					setCurrentColor(old);
+					getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				}
+			}
 		}
 	}
 
-	public void drawCachedGeometry(final IShape.Type id, final boolean solid, final Color border) {
+	public void drawCachedGeometry(final IShape.Type id, /* final boolean solid, */ final Color border) {
 		if (geometryCache == null || id == null) return;
 		final BuiltInGeometry object = geometryCache.get(id);
 		if (object != null) {
-			if (solid && !isWireframe()) { object.draw(this); }
-
-			if (!solid || isWireframe() || border != null) {
+			if (!isWireframe()) { object.draw(this); }
+			if (isWireframe() || border != null) {
 				final Color old = swapCurrentColor(border != null ? border : getCurrentColor());
 				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-				object.draw(this);
-				setCurrentColor(old);
-				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				try {
+					object.draw(this);
+				} finally {
+					setCurrentColor(old);
+					getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				}
 			}
 		}
 	}
@@ -908,6 +920,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	// COMPLEX SHAPES
 
 	public void beginObject(final AbstractObject object) {
+		// DEBUG.OUT("Object " + object + " begin and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
 		setObjectWireframe(object.getAttributes().isEmpty());
 		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
@@ -924,7 +937,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
-		setObjectWireframe(!object.getAttributes().isEmpty());
+		// DEBUG.OUT("Object " + object + " ends and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
+		// setObjectWireframe(!object.getAttributes().isEmpty());
 	}
 
 	public Pass beginScene() {
@@ -965,12 +979,18 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	public void endScene() {
-		disableTextures();
-		setLighting(false);
-		drawFPS();
-		drawROI();
-		drawRotation();
-		gl.glFlush();
+		boolean drawFPS = getData().isShowfps();
+		boolean drawRotation = rotationMode && SHOULD_DRAW_ROTATION_SPHERE;
+		boolean drawROI = roiEnvelope != null;
+		if (drawFPS || drawRotation || drawROI) {
+			disableTextures();
+			setLighting(false);
+		}
+		drawFPS(drawFPS);
+		drawROI(drawROI);
+		drawRotation(drawRotation);
+		// gl.glFlush();
+		gl.glFinish();
 	}
 
 	public void initializeGLStates(final Color bg) {
@@ -1014,13 +1034,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// Disabling line smoothing to only rely on FSAA
 		gl.glEnable(GL.GL_LINE_SMOOTH);
 		gl.glEnable(GL2ES1.GL_POINT_SMOOTH);
-		gl.glEnable(GL2GL3.GL_POLYGON_SMOOTH);
+		// gl.glEnable(GL2GL3.GL_POLYGON_SMOOTH);
 		// Enabling forced normalization of normal vectors (important)
 		gl.glEnable(GLLightingFunc.GL_NORMALIZE);
 		// Enabling multi-sampling (necessary ?)
 		// if (USE_MULTI_SAMPLE) {
 		gl.glEnable(GL.GL_MULTISAMPLE);
-		// }
+		// Setting the default polygon mode
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 		initializeShapeCache();
 
 	}
@@ -1043,26 +1064,25 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return rotationMode;
 	}
 
-	public void drawFPS() {
-		if (!getData().isShowfps()) return;
-		setCurrentColor(Color.black);
-		final int nb = (int) getCanvas().getAnimator().getLastFPS();
-		final String s = nb == 0 ? "(computing FPS...)" : nb + " FPS";
-		rasterText(s, GLUT.BITMAP_HELVETICA_12, -5, 5, 0);
+	public void drawFPS(final boolean doIt) {
+		if (doIt) {
+			setCurrentColor(Color.black);
+			final int nb = (int) getCanvas().getAnimator().getLastFPS();
+			final String s = nb == 0 ? "(computing FPS...)" : nb + " FPS";
+			rasterText(s, GLUT.BITMAP_HELVETICA_12, -5, 5, 0);
+		}
 	}
 
-	public void drawROI() {
-		final Envelope3D env = roiEnvelope;
-		if (env == null) return;
-		geometryDrawer.drawROIHelper(env);
+	public void drawROI(final boolean doIt) {
+		if (doIt) { geometryDrawer.drawROIHelper(roiEnvelope); }
 	}
 
 	public double sizeOfRotationElements() {
 		return Math.min(getMaxEnvDim() / 4d, getData().getCameraPos().minus(getData().getCameraTarget()).norm() / 6d);
 	}
 
-	public void drawRotation() {
-		if (rotationMode && SHOULD_DRAW_ROTATION_SPHERE) {
+	public void drawRotation(final boolean doIt) {
+		if (doIt) {
 			final GamaPoint target = getData().getCameraTarget();
 			final double distance = getData().getCameraPos().minus(target).norm();
 			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 6d));

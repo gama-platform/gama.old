@@ -195,20 +195,15 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	}
 
-	@SuppressWarnings ("restriction")
+	boolean first = true;
+
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
 		int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
 		// height = scaleDownIfMac(height);
-		if (width <= 0 || height <= 0) return;
-		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) return;
-		// DEBUG.OUT("Reshaped to " + width + " x " + height);
-		// DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
-		// DEBUG.OUT("AutoScale down = ", false);
-		// DEBUG.OUT(DPIUtil.autoScaleDown(new int[] { width, height }));
-		// DEBUG.OUT("Size of window:" + ((GLCanvas) drawable).getClientArea());
+		if (width <= 0 || height <= 0 || openGL.getViewWidth() == width && openGL.getViewHeight() == height) return;
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);

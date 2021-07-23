@@ -28,12 +28,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.locationtech.jts.geom.Envelope;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -42,7 +42,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
-import com.jogamp.opengl.util.GLBuffers;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -122,8 +121,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	protected IOpenGLRenderer createRenderer() {
-		final IOpenGLRenderer r = new JOGLRenderer();
-		return r;
+		return new JOGLRenderer();
 	}
 
 	private GLAnimatorControl createAnimator() {
@@ -140,16 +138,18 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setSampleBuffers(true);
 		cap.setAlphaBits(8);
 		cap.setNumSamples(8);
-		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null) {
+		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
 
-			@SuppressWarnings ("restriction")
-			@Override
-			public Rectangle getClientArea() {
-				// see Issue #2378
-				// if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
-				return super.getClientArea();
-			}
-		};
+		// {
+		//
+		// @SuppressWarnings ("restriction")
+		// @Override
+		// public Rectangle getClientArea() {
+		// // see Issue #2378
+		// // if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
+		// return super.getClientArea();
+		// }
+		// };
 		canvas.setAutoSwapBufferMode(true);
 		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
@@ -195,7 +195,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected ByteBuffer getBuffer(final int w, final int h) {
 
 		if (buffer == null || buffer.capacity() != w * h * 4) {
-			buffer = GLBuffers.newDirectByteBuffer(w * h * 4);
+			buffer = Buffers.newDirectByteBuffer(w * h * 4);
 		} else {
 			buffer.rewind();
 		}
@@ -256,7 +256,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					focusOn(geometry);
 				}
 			}
-			if (force) { if (oldState) { animator.pause(); } }
+			if (force && oldState) { animator.pause(); }
 		} finally {
 			alreadyUpdating = false;
 		}
