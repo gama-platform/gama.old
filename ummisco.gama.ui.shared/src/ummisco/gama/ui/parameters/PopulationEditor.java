@@ -58,15 +58,8 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	}
 
 	@Override
-	public Control getEditorControl() {
-		return populationDisplayer;
-	}
-
-	@Override
 	protected void applyBrowse() {
-		if (currentValue instanceof Collection) {
-			ValuedDisplayOutputFactory.browse((Collection) currentValue);
-		}
+		if (currentValue instanceof Collection) { ValuedDisplayOutputFactory.browse((Collection) currentValue); }
 	}
 
 	@Override

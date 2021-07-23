@@ -55,16 +55,16 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		final Label t = toolbar.getItem(DEFINE);
+		final Label t = editorToolbar.getItem(DEFINE);
 		if (t == null || t.isDisposed()) return;
 		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");
 			t.setImage(GamaIcons.create("small.undefine").image());
-			getEditorControl().setEnabled(true);
+			editorControl.setActive(true);
 		} else {
 			t.setToolTipText("Define the parameter (currently undefined)");
 			t.setImage(GamaIcons.create("small.define").image());
-			getEditorControl().setEnabled(false);
+			editorControl.setActive(false);
 		}
 	}
 
@@ -73,7 +73,7 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 		if (param.isDefined()) {
 			param.setDefined(false);
 			internalModification = true;
-			getEditorControl().setText(UNDEFINED_LABEL);
+			editorControl.setText(UNDEFINED_LABEL);
 			internalModification = false;
 			modifyValue(null);
 		} else {

@@ -52,7 +52,7 @@ public class ColorEditor extends AbstractEditor<Color> {
 			final MenuItem i = (MenuItem) e.widget;
 			final String color = i.getText().replace("#", "");
 			final GamaColor c = GamaColor.colors.get(color);
-			if (c == null) { return; }
+			if (c == null) return;
 			modifyAndDisplayValue(c);
 		}
 
@@ -64,10 +64,10 @@ public class ColorEditor extends AbstractEditor<Color> {
 		super(scope, agent, param, l);
 	}
 
-	ColorEditor(final IScope scope, final Composite parent, final String title, final Object value,
+	ColorEditor(final IScope scope, final EditorsGroup parent, final String title, final Object value,
 			final EditorListener<java.awt.Color> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	@Override
@@ -91,11 +91,6 @@ public class ColorEditor extends AbstractEditor<Color> {
 		edit.setText(color.toString());
 		edit.setColor(color);
 		internalModification = false;
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return edit;
 	}
 
 	@Override

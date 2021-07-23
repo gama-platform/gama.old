@@ -51,7 +51,6 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	private final Text text;
 	private final ExpressionBasedEditor<Object> editor;
-	// private GamaUIColor background;
 	private Object currentValue;
 	protected Exception currentException;
 	final boolean evaluateExpression;

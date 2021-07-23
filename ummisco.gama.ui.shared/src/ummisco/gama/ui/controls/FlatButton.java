@@ -91,7 +91,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private FlatButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		// setFont(GamaFonts.getSystemFont());
 		addPaintListener(this);
 		addListeners();
 	}
@@ -380,14 +379,18 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return image;
 	}
 
+	/**
+	 * Sent by the layout
+	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
+		setWidth(width);
 		super.setBounds(x, y, width, height);
 	}
 
 	@Override
 	public void setBounds(final Rectangle rect) {
-		super.setBounds(rect);
+		setBounds(rect.x, rect.y, rect.width, rect.height);
 	}
 
 }

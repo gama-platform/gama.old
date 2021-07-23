@@ -16,13 +16,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.views.ExpandableItemsView;
 
 public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
@@ -39,16 +38,12 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 	@Override
 	protected Composite createItemContentsFor(final T data) {
 		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(data);
-		final Composite compo = new Composite(getViewer(), SWT.NONE);
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		compo.setLayout(layout);
-		compo.setBackground(getViewer().getBackground());
+		final EditorsGroup compo = new EditorsGroup(getViewer());
 		if (parameters != null) {
 			final List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);
 			for (final AbstractEditor<?> gpParam : list) {
-				gpParam.createComposite(compo);
+				gpParam.createControls(compo);
 				if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
 			}
 		}

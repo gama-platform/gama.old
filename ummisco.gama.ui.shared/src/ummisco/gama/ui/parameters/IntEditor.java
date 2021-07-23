@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import org.eclipse.swt.widgets.Composite;
-
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -30,17 +28,16 @@ public class IntEditor extends NumberEditor<Integer> {
 		super(scope, agent, param, l, canBeNull);
 	}
 
-	IntEditor(final IScope scope, final Composite parent, final String title, final String unit, final Integer value,
+	IntEditor(final IScope scope, final EditorsGroup parent, final String title, final String unit, final Integer value,
 			final Integer min, final Integer max, final Integer step, final EditorListener<Integer> whenModified,
 			final boolean canBeNull) {
 		super(scope, new InputParameter(title, unit, value, min, max, step), whenModified, canBeNull);
-		createComposite(parent);
+		createControls(parent);
 	}
 
 	@Override
-	protected void computeStepValue() {
-		super.computeStepValue();
-		if (stepValue == null) { stepValue = 1; }
+	protected Integer defaultStepValue() {
+		return 1;
 	}
 
 	@Override
@@ -70,9 +67,9 @@ public class IntEditor extends NumberEditor<Integer> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		toolbar.enable(PLUS,
+		editorToolbar.enable(PLUS,
 				param.isDefined() && (getMaxValue() == null || applyPlus() < Cast.asInt(getScope(), getMaxValue())));
-		toolbar.enable(MINUS,
+		editorToolbar.enable(MINUS,
 				param.isDefined() && (getMinValue() == null || applyMinus() > Cast.asInt(getScope(), getMinValue())));
 	}
 

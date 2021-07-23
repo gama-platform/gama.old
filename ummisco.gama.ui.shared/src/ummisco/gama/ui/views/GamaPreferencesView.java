@@ -11,7 +11,10 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
-import java.util.ArrayList;
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+import static ummisco.gama.ui.resources.IGamaColors.DARK_GRAY;
+import static ummisco.gama.ui.resources.IGamaColors.VERY_LIGHT_GRAY;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,14 +26,11 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -54,8 +53,8 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.Selector;
@@ -92,7 +91,7 @@ public class GamaPreferencesView {
 			instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 		}
 		for (final IParameterEditor ed : instance.editors.values()) {
-			ed.updateValue(true);
+			ed.updateWithValueOfParameter();
 		}
 		instance.open();
 	}
@@ -106,7 +105,7 @@ public class GamaPreferencesView {
 
 			});
 			for (final IParameterEditor ed : instance.editors.values()) {
-				ed.updateValue(true);
+				ed.updateWithValueOfParameter();
 			}
 		});
 
@@ -124,7 +123,6 @@ public class GamaPreferencesView {
 
 	Shell parentShell, shell;
 	CTabFolder tabFolder;
-	List<ParameterExpandBar> contents = new ArrayList();
 	final Map<String, IParameterEditor> editors = new LinkedHashMap();
 
 	final Map<String, Object> modelValues = new LinkedHashMap();
@@ -132,23 +130,12 @@ public class GamaPreferencesView {
 	private GamaPreferencesView(final Shell parent) {
 		parentShell = parent;
 		shell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.APPLICATION_MODAL);
-		final var gridLayout = new GridLayout(2, false);
-		gridLayout.marginWidth = gridLayout.marginHeight = 5;
-		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
-		shell.setLayout(gridLayout);
-		// shell.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.color());
-		buildContents();
-	}
-
-	private void buildContents() {
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).spacing(5, 5).applyTo(shell);
 		tabFolder = new CTabFolder(shell, SWT.TOP | SWT.NO_TRIM);
 		tabFolder.setBorderVisible(true);
 		tabFolder.setMRUVisible(true);
 		tabFolder.setSimple(false); // rounded tabs
-		tabFolder.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
-		// tabFolder.setBackground(!ThemeHelper.isDark() ? IGamaColors.LIGHT_GRAY.color() :
-		// IGamaColors.DARK_GRAY.color());
-
+		GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(tabFolder);
 		final var prefs = GamaPreferences.organizePrefs();
 		for (final String tabName : prefs.keySet()) {
 			final var item = new CTabItem(tabFolder, SWT.NONE);
@@ -163,24 +150,17 @@ public class GamaPreferencesView {
 
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
-		contents.add(viewer);
-		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		viewer.setBackground(
-				!ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.darker());
-		viewer.setLayoutData(data);
-		// ?
-		viewer.computeSize(tab.getBounds().x, SWT.DEFAULT);
-		//
+		viewer.setBackground(!isDark() ? VERY_LIGHT_GRAY.color() : DARK_GRAY.darker());
 		viewer.setSpacing(5);
 		tab.setControl(viewer);
+
 		for (final String groupName : entries.keySet()) {
 			final var item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			final var compo = new Composite(viewer, SWT.NONE);
-			// compo.setBackground(viewer.getBackground());
 			item.setControl(compo);
 			// Build the contents *after* setting the control to the item.
-			buildGroupContents(compo, entries.get(groupName), NB_DIVISIONS);
+			buildGroupContents(compo, entries.get(groupName));
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			item.setExpanded(true);
 		}
@@ -222,20 +202,16 @@ public class GamaPreferencesView {
 		if (e.getRefreshment() != null) {
 			for (final String activable : e.getRefreshment()) {
 				final var ed = editors.get(activable);
-				if (ed != null) { ed.updateValue(true); }
+				if (ed != null) { ed.updateWithValueOfParameter(); }
 			}
 		}
 	}
 
-	private void buildGroupContents(final Composite compo, final List<Pref> list, final int nbColumns) {
-		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(0, 0).equalWidth(true).applyTo(compo);
-		final var comps = new Composite[nbColumns];
-		for (var i = 0; i < nbColumns; i++) {
-			comps[i] = new Composite(compo, SWT.NONE);
-			GridLayoutFactory.fillDefaults().numColumns(2).spacing(0, 0).extendedMargins(0, 0, 10, 5).equalWidth(false)
-					.applyTo(comps[i]);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(comps[i]);
-
+	private void buildGroupContents(final Composite compo, final List<Pref> list) {
+		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(5, 0).equalWidth(true).applyTo(compo);
+		final var comps = new EditorsGroup[NB_DIVISIONS];
+		for (var i = 0; i < NB_DIVISIONS; i++) {
+			comps[i] = new EditorsGroup(compo, SWT.BORDER);
 		}
 		var i = 0;
 		for (final Pref e : list) {
@@ -254,7 +230,7 @@ public class GamaPreferencesView {
 
 			});
 			final var isSubParameter = activations.containsKey(e.getKey());
-			final var ed = EditorFactory.create(null, comps[(int) (i * ((double) nbColumns / list.size()))], e,
+			final var ed = EditorFactory.create(null, comps[(int) (i * ((double) NB_DIVISIONS / list.size()))], e,
 					isSubParameter, true);
 			if (e.isDisabled()) {
 				ed.setActive(false);
@@ -296,7 +272,7 @@ public class GamaPreferencesView {
 		i2.setText("Revert to default value");
 		i2.addSelectionListener((Selector) se -> {
 			e.set(e.getInitialValue(GAMA.getRuntimeScope()));
-			ed.forceUpdateValueAsynchronously();
+			ed.updateWithValueOfParameter();
 		});
 		return m;
 	}
@@ -344,7 +320,7 @@ public class GamaPreferencesView {
 				if (path == null) return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
 				for (final IParameterEditor ed : editors.values()) {
-					ed.updateValue(true);
+					ed.updateWithValueOfParameter();
 				}
 			}
 
@@ -445,26 +421,26 @@ public class GamaPreferencesView {
 			saveDialogProperties();
 		});
 
-		shell.addControlListener(new ControlListener() {
-
-			@Override
-			public void controlResized(final ControlEvent e) {
-				for (final IParameterEditor ed : editors.values()) {
-					((AbstractEditor) ed).getLabel().resize(shell.getSize().x / (NB_DIVISIONS * 2));
-				}
-				for (final ParameterExpandBar bar : contents) {
-					for (final ParameterExpandItem item : bar.getItems()) {
-						item.setHeight(item.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-					}
-
-					bar.redraw();
-				}
-				shell.layout(true, true);
-			}
-
-			@Override
-			public void controlMoved(final ControlEvent e) {}
-		});
+		// shell.addControlListener(new ControlListener() {
+		//
+		// @Override
+		// public void controlResized(final ControlEvent e) {
+		// for (final IParameterEditor ed : editors.values()) {
+		// ((AbstractEditor) ed).getLabel().resize(shell.getSize().x / (NB_DIVISIONS * 2));
+		// }
+		// for (final ParameterExpandBar bar : contents) {
+		// for (final ParameterExpandItem item : bar.getItems()) {
+		// item.setHeight(item.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		// }
+		//
+		// bar.redraw();
+		// }
+		// shell.layout(true, true);
+		// }
+		//
+		// @Override
+		// public void controlMoved(final ControlEvent e) {}
+		// });
 
 	}
 

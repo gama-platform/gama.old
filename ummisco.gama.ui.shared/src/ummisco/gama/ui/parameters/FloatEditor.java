@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import org.eclipse.swt.widgets.Composite;
-
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -30,18 +28,17 @@ public class FloatEditor extends NumberEditor<Double> {
 		super(scope, agent, param, l, canBeNull);
 	}
 
-	FloatEditor(final IScope scope, final Composite parent, final String title, final Double value, final Double min,
+	FloatEditor(final IScope scope, final EditorsGroup parent, final String title, final Double value, final Double min,
 			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value, min, max, step), whenModified, canBeNull);
 		if (step != null) { stepValue = step; }
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	@Override
-	protected void computeStepValue() {
-		super.computeStepValue();
-		if (stepValue == null) { stepValue = 0.1; }
+	protected Double defaultStepValue() {
+		return 0.1d;
 	}
 
 	@Override
@@ -58,14 +55,6 @@ public class FloatEditor extends NumberEditor<Double> {
 		return super.modifyValue(i);
 
 	}
-
-	// @Override
-	// protected void setOriginalValue(final Double val) {
-	// // if ( acceptNull && val == null ) {
-	// // super.setOriginalValue(val);
-	// // }
-	// super.setOriginalValue(val);
-	// }
 
 	@Override
 	protected Double normalizeValues() throws GamaRuntimeException {
@@ -98,9 +87,9 @@ public class FloatEditor extends NumberEditor<Double> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		toolbar.enable(PLUS,
+		editorToolbar.enable(PLUS,
 				param.isDefined() && (getMaxValue() == null || applyPlus() < Cast.asFloat(getScope(), getMaxValue())));
-		toolbar.enable(MINUS,
+		editorToolbar.enable(MINUS,
 				param.isDefined() && (getMinValue() == null || applyMinus() > Cast.asFloat(getScope(), getMinValue())));
 	}
 }

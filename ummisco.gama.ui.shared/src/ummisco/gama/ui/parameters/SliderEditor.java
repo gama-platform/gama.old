@@ -19,7 +19,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +44,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<T> {
 
 	final protected int nbInts;
+	SimpleSlider slider;
 	final DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
 
 	private static final int[] ITEMS = { VALUE, REVERT };
@@ -58,7 +58,6 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
 			formatter.setGroupingUsed(false);
-			stepValue = getStep();
 			if (stepValue == null) { stepValue = 1; }
 		}
 
@@ -75,7 +74,6 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 
 		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Double> l) {
 			super(scope, a, variable, l);
-			stepValue = getStep();
 			if (stepValue == null) {
 				stepValue = (Cast.asFloat(scope, getMaxValue()) - Cast.asFloat(scope, getMinValue())) / 100d;
 			}
@@ -100,9 +98,6 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 
 	}
 
-	SimpleSlider slider;
-	Number stepValue;
-
 	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
 		super(scope, a, variable, l);
 		final int minChars = String.valueOf(Cast.asInt(getScope(), getMinValue())).length();
@@ -113,16 +108,6 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	@Override
 	protected int[] getToolItems() {
 		return ITEMS;
-	}
-
-	@SuppressWarnings ("unchecked")
-	protected T getStep() {
-		return (T) param.getStepValue(getScope());
-	}
-
-	@Override
-	protected Control getEditorControl() {
-		return slider;
 	}
 
 	@Override
@@ -145,10 +130,9 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 			}
 		}
 		slider = new SimpleSlider(comp, left, right, thumb, false);
-		slider.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		if (stepValue != null) {
-			final Double realStep = stepValue.doubleValue()
+			final Double realStep = ((Number) stepValue).doubleValue()
 					/ (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue()));
 			slider.setStep(realStep);
 		}
@@ -158,26 +142,12 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		return slider;
 	}
 
-	String truncateCurrentValue() {
-		// Avoids invisible exception (see #2044)
-		if (currentValue == null) return formatter.format(0);
-		return formatter.format(currentValue);
-	}
-
 	@Override
 	protected GridData getParameterGridData() {
 		final GridData result = super.getParameterGridData();
-		result.heightHint = 24;
+		result.heightHint = 18 /* SimpleSlider.THUMB_HEIGHT + 5 */;
 		return result;
 	}
-	//
-	// @Override
-	// public void createComposite(final Composite comp) {
-	// super.createComposite(comp);
-	// final GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
-	// toolbar.setLayoutData(data);
-	// toolbar.layout();
-	// }
 
 	protected abstract T computeValue(final double position);
 
@@ -187,8 +157,14 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		final double position = (Cast.asFloat(getScope(), p) - Cast.asFloat(getScope(), getMinValue()))
 				/ (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue()));
 		slider.updateSlider(position, false);
-		toolbar.updateValue(truncateCurrentValue());
 		composite.layout();
+	}
+
+	@Override
+	protected void updateToolbar() {
+		super.updateToolbar();
+		// Avoids invisible exception (see #2044)
+		editorToolbar.updateValue(formatter.format(currentValue == null ? 0 : currentValue));
 	}
 
 }

@@ -64,11 +64,11 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		super(scope, agent, param, l);
 	}
 
-	PointEditor(final IScope scope, final Composite parent, final String title, final ILocation value,
+	PointEditor(final IScope scope, final EditorsGroup parent, final String title, final ILocation value,
 			final EditorListener<ILocation> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	@Override
@@ -161,14 +161,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	}
 
 	@Override
-	protected void computeStepValue() {
-		super.computeStepValue();
-		if (stepValue == null) { stepValue = new GamaPoint(0.1, 0.1, 0.1); }
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return pointEditor;
+	protected GamaPoint defaultStepValue() {
+		return new GamaPoint(0.1, 0.1, 0.1);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

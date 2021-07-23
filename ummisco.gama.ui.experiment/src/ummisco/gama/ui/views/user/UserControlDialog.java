@@ -22,8 +22,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,6 +43,7 @@ import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -96,7 +97,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	@Override
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
-		if (previous == null || !previous.name.equals(title)) { return; }
+		if (previous == null || !previous.name.equals(title)) return;
 		newShell.setLocation(previous.location);
 		newShell.setSize(previous.extent);
 
@@ -129,19 +130,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		final Composite composite = (Composite) super.createDialogArea(parent);
-		final GridLayout layout = (GridLayout) composite.getLayout();
-		layout.numColumns = 3;
-		// Label text = new Label(composite, SWT.None);
-		// text.setBackground(SwtGui.COLOR_OK);
-		// text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		// text.setText(title);
-		// GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-		// text.setLayoutData(data);
-		// Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		// data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-		// data.heightHint = 20;
-		// sep.setLayoutData(data);
+		final Composite above = (Composite) super.createDialogArea(parent);
+		final EditorsGroup composite = new EditorsGroup(above);
 		for (final IStatement c : userCommands) {
 			if (c instanceof UserCommandStatement) {
 				final List<UserInputStatement> inputs = ((UserCommandStatement) c).getInputs();
@@ -232,10 +222,9 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	protected Control createDetailsArea(final Composite parent) {
-		final Composite compo = new Composite(parent, SWT.BORDER | SWT.SHADOW_IN);
+		final EditorsGroup compo = new EditorsGroup(parent, SWT.BORDER | SWT.SHADOW_IN);
 		compo.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
+		final FillLayout layout = new FillLayout();
 		compo.setLayout(layout);
 		final IAgent agent = scope.getAgent();
 		final AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
@@ -245,7 +234,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 			final List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);
 			for (final AbstractEditor gpParam : list) {
-				gpParam.createComposite(compo);
+				gpParam.createControls(compo);
 			}
 		}
 		return compo;

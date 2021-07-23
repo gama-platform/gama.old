@@ -38,6 +38,7 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -99,11 +100,11 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 		for (final IStatement statement : panel.getUserCommands()) {
 			if (statement instanceof UserCommandStatement) {
 				final UserCommandStatement c = (UserCommandStatement) statement;
-				final Composite commandComposite = new Composite(body, SWT.BORDER);
+				final EditorsGroup commandComposite = new EditorsGroup(body, SWT.NONE);
 				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
 				commandComposite.setLayoutData(data);
-				layout = new GridLayout(3, false);
-				commandComposite.setLayout(layout);
+				// layout = new GridLayout(3, false);
+				// commandComposite.setLayout(layout);
 				commandComposite.setBackground(IGamaColors.WHITE.color());
 				final List<UserInputStatement> inputs = c.getInputs();
 				final int nbLines = inputs.size() > 1 ? inputs.size() : 1;

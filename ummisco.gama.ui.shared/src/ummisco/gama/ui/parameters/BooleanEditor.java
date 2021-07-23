@@ -31,11 +31,11 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	private SwitchButton button;
 
-	BooleanEditor(final IScope scope, final Composite parent, final String title, final boolean value,
+	BooleanEditor(final IScope scope, final EditorsGroup parent, final String title, final boolean value,
 			final EditorListener<Boolean> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
 		acceptNull = false;
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
@@ -69,16 +69,9 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		var b = currentValue;
-		if (b == null) { b = false; }
-		button.setSelection(b);
+		button.setSelection(currentValue == null ? false : currentValue);
 		internalModification = false;
 
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return button;
 	}
 
 	@Override

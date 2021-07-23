@@ -33,41 +33,16 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class AgentEditor extends ExpressionBasedEditor {
 
-	// Label agentDisplayer;
 	String species;
-
-	// AgentEditor(final IParameter param) {
-	// this(null, param);
-	// }
-
-	// AgentEditor(final IAgent agent, final IParameter param) {
-	// this(agent, param, null);
-	// }
 
 	AgentEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);
 		species = param.getType().toString();
 	}
 
-	//
-	// AgentEditor(final Composite parent, final String title, final Object
-	// value,
-	// final EditorListener<java.util.List> whenModified) {
-	// // Convenience method
-	// super(new InputParameter(title, value), whenModified);
-	// this.createComposite(parent);
-	// }
-
-	// @Override
-	// public Control createCustomParameterControl(final Composite compo) {
-	// currentValue = getOriginalValue();
-	// agentDisplayer = new Label(compo, SWT.NONE);
-	// return agentDisplayer;
-	// }
-
 	@Override
 	public void applyChange() {
-		Shell shell = toolbar.getItem(CHANGE).getParent().getShell();
+		Shell shell = editorToolbar.getItem(CHANGE).getParent().getShell();
 		final Menu old = shell.getMenu();
 		shell.setMenu(null);
 		if (old != null) { old.dispose(); }
@@ -93,25 +68,12 @@ public class AgentEditor extends ExpressionBasedEditor {
 						action);
 			}
 		}
-		final Rectangle rect = toolbar.getItem(CHANGE).getBounds();
-		final Point pt = toolbar.getItem(CHANGE).getParent().toDisplay(new Point(rect.x, rect.y));
+		final Rectangle rect = editorToolbar.getItem(CHANGE).getBounds();
+		final Point pt = editorToolbar.getItem(CHANGE).getParent().toDisplay(new Point(rect.x, rect.y));
 		dropMenu.setLocation(pt.x, pt.y + rect.height);
 		dropMenu.setVisible(true);
 
 	}
-
-	// @Override
-	// protected void displayParameterValue() {
-	// internalModification = true;
-	// agentDisplayer.setText(currentValue instanceof IAgent ? ((IAgent)
-	// currentValue).getName() : "No agent");
-	// internalModification = false;
-	// }
-
-	// @Override
-	// public Control getEditorControl() {
-	// return agentDisplayer;
-	// }
 
 	@Override
 	public IType getExpectedType() {
@@ -130,7 +92,6 @@ public class AgentEditor extends ExpressionBasedEditor {
 
 	@Override
 	protected void applyInspect() {
-
 		if (currentValue instanceof IAgent) {
 			final IAgent a = (IAgent) currentValue;
 			if (!a.dead()) { getScope().getGui().setSelectedAgent(a); }

@@ -42,7 +42,7 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		toolbar.enable(EDIT, currentValue instanceof IList);
+		editorToolbar.enable(EDIT, currentValue instanceof IList);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

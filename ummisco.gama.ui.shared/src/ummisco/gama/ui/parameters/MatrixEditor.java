@@ -39,7 +39,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix<?>> {
 	@Override
 	protected void updateToolbar() {
 		super.updateToolbar();
-		toolbar.enable(EDIT, currentValue != null);
+		editorToolbar.enable(EDIT, currentValue != null);
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })

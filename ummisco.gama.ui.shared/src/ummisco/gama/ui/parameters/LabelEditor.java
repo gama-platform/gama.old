@@ -17,31 +17,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+/**
+ * Edits arbitrary strings, not only GAML ones or well-formed expressions
+ *
+ * @author A. Drogoul
+ *
+ */
 public class LabelEditor extends AbstractEditor<String> {
 
 	private Text textBox;
 
-	LabelEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<String> l) {
-		super(scope, agent, param, l);
-	}
-
-	LabelEditor(final IScope scope, final Composite parent, final String title, final Object value,
+	LabelEditor(final IScope scope, final EditorsGroup parent, final String title, final Object value,
 			final EditorListener<String> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 
 	}
 
 	@Override
 	public void modifyText(final ModifyEvent me) {
-		if (internalModification) { return; }
+		if (internalModification) return;
 		modifyValue(textBox.getText());
 	}
 
@@ -55,15 +55,8 @@ public class LabelEditor extends AbstractEditor<String> {
 	@Override
 	protected void displayParameterValue() {
 		String s = currentValue;
-		if (s == null) {
-			s = "";
-		}
+		if (s == null) { s = ""; }
 		textBox.setText(s);
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return textBox;
 	}
 
 	@Override

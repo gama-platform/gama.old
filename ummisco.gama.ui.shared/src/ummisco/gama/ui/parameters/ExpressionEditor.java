@@ -1,13 +1,12 @@
 /*********************************************************************************************
  *
- * 'ExpressionEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * 'ExpressionEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -24,7 +23,7 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 
 	private String expressionText;
 
-	ExpressionEditor(final IScope scope, final Composite parent, final String title, final IExpression value,
+	ExpressionEditor(final IScope scope, final EditorsGroup parent, final String title, final IExpression value,
 			final EditorListener<IExpression> whenModified, final IType<?> expectedType) {
 		super(scope, parent, title, value, whenModified);
 		this.expectedType = expectedType;
@@ -32,27 +31,18 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		// if ( currentValue instanceof String ) {
-		// expressionText = (String) currentValue;
-		// } else if ( currentValue instanceof IExpression ) {
 		expressionText = currentValue.serialize(true);
-		// }
 		return super.createCustomParameterControl(comp);
 	}
 
 	@Override
 	protected void displayParameterValue() {
-		getEditorControl().setText(expressionText);
+		editorControl.setText(expressionText);
 	}
 
 	@Override
-	public IExpression getParameterValue() {
+	public IExpression retrieveValueOfParameter() {
 		return (IExpression) param.value(getScope());
-	}
-
-	@Override
-	protected String typeToDisplay() {
-		return "expression";
 	}
 
 	@Override
@@ -62,7 +52,7 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 
 	public void setEditorTextNoPopup(final String s) {
 		internalModification = true;
-		getEditorControl().setText(s);
+		editorControl.setText(s);
 		internalModification = false;
 	}
 

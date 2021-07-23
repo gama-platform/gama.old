@@ -42,10 +42,10 @@ public class DateEditor extends AbstractEditor<GamaDate> {
 		super(scope, agent, param, l);
 	}
 
-	DateEditor(final IScope scope, final Composite parent, final String title, final Object value,
+	DateEditor(final IScope scope, final EditorsGroup parent, final String title, final Object value,
 			final EditorListener<GamaDate> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	@Override
@@ -86,11 +86,6 @@ public class DateEditor extends AbstractEditor<GamaDate> {
 			time.setTime(d.getHour(), d.getMinute(), d.getSecond());
 		}
 		internalModification = false;
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return edit;
 	}
 
 	@Override

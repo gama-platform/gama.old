@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IViewSite;
@@ -40,8 +40,8 @@ import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.TestState;
 import ummisco.gama.ui.controls.ParameterExpandItem;
-import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.AssertEditor;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -55,18 +55,13 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	static final Comparator<AbstractSummary<?>> BY_SEVERITY = (o1, o2) -> {
 		final TestState s1 = o1.getState();
 		final TestState s2 = o2.getState();
-		if (s1 == s2) {
+		if (s1 == s2)
 			return BY_ORDER.compare(o1, o2);
-		} else {
+		else
 			return s1.compareTo(s2);
-		}
 	};
 	public final List<AbstractSummary<?>> experiments = new ArrayList<>();
 	private boolean runningAllTests;
-	public static final GridLayout layout = new GridLayout(2, false);
-	static {
-		layout.verticalSpacing = 0;
-	}
 
 	public static String ID = IGui.TEST_VIEW_ID;
 
@@ -112,14 +107,10 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	@Override
 	public void addTestResult(final CompoundSummary<?, ?> summary) {
 		if (summary instanceof TestExperimentSummary) {
-			if (!experiments.contains(summary)) {
-				experiments.add(summary);
-			}
+			if (!experiments.contains(summary)) { experiments.add(summary); }
 		} else {
 			for (final AbstractSummary<?> s : summary.getSummaries().values()) {
-				if (!experiments.contains(s)) {
-					experiments.add(s);
-				}
+				if (!experiments.contains(s)) { experiments.add(s); }
 			}
 		}
 	}
@@ -128,12 +119,10 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	public boolean addItem(final AbstractSummary<?> experiment) {
 		final boolean onlyFailed = GamaPreferences.Runtime.FAILED_TESTS.getValue();
 		ParameterExpandItem item = getViewer() == null ? null : getViewer().getItem(experiment);
-		if (item != null) {
-			item.dispose();
-		}
+		if (item != null) { item.dispose(); }
 		if (onlyFailed) {
 			final TestState state = experiment.getState();
-			if (state != TestState.FAILED && state != TestState.ABORTED) { return false; }
+			if (state != TestState.FAILED && state != TestState.ABORTED) return false;
 		}
 		item = createItem(getParentComposite(), experiment, !runningAllTests,
 				GamaColors.get(getItemDisplayColor(experiment)));
@@ -150,8 +139,8 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	protected ParameterExpandItem createItem(final Composite parent, final AbstractSummary<?> data,
 			final boolean expanded, final GamaUIColor color) {
 		createViewer(parent);
-		if (getViewer() == null) { return null; }
-		final Composite control = createItemContentsFor(data);
+		if (getViewer() == null) return null;
+		final EditorsGroup control = createItemContentsFor(data);
 		ParameterExpandItem item;
 		if (expanded) {
 			createEditors(control, data);
@@ -164,14 +153,13 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	@Override
-	protected Composite createItemContentsFor(final AbstractSummary<?> experiment) {
-		final Composite compo = new Composite(getViewer(), SWT.NONE);
-		compo.setLayout(layout);
+	protected EditorsGroup createItemContentsFor(final AbstractSummary<?> experiment) {
+		final EditorsGroup compo = new EditorsGroup(getViewer());
 		compo.setBackground(getViewer().getBackground());
 		return compo;
 	}
 
-	public void createEditors(final Composite compo, final AbstractSummary<?> test) {
+	public void createEditors(final EditorsGroup compo, final AbstractSummary<?> test) {
 		Map<String, ? extends AbstractSummary<?>> assertions = test.getSummaries();
 		for (final Map.Entry<String, ? extends AbstractSummary<?>> assertion : assertions.entrySet()) {
 			final AbstractSummary<?> summary = assertion.getValue();
@@ -186,15 +174,14 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		}
 	}
 
-	public void createEditor(final Composite compo, final AbstractSummary<?> globalTest,
+	public void createEditor(final EditorsGroup compo, final AbstractSummary<?> globalTest,
 			final AbstractSummary<?> subTest, final String name) {
 		if (GamaPreferences.Runtime.FAILED_TESTS.getValue()) {
 			final TestState state = subTest.getState();
-			if (state != TestState.FAILED && state != TestState.ABORTED) { return; }
+			if (state != TestState.FAILED && state != TestState.ABORTED) return;
 		}
 		final AssertEditor ed = new AssertEditor(GAMA.getRuntimeScope(), subTest);
-		// editorsByExperiment.get(globalTest).put(name, ed);
-		((AbstractEditor<?>) ed).createComposite(compo);
+		ed.createControls(compo);
 	}
 
 	@SuppressWarnings ("synthetic-access")
@@ -302,7 +289,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	}
 
 	@Override
-	public void displayProgress(int number, int total) {
+	public void displayProgress(final int number, final int total) {
 		WorkbenchHelper.asyncRun(() -> {
 			if (toolbar != null) {
 				toolbar.status(null, "Executing test models: " + number + " on " + total, null, IGamaColors.NEUTRAL,

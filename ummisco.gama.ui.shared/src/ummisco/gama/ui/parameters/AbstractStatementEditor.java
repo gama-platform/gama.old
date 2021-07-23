@@ -2,9 +2,6 @@ package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,58 +32,50 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 	}
 
 	@Override
-	protected final Control getEditorControl() {
-		return textBox;
-	}
-
-	@Override
-	protected final Object getParameterValue() throws GamaRuntimeException {
+	protected final Object retrieveValueOfParameter() throws GamaRuntimeException {
 		return null;
 	}
 
 	@Override
-	protected String computeLabelTooltip() {
-		return "";
-	}
+	protected void updateToolbar() {}
 
 	@Override
-	public void createComposite(final Composite parent) {
+	public void createControls(final EditorsGroup parent) {
 		this.parent = parent;
 		internalModification = true;
-		if (!isSubParameter) {
-			titleLabel = new EditorLabel(parent, name, "", isSubParameter);
-		} else {
-			new EditorLabel(parent, " ", "", isSubParameter);
-		}
-		currentValue = getOriginalValue();
-		composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getBackground());
-		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		data.minimumWidth = 150;
-		composite.setLayoutData(data);
-		final var layout = new GridLayout(isSubParameter ? 3 : 2, false);
-		layout.marginWidth = 5;
-		composite.setLayout(layout);
-		createEditorControl(composite);
-		if (isSubParameter) {
-			titleLabel = new EditorLabel(composite, name, "", isSubParameter);
-			// titleLabel.getLabel().setFont(GamaFonts.getNavigFolderFont());
-			// final var d = new GridData(SWT.LEAD, SWT.CENTER, true, false);
-			titleLabel.setHorizontalAlignment(SWT.LEAD);
-		}
+		// Create the label of the value editor
+		editorLabel = createEditorLabel();
+		// Create the composite that will hold the value editor and the toolbar
+		createValueComposite();
+		// Create and initialize the value editor
+		editorControl = createEditorControl();
 
+		if (isSubParameter) {
+			editorLabel = new EditorLabel(this, composite, name, isSubParameter);
+			editorLabel.setHorizontalAlignment(SWT.LEAD);
+		}
+		// Create and initialize the toolbar associated with the value editor
+		editorToolbar = createEditorToolbar();
 		internalModification = false;
-		composite.layout();
+		parent.layout();
 	}
 
 	@Override
-	protected final GridData getParameterGridData() {
-		final var d = new GridData(SWT.FILL, SWT.TOP, false, false);
-		d.minimumWidth = 70;
-		return d;
+	EditorLabel createEditorLabel() {
+		if (!isSubParameter)
+			return super.createEditorLabel();
+		else
+			return new EditorLabel(this, parent, " ", isSubParameter);
 	}
 
 	@Override
 	protected final void displayParameterValue() {}
+
+	@Override
+	protected GridData getParameterGridData() {
+		final var d = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		d.minimumWidth = 50;
+		return d;
+	}
 
 }

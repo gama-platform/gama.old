@@ -11,29 +11,26 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import static msi.gama.common.util.StringUtils.toGaml;
+import static msi.gama.runtime.GAMA.getRuntimeScope;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.create;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import com.google.common.primitives.Ints;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
@@ -47,7 +44,6 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class AbstractEditor<T>
@@ -62,37 +58,66 @@ public abstract class AbstractEditor<T>
 	protected final IParameter param;
 
 	// Values
-	List<T> possibleValues = null;
 	protected T originalValue, currentValue, minValue, maxValue, stepValue;
 
 	// Properties
 	protected boolean noScope = false, acceptNull = true;
-	protected final boolean isCombo;
 	protected /* almost final */ boolean isSubParameter;
-	protected final boolean isEditable;
 	protected volatile boolean internalModification;
+	protected IType<?> expectedType = Types.NO_TYPE;
 
 	// UI Components
-	protected Combo combo;
-	protected EditorLabel titleLabel;
-	private CLabel fixedValue;
-	protected Composite composite, parent;
-	final EditorToolbar toolbar;
-
-	public AbstractEditor(final IScope scope, final IParameter variable) {
-		this(scope, null, variable, null);
-	}
+	protected Composite composite;
+	protected EditorsGroup parent;
+	protected EditorToolbar editorToolbar;
+	protected EditorLabel editorLabel;
+	protected EditorControl editorControl;
 
 	public AbstractEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
 		this(scope, null, variable, l);
 	}
 
-	public AbstractEditor(final IScope scope, final IAgent a, final IParameter variable) {
-		this(scope, a, variable, null);
+	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nonnull final IParameter parameter,
+			@Nullable final EditorListener<T> l) {
+		this.scope = scope;
+		param = parameter;
+		agent = a;
+		if (param != null) {
+			name = param.getTitle();
+			expectedType = param.getType();
+			minValue = (T) param.getMinValue(getScope());
+			maxValue = (T) param.getMaxValue(getScope());
+			stepValue = (T) param.getStepValue(getScope());
+		}
+		if (stepValue == null) { stepValue = defaultStepValue(); }
+		listener = l;
+		try {
+			currentValue = originalValue = retrieveValueOfParameter();
+		} catch (final GamaRuntimeException e1) {
+			e1.addContext("Impossible to obtain the value of " + name);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
+		}
 	}
 
-	protected void computeStepValue() {
-		stepValue = (T) param.getStepValue(getScope());
+	@Override
+	public void isSubParameter(final boolean b) {
+		isSubParameter = b;
+	}
+
+	protected abstract int[] getToolItems();
+
+	/**
+	 * Returns null by default as only some types can define a "step" value
+	 *
+	 * @return null
+	 */
+	protected T defaultStepValue() {
+		return null;
+	}
+
+	@Override
+	public IType<?> getExpectedType() {
+		return expectedType;
 	}
 
 	@Override
@@ -103,51 +128,31 @@ public abstract class AbstractEditor<T>
 		return GAMA.getRuntimeScope();
 	}
 
-	public AbstractEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
-		this.scope = scope;
-		param = variable;
-		agent = a;
-		if (param != null) {
-			isCombo = param.getAmongValue(getScope()) != null;
-			isEditable = param.isEditable();
-			name = param.getTitle();
-			minValue = (T) param.getMinValue(getScope());
-			maxValue = (T) param.getMaxValue(getScope());
-			computeStepValue();
-		} else {
-			isCombo = false;
-			isEditable = true;
-			name = "";
-		}
-		listener = l;
-		toolbar = new EditorToolbar(this);
-	}
-
-	@Override
-	public void isSubParameter(final boolean b) {
-		isSubParameter = b;
-	}
-
-	protected abstract int[] getToolItems();
-
 	@Override
 	public void setActive(final Boolean active) {
-		if (titleLabel != null) {
-			if (active) {
-				titleLabel.setActive();
-			} else {
-				titleLabel.setInactive();
-			}
-		}
-		toolbar.setActive(active);
+		if (editorLabel != null) { editorLabel.setActive(active); }
+		editorToolbar.setActive(active);
 		if (active) { updateToolbar(); }
-		this.getEditor().setEnabled(active);
+		editorControl.setActive(active);
 	}
 
-	private final void valueModified(final Object newValue) throws GamaRuntimeException {
+	@SuppressWarnings ("unchecked")
+	protected T retrieveValueOfParameter() throws GamaRuntimeException {
+		if (param == null) return null;
+		Object result;
+		if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
+			result = param.value(scope);
+		} else {
+			result = scope.getAgentVarValue(getAgent(), param.getName());
+		}
+		if (getExpectedType() == Types.STRING)
+			return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
+		return (T) getExpectedType().cast(scope, result, null, false);
 
+	}
+
+	private final void modifyValueOfParameterWith(final Object newValue) throws GamaRuntimeException {
 		var a = agent;
-
 		if (param instanceof ExperimentParameter) {
 			if (a == null) {
 				final var exp = GAMA.getExperiment();
@@ -168,97 +173,71 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public IType<?> getExpectedType() {
-		return Types.NO_TYPE;
-	}
-
-	// In case the editor allows to edit the expression, should it be evaluated
-	// ?
-	protected boolean evaluateExpression() {
-		return true;
-	}
-
-	@Override
 	public int compareTo(final AbstractEditor<T> e) {
 		return Ints.compare(order, e.order);
 	}
 
 	public EditorLabel getLabel() {
-		return titleLabel;
+		return editorLabel;
 	}
 
 	public Control getEditor() {
-		return !isEditable ? fixedValue : isCombo ? combo : getEditorControl();
+		return editorControl.getControl();
 	}
 
-	protected abstract Control getEditorControl();
-
-	protected Control createEditorControl(final Composite comp) {
-		Control paramControl;
-		try {
-			paramControl = !isEditable ? createLabelParameterControl(comp)
-					: isCombo ? createComboParameterControl(comp) : createCustomParameterControl(comp);
-		} catch (final GamaRuntimeException e1) {
-			e1.addContext("The editor for " + name + " could not be created");
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			return null;
-		}
-
-		final var data = getParameterGridData();
-		paramControl.setLayoutData(data);
-		paramControl.setBackground(getNormalBackground());
-		return paramControl;
-	}
-
-	public void createComposite(final Composite comp) {
-		// Necessary to force SWT to "reskin" and give the right background to the composite (issue in the CSS engine)
-		comp.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		try {
-			setOriginalValue(getParameterValue());
-			currentValue = getOriginalValue();
-		} catch (final GamaRuntimeException e1) {
-			e1.addContext("Impossible to obtain the value of " + name);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-		}
-		parent = comp;
+	public void createControls(final EditorsGroup parent) {
+		this.parent = parent;
 		internalModification = true;
-		titleLabel = new EditorLabel(comp, name, computeLabelTooltip(), isSubParameter);
-		composite = new Composite(comp, SWT.NONE);
-		composite.setBackground(getNormalBackground());
+		// Create the label of the value editor
+		editorLabel = createEditorLabel();
+		// Create the composite that will hold the value editor and the toolbar
+		composite = createValueComposite();
+		// Create and initialize the value editor
+		editorControl = createEditorControl();
+		// Create and initialize the toolbar associated with the value editor
+		editorToolbar = createEditorToolbar();
+		internalModification = false;
+		parent.layout();
+	}
+
+	Composite createValueComposite() {
+		composite = new Composite(parent, SWT.NONE);
+		composite.setBackground(parent.getBackground());
 		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		composite.setLayoutData(data);
+		// Important to keep two columns as AbstractStatementEditor relies on it
 		final var layout = new GridLayout(2, false);
-		layout.marginWidth = 5;
 		composite.setLayout(layout);
-		createEditorControl(composite);
-		toolbar.createOn(composite);
-		if (isEditable && !isCombo) { displayParameterValueAndCheckButtons(); }
-		internalModification = false;
-		comp.layout();
-		// composite.layout();
+		return composite;
 	}
 
-	protected String computeLabelTooltip() {
-		boolean isBatch = GAMA.getExperiment() != null && GAMA.getExperiment().isBatch();
-		boolean isExperiment = param.isDefinedInExperiment();
-		StringBuilder s = new StringBuilder();
-		if (isEditable) { s.append("Parameter of type ").append(typeToDisplay()).append(" that represents the "); }
-		s.append("value of " + (isExperiment ? "experiment" : "model") + " attribute " + param.getName());
-		if (!isBatch) {
-			if (getMinValue() != null) {
-				final var min = StringUtils.toGaml(getMinValue(), false);
-				if (maxValue != null) {
-					s.append(" [").append(min).append("..").append(toGaml(maxValue, false)).append("]");
-				} else {
-					s.append(">= ").append(min);
-				}
-			} else if (maxValue != null) { s.append("<=").append(toGaml(maxValue, false)); }
-			if ((minValue != null || maxValue != null) && stepValue != null) { s.append(" every ").append(stepValue); }
+	EditorLabel createEditorLabel() {
+		editorLabel = new EditorLabel(this, parent, name, isSubParameter);
+		return editorLabel;
+	}
+
+	EditorToolbar createEditorToolbar() {
+		editorToolbar = new EditorToolbar(this, parent);
+		updateToolbar();
+		return editorToolbar;
+	}
+
+	EditorControl createEditorControl() {
+		boolean isCombo = param != null && param.getAmongValue(getScope()) != null;
+		boolean isEditable = param == null /* statement */ || param != null && param.isEditable();
+		if (isEditable) {
+			if (isCombo) {
+				editorControl =
+						new ComboEditorControl(this, composite, getExpectedType(), param.getAmongValue(getScope()));
+			} else {
+				editorControl = new EditorControl(this, createCustomParameterControl(composite));
+			}
 		} else {
-			final var u = param.getUnitLabel(getScope());
-			if (u != null) { s.append(" ").append(u); }
+			editorControl = new FixedValueEditorControl(this, composite);
 		}
-		return s.toString();
+		editorControl.displayParameterValue();
+		// displayParameterValue();
+		return editorControl;
 	}
 
 	protected T getMinValue() {
@@ -269,23 +248,8 @@ public abstract class AbstractEditor<T>
 		return maxValue;
 	}
 
-	protected String typeToDisplay() {
-		if (!this.isEditable) return "";
-		return param.getType().serialize(false);
-	}
-
-	@SuppressWarnings ("unchecked")
-	protected T getParameterValue() throws GamaRuntimeException {
-		Object result;
-		if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
-			result = param.value(scope);
-		} else {
-			result = scope.getAgentVarValue(getAgent(), param.getName());
-		}
-		if (getExpectedType() == Types.STRING)
-			return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
-		return (T) getExpectedType().cast(scope, result, null, false);
-
+	protected T getStepValue() {
+		return stepValue;
 	}
 
 	protected EditorListener<?> getListener() {
@@ -296,77 +260,34 @@ public abstract class AbstractEditor<T>
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				if (listener == null) {
-					valueModified(val);
+					modifyValueOfParameterWith(val);
 				} else {
 					listener.valueModified(val);
 				}
 			} catch (final GamaRuntimeException e) {
-				e.printStackTrace();
 				e.addContext("Value of " + name + " cannot be modified");
-				GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e, GAMA.getRuntimeScope()), false);
+				GAMA.reportError(getRuntimeScope(), create(e, getRuntimeScope()), false);
 				return;
 			}
 		});
 	}
 
 	protected GridData getParameterGridData() {
-		final var d = new GridData(SWT.FILL, SWT.TOP, true, false);
+		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		d.minimumWidth = 100;
 		return d;
 	}
 
 	protected abstract Control createCustomParameterControl(Composite comp) throws GamaRuntimeException;
 
-	protected Control createLabelParameterControl(final Composite comp) {
-		fixedValue = new CLabel(comp, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue
-				.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color());
-		// force text color, see #2601
-		fixedValue.setText(
-				getOriginalValue() instanceof String ? (String) getOriginalValue() : toGaml(getOriginalValue(), false));
-		return fixedValue;
-	}
-
-	protected Control createComboParameterControl(final Composite comp) {
-		possibleValues = new ArrayList<T>(param.getAmongValue(getScope()));
-		final var valuesAsString = new String[possibleValues.size()];
-		for (var i = 0; i < possibleValues.size(); i++) {
-			if (getExpectedType() == Types.STRING) {
-				valuesAsString[i] = StringUtils.toJavaString(toGaml(possibleValues.get(i), false));
-			} else {
-				valuesAsString[i] = toGaml(possibleValues.get(i), false);
-				// }
-			}
-		}
-		combo = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
-		combo.setForeground(ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.color());
-		// force text color, see #2601
-		combo.setItems(valuesAsString);
-		combo.select(possibleValues.indexOf(getOriginalValue()));
-		combo.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent me) {
-				modifyValue(possibleValues.get(combo.getSelectionIndex()));
-			}
-		});
-
-		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		//
-		d.minimumWidth = 48;
-		combo.setLayoutData(d);
-		combo.pack();
-		return combo;
-	}
-
 	protected abstract void displayParameterValue();
 
 	@Override
 	public boolean isValueModified() {
-		return isValueDifferent(getOriginalValue());
+		return isValueDifferentFrom(getOriginalValue());
 	}
 
-	public boolean isValueDifferent(final Object newVal) {
+	public boolean isValueDifferentFrom(final Object newVal) {
 		return !Objects.equals(currentValue, newVal);
 	}
 
@@ -384,29 +305,29 @@ public abstract class AbstractEditor<T>
 	// Passes Object on purpose so that Float and Int editors can cast it.
 	// Returns whether or not the modification is **accepted**
 	protected boolean modifyValue(final Object val) throws GamaRuntimeException {
-		if (!isValueDifferent(val)) return true;
+		if (!isValueDifferentFrom(val)) return true;
 		currentValue = (T) val;
-		if (isValueModified()) {
-			getLabel().signalChanged();
-		} else {
-			getLabel().cancelChanged();
-		}
+		editorLabel.signalChanged(isValueModified());
 		if (!internalModification) { setParameterValue(currentValue); }
 		return true;
 	}
 
-	protected Color getNormalBackground() {
-		return parent.getBackground();
-	}
-
 	@Override
-	public void updateValue(final boolean force) {
+	public void updateWithValueOfParameter() {
 		try {
-			final var newVal = getParameterValue();
-			if (!force && !isValueDifferent(newVal)) return;
-			internalModification = true;
-			modifyAndDisplayValue(newVal);
-			internalModification = false;
+			final var newVal = retrieveValueOfParameter();
+			currentValue = newVal;
+			WorkbenchHelper.asyncRun(() -> {
+				internalModification = true;
+				if (!parent.isDisposed()) {
+					editorLabel.signalChanged(isValueModified());
+					editorControl.displayParameterValue();
+					updateToolbar();
+					composite.update();
+				}
+				internalModification = false;
+			});
+
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
 			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
@@ -414,66 +335,17 @@ public abstract class AbstractEditor<T>
 		}
 	}
 
-	@Override
-	public void forceUpdateValueAsynchronously() {
-		final var newVal = getParameterValue();
-		currentValue = newVal;
+	protected final void modifyAndDisplayValue(final T val) {
+		modifyValue(val);
 		WorkbenchHelper.asyncRun(() -> {
-			internalModification = true;
-			if (isValueModified()) {
-				titleLabel.signalChanged();
-			} else {
-				titleLabel.cancelChanged();
-			}
-			if (!parent.isDisposed()) {
-				if (!isEditable) {
-					fixedValue.setText(newVal instanceof String ? (String) newVal : toGaml(newVal, false));
-				} else if (isCombo) {
-					combo.select(possibleValues.indexOf(newVal));
-				} else {
-					displayParameterValue();
-					updateToolbar();
-				}
-				composite.update();
-				internalModification = false;
-			}
-		});
-
-	}
-
-	private void displayParameterValueAndCheckButtons() {
-		WorkbenchHelper.run(() -> {
-			displayParameterValue();
+			editorControl.displayParameterValue();
 			updateToolbar();
 		});
 
 	}
 
-	protected final void modifyAndDisplayValue(final T val) {
-		if (modifyValue(val)) {
-			WorkbenchHelper.asyncRun(() -> {
-				if (!isEditable) {
-					if (!fixedValue.isDisposed()) {
-						fixedValue.setText(val instanceof String ? (String) val : StringUtils.toGaml(val, false));
-					}
-				} else if (isCombo) {
-					if (!combo.isDisposed()) { combo.select(possibleValues.indexOf(val)); }
-				} else {
-					displayParameterValueAndCheckButtons();
-				}
-				if (!composite.isDisposed()) { composite.update(); }
-			});
-		} else {
-			WorkbenchHelper.asyncRun(() -> {
-				displayParameterValue();
-				updateToolbar();
-			});
-		}
-
-	}
-
 	protected void updateToolbar() {
-		toolbar.update();
+		editorToolbar.update();
 	}
 
 	protected IAgent getAgent() {
@@ -494,6 +366,11 @@ public abstract class AbstractEditor<T>
 
 	protected T getOriginalValue() {
 		return originalValue;
+	}
+
+	@Override
+	public T getCurrentValue() {
+		return currentValue;
 	}
 
 	protected void setOriginalValue(final T originalValue) {
@@ -522,18 +399,8 @@ public abstract class AbstractEditor<T>
 
 	protected void applyDefine() {}
 
-	public Composite getComposite() {
-		return composite;
-	}
-
-	@Override
-	public T getCurrentValue() {
-		return currentValue;
-	}
-
 	public void dontUseScope(final boolean dont) {
 		this.noScope = dont;
-
 	}
 
 }

@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
+import static ummisco.gama.ui.resources.GamaColors.get;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,6 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -37,7 +38,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.parameters.EditorFactory;
-import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.ExpandableItemsView;
@@ -73,9 +74,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public boolean addItem(final MonitorOutput output) {
 		if (output != null) {
 			createItem(getParentComposite(), output, output.getValue() == null,
-					output.getColor() == null ? null : GamaColors.get(output.getColor()));
-			// getViewer().setSize(getViewer().computeSize(SWT.DEFAULT,
-			// SWT.DEFAULT, true));
+					output.getColor() == null ? null : get(output.getColor()));
 			return true;
 		}
 		return false;
@@ -84,17 +83,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	protected Composite createItemContentsFor(final MonitorOutput output) {
-		final Composite compo = new Composite(getViewer(), SWT.NONE);
-		// compo.setBackground(IGamaColors.WHITE.color());
-		final GridLayout layout = new GridLayout(2, false);
-		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true,
-		// false);
-		// firstColData.widthHint = 60;
-		// GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true,
-		// false);
-		// secondColData.widthHint = 200;
-		layout.verticalSpacing = 5;
-		compo.setLayout(layout);
+		final EditorsGroup compo = new EditorsGroup(getViewer(), SWT.NONE);
 		final Text titleEditor =
 				(Text) EditorFactory.create(output.getScope(), compo, "Title:", output.getName(), true, newValue -> {
 					output.setName(newValue);
@@ -138,9 +127,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void resumeItem(final MonitorOutput o) {
-		if (o.isPaused()) {
-			o.setPaused(false);
-		}
+		if (o.isPaused()) { o.setPaused(false); }
 		update(o);
 	}
 
@@ -150,17 +137,12 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		update(o);
 	}
 
-	// private final StringBuilder sb = new StringBuilder(100);
-
 	@Override
 	public String getItemDisplayName(final MonitorOutput o, final String previousName) {
-
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
 		sb.append(o.getName()).append(ItemList.SEPARATION_CODE).append(getValueAsString(o));
-		if (o.isPaused()) {
-			sb.append(" (paused)");
-		}
+		if (o.isPaused()) { sb.append(" (paused)"); }
 		return sb.toString();
 
 	}
@@ -181,25 +163,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		new MonitorOutput(scope, "monitor" + count++, "");
 	}
 
-	// @Override
-	// public void dispose() {
-	// reset();
-	// super.dispose();
-	// }
-
 	@Override
 	public void reset() {
 		disposeViewer();
 		outputs.clear();
 	}
-
-	//
-	// @Override
-	// public void update(final IDisplayOutput displayOutput) {
-	// final MonitorOutput output = (MonitorOutput) displayOutput;
-	// if ( !outputs.contains(output) ) { return; }
-	// super.update(output);
-	// }
 
 	@Override
 	public void focusItem(final MonitorOutput data) {
@@ -263,7 +231,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {
 		final Map<String, Runnable> menu = new HashMap();
 		final IExpression exp = data.getValue();
-		if (exp == null) { return null; }
+		if (exp == null) return null;
 		final IType<?> type = exp.getGamlType();
 		menu.put("Copy to clipboard", () -> {
 			WorkbenchHelper.copy(getValueAsString(data));
