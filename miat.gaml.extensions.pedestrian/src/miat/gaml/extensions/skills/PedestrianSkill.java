@@ -28,6 +28,7 @@ import msi.gama.util.IMap;
 import msi.gama.util.path.IPath;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.Points;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
@@ -129,6 +130,24 @@ import msi.gaml.types.Types;
 			type = IType.FLOAT,
 			init = "0.5",
 			doc = @doc ("Value of lambda in the SFM model - the (an-)isotropy (between 0.0 and 1.0)")),
+	@variable (
+			name = "n_SFM",
+			type = IType.FLOAT,
+			init = "2.0",
+			doc = @doc ("Value of n in the SFM model (classic values : mean = 2.0, std = 0.1)")),
+	@variable (
+			name = "n_prime_SFM",
+			type = IType.FLOAT,
+			init = "3.0",
+			doc = @doc ("Value of n\' in the SFM model (classic values : mean = 3.0, std = 0.7)")),
+	@variable (
+			name = "pedestrian_model",
+			type = IType.STRING,
+			init = "'simple'",
+			doc = @doc ("Model use for the movement of agents (Social Force Model). Can be either \"simple\" "
+					+ "or \"advanced\" (default) for different versions of SFM Helbing model")),
+	
+	
 	@variable(
 			name = "velocity", 
 			type = IType.POINT, init = "{0,0,0}",
@@ -210,6 +229,9 @@ public class PedestrianSkill extends MovingSkill {
 	public final static String RELAXION_SFM = "relaxion_SFM";
 	public final static String GAMA_SFM = "gama_SFM";
 	public final static String lAMBDA_SFM = "lambda_SFM";
+
+	public final static String N_SFM = "n_SFM";
+	public final static String N_PRIME_SFM = "n_prime_SFM";
 	
 	public final static String CURRENT_TARGET_GEOM = "current_target_geom";
 	public final static String CURRENT_INDEX = "current_index";
@@ -276,7 +298,25 @@ public class PedestrianSkill extends MovingSkill {
 	    agent.setAttribute(KAPPA_SFM, s);
 	}
 	
-	
+	@setter (N_PRIME_SFM)
+	public void setN_PRIME_SFM(final IAgent agent, final Double val) {
+		agent.setAttribute(N_PRIME_SFM, val);
+	}
+	@getter (N_PRIME_SFM)
+	public Double getN_PRIME_SFM(final IAgent agent) {
+		return (Double) agent.getAttribute(N_PRIME_SFM);
+	}
+
+	@setter (N_SFM)
+	public void setN_SFM(final IAgent agent, final Double val) {
+		agent.setAttribute(N_SFM, val);
+	}
+	@getter (N_SFM)
+	public Double getN_SFM(final IAgent agent) {
+		return (Double) agent.getAttribute(N_SFM);
+	}
+
+
 	
 	@getter (OBSTACLE_SPECIES)
 	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
@@ -485,6 +525,18 @@ public class PedestrianSkill extends MovingSkill {
 		agent.setAttribute(USE_GEOMETRY_TARGET, val);
 	}
 	
+	@getter (PEDESTRIAN_MODEL)
+	public String getPedestrianModel(final IAgent agent) {
+		return (String) agent.getAttribute(PEDESTRIAN_MODEL);
+	}
+
+	@setter (PEDESTRIAN_MODEL)
+	public void setPedestrianModel(final IAgent agent, final String val) {
+		if (val.equals("advanced") || val.equals("simple")) 
+			agent.setAttribute(PEDESTRIAN_MODEL, val);
+		else GamaRuntimeException.error("" + val + " is not a possible value for pedestrian model; possible values: ['simple', 'advanced']", agent.getScope());
+	}
+	
 	// ----------------------------------- //
 	
 	
@@ -593,7 +645,13 @@ public class PedestrianSkill extends MovingSkill {
 		if (avoidOther) {
 			double distPercep = Math.max(maxDist, getPedestrianConsiderationDistance(agent));
 			double distPercepObst = Math.max(maxDist, getObstacleConsiderationDistance(agent));
-			velocity = avoidSFM(scope, agent, location, target, distPercep,distPercepObst,pedestrianList,obstaclesList);
+			if ("simple".equals(getPedestrianModel(agent))) {
+				velocity = avoidSFMSimple(scope, agent, location, target, distPercep,distPercepObst,pedestrianList,obstaclesList);
+				
+			} else {
+				velocity = avoidSFM(scope, agent, location, target, distPercep,distPercepObst,pedestrianList,obstaclesList);
+				
+			}
 			velocity = velocity.multiplyBy(dist);
 		} else {
 			velocity = target.copy(scope).minus(location);
@@ -630,7 +688,81 @@ public class PedestrianSkill extends MovingSkill {
 	}
 	
 	
+	/**
+	 * Classical implementation of the Social Force Model (Helbing and Molnar, 1998)
+	 * 
+	 * @param scope
+	 * @param agent
+	 * @param location
+	 * @param currentTarget
+	 * @param distPercep
+	 * @param obstaclesList
+	 * @return
+	 */
+	//public GamaPoint avoidSFMSimple(IScope scope, IAgent agent, GamaPoint location, GamaPoint currentTarget,  double distPercep, IContainer obstaclesList) {
+	public GamaPoint avoidSFMSimple(IScope scope, IAgent agent, GamaPoint location, GamaPoint currentTarget, double distPercepPedestrian, double distPercepObstacle, IContainer pedestriansList, IContainer obstaclesList) {
+			
+		GamaPoint current_velocity = getVelocity(agent).copy(scope);
+		GamaPoint fsoc = new GamaPoint(0,0,0);
+		double dist = location.euclidianDistanceTo(currentTarget);
+		double step = scope.getSimulation().getClock().getStepInSeconds();
+		double speed = getSpeed(agent);
+		IList<ISpecies> speciesList = getObstacleSpecies(agent);
+		IList<IAgent> obstacles = GamaListFactory.create(Types.AGENT);
+		
+		obstacles.addAll( (IList<IAgent>) Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
 	
+		obstacles.remove(agent);
+		obstacles.removeIf(a -> a.dead());
+		double lambda = getlAMBDA_SFM(agent);
+		double gama_ = getGAMA_SFM(agent);
+		double A = getAPedestrian_SFM(agent);
+		double n = getN_SFM(agent);
+		double n_prime = getN_PRIME_SFM(agent);
+		for (IAgent ag : obstacles) {
+			GamaPoint force = new GamaPoint(0,0,0);
+			double distance = agent.euclidianDistanceTo(ag);
+			GamaPoint itoj = Points.subtract(ag.getLocation().toGamaPoint(), agent.getLocation().toGamaPoint()).toGamaPoint();
+			itoj = itoj.divideBy(Maths.sqrt(scope, (itoj.x * itoj.x + itoj.y * itoj.y + itoj.z * itoj.z)));
+			
+			GamaPoint D = current_velocity.copy(scope).subtract(getVelocity(ag)).multiplyBy(lambda).add(itoj);
+			double D_norm = Maths.sqrt(scope, D.x * D.x + D.y * D.y + D.z * D.z);
+			double B = gama_ * D_norm; 
+			GamaPoint t_ = D.divideBy(D_norm);
+			GamaPoint n_;
+			if (t_.x == 0) {
+				n_ = new GamaPoint(t_.y > 0 ? -1 : 1,0,0);
+			} else if (t_.y == 0) {
+				n_ = new GamaPoint(0,t_.x > 0 ? 1 : -1,0);
+			} else {
+				double nx = -t_.y/t_.x;
+				double norm = Math.sqrt(nx*nx + 1);
+				n_ = t_.x > 0 ?new GamaPoint(-nx/norm,-1/norm,0) : new GamaPoint(nx/norm,1/norm,0)  ;	
+			}
+			double t_xDotitoj = t_.x * itoj.x + t_.y * itoj.y + t_.z * itoj.z;
+			t_xDotitoj = Math.max(Math.min(t_xDotitoj, 1.0), -1.0);
+			double teta = Math.abs((Maths.acos(t_xDotitoj)) * Math.PI / 180);
+			if (teta <= Math.PI) {
+				GamaPoint f_1 = t_.multiplyBy(Math.exp(-(Math.pow(n_prime * B * teta,2))));
+				GamaPoint f_2 = n_.multiplyBy(Math.exp(-(Math.pow(n * B * teta,2))));
+				force =  f_1.add(f_2).multiplyBy((- A) * Math.exp(-distance/B)) ;
+				fsoc = fsoc.add(force);
+			}
+		}
+		GamaPoint desiredVelo = (currentTarget.copy(scope).minus(location).divideBy(dist * Math.min(getSpeed(agent), dist/scope.getSimulation().getClock().getStepInSeconds()))) ;
+		GamaPoint fdest = desiredVelo.minus(current_velocity).multiplyBy(getRELAXION_SFM(agent));
+	
+		GamaPoint forces = fdest.add(fsoc);
+		GamaPoint pref_velocity = current_velocity.add(forces.multiplyBy(step));
+		double norm_vel = Maths.sqrt(scope, pref_velocity.x * pref_velocity.x +pref_velocity.y * pref_velocity.y+pref_velocity.z * pref_velocity.z);
+		if (norm_vel > speed) {
+			current_velocity = pref_velocity.divideBy(norm_vel * speed); 
+		} else {
+			current_velocity = pref_velocity;
+		}
+		return current_velocity;//.multiplyBy(step);
+	}
+		
 	
 	public GamaPoint avoidSFM(IScope scope, IAgent agent, GamaPoint location, GamaPoint currentTarget, double distPercepPedestrian, double distPercepObstacle, IContainer pedestriansList, IContainer obstaclesList) {
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
