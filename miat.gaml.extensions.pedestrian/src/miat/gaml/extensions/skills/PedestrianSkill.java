@@ -1065,7 +1065,7 @@ public class PedestrianSkill extends MovingSkill {
 			location = agent.getLocation().toGamaPoint();
 			
 			if (arrivedAtTarget(scope,location,currentTarget,getToleranceTarget(agent), index, maxIndex, targets)) {
-				if (road != null) PedestrianRoadSkill.unregister(scope, road, agent);
+				if (road != null) PedestrianRoadSkill.unregister(scope, road, agent); 
 				
 				if (index < maxIndex) {
 					index++;
