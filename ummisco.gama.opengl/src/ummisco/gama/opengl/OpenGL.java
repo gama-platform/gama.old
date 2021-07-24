@@ -1021,7 +1021,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, hint);
 		gl.glHint(GL.GL_LINE_SMOOTH_HINT, hint);
 		gl.glHint(GL2ES1.GL_POINT_SMOOTH_HINT, hint);
-		gl.glHint(GL2GL3.GL_POLYGON_SMOOTH_HINT, hint);
+		// gl.glHint(GL2GL3.GL_POLYGON_SMOOTH_HINT, hint);
 		gl.glHint(GL2.GL_MULTISAMPLE_FILTER_HINT_NV, hint);
 		// Enable texture 2D
 		gl.glEnable(GL.GL_TEXTURE_2D);

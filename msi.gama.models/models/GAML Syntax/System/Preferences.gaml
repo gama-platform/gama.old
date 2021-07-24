@@ -106,9 +106,6 @@ init {
 	//Synchronize outputs with the simulation
 	write sample(gama.pref_display_synchronized);
 
-	//Use OpenGL tesselator (false is more precise, but more CPU intensive)
-	write sample(gama.pref_display_triangulator);
-
 	//Default layout of display views
 	write sample(gama.pref_display_view_layout);
 
@@ -360,9 +357,6 @@ init {
 
 	//Synchronize outputs with the simulation
 	gama.pref_display_synchronized <- false;
-
-	//Use OpenGL tesselator (false is more precise, but more CPU intensive)
-	gama.pref_display_triangulator <- true;
 
 	//Default layout of display views
 	gama.pref_display_view_layout <- 'None';

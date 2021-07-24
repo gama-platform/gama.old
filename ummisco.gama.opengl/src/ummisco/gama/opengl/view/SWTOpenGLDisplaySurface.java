@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfMac;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -73,6 +71,7 @@ import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -206,8 +205,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		final int width = scaleDownIfMac(ww);
-		final int height = scaleDownIfMac(hh);
+		final int width = PlatformHelper.autoScaleDown(ww);
+		final int height = PlatformHelper.autoScaleDown(hh);
 		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		final Graphics graphics = screenshot.getGraphics();
 
