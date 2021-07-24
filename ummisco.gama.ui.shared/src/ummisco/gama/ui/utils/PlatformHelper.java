@@ -74,6 +74,13 @@ public class PlatformHelper {
 		return Math.round(v * scaleFactor);
 	}
 
+	public static double autoScaleUp(final double v) {
+		final int deviceZoom = DPIUtil.getDeviceZoom();
+		if (100 == deviceZoom || DPIUtil.useCairoAutoScale()) return v;
+		final double scaleFactor = deviceZoom / 100d;
+		return v * scaleFactor;
+	}
+
 	/**
 	 * Returns SWT auto scaled-down value {@code v}, compatible with {@link DPIUtil#autoScaleDown(int)}
 	 * <p>
@@ -87,6 +94,15 @@ public class PlatformHelper {
 		if (100 == deviceZoom || DPIUtil.useCairoAutoScale()) return v;
 		final float scaleFactor = deviceZoom / 100f;
 		return Math.round(v / scaleFactor);
+	}
+
+	public static double autoScaleDown(final double v) {
+		// Temp !
+		// if (true) return v;
+		final int deviceZoom = DPIUtil.getDeviceZoom();
+		if (100 == deviceZoom || DPIUtil.useCairoAutoScale()) return v;
+		final double scaleFactor = deviceZoom / 100d;
+		return v / scaleFactor;
 	}
 
 	/**

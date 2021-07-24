@@ -10,7 +10,7 @@ global {}
 
 experiment Strings {
 	
-	list<font> fonts <- [font("Helvetica", 48, #plain),font("Times", 36, #plain) ,font("Courier", 40, #plain), font("Arial", 24, #bold),font("Times", 36, #bold+#italic) ,font("Courier", 32, #plain)];
+	list<font> fonts <- [font("Helvetica", 48, #plain),font("Times", 30, #plain) ,font("Courier", 30, #plain), font("Arial", 24, #bold),font("Times", 30, #bold+#italic) ,font("Geneva", 30, #bold)];
 	map<string, point> anchors <- ["center"::#center, "top_left"::#top_left, "left_center"::#left_center, "bottom_left"::#bottom_left, "bottom_center"::#bottom_center, "bottom_right"::#bottom_right, "right_center"::#right_center, "top_right"::#top_right, "top_center"::#top_center];
 	font current_font <- one_of(fonts) update: one_of(fonts);
 	rgb current_color <- rnd_color(255) update: rnd_color(255);

@@ -233,7 +233,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public void reshape(final GL2 newGL, final int width, final int height) {
 		setGL2(newGL);
-		newGL.glViewport(0, 0, width, height);
+		// newGL.glViewport(0, 0, width, height);
 		viewWidth = width;
 		viewHeight = height;
 		resetMatrix(GLMatrixFunc.GL_MODELVIEW);
