@@ -94,7 +94,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 			drawBitmap(s.getObject(), attributes);
 		} else {
 			Font font = attributes.getFont();
-			final int fontSize = autoScaleUp(Math.round(font.getSize()));
+			final int fontSize = autoScaleUp(font.getSize());
 			if (fontSize != font.getSize()) { font = font.deriveFont((float) fontSize); }
 			Shape shape = font.createGlyphVector(context, s.getObject()).getOutline();
 			final Rectangle2D bounds = shape.getBounds2D();
