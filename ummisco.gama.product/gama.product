@@ -25,17 +25,22 @@
       </programArgs>
       <programArgsLin>--launcher.GTK_version 3
       </programArgsLin>
-      <vmArgs>-server
-         -Dosgi.locking=none 
-         -Xmn128m
-         -Xss2m
-         -XX:+UseAdaptiveSizePolicy
-         -XX:+OptimizeStringConcat
-         -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
-         -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
-         -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
-         -Declipse.log.level=ERROR
-         -Dosgi.checkConfiguration=false
+      <vmArgs>-server 
+-XX:+UseG1GC
+-XX:+UseStringDeduplication
+-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false
+-Xms4096m
+-Xmx4096m
+-Xss128m
+-Xmn1024m
+-XX:+UseAdaptiveSizePolicy
+-XX:+OptimizeStringConcat
+-Dosgi.locking=none
+-Dosgi.checkConfiguration=false
+-Declipse.log.level=ERROR
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
+-Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
       </vmArgs>
       <vmArgsLin>-Xms256m -Xmx1024m
       </vmArgsLin>
@@ -272,8 +277,8 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="eclipse.buildId" value="${build.id}" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="eclipse.buildId" value="${build.id}" />
       <property name="version" value="1.8.1" />
    </configurations>
 
