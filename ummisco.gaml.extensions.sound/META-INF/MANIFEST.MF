@@ -13,5 +13,5 @@ Bundle-ClassPath: .,
  lib/mp3spi-1.9.5.4.jar
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: UMMISCO
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: ummisco.gaml.extensions.sound
