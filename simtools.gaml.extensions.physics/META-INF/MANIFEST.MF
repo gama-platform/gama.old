@@ -13,5 +13,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: simtools.gaml.extensions.physics
 Eclipse-BundleShape: dir
-Bundle-Activator: gama.extensions.physics.BulletActivator
+Bundle-Activator: gama.extensions.physics.PhysicsActivator
 Bundle-NativeCode: os/Linux/x86_64/libbulletjme.so;osname=Linux;processor=x86_64,os/MacOS/x86_64/libbulletjme.dylib;osname=MacOS;processor=x86_64,os/Win32/x86_64/bulletjme.dll;osname=Win32;processor=x86_64,*

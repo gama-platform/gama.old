@@ -10,7 +10,7 @@
 model Restitution
 
 global parent: physical_world {
-	string library <- use_native_library ? "Native":"Java";
+	string library_name <- use_native? "Native":"Java";
 	// The definition of the step plays a crucial role in the dynamics. If the physics engine can kick in at a high frequency, then the simulation is more accurate (but also slower). 
 	// The outcome of a model can be completely changed by the step. 
 	float step <- 1.0/60;
@@ -132,8 +132,8 @@ experiment "Test Restitution !" type: gui {
 		bool prev1 <- gama.pref_append_simulation_name;
  		gama.pref_append_simulation_name <- true;
 		gama.pref_experiment_expand_params <- true;
-		create simulation with: [seed:: 1.0, use_native_library :: true];
-		create simulation with: [seed:: 1.0, use_native_library :: false];
+		create simulation with: [seed:: 1.0, use_native :: true];
+		create simulation with: [seed:: 1.0, use_native :: false];
 		gama.pref_experiment_expand_params <- prev0;
 		gama.pref_append_simulation_name <- prev1;
 	}
@@ -144,7 +144,7 @@ experiment "Test Restitution !" type: gui {
 		layout #split;
 		display "Restitution" type: opengl antialias: true {
 			graphics "Title"  refresh: false {
-				draw library + " (click to move the balls)" font: custom color: #cadetblue at: {5, 0, 20} depth: 5 precision: 0.001;
+				draw library_name + " (click to move the balls)" font: custom color: #cadetblue at: {5, 0, 20} depth: 5 precision: 0.001;
 				draw shape color: #khaki;
 			}
 			graphics "Bang" {

@@ -34,7 +34,10 @@ public interface IPhysicalConstants<VectorType> {
 	/*
 	 * Attributes
 	 */
-	String USE_NATIVE = "use_native_library";
+	String USE_NATIVE = "use_native";
+	String LIBRARY_NAME = "library";
+	String BULLET_LIBRARY_NAME = "bullet";
+	String BOX2D_LIBRARY_NAME = "box2D";
 	String ROTATION = "rotation";
 	String VELOCITY = "velocity";
 	String FRICTION = "friction";

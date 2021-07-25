@@ -12,7 +12,7 @@ import com.jme3.system.Platform;
 
 import ummisco.gama.dev.utils.DEBUG;
 
-public class BulletActivator implements BundleActivator {
+public class PhysicsActivator implements BundleActivator {
 
 	static {
 		DEBUG.ON();

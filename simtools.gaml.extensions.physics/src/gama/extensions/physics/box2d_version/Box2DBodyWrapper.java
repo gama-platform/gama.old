@@ -20,9 +20,9 @@ import msi.gama.metamodel.shape.IShape;
 
 public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Vec2> implements IBox2DPhysicalEntity {
 
-	final BodyDef def = new BodyDef();
-	final FixtureDef fixtureDef = new FixtureDef();
-	MassData ms = new MassData();
+	BodyDef def;
+	FixtureDef fixtureDef;
+	MassData ms;
 
 	public Box2DBodyWrapper(final IAgent agent, final Box2DPhysicalWorld world) {
 		super(agent, world);
@@ -30,6 +30,9 @@ public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Ve
 
 	@Override
 	public Body createAndInitializeBody(final Shape shape, final World world) {
+		def = new BodyDef();
+		fixtureDef = new FixtureDef();
+		ms = new MassData();
 		IBody previous = (IBody) agent.getAttribute(BODY);
 		if (previous != null) {
 			GamaPoint pointTransfer = new GamaPoint();
@@ -87,8 +90,8 @@ public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Ve
 
 	@Override
 	public GamaPoint getAngularVelocity(final GamaPoint v) {
-		// TODO Auto-generated method stub
-		return null;
+		v.setLocation(0, 0, body.getAngularVelocity());
+		return v;
 	}
 
 	@Override
@@ -144,7 +147,7 @@ public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Ve
 
 	@Override
 	public void setAngularVelocity(final GamaPoint angularVelocity) {
-		body.setAngularVelocity((float) angularVelocity.norm());
+		body.setAngularVelocity((float) angularVelocity.z);
 	}
 
 	@Override
