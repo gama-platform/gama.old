@@ -13,6 +13,7 @@ package msi.gaml.operators;
 import java.io.File;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
@@ -42,7 +43,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class Files {
 
-	public static final String FOLDER = "folder";
 	public static final String WRITE = "write";
 
 	// @operator (
@@ -89,7 +89,7 @@ public class Files {
 
 	@operator (
 			value = "file_exists",
-			can_be_const = true,
+			can_be_const = false,
 			category = IOperatorCategory.FILE,
 			concept = { IConcept.FILE })
 	@doc (
@@ -108,10 +108,10 @@ public class Files {
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_file(final IScope scope, final String s) {
-		if (s == null) { return false; }
-		if (scope == null) {
+		if (s == null) return false;
+		if (scope == null)
 			return false;
-		} else {
+		else {
 			final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
 			final File f = new File(path);
 
@@ -121,7 +121,7 @@ public class Files {
 
 	@operator (
 			value = "folder_exists",
-			can_be_const = true,
+			can_be_const = false,
 			category = IOperatorCategory.FILE,
 			concept = { IConcept.FILE })
 	@doc (
@@ -140,10 +140,10 @@ public class Files {
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_folder(final IScope scope, final String s) {
-		if (s == null) { return false; }
-		if (scope == null) {
+		if (s == null) return false;
+		if (scope == null)
 			return false;
-		} else {
+		else {
 			final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
 			final File f = new File(path);
 
@@ -152,8 +152,8 @@ public class Files {
 	}
 
 	@operator (
-			value = FOLDER,
-			can_be_const = true,
+			value = IKeyword.FOLDER,
+			can_be_const = false,
 			index_type = IType.INT,
 			category = IOperatorCategory.FILE,
 			concept = { IConcept.FILE },
@@ -175,8 +175,9 @@ public class Files {
 	public static IGamaFile folderFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s);
 	}
-	
-	public static IGamaFile folderFile(final IScope scope, final String s, final boolean modify) throws GamaRuntimeException {
+
+	public static IGamaFile folderFile(final IScope scope, final String s, final boolean modify)
+			throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s, modify);
 	}
 
@@ -196,7 +197,7 @@ public class Files {
 			see = "file")
 	@no_test
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
-		if (s == null) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file", scope); }
+		if (s == null) throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file", scope);
 		final boolean b = writable == null ? false : writable;
 		s.setWritable(scope, b);
 		return s;
@@ -228,7 +229,7 @@ public class Files {
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		final Map attributes = scope.peekReadAttributes();
-		if (attributes != null) { return attributes.get(s); }
+		if (attributes != null) return attributes.get(s);
 		// Then try to read in the agent, if it has been created from a GIS/CSV
 		// file.
 		return opRead(scope, scope.getAgent(), s);
@@ -253,7 +254,7 @@ public class Files {
 							isExecutable = false)) })
 	@no_test
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
-		if (g == null) { return null; }
+		if (g == null) return null;
 		return g.get(scope, s);
 	}
 
@@ -275,7 +276,7 @@ public class Files {
 							isExecutable = false)) })
 	@no_test
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
-		if (g == null) { return null; }
+		if (g == null) return null;
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
 	}
 
@@ -300,13 +301,9 @@ public class Files {
 		theName = FileUtils.constructAbsoluteFilePath(scope, folder, false);
 
 		final File file = new File(theName);
-		if (file.exists() && !file.isDirectory()) {
-			throw GamaRuntimeException.error("The folder " + folder + " can not overwrite a file with the same name",
-					scope);
-		}
-		if (!file.exists()) {
-			file.mkdirs();
-		}
+		if (file.exists() && !file.isDirectory()) throw GamaRuntimeException
+				.error("The folder " + folder + " can not overwrite a file with the same name", scope);
+		if (!file.exists()) { file.mkdirs(); }
 		return new GamaFolderFile(scope, folder);
 
 	}

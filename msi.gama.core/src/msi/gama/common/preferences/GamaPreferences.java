@@ -31,6 +31,9 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.geotools.referencing.CRS;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -477,7 +480,12 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIMIZATIONS = "Optimizations";
 		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
-				"Optimize constant expressions (experimental)", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+				"Optimize constant expressions (experimental, performs a rebuild of models)", false, IType.BOOL, true)
+						.in(NAME, OPTIMIZATIONS).onChange(v -> {
+							try {
+								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+							} catch (CoreException e) {}
+						});
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
 				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
 						OPTIMIZATIONS);

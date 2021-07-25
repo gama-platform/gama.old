@@ -11,14 +11,13 @@
 package msi.gaml.expressions.types;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.types.Types;
 
 public class DenotedActionExpression extends VariableExpression {
 
-	public DenotedActionExpression(final IDescription action) {
+	public DenotedActionExpression(final StatementDescription action) {
 		super(action.getName(), Types.ACTION, true, action);
 	}
 

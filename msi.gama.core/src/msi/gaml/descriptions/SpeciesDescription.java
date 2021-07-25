@@ -212,7 +212,7 @@ public class SpeciesDescription extends TypeDescription {
 	public IExpression getVarExpr(final String n, final boolean asField) {
 		IExpression result = super.getVarExpr(n, asField);
 		if (result == null) {
-			IDescription desc = getBehavior(n);
+			StatementDescription desc = getBehavior(n);
 			if (desc != null) { result = new DenotedActionExpression(desc); }
 			desc = getAspect(n);
 			if (desc != null) { result = new DenotedActionExpression(desc); }

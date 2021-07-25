@@ -24,7 +24,6 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.expressions.IVarExpression.Agent;
 import msi.gaml.types.IType;
 
 public class GlobalVariableExpression extends VariableExpression implements IVarExpression.Agent {
@@ -34,10 +33,10 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final VariableDescription v = ((SpeciesDescription) world).getAttribute(n);
 		final IExpression exp = v.getFacetExpr(IKeyword.INIT);
 		if (exp != null) {
-			final boolean isConst = notModifiable && exp.isConst();
-			if (isConst && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
+			// AD Addition of a test on whether the variable is a function or not
+			final boolean isConst = notModifiable && exp.isConst() && !v.isFunction();
+			if (isConst && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
 				return GAML.getExpressionFactory().createConst(exp.getConstValue(), type, n);
-			}
 		}
 		return new GlobalVariableExpression(n, type, notModifiable, world);
 	}
@@ -45,6 +44,15 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	protected GlobalVariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
 		super(n, type, notModifiable, world);
+	}
+
+	@Override
+	public boolean isConst() {
+		// Allow global variables to report that they are constant if they are noted so (except if they are containers).
+		if (type.isContainer()) return false;
+		VariableDescription vd = getDefinitionDescription().getSpeciesContext().getAttribute(name);
+		if (vd == null || vd.isFunction()) return false;
+		return isNotModifiable;
 	}
 
 	@Override
@@ -57,9 +65,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final String name = getName();
 		// We first try in the 'normal' scope (so that regular global vars are still accessed by agents of micro-models,
 		// see #2238)
-		if (scope.hasAccessToGlobalVar(name)) {
+		if (scope.hasAccessToGlobalVar(name))
 			return scope.getGlobalVarValue(name);
-		} else {
+		else {
 			final IAgent microAgent = scope.getAgent();
 			if (microAgent != null) {
 				final IScope agentScope = microAgent.getScope();
@@ -67,7 +75,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 					final ITopLevelAgent root = agentScope.getRoot();
 					if (root != null) {
 						final IScope globalScope = root.getScope();
-						if (globalScope != null) { return globalScope.getGlobalVarValue(getName()); }
+						if (globalScope != null) return globalScope.getGlobalVarValue(getName());
 					}
 				}
 			}
@@ -78,14 +86,12 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		if (isNotModifiable) { return; }
+		if (isNotModifiable) return;
 		if (scope.hasAccessToGlobalVar(name)) {
 			scope.setGlobalVarValue(name, v);
 		} else {
 			final IAgent sc = scope.getAgent();
-			if (sc != null) {
-				sc.getScope().getRoot().getScope().setGlobalVarValue(name, v);
-			}
+			if (sc != null) { sc.getScope().getRoot().getScope().setGlobalVarValue(name, v); }
 		}
 	}
 
@@ -105,15 +111,10 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		String s = "Type " + type.getTitle();
 		if (desc != null) {
 			final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
-			if (var != null) {
-				doc = var.getBuiltInDoc();
-			}
-		} else {
+			if (var != null) { doc = var.getBuiltInDoc(); }
+		} else
 			return s;
-		}
-		if (doc != null) {
-			s += "<br>" + doc;
-		}
+		if (doc != null) { s += "<br>" + doc; }
 		final String quality =
 				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
 						+ desc.getTitle();
@@ -124,12 +125,10 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
-		if (alreadyProcessed.contains(this)) { return; }
+		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
 		final SpeciesDescription sd = this.getDefinitionDescription().getSpeciesContext();
-		if (species.equals(sd)) {
-			result.add(sd.getAttribute(getName()));
-		}
+		if (species.equals(sd)) { result.add(sd.getAttribute(getName())); }
 	}
 
 }
