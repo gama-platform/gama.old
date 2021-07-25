@@ -196,10 +196,10 @@ public class NumberVariable<T extends Comparable> extends Variable {
 				return checkMinMax(agent, scope, (GamaDate) val);
 			case IType.POINT:
 				return checkMinMax(agent, scope, (GamaPoint) val);
+			default:
+				throw GamaRuntimeException.error("Impossible to create " + getName(), scope);
 		}
 
-		if (type.id() == IType.INT) return checkMinMax(agent, scope, (Integer) val);
-		return checkMinMax(agent, scope, (Double) val);
 	}
 
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
