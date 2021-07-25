@@ -123,6 +123,7 @@ public class NumberVariable<T extends Comparable> extends Variable {
 	private final IExpression min, max, step;
 	private T minVal, maxVal, stepVal;
 
+	@SuppressWarnings ("unchecked")
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		final IScope scope = null;

@@ -127,10 +127,10 @@ public abstract class Tuple4b implements java.io.Serializable, Cloneable {
     @Override
     public String toString()
     {
-        return("("  + ((int)this.x & 0xff) +
-	       ", " + ((int)this.y & 0xff) +
-	       ", " + ((int)this.z & 0xff) +
-	       ", " + ((int)this.w & 0xff) + ")");
+        return("("  + (this.x & 0xff) +
+	       ", " + (this.y & 0xff) +
+	       ", " + (this.z & 0xff) +
+	       ", " + (this.w & 0xff) + ")");
     }
 
 
@@ -235,10 +235,10 @@ public abstract class Tuple4b implements java.io.Serializable, Cloneable {
      */
     @Override
     public int hashCode() {
-	return ((((int)x & 0xff) <<  0) |
-		(((int)y & 0xff) <<  8) |
-		(((int)z & 0xff) << 16) |
-		(((int)w & 0xff) << 24));
+	return (((x & 0xff) <<  0) |
+		((y & 0xff) <<  8) |
+		((z & 0xff) << 16) |
+		((w & 0xff) << 24));
     }
 
     /**

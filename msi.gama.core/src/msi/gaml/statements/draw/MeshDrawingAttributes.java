@@ -45,6 +45,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		speciesName = name;
 	}
 
+	@SuppressWarnings ("unchecked")
 	public void setColors(final Object colors) {
 		if (colors instanceof GamaColor) {
 			color = new ColorBasedMeshColorProvider((GamaColor) colors);

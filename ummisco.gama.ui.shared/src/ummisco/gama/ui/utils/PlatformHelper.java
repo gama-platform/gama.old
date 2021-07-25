@@ -59,6 +59,10 @@ public class PlatformHelper {
 		return isDeveloper;
 	}
 
+	public static int getDeviceZoom() {
+		return DPIUtil.getDeviceZoom();
+	}
+
 	/**
 	 * Returns SWT auto scaled-up value {@code v}, compatible with {@link DPIUtil#autoScaleUp(int)}
 	 * <p>

@@ -329,7 +329,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 
        if (ww >= 0) {
 	   if (ww >= EPS2) {
-	       this.w = (float) Math.sqrt((double)ww);
+	       this.w = (float) Math.sqrt(ww);
 	       ww =  0.25f/this.w;
 	       this.x = (m1.m21 - m1.m12)*ww;
 	       this.y = (m1.m02 - m1.m20)*ww;
@@ -349,7 +349,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 
        if (ww >= 0) {
 	   if (ww >= EPS2) {
-	       this.x = (float) Math.sqrt((double) ww);
+	       this.x = (float) Math.sqrt(ww);
 	       ww = 1.0f/(2.0f*this.x);
 	       this.y = m1.m10*ww;
 	       this.z = m1.m20*ww;
@@ -366,7 +366,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
        ww = 0.5f*(1.0f - m1.m22);
 
        if (ww >= EPS2) {
-	   this.y = (float) Math.sqrt((double) ww);
+	   this.y = (float) Math.sqrt(ww);
 	   this.z = m1.m21/(2.0f*this.y);
 	   return;
        }
@@ -423,7 +423,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 	ww = 0.5*(1.0 - m1.m22);
 	if (ww >= EPS2) {
 	    this.y = (float) Math.sqrt(ww);
-	    this.z = (float) (m1.m21/(2.0*(double)(this.y)));
+	    this.z = (float) (m1.m21/(2.0*(this.y)));
 	    return;
 	}
 
@@ -443,7 +443,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 
 	if (ww >= 0) {
 	    if (ww >= EPS2) {
-		this.w = (float) Math.sqrt((double) ww);
+		this.w = (float) Math.sqrt(ww);
 		ww = 0.25f/this.w;
 		this.x = (m1.m21 - m1.m12)*ww;
 		this.y = (m1.m02 - m1.m20)*ww;
@@ -462,7 +462,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 	ww = -0.5f*(m1.m11 + m1.m22);
 	if (ww >= 0) {
 	    if (ww >= EPS2) {
-		this.x = (float) Math.sqrt((double) ww);
+		this.x = (float) Math.sqrt(ww);
 		ww = 0.5f/this.x;
 		this.y = m1.m10*ww;
 		this.z = m1.m20*ww;
@@ -478,7 +478,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 	this.x = 0;
 	ww =  0.5f*(1.0f - m1.m22);
 	if (ww >= EPS2) {
-	    this.y = (float) Math.sqrt((double) ww);
+	    this.y = (float) Math.sqrt(ww);
 	    this.z = m1.m21/(2.0f*this.y);
 	    return;
 	}
@@ -535,7 +535,7 @@ public class Quat4f extends Tuple4f implements java.io.Serializable {
 	ww = 0.5*(1.0 - m1.m22);
 	if (ww >= EPS2) {
 	    this.y = (float) Math.sqrt(ww);
-	    this.z = (float) (m1.m21/(2.0*(double)(this.y)));
+	    this.z = (float) (m1.m21/(2.0*(this.y)));
 	    return;
 	}
 

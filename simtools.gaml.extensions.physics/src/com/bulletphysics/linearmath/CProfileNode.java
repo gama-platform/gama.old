@@ -122,7 +122,7 @@ class CProfileNode {
 		if (--recursionCounter == 0 && totalCalls != 0) {
 			long time = BulletStats.profileGetTicks();
 			time -= startTime;
-			totalTime += (float) time / BulletStats.profileGetTickRate();
+			totalTime += time / BulletStats.profileGetTickRate();
 		}
 		return (recursionCounter == 0);
 	}

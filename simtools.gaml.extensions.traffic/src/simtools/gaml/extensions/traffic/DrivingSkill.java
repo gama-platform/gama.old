@@ -996,7 +996,7 @@ public class DrivingSkill extends MovingSkill {
 		)
 	)
 	public Boolean primReadyToCross(final IScope scope) throws GamaRuntimeException {
-		IAgent vehicle = (IAgent) getCurrentAgent(scope);
+		IAgent vehicle = getCurrentAgent(scope);
 		IAgent node = (IAgent) scope.getArg("node", IType.AGENT);
 		IAgent road = (IAgent) scope.getArg("new_road", IType.AGENT);
 		return readyToCross(scope, vehicle, node, road);

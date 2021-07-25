@@ -165,10 +165,9 @@ public class SimulationIslandManager {
 
 					assert colObj0.getIslandTag() == islandId || colObj0.getIslandTag() == -1;
 
-					if (colObj0.getIslandTag() == islandId) {
-						if (colObj0.getActivationState() == CollisionObject.ISLAND_SLEEPING) {
-							colObj0.setActivationState(CollisionObject.WANTS_DEACTIVATION);
-						}
+					if (colObj0.getIslandTag() == islandId
+							&& colObj0.getActivationState() == CollisionObject.ISLAND_SLEEPING) {
+						colObj0.setActivationState(CollisionObject.WANTS_DEACTIVATION);
 					}
 				}
 			}
@@ -182,8 +181,8 @@ public class SimulationIslandManager {
 			CollisionObject colObj0 = (CollisionObject) manifold.getBody0();
 			CollisionObject colObj1 = (CollisionObject) manifold.getBody1();
 			// todo: check sleeping conditions!
-			if (colObj0 != null && colObj0.getActivationState() != CollisionObject.ISLAND_SLEEPING
-					|| colObj1 != null && colObj1.getActivationState() != CollisionObject.ISLAND_SLEEPING) {
+			if (colObj1 != null && colObj0 != null && (colObj0.getActivationState() != CollisionObject.ISLAND_SLEEPING
+					|| colObj1.getActivationState() != CollisionObject.ISLAND_SLEEPING)) {
 
 				// kinematic objects don't merge islands, but wake up all
 				// connected objects

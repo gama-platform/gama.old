@@ -23,7 +23,6 @@ import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 
-import org.eclipse.swt.internal.DPIUtil;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
@@ -68,6 +67,7 @@ import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
 import ummisco.gama.opengl.scene.resources.ResourceDrawer;
 import ummisco.gama.opengl.scene.text.TextDrawer;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * A class that represents an intermediate state between the rendering and the opengl state. It captures all the
@@ -271,9 +271,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		DEBUG.OUT("Ratio width/height in pixels ", 35, envWidth / envHeight);
 		DEBUG.OUT("Window pixels/env pixels ", 35, width / envWidth + " | " + height / envHeight);
 		DEBUG.OUT("Current XRatio pixels/env in units ", 35, xRatio + " | " + yRatio);
-		DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
+		DEBUG.OUT("Device Zoom =  " + PlatformHelper.getDeviceZoom());
 		DEBUG.OUT("AutoScale down = ", false);
-		DEBUG.OUT(DPIUtil.autoScaleDown(new int[] { width, height }));
+		DEBUG.OUT(" " + PlatformHelper.autoScaleDown(width) + " " + PlatformHelper.autoScaleDown(height));
 		// DEBUG.OUT("Client area of window:" + getRenderer().getCanvas().getClientArea());
 	}
 

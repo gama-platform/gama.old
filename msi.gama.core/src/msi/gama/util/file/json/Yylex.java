@@ -165,9 +165,6 @@ class Yylex {
 	/** the input device */
 	private java.io.Reader zzReader;
 
-	/** the current state of the DFA */
-	private int zzState;
-
 	/** the current lexical state */
 	private int zzLexicalState = YYINITIAL;
 
@@ -190,27 +187,11 @@ class Yylex {
 	 */
 	private int zzEndRead;
 
-	/** number of newlines encountered up to the start of the matched text */
-	private int yyline;
-
 	/** the number of characters up to the start of the matched text */
 	private int yychar;
 
-	/**
-	 * the number of characters from the last newline up to the start of the matched text
-	 */
-	private int yycolumn;
-
-	/**
-	 * zzAtBOL == true <=> the scanner is currently at the beginning of a line
-	 */
-	private boolean zzAtBOL = true;
-
 	/** zzAtEOF == true <=> the scanner is at the EOF */
 	private boolean zzAtEOF;
-
-	/** denotes if the user-EOF-code has already been executed */
-	private boolean zzEOFDone;
 
 	/* user code: */
 	private StringBuilder sb = new StringBuilder();
@@ -264,7 +245,7 @@ class Yylex {
 	 * Refills the input buffer.
 	 *
 	 * @return <code>false</code>, iff there was new input.
-	 * 
+	 *
 	 * @exception java.io.IOException
 	 *                if any I/O-Error occurs
 	 */
@@ -299,9 +280,7 @@ class Yylex {
 		// unlikely but not impossible: read 0 characters, but not at end of stream
 		if (numRead == 0) {
 			final int c = zzReader.read();
-			if (c == -1) {
-				return true;
-			} else {
+			if (c == -1) {} else {
 				zzBuffer[zzEndRead++] = (char) c;
 				return false;
 			}
@@ -318,9 +297,7 @@ class Yylex {
 		zzAtEOF = true; /* indicate end of file */
 		zzEndRead = zzStartRead; /* invalidate buffer */
 
-		if (zzReader != null) {
-			zzReader.close();
-		}
+		if (zzReader != null) { zzReader.close(); }
 	}
 
 	/**
@@ -334,12 +311,9 @@ class Yylex {
 	 */
 	public final void yyreset(final java.io.Reader reader) {
 		zzReader = reader;
-		zzAtBOL = true;
 		zzAtEOF = false;
-		zzEOFDone = false;
 		zzEndRead = zzStartRead = 0;
 		zzCurrentPos = zzMarkedPos = 0;
-		yyline = yychar = yycolumn = 0;
 		zzLexicalState = YYINITIAL;
 	}
 
@@ -369,7 +343,7 @@ class Yylex {
 
 	/**
 	 * Returns the character at position <tt>pos</tt> from the matched text.
-	 * 
+	 *
 	 * It is equivalent to yytext().charAt(pos), but faster
 	 *
 	 * @param pos
@@ -420,9 +394,7 @@ class Yylex {
 	 *            the number of characters to be read again. This number must not be greater than yylength()!
 	 */
 	public void yypushback(final int number) {
-		if (number > yylength()) {
-			zzScanError(ZZ_PUSHBACK_2BIG);
-		}
+		if (number > yylength()) { zzScanError(ZZ_PUSHBACK_2BIG); }
 
 		zzMarkedPos -= number;
 	}
@@ -459,7 +431,7 @@ class Yylex {
 
 			zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
 
-			zzState = ZZ_LEXSTATE[zzLexicalState];
+			int zzState = ZZ_LEXSTATE[zzLexicalState];
 
 			zzForAction: {
 				while (true) {
@@ -487,18 +459,14 @@ class Yylex {
 						}
 					}
 					final int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
-					if (zzNext == -1) {
-						break zzForAction;
-					}
+					if (zzNext == -1) { break zzForAction; }
 					zzState = zzNext;
 
 					final int zzAttributes = zzAttrL[zzState];
 					if ((zzAttributes & 1) == 1) {
 						zzAction = zzState;
 						zzMarkedPosL = zzCurrentPosL;
-						if ((zzAttributes & 8) == 8) {
-							break zzForAction;
-						}
+						if ((zzAttributes & 8) == 8) { break zzForAction; }
 					}
 
 				}
@@ -512,12 +480,12 @@ class Yylex {
 					sb = null;
 					sb = new StringBuilder();
 					yybegin(STRING_BEGIN);
-				}
+				} //$FALL-THROUGH$
 				case 24:
 					break;
 				case 11: {
 					sb.append(yytext());
-				}
+				} //$FALL-THROUGH$
 				case 25:
 					break;
 				case 5: {
@@ -528,6 +496,7 @@ class Yylex {
 				case 16: {
 					sb.append('\b');
 				}
+				//$FALL-THROUGH$
 				case 27:
 					break;
 				case 23: {
@@ -541,7 +510,7 @@ class Yylex {
 						throw new DeserializationException(yychar,
 								DeserializationException.Problems.UNEXPECTED_EXCEPTION, e);
 					}
-				}
+				} //$FALL-THROUGH$
 				case 28:
 					break;
 				case 22: {
@@ -552,7 +521,7 @@ class Yylex {
 					break;
 				case 12: {
 					sb.append('\\');
-				}
+				} //$FALL-THROUGH$
 				case 30:
 					break;
 				case 10: {
@@ -572,12 +541,12 @@ class Yylex {
 					break;
 				case 19: {
 					sb.append('\r');
-				}
+				} //$FALL-THROUGH$
 				case 34:
 					break;
 				case 15: {
 					sb.append('/');
-				}
+				} //$FALL-THROUGH$
 				case 35:
 					break;
 				case 2: {
@@ -588,7 +557,7 @@ class Yylex {
 					break;
 				case 14: {
 					sb.append('"');
-				}
+				} //$FALL-THROUGH$
 				case 37:
 					break;
 				case 8: {
@@ -598,12 +567,12 @@ class Yylex {
 					break;
 				case 17: {
 					sb.append('\f');
-				}
+				} //$FALL-THROUGH$
 				case 39:
 					break;
 				case 1: {
 					throw new DeserializationException(yychar, DeserializationException.Problems.UNEXPECTED_CHARACTER,
-							new Character(yycharat(0)));
+							Character.valueOf(yycharat(0)));
 				}
 				case 40:
 					break;
@@ -614,7 +583,7 @@ class Yylex {
 					break;
 				case 20: {
 					sb.append('\t');
-				}
+				} //$FALL-THROUGH$
 				case 42:
 					break;
 				case 7: {
@@ -624,7 +593,7 @@ class Yylex {
 					break;
 				case 18: {
 					sb.append('\n');
-				}
+				} //$FALL-THROUGH$
 				case 44:
 					break;
 				case 13: {
@@ -632,8 +601,7 @@ class Yylex {
 					return new Yytoken(Yytoken.Types.DATUM, sb.toString());
 				}
 				case 45:
-					break;
-				case 3: {}
+				case 3:
 				case 46:
 					break;
 				default:
