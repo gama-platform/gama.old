@@ -16,7 +16,6 @@ import static msi.gama.runtime.exceptions.GamaRuntimeException.create;
 
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.eclipse.swt.SWT;
@@ -51,11 +50,11 @@ public abstract class AbstractEditor<T>
 
 	private static int ORDER;
 	private final int order = ORDER++;
-	private final EditorListener<T> listener;
-	private final IAgent agent;
+	@Nullable private final EditorListener<T> listener;
+	@Nullable private final IAgent agent;
 	private final IScope scope;
 	protected String name;
-	protected final IParameter param;
+	@Nullable protected final IParameter param;
 
 	// Values
 	protected T originalValue, currentValue, minValue, maxValue, stepValue;
@@ -73,11 +72,15 @@ public abstract class AbstractEditor<T>
 	protected EditorLabel editorLabel;
 	protected EditorControl editorControl;
 
+	public AbstractEditor(final IScope scope, final EditorListener<T> l) {
+		this(scope, null, l);
+	}
+
 	public AbstractEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
 		this(scope, null, variable, l);
 	}
 
-	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nonnull final IParameter parameter,
+	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nullable final IParameter parameter,
 			@Nullable final EditorListener<T> l) {
 		this.scope = scope;
 		param = parameter;
@@ -224,7 +227,7 @@ public abstract class AbstractEditor<T>
 
 	EditorControl createEditorControl() {
 		boolean isCombo = param != null && param.getAmongValue(getScope()) != null;
-		boolean isEditable = param == null /* statement */ || param != null && param.isEditable();
+		boolean isEditable = param != null && param.isEditable() || param == null /* statement */;
 		if (isEditable) {
 			if (isCombo) {
 				editorControl =

@@ -14,7 +14,7 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 	T statement;
 
 	public AbstractStatementEditor(final IScope scope, final T command, final EditorListener<Object> l) {
-		super(scope, null, l);
+		super(scope, l);
 		this.statement = command;
 	}
 
