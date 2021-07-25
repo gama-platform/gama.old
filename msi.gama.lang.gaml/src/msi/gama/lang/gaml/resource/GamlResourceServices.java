@@ -62,7 +62,7 @@ public class GamlResourceServices {
 	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
 	private static final Map<URI, IGamlBuilderListener> resourceListeners = GamaMapFactory.createUnordered();
 	private static final Map<URI, ValidationContext> resourceErrors = GamaMapFactory.createUnordered();
-	private static XtextResourceSet poolSet;
+	private static volatile XtextResourceSet poolSet;
 	private static final LoadingCache<URI, IMap<EObject, IGamlDescription>> documentationCache =
 			CacheBuilder.newBuilder().build(new CacheLoader<URI, IMap<EObject, IGamlDescription>>() {
 
@@ -98,11 +98,11 @@ public class GamlResourceServices {
 				e.printStackTrace();
 			}
 		}
-		final URI result = URI.createURI(pre_properlyEncodedURI.toString(), true);
+
 		// if (DEBUG.IS_ON()) {
 		// DEBUG.OUT("Original URI: " + uri + " => " + result);
 		// }
-		return result;
+		return URI.createURI(pre_properlyEncodedURI.toString(), true);
 	}
 
 	public static boolean isEdited(final URI uri) {
