@@ -781,6 +781,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				final IExpression var = attributes.get(e);
 				String name = e.replace("\"", "");
 				name = name.replace("'", "");
+				name = name.replace(":", "_");
 				final String type = type(var);
 				specs.append(',').append(name).append(':').append(type);
 			}
