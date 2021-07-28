@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.util.file.GamaFile;
@@ -42,11 +42,11 @@ public interface IGraphics {
 			return false;
 		}
 
-		ILocation getCameraPos();
+		GamaPoint getCameraPos();
 
-		ILocation getCameraTarget();
+		GamaPoint getCameraTarget();
 
-		ILocation getCameraOrientation();
+		GamaPoint getCameraOrientation();
 	}
 
 	RenderingHints QUALITY_RENDERING = new RenderingHints(null);

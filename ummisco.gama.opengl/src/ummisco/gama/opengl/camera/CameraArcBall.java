@@ -173,7 +173,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	// public void followAgent(IAgent a) {
 	//
-	// ILocation l = a.getGeometry().getLocation();
+	// GamaPoint l = a.getGeometry().getLocation();
 	// Envelope env = a.getGeometry().getEnvelope();
 	//
 	// double xPos = l.getX() - myRenderer.displaySurface.getEnvWidth() / 2;

@@ -36,7 +36,7 @@ public class NativeBulletBodyWrapper
 
 	public NativeBulletBodyWrapper(final IAgent agent, final NativeBulletPhysicalWorld gateway) {
 		super(agent, gateway);
-		setLocation(agent.getLocation().toGamaPoint());
+		setLocation(agent.getLocation());
 		// We add the wrapper to both the body and the agent to enable their inter-communication
 		agent.setAttribute(BODY, this);
 		body.setUserObject(this);

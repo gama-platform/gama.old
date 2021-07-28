@@ -18,7 +18,7 @@ import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
@@ -46,11 +46,11 @@ public class DrawingData extends AttributeHolder {
 
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
-	final Attribute<ILocation> size;
+	final Attribute<GamaPoint> size;
 	final Attribute<Double> depth;
 	final Attribute<AxisAngle> rotation;
-	final Attribute<ILocation> location;
-	final Attribute<ILocation> anchor;
+	final Attribute<GamaPoint> location;
+	final Attribute<GamaPoint> anchor;
 	final Attribute<Boolean> empty;
 	final Attribute<GamaColor> border, color;
 	final Attribute<GamaFont> font;
@@ -63,7 +63,7 @@ public class DrawingData extends AttributeHolder {
 
 	public DrawingData(final DrawStatement symbol) {
 		super(symbol);
-		final Function<IExpression, ILocation> constSizeCaster = (exp) -> {
+		final Function<IExpression, GamaPoint> constSizeCaster = (exp) -> {
 			if (exp.getGamlType().isNumber()) {
 				final double val = Cast.asFloat(null, exp.getConstValue());
 				// We do not consider the z ordinate -- see Issue #1539
@@ -159,11 +159,11 @@ public class DrawingData extends AttributeHolder {
 	}
 
 	public GamaPoint getLocation() {
-		return location.get() == null ? null : location.get().toGamaPoint();
+		return location.get() == null ? null : location.get();
 	}
 
 	public GamaPoint getAnchor() {
-		return anchor.get() == null ? null : anchor.get().toGamaPoint();
+		return anchor.get() == null ? null : anchor.get();
 	}
 
 }

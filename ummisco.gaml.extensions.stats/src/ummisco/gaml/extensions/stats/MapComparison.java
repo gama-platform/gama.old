@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -478,11 +478,11 @@ public class MapComparison {
 			final int nbCat, final Map<List<Integer>, Map<Double, Double>> XaPerTransition,
 			final Map<List<Integer>, Map<Double, Double>> XsPerTransition, final Set<Double> Xvals) {
 
-		final IList<ILocation> locs = GamaListFactory.create(Types.POINT);
+		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
+		final GamaPoint centralLoc = (GamaPoint) Containers.mean(scope, locs);
 		if (filter != null) {
 			final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 			final List<IAgent> neighbors = distance == 0 ? new ArrayList<>()
@@ -521,12 +521,10 @@ public class MapComparison {
 								mapxa = GamaMapFactory.create();
 								mapxa.put(xa, 1.0);
 								XaPerTransition.put(ca, mapxa);
+							} else if (mapxa.containsKey(xa)) {
+								mapxa.put(xa, mapxa.get(xa) + 1.0);
 							} else {
-								if (mapxa.containsKey(xa)) {
-									mapxa.put(xa, mapxa.get(xa) + 1.0);
-								} else {
-									mapxa.put(xa, 1.0);
-								}
+								mapxa.put(xa, 1.0);
 							}
 							Xvals.add(xa);
 						}
@@ -536,12 +534,10 @@ public class MapComparison {
 								mapxs = GamaMapFactory.create();
 								mapxs.put(xs, 1.0);
 								XsPerTransition.put(ca, mapxs);
+							} else if (mapxs.containsKey(xa)) {
+								mapxs.put(xs, mapxs.get(xs) + 1.0);
 							} else {
-								if (mapxs.containsKey(xa)) {
-									mapxs.put(xs, mapxs.get(xs) + 1.0);
-								} else {
-									mapxs.put(xs, 1.0);
-								}
+								mapxs.put(xs, 1.0);
 							}
 							Xvals.add(xs);
 						}
@@ -689,11 +685,11 @@ public class MapComparison {
 			final List<Double> rings, final Map<Double, Integer> ringsPn,
 			final IAddressableContainer<Integer, IAgent, Integer, IAgent> agents) {
 
-		final IList<ILocation> locs = GamaListFactory.create(Types.POINT);
+		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
+		final GamaPoint centralLoc = (GamaPoint) Containers.mean(scope, locs);
 		final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<>()
 				: new ArrayList<>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));

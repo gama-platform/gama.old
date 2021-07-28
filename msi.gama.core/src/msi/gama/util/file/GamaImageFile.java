@@ -34,7 +34,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -248,7 +248,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
 		if (preferredSize != null)
@@ -277,13 +277,13 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		// return image;
 	}
 
-	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize)
+	private IMatrix matrixValueFromImage(final IScope scope, final GamaPoint preferredSize)
 			throws GamaRuntimeException {
 		final BufferedImage image = loadImage(scope, true);
 		return matrixValueFromImage(scope, image, preferredSize);
 	}
 
-	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final ILocation preferredSize) {
+	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final GamaPoint preferredSize) {
 		int xSize, ySize;
 		BufferedImage resultingImage = image;
 		if (preferredSize == null) {

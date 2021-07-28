@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
@@ -82,8 +82,8 @@ public class GamaPair<K, V>
 
 	@Override
 	public boolean equals(final Object a) {
-		if (a == null) { return false; }
-		if (a instanceof GamaPair) { return equals((GamaPair) a); }
+		if (a == null) return false;
+		if (a instanceof GamaPair) return equals((GamaPair) a);
 		return false;
 	}
 
@@ -256,10 +256,10 @@ public class GamaPair<K, V>
 	 * Method matrixValue()
 	 *
 	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gaml.types.IType,
-	 *      msi.gama.metamodel.shape.ILocation)
+	 *      msi.gama.metamodel.shape.GamaPoint)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentType, final ILocation size, final boolean copy) {
+	public IMatrix matrixValue(final IScope scope, final IType contentType, final GamaPoint size, final boolean copy) {
 		return GamaMatrixType.from(scope, listValue(scope, contentType, copy), contentType, size);
 	}
 

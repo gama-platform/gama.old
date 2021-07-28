@@ -30,7 +30,7 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.AgentLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
@@ -189,17 +189,17 @@ public class LayerSideControls {
 				});
 
 		cameraPos = EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
-				(EditorListener<ILocation>) newValue -> {
+				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
-				(EditorListener<ILocation>) newValue -> {
+				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraLookPos((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
 		cameraOrientation = EditorFactory.create(scope, contents, "Orientation:", data.getCameraOrientation(),
-				(EditorListener<ILocation>) newValue -> {
+				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraOrientation((GamaPoint) newValue);
 					ds.updateDisplay(true);
 				});
@@ -268,7 +268,7 @@ public class LayerSideControls {
 			final int j = i;
 			i++;
 			point[j] = EditorFactory.create(scope, contents, "Point " + j + ":", data.getKeystone().at(j).clone(),
-					(EditorListener<ILocation>) newValue -> {
+					(EditorListener<GamaPoint>) newValue -> {
 						data.getKeystone().at(j).setLocation(newValue);
 						data.setKeystone(data.getKeystone());
 						ds.updateDisplay(true);
@@ -421,12 +421,12 @@ public class LayerSideControls {
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Position:", layer.getData().getPosition(),
-				(EditorListener<ILocation>) newValue -> {
+				(EditorListener<GamaPoint>) newValue -> {
 					layer.getData().setPosition(newValue);
 					updateIfPaused(layer, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Size:", layer.getData().getSize(),
-				(EditorListener<ILocation>) newValue -> {
+				(EditorListener<GamaPoint>) newValue -> {
 					layer.getData().setSize(newValue);
 					updateIfPaused(layer, container);
 				});
@@ -528,17 +528,17 @@ public class LayerSideControls {
 
 	private String cameraDefinitionToCopy() {
 		StringBuilder text = new StringBuilder(IKeyword.CAMERA_LOCATION).append(": ").append(
-				new GamaPoint(cameraPos.getCurrentValue().toGamaPoint()).yNegated().withPrecision(4).serialize(false));
+				new GamaPoint(cameraPos.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
 		text.append(" ").append(IKeyword.CAMERA_TARGET).append(": ")
-				.append(new GamaPoint(cameraTarget.getCurrentValue().toGamaPoint()).yNegated().withPrecision(4)
+				.append(new GamaPoint(cameraTarget.getCurrentValue()).yNegated().withPrecision(4)
 						.serialize(false));
 		text.append(" ").append(IKeyword.CAMERA_ORIENTATION).append(": ").append(
-				new GamaPoint(cameraOrientation.getCurrentValue().toGamaPoint()).withPrecision(4).serialize(false));
+				new GamaPoint(cameraOrientation.getCurrentValue()).withPrecision(4).serialize(false));
 		return text.toString();
 	}
 
 	private String keystoneDefinitionToCopy(final IScope scope, final LayeredDisplayData data) {
-		final IList<ILocation> pp = GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
+		final IList<GamaPoint> pp = GamaListFactory.create(scope, Types.POINT, data.getKeystone().toCoordinateArray());
 		return IKeyword.KEYSTONE + ": " + pp.serialize(false);
 	}
 }

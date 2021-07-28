@@ -18,7 +18,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.ext.webb.Webb;
 import msi.gama.ext.webb.WebbException;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -321,7 +321,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		// final String path = getPath(scope).toLowerCase();
 		final int mid = path.lastIndexOf('.');
 		if (mid == -1) return "";
-		return path.substring(mid + 1, path.length());
+		return path.substring(mid + 1);
 	}
 
 	@Override
@@ -407,12 +407,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	@Override
-	public IMatrix<?> matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix<?> matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return _matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
-	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().matrixValue(scope, contentsType, preferredSize, copy);

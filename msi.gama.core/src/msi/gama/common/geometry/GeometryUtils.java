@@ -56,7 +56,6 @@ import msi.gama.common.interfaces.IEnvelopeComputer;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.GAMA;
@@ -86,10 +85,6 @@ import msi.gaml.types.Types;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GeometryUtils {
-
-	public static GamaPoint toCoordinate(final ILocation l) {
-		return l.toGamaPoint();
-	}
 
 	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList<>();
 
@@ -427,13 +422,11 @@ public class GeometryUtils {
 							firstX = false;
 
 						}
-					} else {
-						if (square.intersects(geom)) {
-							final IShape sq = new GamaShape(square);
-							geoms.add(sq);
-							if (firstX && borders != null) { borders.add(sq); }
-							firstX = false;
-						}
+					} else if (square.intersects(geom)) {
+						final IShape sq = new GamaShape(square);
+						geoms.add(sq);
+						if (firstX && borders != null) { borders.add(sq); }
+						firstX = false;
 					}
 				}
 				x += size_x;
@@ -452,7 +445,7 @@ public class GeometryUtils {
 				final GamaShape sp = new GamaShape(gg);
 				final GamaPoint[] pts = getPointsOf(sp);
 				for (int i = 0; i < pts.length; i++) {
-					final ILocation gp = pts[i];
+					final GamaPoint gp = pts[i];
 					if (zVal != gp.getZ()) { ThreeD.set_z(null, sp, i, zVal); }
 				}
 				geoms.add(sp);
@@ -584,7 +577,7 @@ public class GeometryUtils {
 		try {
 			dtb.setSites(polygon);
 			dtb.setTolerance(sizeTol);
-			applyToInnerGeometries(dtb.getTriangles(GEOMETRY_FACTORY), (gg) -> {
+			applyToInnerGeometries(dtb.getTriangles(GEOMETRY_FACTORY), gg -> {
 				final ICoordinates cc = getContourCoordinates(gg);
 				if (cc.isCoveredBy(env) && buffered.covers(gg)) {
 					cc.setAllZ(elevation);
@@ -626,36 +619,36 @@ public class GeometryUtils {
 		return network;
 	}
 
-	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
-		final IShape.Type geometryType = geometryType(listPoints);
+	public static Geometry buildGeometryJTS(final List<List<List<GamaPoint>>> geomG) {
+		final IShape.Type geometryType = geometryType(geomG);
 		switch (geometryType) {
 			case NULL:
 				return null;
 			case POINT:
-				return buildPoint(listPoints.get(0));
+				return buildPoint(geomG.get(0));
 			case LINESTRING:
-				return buildLine(listPoints.get(0));
+				return buildLine(geomG.get(0));
 			case POLYGON:
-				return buildPolygon(listPoints.get(0));
+				return buildPolygon(geomG.get(0));
 			case MULTIPOINT:
-				final int nb = listPoints.size();
+				final int nb = geomG.size();
 				final Point[] geoms = new Point[nb];
 				for (int i = 0; i < nb; i++) {
-					geoms[i] = (Point) buildPoint(listPoints.get(i));
+					geoms[i] = (Point) buildPoint(geomG.get(i));
 				}
 				return GEOMETRY_FACTORY.createMultiPoint(geoms);
 			case MULTILINESTRING:
-				final int n = listPoints.size();
+				final int n = geomG.size();
 				final LineString[] lines = new LineString[n];
 				for (int i = 0; i < n; i++) {
-					lines[i] = (LineString) buildLine(listPoints.get(i));
+					lines[i] = (LineString) buildLine(geomG.get(i));
 				}
 				return GEOMETRY_FACTORY.createMultiLineString(lines);
 			case MULTIPOLYGON:
-				final int n3 = listPoints.size();
+				final int n3 = geomG.size();
 				final Polygon[] polys = new Polygon[n3];
 				for (int i = 0; i < n3; i++) {
-					polys[i] = (Polygon) buildPolygon(listPoints.get(i));
+					polys[i] = (Polygon) buildPolygon(geomG.get(i));
 				}
 				return GEOMETRY_FACTORY.createMultiPolygon(polys);
 			default:
@@ -663,8 +656,8 @@ public class GeometryUtils {
 		}
 	}
 
-	private static Geometry buildPoint(final List<List<ILocation>> listPoints) {
-		return GEOMETRY_FACTORY.createPoint((Coordinate) listPoints.get(0).get(0));
+	private static Geometry buildPoint(final List<List<GamaPoint>> listPoints) {
+		return GEOMETRY_FACTORY.createPoint(listPoints.get(0).get(0));
 	}
 
 	public static Geometry buildGeometryCollection(final List<IShape> geoms) {
@@ -677,42 +670,41 @@ public class GeometryUtils {
 
 	}
 
-	private static Geometry buildLine(final List<List<ILocation>> listPoints) {
-		final List<ILocation> coords = listPoints.get(0);
+	private static Geometry buildLine(final List<List<GamaPoint>> listPoints) {
+		final List<GamaPoint> coords = listPoints.get(0);
 		final int nb = coords.size();
 		final Coordinate[] coordinates = new Coordinate[nb];
 		for (int i = 0; i < nb; i++) {
-			coordinates[i] = (Coordinate) coords.get(i);
+			coordinates[i] = coords.get(i);
 		}
 		return GEOMETRY_FACTORY.createLineString(coordinates);
 	}
 
-	private static Geometry buildPolygon(final List<List<ILocation>> listPoints) {
-		final List<ILocation> coords = listPoints.get(0);
+	private static Geometry buildPolygon(final List<List<GamaPoint>> listPoints) {
+		final List<GamaPoint> coords = listPoints.get(0);
 		final int nb = coords.size();
 		final Coordinate[] coordinates = new Coordinate[nb];
 		for (int i = 0; i < nb; i++) {
-			coordinates[i] = (Coordinate) coords.get(i);
+			coordinates[i] = coords.get(i);
 		}
 		final int nbHoles = listPoints.size() - 1;
 		LinearRing[] holes = null;
 		if (nbHoles > 0) {
 			holes = new LinearRing[nbHoles];
 			for (int i = 0; i < nbHoles; i++) {
-				final List<ILocation> coordsH = listPoints.get(i + 1);
+				final List<GamaPoint> coordsH = listPoints.get(i + 1);
 				final int nbp = coordsH.size();
 				final Coordinate[] coordinatesH = new Coordinate[nbp];
 				for (int j = 0; j < nbp; j++) {
-					coordinatesH[j] = (Coordinate) coordsH.get(j);
+					coordinatesH[j] = coordsH.get(j);
 				}
 				holes[i] = GEOMETRY_FACTORY.createLinearRing(coordinatesH);
 			}
 		}
-		final Polygon poly = GEOMETRY_FACTORY.createPolygon(GEOMETRY_FACTORY.createLinearRing(coordinates), holes);
-		return poly;
+		return GEOMETRY_FACTORY.createPolygon(GEOMETRY_FACTORY.createLinearRing(coordinates), holes);
 	}
 
-	private static IShape.Type geometryType(final List<List<List<ILocation>>> listPoints) {
+	private static IShape.Type geometryType(final List<List<List<GamaPoint>>> listPoints) {
 		final int size = listPoints.size();
 		if (size == 0) return NULL;
 		if (size == 1) return geometryTypeSimp(listPoints.get(0));
@@ -729,9 +721,9 @@ public class GeometryUtils {
 		}
 	}
 
-	private static IShape.Type geometryTypeSimp(final List<List<ILocation>> listPoints) {
+	private static IShape.Type geometryTypeSimp(final List<List<GamaPoint>> listPoints) {
 		if (listPoints.isEmpty() || listPoints.get(0).isEmpty()) return NULL;
-		final List<ILocation> list0 = listPoints.get(0);
+		final List<GamaPoint> list0 = listPoints.get(0);
 		final int size0 = list0.size();
 		if (size0 == 1 || size0 == 2 && list0.get(0).equals(list0.get(listPoints.size() - 1))) return POINT;
 		if (!list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3) return LINESTRING;
@@ -763,21 +755,20 @@ public class GeometryUtils {
 						locs.add(new GamaPoint(s));
 						distCur = 0;
 
-					} else if (distance - distCur > dist) {
-						distCur += dist;
-						break;
 					} else {
-						distCur = 0;
-						locs.add(new GamaPoint(t));
+						if (distance - distCur > dist) {
+							distCur += dist;
+						} else {
+							distCur = 0;
+							locs.add(new GamaPoint(t));
+						}
 						break;
 					}
 				}
 
 			}
-			if (locs.size() > 1) {
-				if (locs.get(0).distance3D(locs.get(locs.size() - 1)) < 0.1 * distance) {
-					locs.remove(locs.size() - 1);
-				}
+			if (locs.size() > 1 && locs.get(0).distance3D(locs.get(locs.size() - 1)) < 0.1 * distance) {
+				locs.remove(locs.size() - 1);
 			}
 		} else if (geom instanceof Polygon) {
 			final Polygon poly = (Polygon) geom;
@@ -853,8 +844,8 @@ public class GeometryUtils {
 		else if (obj instanceof Number) {
 			final double size = ((Number) obj).doubleValue();
 			result = Envelope3D.of(0, size, 0, size, 0, size);
-		} else if (obj instanceof ILocation) {
-			final ILocation size = (ILocation) obj;
+		} else if (obj instanceof GamaPoint) {
+			final GamaPoint size = (GamaPoint) obj;
 			result = Envelope3D.of(0, size.getX(), 0, size.getY(), 0, size.getZ());
 		} else if (obj instanceof IShape) {
 			result = ((IShape) obj).getEnvelope();
@@ -926,8 +917,8 @@ public class GeometryUtils {
 
 	}
 
-	public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
-		return split_at(geom.getInnerGeometry(), pt.toGamaPoint());
+	public static IList<IShape> split_at(final IShape geom, final GamaPoint pt) {
+		return split_at(geom.getInnerGeometry(), pt);
 	}
 
 	/**
@@ -1060,8 +1051,9 @@ public class GeometryUtils {
 	}
 
 	public static Geometry geometryCollectionManagement(final Geometry gjts) {
-		if (!(gjts instanceof GeometryCollection)) return gjts;
-		if (gjts instanceof MultiPoint || gjts instanceof MultiLineString || gjts instanceof MultiPolygon) return gjts;
+		if (!(gjts instanceof GeometryCollection) || gjts instanceof MultiPoint || gjts instanceof MultiLineString
+				|| gjts instanceof MultiPolygon)
+			return gjts;
 		GeometryCollection gc = (GeometryCollection) gjts;
 		int dimMax = -1;
 		boolean toManage = false;

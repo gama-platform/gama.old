@@ -20,7 +20,7 @@ import java.util.ListIterator;
 
 import com.google.common.collect.Iterators;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
@@ -274,8 +274,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	@Override
 	public int size() {
 		if (size != null) return size;
-		final int size = Iterators.size(iterator());
-		return size;
+		return Iterators.size(iterator());
 	}
 
 	@Override
@@ -415,7 +414,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType contentType, final ILocation size,
+	public IMatrix<GamaDate> matrixValue(final IScope scope, final IType contentType, final GamaPoint size,
 			final boolean copy) {
 		return GamaListFactory.wrap(Types.DATE, this).matrixValue(scope, contentType, copy);
 	}
@@ -426,7 +425,7 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	public IList<GamaDate> step(final Double step) {
-		return new GamaDateInterval(start, end, Duration.of((long) step.doubleValue(), ChronoUnit.SECONDS));
+		return new GamaDateInterval(start, end, Duration.of(step.longValue(), ChronoUnit.SECONDS));
 	}
 
 	@SuppressWarnings ("unchecked")

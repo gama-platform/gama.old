@@ -366,7 +366,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						agents = scope.getAgent().getPopulationFor((ISpecies) agents);
 					} else if (agents instanceof IShape) {
 						// see Issue #2857
-						agents = GamaListFactory.wrap(item.getGamlType(), agents);
+						agents = GamaListFactory.wrap(Types.GEOMETRY, (IShape) agents);
 					} else if (!(agents instanceof IList)) return null;
 					saveShape((IList<? extends IShape>) agents, fileToSave, scope, "json".equals(type));
 					break;

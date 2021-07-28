@@ -40,7 +40,7 @@ import msi.gama.ext.kml.Placemark;
 import msi.gama.ext.kml.Scale;
 import msi.gama.ext.kml.Style;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
@@ -236,7 +236,7 @@ public class GamaKmlExport {
 		 * @param description
 		 *            Description (only displayed on mouse click on the label)
 		 */
-		public void addLabel(final IScope scope, final ILocation loc, final String beginDate, final String endDate,
+		public void addLabel(final IScope scope, final GamaPoint loc, final String beginDate, final String endDate,
 				final String name, final String description, final String styleName) {
 			final Placemark placemark = fold.createAndAddPlacemark().withStyleUrl("#" + styleName);
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
@@ -250,7 +250,7 @@ public class GamaKmlExport {
 			placemark.setDescription(description);
 		}
 
-		public void add3DModel(final IScope scope, final ILocation loc, final double orientation, final double scale,
+		public void add3DModel(final IScope scope, final GamaPoint loc, final double orientation, final double scale,
 				final String beginDate, final String endDate, final String daefile) {
 
 			final Placemark placemark = fold.createAndAddPlacemark();

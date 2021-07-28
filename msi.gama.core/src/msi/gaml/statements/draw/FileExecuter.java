@@ -18,7 +18,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFile;
@@ -40,7 +39,7 @@ class FileExecuter extends DrawExecuter {
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
-		if (file == null) { return null; }
+		if (file == null) return null;
 		final FileDrawingAttributes attributes =
 				computeAttributes(scope, data, file instanceof GamaImageFile, file instanceof GamaGisFile, g.is2D());
 
@@ -50,12 +49,10 @@ class FileExecuter extends DrawExecuter {
 			final Scaling3D size = attributes.getSize();
 			if (size != null) {
 				// if a size is provided
-				final Envelope3D expected = Envelope3D.of((ILocation) attributes.getLocation());
+				final Envelope3D expected = Envelope3D.of(attributes.getLocation());
 				expected.expandBy(size.getX() / 2, size.getY() / 2);
 				final Envelope visible = g.getVisibleRegion();
-				if (visible != null) {
-					if (!visible.intersects(expected)) { return null; }
-				}
+				if (visible != null && !visible.intersects(expected)) return null;
 			}
 			// XXX EXPERIMENTAL
 		}
@@ -71,17 +68,15 @@ class FileExecuter extends DrawExecuter {
 		// We push the location of the agent if none has been provided and if it is not a GIS file (where coordinates
 		// are already provided, see Issue #2165)
 		if (!gisFile && attributes.getLocation() == null) {
-			attributes.setLocation(scope.getAgent().getLocation().toGamaPoint().clone());
+			attributes.setLocation(scope.getAgent().getLocation().clone());
 		}
-		if (twoD) {
-			if (imageFile) {
-				// If the size is provided, we automatically center the file
-				final Scaling3D size = attributes.getSize();
-				if (size != null) {
-					// New location
-					attributes.setLocation(
-							attributes.getLocation().minus(size.getX() / 2, size.getY() / 2, size.getZ() / 2));
-				}
+		if (twoD && imageFile) {
+			// If the size is provided, we automatically center the file
+			final Scaling3D size = attributes.getSize();
+			if (size != null) {
+				// New location
+				attributes
+						.setLocation(attributes.getLocation().minus(size.getX() / 2, size.getY() / 2, size.getZ() / 2));
 			}
 		}
 

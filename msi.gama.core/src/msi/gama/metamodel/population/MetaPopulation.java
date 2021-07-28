@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IValue;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -68,7 +68,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		getMapOfPopulations(scope);
-		if (setOfPopulations.size() == 1) { return setOfPopulations.values().iterator().next(); }
+		if (setOfPopulations.size() == 1) return setOfPopulations.values().iterator().next();
 		return null;
 	}
 
@@ -122,7 +122,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		final IAgent agent = a.getAgent();
-		if (agent == source.getAgent()) { return false; }
+		if (agent == source.getAgent()) return false;
 		return contains(scope, agent);
 	}
 
@@ -136,7 +136,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		results.removeIf((each) -> !contains(scope, each));
+		results.removeIf(each -> !contains(scope, each));
 	}
 
 	/**
@@ -173,9 +173,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 		final StringBuilder sb = new StringBuilder(populationSets.size() * 10);
 		sb.append('[');
 		for (int i = 0; i < populationSets.size(); i++) {
-			if (i != 0) {
-				sb.append(',');
-			}
+			if (i != 0) { sb.append(','); }
 			sb.append(StringUtils.toGaml(populationSets.get(i), includingBuiltIn));
 		}
 		sb.append(']');
@@ -210,9 +208,9 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-		if (!(o instanceof IAgent)) { return false; }
+		if (!(o instanceof IAgent)) return false;
 		for (final IPopulationSet pop : populationSets) {
-			if (pop.contains(scope, o)) { return true; }
+			if (pop.contains(scope, o)) return true;
 		}
 		return false;
 	}
@@ -233,7 +231,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IAgent firstValue(final IScope scope) throws GamaRuntimeException {
-		if (populationSets.size() == 0) { return null; }
+		if (populationSets.size() == 0) return null;
 		return populationSets.get(0).firstValue(scope);
 	}
 
@@ -244,7 +242,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IAgent lastValue(final IScope scope) throws GamaRuntimeException {
-		if (populationSets.size() == 0) { return null; }
+		if (populationSets.size() == 0) return null;
 		return populationSets.get(populationSets.size() - 1).lastValue(scope);
 	}
 
@@ -270,7 +268,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public boolean isEmpty(final IScope scope) {
 		for (final IPopulationSet p : populationSets) {
-			if (!p.isEmpty(scope)) { return false; }
+			if (!p.isEmpty(scope)) return false;
 		}
 		return true;
 	}
@@ -292,7 +290,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public IAgent anyValue(final IScope scope) {
-		if (populationSets.size() == 0) { return null; }
+		if (populationSets.size() == 0) return null;
 		final RandomUtils r = scope.getRandom();
 		final int i = r.between(0, populationSets.size() - 1);
 		return populationSets.get(i).anyValue(scope);
@@ -324,10 +322,10 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Method matrixValue()
 	 *
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.GamaPoint)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return listValue(scope, contentsType, false).matrixValue(scope, contentsType, preferredSize, false);
 	}

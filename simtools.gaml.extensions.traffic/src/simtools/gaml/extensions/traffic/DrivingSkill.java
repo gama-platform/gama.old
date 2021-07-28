@@ -28,7 +28,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -1306,7 +1306,7 @@ public class DrivingSkill extends MovingSkill {
 		Pair<Integer, Double> laneAndAccPair;
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		while (remainingTime > 0) {
-			ILocation loc = vehicle.getLocation();
+			GamaPoint loc = vehicle.getLocation();
 			IAgent target = getCurrentTarget(vehicle);
 			GamaPoint targetLoc = (GamaPoint) target.getLocation();
 
@@ -1447,7 +1447,7 @@ public class DrivingSkill extends MovingSkill {
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
 		// main loop to move the agent until the simulation step ends
 		while (remainingTime > 0) {
-			ILocation loc = vehicle.getLocation();
+			GamaPoint loc = vehicle.getLocation();
 			IAgent target = getCurrentTarget(vehicle);
 			GamaPoint targetLoc = (GamaPoint) target.getLocation();
 

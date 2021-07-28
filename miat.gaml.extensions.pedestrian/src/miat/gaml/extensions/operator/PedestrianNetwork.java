@@ -182,7 +182,7 @@ public class PedestrianNetwork {
 				if (nbPoints == 0) continue;
 				if (randomDist) {
 					for (int i = 0; i < nbPoints;i++) {
-						pts.add(Spatial.Punctal.any_location_in(scope, g).toGamaPoint());
+						pts.add(Spatial.Punctal.any_location_in(scope, g));
 					}
 				}
 				else {

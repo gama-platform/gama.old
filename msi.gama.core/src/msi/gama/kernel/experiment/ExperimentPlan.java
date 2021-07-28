@@ -33,7 +33,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.FileOutput;
@@ -268,7 +268,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public ExperimentAgent getAgent(final IScope scope, final ILocation value) {
+		public ExperimentAgent getAgent(final IScope scope, final GamaPoint value) {
 			return agent;
 		}
 

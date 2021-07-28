@@ -14,7 +14,6 @@ import java.util.List;
 
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -55,7 +54,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return type.cast(scope, objects, null, false);
 	}
 
-	protected ILocation buildIndex(final IScope scope, final Object object) {
+	protected GamaPoint buildIndex(final IScope scope, final Object object) {
 		return GamaPointType.staticCast(scope, object, false);
 	}
 
@@ -152,7 +151,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @param preferredSize
 	 *            the preferred size
 	 */
-	protected GamaMatrix(final IScope scope, final List objects, final ILocation preferredSize,
+	protected GamaMatrix(final IScope scope, final List objects, final GamaPoint preferredSize,
 			final IType contentsType) {
 		if (preferredSize != null) {
 			numRows = (int) preferredSize.getY();
@@ -176,7 +175,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public T get(final IScope scope, final ILocation p) {
+	public T get(final IScope scope, final GamaPoint p) {
 		final double px = p.getX();
 		final double py = p.getY();
 		if (px > numCols - 1 || px < 0)
@@ -234,7 +233,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 				sb.append(Cast.asString(scope, get(scope, col, line)));
 				if (col != numCols - 1) { sb.append(';'); }
 			}
-			sb.append(java.lang.System.getProperty("line.separator"));
+			sb.append(System.lineSeparator());
 		}
 		return sb.toString();
 	}
@@ -255,14 +254,14 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	//
 	// @Override
-	// public final Object removeAt(IScope scope, final ILocation p) throws
+	// public final Object removeAt(IScope scope, final GamaPoint p) throws
 	// GamaRuntimeException {
 	// // Normally never called as matrices are of fixed length
 	// return remove(scope, (int) p.getX(), (int) p.getY());
 	// }
 
 	// @Override
-	// public final void put(IScope scope, final ILocation p, final T value,
+	// public final void put(IScope scope, final GamaPoint p, final T value,
 	// final Object param)
 	// throws GamaRuntimeException {
 	// set(scope, (int) p.getX(), (int) p.getY(), value);
@@ -287,8 +286,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	// @Override
 	// public boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-	// if (object instanceof ILocation) {
-	// final ILocation index = (ILocation) object;
+	// if (object instanceof GamaPoint) {
+	// final GamaPoint index = (GamaPoint) object;
 	// final int x = (int) index.getX();
 	// final int y = (int) index.getY();
 	// return x >= 0 && x < numCols && y >= 0 && y < numRows;
@@ -424,7 +423,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 			setNthElement(scope, (int) index, value);
 			return;
 		}
-		final ILocation p = buildIndex(scope, index);
+		final GamaPoint p = buildIndex(scope, index);
 		set(scope, (int) p.getX(), (int) p.getY(), value);
 
 	}
@@ -484,7 +483,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IValue#matrixValue(msi.gama.interfaces.IScope, msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public final IMatrix<T> matrixValue(final IScope scope, final IType type, final ILocation size, final boolean copy)
+	public final IMatrix<T> matrixValue(final IScope scope, final IType type, final GamaPoint size, final boolean copy)
 			throws GamaRuntimeException {
 		return _matrixValue(scope, size, type, copy);
 	}
@@ -582,7 +581,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract IList<T> _listValue(IScope scope, IType contentsType, boolean cast);
 
-	protected abstract IMatrix<T> _matrixValue(IScope scope, ILocation size, IType type, boolean copy);
+	protected abstract IMatrix<T> _matrixValue(IScope scope, GamaPoint size, IType type, boolean copy);
 
 	protected abstract void _clear();
 

@@ -32,7 +32,6 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -363,7 +362,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public void setLocation(final ILocation newGlobalLoc) {}
+	public GamaPoint setLocation(final GamaPoint p) {
+		return p;
+	}
 
 	@Override
 	public void setGeometry(final IShape newGlobalGeometry) {}

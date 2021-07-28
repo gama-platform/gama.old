@@ -43,7 +43,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.population.MetaPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
@@ -714,7 +714,7 @@ public class Containers {
 							value = "matrix([[1,2,3],[4,5,6]]) index_of 4",
 							equals = "{1.0,0.0}") }))
 	@test ("matrix([[1,2,3],[4,5,6]]) index_of 4 = {1.0,0.0}")
-	public static ILocation index_of(final IScope scope, final IMatrix c, final Object o) {
+	public static GamaPoint index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = 0; i < notNull(scope, c).getCols(scope); i++) {
 			for (int j = 0; j < c.getRows(scope); j++) {
 				if (c.get(scope, i, j).equals(o)) return new GamaPoint(i, j);
@@ -804,7 +804,7 @@ public class Containers {
 							value = "matrix([[1,2,3],[4,5,4]]) last_index_of 4",
 							equals = "{1.0,2.0}") }))
 	@test ("matrix([[1,2,3],[4,5,4]]) last_index_of 4 = {1.0,2.0}")
-	public static ILocation last_index_of(final IScope scope, final IMatrix c, final Object o) {
+	public static GamaPoint last_index_of(final IScope scope, final IMatrix c, final Object o) {
 		for (int i = notNull(scope, c).getCols(scope) - 1; i > -1; i--) {
 			for (int j = c.getRows(scope) - 1; j > -1; j--) {
 				if (c.get(scope, i, j).equals(o)) return new GamaPoint(i, j);
@@ -1416,7 +1416,7 @@ public class Containers {
 		int size = l.length(scope);
 		if (size == 0) { size = 1; }
 		if (s instanceof Number) return ((Number) s).doubleValue() / size;
-		if (s instanceof ILocation) return Points.divide(scope, (GamaPoint) s, size);
+		if (s instanceof GamaPoint) return Points.divide(scope, (GamaPoint) s, size);
 		if (s instanceof GamaColor) return Colors.divide((GamaColor) s, size);
 		return Cast.asFloat(scope, s) / size;
 	}

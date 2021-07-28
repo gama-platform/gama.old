@@ -17,7 +17,7 @@ import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.UserCommandStatement;
@@ -74,7 +74,7 @@ public class EditorFactory {
 	}
 
 	public static PointEditor create(final IScope scope, final EditorsGroup parent, final String title,
-			final ILocation value, final EditorListener<ILocation> whenModified) {
+			final GamaPoint value, final EditorListener<GamaPoint> whenModified) {
 		return new PointEditor(scope, parent, title, value, whenModified);
 	}
 

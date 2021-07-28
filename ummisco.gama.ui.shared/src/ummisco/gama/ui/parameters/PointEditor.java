@@ -39,7 +39,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
@@ -47,7 +46,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-public class PointEditor extends AbstractEditor<ILocation> implements VerifyListener {
+public class PointEditor extends AbstractEditor<GamaPoint> implements VerifyListener {
 
 	private static final String[] LABELS = { "x", "y", "z" };
 	private static final int LABEL_WIDTH = 15;
@@ -60,12 +59,12 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	private final Text[] ordinates = new Text[3];
 	private final Label[] labels = new Label[3];
 
-	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<ILocation> l) {
+	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaPoint> l) {
 		super(scope, agent, param, l);
 	}
 
-	PointEditor(final IScope scope, final EditorsGroup parent, final String title, final ILocation value,
-			final EditorListener<ILocation> whenModified) {
+	PointEditor(final IScope scope, final EditorsGroup parent, final String title, final GamaPoint value,
+			final EditorListener<GamaPoint> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createControls(parent);
@@ -133,7 +132,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	protected void displayParameterValue() {
 		allowVerification = false;
-		final var p = (GamaPoint) currentValue;
+		final var p = currentValue;
 		for (var i = 0; i < 3; i++) {
 			if (isReverting || !ordinates[i].isFocusControl()) {
 				ordinates[i].setText(currentValue == null ? "0.0" : StringUtils.toGaml(p.getOrdinate(i), false));
@@ -153,7 +152,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	protected boolean modifyValue(final Object val) throws GamaRuntimeException {
-		GamaPoint i = Cast.asPoint(getScope(), val).toGamaPoint();
+		GamaPoint i = Cast.asPoint(getScope(), val);
 		if (minValue != null && i.smallerThan(Cast.asPoint(getScope(), minValue))
 				|| maxValue != null && i.biggerThan(Cast.asPoint(getScope(), maxValue)))
 			return false;
@@ -177,24 +176,24 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	}
 
 	@Override
-	protected ILocation applyRevert() {
+	protected GamaPoint applyRevert() {
 		isReverting = true;
 		return super.applyRevert();
 	}
 
 	@Override
-	protected ILocation applyPlus() {
+	protected GamaPoint applyPlus() {
 		isReverting = true;
-		GamaPoint p = currentValue.toGamaPoint().clone();
-		p.add(stepValue.toGamaPoint());
+		GamaPoint p = currentValue.clone();
+		p.add(stepValue);
 		return p;
 	}
 
 	@Override
-	protected ILocation applyMinus() {
+	protected GamaPoint applyMinus() {
 		isReverting = true;
-		GamaPoint p = currentValue.toGamaPoint().clone();
-		p.subtract(stepValue.toGamaPoint());
+		GamaPoint p = currentValue.clone();
+		p.subtract(stepValue);
 		return p;
 	}
 

@@ -52,7 +52,7 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
@@ -101,7 +101,7 @@ public class SwtGui implements IGui {
 	public volatile static boolean ALL_TESTS_RUNNING;
 
 	private IAgent highlightedAgent;
-	private ILocation mouseLocationInModel;
+	private GamaPoint mouseLocationInModel;
 
 	static {
 		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
@@ -130,8 +130,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		if (g.isReported()) return;
-		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) return;
+		if (g.isReported() || (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing())) return;
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		if (!handler.isRunning()) { handler.start(); }
 		handler.offer(g);
@@ -201,8 +200,8 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.asyncRun(() -> {
 			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
 			final TextTransfer textTransfer = TextTransfer.getInstance();
-			final Transfer[] transfers = new Transfer[] { textTransfer };
-			final Object[] data = new Object[] { text };
+			final Transfer[] transfers = { textTransfer };
+			final Object[] data = { text };
 			clipboard.setContents(data, transfers);
 			clipboard.dispose();
 		});
@@ -407,8 +406,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void setSelectedAgent(final IAgent a) {
 		WorkbenchHelper.asyncRun(() -> {
-			if (WorkbenchHelper.getPage() == null) return;
-			if (a == null) return;
+			if ((WorkbenchHelper.getPage() == null) || (a == null)) return;
 			try {
 				final InspectDisplayOutput output = new InspectDisplayOutput(a);
 				output.launch(a.getScope());
@@ -445,7 +443,7 @@ public class SwtGui implements IGui {
 			} else {
 				showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 			}
-			WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
+			WorkbenchHelper.runInUI("Arranging views", 0, m -> {
 				WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 				if (showConsoles != null && !showConsoles) {
 					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
@@ -595,7 +593,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.run(() -> {
 			final IViewPart part =
 					WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
-			if (part != null && part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
+			if (part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
 		});
 
 	}
@@ -620,7 +618,7 @@ public class SwtGui implements IGui {
 	public void run(final String taskName, final Runnable r, final boolean asynchronous) {
 
 		if (asynchronous) {
-			WorkbenchHelper.runInUI(taskName, 0, (m) -> r.run());
+			WorkbenchHelper.runInUI(taskName, 0, m -> r.run());
 		} else {
 			WorkbenchHelper.run(r);
 		}
@@ -628,7 +626,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void setFocusOn(final IShape shape) {
-		for (final IDisplaySurface surface : this.allDisplaySurfaces()) {
+		for (final IDisplaySurface surface : SwtGui.allDisplaySurfaces()) {
 			surface.focusOn(shape);
 		}
 		GAMA.getExperiment().refreshAllOutputs();
@@ -641,12 +639,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public ILocation getMouseLocationInModel() {
+	public GamaPoint getMouseLocationInModel() {
 		return mouseLocationInModel;
 	}
 
 	@Override
-	public void setMouseLocationInModel(final ILocation location) {
+	public void setMouseLocationInModel(final GamaPoint location) {
 		mouseLocationInModel = location;
 	}
 

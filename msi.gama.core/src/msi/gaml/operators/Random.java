@@ -12,7 +12,7 @@ package msi.gaml.operators;
 
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -422,7 +422,7 @@ public class Random {
 			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "skew_gauss", "truncated_gauss",
 					"weibull_rnd" })
 	@test ("seed <- 1.0; rnd ({2.5,3, 1.0}) = {1.935030382553449,2.3551192220022856,0.5087825199078746}")
-	public static ILocation opRnd(final IScope scope, final GamaPoint max) {
+	public static GamaPoint opRnd(final IScope scope, final GamaPoint max) {
 		return opRnd(scope, NULL_POINT, max);
 	}
 

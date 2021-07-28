@@ -3,7 +3,7 @@ package msi.gama.util.matrix;
 import javax.annotation.Nonnull;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.IDiffusionTarget;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -111,7 +111,7 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 *            a world location (location of an agent, for instance)
 	 * @return A list of values at this location. Never null nor empty (as there is at least one band).
 	 */
-	IShape getCellShapeAt(IScope scope, ILocation loc);
+	IShape getCellShapeAt(IScope scope, GamaPoint loc);
 
 	IShape getCellShapeAt(IScope scope, int columns, int rows);
 

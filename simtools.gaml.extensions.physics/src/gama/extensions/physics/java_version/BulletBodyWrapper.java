@@ -21,7 +21,7 @@ import gama.extensions.physics.common.AbstractBodyWrapper;
 import gama.extensions.physics.common.IBody;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.Types;
@@ -50,7 +50,7 @@ public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld
 	public RigidBody createAndInitializeBody(final CollisionShape shape, final DiscreteDynamicsWorld world) {
 		final Transform startTransform = new Transform();
 		startTransform.setIdentity();
-		ILocation p = agent.getLocation();
+		GamaPoint p = agent.getLocation();
 		startTransform.origin.set((float) p.getX(), (float) p.getY(), (float) p.getZ() + aabbTranslation.getZ());
 		final MotionState state = new DefaultMotionState(startTransform);
 		final RigidBodyConstructionInfo info = new RigidBodyConstructionInfo(0f, state, shape);

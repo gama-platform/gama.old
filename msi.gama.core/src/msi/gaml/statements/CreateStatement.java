@@ -35,7 +35,7 @@ import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -273,11 +273,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					cd.error(sd.getName() + " is " + p + " and cannot be instantiated", WRONG_TYPE, SPECIES);
 					return;
 				}
-			} else {
-				if (!(sd instanceof ModelDescription)) {
-					cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
-							WRONG_TYPE, SPECIES);
-				}
+			} else if (!(sd instanceof ModelDescription)) {
+				cd.info("The actual species will be determined at runtime. This can lead to errors if it cannot be instantiated",
+						WRONG_TYPE, SPECIES);
 			}
 
 			if (sd instanceof ModelDescription && !(cd.getSpeciesContext() instanceof ExperimentDescription)) {
@@ -459,7 +457,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		Object source = from == null ? null : from.value(scope);
 		if (source instanceof String) {
 			source = Files.from(scope, (String) source);
-		} else if (source instanceof GamaShape) { source = GamaListFactory.wrap(Types.GEOMETRY, source); }
+		} else if (source instanceof IShape) { source = GamaListFactory.wrap(Types.GEOMETRY, (IShape) source); }
 		return source;
 	}
 

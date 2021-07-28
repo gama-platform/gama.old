@@ -18,7 +18,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.google.common.collect.ImmutableList;
 
 import msi.gama.common.util.RandomUtils;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
@@ -47,9 +47,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	/** The matrix. */
-	private Object[] matrix;
+	protected Object[] matrix;
 
-	public GamaObjectMatrix(final ILocation p, final IType<?> contentsType) {
+	public GamaObjectMatrix(final GamaPoint p, final IType<?> contentsType) {
 		this((int) p.getX(), (int) p.getY(), contentsType);
 	}
 
@@ -81,7 +81,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final ILocation preferredSize,
+	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final GamaPoint preferredSize,
 			final IType<?> contentsType) {
 		super(scope, objects, preferredSize, contentsType);
 		setMatrix(new Object[numRows * numCols]);
@@ -152,8 +152,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final Object[] mab = ArrayUtils.addAll(getMatrix(), ((GamaObjectMatrix) b).getMatrix());
 		final IType<?> newContentsType =
 				GamaType.findCommonType(getGamlType().getContentType(), b.getGamlType().getContentType());
-		final IMatrix<?> fl = new GamaObjectMatrix(numCols, numRows + b.getRows(scope), mab, newContentsType);
-		return fl;
+		return new GamaObjectMatrix(numCols, numRows + b.getRows(scope), mab, newContentsType);
 	}
 
 	/**
@@ -169,8 +168,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final GamaObjectMatrix aprime = _reverse(scope);
 		final GamaObjectMatrix bprime = GamaObjectMatrix.from(b.getCols(scope), b.getRows(scope), b)._reverse(scope);
 		final GamaObjectMatrix c = (GamaObjectMatrix) aprime._opAppendVertically(scope, bprime);
-		final GamaObjectMatrix cprime = c._reverse(scope);
-		return cprime;
+		return c._reverse(scope);
 	}
 
 	// @Override
@@ -236,7 +234,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	protected IMatrix<Object> _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
+	protected IMatrix<Object> _matrixValue(final IScope scope, final GamaPoint preferredSize, final IType type,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}
@@ -253,7 +251,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	public GamaObjectMatrix copy(final IScope scope, final ILocation size, final boolean copy) {
+	public GamaObjectMatrix copy(final IScope scope, final GamaPoint size, final boolean copy) {
 		if (size == null) {
 			if (copy)
 				return new GamaObjectMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length),
@@ -398,8 +396,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 */
 	@Override
 	public Object getNthElement(final Integer index) {
-		if (index == null) return null;
-		if (index > getMatrix().length) return null;
+		if (index == null || index > getMatrix().length) return null;
 		return getMatrix()[index];
 	}
 

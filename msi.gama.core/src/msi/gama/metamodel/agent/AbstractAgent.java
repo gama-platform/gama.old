@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -132,7 +132,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation g) {
+	public double euclidianDistanceTo(final GamaPoint g) {
 		return getGeometry().euclidianDistanceTo(g);
 	}
 
@@ -327,13 +327,13 @@ public abstract class AbstractAgent implements IAgent {
 	public void setName(final String name) {}
 
 	@Override
-	public ILocation getLocation() {
+	public GamaPoint getLocation() {
 		return getGeometry().getLocation();
 	}
 
 	@Override
-	public void setLocation(final ILocation l) {
-		getGeometry().setLocation(l);
+	public GamaPoint setLocation(final GamaPoint l) {
+		return getGeometry().setLocation(l);
 	}
 
 	@Override
@@ -589,7 +589,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<GamaPoint> getPoints() {
 		if (getGeometry() == null) return GamaListFactory.EMPTY_LIST;
 		return getGeometry().getPoints();
 	}

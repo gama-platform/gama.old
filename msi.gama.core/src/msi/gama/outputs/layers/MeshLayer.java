@@ -47,7 +47,7 @@ public class MeshLayer extends AbstractLayer {
 		attributes.setGrayscaled(data.isGrayScaled());
 		attributes.setEmpty(data.isWireframe());
 		if (textureFile != null) { attributes.setTextures(Arrays.asList(textureFile)); }
-		attributes.setLocation(data.getPosition().toGamaPoint());
+		attributes.setLocation(data.getPosition());
 		attributes.setTriangulated(data.isTriangulated());
 		attributes.setWithText(data.isShowText());
 		attributes.setCellSize(data.getCellSize());

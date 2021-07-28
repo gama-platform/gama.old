@@ -131,8 +131,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		THREED_FILE("");
 
 		Type(final String name) {
-			if (name.isEmpty()) { return; }
-			if (name.equals("3D")) {
+			if (name.isEmpty()) return;
+			if ("3D".equals(name)) {
 				THREED_TYPES.add(this);
 			} else {
 				JTS_TYPES.put(name, this);
@@ -151,7 +151,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	void dispose();
 
-	double euclidianDistanceTo(ILocation g);
+	double euclidianDistanceTo(GamaPoint g);
 
 	double euclidianDistanceTo(IShape g);
 
@@ -224,7 +224,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	GamaShape getGeometricEnvelope();
 
 	@getter ("points")
-	IList<? extends ILocation> getPoints();
+	IList<GamaPoint> getPoints();
 
 	@getter ("geometries")
 	IList<? extends IShape> getGeometries();
@@ -236,13 +236,9 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 */
 	default void copyShapeAttributesFrom(final IShape other) {
 		final Double d = other.getDepth();
-		if (d != null) {
-			setDepth(d);
-		}
+		if (d != null) { setDepth(d); }
 		final Type t = other.getGeometricalType();
-		if (THREED_TYPES.contains(t)) {
-			setGeometricalType(t);
-		}
+		if (THREED_TYPES.contains(t)) { setGeometricalType(t); }
 	}
 
 	void setGeometricalType(Type t);

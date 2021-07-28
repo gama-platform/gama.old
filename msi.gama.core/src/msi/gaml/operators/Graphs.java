@@ -51,7 +51,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
@@ -184,7 +184,7 @@ public class Graphs {
 
 				return nb == 2;
 			}
-			try (ICollector<ILocation> cp = Collector.getSet()) {
+			try (ICollector<GamaPoint> cp = Collector.getSet()) {
 				final GamaPoint[] lp1 = GeometryUtils.getPointsOf(p1);
 				for (final GamaPoint pt : GeometryUtils.getPointsOf(p2)) {
 					if (ArrayUtils.contains(lp1, pt)) {
@@ -2923,7 +2923,7 @@ public class Graphs {
 			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.GRAPH })
 	@doc (
-			value = "The Girvan–Newman algorithm is a hierarchical method used to detect communities. It detects communities by progressively removing edges from the original network."
+			value = "The Girvanï¿½Newman algorithm is a hierarchical method used to detect communities. It detects communities by progressively removing edges from the original network."
 					+ "It returns a list of list of vertices and takes as operand the graph and the number of clusters")
 	@no_test
 	public static IList GirvanNewmanClustering(final IScope scope, final IGraph graph, final int numCLusters) {

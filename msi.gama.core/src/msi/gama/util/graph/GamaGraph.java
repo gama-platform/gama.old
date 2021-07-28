@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Supplier;
 
+import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.GraphType;
 import org.jgrapht.Graphs;
@@ -46,7 +47,6 @@ import org.jgrapht.alg.tour.PalmerHamiltonianCycle;
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.DefaultUndirectedGraph;
@@ -59,7 +59,7 @@ import com.google.common.collect.ImmutableList;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.AStar;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
@@ -237,7 +237,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		this(scope, Types.get(nodes.get(0).getClass()), edgeS == null ? Types.STRING : Types.AGENT);
 		Map<String, Object> verticesAg = new HashMap();
 		for (Object v : graph.vertexSet()) {
-			Object d = nodes.get(Integer.valueOf(v.toString()));
+			Object d = nodes.get(Integer.parseInt(v.toString()));
 			addVertex(d);
 			verticesAg.put(v.toString(), d);
 		}
@@ -572,10 +572,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public boolean addVertex(final Object v) {
 		if (v instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
-			if (v instanceof IAgent) {
-				if (!this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies) {
-					vertexSpecies = null;
-				}
+			if ((v instanceof IAgent)
+					&& (!this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies)) {
+				vertexSpecies = null;
 			}
 			addValue(graphScope, (msi.gaml.operators.Graphs.GraphObjectToAdd) v);
 			return ((msi.gaml.operators.Graphs.GraphObjectToAdd) v).getObject() != null;
@@ -671,7 +670,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public double getEdgeWeight(final Object e) {
-		if (!containsEdge(e)) return DefaultDirectedWeightedGraph.DEFAULT_EDGE_WEIGHT;
+		if (!containsEdge(e)) return Graph.DEFAULT_EDGE_WEIGHT;
 		return getEdge(e).getWeight();
 	}
 
@@ -1055,7 +1054,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) {
 		// TODO Representation of the graph as a matrix ?
 		return null;
@@ -1213,12 +1212,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			if (target instanceof GamaPair) {
 				target = getEdge(((GamaPair) target).first(), ((GamaPair) target).last());
 				setEdgeWeight(target, Cast.asFloat(graphScope, entry.getValue()));
+			} else if (containsEdge(target)) {
+				setEdgeWeight(target, Cast.asFloat(graphScope, entry.getValue()));
 			} else {
-				if (containsEdge(target)) {
-					setEdgeWeight(target, Cast.asFloat(graphScope, entry.getValue()));
-				} else {
-					setVertexWeight(target, Cast.asFloat(graphScope, entry.getValue()));
-				}
+				setVertexWeight(target, Cast.asFloat(graphScope, entry.getValue()));
 			}
 		}
 
@@ -1481,46 +1478,42 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 					matrix.set(scope, j, i, nextVertice(scope, path.getEdgeList().get(0), v1, indexVertices, directed));
 				}
 			}
-		} else {
-			if (pathFindingAlgo.equals(shortestPathAlgorithm.FloydWarshall)) {
-				optimizer = new FloydWarshallShortestPathsGAMA(this);
-				optimizer.lazyCalculateMatrix();
-				for (int i = 0; i < vertexMap.size(); i++) {
-					for (int j = 0; j < vertexMap.size(); j++) {
-						if (i == j) { continue; }
-						matrix.set(scope, j, i, optimizer.succRecur(i, j));
-					}
-				}
-			} else {
-				for (int i = 0; i < vertexMap.size(); i++) {
-					final V v1 = vertices.get(i);
-					for (int j = 0; j < vertexMap.size(); j++) {
-						if (i == j) { continue; }
-						if (matrix.get(scope, j, i) != i) { continue; }
-						final V v2 = vertices.get(j);
-						final List edges = computeBestRouteBetween(scope, v1, v2);
-						// DEBUG.LOG("edges : " + edges);
-						if (edges == null) { continue; }
-						V source = v1;
-						int s = i;
-						for (final Object edge : edges) {
-							// DEBUG.LOG("s : " + s + " j : " + j + "
-							// i: " + i);
-							if (s != i && matrix.get(scope, j, s) != s) { break; }
-
-							V target = (V) this.getEdgeTarget(edge);
-							if (!directed && target == source) { target = (V) this.getEdgeSource(edge); }
-							final Integer k = indexVertices.get(scope, target);
-							// DEBUG.LOG("k : " +k);
-							matrix.set(scope, j, s, k);
-							s = k;
-							source = target;
-						}
-
-					}
+		} else if (shortestPathAlgorithm.FloydWarshall.equals(pathFindingAlgo)) {
+			optimizer = new FloydWarshallShortestPathsGAMA(this);
+			optimizer.lazyCalculateMatrix();
+			for (int i = 0; i < vertexMap.size(); i++) {
+				for (int j = 0; j < vertexMap.size(); j++) {
+					if (i == j) { continue; }
+					matrix.set(scope, j, i, optimizer.succRecur(i, j));
 				}
 			}
+		} else {
+			for (int i = 0; i < vertexMap.size(); i++) {
+				final V v1 = vertices.get(i);
+				for (int j = 0; j < vertexMap.size(); j++) {
+					if ((i == j) || (matrix.get(scope, j, i) != i)) { continue; }
+					final V v2 = vertices.get(j);
+					final List edges = computeBestRouteBetween(scope, v1, v2);
+					// DEBUG.LOG("edges : " + edges);
+					if (edges == null) { continue; }
+					V source = v1;
+					int s = i;
+					for (final Object edge : edges) {
+						// DEBUG.LOG("s : " + s + " j : " + j + "
+						// i: " + i);
+						if (s != i && matrix.get(scope, j, s) != s) { break; }
 
+						V target = (V) this.getEdgeTarget(edge);
+						if (!directed && target == source) { target = (V) this.getEdgeSource(edge); }
+						final Integer k = indexVertices.get(scope, target);
+						// DEBUG.LOG("k : " +k);
+						matrix.set(scope, j, s, k);
+						s = k;
+						source = target;
+					}
+
+				}
+			}
 		}
 		return matrix;
 

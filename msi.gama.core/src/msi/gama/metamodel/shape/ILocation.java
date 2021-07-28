@@ -12,13 +12,7 @@ package msi.gama.metamodel.shape;
 
 import org.locationtech.jts.geom.Coordinate;
 
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.variable;
-import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.IType;
 
 /**
  * The class ILocation.
@@ -28,39 +22,24 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ("rawtypes")
-@vars ({ @variable (
-		name = IKeyword.X,
-		type = IType.FLOAT,
-		doc = { @doc ("Returns the x ordinate of this point") }),
-		@variable (
-				name = IKeyword.Y,
-				type = IType.FLOAT,
-				doc = { @doc ("Returns the y ordinate of this point") }),
-		@variable (
-				name = IKeyword.Z,
-				type = IType.FLOAT,
-				doc = { @doc ("Returns the z ordinate of this point") }) })
+@Deprecated
 public interface ILocation extends IShape, Comparable<Coordinate> {
 
-	@getter (IKeyword.X)
 	double getX();
 
 	void setX(double x);
 
-	@getter (IKeyword.Y)
 	double getY();
 
 	void setY(double y);
 
 	// public abstract boolean equals(final Coordinate o);
-	@getter (IKeyword.Z)
 	double getZ();
 
 	void setZ(double z);
 
 	void add(ILocation p);
 
-	@Override
 	double euclidianDistanceTo(ILocation targ);
 
 	@Override
@@ -68,14 +47,6 @@ public interface ILocation extends IShape, Comparable<Coordinate> {
 
 	GamaPoint toGamaPoint();
 
-	ILocation yNegated();
-
 	boolean equalsWithTolerance(Coordinate c, double tolerance);
-
-	ILocation withPrecision(int i);
-
-	default int compareTo(final ILocation location) {
-		return compareTo((Coordinate) toGamaPoint());
-	}
 
 }

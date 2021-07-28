@@ -58,7 +58,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -449,7 +449,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public ILocation getModelCoordinates() {
+	public GamaPoint getModelCoordinates() {
 		final Point origin = getOrigin();
 		final Point mouse = getMousePosition();
 		if (mouse == null) return null;

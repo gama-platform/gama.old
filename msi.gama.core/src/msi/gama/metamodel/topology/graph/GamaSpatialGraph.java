@@ -25,7 +25,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -269,7 +269,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final IShape sh = verticesBuilt.get(vertex.hashCode());
 		if (sh != null) { return sh; }
 		for (final Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
+			if (vertex.distance3D((((IShape) v).getLocation())) <= tolerance) {
 				return (IShape) v;
 			}
 		}
@@ -287,7 +287,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		*/
 		
-		final IMap<ILocation, IShape> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
+		final IMap<GamaPoint, IShape> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			super.addVertex(ag);
 			nodes.put(((IShape) ag).getLocation(), (IShape) ag);
@@ -301,7 +301,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 	}
 
-	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<ILocation, IShape> nodes) {
+	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<GamaPoint, IShape> nodes) {
 		if (containsEdge(e)) { return false; }
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		final IShape ptS = new GamaPoint(coord[0]);

@@ -47,7 +47,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -496,7 +496,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@SuppressWarnings ("unchecked")
 	@Override
-	public T getAgent(final IScope scope, final ILocation coord) {
+	public T getAgent(final IScope scope, final GamaPoint coord) {
 		final IAgentFilter filter = In.list(scope, this);
 		if (filter == null) return null;
 

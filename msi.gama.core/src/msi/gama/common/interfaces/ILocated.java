@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
@@ -37,8 +37,9 @@ public interface ILocated {
 	 *
 	 * @param p
 	 *            the new location
+	 * @return the new location or the previous one if a problem has occured
 	 */
-	void setLocation(ILocation p);
+	GamaPoint setLocation(GamaPoint p);
 
 	/**
 	 * Gets the absolute location of the object implemeting this interface . If the implementation classes provide an
@@ -48,6 +49,6 @@ public interface ILocated {
 	 * @return the absolute (i.e. agent-like) location
 	 */
 	@getter (IKeyword.LOCATION)
-	ILocation getLocation();
+	GamaPoint getLocation();
 
 }

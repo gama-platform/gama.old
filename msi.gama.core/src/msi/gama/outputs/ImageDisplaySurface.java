@@ -71,9 +71,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void outputReloaded() {
 		this.scope = output.getScope().copy("in image surface of " + output.getName());
-		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) {
-			scope.disableErrorReporting();
-		}
+		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) { scope.disableErrorReporting(); }
 		if (manager == null) {
 			manager = new LayerManager(this, output);
 		} else {
@@ -121,18 +119,17 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	public boolean resizeImage(final int newWidth, final int newHeight, final boolean force) {
-		if (!force && width == newWidth && height == newHeight) { return false; }
+		if (!force && width == newWidth && height == newHeight) return false;
 		this.width = newWidth;
 		this.height = newHeight;
 		final Image copy = buffImage;
 		createBuffImage();
-		if (getScope()!=null && getScope().isPaused()) {
+		if (getScope() != null && getScope().isPaused()) {
 			updateDisplay(true);
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
 		}
-		if(copy!=null)
-			copy.flush();
+		if (copy != null) { copy.flush(); }
 		return true;
 	}
 
@@ -144,7 +141,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	private void drawAllDisplays() {
-		if (displayGraphics == null) { return; }
+		if (displayGraphics == null) return;
 		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
 		manager.drawLayersOn(displayGraphics);
 	}
@@ -159,21 +156,15 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	private void paint() {
-		if (buffImage == null) {
-			createBuffImage();
-		}
+		if (buffImage == null) { createBuffImage(); }
 		drawAllDisplays();
 
 	}
 
 	@Override
 	public void dispose() {
-		if (g2 != null) {
-			g2.dispose();
-		}
-		if (manager != null) {
-			manager.dispose();
-		}
+		if (g2 != null) { g2.dispose(); }
+		if (manager != null) { manager.dispose(); }
 		GAMA.releaseScope(scope);
 	}
 

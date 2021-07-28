@@ -23,7 +23,7 @@ import com.google.common.collect.Ordering;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
@@ -79,7 +79,7 @@ public class GraphTopology extends AbstractTopology {
 
 	private IShape optimizedClosestTo(final IShape source, final List<IShape> candidates) {
 		IShape result = null;
-		final ILocation loc = source.getLocation();
+		final GamaPoint loc = source.getLocation();
 		double distMin = Double.MAX_VALUE;
 		for (final IShape c : candidates) {
 			final double dist = loc.euclidianDistanceTo(c.getLocation());
@@ -100,7 +100,7 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
-		// final ILocation source = sourceShape.getLocation();
+		// final GamaPoint source = sourceShape.getLocation();
 		final GamaSpatialGraph graph = (GamaSpatialGraph) getPlaces();
 		IShape sourceN = source;
 		IShape targetN = target;
@@ -676,7 +676,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
+	public GamaSpatialPath pathBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
 		return pathBetween(scope, (IShape) source, (IShape) target);
 	}
 
@@ -717,7 +717,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final IScope scope, final ILocation p) {
+	public boolean isValidLocation(final IScope scope, final GamaPoint p) {
 		return isValidGeometry(scope, p.getGeometry());
 	}
 
@@ -758,7 +758,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
+	public Double distanceBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
 		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if (path == null) { return Double.MAX_VALUE; }
 		if (path.getEdgeList().isEmpty()) { return 0.0; }
@@ -872,7 +872,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final GamaPoint source, final GamaPoint target,
 			final int k) {
 		return KpathsBetween(scope, source.getGeometry(), target.getGeometry(), k);
 	}

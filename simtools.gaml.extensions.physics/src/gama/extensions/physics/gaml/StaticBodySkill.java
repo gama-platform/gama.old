@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -126,10 +126,10 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	 *
 	 */
 	@listener (IKeyword.LOCATION)
-	public void changeInLocation(final IAgent a, final ILocation loc) {
+	public void changeInLocation(final IAgent a, final GamaPoint loc) {
 		IBody body = getBody(a);
 		if (body == null) return;
-		body.setLocation(loc.toGamaPoint());
+		body.setLocation(loc);
 	}
 
 	@getter (AABB)

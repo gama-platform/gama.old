@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
@@ -63,7 +63,7 @@ public interface IList<E>
 	}
 
 	@Override
-	default IMatrix<E> matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	default IMatrix<E> matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, contentsType, preferredSize);
 	}
@@ -154,7 +154,7 @@ public interface IList<E>
 
 	@Override
 	default void removeIndex(final IScope scope, final Object index) {
-		if (index instanceof Integer) { remove(((Integer) index).intValue()); }
+		if (index instanceof Integer) { remove(((Integer) index)); }
 	}
 
 	@Override
@@ -185,7 +185,7 @@ public interface IList<E>
 
 	@Override
 	default E get(final IScope scope, final Integer index) {
-		return get(index.intValue());
+		return get(index);
 	}
 
 	@Override
@@ -267,7 +267,7 @@ public interface IList<E>
 		final IList<Integer> l = (IList<Integer>) index.listValue(scope, Types.INT, false);
 		Collections.sort(l, Collections.reverseOrder());
 		for (final Integer i : l) {
-			remove(i.intValue());
+			remove(i);
 		}
 	}
 

@@ -61,7 +61,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -486,7 +486,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		coverage = null;
 	}
 
-	public Double valueOf(final IScope scope, final ILocation loc) {
+	public Double valueOf(final IScope scope, final GamaPoint loc) {
 		return valueOf(scope, loc.getX(), loc.getY());
 	}
 

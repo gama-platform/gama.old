@@ -19,7 +19,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.JAVA_COMMAND" value="java"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Home"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/16.0.1"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog  -v  /Applications/Gama.app/Contents/headless/samples/predatorPrey.xml   /tmp/out"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <booleanAttribute key="pde.generated.config" value="false"/>
@@ -32,7 +32,6 @@
         <setEntry value="com.jcraft.jsch@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
         <setEntry value="javax.inject@default:default"/>
-        <setEntry value="javax.servlet@default:default"/>
         <setEntry value="javax.xml@default:default"/>
         <setEntry value="org.antlr.runtime@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>

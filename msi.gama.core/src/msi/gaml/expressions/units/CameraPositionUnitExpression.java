@@ -15,7 +15,7 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.runtime.IScope;
 import msi.gaml.types.Types;
 
@@ -26,7 +26,7 @@ public class CameraPositionUnitExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public ILocation _value(final IScope scope) {
+	public GamaPoint _value(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
 		if (g == null) {
 			Iterable<IDisplaySurface> surfaces = scope.getGui().getAllDisplaySurfaces();

@@ -24,7 +24,6 @@ import com.jogamp.opengl.swt.GLCanvas;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.charts.ChartOutput;
@@ -367,17 +366,17 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 
 	@Override
-	public final ILocation getCameraPos() {
+	public final GamaPoint getCameraPos() {
 		return cameraHelper.getPosition();
 	}
 
 	@Override
-	public final ILocation getCameraTarget() {
+	public final GamaPoint getCameraTarget() {
 		return cameraHelper.getTarget();
 	}
 
 	@Override
-	public final ILocation getCameraOrientation() {
+	public final GamaPoint getCameraOrientation() {
 		return cameraHelper.getOrientation();
 	}
 

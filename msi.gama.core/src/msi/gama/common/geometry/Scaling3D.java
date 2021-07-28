@@ -13,7 +13,6 @@ package msi.gama.common.geometry;
 import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 
 @SuppressWarnings ("unchecked")
 public abstract class Scaling3D implements Transformation3D {
@@ -21,22 +20,17 @@ public abstract class Scaling3D implements Transformation3D {
 	public final static Scaling3D IDENTITY = new Uniform(1);
 
 	public static Scaling3D of(final double x, final double y, final double z) {
-		if (x == y && y == z) { return of(x); }
+		if (x == y && y == z) return of(x);
 		return new Heterogeneous(x, y, z);
 	}
 
 	public static Scaling3D of(final GamaPoint p) {
-		if (p == null) { return null; }
+		if (p == null) return null;
 		return of(p.x, p.y, p.z);
 	}
 
-	public static Scaling3D of(final ILocation p) {
-		if (p == null) { return null; }
-		return of(p.getX(), p.getY(), p.getZ());
-	}
-
 	public static Scaling3D of(final double factor) {
-		if (factor == 1d) { return IDENTITY; }
+		if (factor == 1d) return IDENTITY;
 		return new Uniform(factor);
 	}
 

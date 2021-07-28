@@ -186,7 +186,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
 		return drawShape(shape.getInnerGeometry(),
-				new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c, (IShape.Type) null));
+				new ShapeDrawingAttributes(shape.getLocation(), c, c, (IShape.Type) null));
 	}
 
 	AffineTransform imageTransform = new AffineTransform();

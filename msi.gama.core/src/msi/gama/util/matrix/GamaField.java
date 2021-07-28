@@ -13,7 +13,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -110,9 +110,9 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	 */
 	@Override
 	@Nullable
-	public Double get(final IScope scope, final ILocation p) {
+	public Double get(final IScope scope, final GamaPoint p) {
 		computeDimensions(scope);
-		GamaPoint gp = p.toGamaPoint();
+		GamaPoint gp = p;
 		// May happen in case of torus environment (see #3132)
 		if (gp.x < 0) {
 			gp.x = 0;
@@ -232,7 +232,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 
 	@Nullable
 	@Override
-	public IShape getCellShapeAt(final IScope scope, final ILocation at) {
+	public IShape getCellShapeAt(final IScope scope, final GamaPoint at) {
 		computeDimensions(scope);
 		final GamaPoint p = (GamaPoint) at;
 		return getCellShapeAt(scope, getGridX(p.x), getGridY(p.y));
@@ -332,7 +332,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	}
 
 	@Override
-	public GamaField copy(final IScope scope, final ILocation size, final boolean copy) {
+	public GamaField copy(final IScope scope, final GamaPoint size, final boolean copy) {
 		if (size == null) {
 			if (copy) {
 				GamaField result = new GamaField(scope, numCols, numRows,
