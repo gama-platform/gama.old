@@ -85,7 +85,7 @@ species people skills: [moving]
 	int start_work <- min_work_start + rnd(max_work_start - min_work_start);
 	int end_work <- min_work_end + rnd(max_work_end - min_work_end);
 	string objectif;
-	point the_target <- nil;
+	point the_target;
 	reflex time_to_work when: day_time = start_work
 	{
 		objectif <- 'working';
