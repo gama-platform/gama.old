@@ -43,7 +43,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		uniqueIndexes = Collector.getOrderedSet();
 		uniqueIndexes.add(rootIndex);
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
-		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * Math.sqrt(2) };
+		steps = new double[] { biggest / 100, biggest / 50, biggest / 20, biggest / 10, biggest / 2, biggest,
+				biggest * Math.sqrt(2) };
 	}
 
 	private ISpatialIndex findSpatialIndex(final IPopulation<? extends IAgent> s) {
