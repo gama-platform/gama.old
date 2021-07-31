@@ -43,7 +43,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
 	@SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
 			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
-					TabuSearchReactive.class, ExhaustiveSearch.class };
+					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class};
 
 	static {
 		AbstractGamlAdditions._constants(COMBINATIONS);
@@ -55,8 +55,8 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
 	// protected IScope scope;
-	private ParametersSet bestSolution = null;
-	private Double bestFitness = null;
+	protected ParametersSet bestSolution = null;
+	protected Double bestFitness = null;
 	protected short combination;
 
 	protected abstract ParametersSet findBestSolution(IScope scope) throws GamaRuntimeException;
@@ -78,7 +78,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		testedSolutions = new HashMap<ParametersSet, Double>();
 	}
 
-	void initParams() {
+	protected void initParams() {
 		GAMA.run(new InScope.Void() {
 
 			@Override
@@ -88,7 +88,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		});
 	}
 
-	void initParams(final IScope scope) {}
+	protected void initParams(final IScope scope) {}
 
 	public ParamSpaceExploAlgorithm(final IDescription desc) {
 		super(desc);
@@ -122,7 +122,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
-	protected boolean isMaximize() {
+	public boolean isMaximize() {
 		return isMaximize;
 	}
 
@@ -145,6 +145,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		});
 	}
 
+	
 	@Override
 	public Double getBestFitness() {
 		return bestFitness;

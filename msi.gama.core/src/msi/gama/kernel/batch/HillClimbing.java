@@ -147,7 +147,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	// public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 	// super.initializeFor(scope, agent);
 	// }
-
+ 
 	@Override
 	protected void initParams(final IScope scope) {
 		final IExpression maxItExp = getFacet(ITER_MAX);

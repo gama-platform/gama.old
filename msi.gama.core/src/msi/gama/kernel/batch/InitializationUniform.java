@@ -43,7 +43,7 @@ public class InitializationUniform implements Initialization {
 		if (algo.isMaximize) {
 			Collections.reverse(populationInitOrd);
 		}
-		return populationInitOrd.subList(0, populationDim);
+		return populationInitOrd.subList(0, populationDim - 1);
 	}
 
 }
