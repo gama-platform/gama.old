@@ -82,9 +82,9 @@ public class RandomUtils {
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
-		if (generatorName.equals(IKeyword.CELLULAR)) {
+		if (IKeyword.CELLULAR.equals(generatorName)) {
 			generator = new CellularAutomatonRNG(this);
-		} else if (generatorName.equals(IKeyword.JAVA)) {
+		} else if (IKeyword.JAVA.equals(generatorName)) {
 			generator = new JavaRNG(this);
 		} else {
 			/* By default */
@@ -240,6 +240,7 @@ public class RandomUtils {
 	// }
 
 	public void shuffleInPlace(final Collection list) {
+		if (list == null) return;
 		final int size = list.size();
 		if (size < 2) return;
 		final Object[] a = list.toArray(new Object[size]);
