@@ -14,11 +14,13 @@ import static java.lang.Math.sqrt;
 import static msi.gaml.operators.Maths.round;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.IIntersectable;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.IKeyword;
@@ -56,7 +58,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.Z,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the z ordinate of this point") }) })
-public class GamaPoint extends Coordinate implements IShape, ILocation {
+public class GamaPoint extends Coordinate implements IShape, ILocation, IIntersectable {
 
 	public GamaPoint() {
 		x = 0.0d;
@@ -662,6 +664,16 @@ public class GamaPoint extends Coordinate implements IShape, ILocation {
 	@Deprecated
 	public GamaPoint toGamaPoint() {
 		return this;
+	}
+
+	@Override
+	public boolean intersects(final Envelope env) {
+		return env.intersects(this);
+	}
+
+	@Override
+	public boolean intersects(final Coordinate env) {
+		return this.equals3D(env);
 	}
 
 }
