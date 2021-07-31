@@ -312,16 +312,20 @@ public class BatchAgent extends ExperimentAgent {
 
 		});
 
-		params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Best parameter set found", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+
 
 			@Override
-			public String getUnitLabel(final IScope scope) {
+			public String value() {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
 				if (algo == null) return "";
 				final ParametersSet solutions = algo.getBestSolution();
 				if (solutions == null) return "";
-				return "with " + solutions;
+				return solutions.toString();
 			}
+
+		});
+		params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
 			@Override
 			public String value() {
@@ -333,14 +337,20 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 		});
+		
+	
+		params.add(new ParameterAdapter("Last parameeter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
-		params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
+	
 			@Override
-			public String getUnitLabel(final IScope scope) {
-				if (lastSolution == null) return "";
-				return "with " + lastSolution.toString();
+			public String value() {
+				if (lastSolution == null) return "-";
+				return lastSolution.toString();
 			}
+
+		});
+		
+		params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
 			@Override
 			public String value() {
