@@ -139,6 +139,19 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
+	public boolean touches(final IShape g) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
 	public boolean isLine() {
 		// TODO Auto-generated method stub
 		return false;

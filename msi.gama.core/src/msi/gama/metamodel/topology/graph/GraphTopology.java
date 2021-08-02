@@ -27,6 +27,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.ITopology.SpatialRelation;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.IScope;
@@ -805,8 +806,8 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	@Override
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-			final boolean covered) {
-		final Collection<IAgent> result = super.getAgentsIn(scope, source, f, covered);
+			final SpatialRelation relation) {
+		final Collection<IAgent> result = super.getAgentsIn(scope, source, f, relation);
 		result.removeIf(each -> each.dead() || !isValidGeometry(scope, each));
 		return result;
 	}

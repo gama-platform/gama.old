@@ -240,7 +240,7 @@ public class GridTopology extends AbstractTopology {
 				: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
 		final Collection<IAgent> agents = getAgentsIn(scope,
 				GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.wrap(Types.AGENT, placesConcerned)), fDL,
-				false);
+				SpatialRelation.OVERLAP);
 		if (!normalFilter) { agents.addAll(placesConcerned); }
 		return agents;
 

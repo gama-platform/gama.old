@@ -146,6 +146,10 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	IShape copy(IScope scope);
 
 	boolean covers(IShape g);
+	
+	boolean partiallyOverlaps(IShape g);
+
+	boolean touches(IShape g);
 
 	boolean crosses(IShape g);
 

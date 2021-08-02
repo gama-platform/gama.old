@@ -339,6 +339,17 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	public boolean intersects(final IShape g) {
 		return getInnerGeometry().intersects(g.getInnerGeometry());
 	}
+	
+	@Override
+	public boolean touches(final IShape g) {
+		return getInnerGeometry().touches(g.getInnerGeometry());
+	}
+	
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		return getInnerGeometry().overlaps(g.getInnerGeometry());
+	}
 
 	/**
 	 * Method getPerimeter()

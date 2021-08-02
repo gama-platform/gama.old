@@ -57,6 +57,15 @@ import msi.gaml.types.IType;
 		 */
 })
 public interface ITopology extends IValue {
+	
+	enum SpatialRelation {
+		OVERLAP,
+		COVER,
+		INSIDE,
+		TOUCH,
+		CROSS,
+		PARTIALLY_OVERLAP
+	}
 
 	ISpatialIndex getSpatialIndex();
 
@@ -77,7 +86,9 @@ public interface ITopology extends IValue {
 	Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance, IAgentFilter filter)
 			throws GamaRuntimeException;
 
-	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, boolean covered);
+	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, SpatialRelation relation);
+
+	
 
 	boolean isTorus();
 

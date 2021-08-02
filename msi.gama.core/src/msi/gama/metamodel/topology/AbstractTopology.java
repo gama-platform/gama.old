@@ -56,7 +56,7 @@ public abstract class AbstractTopology implements ITopology {
 	public IType<?> getGamlType() {
 		return Types.TOPOLOGY;
 	}
-
+	
 	protected IShape environment;
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
@@ -78,7 +78,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public List<Geometry> listToroidalGeometries(final Geometry geom) {
-		final Geometry copy = (Geometry) geom.clone();
+		final Geometry copy = (Geometry) geom.copy();
 		final List<Geometry> geoms = new ArrayList<>();
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
@@ -505,11 +505,28 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	private final PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
+	
+	public static final boolean accept(PreparedGeometry pg1, Geometry g2, SpatialRelation rel) {
+		if (rel == SpatialRelation.OVERLAP) {
+			return pg1.intersects(g2);
+		} else if (rel == SpatialRelation.INSIDE) {
+			return pg1.covers(g2);
+		} else if (rel == SpatialRelation.COVER) {
+			return pg1.coveredBy(g2);
+		} else if (rel == SpatialRelation.CROSS) {
+			return pg1.crosses(g2);
+		} else if (rel == SpatialRelation.PARTIALLY_OVERLAP) {
+			return pg1.overlaps(g2);
+		}  else {
+			return pg1.touches(g2);
+		}
+	}
 
 	@Override
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-			final boolean covered) {
+			final SpatialRelation relation ) {
 		if (source == null) return Collections.EMPTY_SET;
+		boolean covered = relation == SpatialRelation.INSIDE;
 		insertAgents(scope, f);
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
@@ -519,7 +536,7 @@ public abstract class AbstractTopology implements ITopology {
 				shapes.removeIf(each -> {
 					if (each.dead()) return true;
 					final Geometry geom = each.getInnerGeometry();
-					return !(covered ? pg.covers(geom) : pg.intersects(geom));
+					return !accept(pg,geom,relation);
 				});
 				return shapes;
 			} finally {
@@ -538,7 +555,7 @@ public abstract class AbstractTopology implements ITopology {
 						if (source.getAgent() != null && ag == source.getAgent()) { continue; }
 						final Geometry geom = ag.getInnerGeometry();
 
-						if (covered ? pg.covers(geom) : pg.intersects(geom)) { result.add(ag); }
+						if (accept(pg,geom,relation)){ result.add(ag); }
 					}
 				}
 			}

@@ -310,6 +310,15 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		if (g.isPoint()) return this.equals(g.getLocation());
 		return g.intersects(this);
 	}
+	
+	public boolean touches(final IShape g) {
+		return g.touches(this);
+	}
+	
+	public boolean partiallyOverlaps(final IShape g) {
+		return g.partiallyOverlaps(this);
+	}
+
 
 	@Override
 	public boolean crosses(final IShape g) {

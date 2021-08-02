@@ -159,7 +159,7 @@ public class AmorphousTopology implements ITopology {
 	 */
 	@Override
 	public Set<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-			final boolean covered) {
+			final SpatialRelation relation) {
 		return Collections.EMPTY_SET;
 	}
 

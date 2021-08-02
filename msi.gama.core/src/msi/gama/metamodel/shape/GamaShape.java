@@ -627,6 +627,48 @@ public class GamaShape implements IShape {
 			return false;
 		}
 	}
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		try {
+			return geometry.overlaps(g.getInnerGeometry());
+		} catch (final TopologyException e) {
+			try {
+				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean touches(final IShape g) {
+		try {
+			return geometry.touches(g.getInnerGeometry());
+		} catch (final TopologyException e) {
+			try {
+				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
 
 	/**
 	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get' operators. Can be

@@ -69,6 +69,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -3864,9 +3865,9 @@ public abstract class Spatial {
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15} = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) = false")
-		public static Boolean partially_overlaps(final IShape g1, final IShape g) {
-			if (g == null) return false;
-			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());
+		public static Boolean partially_overlaps(final IShape g1, final IShape g2) {
+			if (g1 == null || g2 == null) return false;
+			return g1.partiallyOverlaps(g2);
 		}
 
 		/**
@@ -3923,9 +3924,9 @@ public abstract class Spatial {
 		@test ("polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) = false")
 		@test ("polyline([{10,10},{20,20}]) touches {15,15} = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15} = false")
-		public static Boolean touches(final IShape g, final IShape g2) {
-			if (g == null) return false;
-			return g2.getInnerGeometry().touches(g.getInnerGeometry());
+		public static Boolean touches(final IShape g1, final IShape g2) {
+			if (g1 == null || g2 == null) return false;
+			return g1.touches(g2);
 		}
 
 		/**
@@ -4342,6 +4343,16 @@ public abstract class Spatial {
 			}
 			return geoms;
 		}
+		
+		
+		static IList<? extends IShape>  relatedEntities(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, ITopology.SpatialRelation relation) {
+			final IType contentType = list.getGamlType().getContentType();
+			if (contentType.isAgentType())
+				return _gather(scope, In.list(scope, list), source, relation);
+			else if (contentType == Types.GEOMETRY) return geomsRelated(scope, list, source, relation);
+			return GamaListFactory.EMPTY_LIST;
+		}
 
 		@operator (
 				value = { "inside" },
@@ -4364,15 +4375,109 @@ public abstract class Spatial {
 		@no_test // already done in Spatial tests Models
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
-			final IType contentType = list.getGamlType().getContentType();
-			if (contentType.isAgentType())
-				return _gather(scope, In.list(scope, list), source, true);
-			else if (contentType == Types.GEOMETRY) return geomOverlapping(scope, list, source, true);
-			return GamaListFactory.EMPTY_LIST;
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.INSIDE ); 
+		}
+		
+		
+		
+		@operator (
+				value = { "covering" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), covering the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] covering(self)",
+						equals = "the agents among ag1, ag2 and ag3 that cover the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) covering (self)",
+								equals = "the agents among species species1 and species2 that covers the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> covering(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) {
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.COVER ); 
+		}
+		
+		@operator (
+				value = { "crossing" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), crossing the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] crossing(self)",
+						equals = "the agents among ag1, ag2 and ag3 that cross the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) crossing (self)",
+								equals = "the agents among species species1 and species2 that cross the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> crossing(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.CROSS ); 
 		}
 
 		@operator (
-				value = { "overlapping" },
+				value = { "touching" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), touching the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] toucing(self)",
+						equals = "the agents among ag1, ag2 and ag3 that touch the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) touching (self)",
+								equals = "the agents among species species1 and species2 that touch the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> touching(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.TOUCH ); 
+		}
+		
+		@operator (
+				value = { "partially_overlapping" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), partially_overlapping the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] partially_overlapping(self)",
+						equals = "the agents among ag1, ag2 and ag3 that partially_overlap the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) partially_overlapping (self)",
+								equals = "the agents among species species1 and species2 that partially_overlap the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> partiallyOverlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.PARTIALLY_OVERLAP ); 
+		}
+		
+		@operator (
+				value = { "overlapping", "intersecting" },
 				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
@@ -4391,27 +4496,25 @@ public abstract class Spatial {
 		@no_test // test already done in Spatial tests models
 		public static IList<? extends IShape> overlapping(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final IShape source) {
-			final IType contentType = list.getGamlType().getContentType();
-			if (contentType.isAgentType())
-				return _gather(scope, In.list(scope, list), source, false);
-			else if (contentType == Types.GEOMETRY) return geomOverlapping(scope, list, source, false);
-			return GamaListFactory.EMPTY_LIST;
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.OVERLAP ); 
 		}
 
-		public static IList<? extends IShape> geomOverlapping(final IScope scope,
-				final IContainer<?, ? extends IShape> list, final IShape source, final boolean cover) {
+		public static IList<? extends IShape> geomsRelated(final IScope scope,
+				final IContainer<?, ? extends IShape> list, final IShape source, final ITopology.SpatialRelation relation) {
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
+			PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
 				if (!(shape instanceof IShape)) { continue; }
-				if (cover) {
-					if (source.covers((IShape) shape)) { geoms.add((IShape) shape); }
-				} else {
-					if (source.intersects((IShape) shape)) { geoms.add((IShape) shape); }
+				if (AbstractTopology.accept(pg, ((IShape) shape).getInnerGeometry(), relation)){ 
+					geoms.add((IShape) shape); 
 				}
-
 			}
 			return geoms;
 		}
+		
+	
+
 
 		@operator (
 				value = { "closest_to" },
@@ -4582,6 +4685,78 @@ public abstract class Spatial {
 			return _farthest(scope, Different.with(), source);
 		}
 
+		
+		
+		@operator (
+				value = "agents_touching",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents touching the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_touching(self)",
+						equals = "the agents that touch the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_touching(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.TOUCH);
+		}
+		@operator (
+				value = "agents_crossing",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents cross the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_crossing(self)",
+						equals = "the agents that crossing the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_crossing(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.CROSS);
+		}
+		
+		@operator (
+				value = "agents_partially_overlapping",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents that partially overlap the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_partially_overlapping(self)",
+						equals = "the agents that partially overlap the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_partially_overlapping(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.PARTIALLY_OVERLAP);
+		}
+		
+		@operator (
+				value = "agents_covering",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents covered by the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_covering(self)",
+						equals = "the agents that cover the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_cover(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.COVER);
+		}
 		@operator (
 				value = "agents_inside",
 				content_type = IType.AGENT,
@@ -4597,11 +4772,11 @@ public abstract class Spatial {
 				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
 		@no_test // already done in Spacial tests Models
 		public static IList<IAgent> agents_inside(final IScope scope, final Object source) {
-			return _gather(scope, Different.with(), source, true);
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.INSIDE);
 		}
 
 		@operator (
-				value = "agents_overlapping",
+				value = {"agents_overlapping", "agent_intersecting"},
 				content_type = IType.AGENT,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
@@ -4616,7 +4791,7 @@ public abstract class Spatial {
 						"overlapping", "at_distance" })
 		@no_test // already done in Spatial tests Models
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object source) {
-			return _gather(scope, Different.with(), source, false);
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.OVERLAP);
 		}
 
 		@operator (
@@ -4640,11 +4815,11 @@ public abstract class Spatial {
 		// Support methods used by the different queries
 
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
-				final boolean inside) {
+				final ITopology.SpatialRelation relation) {
 			if (filter == null || source == null) return GamaListFactory.EMPTY_LIST;
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type,
-					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
+					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, relation));
 		}
 
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {

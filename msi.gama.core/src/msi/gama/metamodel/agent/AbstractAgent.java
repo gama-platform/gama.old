@@ -143,6 +143,16 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean intersects(final IShape g) {
 		return getGeometry().intersects(g);
 	}
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		return getGeometry().partiallyOverlaps(g);
+	}
+	
+	@Override
+	public boolean touches(final IShape g) {
+		return getGeometry().touches(g);
+	}
 
 	@Override
 	public boolean crosses(final IShape g) {
