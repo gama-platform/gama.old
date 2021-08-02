@@ -98,6 +98,7 @@
 			<id>portfolio-non-maven-dependencies</id>
 			<url>http://buchen.github.io/maven-repo</url>
 		</repository>
+		<!--
 		<repository>
 			<id>eclipse-ecf</id>
 			<releases>
@@ -109,6 +110,7 @@
 			<url>http://download.eclipse.org/rt/ecf/3.14.18/site.p2/3.14.18.v20201102-0420/</url>
 			<layout>p2</layout>
 		</repository> 
+		-->
 		<repository>
 			<id>eclipse-2103</id>
 			<url>http://download.eclipse.org/releases/2021-03</url>
