@@ -375,7 +375,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				objects.forEach((a, e) -> {
 					if (e != null && e.intersects(r)) { result.add(a); }
 				});
-			} else {
+			} else if (nodes != null)  {
 				for (final QuadNode node : nodes) {
 					node.findIntersects(r, result);
 				}
