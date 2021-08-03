@@ -121,8 +121,14 @@ public class Utils {
 
 			if (Math.abs(gapBetweenCentroids) < 0.5 * vL + 0.5 * otherVL) {
 				// Overlap with another vehicle
-				return null;
-			} else if (gapBetweenCentroids > 0 && gap < minLeadingDist) {
+				//return null;
+				if (gapBetweenCentroids >= 0)
+					gap =  + 0.5 * vL + 0.5 * otherVL;
+				else {
+					gap =  - 0.5 * vL - 0.5 * otherVL;
+				}
+			}
+			if (gapBetweenCentroids > 0 && gap < minLeadingDist) {
 				leadingVehicle = otherVehicle;
 				minLeadingDist = Math.abs(gap);
 				leadingSameDirection = sameDirection;
