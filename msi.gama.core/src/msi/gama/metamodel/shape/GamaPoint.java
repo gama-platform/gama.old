@@ -312,11 +312,11 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	}
 	
 	public boolean touches(final IShape g) {
-		return g.touches(this);
+		return false;
 	}
 	
 	public boolean partiallyOverlaps(final IShape g) {
-		return g.partiallyOverlaps(this);
+		return false;
 	}
 
 
