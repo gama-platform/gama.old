@@ -47,18 +47,12 @@ public interface ISpatialIndex {
 
 	public interface Compound extends ISpatialIndex {
 
-		void add(ISpatialIndex index, IPopulation<? extends IAgent> pop);
-
 		void remove(final IPopulation<? extends IAgent> species);
 
-		void updateQuadtree(Envelope envelope);
+		void update(Envelope envelope, boolean parallel);
 
 		void mergeWith(Compound spatialIndex);
 
 	}
-
-	Collection<IAgent> allAgents();
-
-	boolean isParallel();
 
 }

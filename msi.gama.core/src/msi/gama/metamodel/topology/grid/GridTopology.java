@@ -22,7 +22,6 @@ import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
-import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.DifferentList;
@@ -51,7 +50,7 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
-		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop);
+		// ((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop);
 		super.initialize(scope, pop);
 	}
 

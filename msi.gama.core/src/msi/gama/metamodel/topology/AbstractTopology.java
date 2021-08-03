@@ -27,7 +27,6 @@ import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -46,7 +45,6 @@ import msi.gama.util.IList;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Maths;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -56,18 +54,18 @@ public abstract class AbstractTopology implements ITopology {
 	public IType<?> getGamlType() {
 		return Types.TOPOLOGY;
 	}
-	
+
 	protected IShape environment;
 	protected RootTopology root;
 	protected IContainer<?, IShape> places;
-	protected List<ISpecies> speciesInserted;
+	// protected List<ISpecies> speciesInserted;
 
 	// VARIABLES USED IN TORUS ENVIRONMENT
 	private double[][] adjustedXYVector = null;
 
 	public AbstractTopology(final IScope scope, final IShape env, final RootTopology root) {
 		setRoot(scope, root);
-		speciesInserted = new ArrayList<>();
+		// speciesInserted = new ArrayList<>();
 		environment = env;
 	}
 
@@ -78,7 +76,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public List<Geometry> listToroidalGeometries(final Geometry geom) {
-		final Geometry copy = (Geometry) geom.copy();
+		final Geometry copy = geom.copy();
 		final List<Geometry> geoms = new ArrayList<>();
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(copy);
@@ -214,14 +212,14 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public void updateAgent(final Envelope3D previous, final IAgent agent) {
-		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
-			if (speciesInserted.contains(agent.getSpecies())) { updateAgentBase(previous, agent); }
-		} else {
-			updateAgentBase(previous, agent);
-		}
-	}
-
-	public void updateAgentBase(final Envelope3D previous, final IAgent agent) {
+		// if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+		// if (speciesInserted.contains(agent.getSpecies())) { updateAgentBase(previous, agent); }
+		// } else {
+		// updateAgentBase(previous, agent);
+		// }
+		// }
+		//
+		// public void updateAgentBase(final Envelope3D previous, final IAgent agent) {
 		if (previous != null && !previous.isNull()) { getSpatialIndex().remove(previous, agent); }
 		getSpatialIndex().insert(agent);
 	}
@@ -345,30 +343,30 @@ public abstract class AbstractTopology implements ITopology {
 		return places;
 	}
 
-	protected void insertSpecies(final IScope scope, final ISpecies species) {
-		if (!this.speciesInserted.contains(species)) {
-			this.speciesInserted.add(species);
-			for (final IAgent ag : species.getPopulation(scope)) {
-				getSpatialIndex().insert(ag);
-			}
-		}
-	}
-
-	protected void insertAgents(final IScope scope, final IAgentFilter filter) {
-		if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
-			if (filter.getSpecies() != null) {
-				insertSpecies(scope, filter.getSpecies());
-			} else {
-				final IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
-				if (pop != null) { insertSpecies(scope, pop.getSpecies()); }
-			}
-		}
-	}
+	// protected void insertSpecies(final IScope scope, final ISpecies species) {
+	// if (!this.speciesInserted.contains(species)) {
+	// this.speciesInserted.add(species);
+	// for (final IAgent ag : species.getPopulation(scope)) {
+	// getSpatialIndex().insert(ag);
+	// }
+	// }
+	// }
+	//
+	// protected void insertAgents(final IScope scope, final IAgentFilter filter) {
+	// if (GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) {
+	// if (filter.getSpecies() != null) {
+	// insertSpecies(scope, filter.getSpecies());
+	// } else {
+	// final IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
+	// if (pop != null) { insertSpecies(scope, pop.getSpecies()); }
+	// }
+	// }
+	// }
 
 	@Override
 	public Collection<IAgent> getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter,
 			final int number) {
-		insertAgents(scope, filter);
+		// insertAgents(scope, filter);
 		if (!isTorus()) {
 			try (ICollector<IAgent> alreadyChosen = Collector.getList()) {
 				return getSpatialIndex().firstAtDistance(scope, source, 0, filter, number, alreadyChosen);
@@ -390,7 +388,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
-		insertAgents(scope, filter);
+		// insertAgents(scope, filter);
 		if (!isTorus()) return getSpatialIndex().firstAtDistance(scope, source, 0, filter);
 		IAgent result = null;
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
@@ -467,7 +465,7 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
 			final IAgentFilter filter) throws GamaRuntimeException {
-		insertAgents(scope, filter);
+		// insertAgents(scope, filter);
 
 		if (!isTorus()) return getSpatialIndex().allAtDistance(scope, source, distance, filter);
 
@@ -505,29 +503,28 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	private final PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
-	
-	public static final boolean accept(PreparedGeometry pg1, Geometry g2, SpatialRelation rel) {
-		if (rel == SpatialRelation.OVERLAP) {
+
+	public static final boolean accept(final PreparedGeometry pg1, final Geometry g2, final SpatialRelation rel) {
+		if (rel == SpatialRelation.OVERLAP)
 			return pg1.intersects(g2);
-		} else if (rel == SpatialRelation.INSIDE) {
+		else if (rel == SpatialRelation.INSIDE)
 			return pg1.covers(g2);
-		} else if (rel == SpatialRelation.COVER) {
+		else if (rel == SpatialRelation.COVER)
 			return pg1.coveredBy(g2);
-		} else if (rel == SpatialRelation.CROSS) {
+		else if (rel == SpatialRelation.CROSS)
 			return pg1.crosses(g2);
-		} else if (rel == SpatialRelation.PARTIALLY_OVERLAP) {
+		else if (rel == SpatialRelation.PARTIALLY_OVERLAP)
 			return pg1.overlaps(g2);
-		}  else {
+		else
 			return pg1.touches(g2);
-		}
 	}
 
 	@Override
 	public Collection<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
-			final SpatialRelation relation ) {
+			final SpatialRelation relation) {
 		if (source == null) return Collections.EMPTY_SET;
 		boolean covered = relation == SpatialRelation.INSIDE;
-		insertAgents(scope, f);
+		// insertAgents(scope, f);
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			try {
@@ -536,7 +533,7 @@ public abstract class AbstractTopology implements ITopology {
 				shapes.removeIf(each -> {
 					if (each.dead()) return true;
 					final Geometry geom = each.getInnerGeometry();
-					return !accept(pg,geom,relation);
+					return !accept(pg, geom, relation);
 				});
 				return shapes;
 			} finally {
@@ -555,7 +552,7 @@ public abstract class AbstractTopology implements ITopology {
 						if (source.getAgent() != null && ag == source.getAgent()) { continue; }
 						final Geometry geom = ag.getInnerGeometry();
 
-						if (accept(pg,geom,relation)){ result.add(ag); }
+						if (accept(pg, geom, relation)) { result.add(ag); }
 					}
 				}
 			}

@@ -520,7 +520,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		if (edgeSpecies == null) return generateEdgeObject(v1, v2);
+		if (getEdgeSpecies() == null) return generateEdgeObject(v1, v2);
 		final IMap<String, Object> map = GamaMapFactory.create();
 		final List initVal = new ArrayList<>();
 		map.put(IKeyword.SOURCE, v1);
@@ -535,7 +535,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected IAgent generateEdgeAgent(final List<Map<String, Object>> attributes) {
-		final IAgent agent = graphScope.getAgent().getPopulationFor(edgeSpecies)
+		final IAgent agent = graphScope.getAgent().getPopulationFor(getEdgeSpecies())
 				.createAgents(graphScope, 1, attributes, false, true).firstValue(graphScope);
 		if (agent != null) { generatedEdges.add(agent); }
 		return agent;
@@ -572,8 +572,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public boolean addVertex(final Object v) {
 		if (v instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
-			if ((v instanceof IAgent)
-					&& (!this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies)) {
+			if (v instanceof IAgent && !this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies) {
 				vertexSpecies = null;
 			}
 			addValue(graphScope, (msi.gaml.operators.Graphs.GraphObjectToAdd) v);
@@ -1491,7 +1490,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			for (int i = 0; i < vertexMap.size(); i++) {
 				final V v1 = vertices.get(i);
 				for (int j = 0; j < vertexMap.size(); j++) {
-					if ((i == j) || (matrix.get(scope, j, i) != i)) { continue; }
+					if (i == j || matrix.get(scope, j, i) != i) { continue; }
 					final V v2 = vertices.get(j);
 					final List edges = computeBestRouteBetween(scope, v1, v2);
 					// DEBUG.LOG("edges : " + edges);
@@ -1632,6 +1631,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public ISpecies getEdgeSpecies() {
+		if (edgeSpecies == null) {
+			final IType contents = getGamlType().getContentType();
+			edgeSpecies = getScope().getModel().getSpecies(contents.getSpeciesName());
+		}
 		return edgeSpecies;
 	}
 
