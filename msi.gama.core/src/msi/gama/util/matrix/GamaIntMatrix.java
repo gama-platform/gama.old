@@ -502,7 +502,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public Integer getNthElement(final Integer index) {
-		if ((index == null) || (index > getMatrix().length)) return 0;
+		if (index == null || index > getMatrix().length) return 0;
 		return getMatrix()[index];
 	}
 
@@ -510,11 +510,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	protected void setNthElement(final IScope scope, final int index, final Object value) {
 		getMatrix()[index] = Cast.asInt(scope, value);
 	}
-
-	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "matrix<int>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
-	}
+	//
+	// @Override
+	// public String serialize(final boolean includingBuiltIn) {
+	// return "matrix<int>(" + getRowsList().serialize(includingBuiltIn) + ")";
+	// }
 
 	@Override
 	public StreamEx<Integer> stream(final IScope scope) {
