@@ -10,9 +10,14 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.locationtech.jts.geom.Coordinate;
+
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -30,7 +35,9 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -87,7 +94,20 @@ import msi.gaml.types.Types;
 		type = IType.FLOAT,
 		init = "50#km/#h",
 		doc = @doc("the maximal speed on the road")
-	)
+	),
+	@variable(
+		name = RoadSkill.SEGMENT_LENGTHS,
+		type = IType.LIST,
+		depends_on = IKeyword.SHAPE,
+		doc = @doc("stores the length of each road segment. " +
+			"The index of each element corresponds to the segment index.")
+	),
+	@variable(
+		name = RoadSkill.VEHICLE_ORDERING,
+		type = IType.MAP,
+		depends_on = {RoadSkill.NUM_LANES},
+		doc = @doc("provides information about the ordering of vehicle on any given lane")
+	),
 })
 @skill(
 	name = RoadSkill.SKILL_ROAD,
@@ -109,6 +129,8 @@ public class RoadSkill extends Skill {
 	@Deprecated public static final String LANES = "lanes";
 	public static final String NUM_LANES = "num_lanes";
 	public static final String NUM_SEGMENTS = "num_segments";
+	public static final String SEGMENT_LENGTHS = "segment_lengths";
+	public static final String VEHICLE_ORDERING = "vehicle_ordering";
 
 	@getter(AGENTS_ON)
 	public static List getAgentsOn(final IAgent agent) {
@@ -171,6 +193,16 @@ public class RoadSkill extends Skill {
 			GamaRuntimeException.warning(agent.getName() + " has zero lanes",
 					GAMA.getRuntimeScope());
 		}
+		if (agent.getAttribute(NUM_LANES) == null ||
+				numLanes != getNumLanes(agent) ||
+				getVehicleOrdering(agent) == null) {
+			List<TreeBidiMap<IAgent, Double>> res = new LinkedList<>();
+			//TODO: should this be initialized somewhere else?	
+			for (int i = 0; i < numLanes; i += 1) {
+				res.add(new TreeBidiMap<IAgent, Double>());
+			}
+			setVehicleOrdering(agent, res);
+		}
 		agent.setAttribute(NUM_LANES, numLanes);
 	}
 
@@ -202,6 +234,29 @@ public class RoadSkill extends Skill {
 	@setter(NUM_SEGMENTS)
 	public static void setNumSegments(final IAgent road, final int numSegments) {
 		// read-only
+	}
+
+	@getter(value = SEGMENT_LENGTHS, initializer = true)
+	public static List<Double> getSegmentLengths(final IAgent road) {
+		List<Double> res = (List<Double>) road.getAttribute(SEGMENT_LENGTHS);
+		if (res == null) {
+			res = GamaListFactory.create();
+			Coordinate[] coords = road.getInnerGeometry().getCoordinates();
+			for (int i = 0; i < coords.length - 1; i += 1)  {
+				res.add(coords[i].distance(coords[i + 1]));
+			}
+		}
+		return res;
+	}
+
+	@getter(value = VEHICLE_ORDERING, initializer = true)
+	public static List<TreeBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
+		return (List<TreeBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
+	}
+
+	// @setter(VEHICLE_ORDERING, initializer = true)
+	public static void setVehicleOrdering(final IAgent road, List<TreeBidiMap<IAgent, Double>> list) {
+		road.setAttribute(VEHICLE_ORDERING, list);
 	}
 
 	//TODO: update doc string
@@ -295,13 +350,12 @@ public class RoadSkill extends Skill {
 		getAgents(road).add(vehicle);
 
 		DrivingSkill.setViolatingOneway(vehicle, violatingOneway);
+		int numSegments = getNumSegments(road);
+		List<Double> lengths = getSegmentLengths(road);
 		if (!violatingOneway) {
-			DrivingSkill.setDistanceToGoal(vehicle,
-					vehicle.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[1]));
+			DrivingSkill.setDistanceToGoal(vehicle, lengths.get(0));
 		} else {
-			int numSegments = getNumSegments(road);
-			DrivingSkill.setDistanceToGoal(vehicle,
-					vehicle.getLocation().euclidianDistanceTo(GeometryUtils.getPointsOf(road)[numSegments - 1]));
+			DrivingSkill.setDistanceToGoal(vehicle, lengths.get(numSegments - 1));
 		}
 		DrivingSkill.setCurrentRoad(vehicle, road);
 		DrivingSkill.setLowestLane(vehicle, lowestLane);
