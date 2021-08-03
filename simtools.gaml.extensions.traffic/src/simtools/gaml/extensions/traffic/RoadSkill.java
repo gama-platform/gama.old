@@ -205,6 +205,12 @@ public class RoadSkill extends Skill {
 		}
 		agent.setAttribute(NUM_LANES, numLanes);
 	}
+	
+	public static int getNumLanesTotal(final IAgent road) {
+		IAgent linkedRoad = getLinkedRoad(road);
+		int numLanesLinked = linkedRoad != null ? getNumLanes(linkedRoad) : 0;
+		return getNumLanes(road) + numLanesLinked;
+	}
 
 	@getter(MAXSPEED)
 	public static Double getMaxSpeed(final IAgent agent) {
@@ -248,6 +254,11 @@ public class RoadSkill extends Skill {
 		}
 		return res;
 	}
+	
+	public static double getTotalLength(final IAgent road) {
+		List<Double> lengths = getSegmentLengths(road);
+		return lengths.stream().reduce(0.0, Double::sum);
+	}
 
 	@getter(value = VEHICLE_ORDERING, initializer = true)
 	public static List<TreeBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
@@ -268,28 +279,24 @@ public class RoadSkill extends Skill {
 	 * @param lane the input lane index
 	 * @return
 	 */
-	public static List<IAgent> getVehiclesOnLaneSegment(final IScope scope,
+	public static TreeBidiMap<IAgent, Double> getVehiclesOnLaneSegment(final IScope scope,
 			final IAgent correctRoad,
-			final int lane,
-			final int segment) {
+			final int lane) {
 		int numLanesCorrect = getNumLanes(correctRoad);
 		IAgent actualRoad;
-		int actualLane, actualSegment;
+		int actualLane;
 
 		if (lane < numLanesCorrect) {
 			actualRoad = correctRoad;
 			actualLane = lane;
-			actualSegment = segment;
 		} else {
 			IAgent linkedRoad = getLinkedRoad(correctRoad);
 			int numLanesLinked = getNumLanes(linkedRoad);
 			actualRoad = linkedRoad;
 			actualLane = numLanesCorrect + numLanesLinked - 1 - lane;
-			actualSegment = getNumSegments(actualRoad) - segment - 1;
 		}
 
-		List<List<List<IAgent>>> vehicles = RoadSkill.getAgentsOn(actualRoad);
-		return vehicles.get(actualLane).get(actualSegment);
+		return getVehicleOrdering(actualRoad).get(actualLane);
 	}
 
 	@action(
@@ -336,30 +343,33 @@ public class RoadSkill extends Skill {
 		if (vehicle == null) return;
 
 		int numLanesOccupied = DrivingSkill.getNumLanesOccupied(vehicle);
+		int numSegments = getNumSegments(road);
+		List<Double> lengths = getSegmentLengths(road);
 
 		GamaPoint roadEndPt = (GamaPoint) getTargetNode(road).getLocation();
 		boolean violatingOneway = !DrivingSkill.getCurrentTarget(vehicle).getLocation().equals(roadEndPt);
 
-		// TODO: why not just set to 0
-		int indexSegment = !violatingOneway ? 0 : getNumSegments(road) - 1;
+		int segmentIdx = !violatingOneway ? 0 : getNumSegments(road) - 1;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
-			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
-			newVehicleList.add(vehicle);
+			getVehiclesOnLaneSegment(scope, road, lane).put(vehicle, getTotalLength(road));
+//			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
+//			newVehicleList.add(vehicle);
 		}
-		getAgents(road).add(vehicle);
+//		getAgents(road).add(vehicle);
+		
+		
 
 		DrivingSkill.setViolatingOneway(vehicle, violatingOneway);
-		int numSegments = getNumSegments(road);
-		List<Double> lengths = getSegmentLengths(road);
 		if (!violatingOneway) {
 			DrivingSkill.setDistanceToGoal(vehicle, lengths.get(0));
 		} else {
 			DrivingSkill.setDistanceToGoal(vehicle, lengths.get(numSegments - 1));
 		}
+		DrivingSkill.setDistanceToCurrentTarget(vehicle, getTotalLength(road));
 		DrivingSkill.setCurrentRoad(vehicle, road);
 		DrivingSkill.setLowestLane(vehicle, lowestLane);
-		DrivingSkill.setSegmentIndex(vehicle, indexSegment);
+		DrivingSkill.setSegmentIndex(vehicle, segmentIdx);
 	}
 
 	@action(
@@ -397,12 +407,9 @@ public class RoadSkill extends Skill {
 
 		Integer lowestLane = (Integer) driver.getAttribute(DrivingSkill.LOWEST_LANE);
 		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
-		int currentSegment = DrivingSkill.getSegmentIndex(driver);
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
-			List<IAgent> oldVehicleList = getVehiclesOnLaneSegment(
-					scope, currentRoad, lane, currentSegment);
-			oldVehicleList.remove(driver);
+			getVehiclesOnLaneSegment(scope, currentRoad, lane).remove(driver);
 		}
 		getAgents(currentRoad).remove(driver);
 	}

@@ -20,7 +20,8 @@ import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingSpeed;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingVehicle;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setTimeSinceLC;
-import static simtools.gaml.extensions.traffic.Utils.findLeadingAndBackVehicle;
+import static simtools.gaml.extensions.traffic.Utils.findLeader;
+import static simtools.gaml.extensions.traffic.Utils.findFollower;
 import static simtools.gaml.extensions.traffic.Utils.rescaleProba;
 
 import java.util.List;
@@ -53,7 +54,8 @@ public class MOBIL {
 			final IAgent target,
 			final IAgent road,
 			final int segment,
-			final double distToSegmentEnd) {
+			final double distToSegmentEnd,
+			final double distToCurrentTarget) {
 		double VL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 		int currentLowestLane = getLowestLane(vehicle);
@@ -85,20 +87,20 @@ public class MOBIL {
 			boxed().collect(Collectors.toList());
 
 		// Compute acceleration if the vehicle stays on the same lane
-		ImmutablePair<Triple<IAgent, Double, Boolean>, Triple<IAgent, Double, Boolean>> pair =
-			findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, currentLowestLane);
+		Triple<IAgent, Double, Boolean> leaderTriple = findLeader(
+				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
+		Triple<IAgent, Double, Boolean> followerTriple = findFollower(
+				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
 		IAgent currentBackVehicle = null;
 		double stayAccelM;
-		if (pair == null) {
+		if (leaderTriple == null || followerTriple == null) {
 			stayAccelM = -Double.MAX_VALUE;
 		} else {
-			if (pair.getValue() != null) {
-				currentBackVehicle = pair.getValue().getLeft();
-			}
+			currentBackVehicle = followerTriple.getLeft();
 			// Find the leading vehicle on current lanes
-			IAgent leadingVehicle = pair.getKey().getLeft();
-			double leadingDist = pair.getKey().getMiddle();
-			boolean leadingSameDirection = pair.getKey().getRight();
+			IAgent leadingVehicle = leaderTriple.getLeft();
+			double leadingDist = leaderTriple.getMiddle();
+			boolean leadingSameDirection = leaderTriple.getRight();
 			double leadingSpeed = getSpeed(leadingVehicle);
 			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
 			setLeadingVehicle(vehicle, leadingVehicle);
@@ -142,17 +144,19 @@ public class MOBIL {
 				}
 			}
 
-			pair = findLeadingAndBackVehicle(scope, vehicle, target, road, segment, distToSegmentEnd, tmpLowestLane);
-			if (pair == null) {
+			Triple<IAgent, Double, Boolean> newLeaderTriple = findLeader(
+					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
+			Triple<IAgent, Double, Boolean> newFollowerTriple = findFollower(
+					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
+			if (newLeaderTriple == null || newFollowerTriple == null) {
 				// Will crash into another vehicle if switch to this lane
 				continue;
 			}
 
 			// Find the leading vehicle of M on this new lane
-			Triple<IAgent, Double, Boolean> leadingTriple = pair.getKey();
-			IAgent leadingVehicle = leadingTriple.getLeft();
-			double leadingDist = leadingTriple.getMiddle();
-			boolean leadingSameDirection = leadingTriple.getRight();
+			IAgent leadingVehicle = newLeaderTriple.getLeft();
+			double leadingDist = newLeaderTriple.getMiddle();
+			boolean leadingSameDirection = newLeaderTriple.getRight();
 			double leadingSpeed = getSpeed(leadingVehicle);
 			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
 
@@ -162,10 +166,10 @@ public class MOBIL {
 			// Find back vehicle B' on new lane
 			double stayAccelB;
 			double changeAccelB;
-			Triple<IAgent, Double, Boolean> backTriple = pair.getValue();
-			if (backTriple == null || !backTriple.getRight() ||
-					backTriple.getLeft() == currentBackVehicle ||
-					getLeadingVehicle(backTriple.getLeft()) != vehicle) {
+			// TODO: the final condition is wrong
+			if (newFollowerTriple.getLeft() == null || !newFollowerTriple.getRight() ||
+					newFollowerTriple.getLeft() == currentBackVehicle ||
+					getLeadingVehicle(newFollowerTriple.getLeft()) != vehicle) {
 				// IF no back vehicle OR back vehicle is moving in opposite direction OR
 				// back vehicle on new lanes is the same one on old lanes OR
 				// back vehicle's leading vehicle is not the current vehicle
@@ -173,8 +177,8 @@ public class MOBIL {
 				stayAccelB = 0;
 				changeAccelB = 0;
 			} else {
-				IAgent backVehicle = backTriple.getLeft();
-				double backDist = backTriple.getMiddle();
+				IAgent backVehicle = newFollowerTriple.getLeft();
+				double backDist = newFollowerTriple.getMiddle();
 				// Calculate acc(B') - acceleration of B' if M does not change to this lane
 				// NOTE: in this case, the leading vehicle is the one we have found above for M
 				stayAccelB = IDM.computeAcceleration(scope, backVehicle, backDist + VL + leadingDist, leadingSpeed);

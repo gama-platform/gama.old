@@ -27,13 +27,13 @@ global {
 		create road from: shp_roads {
 			num_lanes <- 5;
 			
-			// Create another road in the opposite direction
-			create road with: [shape::polyline(reverse(shape.points))] {
-				num_lanes <- 5;
-				maxspeed <- myself.maxspeed;
-				linked_road <- myself;
-				myself.linked_road <- self;
-			}
+//			// Create another road in the opposite direction
+//			create road with: [shape::polyline(reverse(shape.points))] {
+//				num_lanes <- 5;
+//				maxspeed <- myself.maxspeed;
+//				linked_road <- myself;
+//				myself.linked_road <- self;
+//			}
 		}
 		
 		create intersection from: shp_nodes
