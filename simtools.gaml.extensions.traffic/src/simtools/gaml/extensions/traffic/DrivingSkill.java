@@ -1192,13 +1192,13 @@ public class DrivingSkill extends MovingSkill {
 
 		if (target != null) {
 			if (!graph.vertexSet().contains(target)) {
-				throw GamaRuntimeException.error(target.getName() + " is not a vertex in the given graph", scope);
+				throw GamaRuntimeException.error(target.getName() + " must be a vertex in the given graph", scope);
 			}
 
 			if (source == null) {
 				source = (IAgent) Queries.closest_to(scope, graph.getVertices(), vehicle);
 			} else if (!graph.vertexSet().contains(source)) {
-				throw GamaRuntimeException.error(source.getName() + " is not a vertex in the given graph", scope);
+				throw GamaRuntimeException.error(source.getName() + " must be a vertex in the given graph", scope);
 			}
 			path = graph.computeShortestPathBetween(scope, source, target);
 		} else if (nodes != null && !nodes.isEmpty()) {
