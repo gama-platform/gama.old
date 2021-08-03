@@ -1191,9 +1191,14 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		if (target != null) {
-			// TODO: why do we make source an arg again?
+			if (!graph.vertexSet().contains(target)) {
+				throw GamaRuntimeException.error(target.getName() + " is not a vertex in the given graph", scope);
+			}
+
 			if (source == null) {
-				source = (IAgent) Queries.closest_to(scope, target.getSpecies(), vehicle);
+				source = (IAgent) Queries.closest_to(scope, graph.getVertices(), vehicle);
+			} else if (!graph.vertexSet().contains(source)) {
+				throw GamaRuntimeException.error(source.getName() + " is not a vertex in the given graph", scope);
 			}
 			path = graph.computeShortestPathBetween(scope, source, target);
 		} else if (nodes != null && !nodes.isEmpty()) {
