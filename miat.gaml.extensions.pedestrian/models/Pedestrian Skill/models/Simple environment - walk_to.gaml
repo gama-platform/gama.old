@@ -101,14 +101,14 @@ species people skills: [pedestrian] schedules: shuffle(people) {
 	rgb color <- rnd_color(255);
 	float speed <- 3 #km/#h;
 	bool avoid_other <- true;
-	
+	point current_target ;
 	reflex move when: current_target != nil{
 		if (nb_obstacles > 0) {
 			do walk_to target: current_target bounds: free_space;
 		} else {
 			do walk_to target: current_target;
 		}
-		if (self distance_to current_waypoint < 0.5) {
+		if (self distance_to current_target < 0.5) {
 			do die;
 		}
 	}
