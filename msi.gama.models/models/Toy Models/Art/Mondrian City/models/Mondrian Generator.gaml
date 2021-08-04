@@ -1,11 +1,11 @@
 /***
-* Name: MondiranGenerator
+* Name: MondrianGenerator
 * Author: ben
 * Description: Model generating displays inspired by the "Composition II en rouge, bleu et jaune" of Piet Mondrian (1930)
-* Tags: art, Mondiran, generator
+* Tags: art, Mondrian, generator
 ***/
 
-model MondiranGeneratorComposition
+model MondrianGeneratorComposition
 
 global {
 	// Parameters
@@ -104,13 +104,13 @@ species squares {
 	}
 }
 
-experiment MondiranGenerator type: gui {
+experiment MondrianGenerator type: gui {
 	parameter "Nb max of squares: " var: nb_max_squares;
 	parameter "Nb max of border: " var: nb_max_lines;
 	parameter "Nb max of columns: " var: nb_max_columns;
 	
 	output {
-		display map {
+		display map type: opengl {
 			species lines ;											
 			species squares ;	
 		}
