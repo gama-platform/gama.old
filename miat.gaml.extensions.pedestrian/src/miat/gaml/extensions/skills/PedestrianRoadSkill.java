@@ -107,7 +107,7 @@ public class PedestrianRoadSkill extends Skill {
 	public static IList<IAgent> getLinkedPedestrianRoads(final IAgent agent) {
 		return (IList<IAgent>) agent.getAttribute(LINKED_PEDESTRIAN_ROADS);
 	}
-
+ 
 	@SuppressWarnings ("unchecked")
 	@getter (EXIT_NODES_HUB)
 	public static IMap<GamaPoint, IList<GamaPoint>> getExitNodesHub(final IAgent agent) {
