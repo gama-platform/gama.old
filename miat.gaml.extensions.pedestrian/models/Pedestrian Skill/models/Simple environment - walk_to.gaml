@@ -24,8 +24,8 @@ global {
 	float P_obstacle_consideration_distance <- 5.0 parameter: true ;
 	float P_pedestrian_consideration_distance <- 5.0 parameter: true ;
 	float P_minimal_distance <- 0.0 parameter: true;
-	float P_tolerance_target <- 0.1 parameter: true;
-	bool P_use_geometry_target <- true parameter: true;
+	float P_tolerance_waypoint <- 0.1 parameter: true;
+	bool P_use_geometry_waypoint <- true parameter: true;
 	
 	float P_A_pedestrian_SFM parameter: true <- 0.16 category: "SFM" ;
 	float P_A_obstacles_SFM parameter: true <- 1.9 category: "SFM" ;
@@ -70,8 +70,8 @@ global {
 			relaxion_SFM <- P_relaxion_SFM;
 			gama_SFM <- P_gama_SFM;
 			lambda_SFM <- P_lambda_SFM;
-			use_geometry_target <- P_use_geometry_target;
-			tolerance_target <- P_tolerance_target;
+			use_geometry_waypoint <- P_use_geometry_waypoint;
+			tolerance_waypoint <- P_tolerance_waypoint;
 
 			pedestrian_species <- [people];
 			obstacle_species<-[obstacle];
@@ -108,7 +108,7 @@ species people skills: [pedestrian] schedules: shuffle(people) {
 		} else {
 			do walk_to target: current_target;
 		}
-		if (self distance_to current_target < 0.5) {
+		if (self distance_to current_waypoint < 0.5) {
 			do die;
 		}
 	}

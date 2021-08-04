@@ -83,7 +83,7 @@ import msi.gaml.types.Types;
 				init = "[]",
 				doc = @doc ("The exit hub (several exit connected to each road extremities) that makes it possible to reduce angular distance when travelling to connected pedestrian roads")) })
 public class PedestrianRoadSkill extends Skill {
-
+ 
 	public final static String PEDESTRIAN_ROAD_SKILL = "pedestrian_road";
 	public final static String LINKED_PEDESTRIAN_ROADS = "linked_pedestrian_roads";
 
@@ -476,7 +476,7 @@ public class PedestrianRoadSkill extends Skill {
 
 	/*
 	 * Create exit hub for a set of connected out edges
-	 */
+	 */ 
 	@SuppressWarnings ("unchecked")
 	private IList<GamaPoint> connectedRoads(final IScope scope, final IAgent currentRoad, final Double dist,
 			final GamaPoint lp, final GamaPoint pp, final IShape bounds) {

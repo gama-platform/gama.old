@@ -22,7 +22,7 @@ global {
 	
 	bool display_free_space <- false parameter: true;
 	bool display_force <- false parameter: true;
-	bool display_target <- false parameter: true;
+	bool display_waypoint <- false parameter: true;
 	bool display_circle_min_dist <- true parameter: true;
 	
 	float P_shoulder_length <- 0.45 parameter: true;
@@ -31,8 +31,8 @@ global {
 	float P_obstacle_consideration_distance <- 3.0 parameter: true ;
 	float P_pedestrian_consideration_distance <- 3.0 parameter: true ;
 	float P_minimal_distance <- 0.0 parameter: true;
-	float P_tolerance_target <- 0.1 parameter: true;
-	bool P_use_geometry_target <- true parameter: true;
+	float P_tolerance_waypoint <- 0.1 parameter: true;
+	bool P_use_geometry_waypoint <- true parameter: true;
 	
 	float P_A_pedestrian_SFM parameter: true <- 0.16 category: "SFM" ;
 	float P_A_obstacles_SFM parameter: true <- 1.9 category: "SFM" ;
@@ -78,8 +78,8 @@ global {
 			relaxion_SFM <- P_relaxion_SFM;
 			gama_SFM <- P_gama_SFM;
 			lambda_SFM <- P_lambda_SFM;
-			use_geometry_target <- P_use_geometry_target;
-			tolerance_target <- P_tolerance_target;
+			use_geometry_waypoint <- P_use_geometry_waypoint;
+			tolerance_waypoint <- P_tolerance_waypoint;
 			
 			pedestrian_species <- [people];
 			obstacle_species<-[wall];
@@ -123,8 +123,8 @@ species people skills: [pedestrian]{
 	float speed <- gauss(5,1.5) #km/#h min: 2 #km/#h;
 
 	reflex move  {
-		if (final_target = nil) {
-			do compute_virtual_path pedestrian_graph:network final_target: any_location_in(open_area) ;
+		if (final_waypoint = nil) {
+			do compute_virtual_path pedestrian_graph:network target: any_location_in(open_area) ;
 		}
 		do walk ;
 	}	
@@ -137,8 +137,8 @@ species people skills: [pedestrian]{
 		
 		draw triangle(shoulder_length) color: color rotate: heading + 90.0;
 		
-		if display_target and current_target != nil {
-			draw line([location,current_target]) color: color;
+		if display_waypoint and current_waypoint != nil {
+			draw line([location,current_waypoint]) color: color;
 		}
 		if  display_force {
 			loop op over: forces.keys {
