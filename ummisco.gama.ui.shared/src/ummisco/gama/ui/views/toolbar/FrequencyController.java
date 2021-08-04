@@ -41,15 +41,13 @@ public class FrequencyController implements StateListener {
 	}
 
 	void togglePause(final ToolItem item, final IOutput out) {
-		if (out != null) {
-			item.setToolTipText((out.isPaused() ? "Resume " : "Pause ") + out.getName());
-		}
+		if (out != null) { item.setToolTipText((out.isPaused() ? "Resume " : "Pause ") + out.getName()); }
 		view.pauseChanged();
 	}
 
 	void toggleSync(final ToolItem item, final IDisplayOutput out) {
 		if (out != null) {
-			item.setToolTipText((out.isSynchronized() ? "Unsynchronize " : "Synchronize ") + out.getName());
+			item.setToolTipText((out.isSynchronized() ? "Desynchronize " : "Synchronize ") + out.getName());
 		}
 		view.synchronizeChanged();
 	}
@@ -67,13 +65,11 @@ public class FrequencyController implements StateListener {
 	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
 		syncItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC, "Synchronize with simulation", "Synchronize", e -> {
 			final IDisplayOutput output = view.getOutput();
-			if (!internalChange) {
-				if (output != null) {
-					if (output.isSynchronized()) {
-						output.setSynchronized(false);
-					} else {
-						output.setSynchronized(true);
-					}
+			if (!internalChange && (output != null)) {
+				if (output.isSynchronized()) {
+					output.setSynchronized(false);
+				} else {
+					output.setSynchronized(true);
 				}
 			}
 			toggleSync((ToolItem) e.widget, output);
@@ -90,14 +86,11 @@ public class FrequencyController implements StateListener {
 
 		pauseItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE, "Pause", "Pause or resume the current view", e -> {
 			final IOutput output = view.getOutput();
-			if (!internalChange) {
-
-				if (output != null) {
-					if (output.isPaused()) {
-						output.setPaused(false);
-					} else {
-						output.setPaused(true);
-					}
+			if (!internalChange && (output != null)) {
+				if (output.isPaused()) {
+					output.setPaused(false);
+				} else {
+					output.setPaused(true);
 				}
 			}
 			togglePause((ToolItem) e.widget, output);
@@ -107,18 +100,14 @@ public class FrequencyController implements StateListener {
 
 	@Override
 	public void updateToReflectState() {
-		if (view == null) { return; }
+		if (view == null) return;
 		final IDisplayOutput output = view.getOutput();
-		if (output == null) { return; }
+		if (output == null) return;
 
 		WorkbenchHelper.run(() -> {
 			internalChange = true;
-			if (pauseItem != null && !pauseItem.isDisposed()) {
-				pauseItem.setSelection(output.isPaused());
-			}
-			if (syncItem != null && !syncItem.isDisposed()) {
-				syncItem.setSelection(output.isSynchronized());
-			}
+			if (pauseItem != null && !pauseItem.isDisposed()) { pauseItem.setSelection(output.isPaused()); }
+			if (syncItem != null && !syncItem.isDisposed()) { syncItem.setSelection(output.isSynchronized()); }
 			internalChange = false;
 		});
 

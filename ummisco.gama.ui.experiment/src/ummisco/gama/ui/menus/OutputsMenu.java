@@ -1,5 +1,7 @@
 package ummisco.gama.ui.menus;
 
+import static ummisco.gama.ui.resources.GamaIcons.create;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,8 +17,10 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 public class OutputsMenu extends ContributionItem {
 
@@ -44,16 +48,19 @@ public class OutputsMenu extends ContributionItem {
 			managementSubMenu(main, sim.getScope(), sim.getOutputManager());
 		}
 		GamaMenu.separate(main);
-		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), null, "Pause all");
-		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), null, "Refresh all");
-		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(), null, "Resume all");
-		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(), null, "Synchronize all");
-		menuItem(main, e -> GAMA.getExperiment().unSynchronizeAllOutputs(), null, "Unsynchronize all");
+		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
+				"Pause all");
+		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create("action.update2").image(), "Update all");
+		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
+				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
+		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
+				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
+		menuItem(main, e -> GAMA.getExperiment().unSynchronizeAllOutputs(),
+				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
 	}
 
 	public void managementSubMenu(final Menu main, final IScope scope, final IOutputManager manager) {
-		if (Iterables.isEmpty(manager.getDisplayOutputs()))
-			return;
+		if (Iterables.isEmpty(manager.getDisplayOutputs())) return;
 		final MenuItem item = new MenuItem(main, SWT.CASCADE);
 		item.setText(manager.toString());
 		final Menu sub = new Menu(item);
@@ -71,17 +78,34 @@ public class OutputsMenu extends ContributionItem {
 		item.setMenu(sub);
 		if (output.isOpen()) {
 			// menuItem(sub, e -> output.close(), null, "Close");
-			if (output.isPaused())
+			if (output.isPaused()) {
 				menuItem(sub, e -> output.setPaused(false), null, "Resume");
-			else
-				menuItem(sub, e -> output.setPaused(true), null, "Pause");
-			menuItem(sub, e -> output.update(), null, "Refresh");
-			if (output.isSynchronized())
-				menuItem(sub, e -> output.setSynchronized(false), null, "Unsynchronize");
-			else
-				menuItem(sub, e -> output.setSynchronized(true), null, "Synchronize");
-		} else
+			} else {
+				menuItem(sub, e -> output.setPaused(true), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
+			}
+			menuItem(sub, e -> output.update(), create("action.update2").image(), "Force update");
+			if (output.isSynchronized()) {
+				menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
+						"Desynchronize");
+			} else {
+				menuItem(sub, e -> output.setSynchronized(true), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
+						"Synchronize");
+			}
+			if (output instanceof LayeredDisplayOutput) {
+				LayeredDisplayOutput ldo = (LayeredDisplayOutput) output;
+				GamaMenu.separate(sub);
+				menuItem(sub, e -> ldo.zoom(1), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN).image(), "Zoom in");
+				menuItem(sub, e -> ldo.zoom(0), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(), "Zoom to fit view");
+				menuItem(sub, e -> ldo.zoom(-1), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(), "Zoom out");
+				GamaMenu.separate(sub);
+				menuItem(sub, e -> ldo.getView().takeSnapshot(), create(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(),
+						"Take a snapshot");
+				menuItem(sub, e -> ldo.getView().toggleFullScreen(), create("display.fullscreen2").image(),
+						"Toggle fullscreen");
+			}
+		} else {
 			menuItem(sub, e -> manager.open(scope, output), null, "Reopen");
+		}
 
 	}
 
@@ -94,10 +118,8 @@ public class OutputsMenu extends ContributionItem {
 			final String prefix) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix);
-		if (listener != null)
-			result.addSelectionListener(listener);
-		if (image != null)
-			result.setImage(image);
+		if (listener != null) { result.addSelectionListener(listener); }
+		if (image != null) { result.setImage(image); }
 		return result;
 	}
 }

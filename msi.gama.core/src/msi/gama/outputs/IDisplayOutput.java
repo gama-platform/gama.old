@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
+import msi.gama.common.interfaces.IGamaView;
+
 /**
  * Display outputs extend regular outputs to represent and serve as the logical model of views displayed on the user
  * interface.
@@ -80,4 +82,10 @@ public interface IDisplayOutput extends IOutput {
 	default boolean isAutoSave() {
 		return false;
 	}
+
+	/**
+	 * Returns the GamaView associated with this output
+	 */
+
+	IGamaView getView();
 }

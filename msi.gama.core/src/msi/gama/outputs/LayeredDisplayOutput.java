@@ -17,6 +17,8 @@ import java.util.List;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -347,15 +349,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			if (parent != null) { handleInheritance(d, parent.toString()); }
 
 			final IExpressionDescription auto = d.getFacet(AUTOSAVE);
-			if (auto != null && auto.getExpression().isConst() && auto.getExpression().literalValue().equals(TRUE)) {
+			if (auto != null && auto.getExpression().isConst() && TRUE.equals(auto.getExpression().literalValue())) {
 				d.info("With autosave enabled, GAMA must remain the frontmost window and the display must not be covered or obscured by other windows",
 						IGamlIssue.GENERAL, auto.getTarget(), AUTOSAVE);
 			}
 			// Are we in OpenGL world ?
 			final IExpressionDescription type = d.getFacet(TYPE);
-			final Boolean isOpenGLDefault = !GamaPreferences.Displays.CORE_DISPLAY.getValue().equals("Java2D");
+			final Boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
-					: type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
+					: LayeredDisplayData.OPENGL.equals(type.getExpression().literalValue());
 			if (type != null) {
 				// Addresses and fixes Issue 833.
 				final String s = type.getExpression().literalValue();
@@ -365,8 +367,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 							IGamlIssue.UNKNOWN_KEYWORD, TYPE);
 					return;
 				}
-			} else {
-				if (isOpenGLDefault) { d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL)); }
+			} else if (isOpenGLDefault) {
+				d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
 			}
 
 			final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
@@ -591,9 +593,23 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean isAutoSave() {
 		final IExpression e = getFacet(IKeyword.AUTOSAVE);
-		if (e == null) return false;
-		if (e == IExpressionFactory.FALSE_EXPR) return false;
+		if (e == null || e == IExpressionFactory.FALSE_EXPR) return false;
 		return true;
+	}
+
+	public void zoom(final int mode) {
+		if (mode < 0) {
+			surface.zoomOut();
+		} else if (mode == 0) {
+			surface.zoomFit();
+		} else {
+			surface.zoomIn();
+		}
+	}
+
+	@Override
+	public IGamaView.Display getView() {
+		return (Display) super.getView();
 	}
 
 }
