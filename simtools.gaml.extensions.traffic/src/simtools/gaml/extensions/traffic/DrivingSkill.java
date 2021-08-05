@@ -19,8 +19,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.geom.Coordinate;
 
@@ -28,7 +26,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -1688,18 +1685,6 @@ public class DrivingSkill extends MovingSkill {
 				.boxed().collect(Collectors.toCollection(HashSet::new));
 		Set<Integer> newLanes = IntStream.range(newLowestLane, newLowestLane + numLanesOccupied)
 				.boxed().collect(Collectors.toCollection(HashSet::new));
-
-//		// Small optimization to not touch the lists associated with unchanged lanes
-//		Set<Integer> lanesToRemove, lanesToAdd;
-//		if (newSegment != currentSegment) {
-//			// if entering new segment, we have to update the lists for all related lanes and segments
-//			lanesToRemove = oldLanes;
-//			lanesToAdd = newLanes;
-//		} else {
-//			// otherwise the vehicle is still in the same segment, so we only update (possibly few) relevant lists
-//			lanesToRemove = Sets.difference(oldLanes, newLanes);
-//			lanesToAdd = Sets.difference(newLanes, oldLanes);
-//		}
 
 		IAgent correctRoad = getCurrentRoad(vehicle);
 		int numLanesCorrect = RoadSkill.getNumLanes(correctRoad);

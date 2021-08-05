@@ -20,9 +20,9 @@ import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingSpeed;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingVehicle;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setTimeSinceLC;
-import static simtools.gaml.extensions.traffic.Utils.findLeader;
-import static simtools.gaml.extensions.traffic.Utils.findFollower;
-import static simtools.gaml.extensions.traffic.Utils.rescaleProba;
+import static simtools.gaml.extensions.traffic.carfollowing.Utils.findFollower;
+import static simtools.gaml.extensions.traffic.carfollowing.Utils.findLeader;
+import static simtools.gaml.extensions.traffic.carfollowing.Utils.rescaleProba;
 
 import java.util.List;
 import java.util.stream.Collectors;

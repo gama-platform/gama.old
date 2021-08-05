@@ -13,11 +13,6 @@
  **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import java.util.List;
-
-import org.locationtech.jts.geom.Coordinate;
-
-import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;

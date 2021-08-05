@@ -10,10 +10,12 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections4.bidimap.TreeBidiMap;
+import org.apache.commons.collections4.OrderedBidiMap;
 import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.geometry.GeometryUtils;
@@ -35,12 +37,11 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.IMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 
 @vars({
 	@variable(
@@ -196,10 +197,23 @@ public class RoadSkill extends Skill {
 		if (agent.getAttribute(NUM_LANES) == null ||
 				numLanes != getNumLanes(agent) ||
 				getVehicleOrdering(agent) == null) {
-			List<TreeBidiMap<IAgent, Double>> res = new LinkedList<>();
+			List<OrderedBidiMap<IAgent, Double>> res = new LinkedList<>();
 			//TODO: should this be initialized somewhere else?	
 			for (int i = 0; i < numLanes; i += 1) {
-				res.add(new TreeBidiMap<IAgent, Double>());
+				res.add(
+					new CustomDualTreeBidiMap<IAgent, Double>(new Comparator<IAgent>() {
+						@Override
+						public int compare(IAgent a, IAgent b) {
+							int r = a.getSpeciesName().compareTo(b.getSpeciesName());
+							if (r != 0) {
+								return r;
+							} else {
+								return Integer.compare(a.getIndex(), b.getIndex());
+							}
+						}
+					}, 
+					Collections.reverseOrder())
+				);
 			}
 			setVehicleOrdering(agent, res);
 		}
@@ -261,12 +275,12 @@ public class RoadSkill extends Skill {
 	}
 
 	@getter(value = VEHICLE_ORDERING, initializer = true)
-	public static List<TreeBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
-		return (List<TreeBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
+	public static List<OrderedBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
+		return (List<OrderedBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
 	}
 
 	// @setter(VEHICLE_ORDERING, initializer = true)
-	public static void setVehicleOrdering(final IAgent road, List<TreeBidiMap<IAgent, Double>> list) {
+	public static void setVehicleOrdering(final IAgent road, List<OrderedBidiMap<IAgent, Double>> list) {
 		road.setAttribute(VEHICLE_ORDERING, list);
 	}
 
@@ -279,7 +293,7 @@ public class RoadSkill extends Skill {
 	 * @param lane the input lane index
 	 * @return
 	 */
-	public static TreeBidiMap<IAgent, Double> getVehiclesOnLaneSegment(final IScope scope,
+	public static OrderedBidiMap<IAgent, Double> getVehiclesOnLaneSegment(final IScope scope,
 			final IAgent correctRoad,
 			final int lane) {
 		int numLanesCorrect = getNumLanes(correctRoad);
@@ -353,13 +367,8 @@ public class RoadSkill extends Skill {
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
 			getVehiclesOnLaneSegment(scope, road, lane).put(vehicle, getTotalLength(road));
-//			List<IAgent> newVehicleList = getVehiclesOnLaneSegment(scope, road, lane, indexSegment);
-//			newVehicleList.add(vehicle);
 		}
-//		getAgents(road).add(vehicle);
 		
-		
-
 		DrivingSkill.setViolatingOneway(vehicle, violatingOneway);
 		if (!violatingOneway) {
 			DrivingSkill.setDistanceToGoal(vehicle, lengths.get(0));
