@@ -28,9 +28,8 @@ global {
 			num_lanes <- 5;
 			
 			// Create another road in the opposite direction
-			create road {
+			create road with: [shape::polyline(reverse(shape.points))] {
 				num_lanes <- 5;
-				shape <- polyline(reverse(myself.shape.points));
 				maxspeed <- myself.maxspeed;
 				linked_road <- myself;
 				myself.linked_road <- self;
