@@ -495,5 +495,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		if (name == null) return null;
 		return descriptions.get(eVar).get(QualifiedName.create(name));
 	}
-
+	
+	public static void writeResourceToFile() {
+		BuiltinGlobalScopeProvider s = new BuiltinGlobalScopeProvider();
+		s.createDescriptions();
+	}
 }

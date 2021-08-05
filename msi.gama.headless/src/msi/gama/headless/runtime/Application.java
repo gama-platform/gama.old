@@ -52,6 +52,8 @@ import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
+
 public class Application implements IApplication {
 
 	final public static String CONSOLE_PARAMETER = "-c";
@@ -66,6 +68,7 @@ public class Application implements IApplication {
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	final public static String WRITE_RESOURCE_FILE = "-write-xmi";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -110,6 +113,10 @@ public class Application implements IApplication {
 		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
+		if (args.contains(WRITE_RESOURCE_FILE)) {
+			size = size - 1;
+			mustContainInFile = false;
+		}
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -180,7 +187,8 @@ public class Application implements IApplication {
 			DEBUG.ON();
 			DEBUG.LOG(showHelp());
 			DEBUG.OFF();
-
+		} else if (args.contains(WRITE_RESOURCE_FILE)) {
+			BuiltinGlobalScopeProvider.writeResourceToFile();
 		} else if (args.contains(RUN_LIBRARY_PARAMETER))
 			return ModelLibraryRunner.getInstance().start(args);
 		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
