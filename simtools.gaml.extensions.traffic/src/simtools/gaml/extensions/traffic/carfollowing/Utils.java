@@ -12,8 +12,12 @@ import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 
 public class Utils {
@@ -207,8 +211,52 @@ public class Utils {
 		}
 		if (follower != null && !follower.dead()) {
 			return ImmutableTriple.of(follower, minGap, sameDirection);
+		}
+
+		// Find followers on previous roads
+		IAgent sourceNode = (target == RoadSkill.getTargetNode(road)) ?
+				RoadSkill.getSourceNode(road) : target;
+		for (IAgent prevRoad : RoadNodeSkill.getRoadsIn(sourceNode)) {
+			int numLanes = RoadSkill.getNumLanes(prevRoad);
+			int numLanesTotal = RoadSkill.getNumLanesTotal(prevRoad);
+			for (int i = 0; i < numLanesOccupied; i += 1) {
+				int lane = lowestLane + i;
+				if (lane >= numLanesTotal - numLanesOccupied) {
+					break;
+				}
+				
+				boolean isLinkedLane = lane >= numLanes;
+				if (isLinkedLane) {
+					prevRoad = RoadSkill.getLinkedRoad(prevRoad);
+				}
+				OrderedBidiMap<Double, IAgent> distMap = 
+						RoadSkill.getVehiclesOnLaneSegment(scope, prevRoad, lane).inverseBidiMap();
+				if (distMap.isEmpty()) {
+					continue;
+				}
+				double distQuery = !isLinkedLane ? distMap.lastKey() : distMap.firstKey();
+
+				IAgent tmpFollower = distMap.get(distQuery);
+				if (getCurrentTarget(tmpFollower) != sourceNode) {
+					// This vehicle is not following the current one, but it's going the other way
+					continue;
+				}
+				
+				double extraGap = !isLinkedLane ? distQuery : RoadSkill.getTotalLength(prevRoad) - distQuery;
+				double gap = distToCurrentTarget + extraGap - 0.5 * vL - 0.5 * getVehicleLength(tmpFollower);
+				if (gap < 0) {
+					return null;
+				} else if (gap < minGap) {
+					minGap = gap;
+					follower = tmpFollower;
+					sameDirection = sourceNode == getCurrentTarget(tmpFollower);
+				}
+			}
+		}
+			
+		if (follower != null) {
+			return ImmutableTriple.of(follower, minGap, sameDirection);
 		} else {
-			//TODO: find followers on previous roads
 			return ImmutableTriple.of(null, null, null);
 		}
 	}

@@ -1,11 +1,13 @@
 package simtools.gaml.extensions.traffic.lanechange;
 
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccGainThreshold;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAllowedLanes;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLCCooldown;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLaneChangeLimit;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingVehicle;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLowestLane;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSafeDeceleration;
@@ -106,6 +108,7 @@ public class MOBIL {
 			setLeadingVehicle(vehicle, leadingVehicle);
 			setLeadingDistance(vehicle, leadingDist);
 			setLeadingSpeed(vehicle, leadingSpeed);
+			setFollower(vehicle, currentBackVehicle);
 			// Calculate acc(M) - Acceleration of current vehicle M if no lane change occurs
 			stayAccelM = IDM.computeAcceleration(scope, vehicle, leadingDist, leadingSpeed);
 			// Do not allow changing lane when approaching intersections
@@ -130,13 +133,6 @@ public class MOBIL {
 				continue;
 			}
 
-			// Evaluate probabilities to switch to tmpLowestLane
-			// boolean canChangeDown = tmpLowestLane < lowestLane &&
-			// 		scope.getRandom().next() < probaChangeLaneDown;
-			// // NOTE: in canChangeUp, the 2nd condition prevents moving from current road to linked road
-			// boolean canChangeUp = tmpLowestLane > lowestLane &&
-			// 		 !(lowestLane <= numCurrentLanes - numLanesOccupied && tmpLowestLane > numCurrentLanes - numLanesOccupied) &&
-			// 		 scope.getRandom().next() < probaChangeLaneUp;
 			if (currentLowestLane <= numCurrentLanes - numLanesOccupied &&
 					tmpLowestLane > numCurrentLanes - numLanesOccupied) {
 				if (scope.getRandom().next() > probaUseLinkedRoad) {
@@ -166,14 +162,14 @@ public class MOBIL {
 			// Find back vehicle B' on new lane
 			double stayAccelB;
 			double changeAccelB;
-			// TODO: the final condition is wrong
-			if (newFollowerTriple.getLeft() == null || !newFollowerTriple.getRight() ||
+			// TODO: the final condition is wrong, also did I take into account vehicle going the wrong way?
+			// Ignore follower in incentive criterion if:
+			// 1. No follower was found
+			// 2. New follower if switch lanes is still the old one
+			// 3. The follower is actually following another vehicle
+			if (newFollowerTriple.getLeft() == null || 
 					newFollowerTriple.getLeft() == currentBackVehicle ||
-					getLeadingVehicle(newFollowerTriple.getLeft()) != vehicle) {
-				// IF no back vehicle OR back vehicle is moving in opposite direction OR
-				// back vehicle on new lanes is the same one on old lanes OR
-				// back vehicle's leading vehicle is not the current vehicle
-				// THEN acceleration change of B is irrelevant
+					getLeadingDistance(newFollowerTriple.getLeft()) < newFollowerTriple.getMiddle()) {
 				stayAccelB = 0;
 				changeAccelB = 0;
 			} else {
@@ -210,6 +206,7 @@ public class MOBIL {
 				setLeadingVehicle(vehicle, leadingVehicle);
 				setLeadingDistance(vehicle, leadingDist);
 				setLeadingSpeed(vehicle, leadingSpeed);
+				setFollower(vehicle, newFollowerTriple.getLeft());
 			}
 		}
 

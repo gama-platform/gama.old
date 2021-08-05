@@ -401,6 +401,12 @@ import ummisco.gama.dev.utils.DEBUG;
 		type = IType.FLOAT,
 		init = "nil",
 		doc = @doc("the speed of the leading vehicle")
+	),
+	@variable(
+		name = DrivingSkill.FOLLOWER,
+		type = IType.AGENT,
+		init = "nil",
+		doc = @doc("the vehicle following this vehicle")
 	)
 })
 @skill(
@@ -464,6 +470,7 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LEADING_VEHICLE = "leading_vehicle";
 	public static final String LEADING_DISTANCE = "leading_distance";
 	public static final String LEADING_SPEED = "leading_speed";
+	public static final String FOLLOWER = "follower";
 
 	// NOTE: Due to approximations in IDM, vehicles will never have the exact same location as its target.
 	// Therefore we consider the vehicle has reached its goal when distToGoal is smaller than this threshold.
@@ -926,6 +933,11 @@ public class DrivingSkill extends MovingSkill {
 		vehicle.setAttribute(LEADING_VEHICLE, leadingVehicle);
 	}
 
+	@getter(LEADING_DISTANCE)
+	public static double getLeadingDistance(final IAgent vehicle) {
+		return (double) vehicle.getAttribute(LEADING_DISTANCE);
+	}
+
 	@setter(LEADING_DISTANCE)
 	public static void setLeadingDistanceReadOnly(final IAgent vehicle, final double leadingDist) {
 		// read-only
@@ -942,6 +954,10 @@ public class DrivingSkill extends MovingSkill {
 
 	public static void setLeadingSpeed(final IAgent vehicle, final double leadingSpeed) {
 		vehicle.setAttribute(LEADING_SPEED, leadingSpeed);
+	}
+
+	public static void setFollower(final IAgent vehicle, final IAgent follower) {
+		vehicle.setAttribute(FOLLOWER, follower);
 	}
 
 	@action(

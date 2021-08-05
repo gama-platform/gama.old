@@ -73,22 +73,22 @@ public class RoadNodeSkill extends Skill {
 	public static final String BLOCK = "block";
 
 	@getter(ROADS_IN)
-	public static List getRoadsIn(final IAgent agent) {
-		return (List) agent.getAttribute(ROADS_IN);
+	public static List<IAgent> getRoadsIn(final IAgent agent) {
+		return (List<IAgent>) agent.getAttribute(ROADS_IN);
 	}
 
 	@getter(ROADS_OUT)
-	public static List getRoadsOut(final IAgent agent) {
-		return (List) agent.getAttribute(ROADS_OUT);
+	public static List<IAgent> getRoadsOut(final IAgent agent) {
+		return (List<IAgent>) agent.getAttribute(ROADS_OUT);
 	}
 
 	@setter(ROADS_IN)
-	public static void setRoadsIn(final IAgent agent, final List rds) {
+	public static void setRoadsIn(final IAgent agent, final List<IAgent> rds) {
 		agent.setAttribute(ROADS_IN, rds);
 	}
 
 	@setter(ROADS_OUT)
-	public static void setRoadsOut(final IAgent agent, final List rds) {
+	public static void setRoadsOut(final IAgent agent, final List<IAgent> rds) {
 		agent.setAttribute(ROADS_OUT, rds);
 	}
 
