@@ -120,6 +120,8 @@ public class Utils {
 			double gap = Math.abs(gapBetweenCentroids) - 0.5 * vL - 0.5 * otherVL;
 
 			if (Math.abs(gapBetweenCentroids) < 0.5 * vL + 0.5 * otherVL) {
+				//Patrick: I removed that to avoid stuck vehicles
+				
 				// Overlap with another vehicle
 				//return null;
 				if (gapBetweenCentroids >= 0)
@@ -174,10 +176,15 @@ public class Utils {
 					}
 
 					double gap = otherDistToSegmentEnd + distToPrevTarget - 0.5 * vL - 0.5 * otherVL;
+
 					if (gap < 0) {
-						//overlap
-						return null;
-					} else if (gap < minBackDist) {
+						gap = 0.0;
+					}
+						//Patrick: I removed that to avoid stuck vehicles
+						// crash
+						//return null;
+					//} else
+					if (gap < minBackDist) {
 						backVehicle = otherVehicle;
 						minBackDist = gap;
 						backSameDirection = sameDirection;
@@ -270,9 +277,13 @@ public class Utils {
 					double gap = distToSegmentEnd + targetToOtherVehicle - 0.5 * vL - 0.5 * otherVL;
 
 					if (gap < 0) {
+						gap = 0.0;
+					}
+						//Patrick: I removed that to avoid stuck vehicles
 						// crash
-						return null;
-					} else if (gap < minLeadingDist) {
+						//return null;
+					//} else
+					if (gap < minLeadingDist) {
 						leadingVehicle = otherVehicle;
 						minLeadingDist = gap;
 						leadingSameDirection = sameDirection;
