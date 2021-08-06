@@ -50,6 +50,7 @@ import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
+import msi.gama.lang.gaml.RunLSP;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
@@ -66,6 +67,7 @@ public class Application implements IApplication {
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	final public static String RUN_LSP = "-lsp";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -83,6 +85,7 @@ public class Application implements IApplication {
 				+ "\n      -m [mem]    					-- allocate memory (ex 2048m)"
 				+ "\n      -c        					-- start the console to write xml parameter file"
 				+ "\n      -v 							-- verbose mode"
+				+ "\n      -lsp 						-- run GAML language server"
 				+ "\n      -hpc [core] 					-- set the number of core available for experimentation"
 				+ "\n      -socket [socketPort] 		-- start socket pipeline to interact with another framework"
 				+ "\n" + "\n      -p        					-- start pipeline to interact with another framework"
@@ -110,6 +113,10 @@ public class Application implements IApplication {
 		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
+		if (args.contains(RUN_LSP)) {
+			size = size - 1;
+			mustContainInFile = false;
+		}
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -176,7 +183,16 @@ public class Application implements IApplication {
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 		if (args.contains(GAMA_VERSION)) {
 
-		} else if (args.contains(HELP_PARAMETER)) {
+		}
+		else if (args.contains(RUN_LSP)) {
+			String[] args_ = new String[args.size()];
+			Iterator<String> iter = args.iterator();
+			for (int i = 0; i < args_.length; i ++) {
+				args_[i] = iter.next();
+			}
+			RunLSP.main(args_);
+		}
+		else if (args.contains(HELP_PARAMETER)) {
 			DEBUG.ON();
 			DEBUG.LOG(showHelp());
 			DEBUG.OFF();
