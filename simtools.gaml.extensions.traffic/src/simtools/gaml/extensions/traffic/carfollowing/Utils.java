@@ -1,5 +1,7 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
+import static simtools.gaml.extensions.traffic.DrivingSkill.getDistanceToCurrentTarget;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentTarget;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getNextRoad;
@@ -33,6 +35,7 @@ public class Utils {
 		return Math.min(probaInOneSecond * timeStep, 1.0);
 	}
 	
+	// TODO: this and findFollower don't need this many params
 	public static Triple<IAgent, Double, Boolean> findLeader(final IScope scope,
 										final IAgent vehicle,
 										final IAgent target,
@@ -97,16 +100,14 @@ public class Utils {
 		// The methods continue down here if no leading vehicle is found on the current road
 
 		IAgent nextRoad = getNextRoad(vehicle);
-		// Check if vehicle is approaching an intersection
-		// Slowing down at final target, since at this point we don't know which road will be taken next
-		// OR might need to slow down at the intersection if it is not possible to enter the next road
+		// If vehicle is approaching an intersection, we need to slow down if
+		// 1. The intersection is the final target, the vehicle hasn't decide the next road yet
+		// 2. It is not possible to enter the next road (e.g. traffic lights)
 		if (nextRoad == null || !readyToCross(scope, vehicle, target, nextRoad)) {
 			// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 			// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
-			// TODO: make the vehicles stop in front of the lights,
-			// this would require changes in the drive loop as well
 			return ImmutableTriple.of(target, distToCurrentTarget + minSafetyDist, false);
-		} else if (nextRoad != road) {
+		} else if (nextRoad != road) { // nextRoad == road when vehicle is trying to cross intersection
 			boolean willViolateOneway = target == RoadSkill.getTargetNode(nextRoad);
 			IAgent nextTarget = !willViolateOneway ?
 				RoadSkill.getTargetNode(nextRoad) : RoadSkill.getSourceNode(nextRoad);
@@ -125,7 +126,7 @@ public class Utils {
 					continue;
 				}
 				
-				double tmpLeaderDist = !wrongDirection ? distMap.lastKey() : distMap.firstKey();
+				double tmpLeaderDist = !wrongDirection ? distMap.firstKey() : distMap.lastKey();
 				IAgent tmpLeader = distMap.get(tmpLeaderDist);
 				if (tmpLeader == null || tmpLeader.dead()) {
 					continue;
@@ -146,7 +147,7 @@ public class Utils {
 			}
 		}	
 
-		if (leader != null) {
+		if (leader != null && !leader.dead()) {
 			return ImmutableTriple.of(leader, minGap, sameDirection);
 		} else {
 			// the road ahead seems to be completely clear
@@ -158,17 +159,22 @@ public class Utils {
 	public static Triple<IAgent, Double, Boolean> findFollower(final IScope scope,
 										final IAgent vehicle,
 										final IAgent target,
-										final IAgent road,
+										final IAgent dummyRoad,
 										final int segment,
 										final int lowestLane,
 										final double distToSegmentEnd,
-										final double distToCurrentTarget) {
+										final double dummyDistToCurrentTarget) {
+		IAgent road = getCurrentRoad(vehicle);
+		if (road == null) {
+			return ImmutableTriple.of(null,null,null);
+		}
 		double vL = getVehicleLength(vehicle);
+		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);	
+
 		boolean violatingOneway = isViolatingOneway(vehicle);
 		int numRoadLanes = RoadSkill.getNumLanes(road);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 
-		double tmpDistQuery;
 		IAgent follower = null;
 		double minGap = Double.MAX_VALUE;
 		boolean sameDirection = false;
@@ -178,7 +184,7 @@ public class Utils {
 					RoadSkill.getVehiclesOnLaneSegment(scope, road, lane).inverseBidiMap();
 			boolean wrongDirection = lane < numRoadLanes ? false : true;
 			wrongDirection = violatingOneway ? !wrongDirection : wrongDirection;
-			tmpDistQuery = !wrongDirection ? distToCurrentTarget : 
+			double tmpDistQuery = !wrongDirection ? distToCurrentTarget : 
 					RoadSkill.getTotalLength(road) - distToCurrentTarget;
 
 			if (distMap.containsKey(tmpDistQuery) && distMap.get(tmpDistQuery) != vehicle) {
@@ -243,7 +249,8 @@ public class Utils {
 				}
 				
 				double extraGap = !isLinkedLane ? distQuery : RoadSkill.getTotalLength(prevRoad) - distQuery;
-				double gap = distToCurrentTarget + extraGap - 0.5 * vL - 0.5 * getVehicleLength(tmpFollower);
+				double gap = RoadSkill.getTotalLength(road) - distToCurrentTarget 
+						+ extraGap - 0.5 * vL - 0.5 * getVehicleLength(tmpFollower);
 				if (gap < 0) {
 					return null;
 				} else if (gap < minGap) {
@@ -254,7 +261,7 @@ public class Utils {
 			}
 		}
 			
-		if (follower != null) {
+		if (follower != null && !follower.dead()) {
 			return ImmutableTriple.of(follower, minGap, sameDirection);
 		} else {
 			return ImmutableTriple.of(null, null, null);

@@ -93,12 +93,11 @@ public class MOBIL {
 				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
 		Triple<IAgent, Double, Boolean> followerTriple = findFollower(
 				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
-		IAgent currentBackVehicle = null;
+		IAgent currentBackVehicle = followerTriple != null ? followerTriple.getLeft() : null;
 		double stayAccelM;
-		if (leaderTriple == null || followerTriple == null) {
+		if (leaderTriple == null) { // || followerTriple == null) {
 			stayAccelM = -Double.MAX_VALUE;
 		} else {
-			currentBackVehicle = followerTriple.getLeft();
 			// Find the leading vehicle on current lanes
 			IAgent leadingVehicle = leaderTriple.getLeft();
 			double leadingDist = leaderTriple.getMiddle();
@@ -162,7 +161,6 @@ public class MOBIL {
 			// Find back vehicle B' on new lane
 			double stayAccelB;
 			double changeAccelB;
-			// TODO: the final condition is wrong, also did I take into account vehicle going the wrong way?
 			// Ignore follower in incentive criterion if:
 			// 1. No follower was found
 			// 2. New follower if switch lanes is still the old one

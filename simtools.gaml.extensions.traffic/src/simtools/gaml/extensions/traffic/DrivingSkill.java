@@ -1764,6 +1764,7 @@ public class DrivingSkill extends MovingSkill {
 		if (distMoved > distToGoal || distToGoal < EPSILON) {
 			setDistanceToCurrentTarget(vehicle, 
 					getDistanceToCurrentTarget(vehicle) - distToGoal);
+			updateLaneSegment(scope, newLowestLane, currentSegment);
 			if (endPt.equals(currentTarget.getLocation())) {
 				// Move to a new road
 				setLocation(vehicle, endPt);

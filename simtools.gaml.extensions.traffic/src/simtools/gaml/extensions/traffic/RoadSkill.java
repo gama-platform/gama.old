@@ -10,10 +10,13 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.locationtech.jts.geom.Coordinate;
@@ -67,14 +70,6 @@ import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 		doc = @doc("the target node of the road")
 	),
 	@variable(
-		name = RoadSkill.LANES,
-		type = IType.INT,
-		doc = @doc(
-			value = "the number of lanes",
-			deprecated = "use num_lanes instead"
-		)
-	),
-	@variable(
 		name = RoadSkill.NUM_LANES,
 		type = IType.INT,
 		init = "2",
@@ -105,7 +100,7 @@ import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 	),
 	@variable(
 		name = RoadSkill.VEHICLE_ORDERING,
-		type = IType.MAP,
+		type = IType.LIST,
 		depends_on = {RoadSkill.NUM_LANES},
 		doc = @doc("provides information about the ordering of vehicle on any given lane")
 	),
@@ -144,13 +139,17 @@ public class RoadSkill extends Skill {
 	}
 
 	@getter(ALL_AGENTS)
-	public static List getAgents(final IAgent agent) {
-		return (List) agent.getAttribute(ALL_AGENTS);
+	public static List<IAgent> getAgents(final IAgent agent) {
+		Set<IAgent> res = new HashSet<>();
+		for (OrderedBidiMap<IAgent, Double> map : getVehicleOrdering(agent)) {
+			res.addAll(map.keySet());
+		}
+		return new ArrayList<>(res);
 	}
 
 	@setter(ALL_AGENTS)
 	public static void setAgents(final IAgent agent, final List agents) {
-		agent.setAttribute(ALL_AGENTS, agents);
+		// read-only
 	}
 
 	@getter(SOURCE_NODE)
@@ -173,16 +172,6 @@ public class RoadSkill extends Skill {
 		agent.setAttribute(TARGET_NODE, nd);
 	}
 
-	@getter(LANES)
-	public static int getLanes(final IAgent agent) {
-		return getNumLanes(agent);
-	}
-
-	@setter(LANES)
-	public static void setLanes(final IAgent agent, final int numLanes) {
-		setNumLanes(agent, numLanes);
-	}
-
 	@getter(NUM_LANES)
 	public static int getNumLanes(final IAgent agent) {
 		return (int) agent.getAttribute(NUM_LANES);
@@ -195,8 +184,7 @@ public class RoadSkill extends Skill {
 					GAMA.getRuntimeScope());
 		}
 		if (agent.getAttribute(NUM_LANES) == null ||
-				numLanes != getNumLanes(agent) ||
-				getVehicleOrdering(agent) == null) {
+				numLanes != getNumLanes(agent)) {
 			List<OrderedBidiMap<IAgent, Double>> res = new LinkedList<>();
 			//TODO: should this be initialized somewhere else?	
 			for (int i = 0; i < numLanes; i += 1) {
@@ -274,12 +262,12 @@ public class RoadSkill extends Skill {
 		return lengths.stream().reduce(0.0, Double::sum);
 	}
 
-	@getter(value = VEHICLE_ORDERING, initializer = true)
+	@getter(VEHICLE_ORDERING)
 	public static List<OrderedBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
 		return (List<OrderedBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
 	}
 
-	// @setter(VEHICLE_ORDERING, initializer = true)
+	@setter(VEHICLE_ORDERING)
 	public static void setVehicleOrdering(final IAgent road, List<OrderedBidiMap<IAgent, Double>> list) {
 		road.setAttribute(VEHICLE_ORDERING, list);
 	}
@@ -421,76 +409,5 @@ public class RoadSkill extends Skill {
 			getVehiclesOnLaneSegment(scope, currentRoad, lane).remove(driver);
 		}
 		getAgents(currentRoad).remove(driver);
-	}
-
-	@action(
-		name = "update_lanes",
-		args = {
-			@arg(
-				name = "lanes",
-				type = IType.INT,
-				optional = false,
-				doc = @doc("the new number of lanes.")
-			)
-		},
-		doc = @doc(
-			value = "change the number of lanes of the road",
-			examples = { @example ("do update_lanes lanes: 2") }
-		)
-	)
-	public void primChangeLaneNumber(final IScope scope) throws GamaRuntimeException {
-		// TODO: update this for multi-lane
-		final IAgent road = getCurrentAgent(scope);
-		final Integer lanes = scope.getIntArg("lanes");
-		setLanes(road, lanes);
-		if (lanes == 0) {
-			return;
-		}
-		int prev = getNumLanes(road);
-		final IList agentsOn = (IList) road.getAttribute(RoadSkill.AGENTS_ON);
-		if (prev == 0){
-			for (int i = 0; i < prev; i++) {
-				final int nbSeg = road.getInnerGeometry().getNumPoints() - 1;
-				final IList lisSg = GamaListFactory.create(Types.NO_TYPE);
-				for (int j = 0; j < nbSeg; j++) {
-					lisSg.add(GamaListFactory.create(Types.NO_TYPE));
-				}
-				agentsOn.add(lisSg);
-			}
-		} else if (prev < lanes) {
-			IList<IList<IList<IAgent>>> newAgentsOn = GamaListFactory.create();
-			int nb_seg = ((IList) agentsOn.get(0)).size();
-			for(int i = 0; i <lanes; i++) {
-				IList<IList<IAgent>> agsPerLanes = null;
-				if (i < prev) {
-					agsPerLanes = (IList<IList<IAgent>>) agentsOn.get(i);
-				} else {
-					agsPerLanes = GamaListFactory.create();
-					for (int j = 0; j <nb_seg; j++) {
-						agsPerLanes.add(GamaListFactory.create());
-					}
-				}
-				newAgentsOn.add(agsPerLanes);
-			}
-			setAgentsOn(road, newAgentsOn);
-		} else if (prev > lanes) {
-			IList newAgentsOn = GamaListFactory.create();
-			int nb_seg = ((IList) agentsOn.get(0)).size();
-			for (int i = 0; i <prev; i++){
-				IList agsPerLanes =  (IList) agentsOn.get(i);
-				if (i < lanes) {
-					newAgentsOn.add(agsPerLanes);
-				} else {
-					for (int j = 0; j < nb_seg; j++) {
-						IList<IAgent> ags = (IList<IAgent>) agsPerLanes.get(j);
-						for (IAgent ag: ags) {
-							((List)((List)newAgentsOn.get(lanes - 1)).get(j)).add(ag);
-							ag.setAttribute(DrivingSkill.LOWEST_LANE, lanes - 1);
-						}
-					} 	
-				}
-			}
-			setAgentsOn(road, newAgentsOn);		
-		}
 	}
 }
