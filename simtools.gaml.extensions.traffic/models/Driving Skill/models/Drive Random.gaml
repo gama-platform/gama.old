@@ -11,7 +11,7 @@ import "Traffic.gaml"
 
 global {
 	float traffic_light_interval parameter: 'Traffic light interval' init: 60#s;
-	float step <- 0.1#s;
+	float step <- 0.2#s;
     graph full_road_graph;
    
 	string map_name;
