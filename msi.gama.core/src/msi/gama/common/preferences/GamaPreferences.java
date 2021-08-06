@@ -422,7 +422,7 @@ public class GamaPreferences {
 				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0, 1);
 		public static final Pref<Integer> OPENGL_FPS =
-				create("pref_display_max_fps", "Max. number of frames per second", 20, IType.INT, true).in(NAME,
+				create("pref_display_max_fps", "Max. number of frames per second", 60, IType.INT, true).in(NAME,
 						RENDERING);
 		// public static final Pref<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
 		// "Enable OpenGL background loading of textures (faster, but can cause issues on Linux and Windows)",
