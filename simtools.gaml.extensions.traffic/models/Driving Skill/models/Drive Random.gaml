@@ -11,7 +11,7 @@ import "Traffic.gaml"
 
 global {
 	float traffic_light_interval parameter: 'Traffic light interval' init: 60#s;
-	float step <- 0.1#s;
+	float step <- 0.2#s;
     graph full_road_graph;
    
 	string map_name;
@@ -28,8 +28,9 @@ global {
 			num_lanes <- 5;
 			
 			// Create another road in the opposite direction
-			create road with: [shape::polyline(reverse(shape.points))] {
+			create road {
 				num_lanes <- 5;
+				shape <- polyline(reverse(myself.shape.points));
 				maxspeed <- myself.maxspeed;
 				linked_road <- myself;
 				myself.linked_road <- self;

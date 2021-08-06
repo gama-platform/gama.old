@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
@@ -94,7 +95,6 @@ import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 	@variable(
 		name = RoadSkill.SEGMENT_LENGTHS,
 		type = IType.LIST,
-		depends_on = IKeyword.SHAPE,
 		doc = @doc("stores the length of each road segment. " +
 			"The index of each element corresponds to the segment index.")
 	),
@@ -180,7 +180,7 @@ public class RoadSkill extends Skill {
 	@setter(NUM_LANES)
 	public static void setNumLanes(final IAgent agent, final int numLanes) {
 		if (numLanes == 0) {
-			GamaRuntimeException.warning(agent.getName() + " has zero lanes",
+			throw GamaRuntimeException.error(agent.getName() + " has zero lanes",
 					GAMA.getRuntimeScope());
 		}
 		agent.setAttribute(NUM_LANES, numLanes);
@@ -222,12 +222,17 @@ public class RoadSkill extends Skill {
 		// read-only
 	}
 
-	@getter(value = SEGMENT_LENGTHS, initializer = true)
+	@getter(value = SEGMENT_LENGTHS)
 	public static List<Double> getSegmentLengths(final IAgent road) {
 		List<Double> res = (List<Double>) road.getAttribute(SEGMENT_LENGTHS);
-		if (res == null) {
-			res = GamaListFactory.create();
-			Coordinate[] coords = road.getInnerGeometry().getCoordinates();
+		if (res.isEmpty()) {
+			Geometry geom = road.getInnerGeometry();
+			if (road.getInnerGeometry() == null) {
+				throw GamaRuntimeException.error(
+						"The shape of the road has not been initialized",
+						GAMA.getRuntimeScope());
+			}
+			Coordinate[] coords = geom.getCoordinates();
 			for (int i = 0; i < coords.length - 1; i += 1)  {
 				res.add(coords[i].distance(coords[i + 1]));
 			}
