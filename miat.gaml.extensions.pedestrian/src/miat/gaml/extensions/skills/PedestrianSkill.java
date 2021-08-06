@@ -700,25 +700,27 @@ public class PedestrianSkill extends MovingSkill {
 	public GamaPoint avoidSFMSimple(final IScope scope, final IAgent agent, final GamaPoint location,
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
-
+		IMap<IShape, GamaPoint> forcesMap = GamaMapFactory.create();
+		
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
 		GamaPoint fsoc = new GamaPoint(0, 0, 0);
 		double dist = location.euclidianDistanceTo(currentTarget);
 		double step = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(agent);
-		IList<ISpecies> speciesList = getObstacleSpecies(agent);
 		IList<IAgent> obstacles = GamaListFactory.create(Types.AGENT);
+		IList<IAgent> pedestrians = GamaListFactory.create(Types.AGENT);
 
-		obstacles.addAll(Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
-
-		obstacles.remove(agent);
-		obstacles.removeIf(IAgent::dead);
+		pedestrians.addAll(Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
+		obstacles.addAll(Spatial.Queries.at_distance(scope, obstaclesList, distPercepObstacle));
+		
+		pedestrians.remove(agent);
+		pedestrians.removeIf(IAgent::dead);
 		double lambda = getlAMBDA_SFM(agent);
 		double gama_ = getGAMA_SFM(agent);
 		double A = getAPedestrian_SFM(agent);
 		double n = getN_SFM(agent);
 		double n_prime = getN_PRIME_SFM(agent);
-		for (IAgent ag : obstacles) {
+		for (IAgent ag : pedestrians) {
 			GamaPoint force = new GamaPoint(0, 0, 0);
 			double distance = agent.euclidianDistanceTo(ag);
 			GamaPoint itoj = Points.subtract(ag.getLocation(), agent.getLocation());
@@ -747,21 +749,20 @@ public class PedestrianSkill extends MovingSkill {
 				force = f_1.add(f_2).multiplyBy(-A * Math.exp(-distance / B));
 				fsoc = fsoc.add(force);
 			}
-		}
-		GamaPoint desiredVelo = currentTarget.copy(scope).minus(location)
-				.divideBy(dist * Math.min(getSpeed(agent), dist / scope.getSimulation().getClock().getStepInSeconds()));
-		GamaPoint fdest = desiredVelo.minus(current_velocity).multiplyBy(getRELAXION_SFM(agent));
 
-		GamaPoint forces = fdest.add(fsoc);
-		GamaPoint pref_velocity = current_velocity.add(forces.multiplyBy(step));
-		double norm_vel = Maths.sqrt(scope, pref_velocity.x * pref_velocity.x + pref_velocity.y * pref_velocity.y
-				+ pref_velocity.z * pref_velocity.z);
-		if (norm_vel > speed) {
-			current_velocity = pref_velocity.divideBy(norm_vel * speed);
-		} else {
-			current_velocity = pref_velocity;
+			forcesMap.put(ag, force);
 		}
-		return current_velocity;// .multiplyBy(step);
+		
+		
+		GamaPoint desiredVelo = currentTarget.copy(scope).minus(location)
+				.divideBy(dist / Math.min(getSpeed(agent), dist / scope.getSimulation().getClock().getStepInSeconds()));
+		GamaPoint fdest = desiredVelo.minus(current_velocity).dividedBy(getRELAXION_SFM(agent));
+
+
+		forcesMap.put(agent, fdest);
+		agent.setAttribute(FORCES, forcesMap);
+		GamaPoint forces = fdest.add(fsoc);
+		return current_velocity.add(forces).normalize();
 	}
 
 	public GamaPoint avoidSFM(final IScope scope, final IAgent agent, final GamaPoint location,
