@@ -49,6 +49,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -73,6 +74,7 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
+import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
@@ -130,7 +132,8 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		if (g.isReported() || (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing())) return;
+		if (g.isReported() || GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing())
+			return;
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		if (!handler.isRunning()) { handler.start(); }
 		handler.offer(g);
@@ -406,7 +409,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void setSelectedAgent(final IAgent a) {
 		WorkbenchHelper.asyncRun(() -> {
-			if ((WorkbenchHelper.getPage() == null) || (a == null)) return;
+			if (WorkbenchHelper.getPage() == null || a == null) return;
 			try {
 				final InspectDisplayOutput output = new InspectDisplayOutput(a);
 				output.launch(a.getScope());
@@ -501,11 +504,16 @@ public class SwtGui implements IGui {
 	}
 
 	public static List<IDisplaySurface> allDisplaySurfaces() {
-		final List<IDisplaySurface> result = new ArrayList<>();
+		return StreamEx.of(allDisplayViews()).map(msi.gama.common.interfaces.IGamaView.Display::getDisplaySurface)
+				.toList();
+	}
+
+	public static List<IGamaView.Display> allDisplayViews() {
+		final List<IGamaView.Display> result = new ArrayList<>();
 		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
 		for (final IViewReference ref : viewRefs) {
 			final IWorkbenchPart part = ref.getPart(false);
-			if (part instanceof IGamaView.Display) { result.add(((IGamaView.Display) part).getDisplaySurface()); }
+			if (part instanceof IGamaView.Display) { result.add((IGamaView.Display) part); }
 		}
 		return result;
 	}
@@ -626,8 +634,13 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void setFocusOn(final IShape shape) {
-		for (final IDisplaySurface surface : SwtGui.allDisplaySurfaces()) {
-			surface.focusOn(shape);
+		if (shape == null) return;
+		for (final IDisplaySurface surface : allDisplaySurfaces()) {
+			if (shape instanceof ITopLevelAgent) {
+				surface.zoomFit();
+			} else {
+				surface.focusOn(shape);
+			}
 		}
 		GAMA.getExperiment().refreshAllOutputs();
 	}

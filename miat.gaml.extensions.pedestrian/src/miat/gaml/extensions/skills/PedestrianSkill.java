@@ -159,41 +159,41 @@ import msi.gaml.types.Types;
 				init = "[]",
 				doc = @doc ("the map of forces")),
 		@variable (
-				name = "final_target",
+				name = "final_waypoint",
 				type = IType.GEOMETRY,
 				init = "nil",
-				doc = @doc ("the final target of the agent")),
+				doc = @doc ("the final waypoint of the agent")),
 		@variable (
-				name = "current_target",
+				name = "current_waypoint",
 				type = IType.GEOMETRY,
 				init = "nil",
-				doc = @doc ("the current target of the agent")),
+				doc = @doc ("the current waypoint of the agent")),
 		@variable (
 				name = "current_index",
 				type = IType.INT,
 				init = "0",
-				doc = @doc ("the current index of the agent target (according to the targets list)")),
+				doc = @doc ("the current index of the agent waypoint (according to the waypoint list)")),
 		@variable (
-				name = "targets",
+				name = "waypoints",
 				type = IType.LIST,
 				of = IType.GEOMETRY,
 				init = "[]",
 				doc = @doc ("the current list of points/shape that the agent has to reach (path)")),
 		@variable (
-				name = "roads_targets",
+				name = "roads_waypoints",
 				type = IType.MAP,
 				init = "[]",
-				doc = @doc ("for each target, the associated road")),
+				doc = @doc ("for each waypoint, the associated road")),
 		@variable (
-				name = "use_geometry_target",
+				name = "use_geometry_waypoint",
 				type = IType.BOOL,
 				init = "false",
-				doc = @doc ("use geometries as target instead of points")),
+				doc = @doc ("use geometries as waypoint instead of points")),
 		@variable (
-				name = "tolerance_target",
+				name = "tolerance_waypoint",
 				type = IType.FLOAT,
 				init = "1.0",
-				doc = @doc ("distance to a target (in meters) to consider that an agent is arrived at the target"))
+				doc = @doc ("distance to a waypoint (in meters) to consider that an agent is arrived at the waypoint"))
 
 })
 public class PedestrianSkill extends MovingSkill {
@@ -206,7 +206,7 @@ public class PedestrianSkill extends MovingSkill {
 	public final static String SHOULDER_LENGTH = "shoulder_length";
 	public final static String MINIMAL_DISTANCE = "minimal_distance";
 
-	public final static String CURRENT_TARGET = "current_target";
+	public final static String CURRENT_TARGET = "current_waypoint";
 	public final static String OBSTACLE_CONSIDERATION_DISTANCE = "obstacle_consideration_distance";
 	public final static String PEDESTRIAN_CONSIDERATION_DISTANCE = "pedestrian_consideration_distance";
 	public final static String PROBA_DETOUR = "proba_detour";
@@ -230,14 +230,14 @@ public class PedestrianSkill extends MovingSkill {
 	public final static String N_SFM = "n_SFM";
 	public final static String N_PRIME_SFM = "n_prime_SFM";
 
-	public final static String CURRENT_TARGET_GEOM = "current_target_geom";
+	public final static String CURRENT_TARGET_GEOM = "current_waypoint_geom";
 	public final static String CURRENT_INDEX = "current_index";
-	public final static String FINAL_TARGET = "final_target";
+	public final static String FINAL_TARGET = "final_waypoint";
 	public final static String CURRENT_PATH = "current_path";
 	public final static String PEDESTRIAN_GRAPH = "pedestrian_graph";
-	public final static String TOLERANCE_TARGET = "tolerance_target";
+	public final static String TOLERANCE_TARGET = "tolerance_waypoint";
 
-	public final static String USE_GEOMETRY_TARGET = "use_geometry_target";
+	public final static String USE_GEOMETRY_TARGET = "use_geometry_waypoint";
 
 	// ACTION
 	public final static String COMPUTE_VIRTUAL_PATH = "compute_virtual_path";
@@ -245,8 +245,8 @@ public class PedestrianSkill extends MovingSkill {
 	public final static String WALK_TO = "walk_to";
 	// ---------- VARIABLES GETTER AND SETTER ------------- //
 
-	public final static String TARGETS = "targets";
-	public final static String ROADS_TARGET = "roads_targets";
+	public final static String TARGETS = "waypoints";
+	public final static String ROADS_TARGET = "roads_waypoints";
 
 	@getter (SHOULDER_LENGTH)
 	public double getShoulderLength(final IAgent agent) {
@@ -700,25 +700,27 @@ public class PedestrianSkill extends MovingSkill {
 	public GamaPoint avoidSFMSimple(final IScope scope, final IAgent agent, final GamaPoint location,
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
-
+		IMap<IShape, GamaPoint> forcesMap = GamaMapFactory.create();
+		
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
 		GamaPoint fsoc = new GamaPoint(0, 0, 0);
 		double dist = location.euclidianDistanceTo(currentTarget);
 		double step = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(agent);
-		IList<ISpecies> speciesList = getObstacleSpecies(agent);
 		IList<IAgent> obstacles = GamaListFactory.create(Types.AGENT);
+		IList<IAgent> pedestrians = GamaListFactory.create(Types.AGENT);
 
-		obstacles.addAll(Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
-
-		obstacles.remove(agent);
-		obstacles.removeIf(IAgent::dead);
+		pedestrians.addAll(Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
+		obstacles.addAll(Spatial.Queries.at_distance(scope, obstaclesList, distPercepObstacle));
+		
+		pedestrians.remove(agent);
+		pedestrians.removeIf(IAgent::dead);
 		double lambda = getlAMBDA_SFM(agent);
 		double gama_ = getGAMA_SFM(agent);
 		double A = getAPedestrian_SFM(agent);
 		double n = getN_SFM(agent);
 		double n_prime = getN_PRIME_SFM(agent);
-		for (IAgent ag : obstacles) {
+		for (IAgent ag : pedestrians) {
 			GamaPoint force = new GamaPoint(0, 0, 0);
 			double distance = agent.euclidianDistanceTo(ag);
 			GamaPoint itoj = Points.subtract(ag.getLocation(), agent.getLocation());
@@ -747,21 +749,20 @@ public class PedestrianSkill extends MovingSkill {
 				force = f_1.add(f_2).multiplyBy(-A * Math.exp(-distance / B));
 				fsoc = fsoc.add(force);
 			}
-		}
-		GamaPoint desiredVelo = currentTarget.copy(scope).minus(location)
-				.divideBy(dist * Math.min(getSpeed(agent), dist / scope.getSimulation().getClock().getStepInSeconds()));
-		GamaPoint fdest = desiredVelo.minus(current_velocity).multiplyBy(getRELAXION_SFM(agent));
 
-		GamaPoint forces = fdest.add(fsoc);
-		GamaPoint pref_velocity = current_velocity.add(forces.multiplyBy(step));
-		double norm_vel = Maths.sqrt(scope, pref_velocity.x * pref_velocity.x + pref_velocity.y * pref_velocity.y
-				+ pref_velocity.z * pref_velocity.z);
-		if (norm_vel > speed) {
-			current_velocity = pref_velocity.divideBy(norm_vel * speed);
-		} else {
-			current_velocity = pref_velocity;
+			forcesMap.put(ag, force);
 		}
-		return current_velocity;// .multiplyBy(step);
+		
+		
+		GamaPoint desiredVelo = currentTarget.copy(scope).minus(location)
+				.divideBy(dist / Math.min(getSpeed(agent), dist / scope.getSimulation().getClock().getStepInSeconds()));
+		GamaPoint fdest = desiredVelo.minus(current_velocity).dividedBy(getRELAXION_SFM(agent));
+
+
+		forcesMap.put(agent, fdest);
+		agent.setAttribute(FORCES, forcesMap);
+		GamaPoint forces = fdest.add(fsoc);
+		return current_velocity.add(forces).normalize();
 	}
 
 	public GamaPoint avoidSFM(final IScope scope, final IAgent agent, final GamaPoint location,
@@ -878,13 +879,13 @@ public class PedestrianSkill extends MovingSkill {
 					optional = false,
 					doc = @doc ("the graph on wich compute the path")),
 					@arg (
-							name = FINAL_TARGET,
+							name = "target",
 							type = IType.GEOMETRY,
 							optional = false,
 							doc = @doc ("the target to reach, can be any agent")) },
 
 			doc = @doc (
-					value = "action to compute a path to a target location according to a given graph",
+					value = "action to compute a path to a location according to a given graph",
 					returns = "the computed path, return nil if no path can be taken",
 					examples = { @example ("do compute_virtual_path graph: pedestrian_network target: any_point;") }))
 	public IPath primComputeVirtualPath(final IScope scope) throws GamaRuntimeException {
@@ -893,7 +894,7 @@ public class PedestrianSkill extends MovingSkill {
 		final ISpatialGraph graph = (ISpatialGraph) scope.getArg(PEDESTRIAN_GRAPH, IType.GRAPH);
 		final IAgent agent = getCurrentAgent(scope);
 		final boolean useGeometryTarget = getUseGeometryTarget(agent);
-		IShape target = (IShape) scope.getArg(FINAL_TARGET, IType.GEOMETRY);
+		IShape target = (IShape) scope.getArg("target", IType.GEOMETRY);
 		IShape source = agent.getLocation();
 
 		thePath = ((GraphTopology) graph.getTopology(scope)).pathBetween(scope, source, target);

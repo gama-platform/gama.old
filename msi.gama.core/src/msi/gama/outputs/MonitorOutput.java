@@ -139,9 +139,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		super.init(scope);
 		if (colorExpression == null) {
 			final ITopLevelAgent sim = scope.getRoot();
-			if (sim != null) {
-				constantColor = sim.getColor();
-			}
+			if (sim != null) { constantColor = sim.getColor(); }
 		}
 		return true;
 	}
@@ -149,23 +147,19 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 	@Override
 	public boolean step(final IScope scope) {
 		getScope().setCurrentSymbol(this);
-		if (getScope().interrupted()) { return false; }
+		if (getScope().interrupted()) return false;
 		if (getValue() != null) {
 			try {
 				lastValue = getValue().value(getScope());
-				if (history != null) {
-					history.add(lastValue);
-				}
+				if (history != null) { history.add(lastValue); }
 			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
 		} else {
 			lastValue = null;
 		}
-		if (constantColor == null) {
-			if (colorExpression != null) {
-				color = Cast.asColor(scope, colorExpression.value(scope));
-			}
+		if (constantColor == null && colorExpression != null) {
+			color = Cast.asColor(scope, colorExpression.value(scope));
 		}
 		return true;
 	}
@@ -182,9 +176,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 	@Override
 	public String getName() {
 		String result = super.getName();
-		if (result == null) {
-			result = getExpressionText();
-		}
+		if (result == null) { result = getExpressionText(); }
 		return result;
 	}
 
@@ -204,8 +196,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 	}
 
 	public void saveHistory() {
-		if (getScope() == null) { return; }
-		if (history == null || history.isEmpty()) { return; }
+		if (getScope() == null || history == null || history.isEmpty()) return;
 		Files.newFolder(getScope(), monitorFolder);
 		String file =
 				monitorFolder + "/" + "monitor_" + getName() + "_cycle_" + getScope().getClock().getCycle() + ".csv";

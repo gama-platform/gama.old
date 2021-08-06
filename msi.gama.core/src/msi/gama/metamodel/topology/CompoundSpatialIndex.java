@@ -1,3 +1,4 @@
+
 /*******************************************************************************************************
  *
  * msi.gama.metamodel.topology.CompoundSpatialIndex.java, in plugin msi.gama.core, is part of the source code of the
@@ -14,70 +15,124 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.locationtech.jts.geom.Envelope;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
-import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
 
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
-	boolean disposed = false, unique = true;
-	private Map<IPopulation<? extends IAgent>, ISpatialIndex> spatialIndexes;
-	private final ICollector<ISpatialIndex> uniqueIndexes;
-	private ISpatialIndex rootIndex;
+	boolean disposed = false;
+	private final Cache<IPopulation<? extends IAgent>, ISpatialIndex> spatialIndexes =
+			CacheBuilder.newBuilder().expireAfterAccess(180, TimeUnit.SECONDS).build();
+	private Envelope bounds;
+	private boolean parallel;
 	final protected double[] steps;
 
 	public CompoundSpatialIndex(final Envelope bounds, final boolean parallel) {
-		rootIndex = GamaQuadTree.create(bounds, parallel);
-		uniqueIndexes = Collector.getOrderedSet();
-		uniqueIndexes.add(rootIndex);
+		this.bounds = bounds;
+		this.parallel = parallel;
 		final double biggest = Math.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 100, biggest / 50, biggest / 20, biggest / 10, biggest / 2, biggest,
 				biggest * Math.sqrt(2) };
 	}
 
-	private ISpatialIndex findSpatialIndex(final IPopulation<? extends IAgent> s) {
-		if (disposed) return null;
-		if (unique) return rootIndex;
-		final ISpatialIndex index = spatialIndexes == null ? null : spatialIndexes.get(s);
-		return index == null ? rootIndex : index;
-	}
-
 	@Override
-	public void insert(final IAgent a) {
-		if (disposed || a == null) return;
-		if (unique) {
-			rootIndex.insert(a);
-			return;
-		}
-		final ISpatialIndex si = findSpatialIndex(a.getPopulation());
-		if (si != null) { si.insert(a); }
+	public void insert(final IAgent agent) {
+		if (disposed || agent == null) return;
+		IPopulation<? extends IAgent> pop = agent.getPopulation();
+		ISpatialIndex index = spatialIndexes.getIfPresent(pop);
+		if (index == null && !GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) { index = add(pop, false); }
+		if (index != null) { index.insert(agent); }
 	}
 
 	@Override
 	public void remove(final Envelope3D previous, final IAgent agent) {
 		if (disposed || agent == null) return;
-		if (unique) {
-			rootIndex.remove(previous, agent);
-			return;
+		ISpatialIndex index = spatialIndexes.getIfPresent(agent.getPopulation());
+		if (index != null) { index.remove(previous, agent); }
+	}
+	//
+	// @Override
+	// public boolean removeOrUpdate(final Envelope3D previous, final Envelope3D current, final IAgent agent) {
+	// if (disposed || agent == null) return false;
+	// ISpatialIndex index = spatialIndexes.getIfPresent(agent.getPopulation());
+	// if (index != null) return index.removeOrUpdate(previous, current, agent);
+	// return false;
+	// }
+
+	@Override
+	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
+		if (disposed) return null;
+		ISpatialIndex index = add(scope, f);
+		if (index != null) {
+			for (final double step : steps) {
+				IAgent first = index.firstAtDistance(scope, source, step, f);
+				if (first != null) return first;
+			}
+		} else {
+			try (final Collector.AsList<IAgent> shapes = Collector.getList()) {
+				for (final double step : steps) {
+					for (final ISpatialIndex si : spatialIndexes.asMap().values()) {
+						final IAgent first = si.firstAtDistance(scope, source, step, f);
+						if (first != null) { shapes.add(first); }
+					}
+					if (!shapes.isEmpty()) { break; }
+				}
+				if (shapes.items().size() == 1) return shapes.items().get(0);
+				// Adresses Issue 722 by shuffling the returned list using GAMA random
+				// procedure
+				shapes.shuffleInPlaceWith(scope.getRandom());
+				double min_dist = Double.MAX_VALUE;
+				IAgent min_agent = null;
+				for (final IAgent s : shapes) {
+					final double dd = source.euclidianDistanceTo(s);
+					if (dd < min_dist) {
+						min_dist = dd;
+						min_agent = s;
+					}
+				}
+				return min_agent;
+			}
 		}
-		final ISpatialIndex si = findSpatialIndex(agent.getPopulation());
-		if (si != null) { si.remove(previous, agent); }
+		return null;
 	}
 
-	private Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
-			final ISpatialIndex index, final int number, final Collection<IAgent> alreadyChosen) {
+	private Collection<IAgent> nFirstAtDistanceInAllSpatialIndexes(final IScope scope, final IShape source,
+			final IAgentFilter filter, final int number, final Collection<IAgent> alreadyChosen) {
+		if (disposed) return null;
+		final List<IAgent> shapes = new ArrayList<>(alreadyChosen);
+		for (final double step : steps) {
+			for (final ISpatialIndex si : spatialIndexes.asMap().values()) {
+				final Collection<IAgent> firsts = si.firstAtDistance(scope, source, step, filter, number, shapes);
+				shapes.addAll(firsts);
+			}
+			if (shapes.size() >= number) { break; }
+		}
+
+		if (shapes.size() <= number) return shapes;
+		scope.getRandom().shuffleInPlace(shapes);
+		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
+		return ordering.leastOf(shapes, number);
+	}
+
+	private Collection<IAgent> nFirstAtDistanceInSpatialIndex(final IScope scope, final IShape source,
+			final IAgentFilter filter, final int number, final Collection<IAgent> alreadyChosen,
+			final ISpatialIndex index) {
 		try (final ICollector<IAgent> closestEnt = Collector.getList()) {
 			closestEnt.addAll(alreadyChosen);
 			for (final double step : steps) {
@@ -91,187 +146,103 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		}
 	}
 
-	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
-			final ISpatialIndex index) {
-		for (final double step : steps) {
-			final IAgent first = index.firstAtDistance(scope, source, step, filter);
-			if (first != null) return first;
-		}
-		return null;
-	}
-
-	private Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter,
-			final int number, final Collection<IAgent> alreadyChosen) {
-		if (disposed) return null;
-		final List<IAgent> shapes = new ArrayList<>(alreadyChosen);
-		for (final double step : steps) {
-			for (final ISpatialIndex si : getAllSpatialIndexes()) {
-				final Collection<IAgent> firsts = si.firstAtDistance(scope, source, step, filter, number, shapes);
-				shapes.addAll(firsts);
-			}
-			if (shapes.size() >= number) { break; }
-		}
-
-		if (shapes.size() <= number) return shapes;
-		scope.getRandom().shuffleInPlace(shapes);
-		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
-		return ordering.leastOf(shapes, number);
-	}
-
-	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter) {
-		if (disposed) return null;
-		try (final Collector.AsList<IAgent> shapes = Collector.getList()) {
-			for (final double step : steps) {
-				for (final ISpatialIndex si : getAllSpatialIndexes()) {
-					final IAgent first = si.firstAtDistance(scope, source, step, filter);
-					if (first != null) { shapes.add(first); }
-				}
-				if (!shapes.isEmpty()) { break; }
-			}
-			if (shapes.items().size() == 1) return shapes.items().get(0);
-			// Adresses Issue 722 by shuffling the returned list using GAMA random
-			// procedure
-			shapes.shuffleInPlaceWith(scope.getRandom());
-			double min_dist = Double.MAX_VALUE;
-			IAgent min_agent = null;
-			for (final IAgent s : shapes) {
-				final double dd = source.euclidianDistanceTo(s);
-				if (dd < min_dist) {
-					min_dist = dd;
-					min_agent = s;
-				}
-			}
-			return min_agent;
-		}
-
-	}
-
 	@Override
 	public Collection<IAgent> firstAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
-		// TODO -- Verify : dist not taken into account here. Normal ?
-		final IPopulation<? extends IAgent> pop = f.getPopulation(scope);
-		if (pop == null) return firstAtDistance(scope, source, f, number, alreadyChosen);
-		final ISpatialIndex id = findSpatialIndex(pop);
-		if (id != null) return firstAtDistance(scope, source, f, id, number, alreadyChosen);
-		return firstAtDistance(scope, source, f, number, alreadyChosen);
-	}
-
-	@Override
-	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// TODO -- Verify : dist not taken into account here. Normal ?
-		final IPopulation<? extends IAgent> pop = f.getPopulation(scope);
-		if (pop == null) return firstAtDistance(scope, source, f);
-		final ISpatialIndex id = findSpatialIndex(pop);
-		if (id != null) return firstAtDistance(scope, source, f, id);
-		return firstAtDistance(scope, source, f);
-	}
-
-	@Override
-	public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
-			final IAgentFilter f) {
-		if (disposed) return Collections.EMPTY_LIST;
-		if (unique) return rootIndex.allAtDistance(scope, source, dist, f);
-		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id == rootIndex) {
-			try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {
-				for (final ISpatialIndex si : getAllSpatialIndexes()) {
-					agents.addAll(si.allAtDistance(scope, source, dist, f));
-				}
-				return agents.items();
-			}
-		}
-		return id.allAtDistance(scope, source, dist, f);
+		if (disposed) return null;
+		ISpatialIndex index = add(scope, f);
+		if (index != null)
+			return nFirstAtDistanceInSpatialIndex(scope, source, f, number, alreadyChosen, index);
+		else
+			return nFirstAtDistanceInAllSpatialIndexes(scope, source, f, number, alreadyChosen);
 	}
 
 	@Override
 	public Collection<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
 			final IAgentFilter f, final boolean contained) {
 		if (disposed) return Collections.EMPTY_LIST;
-		if (unique) return rootIndex.allInEnvelope(scope, source, envelope, f, contained);
-		final ISpatialIndex id = findSpatialIndex(f.getPopulation(scope));
-		if (id == rootIndex) {
-			try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {
-				for (final ISpatialIndex si : getAllSpatialIndexes()) {
-					agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
-				}
-				agents.shuffleInPlaceWith(scope.getRandom());
-				return agents.items();
+		ISpatialIndex index = add(scope, f);
+		if (index != null) return index.allInEnvelope(scope, source, envelope, f, contained);
+		try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {
+			for (final ISpatialIndex si : spatialIndexes.asMap().values()) {
+				agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 			}
+			agents.shuffleInPlaceWith(scope.getRandom());
+			return agents.items();
 		}
-		return id.allInEnvelope(scope, source, envelope, f, contained);
 	}
 
 	@Override
-	public void add(final ISpatialIndex index, final IPopulation<? extends IAgent> species) {
-		if (disposed || index == null) return;
-		if (spatialIndexes == null) { spatialIndexes = GamaMapFactory.create(); }
-		spatialIndexes.put(species, index);
-		uniqueIndexes.add(index);
-		unique = false;
-	}
-
-	@Override
-	public void remove(final IPopulation<? extends IAgent> species) {
-		if (disposed) return;
-		final ISpatialIndex index = spatialIndexes != null ? spatialIndexes.remove(species) : null;
-		if (index != null) { uniqueIndexes.remove(index); }
+	public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
+			final IAgentFilter f) {
+		if (disposed) return Collections.EMPTY_LIST;
+		ISpatialIndex index = add(scope, f);
+		if (index != null) return index.allAtDistance(scope, source, dist, f);
+		try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {
+			for (final ISpatialIndex si : spatialIndexes.asMap().values()) {
+				agents.addAll(si.allAtDistance(scope, source, dist, f));
+			}
+			agents.shuffleInPlaceWith(scope.getRandom());
+			return agents.items();
+		}
 	}
 
 	@Override
 	public void dispose() {
-		if (spatialIndexes != null) { spatialIndexes.clear(); }
-		uniqueIndexes.clear();
-		rootIndex = null;
+		if (disposed) return;
 		disposed = true;
+		spatialIndexes.invalidateAll();
 	}
 
-	@Override
-	public void updateQuadtree(final Envelope envelope) {
-		ISpatialIndex tree = rootIndex;
-		final Collection<IAgent> agents = tree.allAgents();
-		final boolean parallel = tree.isParallel();
-		tree.dispose();
-		tree = GamaQuadTree.create(envelope, parallel);
-		rootIndex = tree;
-		for (final IAgent a : agents) {
-			tree.insert(a);
-		}
-
-	}
-
-	@Override
-	public Collection<IAgent> allAgents() {
-		if (unique) return rootIndex.allAgents();
-		try (final ICollector<IAgent> set = Collector.getOrderedSet()) {
-			for (final ISpatialIndex i : getAllSpatialIndexes()) {
-				set.addAll(i.allAgents());
+	private ISpatialIndex add(final IPopulation<? extends IAgent> pop, final boolean insertAgents) {
+		if (disposed) return null;
+		ISpatialIndex index = spatialIndexes.getIfPresent(pop);
+		if (index == null) {
+			if (pop.isGrid()) {
+				index = ((GridPopulation) pop).getTopology().getPlaces();
+			} else {
+				index = GamaQuadTree.create(bounds, parallel);
 			}
-			return set.items();
+			spatialIndexes.put(pop, index);
+			if (insertAgents) {
+				for (final IAgent ag : pop) {
+					index.insert(ag);
+				}
+			}
 		}
+		return index;
 	}
 
-	public Collection<ISpatialIndex> getAllSpatialIndexes() {
-		return uniqueIndexes;
+	private ISpatialIndex add(final IScope scope, final IAgentFilter filter) {
+		if (filter == null) return null;
+		IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
+		if (pop == null) return null;
+		return add(pop, true);
 	}
 
 	@Override
-	public void mergeWith(final Compound comp) {
-		final CompoundSpatialIndex other = (CompoundSpatialIndex) comp;
+	public void remove(final IPopulation<? extends IAgent> pop) {
+		spatialIndexes.invalidate(pop);
+	}
+
+	@Override
+	public void update(final Envelope envelope, final boolean parallel) {
+		this.bounds = envelope;
+		this.parallel = parallel;
+		for (IPopulation<? extends IAgent> pop : spatialIndexes.asMap().keySet()) {
+			remove(pop);
+			add(pop, true);
+		}
+	}
+
+	@Override
+	public void mergeWith(final Compound spatialIndex) {
+		final CompoundSpatialIndex other = (CompoundSpatialIndex) spatialIndex;
 		if (null == other) return;
-		if (null == other.spatialIndexes) {
-			other.spatialIndexes = GamaMapFactory.create();
-			// return;
-		}
-		other.spatialIndexes.forEach((species, index) -> {
-			if (index != other.rootIndex) { add(index, species); }
+		other.spatialIndexes.asMap().forEach((species, index) -> {
+			spatialIndexes.put(species, index);
 		});
-		other.dispose();
-	}
-
-	@Override
-	public boolean isParallel() {
-		return rootIndex.isParallel();
+		spatialIndex.dispose();
 	}
 
 }

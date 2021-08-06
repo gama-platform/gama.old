@@ -8,28 +8,24 @@ import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
 
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class SnapshotMaker {
 
-	void doSnapshot(final IDisplayOutput output, final IDisplaySurface surface, final Control composite) {
-		if (output == null || surface == null || composite == null) return;
+	public void doSnapshot(final IDisplaySurface surface, final Rectangle composite) {
+		if (surface == null || composite == null) return;
 		final IScope scope = surface.getScope();
-		final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
-				IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" + GAMA.getModel().getName() + "_display_" + output.getName(),
-				false);
+		final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME
+				+ "/" + GAMA.getModel().getName() + "_display_" + surface.getOutput().getName(), false);
 		final LayeredDisplayData data = surface.getData();
 		final int w = (int) data.getImageDimension().getX();
 		final int h = (int) data.getImageDimension().getY();
@@ -45,8 +41,11 @@ public class SnapshotMaker {
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
 				final Robot robot = new Robot();
-				final Rectangle r = WorkbenchHelper.displaySizeOf(composite);
-				final java.awt.Rectangle bounds = new java.awt.Rectangle(r.x, r.y, r.width, r.height);
+				final java.awt.Rectangle bounds =
+						new java.awt.Rectangle(composite.x, composite.y, composite.width, composite.height);
+				// System.out.println("Bounds of composite " + bounds + " | surface display width "
+				// + surface.getDisplayWidth() + "surface display height " + surface.getDisplayHeight() + " "
+				// + " | surface height " + height + " surface width " + width);
 				image = robot.createScreenCapture(bounds);
 				image = ImageUtils.resize(image, width, height);
 			} catch (final Exception e) {

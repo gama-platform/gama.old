@@ -24,7 +24,6 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -50,8 +49,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		final GamaPoint size = param instanceof GamaPoint ? (GamaPoint) param : null;
 
 		if (size == null) {
-			if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
-				return ((IFieldMatrixProvider) obj).getField(scope);
+			// if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
+			// return ((IFieldMatrixProvider) obj).getField(scope);
 			if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, copy);
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
 		} else if (size.x <= 0 || size.y < 0)

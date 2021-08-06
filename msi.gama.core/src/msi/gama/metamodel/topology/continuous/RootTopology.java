@@ -37,8 +37,8 @@ public class RootTopology extends ContinuousTopology {
 		return spatialIndex;
 	}
 
-	public void updateEnvironment(final IShape newEnv) {
-		spatialIndex.updateQuadtree(newEnv.getEnvelope());
+	public void updateEnvironment(final IShape newEnv, final boolean hasParallelism) {
+		spatialIndex.update(newEnv.getEnvelope(), hasParallelism);
 	}
 
 	@Override
@@ -56,15 +56,11 @@ public class RootTopology extends ContinuousTopology {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (spatialIndex != null) {
-			spatialIndex.dispose();
-		}
+		if (spatialIndex != null) { spatialIndex.dispose(); }
 	}
 
 	public void remove(final IPopulation<? extends IAgent> pop) {
-		if (spatialIndex != null) {
-			spatialIndex.remove(pop);
-		}
+		if (spatialIndex != null) { spatialIndex.remove(pop); }
 
 	}
 

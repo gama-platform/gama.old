@@ -58,43 +58,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return GamaPointType.staticCast(scope, object, false);
 	}
 
-	public static IList getLines(final IScope scope, final IMatrix m) {
-		final IList result = GamaListFactory.create(Types.LIST.of(m.getGamlType().getContentType()));
-		for (int i = 0; i < m.getRows(scope); i++) {
-			result.add(getLine(scope, m, i));
-		}
-		return result;
-	}
-
-	public static IList getColumns(final IScope scope, final IMatrix m) {
-		final IList result = GamaListFactory.create(Types.LIST.of(m.getGamlType().getContentType()));
-		for (int i = 0, n = m.getCols(scope); i < n; i++) {
-			result.add(getColumn(scope, m, i));
-		}
-		return result;
-	}
-
-	public static IList getColumn(final IScope scope, final IMatrix m, final Integer num_col) {
-		final IList result = GamaListFactory.create(m.getGamlType().getContentType());
-		if (num_col >= m.getCols(scope) || num_col < 0) return result;
-		for (int i = 0; i < m.getRows(scope); i++) {
-			result.add(m.get(scope, num_col, i));
-		}
-		return result;
-	}
-
-	public static IList getLine(final IScope scope, final IMatrix m, final Integer num_line) {
-		final IList result = GamaListFactory.create(m.getGamlType().getContentType());
-		if (num_line >= m.getRows(scope) || num_line < 0) return result;
-		for (int i = 0; i < m.getCols(scope); i++) {
-			result.add(m.get(scope, i, num_line));
-		}
-		return result;
-	}
-
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "matrix(" + getRowsList(null).serialize(includingBuiltIn) + ")";
+	public final String serialize(final boolean includingBuiltIn) {
+		return this.getGamlType().serialize(true) + "(" + getColumnsList().serialize(includingBuiltIn) + ")";
 	}
 
 	public static IMatrix opPlus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
@@ -503,8 +469,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getRowsList()
 	 */
 	@Override
-	public IList<IList<T>> getRowsList(final IScope scope) {
-		return getLines(scope, this);
+	public IList<IList<T>> getRowsList() {
+		final IList result = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
+		for (int i = 0; i < numRows; i++) {
+			result.add(getRow(i));
+		}
+		return result;
 	}
 
 	/*
@@ -513,8 +483,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getColumnsList()
 	 */
 	@Override
-	public IList<IList<T>> getColumnsList(final IScope scope) {
-		return getColumns(scope, this);
+	public IList<IList<T>> getColumnsList() {
+		final IList result = GamaListFactory.create(Types.LIST.of(getGamlType().getContentType()));
+		for (int i = 0, n = numCols; i < n; i++) {
+			result.add(getColumn(i));
+		}
+		return result;
 	}
 
 	/*
@@ -523,8 +497,13 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getRow(java.lang.Integer)
 	 */
 	@Override
-	public IList<T> getRow(final IScope scope, final Integer num_line) {
-		return getLine(scope, this, num_line);
+	public IList<T> getRow(final Integer n) {
+		final IList result = GamaListFactory.create(getGamlType().getContentType());
+		if (n >= numRows || n < 0) return result;
+		for (int i = 0; i < numCols; i++) {
+			result.add(getNthElement(n * numCols + i));
+		}
+		return result;
 	}
 
 	/*
@@ -533,8 +512,13 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getColumn(java.lang.Integer)
 	 */
 	@Override
-	public IList<T> getColumn(final IScope scope, final Integer num_line) {
-		return getColumn(scope, this, num_line);
+	public IList<T> getColumn(final Integer n) {
+		final IList result = GamaListFactory.create(getGamlType().getContentType());
+		if (n >= numCols || n < 0) return result;
+		for (int i = 0; i < numRows; i++) {
+			result.add(getNthElement(i * numCols + n));
+		}
+		return result;
 	}
 
 	/*

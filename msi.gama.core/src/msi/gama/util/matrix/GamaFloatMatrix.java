@@ -251,7 +251,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public void set(final IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException {
-		if (((col < numCols) && (col >= 0) && (row < numRows) && (row >= 0))) {
+		if (col < numCols && col >= 0 && row < numRows && row >= 0) {
 			final double val = Cast.asFloat(scope, obj);
 			getMatrix()[row * numCols + col] = val;
 		}
@@ -459,7 +459,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public Double getNthElement(final Integer index) {
-		if ((index == null) || (index > getMatrix().length)) return 0d;
+		if (index == null || index > getMatrix().length) return 0d;
 		return getMatrix()[index];
 	}
 
@@ -467,11 +467,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	protected void setNthElement(final IScope scope, final int index, final Object value) {
 		getMatrix()[index] = Cast.asFloat(scope, value);
 	}
-
-	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
-	}
+	//
+	// @Override
+	// public String serialize(final boolean includingBuiltIn) {
+	// return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
+	// }
 
 	@Override
 	public IContainerType getGamlType() {

@@ -232,19 +232,19 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index
+		final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
+				|| GamaPreferences.External.QUADTREE_SYNCHRONIZATION.getValue() };
+		if (!parallel[0]) {
+			getSpecies().getDescription().visitMicroSpecies(s -> {
+				parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
+				return !parallel[0];
+			});
+		}
 		if (topology != null) {
-			topology.updateEnvironment(shape);
+			topology.updateEnvironment(shape, parallel[0]);
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
 			final boolean torus = expr != null && Cast.asBool(scope, expr.value(scope));
-			final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
-					|| GamaPreferences.External.QUADTREE_SYNCHRONIZATION.getValue() };
-			if (!parallel[0]) {
-				getSpecies().getDescription().visitMicroSpecies(s -> {
-					parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
-					return !parallel[0];
-				});
-			}
 			setTopology(new RootTopology(scope, shape, torus, parallel[0]));
 		}
 	}

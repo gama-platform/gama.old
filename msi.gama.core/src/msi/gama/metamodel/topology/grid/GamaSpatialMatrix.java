@@ -764,10 +764,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
 		if (filter.accept(scope, source, toTest)) return toTest.getAgent();
-		ITopology.SpatialRelation rel = filter.getSpecies() != null
-				&& toTest.getAgent() != null && filter.getSpecies().equals(toTest.getAgent().getSpecies()) ? ITopology.SpatialRelation.INSIDE: ITopology.SpatialRelation.OVERLAP; 
-		final List<IAgent> agents =
-				new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, rel));
+		ITopology.SpatialRelation rel = filter.getSpecies() != null && toTest.getAgent() != null
+				&& filter.getSpecies().equals(toTest.getAgent().getSpecies()) ? ITopology.SpatialRelation.INSIDE
+						: ITopology.SpatialRelation.OVERLAP;
+		final List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, rel));
 		agents.remove(source);
 		if (agents.isEmpty()) return null;
 		scope.getRandom().shuffleInPlace(agents);
@@ -1559,6 +1559,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public GridTopology getTopology() {
+			return (GridTopology) super.getTopology();
+		}
+
+		@Override
 		public void initializeFor(final IScope scope) throws GamaRuntimeException {
 			topology.initialize(scope, this);
 			// scope.getGui().debug("GamaSpatialMatrix.GridPopulation.initializeFor
@@ -1996,11 +2001,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected void setNthElement(final IScope scope, final int index, final Object value) {}
 
 	@Override
-	public Collection<IAgent> allAgents() {
-		return this.getAgents();
-	}
-
-	@Override
 	public StreamEx<IShape> stream(final IScope scope) {
 		return StreamEx.of(matrix);
 	}
@@ -2008,11 +2008,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public String optimizer() {
 		return optimizer;
-	}
-
-	@Override
-	public boolean isParallel() {
-		return false;
 	}
 
 	/**

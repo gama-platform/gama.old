@@ -86,6 +86,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	}
 
 	private boolean isPoint(final Envelope env) {
+		// TODO Beware that null enveloppes also return 0 !
 		return env.getArea() == 0.0;
 	}
 
@@ -231,14 +232,6 @@ public class GamaQuadTree implements ISpatialIndex {
 		return findIntersects(scope, source, envelope, f);
 	}
 
-	@Override
-	public Collection<IAgent> allAgents() {
-		try (final ICollector<IAgent> result = Collector.getOrderedSet()) {
-			root.findIntersects(root.bounds, result);
-			return result.items();
-		}
-	}
-
 	private class QuadNode {
 
 		final Envelope bounds;
@@ -375,7 +368,7 @@ public class GamaQuadTree implements ISpatialIndex {
 				objects.forEach((a, e) -> {
 					if (e != null && e.intersects(r)) { result.add(a); }
 				});
-			} else if (nodes != null)  {
+			} else if (nodes != null) {
 				for (final QuadNode node : nodes) {
 					node.findIntersects(r, result);
 				}
@@ -383,11 +376,6 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		}
 
-	}
-
-	@Override
-	public boolean isParallel() {
-		return parallel;
 	}
 
 }

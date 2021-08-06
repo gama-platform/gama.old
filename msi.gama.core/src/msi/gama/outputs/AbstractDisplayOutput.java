@@ -38,7 +38,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	final Runnable opener = () -> {
 		view = getScope().getGui().showView(getScope(), getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
-		if (view == null) { return; }
+		if (view == null) return;
 		view.addOutput(AbstractDisplayOutput.this);
 	};
 
@@ -65,22 +65,18 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void dispose() {
-		if (disposed) { return; }
+		if (disposed) return;
 		disposed = true;
 		if (view != null) {
 			view.removeOutput(this);
 			view = null;
 		}
-		if (getScope() != null) {
-			GAMA.releaseScope(getScope());
-		}
+		if (getScope() != null) { GAMA.releaseScope(getScope()); }
 	}
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		if (view != null) {
-			view.update(this);
-		}
+		if (view != null) { view.update(this); }
 	}
 
 	@Override
@@ -96,25 +92,25 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void setSynchronized(final boolean sync) {
 		synchro = sync;
-		if (view != null) {
-			view.updateToolbarState();
-		}
+		if (view != null) { view.updateToolbarState(); }
 	}
 
 	@Override
 	public void setPaused(final boolean pause) {
 		super.setPaused(pause);
-		if (view != null) {
-			view.updateToolbarState();
-		}
+		if (view != null) { view.updateToolbarState(); }
+	}
+
+	@Override
+	public IGamaView getView() {
+		return view;
 	}
 
 	@Override
 	public String getId() {
 		final String cName = this.getDescription().getModelDescription().getAlias();
-		if (cName != null && !cName.equals("") && !getName().contains("#")) {
+		if (cName != null && !"".equals(cName) && !getName().contains("#"))
 			return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName;
-		}
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 

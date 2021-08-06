@@ -366,15 +366,6 @@ public class AmorphousTopology implements ITopology {
 			@Override
 			public void dispose() {}
 
-			@Override
-			public Collection<IAgent> allAgents() {
-				return Collections.EMPTY_LIST;
-			}
-
-			@Override
-			public boolean isParallel() {
-				return false;
-			}
 		};
 	}
 

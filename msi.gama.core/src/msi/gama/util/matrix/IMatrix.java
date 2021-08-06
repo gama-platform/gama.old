@@ -104,7 +104,7 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 					value = "rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") },
 			see = "columns_list")
-	IList<IList<T>> getRowsList(IScope scope);
+	IList<IList<T>> getRowsList();
 
 	@operator (
 			value = "columns_list",
@@ -119,7 +119,7 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 					value = "columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]") },
 			see = "rows_list")
-	IList<IList<T>> getColumnsList(IScope scope);
+	IList<IList<T>> getColumnsList();
 
 	@operator (
 			value = "row_at",
@@ -133,7 +133,7 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2",
 					equals = "[\"el13\",\"el23\",\"el33\"]") },
 			see = { "column_at", "columns_list" })
-	IList<T> getRow(IScope scope, Integer num_line);
+	IList<T> getRow(Integer num_line);
 
 	@operator (
 			value = "column_at",
@@ -147,7 +147,7 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2",
 					equals = "[\"el31\",\"el32\",\"el33\"]") },
 			see = { "row_at", "rows_list" })
-	IList<T> getColumn(IScope scope, Integer num_line);
+	IList<T> getColumn(Integer num_line);
 
 	@operator (
 			value = IKeyword.PLUS,

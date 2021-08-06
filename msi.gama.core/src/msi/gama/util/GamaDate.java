@@ -190,8 +190,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			try {
 				final TemporalAccessor ta = df.parse(original);
 				if (ta instanceof Temporal) return (Temporal) ta;
-				if ((!ta.isSupported(ChronoField.YEAR) && !ta.isSupported(ChronoField.MONTH_OF_YEAR)
-						&& !ta.isSupported(ChronoField.DAY_OF_MONTH)) && ta.isSupported(ChronoField.HOUR_OF_DAY))
+				if (!ta.isSupported(ChronoField.YEAR) && !ta.isSupported(ChronoField.MONTH_OF_YEAR)
+						&& !ta.isSupported(ChronoField.DAY_OF_MONTH) && ta.isSupported(ChronoField.HOUR_OF_DAY))
 					return LocalTime.from(ta);
 				if (!ta.isSupported(ChronoField.HOUR_OF_DAY) && !ta.isSupported(ChronoField.MINUTE_OF_HOUR)
 						&& !ta.isSupported(ChronoField.SECOND_OF_MINUTE))
@@ -286,8 +286,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	public IList<?> listValue(final IScope scope, final IType<?> ct) {
 		final LocalDateTime ld = LocalDateTime.from(internal);
-		return GamaListFactory.create(scope, ct, ld.getYear(), ld.getMonthValue(), ld.getDayOfWeek().getValue(),
-				ld.getHour(), ld.getMinute(), ld.getSecond());
+		return GamaListFactory.create(scope, ct, ld.getYear(), ld.getMonthValue(), ld.getDayOfMonth(), ld.getHour(),
+				ld.getMinute(), ld.getSecond());
 	}
 
 	private static LocalDateTime computeFromList(final IScope scope, final IList<?> vals) {
