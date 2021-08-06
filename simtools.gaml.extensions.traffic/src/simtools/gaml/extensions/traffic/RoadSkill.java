@@ -183,28 +183,6 @@ public class RoadSkill extends Skill {
 			GamaRuntimeException.warning(agent.getName() + " has zero lanes",
 					GAMA.getRuntimeScope());
 		}
-		if (agent.getAttribute(NUM_LANES) == null ||
-				numLanes != getNumLanes(agent)) {
-			List<OrderedBidiMap<IAgent, Double>> res = new LinkedList<>();
-			//TODO: should this be initialized somewhere else?	
-			for (int i = 0; i < numLanes; i += 1) {
-				res.add(
-					new CustomDualTreeBidiMap<IAgent, Double>(new Comparator<IAgent>() {
-						@Override
-						public int compare(IAgent a, IAgent b) {
-							int r = a.getSpeciesName().compareTo(b.getSpeciesName());
-							if (r != 0) {
-								return r;
-							} else {
-								return Integer.compare(a.getIndex(), b.getIndex());
-							}
-						}
-					}, 
-					Collections.reverseOrder())
-				);
-			}
-			setVehicleOrdering(agent, res);
-		}
 		agent.setAttribute(NUM_LANES, numLanes);
 	}
 	

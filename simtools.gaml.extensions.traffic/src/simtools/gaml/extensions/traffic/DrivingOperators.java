@@ -13,6 +13,13 @@
  **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.collections4.OrderedBidiMap;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
@@ -23,11 +30,9 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
-import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.types.Types;
+import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DrivingOperators {
@@ -42,23 +47,27 @@ public class DrivingOperators {
 		final IGraph graph = new GamaSpatialGraph(edges, nodes, scope);
 		for (final Object edge : edges.iterable(scope)) {
 			if (edge instanceof IShape) {
-				final IAgent ag = ((IShape) edge).getAgent();
-				if (ag.hasAttribute(RoadSkill.NUM_LANES) && ag.hasAttribute(RoadSkill.AGENTS_ON)) {
-					final int numLanes = RoadSkill.getNumLanes(ag);
-					if (numLanes > 0) {
-						final IList agentsOn = (IList) ag.getAttribute(RoadSkill.AGENTS_ON);
-						for (int i = 0; i < numLanes; i++) {
-							final int nbSeg = ag.getInnerGeometry().getNumPoints() - 1;
-							final IList lisSg = GamaListFactory.create(Types.NO_TYPE);
-							for (int j = 0; j < nbSeg; j++) {
-								lisSg.add(GamaListFactory.create(Types.NO_TYPE));
+				IAgent agent = ((IShape) edge).getAgent();
+				int numLanes = RoadSkill.getNumLanes(agent);
+				List<OrderedBidiMap<IAgent, Double>> res = new LinkedList<>();
+				//TODO: this should be tied to the setter of numLanes
+				for (int i = 0; i < numLanes; i += 1) {
+					res.add(
+						new CustomDualTreeBidiMap<IAgent, Double>(new Comparator<IAgent>() {
+							@Override
+							public int compare(IAgent a, IAgent b) {
+								int r = a.getSpeciesName().compareTo(b.getSpeciesName());
+								if (r != 0) {
+									return r;
+								} else {
+									return Integer.compare(a.getIndex(), b.getIndex());
+								}
 							}
-							agentsOn.add(lisSg);
-						}
-					}
-					ag.setAttribute(RoadSkill.ALL_AGENTS, GamaListFactory.create(Types.NO_TYPE));
+						}, 
+						Collections.reverseOrder())
+					);
 				}
-
+				RoadSkill.setVehicleOrdering(agent, res);
 			}
 		}
 		return graph;
