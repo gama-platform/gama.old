@@ -74,7 +74,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	// The provider of color for the vertices
 	private IMeshColorProvider fill;
 	// Alpha
-//	private final double layerAlpha;
+	// private final double layerAlpha;
 
 	// NORMALS
 	// The normals used for quads drawing
@@ -86,7 +86,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
-//		layerAlpha = gl.getCurrentObjectAlpha();
+		// layerAlpha = gl.getCurrentObjectAlpha();
 	}
 
 	@Override
@@ -262,7 +262,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	public void drawField() {
 		// AD - See issue #3125
-		if (true || gl.isRenderingKeystone()) {
+		if (gl.isRenderingKeystone()) {
 			drawFieldFallback();
 			return;
 		}
