@@ -49,7 +49,6 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
@@ -138,19 +137,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setAlphaBits(8);
 		cap.setNumSamples(8);
 		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-
-		// {
-		//
-		// @SuppressWarnings ("restriction")
-		// @Override
-		// public Rectangle getClientArea() {
-		// // see Issue #2378
-		// // if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
-		// return super.getClientArea();
-		// }
-		// };
 		canvas.setAutoSwapBufferMode(true);
-		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		SWTGLAnimator animator = new SWTGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		renderer.setCanvas(canvas);
 		final FillLayout gl = new FillLayout();
@@ -475,10 +463,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			final Point origin = new Point(0, 0);
 			int xc = -origin.x;
 			int yc = -origin.y;
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			xc = xc + renderer.getCanvas().getSurfaceWidth();
 			yc = yc + renderer.getCanvas().getSurfaceHeight();
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			currentLayer.getData().setVisibleRegion(e);
 		}
 		return e;

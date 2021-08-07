@@ -115,8 +115,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public void fillBackground(final Color bgColor, final double opacity) {
-		openGL.setCurrentObjectAlpha(opacity);
+	public void fillBackground(final Color bgColor) {
+		openGL.setCurrentObjectAlpha(1);
 	}
 
 	@Override

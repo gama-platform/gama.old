@@ -191,7 +191,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		fieldDrawer.dispose();
 		resourceDrawer.dispose();
 		geometryDrawer.dispose();
-		// fontCache.dispose();
 		geometryCache.dispose();
 		textureCache.dispose();
 		gl = null;
@@ -510,8 +509,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param border
 	 *            if not null, will be used to draw the contour
 	 */
-	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, /* final boolean solid, */
-			final boolean clockwise, final boolean computeNormal, final Color border) {
+	public void drawSimpleShape(final ICoordinates yNegatedVertices, final int number, final boolean clockwise,
+			final boolean computeNormal, final Color border) {
 		if (!isWireframe()) {
 			if (computeNormal) { setNormal(yNegatedVertices, clockwise); }
 			final int style = number == 4 ? GL2ES3.GL_QUADS : number == -1 ? GL2.GL_POLYGON : GL.GL_TRIANGLES;
@@ -529,9 +528,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param drawer
 	 */
 	public void drawPolygon(final Polygon p, final ICoordinates yNegatedVertices, final boolean clockwise) {
-		// if (useJTSTriangulation) {
-		// iterateOverTriangles(p, tri -> drawSimpleShape(getYNegatedCoordinates(tri), 3, clockwise, false, null));
-		// } else {
 		gluTessBeginPolygon(tobj, null);
 		gluTessBeginContour(tobj);
 		yNegatedVertices.visitClockwise(glTesselatorDrawer);
@@ -670,10 +666,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glColor4d(red, green, blue, alpha);
 	}
 
-	public void setCurrentColor(final double value) {
-		setCurrentColor(value, value, value, currentObjectAlpha);
-	}
-
 	public Color getCurrentColor() {
 		return currentColor;
 	}
@@ -685,7 +677,11 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	// ALPHA
-
+	/**
+	 * Between 0d (transparent) to 1d (opaque)
+	 *
+	 * @param alpha
+	 */
 	public final void setCurrentObjectAlpha(final double alpha) {
 		currentObjectAlpha = alpha;
 	}
@@ -960,7 +956,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void processUnloadedCacheObjects() {
 		textureCache.processUnloaded();
 		geometryCache.processUnloaded();
-		// fontCache.processUnloaded();
 	}
 
 	private boolean isContinuousRotationActive() {

@@ -71,9 +71,9 @@ public interface IGraphics {
 
 	Rectangle2D drawShape(final Geometry shape, final DrawingAttributes attributes);
 
-	void setOpacity(double i);
+	void setAlpha(double alpha);
 
-	void fillBackground(Color bgColor, double opacity);
+	void fillBackground(Color bgColor);
 
 	boolean beginDrawingLayers();
 

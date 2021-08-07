@@ -12,7 +12,7 @@ package ummisco.gama.opengl.scene;
 
 import org.locationtech.jts.geom.Geometry;
 
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
@@ -28,6 +28,7 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.layers.AxesLayerObject;
 import ummisco.gama.opengl.scene.layers.FrameLayerObject;
 import ummisco.gama.opengl.scene.layers.LayerObject;
+import ummisco.gama.opengl.scene.layers.OverlayLayerObject;
 
 /**
  *
@@ -78,7 +79,7 @@ public class ModelScene {
 
 	public void draw(final OpenGL gl) {
 
-		gl.push(GL2.GL_MODELVIEW);
+		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		gl.setZIncrement(zIncrement);
 
 		layers.forEach((name, layer) -> {
@@ -94,7 +95,7 @@ public class ModelScene {
 		});
 		gl.setZIncrement(0);
 		rendered = true;
-		gl.pop(GL2.GL_MODELVIEW);
+		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 
 	private double computeVisualZIncrement() {
@@ -173,7 +174,8 @@ public class ModelScene {
 	}
 
 	protected LayerObject createRegularLayer(final IOpenGLRenderer renderer, final ILayer layer) {
-		return new LayerObject(renderer, layer);
+		boolean overlay = layer != null && layer.isOverlay();
+		return overlay ? new OverlayLayerObject(renderer, layer) : new LayerObject(renderer, layer);
 	}
 
 	/**

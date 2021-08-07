@@ -142,7 +142,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	private void drawAllDisplays() {
 		if (displayGraphics == null) return;
-		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
+		displayGraphics.fillBackground(data.getBackgroundColor());
 		manager.drawLayersOn(displayGraphics);
 	}
 
