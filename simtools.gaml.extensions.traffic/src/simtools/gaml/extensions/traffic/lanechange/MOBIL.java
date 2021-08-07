@@ -31,10 +31,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import simtools.gaml.extensions.traffic.DrivingSkill;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 import simtools.gaml.extensions.traffic.carfollowing.IDM;
@@ -141,8 +143,19 @@ public class MOBIL {
 
 			Triple<IAgent, Double, Boolean> newLeaderTriple = findLeader(
 					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
-			Triple<IAgent, Double, Boolean> newFollowerTriple = findFollower(
+
+			// If there are more lanes on the new road, we don't need to find a follower
+			// TODO: temp workaround, need to refactor these methods later
+			Triple<IAgent, Double, Boolean> newFollowerTriple;
+			IAgent currentRoad = DrivingSkill.getCurrentRoad(vehicle);
+			if (currentRoad == null || 
+					tmpLowestLane > RoadSkill.getNumLanesTotal(currentRoad) - numLanesOccupied) {
+				newFollowerTriple = ImmutableTriple.of(null, null, null);
+			} else {
+				newFollowerTriple = findFollower(
 					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
+			}
+
 			if (newLeaderTriple == null || newFollowerTriple == null) {
 				// Will crash into another vehicle if switch to this lane
 				continue;
