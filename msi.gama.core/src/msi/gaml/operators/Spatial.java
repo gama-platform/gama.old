@@ -45,6 +45,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.operation.buffer.BufferOp;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.distance.DistanceOp;
 import org.locationtech.jts.precision.EnhancedPrecisionOp;
@@ -2191,6 +2192,50 @@ public abstract class Spatial {
 			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
 			return null;
 		}
+		
+		@operator (
+				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (
+				usages = { @usage (
+						value = "if the left-hand operand is a geometry and the right-hand operands a float, an integer, one of #round, #square or #flat and a boolean, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand and a flat, square or round end cap style and single sided is the boolean is true",
+						examples = { @example (
+								value = "line([{10,10}, {50,50}]) + (5,32,#round, true)",
+								equals = "A ploygon corresponding to the buffer generated",
+								test = false) }) })
+		@test ("(line([{10,10}, {50,50}]) + (5,32,#round, true)).area with_precision 1 = 282.8")
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
+				final Integer numberOfSegments, final Integer endCap, final Boolean isSingleSided) {
+			if (g == null) return null;
+			BufferParameters param = new BufferParameters(numberOfSegments, endCap);
+			param.setSingleSided(isSingleSided);
+			Geometry gg = BufferOp.bufferOp(g.getInnerGeometry(), size,param);
+			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
+			return null;
+		}
+		
+		@operator (
+				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (
+				usages = { @usage (
+						value = "if the left-hand operand is a geometry and the right-hand operands a float and a boolean, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), single sided is the boolean is true",
+						examples = { @example (
+								value = "line([{10,10}, {50,50}]) + (5, true)",
+								equals = "A ploygon corresponding to the buffer generated",
+								test = false) }) })
+		@test ("(line([{10,10}, {50,50}]) + (5, true)).area with_precision 1 = 282.8")
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size, final Boolean isSingleSided) {
+			if (g == null) return null;
+			BufferParameters param = new BufferParameters();
+			param.setSingleSided(isSingleSided);
+			Geometry gg = BufferOp.bufferOp(g.getInnerGeometry(), size,param);
+			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
+			return null;
+		}
+
 
 		@operator (
 				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
