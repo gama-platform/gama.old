@@ -1387,7 +1387,9 @@ public class DrivingSkill extends MovingSkill {
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
-
+				if (remainingTime <= 0.0) {
+					return;
+				}
 				int newLane = laneAndAccPair.getKey();
 
 				setCurrentTarget(vehicle, newTarget);
@@ -1540,7 +1542,8 @@ public class DrivingSkill extends MovingSkill {
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
-
+				if (remainingTime < 0.0) 
+					return;
 				int newLane = laneAndAccPair.getLeft();
 
 				setCurrentIndex(vehicle, newEdgeIdx);
