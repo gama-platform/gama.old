@@ -95,6 +95,7 @@ public class ModelScene {
 		});
 		gl.setZIncrement(0);
 		rendered = true;
+		gl.getRenderer().getSurface().releaseRenderLock();
 		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 

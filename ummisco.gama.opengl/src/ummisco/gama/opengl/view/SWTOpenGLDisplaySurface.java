@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
@@ -98,6 +99,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
+	Semaphore renderLock = new Semaphore(1);
 	final Composite parent;
 	volatile boolean disposed;
 	private volatile boolean alreadyUpdating;
@@ -160,7 +162,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public BufferedImage getImage(final int w, final int h) {
 		while (!isRendered()) {
 			try {
-				Thread.sleep(20);
+				Thread.sleep(1);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -653,6 +655,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
+		releaseRenderLock();
 	}
 
 	@Override
@@ -814,6 +817,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void draggedTo(final int x, final int y) {
 		// Nothing to do (taken in charge by the camera
 
+	}
+
+	@Override
+	public Semaphore getRenderLock() {
+		return renderLock;
 	}
 
 }

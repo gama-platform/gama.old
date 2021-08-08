@@ -43,6 +43,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JPanel;
 
@@ -58,7 +59,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -106,7 +106,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
-
+	Semaphore renderLock = new Semaphore(1);
 	protected Dimension previousPanelSize;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
@@ -575,10 +575,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final Point origin = getOrigin();
 		int xc = -origin.x;
 		int yc = -origin.y;
-		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 		xc = xc + getIGraphics().getViewWidth();
 		yc = yc + getIGraphics().getViewHeight();
-		e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+		e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 		return e;
 	}
 
@@ -749,6 +749,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			return f.deriveFont(PlatformHelper.autoScaleUp(f.getSize()));
 		return f;
 
+	}
+
+	@Override
+	public Semaphore getRenderLock() {
+		return renderLock;
 	}
 
 }

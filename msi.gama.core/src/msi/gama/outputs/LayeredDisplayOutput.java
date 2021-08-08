@@ -305,7 +305,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	protected IDisplaySurface surface;
 	private int index;
 
-	final LayeredDisplayData data = new LayeredDisplayData();
+	private final LayeredDisplayData data = new LayeredDisplayData();
+	// private final ThreadLocal<LayeredDisplayData> data = ThreadLocal.withInitial(LayeredDisplayData::new);
 	// Specific to overlays
 	OverlayStatement overlayInfo;
 
@@ -424,7 +425,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
-		if (hasFacet(IKeyword.TYPE)) { data.setDisplayType(getLiteral(IKeyword.TYPE)); }
+		if (hasFacet(IKeyword.TYPE)) { getData().setDisplayType(getLiteral(IKeyword.TYPE)); }
 		layers = new ArrayList<>();
 	}
 
@@ -435,14 +436,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean shouldOpenAsynchronously() {
 		// OpenGL views need to be opened synchronously
-		return !data.isOpenGL();
+		return !getData().isOpenGL();
 	}
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		final boolean result = super.init(scope);
 		if (!result) return false;
-		data.initWith(getScope(), description);
+		getData().initWith(getScope(), description);
 
 		for (final ILayerStatement layer : getLayers()) {
 			layer.setDisplayOutput(this);
@@ -468,7 +469,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void update() throws GamaRuntimeException {
 		if (surface == null) return;
-		data.update(getScope(), description.getFacets());
+		getData().update(getScope(), description.getFacets());
 
 		if (overlayInfo != null) { getScope().step(overlayInfo); }
 
@@ -484,7 +485,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (surface != null) { surface.dispose(); }
 		surface = null;
 		getLayers().clear();
-		data.dispose();
+		getData().dispose();
 	}
 
 	protected void createSurface(final IScope scope) {
@@ -494,17 +495,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		if (scope.getExperiment().isHeadless()) {
 			// If in headless mode, we need to get the 'image' surface
-			data.setDisplayType(IKeyword.IMAGE);
-		} else if (data.isOpenGL()) // The surface will be crezated later
+			getData().setDisplayType(IKeyword.IMAGE);
+		} else if (getData().isOpenGL()) // The surface will be crezated later
 			return;
 		surface = scope.getGui().createDisplaySurfaceFor(this);
 	}
 
 	@Override
 	public String getViewId() {
-		if (data.isWeb()) return IGui.GL_LAYER_VIEW_ID3;
-		if (data.isOpenGL2()) return IGui.GL_LAYER_VIEW_ID2;
-		if (data.isOpenGL()) return IGui.GL_LAYER_VIEW_ID;
+		if (getData().isWeb()) return IGui.GL_LAYER_VIEW_ID3;
+		if (getData().isOpenGL2()) return IGui.GL_LAYER_VIEW_ID2;
+		if (getData().isOpenGL()) return IGui.GL_LAYER_VIEW_ID;
 		return IGui.LAYER_VIEW_ID;
 	}
 
@@ -558,12 +559,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final boolean wasPaused = isPaused();
 		super.setPaused(paused);
 		if (surface == null) return;
-		if (data.isOpenGL()) { ((IDisplaySurface.OpenGL) surface).setPaused(paused); }
+		if (getData().isOpenGL()) { ((IDisplaySurface.OpenGL) surface).setPaused(paused); }
 		if (wasPaused && !paused) { surface.updateDisplay(false); }
 	}
 
 	public LayeredDisplayData getData() {
-		return data;
+		return data; // .get();
 	}
 
 	// Keeping in sync the two implementations of synchronized, so that OpenGL
@@ -572,14 +573,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setSynchronized(final boolean sync) {
-		data.setSynchronized(sync);
+		getData().setSynchronized(sync);
 		super.setSynchronized(sync);
 
 	}
 
 	@Override
 	public boolean isSynchronized() {
-		return super.isSynchronized() && data.isSynchronized();
+		return super.isSynchronized() && getData().isSynchronized();
 	}
 
 	public int getIndex() {

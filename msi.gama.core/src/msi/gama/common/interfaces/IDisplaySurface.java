@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.concurrent.Semaphore;
 
 import org.locationtech.jts.geom.Envelope;
 
@@ -197,5 +198,31 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	default boolean canTriggerContextualMenu() {
 		return !getManager().hasMouseMenuEventLayer();
 	}
+
+	default void resynchronizeRenderLock() {
+		getRenderLock().drainPermits();
+	}
+
+	/**
+	 * Makes any thread calling this method wait until either the scene is rendered or the surface is disposed
+	 */
+	default void acquireRenderLock() {
+
+		try {
+			getRenderLock().acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Allows any object calling this method to release the thread waiting for the scene to be rendered (called by the
+	 * rendering processes or when this surface is disposed)
+	 */
+	default void releaseRenderLock() {
+		getRenderLock().release();
+	}
+
+	Semaphore getRenderLock();
 
 }

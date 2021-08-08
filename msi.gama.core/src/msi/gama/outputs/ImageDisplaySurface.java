@@ -19,6 +19,7 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Semaphore;
 
 import javax.imageio.ImageIO;
 
@@ -528,5 +529,19 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public Semaphore getRenderLock() {
+		return null;
+	}
+
+	@Override
+	public void acquireRenderLock() {}
+
+	@Override
+	public void releaseRenderLock() {}
+
+	@Override
+	public void resynchronizeRenderLock() {}
 
 }
