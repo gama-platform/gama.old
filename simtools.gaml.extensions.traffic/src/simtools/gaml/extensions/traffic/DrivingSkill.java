@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -1442,7 +1441,7 @@ public class DrivingSkill extends MovingSkill {
 		} else if (possibleRoads.size() == 1) {
 			return possibleRoads.iterator().next();
 		} else {
-			List<IAgent> roadList = new ArrayList<>(possibleRoads);
+			List<IAgent> roadList = GamaListFactory.create(scope, Types.AGENT, possibleRoads);
 			if (roadProba == null || roadProba.isEmpty()) {
 				return roadList.get(scope.getRandom().between(0, roadList.size() - 1));
 			} else {

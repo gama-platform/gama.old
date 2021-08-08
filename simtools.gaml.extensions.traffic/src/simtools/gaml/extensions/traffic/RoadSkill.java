@@ -10,10 +10,8 @@
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -40,8 +38,10 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Containers;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -139,12 +139,12 @@ public class RoadSkill extends Skill {
 	}
 
 	@getter(ALL_AGENTS)
-	public static List<IAgent> getAgents(final IAgent agent) {
-		Set<IAgent> res = new HashSet<>();
+	public static IList<IAgent> getAgents(final IAgent agent) {
+		IList<IAgent> res = GamaListFactory.create(Types.AGENT);
 		for (OrderedBidiMap<IAgent, Double> map : getVehicleOrdering(agent)) {
 			res.addAll(map.keySet());
 		}
-		return new ArrayList<>(res);
+		return Containers.remove_duplicates(GAMA.getRuntimeScope(), res);
 	}
 
 	@setter(ALL_AGENTS)
