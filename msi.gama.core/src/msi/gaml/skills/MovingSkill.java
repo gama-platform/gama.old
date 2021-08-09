@@ -15,13 +15,13 @@ import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.ArrayUtils.indexOf;
-import static org.locationtech.jts.algorithm.CGAlgorithms.distancePointLine;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.locationtech.jts.algorithm.Distance;
 import org.locationtech.jts.geom.Coordinate;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -732,7 +732,7 @@ public class MovingSkill extends Skill {
 					for (int i = 0; i < nb; i++) {
 						line = edges.get(i);
 						final double distS =
-								distancePointLine(currentLocation, getFirstPointOf(line), getLastPointOf(line));
+								Distance.pointToSegment(currentLocation, getFirstPointOf(line), getLastPointOf(line));
 						if (distS < distanceS) {
 							distanceS = distS;
 							index = i;
@@ -749,7 +749,7 @@ public class MovingSkill extends Skill {
 							distanceS = Double.MAX_VALUE;
 							final int nbSp = points.length;
 							for (int i = 0; i < nbSp - 1; i++) {
-								final double distS = distancePointLine(currentLocation, points[i], points[i + 1]);
+								final double distS = Distance.pointToSegment(currentLocation, points[i], points[i + 1]);
 								if (distS < distanceS) {
 									distanceS = distS;
 									indexSegment = i + 1;
@@ -779,7 +779,7 @@ public class MovingSkill extends Skill {
 					if (points.length >= 3) {
 						double distanceT = Double.MAX_VALUE;
 						for (int i = 0; i < points.length - 1; i++) {
-							final double distT = distancePointLine(falseTarget, points[i], points[i + 1]);// segment.distance(pointGeom);
+							final double distT = Distance.pointToSegment(falseTarget, points[i], points[i + 1]);// segment.distance(pointGeom);
 							if (distT < distanceT) {
 								distanceT = distT;
 								endIndexSegment = i + 1;
@@ -870,7 +870,7 @@ public class MovingSkill extends Skill {
 						if (points.length >= 3) {
 							Double distanceS = Double.MAX_VALUE;
 							for (int i = 0; i < points.length - 1; i++) {
-								final double distS = distancePointLine(currentLocation, points[i], points[i + 1]); // segment.distance(pointGeom);
+								final double distS = Distance.pointToSegment(currentLocation, points[i], points[i + 1]); // segment.distance(pointGeom);
 								if (distS < distanceS) {
 									distanceS = distS;
 									indexSegment = i + 1;
