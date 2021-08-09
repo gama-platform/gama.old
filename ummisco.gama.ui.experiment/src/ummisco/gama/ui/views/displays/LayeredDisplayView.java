@@ -51,7 +51,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public abstract class LayeredDisplayView extends GamaViewPart
 		implements IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable, IGamaView.Display {
 
-	private static boolean OLD_SYNC_STRATEGY = false;
+	private static boolean OLD_SYNC_STRATEGY = true;
 
 	protected int realIndex = -1;
 	protected SashForm form;
@@ -60,7 +60,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	protected volatile boolean disposed;
 	Semaphore viewLock = new Semaphore(1);
 	Thread updateThread;
-	private volatile boolean lockAcquired = false;
 
 	@Override
 	public void setIndex(final int index) {
@@ -284,26 +283,22 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void update(final IDisplayOutput output) {
-
+	public void update(final IDisplayOutput out) {
+		LayeredDisplayOutput output = (LayeredDisplayOutput) out;
+		final boolean isSync = output.isSynchronized();
+		final boolean inInitPhase = output.isInInitPhase();
+		final boolean autoSave = output.isAutoSave();
 		// Fix for issue #1693
-		final boolean oldSync = output.isSynchronized();
-		if (output.isInInitPhase()) { output.setSynchronized(false); }
+		if (inInitPhase) { output.setSynchronized(false); }
 		// end fix
-		initUpdateThread(output, oldSync);
+		initUpdateThread(output, isSync);
 
 		if (output.isSynchronized()) {
 			final IDisplaySurface surface = getDisplaySurface();
 			surface.updateDisplay(false);
-			if (getOutput().getData().isAutosave() && surface.isRealized()) {
+			if (autoSave && surface.isRealized()) {
 				SnapshotMaker.getInstance().doSnapshot(surface, WorkbenchHelper.displaySizeOf(surfaceComposite));
 			}
-			// // Fix for issue #1693
-			// if (output.isInInitPhase()) {
-			// output.setInInitPhase(false);
-			// output.setSynchronized(oldSync);
-			// // end fix
-			// }
 			if (OLD_SYNC_STRATEGY) {
 				while (!surface.isRendered() && !surface.isDisposed() && !disposed) {
 					try {
@@ -374,16 +369,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	synchronized void acquireLock() {
-		while (lockAcquired) {
-			try {
-				wait();
-			} catch (final InterruptedException e) {}
-		}
-		lockAcquired = true;
+		try {
+			wait();
+		} catch (final InterruptedException e) {}
+		// }
 	}
 
 	private synchronized void releaseLock() {
-		lockAcquired = false;
 		notify();
 	}
 
@@ -398,7 +390,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		if (output == getOutput() && isFullScreen()) { WorkbenchHelper.run(this::toggleFullScreen); }
 		output.dispose();
 		outputs.remove(output);
-		if (outputs.isEmpty()) { close(GAMA.getRuntimeScope()); }
+		if (outputs.isEmpty()) {
+			releaseViewLock();
+			close(GAMA.getRuntimeScope());
+		}
 	}
 
 	@Override
