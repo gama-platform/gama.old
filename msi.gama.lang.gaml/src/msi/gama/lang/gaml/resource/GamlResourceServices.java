@@ -234,7 +234,9 @@ public class GamlResourceServices {
 		}
 	}
 
-	public synchronized static GamlResource getTemporaryResource(final IDescription existing) {
+	// AD The removal of synchronized solves an issue where threads at startup would end up waiting for
+	// GamlResourceServices to become free
+	public/* synchronized */ static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
 		GamlResource r = null;
 		if (existing != null) {
