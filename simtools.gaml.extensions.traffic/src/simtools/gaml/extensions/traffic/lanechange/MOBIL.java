@@ -40,6 +40,7 @@ import simtools.gaml.extensions.traffic.DrivingSkill;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 import simtools.gaml.extensions.traffic.carfollowing.IDM;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class MOBIL {
 	/**
@@ -72,8 +73,13 @@ public class MOBIL {
 		int numCurrentLanes = RoadSkill.getNumLanes(road);
 		int numLinkedLanes = (linkedRoad != null) ? RoadSkill.getNumLanes(linkedRoad) : 0;
 		int linkedLaneLimit = getLinkedLaneLimit(vehicle);
-		linkedLaneLimit = (linkedLaneLimit != -1 && numLinkedLanes > linkedLaneLimit) ?
-				linkedLaneLimit : numLinkedLanes;
+		if (linkedLaneLimit == -1) {
+			linkedLaneLimit = numLinkedLanes;
+		} else if (probaUseLinkedRoad == 0.0) {
+			linkedLaneLimit = 0;
+		} else {
+			linkedLaneLimit = Math.min(linkedLaneLimit, numLinkedLanes);
+		}
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
 		// Restrict the lane index when entering a new road
 		currentLowestLane = Math.min(currentLowestLane,
