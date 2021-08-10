@@ -53,7 +53,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import simtools.gaml.extensions.traffic.lanechange.MOBIL;
+import simtools.gaml.extensions.traffic.carfollowing.MOBIL;
 import ummisco.gama.dev.utils.DEBUG;
 
 @vars({

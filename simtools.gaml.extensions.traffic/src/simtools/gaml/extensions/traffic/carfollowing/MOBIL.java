@@ -1,4 +1,4 @@
-package simtools.gaml.extensions.traffic.lanechange;
+package simtools.gaml.extensions.traffic.carfollowing;
 
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
@@ -39,8 +39,6 @@ import msi.gama.runtime.IScope;
 import simtools.gaml.extensions.traffic.DrivingSkill;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
-import simtools.gaml.extensions.traffic.carfollowing.IDM;
-import ummisco.gama.dev.utils.DEBUG;
 
 public class MOBIL {
 	/**
@@ -98,12 +96,12 @@ public class MOBIL {
 
 		// Compute acceleration if the vehicle stays on the same lane
 		Triple<IAgent, Double, Boolean> leaderTriple = findLeader(
-				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
+				scope, vehicle, currentLowestLane);
 		Triple<IAgent, Double, Boolean> followerTriple = findFollower(
-				scope, vehicle, target, road, segment, currentLowestLane, distToSegmentEnd, distToCurrentTarget);
+				scope, vehicle, currentLowestLane);
 		IAgent currentBackVehicle = followerTriple != null ? followerTriple.getLeft() : null;
 		double stayAccelM;
-		if (leaderTriple == null) { // || followerTriple == null) {
+		if (leaderTriple.getMiddle() < 0) { // || followerTriple == null) {
 			stayAccelM = -Double.MAX_VALUE;
 		} else {
 			// Find the leading vehicle on current lanes
@@ -147,22 +145,13 @@ public class MOBIL {
 				}
 			}
 
-			Triple<IAgent, Double, Boolean> newLeaderTriple = findLeader(
-					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
+			Triple<IAgent, Double, Boolean> newLeaderTriple = 
+					findLeader(scope, vehicle, tmpLowestLane);
+			Triple<IAgent, Double, Boolean> newFollowerTriple =
+					findFollower(scope, vehicle, tmpLowestLane);
 
-			// If there are more lanes on the new road, we don't need to find a follower
-			// TODO: temp workaround, need to refactor these methods later
-			Triple<IAgent, Double, Boolean> newFollowerTriple;
-			IAgent currentRoad = DrivingSkill.getCurrentRoad(vehicle);
-			if (currentRoad == null || 
-					tmpLowestLane > RoadSkill.getNumLanesTotal(currentRoad) - numLanesOccupied) {
-				newFollowerTriple = ImmutableTriple.of(null, null, null);
-			} else {
-				newFollowerTriple = findFollower(
-					scope, vehicle, target, road, segment, tmpLowestLane, distToSegmentEnd, distToCurrentTarget);
-			}
-
-			if (newLeaderTriple == null || newFollowerTriple == null) {
+			if (newLeaderTriple.getMiddle() < 0 || 
+					newFollowerTriple.getMiddle() < 0) {
 				// Will crash into another vehicle if switch to this lane
 				continue;
 			}
