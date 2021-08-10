@@ -286,6 +286,14 @@ public class RoadSkill extends Skill {
 	public static OrderedBidiMap<IAgent, Double> getVehiclesOnLaneSegment(final IScope scope,
 			final IAgent correctRoad,
 			final int lane) {
+		int numLanesTotal = getNumLanesTotal(correctRoad);
+		if (lane >= numLanesTotal) {
+			String msg = String.format(
+					"Trying to access lane with index %d on road %s, which only have %d valid lanes",
+					lane, correctRoad.getName(), numLanesTotal);
+			throw GamaRuntimeException.error(msg, scope);
+		}
+		
 		int numLanesCorrect = getNumLanes(correctRoad);
 		IAgent actualRoad;
 		int actualLane;

@@ -67,17 +67,8 @@ public class MOBIL {
 		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
 		Double probaUseLinkedRoad = rescaleProba(getProbaUseLinkedRoad(vehicle), timeStep);
 
-		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
 		int numCurrentLanes = RoadSkill.getNumLanes(road);
-		int numLinkedLanes = (linkedRoad != null) ? RoadSkill.getNumLanes(linkedRoad) : 0;
-		int linkedLaneLimit = getLinkedLaneLimit(vehicle);
-		if (linkedLaneLimit == -1) {
-			linkedLaneLimit = numLinkedLanes;
-		} else if (probaUseLinkedRoad == 0.0) {
-			linkedLaneLimit = 0;
-		} else {
-			linkedLaneLimit = Math.min(linkedLaneLimit, numLinkedLanes);
-		}
+		int linkedLaneLimit = Utils.computeLinkedLaneLimit(vehicle, road);
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
 		// Restrict the lane index when entering a new road
 		currentLowestLane = Math.min(currentLowestLane,

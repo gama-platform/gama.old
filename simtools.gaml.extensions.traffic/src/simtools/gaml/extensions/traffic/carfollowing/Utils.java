@@ -45,10 +45,10 @@ public class Utils {
 		IAgent linkedRoad = RoadSkill.getLinkedRoad(road);
 		int numLinkedLanes = (linkedRoad != null) ? RoadSkill.getNumLanes(linkedRoad) : 0;
 
-		if (linkedLaneLimit == -1) {
-			linkedLaneLimit = numLinkedLanes;
-		} else if (probaUseLinkedRoad == 0.0) {
+		if (probaUseLinkedRoad == 0.0) {
 			linkedLaneLimit = 0;
+		} else if (linkedLaneLimit == -1) {
+			linkedLaneLimit = numLinkedLanes;
 		} else {
 			linkedLaneLimit = Math.min(linkedLaneLimit, numLinkedLanes);
 		}
@@ -66,7 +66,9 @@ public class Utils {
 		double minSafetyDist = getMinSafetyDistance(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 		
-		if (road != null) {
+		// The second condition can be false when moving to a bigger road.
+		// In that case we will skip this and only find leaders on the new road.
+		if (road != null && lowestLane < RoadSkill.getNumLanesTotal(road)) {
 			Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
 					vehicle, lowestLane, true);
 			if (triple != null) {
@@ -76,7 +78,7 @@ public class Utils {
 
 		// No leading vehicle is found on the current road
 		IAgent leader = null;
-		double minGap = -Double.MAX_VALUE;
+		double minGap = Double.MAX_VALUE;
 		boolean sameDirection = false;
 		IAgent nextRoad = getNextRoad(vehicle);
 		// If vehicle is approaching an intersection, we need to slow down if
@@ -86,13 +88,13 @@ public class Utils {
 			// Return a virtual leading vehicle of length 0 to simulate deceleration at intersections
 			// NOTE: the added minSafetyDist is necessary for the vehicle to ignore the safety dist when stopping at an endpoint
 			return ImmutableTriple.of(target, distToCurrentTarget + minSafetyDist, false);
-		} else if (nextRoad != road) { // nextRoad == road when vehicle is trying to cross intersection
+		} else {
 			boolean willViolateOneway = target == RoadSkill.getTargetNode(nextRoad);
 			IAgent nextTarget = !willViolateOneway ?
 				RoadSkill.getTargetNode(nextRoad) : RoadSkill.getSourceNode(nextRoad);
 			int numLanesNext = RoadSkill.getNumLanes(nextRoad);
-			int numLanesTotalNext = RoadSkill.getNumLanesTotal(nextRoad);
-			int lowestLaneToCheck = Math.min(lowestLane, numLanesTotalNext - numLanesOccupied);
+			int linkedLaneLimit = computeLinkedLaneLimit(vehicle, nextRoad);
+			int lowestLaneToCheck = Math.min(lowestLane, numLanesNext + linkedLaneLimit - numLanesOccupied);
 			
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				int lane = lowestLaneToCheck + i;
@@ -143,15 +145,20 @@ public class Utils {
 		IAgent target = getCurrentTarget(vehicle);
 		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);	
 		if (road == null) {
-			return ImmutableTriple.of(null, 1e6, false);
 		}
 		double vL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 
-		Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
-				vehicle, lowestLane, false);
-		if (triple != null) {
-			 return triple;
+		// The second condition can be false when moving to a bigger road.
+		// In case there's new lane with higher index, consider that there's no back vehicle.
+		if (road != null && lowestLane < RoadSkill.getNumLanesTotal(road)) {
+			Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
+					vehicle, lowestLane, false);
+			if (triple != null) {
+				 return triple;
+			}
+		} else {
+			return ImmutableTriple.of(null, 1e6, false);
 		}
 
 		// Find followers on previous roads
