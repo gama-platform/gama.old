@@ -247,7 +247,26 @@ public class RoadSkill extends Skill {
 
 	@getter(VEHICLE_ORDERING)
 	public static List<OrderedBidiMap<IAgent, Double>> getVehicleOrdering(final IAgent road) {
-		return (List<OrderedBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
+		List<OrderedBidiMap<IAgent, Double>> res =
+				(List<OrderedBidiMap<IAgent, Double>>) road.getAttribute(VEHICLE_ORDERING);
+		if (res.isEmpty()) {
+			for (int i = 0; i < getNumLanes(road); i += 1) {
+				res.add(
+					new CustomDualTreeBidiMap<IAgent, Double>(new Comparator<IAgent>() {
+						@Override
+						public int compare(IAgent a, IAgent b) {
+							int r = a.getSpeciesName().compareTo(b.getSpeciesName());
+							if (r != 0) {
+								return r;
+							} else {
+								return Integer.compare(a.getIndex(), b.getIndex());
+							}
+						}
+					}, Collections.reverseOrder())
+				);
+			}
+		}
+		return res;
 	}
 
 	@setter(VEHICLE_ORDERING)

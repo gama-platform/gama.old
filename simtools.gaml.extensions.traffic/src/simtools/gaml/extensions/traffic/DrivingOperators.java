@@ -44,32 +44,6 @@ public class DrivingOperators {
 					"as_intersection_graph", "as_distance_graph", "as_edge_graph" })
 	@no_test
 	public static IGraph spatialDrivingFromEdges(final IScope scope, final IContainer edges, final IContainer nodes) {
-		final IGraph graph = new GamaSpatialGraph(edges, nodes, scope);
-		for (final Object edge : edges.iterable(scope)) {
-			if (edge instanceof IShape) {
-				IAgent agent = ((IShape) edge).getAgent();
-				int numLanes = RoadSkill.getNumLanes(agent);
-				List<OrderedBidiMap<IAgent, Double>> res = new LinkedList<>();
-				//TODO: this should be tied to the setter of numLanes
-				for (int i = 0; i < numLanes; i += 1) {
-					res.add(
-						new CustomDualTreeBidiMap<IAgent, Double>(new Comparator<IAgent>() {
-							@Override
-							public int compare(IAgent a, IAgent b) {
-								int r = a.getSpeciesName().compareTo(b.getSpeciesName());
-								if (r != 0) {
-									return r;
-								} else {
-									return Integer.compare(a.getIndex(), b.getIndex());
-								}
-							}
-						}, 
-						Collections.reverseOrder())
-					);
-				}
-				RoadSkill.setVehicleOrdering(agent, res);
-			}
-		}
-		return graph;
+		return new GamaSpatialGraph(edges, nodes, scope);
 	}
 }
