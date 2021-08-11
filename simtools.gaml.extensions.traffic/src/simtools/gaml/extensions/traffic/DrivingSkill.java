@@ -1394,7 +1394,7 @@ public class DrivingSkill extends MovingSkill {
 				int newLane = laneAndAccPair.getKey();
 
 				setCurrentTarget(vehicle, newTarget);
-				RoadSkill.unregister(scope, vehicle);
+				unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 				// Choose the next road in advance
 				IAgent nextRoad = chooseNextRoadRandomly(scope, graph, newTarget, roadProba);
@@ -1551,7 +1551,7 @@ public class DrivingSkill extends MovingSkill {
 
 				setCurrentIndex(vehicle, newEdgeIdx);
 				setCurrentTarget(vehicle, newTarget);
-				RoadSkill.unregister(scope, vehicle);
+				unregister(scope, vehicle);
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 
 				setViolatingOneway(vehicle, violatingOneway);
@@ -1835,6 +1835,32 @@ public class DrivingSkill extends MovingSkill {
 		setCurrentPath(vehicle, null);
 	}
 
+	@action(
+		name = "unregister",
+		doc = @doc(
+			value = "remove the vehicle from its current roads",
+			examples = { @example("do unregister") }
+		)
+	)
+	public void primUnregister(final IScope scope) throws GamaRuntimeException {
+		IAgent vehicle = getCurrentAgent(scope);
+		unregister(scope, vehicle);
+	}
+	
+	public static void unregister(final IScope scope, final IAgent driver) 
+			throws GamaRuntimeException {
+		IAgent currentRoad = getCurrentRoad(driver);
+		if (currentRoad == null) return;
+
+		Integer lowestLane = (Integer) driver.getAttribute(LOWEST_LANE);
+		int numLanesOccupied = (int) driver.getAttribute(NUM_LANES_OCCUPIED);
+		for (int i = 0; i < numLanesOccupied; i += 1) {
+			int lane = lowestLane + i;
+			RoadSkill.getVehiclesOnLaneSegment(scope, currentRoad, lane).remove(driver);
+		}
+		setCurrentRoad(driver, null);
+	}
+
 	// TODO: this action is not overridden
 	@action(
 		name = "die",
@@ -1846,7 +1872,7 @@ public class DrivingSkill extends MovingSkill {
 	public void primDieWrapper(final IScope scope) throws GamaRuntimeException {
 		AbstractAgent vehicle = (AbstractAgent) getCurrentAgent(scope);
 		if (!vehicle.dead() && getCurrentRoad(vehicle) != null) {
-			RoadSkill.unregister(scope, vehicle);
+			unregister(scope, vehicle);
 		}
 		vehicle.primDie(scope);
 	}

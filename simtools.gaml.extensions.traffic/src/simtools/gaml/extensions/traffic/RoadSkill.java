@@ -391,33 +391,13 @@ public class RoadSkill extends Skill {
 		},
 		doc = @doc(
 			value = "unregister the agent on the road",
-			examples = { @example ("do unregister agent: the_driver") }
+			examples = { @example ("do unregister agent: the_driver") },
+			deprecated = "use the `unregister` action in advanced_driving skill instead"
 		)
 	)
+	@Deprecated
 	public void primUnregister(final IScope scope) throws GamaRuntimeException {
 		IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
-		unregister(scope, driver);
-	}
-
-	/**
-	 * Unregisters the driver from all the roads that it's currently on.
-	 *
-	 * @param scope
-	 * @param driver the agent that we want to unregister.
-	 *
-	 * @throws GamaRuntimeException
-	 */
-	public static void unregister(IScope scope, final IAgent driver)
-			throws GamaRuntimeException {
-		IAgent currentRoad = (IAgent) driver.getAttribute(DrivingSkill.CURRENT_ROAD);
-		if (currentRoad == null) return;
-
-		Integer lowestLane = (Integer) driver.getAttribute(DrivingSkill.LOWEST_LANE);
-		int numLanesOccupied = (int) driver.getAttribute(DrivingSkill.NUM_LANES_OCCUPIED);
-		for (int i = 0; i < numLanesOccupied; i += 1) {
-			int lane = lowestLane + i;
-			getVehiclesOnLaneSegment(scope, currentRoad, lane).remove(driver);
-		}
-		getAgents(currentRoad).remove(driver);
+		DrivingSkill.unregister(scope, driver);
 	}
 }
