@@ -1,14 +1,13 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
+import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccGainThreshold;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAllowedLanes;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLCCooldown;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLaneChangeLimit;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingVehicle;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLowestLane;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSafeDeceleration;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
@@ -71,8 +70,10 @@ public class MOBIL {
 		int linkedLaneLimit = Utils.computeLinkedLaneLimit(vehicle, road);
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
 		// Restrict the lane index when entering a new road
-		currentLowestLane = Math.min(currentLowestLane,
-				numCurrentLanes + linkedLaneLimit - numLanesOccupied);
+		if (road != getCurrentRoad(vehicle)) {
+			currentLowestLane = Math.min(currentLowestLane,
+					numCurrentLanes + linkedLaneLimit - numLanesOccupied);
+		}
 
 		// Determine the lanes which is considered for switching
 		int laneChangeLimit = getLaneChangeLimit(vehicle);
