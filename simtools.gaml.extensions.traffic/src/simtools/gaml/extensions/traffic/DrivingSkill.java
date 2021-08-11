@@ -1367,11 +1367,12 @@ public class DrivingSkill extends MovingSkill {
 					return;
 				}
 				double newAccel = laneAndAccPair.getValue();
-				double speed = computeSpeed(scope, newAccel, newRoad);
+				double newSpeed = computeSpeed(scope, newAccel, newRoad);
 				// Check if it is possible to move onto the new road
-				if (speed == 0.0) {
+				if (newSpeed == 0.0) {
 					// TODO: this should only happen once
 					// double probaBlock = rescaleProba(getProbaBlockNode(vehicle), timeStep);
+					setSpeed(vehicle, newSpeed);
 					double probaBlock = getProbaBlockNode(vehicle);
 					boolean goingToBlock = Random.opFlip(scope, probaBlock);
 					IAgent currentRoad = getCurrentRoad(vehicle);
@@ -1525,6 +1526,7 @@ public class DrivingSkill extends MovingSkill {
 				if (newSpeed == 0.0) {
 					// TODO: this should happen once
 					// double probaBlock = rescaleProba(getProbaBlockNode(vehicle), timeStep);
+					setSpeed(vehicle, newSpeed);
 					double probaBlock = getProbaBlockNode(vehicle);
 					boolean goingToBlock = Random.opFlip(scope, probaBlock);
 					IAgent currentRoad = getCurrentRoad(vehicle);
