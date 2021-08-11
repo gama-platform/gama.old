@@ -10,8 +10,6 @@ on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:  # For manual trigger
-    head_commit:
-      message: "ci release"
 
 jobs:
   build:
@@ -58,7 +56,8 @@ jobs:
         env:  
           SSH_USER_PWD: ${{ secrets.USER_PWD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          MSG: ${ github.event.head_commit.message }
+          # If workflow_dispatch trigger change commit message to 'ci release' else use real commit message
+          MSG: "${{ github.event_name == 'workflow_dispatch' && 'ci release' || github.event.head_commit.message }}"
           GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
