@@ -14,10 +14,8 @@ package ummisco.gama.opengl.view;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.jogamp.common.ExceptionUtils;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.AnimatorBase;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -32,14 +30,15 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 
 	private Timer timer = null;
 	private MainTask task = null;
-	private int fps;
+	private final int fps;
 	private final boolean scheduleAtFixedRate;
 	private boolean isAnimating; // MainTask feedback
 	private volatile boolean pauseIssued; // MainTask trigger
 	private volatile boolean stopIssued; // MainTask trigger
 
 	public SWTGLAnimator(final GLAutoDrawable drawable) {
-		this.fps = GamaPreferences.Displays.OPENGL_FPS.getValue();
+		this.fps = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue() ? GamaPreferences.Displays.OPENGL_FPS.getValue()
+				: 1000;
 		if (drawable != null) { add(drawable); }
 		this.scheduleAtFixedRate = false;
 	}
@@ -47,20 +46,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 	@Override
 	protected String getBaseName(final String prefix) {
 		return "FPS" + prefix + "Animator";
-	}
-
-	/**
-	 * @param fps
-	 * @throws GLException
-	 *             if the animator has already been started
-	 */
-	public final void setFPS(final int fps) throws GLException {
-		if (isStarted()) throw new GLException("Animator already started.");
-		this.fps = fps;
-	}
-
-	public final int getFPS() {
-		return fps;
 	}
 
 	class MainTask extends TimerTask {
@@ -94,14 +79,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		}
 
 		@Override
-		public final String toString() {
-			return "Task[thread " + animThread + ", stopped " + alreadyStopped + ", paused " + alreadyPaused
-					+ " pauseIssued " + pauseIssued + ", stopIssued " + stopIssued + " -- started " + isStarted()
-					+ ", animating " + isAnimatingImpl() + ", paused " + isPaused() + ", drawable " + drawables.size()
-					+ ", drawablesEmpty " + drawablesEmpty + "]";
-		}
-
-		@Override
 		public void run() {
 			UncaughtAnimatorException caughtException = null;
 
@@ -109,9 +86,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 				justStarted = false;
 				synchronized (SWTGLAnimator.this) {
 					animThread = Thread.currentThread();
-					if (DEBUG) {
-						System.err.println("FPSAnimator start/resume:" + Thread.currentThread() + ": " + toString());
-					}
 					isAnimating = true;
 					if (drawablesEmpty) {
 						pauseIssued = true; // isAnimating:=false @ pause below
@@ -119,9 +93,7 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 						pauseIssued = false;
 						setDrawablesExclCtxState(exclusiveContext); // may re-enable exclusive context
 					}
-					SWTGLAnimator.this.notifyAll(); // Wakes up 'waitForStartedCondition' sync -and resume from pause or
-													// drawablesEmpty
-					if (DEBUG) { System.err.println("FPSAnimator P1:" + Thread.currentThread() + ": " + toString()); }
+					SWTGLAnimator.this.notifyAll();
 				}
 			}
 			if (!pauseIssued && !stopIssued) { // RUN
@@ -132,12 +104,7 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 					stopIssued = true;
 				}
 			} else if (pauseIssued && !stopIssued) { // PAUSE
-				if (DEBUG) {
-					System.err.println("FPSAnimator pausing: " + alreadyPaused + ", " + Thread.currentThread() + ": "
-							+ toString());
-				}
 				this.cancel();
-
 				if (!alreadyPaused) { // PAUSE
 					alreadyPaused = true;
 					if (exclusiveContext && !drawablesEmpty) {
@@ -158,10 +125,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 				}
 			}
 			if (stopIssued) { // STOP incl. immediate exception handling of 'displayCaught'
-				if (DEBUG) {
-					System.err.println("FPSAnimator stopping: " + alreadyStopped + ", " + Thread.currentThread() + ": "
-							+ toString());
-				}
 				this.cancel();
 
 				if (!alreadyStopped) {
@@ -226,18 +189,11 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		if (null != timer || null != task || isStarted()) return false;
 		timer = new Timer(getThreadName() + "-" + baseName + "-Timer" + timerNo++);
 		task = new MainTask();
-		if (DEBUG) {
-			System.err
-					.println("FPSAnimator.start() START: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		task.start(timer);
 
 		final boolean res =
 				finishLifecycleAction(drawablesEmpty ? waitForStartedEmptyCondition : waitForStartedAddedCondition,
 						POLLP_WAIT_FOR_FINISH_LIFECYCLE_ACTION);
-		if (DEBUG) {
-			System.err.println("FPSAnimator.start() END: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		if (drawablesEmpty) {
 			task.cancel();
 			task = null;
@@ -255,9 +211,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 	@Override
 	public final synchronized boolean stop() {
 		if (null == timer || !isStarted()) return false;
-		if (DEBUG) {
-			System.err.println("FPSAnimator.stop() START: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		final boolean res;
 		if (null == task) {
 			// start/resume case w/ drawablesEmpty
@@ -267,9 +220,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 			res = finishLifecycleAction(waitForStoppedCondition, POLLP_WAIT_FOR_FINISH_LIFECYCLE_ACTION);
 		}
 
-		if (DEBUG) {
-			System.err.println("FPSAnimator.stop() END: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		if (null != task) {
 			task.cancel();
 			task = null;
@@ -287,10 +237,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 	@Override
 	public final synchronized boolean pause() {
 		if (!isStarted() || pauseIssued) return false;
-		if (DEBUG) {
-			System.err
-					.println("FPSAnimator.pause() START: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		final boolean res;
 		if (null == task) {
 			// start/resume case w/ drawablesEmpty
@@ -300,9 +246,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 			res = finishLifecycleAction(waitForPausedCondition, POLLP_WAIT_FOR_FINISH_LIFECYCLE_ACTION);
 		}
 
-		if (DEBUG) {
-			System.err.println("FPSAnimator.pause() END: " + task + ", " + Thread.currentThread() + ": " + toString());
-		}
 		if (null != task) {
 			task.cancel();
 			task = null;
@@ -321,19 +264,12 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 			res = true;
 		} else {
 			if (null != task) {
-				if (DEBUG) {
-					System.err.println("FPSAnimator.resume() Ops: !pauseIssued, but task != null: " + toString());
-					ExceptionUtils.dumpStack(System.err);
-				}
 				task.cancel();
 				task = null;
 			}
 			task = new MainTask();
 			task.start(timer);
 			res = finishLifecycleAction(waitForResumeCondition, POLLP_WAIT_FOR_FINISH_LIFECYCLE_ACTION);
-		}
-		if (DEBUG) {
-			System.err.println("FPSAnimator.resume() END: " + task + ", " + Thread.currentThread() + ": " + toString());
 		}
 		return res;
 	}
@@ -352,16 +288,9 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		}
 	}
 
-	/**
-	 * Method uncaughtException()
-	 *
-	 * @see com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler#uncaughtException(com.jogamp.opengl.GLAnimatorControl,
-	 *      com.jogamp.opengl.GLAutoDrawable, java.lang.Throwable)
-	 */
 	@Override
 	public void uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable,
 			final Throwable cause) {
-
 		// DEBUG.ERR("Uncaught exception in animator & drawable:");
 		cause.printStackTrace();
 

@@ -66,6 +66,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
@@ -140,7 +141,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setNumSamples(8);
 		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
 		canvas.setAutoSwapBufferMode(true);
-		SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		GLAnimatorControl animator = FLAGS.USE_OLD_ANIMATOR ? new OldAnimator(canvas) : new SWTGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		renderer.setCanvas(canvas);
 		final FillLayout gl = new FillLayout();

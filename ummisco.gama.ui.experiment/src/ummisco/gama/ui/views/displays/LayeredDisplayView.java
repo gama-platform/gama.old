@@ -40,6 +40,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -50,8 +51,6 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public abstract class LayeredDisplayView extends GamaViewPart
 		implements IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable, IGamaView.Display {
-
-	private static boolean OLD_SYNC_STRATEGY = true;
 
 	protected int realIndex = -1;
 	protected SashForm form;
@@ -217,7 +216,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			}
 		}
-		if (OLD_SYNC_STRATEGY) {
+		if (FLAGS.USE_OLD_SYNC_STRATEGY) {
 			releaseLock();
 		} else {
 			releaseViewLock();
@@ -299,7 +298,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			if (autoSave && surface.isRealized()) {
 				SnapshotMaker.getInstance().doSnapshot(surface, WorkbenchHelper.displaySizeOf(surfaceComposite));
 			}
-			if (OLD_SYNC_STRATEGY) {
+			if (FLAGS.USE_OLD_SYNC_STRATEGY) {
 				while (!surface.isRendered() && !surface.isDisposed() && !disposed) {
 					try {
 						Thread.sleep(10);
@@ -313,7 +312,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			}
 
 		} else if (updateThread.isAlive()) {
-			if (OLD_SYNC_STRATEGY) {
+			if (FLAGS.USE_OLD_SYNC_STRATEGY) {
 				releaseLock();
 			} else {
 				releaseViewLock();
@@ -330,7 +329,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 				while (!disposed) {
 
 					if (surface != null && surface.isRealized() && !surface.isDisposed() && !disposed) {
-						if (OLD_SYNC_STRATEGY) {
+						if (FLAGS.USE_OLD_SYNC_STRATEGY) {
 							acquireLock();
 						} else {
 							acquireViewLock();
