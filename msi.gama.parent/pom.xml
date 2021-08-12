@@ -189,6 +189,7 @@
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
+		<module>../msi.gama.lang.gaml.ide</module>
 		<module>../msi.gama.documentation</module>
 		<module>../ummisco.gama.ui.modeling</module>
 		<module>../ummisco.gama.ui.shared</module>
@@ -303,6 +304,10 @@
 		<org.eclipse.core.expressions.version>3.3.0-v20070606-0010</org.eclipse.core.expressions.version>
 		<org.eclipse.core.filebuffers.version>3.3.0-v20070606-0010</org.eclipse.core.filebuffers.version>
 		<addjars.version>1.0.5</addjars.version>
+
+		<xtext.version>2.25.0</xtext.version>
+		<mwe2.version>2.12.1</mwe2.version>
+		<tycho.version>1.7.0</tycho.version>
 	</properties>
 
 

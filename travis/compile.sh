@@ -144,8 +144,8 @@ install1 (){
 
 	
 	if [[ ${change} == *"msi.gama.lang.gaml"* ]] || [[ $MSG == *"ci msi.gama.lang.gaml"* ]]; then
-		mvn_install msi.gama.lang.gaml
 		mvn_install msi.gama.lang.gaml.ide
+		mvn_install msi.gama.lang.gaml
 	fi
 	
 	

@@ -35,6 +35,8 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
+import com.google.inject.Injector;
+
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;
 import msi.gama.headless.batch.validation.ModelLibraryRunner;
@@ -51,6 +53,7 @@ import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
 import msi.gama.lang.gaml.RunLSP;
+import msi.gama.lang.gaml.ide.GamlIdeSetup;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class Application implements IApplication {
@@ -176,21 +179,26 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 
-		HeadlessSimulationLoader.preloadGAMA();
 		DEBUG.OFF();
 
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
+
+		if (args.contains(RUN_LSP)) {
+			Injector inj = GamlIdeSetup.createInjector();
+		}
+		else {
+			HeadlessSimulationLoader.preloadGAMA();
+		}
+		
+		
 		if (args.contains(GAMA_VERSION)) {
 
 		}
 		else if (args.contains(RUN_LSP)) {
-			String[] args_ = new String[args.size()];
-			Iterator<String> iter = args.iterator();
-			for (int i = 0; i < args_.length; i ++) {
-				args_[i] = iter.next();
-			}
-			RunLSP.main(args_);
+			DEBUG.ON();
+			RunLSP.main(mm.get("application.args"));
+			return null;
 		}
 		else if (args.contains(HELP_PARAMETER)) {
 			DEBUG.ON();

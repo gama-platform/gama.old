@@ -49,21 +49,31 @@ public class HeadlessSimulationLoader {
 		return INSTANCE.configureInjector();
 	}
 
+	public static void preloadGAMA(Injector inj) {
+		INSTANCE.configureInjector(inj);
+	}
+	
 	public static void preloadGAMA() {
 		INSTANCE.configureInjector();
 	}
+	
+	private Injector configureInjector() { 
+		try {
+			// We initialize XText and Gaml.
+			Injector inj = GamlStandaloneSetup.doSetup();
+			return this.configureInjector(inj);
+		} catch (final Exception e1) {
+			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
+		}
+	}
 
-	private Injector configureInjector() {
+	private Injector configureInjector(Injector inj) {
 		if (injector != null) return injector;
 		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
 		GAMA.setHeadLessMode();
-		try {
-			// We initialize XText and Gaml.
-			injector = GamlStandaloneSetup.doSetup();
-		} catch (final Exception e1) {
-			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
-		}
+		injector = inj;
+
 		// SEED HACK // WARNING AD : Why ?
 		GamaPreferences.External.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.External.CORE_SEED.set(1.0);
