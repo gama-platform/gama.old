@@ -99,7 +99,7 @@ public class Utils {
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				int lane = lowestLaneToCheck + i;
 				OrderedBidiMap<Double, IAgent> distMap = 
-						RoadSkill.getVehiclesOnLaneSegment(scope, nextRoad, lane).inverseBidiMap();
+						RoadSkill.getVehicleOrderingMap(scope, nextRoad, lane).inverseBidiMap();
 				boolean wrongDirection = lane < numLanesNext ? false : true;
 				wrongDirection = willViolateOneway ? !wrongDirection : wrongDirection;
 
@@ -181,7 +181,7 @@ public class Utils {
 					prevRoad = RoadSkill.getLinkedRoad(prevRoad);
 				}
 				OrderedBidiMap<Double, IAgent> distMap = 
-						RoadSkill.getVehiclesOnLaneSegment(scope, prevRoad, lane).inverseBidiMap();
+						RoadSkill.getVehicleOrderingMap(scope, prevRoad, lane).inverseBidiMap();
 				if (distMap.isEmpty()) {
 					continue;
 				}
@@ -233,7 +233,7 @@ public class Utils {
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
 			OrderedBidiMap<Double, IAgent> distMap = 
-					RoadSkill.getVehiclesOnLaneSegment(scope, road, lane).inverseBidiMap();
+					RoadSkill.getVehicleOrderingMap(scope, road, lane).inverseBidiMap();
 			boolean wrongDirection = lane < numRoadLanes ? false : true;
 			wrongDirection = violatingOneway ? !wrongDirection : wrongDirection;
 			double tmpDistQuery = !wrongDirection ? distToCurrentTarget : 

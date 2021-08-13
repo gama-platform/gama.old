@@ -274,16 +274,15 @@ public class RoadSkill extends Skill {
 		road.setAttribute(VEHICLE_ORDERING, list);
 	}
 
-	//TODO: update doc string
 	/**
-	 * Converts the "overflow" lane to the correct lane index on the linked road.
-	 * Simply returns the input lane if it is already a valid lane on the current road.
-	 * Computes the correct segment index on the linked road.
+	 * Helper method that allows access to the ordered maps of vehicles' longitudinal positions
+	 * 
 	 * @param scope
-	 * @param lane the input lane index
-	 * @return
+	 * @param correctRoad the road where the vehicle is supposed to be
+	 * @param lane the lane index
+	 * @return the ordered tree map that corresponds to a lane on a certain road
 	 */
-	public static OrderedBidiMap<IAgent, Double> getVehiclesOnLaneSegment(final IScope scope,
+	public static OrderedBidiMap<IAgent, Double> getVehicleOrderingMap(final IScope scope,
 			final IAgent correctRoad,
 			final int lane) {
 		int numLanesTotal = getNumLanesTotal(correctRoad);
@@ -297,7 +296,7 @@ public class RoadSkill extends Skill {
 		int numLanesCorrect = getNumLanes(correctRoad);
 		IAgent actualRoad;
 		int actualLane;
-
+		// Convert the "overflowed" lane to the correct lane index on the linked road.
 		if (lane < numLanesCorrect) {
 			actualRoad = correctRoad;
 			actualLane = lane;
@@ -364,7 +363,7 @@ public class RoadSkill extends Skill {
 		int segmentIdx = !violatingOneway ? 0 : getNumSegments(road) - 1;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
-			getVehiclesOnLaneSegment(scope, road, lane).put(vehicle, getTotalLength(road));
+			getVehicleOrderingMap(scope, road, lane).put(vehicle, getTotalLength(road));
 		}
 		
 		DrivingSkill.setViolatingOneway(vehicle, violatingOneway);

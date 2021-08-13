@@ -53,11 +53,7 @@ public class MOBIL {
 	 */
 	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope,
 			final IAgent vehicle,
-			final IAgent target,
-			final IAgent road,
-			final int segment,
-			final double distToSegmentEnd,
-			final double distToCurrentTarget) {
+			final IAgent road) {
 		double VL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 		int currentLowestLane = getLowestLane(vehicle);
