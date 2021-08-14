@@ -305,7 +305,12 @@ abstract class GamaPreferenceStore<T> {
 	 */
 	public final Integer getInt(final String key, final Integer def) {
 		String result = System.getProperty(key);
-		return result == null ? getIntPreference(key, def) : Integer.valueOf(result);
+		if (result == null) return getIntPreference(key, def);
+		try {
+			return Integer.valueOf(result);
+		} catch (NumberFormatException e) {
+			return def;
+		}
 	}
 
 	protected abstract Integer getIntPreference(String key, Integer def);
@@ -320,7 +325,12 @@ abstract class GamaPreferenceStore<T> {
 	 */
 	public final Double getDouble(final String key, final Double def) {
 		String result = System.getProperty(key);
-		return result == null ? getDoublePreference(key, def) : Double.valueOf(result);
+		if (result == null) return getDoublePreference(key, def);
+		try {
+			return Double.valueOf(result);
+		} catch (NumberFormatException e) {
+			return def;
+		}
 	}
 
 	protected abstract Double getDoublePreference(String key, Double def);
