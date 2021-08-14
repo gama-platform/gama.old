@@ -2,6 +2,7 @@ package ummisco.gama.dev.utils;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static ummisco.gama.dev.utils.FLAGS.NO_LOGGING;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -34,17 +35,16 @@ public class DEBUG {
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
 	private static final ThreadLocal<PrintStream> LOG_WRITERS = ThreadLocal.withInitial(() -> System.out);
-	private static final boolean GLOBAL_OFF = false;
 
 	static {
-		TO_STRING.put(int.class, (o) -> Arrays.toString((int[]) o));
-		TO_STRING.put(double.class, (o) -> Arrays.toString((double[]) o));
-		TO_STRING.put(float.class, (o) -> Arrays.toString((float[]) o));
-		TO_STRING.put(byte.class, (o) -> Arrays.toString((byte[]) o));
-		TO_STRING.put(boolean.class, (o) -> Arrays.toString((boolean[]) o));
-		TO_STRING.put(long.class, (o) -> Arrays.toString((long[]) o));
-		TO_STRING.put(short.class, (o) -> Arrays.toString((short[]) o));
-		TO_STRING.put(char.class, (o) -> Arrays.toString((char[]) o));
+		TO_STRING.put(int.class, o -> Arrays.toString((int[]) o));
+		TO_STRING.put(double.class, o -> Arrays.toString((double[]) o));
+		TO_STRING.put(float.class, o -> Arrays.toString((float[]) o));
+		TO_STRING.put(byte.class, o -> Arrays.toString((byte[]) o));
+		TO_STRING.put(boolean.class, o -> Arrays.toString((boolean[]) o));
+		TO_STRING.put(long.class, o -> Arrays.toString((long[]) o));
+		TO_STRING.put(short.class, o -> Arrays.toString((short[]) o));
+		TO_STRING.put(char.class, o -> Arrays.toString((char[]) o));
 	}
 
 	/**
@@ -78,11 +78,10 @@ public class DEBUG {
 		if (REGISTERED.containsKey(s)) {
 			if (COUNTERS.containsKey(s)) {
 				result = COUNTERS.get(s) + 1;
-				COUNTERS.put(s, result);
 			} else {
 				result = 0;
-				COUNTERS.put(s, result);
 			}
+			COUNTERS.put(s, result);
 		}
 		return result;
 	}
@@ -93,7 +92,7 @@ public class DEBUG {
 	 */
 	public static void RESET() {
 		final String s = findCallingClassName();
-		if (REGISTERED.containsKey(s)) { if (COUNTERS.containsKey(s)) { COUNTERS.put(s, -1); } }
+		if (REGISTERED.containsKey(s) && COUNTERS.containsKey(s)) { COUNTERS.put(s, -1); }
 	}
 
 	public interface RunnableWithException<T extends Throwable> {
@@ -115,7 +114,7 @@ public class DEBUG {
 	 */
 
 	public static void TIMER(final String title, final Runnable runnable) {
-		if (GLOBAL_OFF || !IS_ON(findCallingClassName())) {
+		if (NO_LOGGING || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
@@ -126,7 +125,7 @@ public class DEBUG {
 
 	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
 			final RunnableWithException<T> runnable) throws T {
-		if (GLOBAL_OFF || !IS_ON(findCallingClassName())) {
+		if (NO_LOGGING || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
@@ -167,7 +166,7 @@ public class DEBUG {
 	 * Turns DEBUG on for the calling class
 	 */
 	public static final void ON() {
-		if (GLOBAL_OFF) return;
+		if (NO_LOGGING) return;
 		final String calling = findCallingClassName();
 		REGISTERED.put(calling, calling);
 	}
@@ -178,7 +177,7 @@ public class DEBUG {
 	 * actions, for instance.
 	 */
 	public static final void OFF() {
-		if (GLOBAL_OFF) return;
+		if (NO_LOGGING) return;
 		final String name = findCallingClassName();
 		REGISTERED.remove(name);
 	}
@@ -190,7 +189,7 @@ public class DEBUG {
 	 * @return whether DEBUG is active for this class
 	 */
 	public static boolean IS_ON() {
-		if (GLOBAL_OFF) return false;
+		if (NO_LOGGING) return false;
 		return IS_ON(findCallingClassName());
 	}
 
@@ -200,7 +199,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static final void ERR(final Object s) {
-		if (!GLOBAL_OFF) { System.err.println(TO_STRING(s)); }
+		if (!NO_LOGGING) { System.err.println(TO_STRING(s)); }
 	}
 
 	/**
@@ -209,7 +208,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static final void ERR(final Object s, final Throwable t) {
-		if (!GLOBAL_OFF) {
+		if (!NO_LOGGING) {
 			System.err.println(TO_STRING(s));
 			t.printStackTrace();
 		}
@@ -221,7 +220,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static void LOG(final Object string) {
-		if (!GLOBAL_OFF) { LOG(string, true); }
+		if (!NO_LOGGING) { LOG(string, true); }
 	}
 
 	/**
@@ -234,7 +233,7 @@ public class DEBUG {
 	 *            whether to pass a new line after or not
 	 */
 	public static void LOG(final Object object, final boolean newLine) {
-		if (!GLOBAL_OFF) {
+		if (!NO_LOGGING) {
 			if (newLine) {
 				LOG_WRITERS.get().println(TO_STRING(object));
 			} else {
@@ -290,7 +289,7 @@ public class DEBUG {
 	 *            the message to output
 	 */
 	public static final void OUT(final Object s) {
-		if (GLOBAL_OFF) return;
+		if (NO_LOGGING) return;
 		if (IS_ON(findCallingClassName())) { LOG(s, true); }
 	}
 
@@ -303,7 +302,7 @@ public class DEBUG {
 	 *            whether or not to output a new line after the message
 	 */
 	public static final void OUT(final Object s, final boolean newLine) {
-		if (GLOBAL_OFF) return;
+		if (NO_LOGGING) return;
 		if (IS_ON(findCallingClassName())) { LOG(s, newLine); }
 	}
 
@@ -318,8 +317,7 @@ public class DEBUG {
 	 *            another object on which TO_STRING() is applied
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
-		if (GLOBAL_OFF) return;
-		if (title == null) return;
+		if (NO_LOGGING || (title == null)) return;
 		if (IS_ON(findCallingClassName())) { LOG(PAD(title, pad) + TO_STRING(other)); }
 	}
 

@@ -37,4 +37,8 @@ public class FLAGS {
 	// false to save them in each GAMA instance preference store (like Eclipse, see #3115). True by default.
 	public static final boolean USE_JRE_PREFERENCE_STORE = get("use_jre_preference_store", true);
 
+	// Used in DEBUG, set to true to supress all logging activities. If false, logging will follow the declaration of
+	// DEBUG.ON() on the classes.
+	public static final boolean NO_LOGGING = get("no_logging", false);
+
 }

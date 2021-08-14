@@ -41,6 +41,7 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
+-Dno_logging=true
       </vmArgs>
       <vmArgsLin>-Xms256m -Xmx1024m
       </vmArgsLin>
@@ -277,9 +278,9 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <property name="version" value="1.8.1" />
       <property name="org.eclipse.update.reconcile" value="false" />
       <property name="eclipse.buildId" value="${build.id}" />
-      <property name="version" value="1.8.1" />
    </configurations>
 
    <repositories>
