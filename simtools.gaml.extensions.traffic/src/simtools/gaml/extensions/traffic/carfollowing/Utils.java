@@ -68,7 +68,8 @@ public class Utils {
 		
 		// The second condition can be false when moving to a bigger road.
 		// In that case we will skip this and only find leaders on the new road.
-		if (road != null && lowestLane < RoadSkill.getNumLanesTotal(road)) {
+		if (road != null &&
+				lowestLane < RoadSkill.getNumLanesTotal(road) - numLanesOccupied) {
 			Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
 					vehicle, lowestLane, true);
 			if (triple != null) {
@@ -151,7 +152,8 @@ public class Utils {
 
 		// The second condition can be false when moving to a bigger road.
 		// In case there's new lane with higher index, consider that there's no back vehicle.
-		if (road != null && lowestLane < RoadSkill.getNumLanesTotal(road)) {
+		if (road != null &&
+				lowestLane < RoadSkill.getNumLanesTotal(road) - numLanesOccupied) {
 			Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
 					vehicle, lowestLane, false);
 			if (triple != null) {
@@ -282,4 +284,5 @@ public class Utils {
 			return null;
 		}
 	}
+}
 }
