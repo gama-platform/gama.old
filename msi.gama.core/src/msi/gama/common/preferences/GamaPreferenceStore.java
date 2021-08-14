@@ -34,6 +34,15 @@ import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.FLAGS;
 
+/**
+ * A store that acts as a gateway with either the JRE preference store (global) or configuration-specific preference
+ * stores (Eclipse). In addition, allows preferences to be overriden if they are passed as VM arguments to GAMA (e.g.
+ * "-Dpref_use_pooling=true"), enabling different instances to set different values even if the store used is global
+ *
+ * @author drogoul
+ *
+ * @param <T>
+ */
 @SuppressWarnings ({ "restriction", "unchecked", "rawtypes" })
 abstract class GamaPreferenceStore<T> {
 
@@ -47,7 +56,7 @@ abstract class GamaPreferenceStore<T> {
 
 	public static GamaPreferenceStore getStore() {
 		if (STORE == null) {
-			STORE = FLAGS.USE_JRE_PREFERENCE_STORE ? new JRE(userRoot().node(NODE_NAME))
+			STORE = FLAGS.USE_GLOBAL_PREFERENCE_STORE ? new JRE(userRoot().node(NODE_NAME))
 					: new Configuration(ConfigurationScope.INSTANCE.getNode(NODE_NAME));
 		}
 		return STORE;
@@ -93,22 +102,22 @@ abstract class GamaPreferenceStore<T> {
 		}
 
 		@Override
-		public String get(final String key, final String def) {
+		public String getStringPreference(final String key, final String def) {
 			return store.get(key, def);
 		}
 
 		@Override
-		public Integer getInt(final String key, final Integer def) {
+		public Integer getIntPreference(final String key, final Integer def) {
 			return store.getInt(key, def);
 		}
 
 		@Override
-		public Double getDouble(final String key, final Double def) {
+		public Double getDoublePreference(final String key, final Double def) {
 			return store.getDouble(key, def);
 		}
 
 		@Override
-		public Boolean getBoolean(final String key, final Boolean def) {
+		public Boolean getBooleanPreference(final String key, final Boolean def) {
 			return store.getBoolean(key, def);
 		}
 
@@ -191,22 +200,22 @@ abstract class GamaPreferenceStore<T> {
 		}
 
 		@Override
-		public String get(final String key, final String def) {
+		public String getStringPreference(final String key, final String def) {
 			return store.get(key, def);
 		}
 
 		@Override
-		public Integer getInt(final String key, final Integer def) {
+		public Integer getIntPreference(final String key, final Integer def) {
 			return store.getInt(key, def);
 		}
 
 		@Override
-		public Double getDouble(final String key, final Double def) {
+		public Double getDoublePreference(final String key, final Double def) {
 			return store.getDouble(key, def);
 		}
 
 		@Override
-		public Boolean getBoolean(final String key, final Boolean def) {
+		public Boolean getBooleanPreference(final String key, final Boolean def) {
 			return store.getBoolean(key, def);
 		}
 
@@ -271,13 +280,65 @@ abstract class GamaPreferenceStore<T> {
 
 	public abstract void putBoolean(final String key, final Boolean value);
 
-	public abstract String get(final String key, final String def);
+	/**
+	 * First searches if the preference is overriden in the system/VM properties/arguments, then looks into the store if
+	 * not
+	 *
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public final String get(final String key, final String def) {
+		String result = System.getProperty(key);
+		return result == null ? getStringPreference(key, def) : result;
+	}
 
-	public abstract Integer getInt(final String key, final Integer def);
+	protected abstract String getStringPreference(String key, String def);
 
-	public abstract Double getDouble(final String key, final Double def);
+	/**
+	 * First searches if the preference is overriden in the system/VM properties/arguments, then looks into the store if
+	 * not
+	 *
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public final Integer getInt(final String key, final Integer def) {
+		String result = System.getProperty(key);
+		return result == null ? getIntPreference(key, def) : Integer.valueOf(result);
+	}
 
-	public abstract Boolean getBoolean(final String key, final Boolean def);
+	protected abstract Integer getIntPreference(String key, Integer def);
+
+	/**
+	 * First searches if the preference is overriden in the system/VM properties/arguments, then looks into the store if
+	 * not
+	 *
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public final Double getDouble(final String key, final Double def) {
+		String result = System.getProperty(key);
+		return result == null ? getDoublePreference(key, def) : Double.valueOf(result);
+	}
+
+	protected abstract Double getDoublePreference(String key, Double def);
+
+	/**
+	 * First searches if the preference is overriden in the system/VM properties/arguments, then looks into the store if
+	 * not
+	 *
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	public final Boolean getBoolean(final String key, final Boolean def) {
+		String result = System.getProperty(key);
+		return result == null ? getBooleanPreference(key, def) : Boolean.valueOf(result);
+	}
+
+	protected abstract Boolean getBooleanPreference(String key, Boolean def);
 
 	/**
 	 * Makes sure preferences are kept in sync between GAMA runtime and the backend file

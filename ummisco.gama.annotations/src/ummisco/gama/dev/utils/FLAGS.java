@@ -51,7 +51,7 @@ public class FLAGS {
 	 * Used in GamaPreferences, true to save the preferences in the global (managed by the JRE) preference store or
 	 * false to save them in each GAMA instance preference store (like Eclipse, see #3115). True by default.
 	 */
-	public static final boolean USE_JRE_PREFERENCE_STORE = get("use_jre_preference_store", true);
+	public static final boolean USE_GLOBAL_PREFERENCE_STORE = get("use_global_preference_store", true);
 
 	/**
 	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration ofD EBUG.ON() on the
