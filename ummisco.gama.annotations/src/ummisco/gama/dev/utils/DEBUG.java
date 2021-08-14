@@ -2,7 +2,7 @@ package ummisco.gama.dev.utils;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
-import static ummisco.gama.dev.utils.FLAGS.NO_LOGGING;
+import static ummisco.gama.dev.utils.FLAGS.ENABLE_LOGGING;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -114,7 +114,7 @@ public class DEBUG {
 	 */
 
 	public static void TIMER(final String title, final Runnable runnable) {
-		if (NO_LOGGING || !IS_ON(findCallingClassName())) {
+		if (!ENABLE_LOGGING || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
@@ -125,7 +125,7 @@ public class DEBUG {
 
 	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
 			final RunnableWithException<T> runnable) throws T {
-		if (NO_LOGGING || !IS_ON(findCallingClassName())) {
+		if (!ENABLE_LOGGING || !IS_ON(findCallingClassName())) {
 			runnable.run();
 			return;
 		}
@@ -166,7 +166,7 @@ public class DEBUG {
 	 * Turns DEBUG on for the calling class
 	 */
 	public static final void ON() {
-		if (NO_LOGGING) return;
+		if (!ENABLE_LOGGING) return;
 		final String calling = findCallingClassName();
 		REGISTERED.put(calling, calling);
 	}
@@ -177,7 +177,7 @@ public class DEBUG {
 	 * actions, for instance.
 	 */
 	public static final void OFF() {
-		if (NO_LOGGING) return;
+		if (!ENABLE_LOGGING) return;
 		final String name = findCallingClassName();
 		REGISTERED.remove(name);
 	}
@@ -189,7 +189,7 @@ public class DEBUG {
 	 * @return whether DEBUG is active for this class
 	 */
 	public static boolean IS_ON() {
-		if (NO_LOGGING) return false;
+		if (!ENABLE_LOGGING) return false;
 		return IS_ON(findCallingClassName());
 	}
 
@@ -199,7 +199,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static final void ERR(final Object s) {
-		if (!NO_LOGGING) { System.err.println(TO_STRING(s)); }
+		if (ENABLE_LOGGING) { System.err.println(TO_STRING(s)); }
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static final void ERR(final Object s, final Throwable t) {
-		if (!NO_LOGGING) {
+		if (ENABLE_LOGGING) {
 			System.err.println(TO_STRING(s));
 			t.printStackTrace();
 		}
@@ -220,7 +220,7 @@ public class DEBUG {
 	 * @param string
 	 */
 	public static void LOG(final Object string) {
-		if (!NO_LOGGING) { LOG(string, true); }
+		if (ENABLE_LOGGING) { LOG(string, true); }
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class DEBUG {
 	 *            whether to pass a new line after or not
 	 */
 	public static void LOG(final Object object, final boolean newLine) {
-		if (!NO_LOGGING) {
+		if (ENABLE_LOGGING) {
 			if (newLine) {
 				LOG_WRITERS.get().println(TO_STRING(object));
 			} else {
@@ -289,7 +289,7 @@ public class DEBUG {
 	 *            the message to output
 	 */
 	public static final void OUT(final Object s) {
-		if (NO_LOGGING) return;
+		if (!ENABLE_LOGGING) return;
 		if (IS_ON(findCallingClassName())) { LOG(s, true); }
 	}
 
@@ -302,7 +302,7 @@ public class DEBUG {
 	 *            whether or not to output a new line after the message
 	 */
 	public static final void OUT(final Object s, final boolean newLine) {
-		if (NO_LOGGING) return;
+		if (!ENABLE_LOGGING) return;
 		if (IS_ON(findCallingClassName())) { LOG(s, newLine); }
 	}
 
@@ -317,7 +317,7 @@ public class DEBUG {
 	 *            another object on which TO_STRING() is applied
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
-		if (NO_LOGGING || (title == null)) return;
+		if (!ENABLE_LOGGING || title == null) return;
 		if (IS_ON(findCallingClassName())) { LOG(PAD(title, pad) + TO_STRING(other)); }
 	}
 
