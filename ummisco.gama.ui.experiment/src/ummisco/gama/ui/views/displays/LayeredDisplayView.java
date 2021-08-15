@@ -15,7 +15,6 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Runtime.CORE_SYNC;
 
 import java.awt.Color;
-import java.util.concurrent.Semaphore;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -40,7 +39,6 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -56,9 +54,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	protected SashForm form;
 	public Composite surfaceComposite;
 	public final LayeredDisplayDecorator decorator;
-	protected volatile boolean disposed;
-	Semaphore viewLock = new Semaphore(1);
-	Thread updateThread;
+	public final LayeredDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
+	protected volatile boolean disposed = false;
+	protected volatile boolean inInitPhase = true;
 
 	@Override
 	public void setIndex(final int index) {
@@ -108,6 +106,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
 			}
 		}
+
 	}
 
 	public boolean isOpenGL() {
@@ -142,7 +141,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			@Override
 			public boolean setFocus() {
-				// decorator.keyAndMouseListener.focusGained(null);
 				return forceFocus();
 			}
 
@@ -176,7 +174,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void setFocus() {
 		if (getParentComposite() != null && !getParentComposite().isDisposed()
 				&& !getParentComposite().isFocusControl()) {
-			// decorator.keyAndMouseListener.focusGained(null);
 			getParentComposite().forceFocus();
 		}
 	}
@@ -216,16 +213,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			}
 		}
-		if (FLAGS.USE_OLD_SYNC_STRATEGY) {
-			releaseLock();
-		} else {
-			releaseViewLock();
-		}
+		synchronizer.authorizeViewUpdate();
 		// }
 		if (updateThread != null) { updateThread.interrupt(); }
-
 		if (decorator != null) { decorator.dispose(); }
-
 		super.widgetDisposed(e);
 	}
 
@@ -274,108 +265,30 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				if (getDisplaySurface() == null) return Status.CANCEL_STATUS;
-				getDisplaySurface().updateDisplay(false);
 				return Status.OK_STATUS;
 			}
 		};
 	}
 
+	final Thread updateThread = new Thread(() -> {
+		final IDisplaySurface surface = getDisplaySurface();
+		synchronizer.waitForSurfaceToBeRealized();
+		while (!disposed && !surface.isDisposed()) {
+			synchronizer.waitForViewUpdateAuthorisation();
+			surface.updateDisplay(false);
+			if (surface.getData().isAutosave()) { takeSnapshot(); }
+			inInitPhase = false;
+		}
+	});
+
 	@Override
 	public void update(final IDisplayOutput out) {
-		LayeredDisplayOutput output = (LayeredDisplayOutput) out;
-		final boolean isSync = output.isSynchronized();
-		final boolean inInitPhase = output.isInInitPhase();
-		final boolean autoSave = output.isAutoSave();
-		// Fix for issue #1693
-		if (inInitPhase) { output.setSynchronized(false); }
-		// end fix
-		initUpdateThread(output, isSync);
-
-		if (output.isSynchronized()) {
-			final IDisplaySurface surface = getDisplaySurface();
-			surface.updateDisplay(false);
-			if (autoSave && surface.isRealized()) {
-				SnapshotMaker.getInstance().doSnapshot(surface, WorkbenchHelper.displaySizeOf(surfaceComposite));
-			}
-			if (FLAGS.USE_OLD_SYNC_STRATEGY) {
-				while (!surface.isRendered() && !surface.isDisposed() && !disposed) {
-					try {
-						Thread.sleep(10);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-
-				}
-			} else {
-				surface.acquireRenderLock();
-			}
-
-		} else if (updateThread.isAlive()) {
-			if (FLAGS.USE_OLD_SYNC_STRATEGY) {
-				releaseLock();
-			} else {
-				releaseViewLock();
-			}
-		}
-
-	}
-
-	private void initUpdateThread(final IDisplayOutput output, final boolean oldSync) {
-
-		if (updateThread == null) {
-			updateThread = new Thread(() -> {
-				final IDisplaySurface surface = getDisplaySurface();
-				while (!disposed) {
-
-					if (surface != null && surface.isRealized() && !surface.isDisposed() && !disposed) {
-						if (FLAGS.USE_OLD_SYNC_STRATEGY) {
-							acquireLock();
-						} else {
-							acquireViewLock();
-						}
-						surface.updateDisplay(false);
-						if (surface.getData().isAutosave()) {
-							SnapshotMaker.getInstance().doSnapshot(surface,
-									WorkbenchHelper.displaySizeOf(surfaceComposite));
-						}
-						// Fix for issue #1693
-						if (output.isInInitPhase()) {
-							output.setInInitPhase(false);
-							output.setSynchronized(oldSync);
-							// end fix
-						}
-
-					}
-
-				}
-			});
+		if (!updateThread.isAlive()) {
+			synchronizer.setSurface(getDisplaySurface());
 			updateThread.start();
 		}
-
-	}
-
-	void acquireViewLock() {
-		try {
-			viewLock.acquire();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	void releaseViewLock() {
-		viewLock.release();
-	}
-
-	synchronized void acquireLock() {
-		try {
-			wait();
-		} catch (final InterruptedException e) {}
-		// }
-	}
-
-	private synchronized void releaseLock() {
-		notify();
+		synchronizer.authorizeViewUpdate();
+		if (!inInitPhase && out.isSynchronized()) { synchronizer.waitForRenderingToBeFinished(); }
 	}
 
 	@Override
@@ -390,7 +303,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			releaseViewLock();
+			synchronizer.authorizeViewUpdate();
 			close(GAMA.getRuntimeScope());
 		}
 	}

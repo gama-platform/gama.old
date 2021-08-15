@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
@@ -44,6 +43,7 @@ import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
@@ -100,7 +100,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
-	Semaphore renderLock = new Semaphore(1);
+	public IDisplaySynchronizer synchronizer;
 	final Composite parent;
 	volatile boolean disposed;
 	private volatile boolean alreadyUpdating;
@@ -114,10 +114,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		renderer.setDisplaySurface(this);
 		animator = createAnimator();
-
 		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-
 		animator.start();
 	}
 
@@ -656,7 +654,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
-		releaseRenderLock();
+		synchronizer.signalRenderingIsFinished();
 	}
 
 	@Override
@@ -743,13 +741,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return (int) this.animator.getTotalFPS();
 	}
 
-	@Override
-	public boolean isRealized() {
-		if (renderer == null) return false;
-		final GLAutoDrawable d = renderer.getCanvas();
-		if (d == null) return false;
-		return d.isRealized();
-	}
+	// @Override
+	// public boolean isRealized() {
+	// if (renderer == null) return false;
+	// final GLAutoDrawable d = renderer.getCanvas();
+	// if (d == null) return false;
+	// return d.isRealized();
+	// }
 
 	@Override
 	public boolean isRendered() {
@@ -821,8 +819,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public Semaphore getRenderLock() {
-		return renderLock;
+	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
+		synchronizer = s;
+		synchronizer.signalSurfaceIsRealized();
 	}
 
 }

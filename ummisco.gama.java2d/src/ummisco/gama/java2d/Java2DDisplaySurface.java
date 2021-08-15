@@ -51,6 +51,7 @@ import org.eclipse.swt.SWT;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
@@ -114,7 +115,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private IScope scope;
 	int frames;
-	private volatile boolean realized = false;
+	private IDisplaySynchronizer synchronizer;
 	private volatile boolean rendered = false;
 	Set<IEventLayerListener> listeners = new HashSet<>();
 	Point mousePosition;
@@ -192,11 +193,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
-	//
-	// public void setMousePosition(final Point point) {
-	// mousePosition = point;
-	//
-	// }
 
 	@Override
 	public Point getMousePosition() {
@@ -237,9 +233,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setDisplayScope(output.getScope().copy("in java2D display "));
 		// We disable error reporting
 		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) { getScope().disableErrorReporting(); }
-
 		layerManager.outputChanged();
-
 		resizeImage(getWidth(), getHeight(), true);
 		if (zoomFit) { zoomFit(); }
 		updateDisplay(true);
@@ -260,9 +254,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void setFont(final Font f) {
-		// super.setFont(null);
-	}
+	public void setFont(final Font f) {}
 
 	@Override
 	public BufferedImage getImage(final int w, final int h) {
@@ -419,8 +411,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void paintComponent(final Graphics g) {
-
-		realized = true;
 		final AWTDisplayGraphics gg = getIGraphics();
 		if (gg == null) return;
 		DEBUG.OUT("-- Surface effectively painting on Java2D context");
@@ -435,6 +425,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			temp_focus = null;
 			focusOn(geometry);
 			rendered = true;
+			synchronizer.signalRenderingIsFinished();
 			return;
 		}
 
@@ -442,6 +433,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		g2d.dispose();
 		frames++;
 		rendered = true;
+		if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
 	}
 
 	AWTDisplayGraphics getIGraphics() {
@@ -599,7 +591,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void dispose() {
 		getData().removeListener(this);
 		if (disposed) return;
-		setRealized(false);
+		// setRealized(false);
 		disposed = true;
 		if (layerManager != null) { layerManager.dispose(); }
 
@@ -636,13 +628,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (arg2 == 0 && arg3 == 0) return;
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
-	//
-	// @Override
-	// public void setBounds(final Rectangle r) {
-	// DEBUG.OUT("-- Java2D surface set bounds to " + r);
-	// if (r.width < 1 && r.height < 1) { return; }
-	// super.setBounds(r);
-	// }
 
 	double applyZoom(final double factor) {
 		double real_factor = Math.min(factor, 10 / getZoomLevel());
@@ -724,15 +709,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public boolean isRealized() {
-		return realized;
-	}
-
-	public void setRealized(final boolean b) {
-		realized = b;
-	}
-
-	@Override
 	public boolean isRendered() {
 		return rendered;
 	}
@@ -752,8 +728,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Semaphore getRenderLock() {
-		return renderLock;
+	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
+		synchronizer = s;
+		synchronizer.signalSurfaceIsRealized();
 	}
 
 }
