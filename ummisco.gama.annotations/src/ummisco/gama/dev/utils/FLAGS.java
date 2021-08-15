@@ -6,7 +6,8 @@ package ummisco.gama.dev.utils;
  * turned into preferences at some point.
  *
  * Use -Dflag=true/false in your VM arguments in run configurations (or in the arguments passed to your VM in gama.ini)
- * to change this default value (e.g. -Denable_logging=false)
+ * to change this default value (e.g. -Denable_logging=false). Note that preferences can also be set as system
+ * properties using the same syntax
  *
  *
  * @author A. Drogoul Aug. 2021
@@ -54,7 +55,7 @@ public class FLAGS {
 	public static final boolean USE_GLOBAL_PREFERENCE_STORE = get("use_global_preference_store", true);
 
 	/**
-	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration ofD EBUG.ON() on the
+	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration of DEBUG.ON() on the
 	 * classes). Set to false to suppress all logging. True by default
 	 */
 	public static final boolean ENABLE_LOGGING = get("enable_logging", true);

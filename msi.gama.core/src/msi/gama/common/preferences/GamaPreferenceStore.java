@@ -44,7 +44,7 @@ import ummisco.gama.dev.utils.FLAGS;
  * @param <T>
  */
 @SuppressWarnings ({ "restriction", "unchecked", "rawtypes" })
-abstract class GamaPreferenceStore<T> {
+public abstract class GamaPreferenceStore<T> {
 
 	static {
 		// DEBUG.ON();
@@ -84,21 +84,25 @@ abstract class GamaPreferenceStore<T> {
 		@Override
 		public void put(final String key, final String value) {
 			store.put(key, value);
+			flush();
 		}
 
 		@Override
 		public void putInt(final String key, final int value) {
 			store.putInt(key, value);
+			flush();
 		}
 
 		@Override
 		public void putDouble(final String key, final Double value) {
 			store.putDouble(key, value);
+			flush();
 		}
 
 		@Override
 		public void putBoolean(final String key, final Boolean value) {
 			store.putBoolean(key, value);
+			flush();
 		}
 
 		@Override
@@ -182,21 +186,25 @@ abstract class GamaPreferenceStore<T> {
 		@Override
 		public void put(final String key, final String value) {
 			store.put(key, value);
+			flush();
 		}
 
 		@Override
 		public void putInt(final String key, final int value) {
 			store.putInt(key, value);
+			flush();
 		}
 
 		@Override
 		public void putDouble(final String key, final Double value) {
 			store.putDouble(key, value);
+			flush();
 		}
 
 		@Override
 		public void putBoolean(final String key, final Boolean value) {
 			store.putBoolean(key, value);
+			flush();
 		}
 
 		@Override

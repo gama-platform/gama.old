@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WorkspacePreferences.java, in plugin msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * 'WorkspacePreferences.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling and
+ * simulation platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
@@ -12,90 +11,52 @@
  **********************************************************************************************/
 package msi.gama.application.workspace;
 
+import static msi.gama.common.preferences.GamaPreferenceStore.getStore;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Map;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IExportedPreferences;
-import org.eclipse.core.runtime.preferences.IPreferenceFilter;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+
 import msi.gama.application.Application;
-import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class WorkspacePreferences {
 
-	static {
-		GamaPreferences.Interface.CORE_ASK_REBUILD.onChange(v -> askBeforeRebuildingWorkspace(v));
-		GamaPreferences.Interface.CORE_ASK_OUTDATED.onChange(v -> askBeforeUsingOutdatedWorkspace(v));
-	}
+	private static final String KEY_WORSPACE_PATH = "pref_workspace_path";
+	private static final String KEY_WORKSPACE_REMEMBER = "pref_workspace_remember";
+	private static final String KEY_WORKSPACE_LIST = "pref_workspace_list";
+	private static final String KEY_ASK_REBUILD = "pref_ask_rebuild";
+	private static final String KEY_ASK_OUTDATED = "pref_ask_outdated";
+	public static final String WORKSPACE_IDENTIFIER = ".gama_application_workspace";
+	private static String MODEL_IDENTIFIER = null;
 
-	/*
-	 * The name of the file that tells us that the workspace directory belongs
-	 * to our application
-	 */
-
-	private static final String keyWorkspaceRootDir = "wsRootDir";
-	private static final String keyRememberWorkspace = "wsRemember";
-	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
-	private static final String keyAskForRebuilding = "wsAskRebuildingWorkspace";
-	private static final String keyAskForOutdated = "wsAskOutdatedWorkspace";
-
-	public static Preferences getNode() {
-		try {
-			if ( Preferences.userRoot().nodeExists("gama") ) { return Preferences.userRoot().node("gama"); }
-		} catch (final BackingStoreException e1) {
-			e1.printStackTrace();
-		}
-		final Preferences p = Preferences.userRoot().node("gama");
-		try {
-			p.flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
-		}
-		return p;
-	}
-
-	private static void flush() {
-		try {
-			getNode().flush();
-		} catch (final BackingStoreException e) {
-			e.printStackTrace();
-		}
-	}
+	static String selectedWorkspaceRootLocation;
 
 	/**
 	 * Returns whether the user selected "remember workspace" in the preferences
 	 */
 	public static boolean isRememberWorkspace() {
-		return getNode().getBoolean(keyRememberWorkspace, false);
+		return getStore().getBoolean(KEY_WORKSPACE_REMEMBER, false);
 	}
 
 	public static void isRememberWorkspace(final boolean remember) {
-		getNode().putBoolean(keyRememberWorkspace, remember);
-		flush();
+		getStore().putBoolean(KEY_WORKSPACE_REMEMBER, remember);
 	}
 
 	public static String getLastUsedWorkspaces() {
-		return getNode().get(keyLastUsedWorkspaces, "");
+		return getStore().get(KEY_WORKSPACE_LIST, "");
 	}
 
 	public static void setLastUsedWorkspaces(final String used) {
-		getNode().put(keyLastUsedWorkspaces, used);
-		flush();
+		getStore().put(KEY_WORKSPACE_LIST, used);
 	}
 
 	/**
@@ -104,41 +65,32 @@ public class WorkspacePreferences {
 	 * @return null if none
 	 */
 	public static String getLastSetWorkspaceDirectory() {
-		return getNode().get(keyWorkspaceRootDir, "");
+		return getStore().get(KEY_WORSPACE_PATH, "");
 	}
 
 	public static void setLastSetWorkspaceDirectory(final String last) {
-		getNode().put(keyWorkspaceRootDir, last);
-		flush();
+		getStore().put(KEY_WORSPACE_PATH, last);
 	}
 
 	public static boolean askBeforeRebuildingWorkspace() {
 		// true by default
-		return getNode().getBoolean(keyAskForRebuilding, true);
+		return getStore().getBoolean(KEY_ASK_REBUILD, true);
 	}
 
 	public static void askBeforeRebuildingWorkspace(final boolean ask) {
 		// true by default
-		getNode().putBoolean(keyAskForRebuilding, ask);
-		flush();
+		getStore().putBoolean(KEY_ASK_REBUILD, ask);
 	}
 
 	public static boolean askBeforeUsingOutdatedWorkspace() {
 		// true by default
-		return getNode().getBoolean(keyAskForOutdated, true);
+		return getStore().getBoolean(KEY_ASK_OUTDATED, true);
 	}
 
 	public static void askBeforeUsingOutdatedWorkspace(final boolean ask) {
 		// true by default
-		getNode().putBoolean(keyAskForOutdated, ask);
-		flush();
+		getStore().putBoolean(KEY_ASK_OUTDATED, ask);
 	}
-
-	// static String lastWs;
-	static String selectedWorkspaceRootLocation;
-	static boolean applyPrefs;
-	public static final String WS_IDENTIFIER = ".gama_application_workspace";
-	private static String MODEL_IDENTIFIER = null;
 
 	public static String getSelectedWorkspaceRootLocation() {
 		return selectedWorkspaceRootLocation;
@@ -162,8 +114,8 @@ public class WorkspacePreferences {
 
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			DEBUG.OUT(
-				">GAMA version " + Platform.getProduct().getDefiningBundle().getVersion().toString() + " loading...");
+			DEBUG.OUT(">GAMA version " + Platform.getProduct().getDefiningBundle().getVersion().toString()
+					+ " loading...");
 			DEBUG.OUT(">GAMA models library version: " + gamaStamp);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
@@ -171,144 +123,83 @@ public class WorkspacePreferences {
 		return gamaStamp;
 	}
 
-	public static IPreferenceFilter[] getPreferenceFilters() {
-		final IPreferenceFilter[] transfers = new IPreferenceFilter[1];
-
-		// For export all create a preference filter that can export
-		// all nodes of the Instance and Configuration scopes
-		transfers[0] = new IPreferenceFilter() {
-
-			@Override
-			public String[] getScopes() {
-				return new String[] { InstanceScope.SCOPE };
-			}
-
-			@Override
-			public Map<String, PreferenceFilterEntry[]> getMapping(final String scope) {
-				return null;
-			}
-		};
-
-		return transfers;
-	}
-
-	public static boolean applyPrefs() {
-		return applyPrefs;
-	}
-
-	public static void setApplyPrefs(final boolean b) {
-		applyPrefs = b;
-	}
-
-	public static void applyEclipsePreferences(final String targetDirectory) {
-		final IPreferencesService service = Platform.getPreferencesService();
-		IExportedPreferences prefs;
-
-		try (FileInputStream input = new FileInputStream(new File(targetDirectory + "/.gama.epf"))) {
-			prefs = service.readPreferences(input);
-			service.applyPreferences(prefs, getPreferenceFilters());
-		} catch (final IOException e) {} catch (final CoreException e) {}
-		setApplyPrefs(false);
-
-	}
-
 	/**
-	 * Ensures a workspace directory is OK in regards of reading/writing, etc.
-	 * This method will get called externally as well.
+	 * Ensures a workspace directory is OK in regards of reading/writing, etc. This method will get called externally as
+	 * well.
 	 *
 	 * @param parentShell
 	 *            Shell parent shell
 	 * @param workspaceLocation
 	 *            Directory the user wants to use
 	 * @param askCreate
-	 *            Whether to ask if to create the workspace or not in this
-	 *            location if it does not exist already
+	 *            Whether to ask if to create the workspace or not in this location if it does not exist already
 	 * @param fromDialog
-	 *            Whether this method was called from our dialog or from
-	 *            somewhere else just to check a location
+	 *            Whether this method was called from our dialog or from somewhere else just to check a location
 	 * @return null if everything is ok, or an error message if not
 	 */
 	public static String checkWorkspaceDirectory(final String workspaceLocation, final boolean askCreate,
-		final boolean fromDialog, final boolean cloning) {
+			final boolean fromDialog, final boolean cloning) {
 		final File f = new File(workspaceLocation);
-		if ( !f.exists() ) {
-			if ( askCreate ) {
-				final boolean create =
-					MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
-						workspaceLocation + " does not exist. Would you like to create a new workspace here" +
-							(cloning ? ", copy the projects and preferences of your current workspace into it, " : "") +
-							" and proceeed ?");
-				if ( create ) {
-					try {
-						f.mkdirs();
-						final File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
-						wsDot.createNewFile();
-						final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
-						dotFile.createNewFile();
-					} catch (final RuntimeException err) {
-						err.printStackTrace();
-						return "Error creating directories, please check folder permissions";
-					} catch (final IOException er) {
-						er.printStackTrace();
-						return "Error creating directories, please check folder permissions";
-					}
-				}
-
-				if ( !f.exists() ) {
-					return "The selected directory does not exist";
-				} else {
-					return null;
+		if (!f.exists() && askCreate) {
+			final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
+					workspaceLocation + " does not exist. Would you like to create a new workspace here"
+							+ (cloning ? ", copy the projects and preferences of your current workspace into it, " : "")
+							+ " and proceeed ?");
+			if (create) {
+				try {
+					f.mkdirs();
+					final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+					wsDot.createNewFile();
+					final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
+					dotFile.createNewFile();
+				} catch (final RuntimeException | IOException er) {
+					er.printStackTrace();
+					return "Error creating directories, please check folder permissions";
 				}
 			}
+
+			if (!f.exists()) return "The selected directory does not exist";
+			return null;
 		}
 
-		if ( !f.canRead() ) {
-			// scope.getGui().debug("The selected directory is not readable");
+		if (!f.canRead()) // scope.getGui().debug("The selected directory is not readable");
 			return "The selected directory is not readable";
-		}
 
-		if ( !f.isDirectory() ) {
-			// scope.getGui().debug("The selected path is not a directory");
+		if (!f.isDirectory()) // scope.getGui().debug("The selected path is not a directory");
 			return "The selected path is not a directory";
-		}
 
 		testWorkspaceSanity(f);
 
-		final File wsTest = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
-		if ( fromDialog ) {
-			if ( !wsTest.exists() ) {
+		final File wsTest = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+		if (fromDialog) {
+			if (!wsTest.exists()) {
 				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
-					"New Workspace", "The directory '" + wsTest.getAbsolutePath() +
-						"' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
-				if ( create ) {
-					try {
-						f.mkdirs();
-						final File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
-						wsDot.createNewFile();
-					} catch (final Exception err) {
-						return "Error creating directories, please check folder permissions";
-					}
-				} else {
-					return "Please select a directory for your workspace";
+						"New Workspace", "The directory '" + wsTest.getAbsolutePath()
+								+ "' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
+				if (!create) return "Please select a directory for your workspace";
+				try {
+					f.mkdirs();
+					final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+					wsDot.createNewFile();
+				} catch (final Exception err) {
+					return "Error creating directories, please check folder permissions";
 				}
 
-				if ( !wsTest.exists() ) { return "The selected directory does not exist"; }
+				if (!wsTest.exists()) return "The selected directory does not exist";
 
 				return null;
 			}
-		} else {
-			if ( !wsTest.exists() ) { return "The selected directory is not a workspace directory"; }
-		}
+		} else if (!wsTest.exists()) return "The selected directory is not a workspace directory";
 		final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
-		if ( !dotFile.exists() ) {
-			if ( fromDialog ) {
+		if (!dotFile.exists()) {
+			if (fromDialog) {
 				boolean create = true;
-				if ( askBeforeUsingOutdatedWorkspace() ) {
+				if (askBeforeUsingOutdatedWorkspace()) {
 					create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
-						"Different version of the models library",
-						"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
+							"Different version of the models library",
+							"The workspace contains a different version of the models library. Do you want to proceed anyway ?");
 				}
-				if ( create ) {
+				if (create) {
 					try {
 						dotFile.createNewFile();
 					} catch (final IOException e) {
@@ -319,44 +210,43 @@ public class WorkspacePreferences {
 			}
 
 			return "models";
-		} else if ( cloning ) {
+		}
+		if (cloning) {
 			final boolean b = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Existing workspace",
-				"The path entered is a path to an existing workspace. All its contents will be erased and replaced by the current workspace contents. Proceed anyway ?");
-			if ( !b ) { return ""; }
+					"The path entered is a path to an existing workspace. All its contents will be erased and replaced by the current workspace contents. Proceed anyway ?");
+			if (!b) return "";
 		}
 		return null;
 	}
 
 	public static boolean testWorkspaceSanity(final File workspace) {
 		DEBUG.OUT("[GAMA] Checking for workspace sanity");
-		File[] files = workspace.listFiles((FileFilter) file -> file.getName().equals(".metadata"));
-		if ( files == null || files.length == 0 ) { return true; }
+		File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
+		if (files == null || files.length == 0) return true;
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
-		if ( logs != null ) {
-			for ( final File log : logs ) {
+		if (logs != null) {
+			for (final File log : logs) {
 				log.delete();
 			}
 		}
-		files = files[0].listFiles((FileFilter) file -> file.getName().equals(".plugins"));
-		if ( files == null ) { return false; }
-		if ( files.length == 0 ) { return true; }
-		files = files[0].listFiles((FileFilter) file -> file.getName().equals("org.eclipse.core.resources"));
-		if ( files == null ) { return false; }
-		if ( files.length == 0 ) { return true; }
+		files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
+		if (files == null) return false;
+		if (files.length == 0) return true;
+		files = files[0].listFiles((FileFilter) file -> "org.eclipse.core.resources".equals(file.getName()));
+		if (files == null) return false;
+		if (files.length == 0) return true;
 		files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
-		if ( files == null ) { return false; }
+		if (files == null) return false;
 		DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
-		if ( files.length == 0 ) { return true; }
+		if (files.length == 0) return true;
 		boolean rebuild = true;
-		if ( askBeforeRebuildingWorkspace() ) {
+		if (askBeforeRebuildingWorkspace()) {
 			rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
-				"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
+					"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
 		}
-		if ( rebuild ) {
-			for ( final File file : files ) {
-				if ( file.exists() ) {
-					file.delete();
-				}
+		if (rebuild) {
+			for (final File file : files) {
+				if (file.exists()) { file.delete(); }
 			}
 			Application.ClearWorkspace(true);
 			return false;
@@ -365,9 +255,7 @@ public class WorkspacePreferences {
 	}
 
 	public static String getModelIdentifier() {
-		if ( MODEL_IDENTIFIER == null ) {
-			MODEL_IDENTIFIER = getCurrentGamaStampString();
-		}
+		if (MODEL_IDENTIFIER == null) { MODEL_IDENTIFIER = getCurrentGamaStampString(); }
 		return MODEL_IDENTIFIER;
 	}
 
