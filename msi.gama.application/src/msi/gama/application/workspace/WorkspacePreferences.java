@@ -143,7 +143,7 @@ public class WorkspacePreferences {
 		if (!f.exists() && askCreate) {
 			final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
 					workspaceLocation + " does not exist. Would you like to create a new workspace here"
-							+ (cloning ? ", copy the projects and preferences of your current workspace into it, " : "")
+							+ (cloning ? ", copy the projects of your current workspace into it," : "")
 							+ " and proceeed ?");
 			if (create) {
 				try {
@@ -162,11 +162,9 @@ public class WorkspacePreferences {
 			return null;
 		}
 
-		if (!f.canRead()) // scope.getGui().debug("The selected directory is not readable");
-			return "The selected directory is not readable";
+		if (!f.canRead()) return "The selected directory is not readable";
 
-		if (!f.isDirectory()) // scope.getGui().debug("The selected path is not a directory");
-			return "The selected path is not a directory";
+		if (!f.isDirectory()) return "The selected path is not a directory";
 
 		testWorkspaceSanity(f);
 
@@ -186,7 +184,6 @@ public class WorkspacePreferences {
 				}
 
 				if (!wsTest.exists()) return "The selected directory does not exist";
-
 				return null;
 			}
 		} else if (!wsTest.exists()) return "The selected directory is not a workspace directory";
