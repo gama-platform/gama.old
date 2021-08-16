@@ -33,6 +33,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -47,6 +48,8 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.osgi.framework.Bundle;
 
+import com.google.common.net.UrlEscapers;
+
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 
@@ -58,7 +61,13 @@ import ummisco.gama.ui.navigator.contents.ResourceManager;
 
 public abstract class AbstractNewModelWizard extends Wizard implements INewWizard {
 
-	static final Map<String, String> TEMPLATES = new HashMap<String, String>() {
+	static final String _AUTHOR = "modelAuthor";
+	static final String _DESCRIPTION = "modelDescription";
+	static final String _TITLE = "modelTitle";
+	static final String _FILENAME = "modelFilename";
+	static final String _DOC = "documentation";
+
+	static final Map<String, String> TEMPLATES = new HashMap<>() {
 		{
 			put(EXPERIMENT, "/templates/experiment.template.resource");
 			put(TEST_EXP, "/templates/test.experiment.template.resource");
@@ -70,8 +79,7 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		while (urls.hasMoreElements()) {
 			try {
 				final URI uri = urls.nextElement().toURI();
-				final String name =
-						uri.getPath().replaceAll(".model.template.resource", "").replaceAll("/templates/", "");
+				final String name = uri.getPath().replaceAll(".model.template.resource", "").replace("/templates/", "");
 				TEMPLATES.put(name, uri.getPath());
 
 			} catch (final URISyntaxException e) {
@@ -92,7 +100,6 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 	// protected String fileHeader;
 
 	public AbstractNewModelWizard() {
-		super();
 		setNeedsProgressMonitor(true);
 	}
 
@@ -158,26 +165,15 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 
 		monitor.beginTask("Creating " + fileName, 2);
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		final IResource container = findContainer(monitor, containerName, root);
-		if (container == null) { return; }
-		IContainer folder = (IContainer) container;
+		IContainer folder = findContainer(monitor, containerName, root);
+		if (folder == null) return;
 		final IProject project = folder.getProject();
 
 		/* Add the models folder */
-		if (project == container) {
-			final IFolder modelFolder = folder.getFolder(new Path(getDefaultFolderForModels()));
-			if (!modelFolder.exists()) {
-				modelFolder.create(true, true, monitor);
-			}
+		final IFolder modelFolder = project.getFolder(new Path(getDefaultFolderForModels()));
+		if (project == folder) {
+			if (!modelFolder.exists()) { modelFolder.create(true, true, monitor); }
 			folder = modelFolder;
-		}
-
-		/* Add the doc folder */
-		if (createDoc) {
-			final IFolder libFolder = project.getFolder(new Path("doc"));
-			if (!libFolder.exists()) {
-				libFolder.create(true, true, monitor);
-			}
 		}
 
 		final IFile file = folder.getFile(new Path(fileName));
@@ -188,8 +184,20 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 			ResourceManager.getInstance().reveal(file);
 			file.create(streamModel, true, monitor);
 			if (createDoc) {
-				try (InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);) {
-					final IFile htmlFile = project.getFile(new Path("doc/" + title + ".html"));
+				final IFolder libFolder = project.getFolder(new Path(_DOC));
+				if (!libFolder.exists()) { libFolder.create(true, true, monitor); }
+
+				IPath p;
+				if (modelFolder.getFullPath().isPrefixOf(file.getFullPath())) {
+					p = file.getFullPath().removeLastSegments(1).makeRelativeTo(modelFolder.getFullPath());
+				} else {
+					p = new Path("");
+				}
+
+				String name = file.getFullPath().removeFileExtension().lastSegment();
+				try (InputStream resourceStream = openContentStreamMDFile(title, desc, author, name);) {
+					IFolder docFolder = (IFolder) createRecursively(root, libFolder.getFullPath().append(p));
+					final IFile htmlFile = docFolder.getFile(name + ".md");
 					htmlFile.create(resourceStream, true, monitor);
 				}
 			}
@@ -220,24 +228,31 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		return replacePlaceHolders(folder, result, title, author, desc);
 	}
 
-	public IResource findContainer(final IProgressMonitor monitor, final String containerName,
+	public IContainer findContainer(final IProgressMonitor monitor, final String containerName,
 			final IWorkspaceRoot root) throws CoreException {
-		IResource container = root.findMember(new Path(containerName));
-		if (container == null || !container.exists()) {
+		IResource resource = root.findMember(new Path(containerName));
+		if (resource == null || !resource.exists()) {
 			final boolean create = MessageDialog.openConfirm(getShell(), "Folder does not exist",
 					"Folder \"" + containerName + "\" does not exist. Create it automatically ?");
-			if (create) {
-				final IFolder folder = root.getFolder(new Path(containerName));
-				folder.create(true, true, monitor);
-				container = folder;
-			} else {
-				return null;
-			}
-		} else if (!(container instanceof IContainer)) {
+			if (!create) return null;
+			final IContainer folder = createRecursively(root, new Path(containerName));
+			resource = folder;
+		} else if (!(resource instanceof IContainer)) {
 			MessageDialog.openError(getShell(), "Not a folder", containerName + " is not a folder. Cannot proceed");
 			return null;
 		}
-		return container;
+		return (IContainer) resource;
+	}
+
+	IContainer createRecursively(final IWorkspaceRoot root, final IPath fullFolderPath) throws CoreException {
+		IContainer folder = root.getProject(fullFolderPath.segment(0));
+		if (folder == null) return root;
+		for (int i = 1; i < fullFolderPath.segmentCount(); i++) {
+			String current = fullFolderPath.segment(i);
+			folder = folder.getFolder(new Path(current));
+			if (!folder.exists()) { ((IFolder) folder).create(true, true, null); }
+		}
+		return folder;
 	}
 
 	protected abstract String getDefaultFolderForModels();
@@ -273,18 +288,19 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 	}
 
 	/** Initialize the file contents to contents of the given resource. */
-	private InputStream openContentStreamHtmlFile(final String title, final String desc, final String author)
-			throws CoreException {
+	private InputStream openContentStreamMDFile(final String title, final String desc, final String author,
+			final String fileName) throws CoreException {
 		final String newline = "\n";
 		String line;
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder sb = new StringBuilder();
 		try (final InputStream input =
-				this.getClass().getResourceAsStream("/templates/description-html-template.resource");
+				this.getClass().getResourceAsStream("/templates/description-md-template.resource");
 				final BufferedReader reader = new BufferedReader(new InputStreamReader(input));) {
 			while ((line = reader.readLine()) != null) {
-				line = line.replaceAll("authorModel", "By " + author);
-				line = line.replaceAll("titleModel", "Description of the model " + title);
-				line = line.replaceAll("descModel", desc);
+				line = line.replaceAll(_AUTHOR, author).replaceAll(_TITLE, "Documentation of " + title)
+						.replaceAll(_DESCRIPTION, desc)
+						.replaceAll(_FILENAME, UrlEscapers.urlFragmentEscaper().escape(fileName));
+
 				sb.append(line);
 				sb.append(newline);
 			}
