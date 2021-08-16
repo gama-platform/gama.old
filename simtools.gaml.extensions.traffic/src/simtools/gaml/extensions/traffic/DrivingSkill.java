@@ -54,6 +54,7 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import simtools.gaml.extensions.traffic.carfollowing.MOBIL;
+import simtools.gaml.extensions.traffic.carfollowing.Utils;
 import ummisco.gama.dev.utils.DEBUG;
 
 @vars({
@@ -420,7 +421,7 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	public static final String ADVANCED_DRIVING = "advanced_driving";
-
+	// Attributes' names
 	@Deprecated public static final String SECURITY_DISTANCE_COEFF = "security_distance_coeff";
 	public static final String SAFETY_DISTANCE_COEFF = "safety_distance_coeff";
 	@Deprecated public static final String MIN_SECURITY_DISTANCE = "min_security_distance";
@@ -470,6 +471,8 @@ public class DrivingSkill extends MovingSkill {
 	public static final String LEADING_DISTANCE = "leading_distance";
 	public static final String LEADING_SPEED = "leading_speed";
 	public static final String FOLLOWER = "follower";
+	// Actions' names
+	public static final String ACT_CHOOSE_LANE = "choose_lane";
 
 	// NOTE: Due to approximations in IDM, vehicles will never have the exact same location as its target.
 	// Therefore we consider the vehicle has reached its goal when distToGoal is smaller than this threshold.
@@ -1441,12 +1444,40 @@ public class DrivingSkill extends MovingSkill {
 			value = "action to choose a lane",
 			returns = "the chosen lane, return -1 if no lane can be taken",
 			examples = { @example ("do lane_choice new_road: a_road;") },
-			deprecated = "There's no apparent use case for overriding this, since MOBIL lane changing model was implemented"
+			deprecated = "Use `choose_lane` instead"
 		)
 	)
 	@Deprecated
 	public Integer primLaneChoice(final IScope scope) throws GamaRuntimeException {
 		return -1;
+	}
+
+	@action(
+		name = ACT_CHOOSE_LANE,
+		args = {
+			@arg(
+				name = "new_road",
+				type = IType.AGENT,
+				optional = false,
+				doc = @doc("the new road that's the vehicle is going to enter")
+			)
+		},
+		doc = @doc(
+			value = "Override this if you want to manually choose a lane when entering new road. "
+					+ "By default, the vehicle tries to stay in the current lane. "
+					+ "If the new road has fewer lanes than the current one and the current lane index is too big, "
+					+ "it tries to enter the most uppermost lane.",
+			returns = "an integer representing the lane index"
+		)
+	)
+	public Integer primChooseLane(final IScope scope) throws GamaRuntimeException {
+		IAgent newRoad = (IAgent) scope.getArg("new_road", IType.AGENT);
+		int numRoadLanes = RoadSkill.getNumLanes(newRoad);
+		IAgent vehicle = getCurrentAgent(scope);
+		int numLanesOccupied = getNumLanesOccupied(vehicle);
+		int currentLowestLane = getLowestLane(vehicle);
+		int linkedLaneLimit = Utils.computeLinkedLaneLimit(vehicle, newRoad);
+		return Math.min(currentLowestLane, numRoadLanes + linkedLaneLimit - numLanesOccupied);
 	}
 
 	/**
@@ -1593,7 +1624,12 @@ public class DrivingSkill extends MovingSkill {
 				}
 				
 				// Choose a lane on the new road
-				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, newRoad);
+				IStatement.WithArgs actionCL = context.getAction(ACT_CHOOSE_LANE);
+				Arguments argsCL = new Arguments();
+				argsCL.put("new_road", ConstantExpressionDescription.create(newRoad));
+				actionCL.setRuntimeArgs(scope, argsCL);
+				int lowestLane = (int) actionCL.executeOn(scope);
+				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, newRoad, lowestLane);
 				if (laneAndAccPair == null) {
 					return;
 				}
@@ -1651,7 +1687,9 @@ public class DrivingSkill extends MovingSkill {
 				RoadSkill.register(scope, vehicle, newRoad, newLane);
 			} else {
 				IAgent currentRoad = getCurrentRoad(vehicle);
-				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, currentRoad);
+				int lowestLane = getLowestLane(vehicle);
+				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, currentRoad,
+						lowestLane);
 			}
 			int lowestLane = laneAndAccPair.getLeft();
 			double accel = laneAndAccPair.getRight();

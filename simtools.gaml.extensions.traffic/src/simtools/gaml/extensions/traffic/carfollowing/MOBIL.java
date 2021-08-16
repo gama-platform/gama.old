@@ -53,10 +53,10 @@ public class MOBIL {
 	 */
 	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope,
 			final IAgent vehicle,
-			final IAgent road) {
+			final IAgent road,
+			int currentLowestLane) {
 		double VL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		int currentLowestLane = getLowestLane(vehicle);
 
 		// Rescale probabilities based on step duration
 		double timeStep = scope.getSimulation().getClock().getStepInSeconds();
@@ -65,11 +65,6 @@ public class MOBIL {
 		int numCurrentLanes = RoadSkill.getNumLanes(road);
 		int linkedLaneLimit = Utils.computeLinkedLaneLimit(vehicle, road);
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
-		// Restrict the lane index when entering a new road
-		if (road != getCurrentRoad(vehicle)) {
-			currentLowestLane = Math.min(currentLowestLane,
-					numCurrentLanes + linkedLaneLimit - numLanesOccupied);
-		}
 
 		// Determine the lanes which is considered for switching
 		int laneChangeLimit = getLaneChangeLimit(vehicle);
