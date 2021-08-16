@@ -17,7 +17,7 @@ global {
 	 * closest_to: the geometry closest to the source geometry
 	 * farthest_to: the geometry farthest to the source geometry
 	 */
-	string type_query <- "overlapping" among: ["overlapping", "inside", "touching", "crossing", "covering", "closest_to", "farthest_to"] parameter:"Type of queries";
+	string type_query <- "overlapping" among: ["overlapping", "inside", "touching", "crossing", "covering", "closest_to", "farthest_to"] ;
 	agent_base selected_agent;
 	
 	init {
@@ -36,9 +36,8 @@ global {
 		do apply_query;
 	}
 	
-	reflex change_agent {
-		selected_agent <- one_of(polygon_agent + polyline_agent + point_agent);
-		
+	action change_agent {
+		selected_agent <- (polygon_agent + polyline_agent + point_agent) closest_to #user_location; 	
 		do apply_query;
 	}
 	
@@ -104,7 +103,6 @@ species point_agent parent:agent_base {
 	rgb color <- #green;
 	aspect default {
 		if (self = selected_agent) {
-			
 			draw circle(1.5) color: #magenta; 
 		}
 		draw circle(1.0) color:is_concerned ? #red : color border: #black; 
@@ -112,11 +110,13 @@ species point_agent parent:agent_base {
 }
 
 experiment Spatialqueries type: gui {
+	parameter Query var: type_query on_change: {ask simulation{do apply_query;} do update_outputs();};
 	output {
 		display map {
 			species polygon_agent;
 			species point_agent;
 			species polyline_agent;	
+			event #mouse_down  {ask simulation{do change_agent;}}
 		}
 	}
 }
