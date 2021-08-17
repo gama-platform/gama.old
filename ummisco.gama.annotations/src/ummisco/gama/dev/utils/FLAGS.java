@@ -63,6 +63,6 @@ public class FLAGS {
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
 	 */
-	public static final boolean IS_READ_ONLY = get("read_only", true);
+	public static final boolean IS_READ_ONLY = get("read_only", false);
 
 }
