@@ -60,4 +60,9 @@ public class FLAGS {
 	 */
 	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
 
+	/**
+	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
+	 */
+	public static final boolean IS_READ_ONLY = get("read_only", true);
+
 }

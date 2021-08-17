@@ -121,6 +121,7 @@ import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.GamaColors;
@@ -335,6 +336,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		super.createPartControl(editor);
 		toolbarParent.layout();
 		installGestures();
+		// this.getStyledText().setEditable(!FLAGS.IS_READ_ONLY);
+	}
+
+	@Override
+	public boolean isEditable() {
+		return FLAGS.IS_READ_ONLY ? false : super.isEditable();
 	}
 
 	@Override
@@ -348,7 +355,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	private void scheduleValidationJob() {
-		if (!isEditable()) return;
+		// if (!isEditable()) return;
 		final IValidationIssueProcessor processor = new MarkerIssueProcessor(getResource(),
 				getInternalSourceViewer().getAnnotationModel(), markerCreator, markerTypeProvider);
 		final ValidationJob validate = new ValidationJob(validator, getDocument(), processor, CheckMode.FAST_ONLY) {
