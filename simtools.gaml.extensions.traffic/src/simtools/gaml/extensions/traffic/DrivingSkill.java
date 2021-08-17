@@ -1787,9 +1787,7 @@ public class DrivingSkill extends MovingSkill {
 
 		double dt = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(vehicle) + acceleration * dt;
-		speed = Math.min(speed, getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
-		speed = Math.max(0.0, speed);
-		return speed;
+		return Math.max(0.0, speed);
 	}
 
 	/**

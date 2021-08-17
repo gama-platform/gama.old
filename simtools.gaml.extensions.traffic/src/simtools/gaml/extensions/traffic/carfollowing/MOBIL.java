@@ -98,10 +98,11 @@ public class MOBIL {
 			setLeadingSpeed(vehicle, leadingSpeed);
 			setFollower(vehicle, currentBackVehicle);
 			// Calculate acc(M) - Acceleration of current vehicle M if no lane change occurs
-			stayAccelM = IDM.computeAcceleration(scope, vehicle, leadingDist, leadingSpeed);
+			stayAccelM = IDM.computeAcceleration(scope, vehicle, road, leadingDist, leadingSpeed);
 			// Do not allow changing lane when approaching intersections
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow a fast vehicle.
+			// TODO: do this when leader is not a intersection
 			if ((leadingVehicle != null &&
 					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) ||
 					getTimeSinceLC(vehicle) < getLCCooldown(vehicle)) {
@@ -147,7 +148,7 @@ public class MOBIL {
 			leadingSpeed = leadingSameDirection ? leadingSpeed : -leadingSpeed;
 
 			// Calculate acc'(M) - acceleration of M on new lane
-			double changeAccelM = IDM.computeAcceleration(scope, vehicle, leadingDist, leadingSpeed);
+			double changeAccelM = IDM.computeAcceleration(scope, vehicle, road, leadingDist, leadingSpeed);
 
 			// Find back vehicle B' on new lane
 			double stayAccelB;
@@ -166,10 +167,10 @@ public class MOBIL {
 				double backDist = newFollowerTriple.getMiddle();
 				// Calculate acc(B') - acceleration of B' if M does not change to this lane
 				// NOTE: in this case, the leading vehicle is the one we have found above for M
-				stayAccelB = IDM.computeAcceleration(scope, backVehicle, backDist + VL + leadingDist, leadingSpeed);
+				stayAccelB = IDM.computeAcceleration(scope, backVehicle, road, backDist + VL + leadingDist, leadingSpeed);
 				// Calculate acc'(B') - acceleration of B' if M changes to this lane
 				// NOTE: in this case, M is the new leading vehicle of B'
-				changeAccelB = IDM.computeAcceleration(scope, backVehicle, backDist, getSpeed(vehicle));
+				changeAccelB = IDM.computeAcceleration(scope, backVehicle, road, backDist, getSpeed(vehicle));
 			}
 
 			// MOBIL params
