@@ -122,11 +122,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 *            the adapter type to check for.
 	 */
 	private <T> T adaptTo(final Object o, final Class<T> actualType, final Class<?> adapterType) {
-		if (actualType.isInstance(o)) {
-			return actualType.cast(o);
-		} else if (o instanceof IAdaptable) {
+		if (actualType.isInstance(o)) return actualType.cast(o);
+		if (o instanceof IAdaptable) {
 			final Object o2 = ((IAdaptable) o).getAdapter(adapterType);
-			if (actualType.isInstance(o2)) { return actualType.cast(o2); }
+			if (actualType.isInstance(o2)) return actualType.cast(o2);
 		}
 		return null;
 	}
@@ -143,7 +142,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private final static FileMetaDataProvider instance = new FileMetaDataProvider();
 
-	public static final ArrayList<String> OSMExt = new ArrayList<String>() {
+	public static final ArrayList<String> OSMExt = new ArrayList<>() {
 
 		{
 			add("osm");
@@ -152,7 +151,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			add("bz2");
 		}
 	};
-	public static final HashMap<String, String> longNames = new HashMap<String, String>() {
+	public static final HashMap<String, String> longNames = new HashMap<>() {
 
 		{
 			put("prj", "Projection data");
@@ -191,9 +190,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		@Override
 		public void appendSuffix(final StringBuilder sb) {
-			if (suffix != null) {
-				sb.append(suffix);
-			}
+			if (suffix != null) { sb.append(suffix); }
 		}
 
 		@Override
@@ -225,15 +222,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		@Override
 		public String getSuffix() {
-			if (comment == null || comment.isEmpty()) { return ""; }
+			if (comment == null || comment.isEmpty()) return "";
 			return comment;
 		}
 
 		@Override
 		public void appendSuffix(final StringBuilder sb) {
-			if (comment != null && !comment.isEmpty()) {
-				sb.append(comment);
-			}
+			if (comment != null && !comment.isEmpty()) { sb.append(comment); }
 		}
 
 		@Override
@@ -248,7 +243,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static final Map<String, Class<? extends GamaFileMetaData>> CLASSES =
-			new HashMap<String, Class<? extends GamaFileMetaData>>() {
+			new HashMap<>() {
 
 				{
 					put(CSV_CT_ID, CSVInfo.class);
@@ -270,10 +265,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	private IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
-		if (!project.isAccessible()) { return null; }
+		if (!project.isAccessible()) return null;
 		final String ct = "project";
 		final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
-		if (infoClass == null) { return null; }
+		if (infoClass == null) return null;
 		final IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
 		if (data == null) {
 			try {
@@ -299,7 +294,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			while (processing.contains(element)) {
 				try {
-					Thread.currentThread().sleep(100);
+					Thread.currentThread();
+					Thread.sleep(100);
 				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -309,7 +305,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 
 		try {
-			if (element instanceof IProject) { return getMetaData((IProject) element, includeOutdated); }
+			if (element instanceof IProject) return getMetaData((IProject) element, includeOutdated);
 			IFile file = adaptTo(element, IFile.class, IFile.class);
 
 			if (file == null) {
@@ -317,12 +313,12 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					final IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
 					file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
 				}
-				if (file == null || !file.exists()) { return null; }
-			} else if (!file.isAccessible()) { return null; }
+				if (file == null || !file.exists()) return null;
+			} else if (!file.isAccessible()) return null;
 			final String ct = getContentTypeId(file);
 			final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
-			if (infoClass == null) { return null; }
-			final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
+			if (infoClass == null) return null;
+			final IGamaFileMetaData[] data = { readMetadata(file, infoClass, includeOutdated) };
 			if (data[0] == null) {
 				processing.add(element);
 				final IFile theFile = file;
@@ -352,9 +348,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							// BEN break;
 						}
 						// Last chance: we generate a generic info
-						if (data[0] == null) {
-							data[0] = createGenericFileMetaData(theFile);
-						}
+						if (data[0] == null) { data[0] = createGenericFileMetaData(theFile); }
 
 						// System.out
 						// .println("Storing the metadata just created (or
@@ -397,7 +391,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				// s = GZIP.decompress(s);
 				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
 			}
-			if (!clazz.isInstance(result)) { return null; }
+			if (!clazz.isInstance(result)) return null;
 		} catch (final Exception ignore) {
 			DEBUG.ERR("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
@@ -407,17 +401,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {
 		startup();
-		if (!file.isAccessible()) { return; }
+		if (!file.isAccessible()) return;
 		try {
 			// DEBUG.LOG("Writing back metadata to " + file);
-			if (ResourcesPlugin.getWorkspace().isTreeLocked()) {
-				// DEBUG.LOG("Canceled: Resources are locked");
+			if (ResourcesPlugin.getWorkspace().isTreeLocked()) // DEBUG.LOG("Canceled: Resources are locked");
 				return;
-			}
 
-			if (data != null) {
-				data.setModificationStamp(file.getModificationStamp());
-			}
+			if (data != null) { data.setModificationStamp(file.getModificationStamp()); }
 
 			final Runnable runnable = () -> {
 				try {
@@ -469,8 +459,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			height = -1;
 			type = -1;
 		}
-		imageInfo = new ImageInfo(file.getModificationStamp(), type, width, height);
-		return imageInfo;
+		return new ImageInfo(file.getModificationStamp(), type, width, height);
 
 	}
 
@@ -503,17 +492,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
 		GenericFileInfo info = null;
 		final IResource r = shapeFileSupportedBy(file);
-		if (r == null) { return null; }
+		if (r == null) return null;
 		final String ext = file.getFileExtension();
 		final String type = longNames.containsKey(ext) ? longNames.get(ext) : "Data";
-		info = new GenericFileInfo(file.getModificationStamp(), "" + type + " for '" + r.getName() + "'");
-		return info;
+		return new GenericFileInfo(file.getModificationStamp(), "" + type + " for '" + r.getName() + "'");
 
 	}
 
 	private GenericFileInfo createGenericFileMetaData(final IFile file) {
 		String ext = file.getFileExtension();
-		if (ext == null) { return new GenericFileInfo(file.getModificationStamp(), "Generic file"); }
+		if (ext == null) return new GenericFileInfo(file.getModificationStamp(), "Generic file");
 		ext = ext.toUpperCase();
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
@@ -524,13 +512,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	public static String getContentTypeId(final IFile p) {
 		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
-		if (ct != null) { return ct.getId(); }
-		if (GamlFileExtension.isAny(p.getName())) { return GAML_CT_ID; }
+		if (ct != null) return ct.getId();
+		if (GamlFileExtension.isAny(p.getName())) return GAML_CT_ID;
 		final String ext = p.getFileExtension();
-		if ("shp".equals(ext)) { return SHAPEFILE_CT_ID; }
-		if (OSMExt.contains(ext)) { return OSM_CT_ID; }
-		if (longNames.containsKey(ext)) { return SHAPEFILE_SUPPORT_CT_ID; }
-		if ("gsim".equals(ext)) { return GSIM_CT_ID; }
+		if ("shp".equals(ext)) return SHAPEFILE_CT_ID;
+		if (OSMExt.contains(ext)) return OSM_CT_ID;
+		if (longNames.containsKey(ext)) return SHAPEFILE_SUPPORT_CT_ID;
+		if ("gsim".equals(ext)) return GSIM_CT_ID;
 		return "";
 	}
 
@@ -541,7 +529,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			fileName = fileName.replace(".xml", "");
 		} else {
 			final String extension = r.getFileExtension();
-			if (!longNames.containsKey(extension)) { return null; }
+			if (!longNames.containsKey(extension)) return null;
 			fileName = fileName.replace(extension, "shp");
 		}
 		return r.getParent().findMember(fileName);
@@ -557,7 +545,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	private void startup() {
-		if (started) { return; }
+		if (started) return;
 		started = true;
 		DEBUG.TIMER("Reading workspace metadata in ", () -> {
 			try {
@@ -584,7 +572,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 			@Override
 			public void saving(final ISaveContext context) throws CoreException {
-				if (context.getKind() != ISaveContext.FULL_SAVE) { return; }
+				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 				final String[] toSave = new String[1];
 				TIMER_WITH_EXCEPTIONS("Saving workspace metadata in ", () -> {
 					getWorkspace().getRoot().accept(resource -> {
@@ -597,9 +585,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							return true;
 						} catch (final Exception e) {
 							ERR("Error for resource " + resource.getName());
-							if (toSave[0] != null) {
-								ERR("Trying to save " + toSave[0].length() + " bytes ");
-							}
+							if (toSave[0] != null) { ERR("Trying to save " + toSave[0].length() + " bytes "); }
 							return true;
 						}
 
@@ -620,18 +606,19 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public List<IFile> getSupportFilesOf(final IFile f) {
-		if (f == null) { return Collections.EMPTY_LIST; }
-		if (!getContentTypeId(f).equals(SHAPEFILE_CT_ID)) { return Collections.EMPTY_LIST; }
+		if ((f == null) || !SHAPEFILE_CT_ID.equals(getContentTypeId(f))) return Collections.EMPTY_LIST;
 		final IContainer c = f.getParent();
 		final List<IFile> result = new ArrayList<>();
 		try {
 			for (final IResource r : c.members()) {
-				if (r instanceof IFile && isSupport(f, (IFile) r)) {
-					result.add((IFile) r);
-				}
+				if (r instanceof IFile && isSupport(f, (IFile) r)) { result.add((IFile) r); }
 			}
 		} catch (final CoreException e) {}
 		return result;
+	}
+
+	public boolean hasSupportFiles(final IResource r) {
+		return r instanceof IFile && SHAPEFILE_CT_ID.equals(getContentTypeId((IFile) r));
 	}
 
 }
