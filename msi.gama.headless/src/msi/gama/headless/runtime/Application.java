@@ -17,9 +17,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +34,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.Multimap;
+import com.google.inject.Injector;
+
+import msi.gama.common.GamlFileExtension;
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.batch.test.ModelLibraryTester;
 import msi.gama.headless.batch.validation.ModelLibraryRunner;
@@ -50,7 +60,16 @@ import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
+
 
 public class Application implements IApplication {
 
@@ -66,6 +85,7 @@ public class Application implements IApplication {
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	final public static String BATCH_PARAMETER = "-batch";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -78,21 +98,24 @@ public class Application implements IApplication {
 	private static String showHelp() {
 		final String res = " Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
 				+ "sh ./gama-headless.sh [Options] [XML Input] [output directory]\n" + "\nList of available options:"
-				+ "\n      -help     				 	-- get the help of the command line"
-				+ "\n      -version     				-- get the the version of gama"
-				+ "\n      -m [mem]    					-- allocate memory (ex 2048m)"
-				+ "\n      -c        					-- start the console to write xml parameter file"
-				+ "\n      -v 							-- verbose mode"
-				+ "\n      -hpc [core] 					-- set the number of core available for experimentation"
-				+ "\n      -socket [socketPort] 		-- start socket pipeline to interact with another framework"
-				+ "\n" + "\n      -p        					-- start pipeline to interact with another framework"
+				+ "\n      -help                        -- get the help of the command line"
+				+ "\n      -version                     -- get the the version of gama"
+				+ "\n      -m [mem]                     -- allocate memory (ex 2048m)"
+				+ "\n      -c                           -- start the console to write xml parameter file"
+				+ "\n      -v                           -- verbose mode"
+				+ "\n      -hpc [core]                  -- set the number of core available for experimentation"
+				+ "\n      -socket [socketPort]         -- start socket pipeline to interact with another framework"
+				+ "\n" 
+				+ "\n      -p                           -- start pipeline to interact with another framework"
 				+ "\n"
-				+ "\n      -validate [directory]    	-- invokes GAMA to validate the models present in the directory passed as argument"
-				+ "\n      -test [directory]		   	-- invokes GAMA to execute the tests present in the directory and display their results"
-				+ "\n      -failed		   				-- only display the failed and aborted test results"
-				+ "\n      -xml	[experimentName] [modelFile.gaml] [xmlOutputFile.xml]	-- only display the failed and aborted test results"
-				+ "\n" + " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n"
-				+ "\n      build an xml parameter file from a model" + "\n" + "\n";
+				+ "\n      -validate [directory]        -- invokes GAMA to validate the models present in the directory passed as argument"
+				+ "\n      -test [directory]            -- invokes GAMA to execute the tests present in the directory and display their results"
+				+ "\n      -failed                      -- only display the failed and aborted test results"
+				+ "\n      -xml [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
+				+ "\n                                   -- build an xml parameter file from a model"
+				+ "\n" 
+				+ "\n      -batch [experimentName] [modelFile.gaml]"
+				+ "\n                                   -- Run batch experiment in headless mode";
 
 		return res;
 	}
@@ -110,6 +133,7 @@ public class Application implements IApplication {
 		int size = args.size();
 		boolean mustContainInFile = true;
 		boolean mustContainOutFile = true;
+		
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -126,6 +150,12 @@ public class Application implements IApplication {
 			size = size - 1;
 			mustContainOutFile = false;
 		}
+
+		if (args.contains(BATCH_PARAMETER)) {
+			size = size - 3;
+			mustContainOutFile = false;
+		}
+		
 		if (args.contains(THREAD_PARAMETER)) { size = size - 2; }
 		if (args.contains(VERBOSE_PARAMETER)) { size = size - 1; }
 		if (mustContainInFile && mustContainOutFile && size < 2) {
@@ -181,6 +211,8 @@ public class Application implements IApplication {
 			DEBUG.LOG(showHelp());
 			DEBUG.OFF();
 
+		} else if (args.contains(BATCH_PARAMETER)) {
+			runBatchSimulation(args);
 		} else if (args.contains(RUN_LIBRARY_PARAMETER))
 			return ModelLibraryRunner.getInstance().start(args);
 		else if (args.contains(VALIDATE_LIBRARY_PARAMETER))
@@ -321,6 +353,24 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
+	public void runBatchSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
+		final String pathToModel = args.get(args.size() - 1);
+		
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+	
+		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final GamlModelBuilder builder = new GamlModelBuilder(injector);
+
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		
+		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
+		
+		expPlan.open();
+		
+		System.exit(0);
+	} 
+	
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
 		while (it.hasNext()) {
