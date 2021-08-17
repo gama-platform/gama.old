@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +21,7 @@ import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -32,6 +36,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaDate;
+import msi.gama.util.GamaDateInterval;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
@@ -44,9 +50,11 @@ import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Dates;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
@@ -408,7 +416,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			getAmongValue(scope);
 			if (amongValue != null) {
 				value = amongValue.get(scope.getRandom().between(0, amongValue.size() - 1));
-			} else if (type.id() == IType.INT || type.id() == IType.FLOAT) {
+			} else if (type.id() == IType.INT || type.id() == IType.FLOAT || type.id() == IType.POINT
+					|| type.id() == IType.DATE) {
 				value = drawRandomValue(scope);
 			} else if (type.id() == IType.BOOL) {
 				value = scope.getRandom().between(1, 100) > 50;
@@ -431,17 +440,38 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	}
 
-	// AD TODO Will not work with points and dates for the moment
 	private Comparable drawRandomValue(final IScope scope) {
-		final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
-		if (type.id() == IType.INT) {
-			final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
-			final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
-			return scope.getRandom().between(theMin, theMax, (int) theStep);
+		switch (type.id()) {
+			case IType.INT:
+				final int iMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+				final int iMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
+				final int iStep = stepValue == null ? 1 : Cast.asInt(scope, stepValue);
+				return scope.getRandom().between(iMin, iMax, iStep);
+			case IType.POINT:
+				final GamaPoint pStep = stepValue == null ? new GamaPoint(1, 1, 1) : Cast.asPoint(scope, stepValue);
+				final GamaPoint pMin =
+						minValue == null ? new GamaPoint(Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE)
+								: Cast.asPoint(scope, minValue);
+				final GamaPoint pMax =
+						maxValue == null ? new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)
+								: Cast.asPoint(scope, maxValue);
+				return scope.getRandom().between(pMin, pMax, pStep);
+			case IType.DATE:
+				final double dStep =
+						stepValue == null ? Dates.DATES_TIME_STEP.getValue() : Cast.asFloat(scope, stepValue);
+				final GamaDate dMin =
+						minValue == null ? GamaDate.of(LocalDateTime.now()).minus(Integer.MAX_VALUE, ChronoUnit.SECONDS)
+								: GamaDateType.staticCast(scope, minValue, null, false);
+				final GamaDate dMax =
+						maxValue == null ? GamaDate.of(LocalDateTime.now()).plus(Integer.MAX_VALUE, ChronoUnit.SECONDS)
+								: GamaDateType.staticCast(scope, maxValue, null, false);
+				return new GamaDateInterval(dMin, dMax, Duration.of((long) dStep, ChronoUnit.SECONDS)).anyValue(scope);
+			default:
+				final double fStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
+				final double fMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+				final double fMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
+				return scope.getRandom().between(fMin, fMax, fStep);
 		}
-		final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
-		final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
-		return scope.getRandom().between(theMin, theMax, theStep);
 	}
 
 	@Override
@@ -457,29 +487,82 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				}
 				return neighborValues.items();
 			}
-			final double theStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
-			if (type.id() == IType.INT) {
-				final int theMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
-				final int theMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
-				final int val = Cast.asInt(scope, value(scope));
-				if (val >= theMin + (int) theStep) { neighborValues.add(val - (int) theStep); }
-				if (val <= theMax - (int) theStep) { neighborValues.add(val + (int) theStep); }
-			} else if (type.id() == IType.FLOAT) {
-				final double theMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
-				final double theMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
-				final double removeZ = Math.max(100000.0, 1.0 / theStep);
-				final double val = Cast.asFloat(null, value(scope));
-				if (val >= theMin + theStep) {
-					final double valLow = Math.round((val - theStep) * removeZ) / removeZ;
-					neighborValues.add(valLow);
-				}
-				if (val <= theMax - theStep) {
-					final double valHigh = Math.round((val + theStep) * removeZ) / removeZ;
-					neighborValues.add(valHigh);
-				}
+			switch (type.id()) {
+				case IType.INT:
+					final int iMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
+					final int iMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
+					final int iStep = stepValue == null ? 1 : Cast.asInt(scope, stepValue);
+					final int iVal = Cast.asInt(scope, value(scope));
+					if (iVal >= iMin + iStep) { neighborValues.add(iVal - iStep); }
+					if (iVal <= iMax - iStep) { neighborValues.add(iVal + iStep); }
+					break;
+				case IType.POINT:
+					final GamaPoint pStep = stepValue == null ? new GamaPoint(1, 1, 1) : Cast.asPoint(scope, stepValue);
+					final GamaPoint pMin =
+							minValue == null ? new GamaPoint(Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE)
+									: Cast.asPoint(scope, minValue);
+					final GamaPoint pMax =
+							maxValue == null ? new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)
+									: Cast.asPoint(scope, maxValue);
+					final GamaPoint pVal = Cast.asPoint(scope, value(scope));
+					for (int i = -1; i <= 1; i++) {
+						for (int j = -1; j <= 1; j++) {
+							for (int k = -1; k <= 1; k++) {
+								if (i == 0 && j == 0 && k == 0) { continue; }
+								double x = pVal.x + i * pStep.x;
+								double y = pVal.y + j * pStep.y;
+								double z = pVal.z + k * pStep.z;
+								int reset = 0;
+								if (x < pMin.x || x > pMax.x) {
+									x = pVal.x;
+									reset++;
+								}
+								if (y < pMin.y || y > pMax.y) {
+									y = pVal.y;
+									reset++;
+								}
+								if (z < pMin.z || z > pMax.z) {
+									z = pVal.z;
+									reset++;
+								}
+								if (reset < 3) { neighborValues.add(new GamaPoint(x, y, z)); }
+							}
+						}
+					}
+					break;
+				case IType.DATE:
+					final double dStep =
+							stepValue == null ? Dates.DATES_TIME_STEP.getValue() : Cast.asFloat(scope, stepValue);
+					final GamaDate dMin = minValue == null
+							? GamaDate.of(LocalDateTime.now()).minus(Integer.MAX_VALUE, ChronoUnit.SECONDS)
+							: GamaDateType.staticCast(scope, minValue, null, false);
+					final GamaDate dMax = maxValue == null
+							? GamaDate.of(LocalDateTime.now()).plus(Integer.MAX_VALUE, ChronoUnit.SECONDS)
+							: GamaDateType.staticCast(scope, maxValue, null, false);
+					Duration dd = Duration.of((long) dStep, ChronoUnit.SECONDS);
+					final GamaDate dVal = GamaDateType.staticCast(scope, value(scope), null, false);
+					if (dVal.isGreaterThan(dMin.plus(dd), false)) { neighborValues.add(dVal.minus(dd)); }
+					if (dVal.isSmallerThan(dMax.minus(dd), false)) { neighborValues.add(dVal.plus(dd)); }
+					break;
+				default:
+					final double fStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
+					final double fMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
+					final double fMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
+					final double fVal = Cast.asFloat(scope, value(scope));
+					final double removeZ = Math.max(100000.0, 1.0 / fStep);
+					if (fVal >= fMin + fStep) {
+						final double valLow = Math.round((fVal - fStep) * removeZ) / removeZ;
+						neighborValues.add(valLow);
+					}
+					if (fVal <= fMax - fStep) {
+						final double valHigh = Math.round((fVal + fStep) * removeZ) / removeZ;
+						neighborValues.add(valHigh);
+					}
 			}
+
 			return neighborValues.items();
 		}
+
 	}
 
 	@Override
