@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
+import static com.google.common.collect.Iterators.transform;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
 import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
@@ -37,10 +38,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import org.jgrapht.graph.DirectedAcyclicGraph;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -179,23 +180,23 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IVariable[] orderAttributes(final TypeDescription ecd, final Predicate<VariableDescription> keep,
 			final Set<String> facetsToConsider) {
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-		// AD Revised in Aug 2021: do not introduce cycles (which might exist in update blocks) in order to obtain a
-		// correct topological order
+		// AD Revised in Aug 2021 for Issue #3068: do not introduce cycles (which might exist in update blocks) in order
+		// to obtain a correct topological order
 		final DirectedAcyclicGraph<String, Object> graph = new DirectedAcyclicGraph<>(Object.class);
 		ecd.visitAllAttributes(d -> {
 			VariableDescription var = (VariableDescription) d;
-			if (keep.test(var)) {
+			if (keep.apply(var)) {
 				String name = var.getName();
 				graph.addVertex(name);
 				for (final VariableDescription dep : var.getDependencies(facetsToConsider, false, true)) {
-					tryAdd(graph, dep.getName(), name);
+					if (keep.apply(dep)) { tryAdd(graph, dep.getName(), name); }
 				}
 				// Adding a constraint between the shape of the macrospecies and the populations of microspecies
 				if (var.isSyntheticSpeciesContainer()) { tryAdd(graph, SHAPE, name); }
 			}
 			return true;
 		});
-		return Iterators.toArray(Iterators.transform(graph.iterator(), s -> getVar(s)), IVariable.class);
+		return Iterators.toArray(transform(graph.iterator(), s -> getVar(s)), IVariable.class);
 
 	}
 
@@ -205,9 +206,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.host = host;
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
-		DEBUG.OUT("ORDERING VARS IN " + getName() + " by INIT");
 		orderedVars = orderAttributes(ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
-		DEBUG.OUT("ORDERING VARS IN " + getName() + " by UPDATE");
 		updatableVars = orderAttributes(ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
