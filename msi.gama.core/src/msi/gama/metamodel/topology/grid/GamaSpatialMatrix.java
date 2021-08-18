@@ -585,20 +585,17 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	protected IList _listValue(final IScope scope, final IType contentType, final boolean cast) {
 		if (actualNumberOfCells == 0) return GamaListFactory.EMPTY_LIST;
-		if (cellSpecies == null)
-			return cast ? GamaListFactory.create(scope, contentType, matrix)
-					: GamaListFactory.wrap(contentType, matrix);
-		else {
-			final IList result = GamaListFactory.create(contentType, actualNumberOfCells);
-			for (final IShape a : matrix) {
-				if (a != null) {
-					final IAgent ag = a.getAgent();
-					final Object toAdd = ag == null ? a : ag;
-					result.add(cast ? contentType.cast(scope, toAdd, null, false) : toAdd);
-				}
+		if (cellSpecies == null) return cast ? GamaListFactory.create(scope, contentType, matrix)
+				: GamaListFactory.wrap(contentType, matrix);
+		final IList result = GamaListFactory.create(contentType, actualNumberOfCells);
+		for (final IShape a : matrix) {
+			if (a != null) {
+				final IAgent ag = a.getAgent();
+				final Object toAdd = ag == null ? a : ag;
+				result.add(cast ? contentType.cast(scope, toAdd, null, false) : toAdd);
 			}
-			return result;
 		}
+		return result;
 	}
 
 	@Override
@@ -879,8 +876,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (current == endAg) {
 				if (onWithWeight != null)
 					return finalPath(scope, source, target, topo, startAg, current, cameFrom, onWithWeight);
-				else
-					return finalPath(scope, source, target, topo, startAg, current, cameFrom);
+				return finalPath(scope, source, target, topo, startAg, current, cameFrom);
 			}
 			Collection<IAgent> neigh;
 			neigh = getNeighborhood().getNeighborsIn(scope, current.getIndex(), 1);
@@ -938,10 +934,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		while (!frontier.isEmpty()) {
 			final IAgent current = (IAgent) ((List) frontier.remove()).get(0);
 			if (current == endAg) {
-				if (weighted)
-					return finalPath(scope, source, target, topo, startAg, current, cameFrom, onWithWeight);
-				else
-					return finalPath(scope, source, target, topo, startAg, current, cameFrom);
+				if (weighted) return finalPath(scope, source, target, topo, startAg, current, cameFrom, onWithWeight);
+				return finalPath(scope, source, target, topo, startAg, current, cameFrom);
 			}
 			final Double cost = costSoFar.get(current);
 			final Set<IAgent> neigh = getNeighborhood().getNeighborsIn(scope, current.getIndex(), 1);
@@ -1129,9 +1123,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
 		if ("Dijkstra".equals(optimizer))
 			return computeShortestPathBetweenDijkstra(scope, source, target, topo, on, null);
-		else if (!neighborhood.isVN() && "JPS".equals(optimizer))
+		if (!neighborhood.isVN() && "JPS".equals(optimizer))
 			return computeShortestPathBetweenJPS(scope, source, target, topo, on);
-		else if ("BF".equals(optimizer)) return computeShortestPathBetweenBF(scope, source, target, topo, on);
+		if ("BF".equals(optimizer)) return computeShortestPathBetweenBF(scope, source, target, topo, on);
 		return computeShortestPathBetweenAStar(scope, source, target, topo, on, null);
 	}
 
@@ -1500,8 +1494,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				}
 			}
 
-			for (final String s : orderedVarNames) {
-				final IVariable var = species.getVar(s);
+			for (final IVariable var : orderedVars) {
+
 				for (int i = 0; i < actualNumberOfCells; i++) {
 					final IAgent a = (IAgent) matrix[i];
 					if (a != null) { var.initializeWith(scope, a, null); }

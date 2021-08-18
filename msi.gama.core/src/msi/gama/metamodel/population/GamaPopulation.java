@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
-import static com.google.common.collect.Iterables.transform;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
 import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
@@ -32,7 +31,6 @@ import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACE
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,13 +39,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterators;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -99,6 +95,10 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPopulation<T> {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {
 		if (species.isGrid()) {
@@ -119,8 +119,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	protected ITopology topology;
 	protected final ISpecies species;
-	protected final String[] orderedVarNames;
-	protected final IVariable[] updatableVars;
+	protected final IVariable[] orderedVars, updatableVars;
 	protected int currentAgentIndex;
 	private final int hashCode;
 	private final boolean isInitOverriden, isStepOverriden;
@@ -168,75 +167,36 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	}
 
-	private Iterable<String> getUpdatableAttributeNames(final TypeDescription ecd) {
-
-		// June 2020: moving (back) to Iterables instead of Streams.
-		return Iterables.filter(getOrderedAttributeNames(ecd, UPDATE_DEPENDENCIES_FACETS),
-				input -> ecd.getAttribute(input).isUpdatable());
+	private void tryAdd(final DirectedAcyclicGraph<String, Object> graph, final String v, final String existing) {
+		graph.addVertex(v);
+		try {
+			graph.addEdge(v, existing);
+		} catch (IllegalArgumentException e) {
+			// AD Revision in Aug 2021 for Issue #3068: edge is not added if it creates a cycle
+		}
 	}
 
-	public Collection<String> getOrderedAttributeNames(final TypeDescription ecd, final Set<String> facetsToConsider) {
+	public IVariable[] orderAttributes(final TypeDescription ecd, final Predicate<VariableDescription> keep,
+			final Set<String> facetsToConsider) {
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-
-		final DefaultDirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		final Map<String, VariableDescription> all = new HashMap<>();
+		// AD Revised in Aug 2021: do not introduce cycles (which might exist in update blocks) in order to obtain a
+		// correct topological order
+		final DirectedAcyclicGraph<String, Object> graph = new DirectedAcyclicGraph<>(Object.class);
 		ecd.visitAllAttributes(d -> {
-			all.put(d.getName(), (VariableDescription) d);
+			VariableDescription var = (VariableDescription) d;
+			if (keep.test(var)) {
+				String name = var.getName();
+				graph.addVertex(name);
+				for (final VariableDescription dep : var.getDependencies(facetsToConsider, false, true)) {
+					tryAdd(graph, dep.getName(), name);
+				}
+				// Adding a constraint between the shape of the macrospecies and the populations of microspecies
+				if (var.isSyntheticSpeciesContainer()) { tryAdd(graph, SHAPE, name); }
+			}
 			return true;
 		});
+		return Iterators.toArray(Iterators.transform(graph.iterator(), s -> getVar(s)), IVariable.class);
 
-		Graphs.addAllVertices(dependencies, all.keySet());
-		final VariableDescription shape = ecd.getAttribute(SHAPE);
-		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
-
-		all.forEach((an, var) -> {
-			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
-				final String other = newVar.getName();
-				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-				if (!dependencies.containsEdge(an, other)) {
-
-					dependencies.addEdge(other, an);
-				}
-			}
-			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
-			if (var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(SHAPE, an);
-			}
-		});
-
-		// TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES
-		// TODO: This method is a performance and memory bottleneck. Too many temp objects created
-
-		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables
-		// after
-		Set<String> varToAdd = new HashSet<>();
-		while (true) {
-			CycleDetector c = new CycleDetector<>(dependencies);
-			if (!c.detectCycles()) { break; }
-			Set<String> cycle = c.findCycles();
-			DEBUG.OUT("Finding cycles between " + cycle + " in " + this);
-			for (String s : cycle) {
-				dependencies.removeVertex(s);
-				varToAdd.add(s);
-				break;
-			}
-
-		}
-
-		// June 2020: moving (back) to Iterables instead of Streams.
-		// ArrayList<String> list = Lists.newArrayList((dependencies.vertexSet()));
-		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
-
-		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
-		for (String s : dependencies.vertexSet()) {
-			if (!list.contains(s)) { list.add(s); }
-		}
-		for (String s : varToAdd) {
-			if (!list.contains(s)) { list.add(s); }
-		}
-		return list;
-		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
 
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
@@ -245,9 +205,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.host = host;
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
-		orderedVarNames = getOrderedAttributeNames(ecd, INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
-		updatableVars =
-				Iterables.toArray(transform(getUpdatableAttributeNames(ecd), s -> species.getVar(s)), IVariable.class);
+		DEBUG.OUT("ORDERING VARS IN " + getName() + " by INIT");
+		orderedVars = orderAttributes(ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
+		DEBUG.OUT("ORDERING VARS IN " + getName() + " by UPDATE");
+		updatableVars = orderAttributes(ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
 		} else {
@@ -329,8 +290,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void createVariablesFor(final IScope scope, final T agent) throws GamaRuntimeException {
-		for (final String s : orderedVarNames) {
-			final IVariable var = species.getVar(s);
+		for (final IVariable var : orderedVars) {
 			var.initializeWith(scope, agent, null);
 		}
 	}
@@ -520,15 +480,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			} else {
 				inits = initialValues.get(i);
 			}
-			for (final String s : orderedVarNames) {
-				final IVariable var = species.getVar(s);
-				final Object initGet = empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(s);
-				if (!update || initGet != null) { var.initializeWith(scope, a, initGet); } // else if initGet == null :
-																							// do not do anything, this
-																							// will
-																							// keep the previously
-																							// defined value for the
-																							// variable
+			for (final IVariable var : orderedVars) {
+				final Object initGet =
+						empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(var.getName());
+				if (!update || initGet != null) { var.initializeWith(scope, a, initGet); }
 			}
 		}
 	}
