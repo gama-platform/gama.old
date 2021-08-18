@@ -15,7 +15,6 @@ import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -23,10 +22,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -284,75 +281,65 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	/**
+	 * Tries to create a new edge of dependency between two variables in the passed graph. If this raises an exception
+	 * (meaning a cycle is being introduced by the addition of a variable), then emits an error on the first
+	 * non-built-in variable involved in the cycle
 	 *
+	 * @return true if the addition has been done, false otherwise
+	 */
+	private boolean add(final DirectedAcyclicGraph<VariableDescription, Object> graph, final VariableDescription source,
+			final VariableDescription target, final String type) {
+		graph.addVertex(source);
+		graph.addVertex(target);
+		try {
+			graph.addEdge(source, target);
+		} catch (IllegalArgumentException e) {
+			// Thrown if a cycle is introduced
+			VariableDescription errored;
+			if (source.isBuiltIn() || source.isSyntheticSpeciesContainer()) {
+				if (target.isBuiltIn() || target.isSyntheticSpeciesContainer()) return false;
+				errored = target;
+			} else {
+				errored = source;
+			}
+			String vName = errored.getName();
+			String oName = (errored == source ? target : source).getName();
+			errored.error(
+					"Cycle detected in the " + type + " of " + vName + " (through the " + type + " of " + oName + ")");
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Verification is done through the construction of a directed acyclic graph that gathers all the variables and
+	 * their dependencies. As soon as a cycle is introduced, an error is raised and this method also returns false
 	 *
-	 * @return
+	 * @return true if the verification is correct, false otherwise
 	 */
 	protected boolean verifyAttributeCycles() {
 		if (attributes == null || attributes.size() <= 1) return true;
 		final VariableDescription shape = attributes.get(SHAPE);
-		final DefaultDirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		if (shape != null) { dependencies.addVertex(shape); }
-		final Collection<VariableDescription> shapeDependencies =
+		final DirectedAcyclicGraph<VariableDescription, Object> graph = new DirectedAcyclicGraph<>(Object.class);
+		final Collection<VariableDescription> shapeDeps =
 				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
-
-		attributes.forEachPair((aName, var) -> {
-			dependencies.addVertex(var);
-			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(shape, var);
+		Set<VariableDescription> varSet = new LinkedHashSet<>(attributes.values());
+		for (VariableDescription var : varSet) {
+			if (shape != null && var.isSyntheticSpeciesContainer() && !add(graph, shape, var, INIT)) return false;
+			final Collection<VariableDescription> varDeps =
+					var == shape ? shapeDeps : var.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
+			for (final VariableDescription newVar : varDeps) {
+				if (varSet.contains(newVar) && !add(graph, newVar, var, INIT)) return false;
 			}
-
-			for (final VariableDescription newVar : var.getDependencies(INIT_DEPENDENCIES_FACETS, false, true)) {
-				if (attributes.containsValue(newVar)) {
-					dependencies.addVertex(newVar);
-					dependencies.addEdge(newVar, var);
+			if (var.hasFacet(FUNCTION)) {
+				graph.removeAllVertices(varSet);
+				for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true,
+						false)) {
+					if (varSet.contains(newVar) && !add(graph, newVar, var, FUNCTION)) return false;
 				}
 			}
-			return true;
-		});
-
-		final CycleDetector cycleDetector = new CycleDetector<>(dependencies);
-		if (cycleDetector.detectCycles()) {
-			final Set<VariableDescription> inCycles = cycleDetector.findCycles();
-			for (final VariableDescription vd : inCycles) {
-				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) { continue; }
-				final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
-				strings.remove(vd.getName());
-				vd.error("Cycle detected between " + vd.getName() + " and " + strings
-						+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
-						+ getKeyword());
-			}
-			return false;
 		}
 
-		final DefaultDirectedGraph<VariableDescription, Object> fDependencies =
-				new DefaultDirectedGraph<>(Object.class);
-		attributes.forEachPair((aName, var) -> {
-			if (!var.hasFacet(FUNCTION)) return true;
-			fDependencies.addVertex(var);
-			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
-				if (attributes.containsValue(newVar)) {
-					fDependencies.addVertex(newVar);
-					fDependencies.addEdge(newVar, var);
-				}
-			}
-			return true;
-		});
-
-		if (!fDependencies.vertexSet().isEmpty()) {
-			final CycleDetector functionCycleDetector = new CycleDetector<>(fDependencies);
-			if (functionCycleDetector.detectCycles()) {
-				final Set<VariableDescription> inCycles = functionCycleDetector.findCycles();
-				for (final VariableDescription vd : inCycles) {
-					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) { continue; }
-					final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
-					vd.error("Cycle detected between " + vd.getName() + " and " + strings
-							+ "; attributes declared as functions cannot contain references to themselves in their function");
-				}
-				return false;
-
-			}
-		}
 		return true;
 	}
 
