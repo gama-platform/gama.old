@@ -12,29 +12,22 @@ package msi.gaml.descriptions;
 
 import static msi.gaml.descriptions.VariableDescription.FUNCTION_DEPENDENCIES_FACETS;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
-import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.jgrapht.Graphs;
 import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.GamaMapFactory;
@@ -43,6 +36,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * A class that represents skills and species (either built-in or introduced by users) The class TypeDescription.
@@ -53,6 +47,10 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
 	// lazily
@@ -262,11 +260,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (existing != null) {
 			// A previous definition has been found
 			// We assert whether their types are compatible or not
-			if (assertAttributesAreCompatible(existing, vd)) {
-				markAttributeRedefinition(existing, vd);
-				vd.copyFrom(existing);
-			} else
-				return;
+			if (!assertAttributesAreCompatible(existing, vd)) return;
+			markAttributeRedefinition(existing, vd);
+			vd.copyFrom(existing);
 		}
 
 		addAttributeNoCheck(vd);
@@ -285,80 +281,6 @@ public abstract class TypeDescription extends SymbolDescription {
 				existing.copyFrom(vd);
 			}
 		}
-	}
-
-	public Iterable<String> getUpdatableAttributeNames() {
-
-		// June 2020: moving (back) to Iterables instead of Streams.
-		return Iterables.filter(getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS),
-				input -> getAttribute(input).isUpdatable());
-		// final Collection<String> vars = getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS);
-		// return StreamEx.of(vars).filter(input -> getAttribute(input).isUpdatable()).toList();
-	}
-
-	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
-		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-
-		final DefaultDirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		final Map<String, VariableDescription> all = new HashMap<>();
-		this.visitAllAttributes(d -> {
-			all.put(d.getName(), (VariableDescription) d);
-			return true;
-		});
-
-		Graphs.addAllVertices(dependencies, all.keySet());
-		final VariableDescription shape = getAttribute(SHAPE);
-		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
-
-		all.forEach((an, var) -> {
-			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
-				final String other = newVar.getName();
-				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-				if (!dependencies.containsEdge(an, other)) {
-
-					dependencies.addEdge(other, an);
-				}
-			}
-			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
-			if (var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(SHAPE, an);
-			}
-		});
-
-		// TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES
-
-		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables
-		// after
-		Set<String> varToAdd = new HashSet<>();
-		while (true) {
-			CycleDetector c = new CycleDetector<>(dependencies);
-			if (c.detectCycles()) {
-				Set<String> cycle = c.findCycles();
-				for (String s : cycle) {
-					dependencies.removeVertex(s);
-					varToAdd.add(s);
-					break;
-				}
-			} else {
-				break;
-			}
-
-		}
-
-		// June 2020: moving (back) to Iterables instead of Streams.
-		// ArrayList<String> list = Lists.newArrayList((dependencies.vertexSet()));
-		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
-
-		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
-		for (String s : dependencies.vertexSet()) {
-			if (!list.contains(s)) { list.add(s); }
-		}
-		for (String s : varToAdd) {
-			if (!list.contains(s)) { list.add(s); }
-		}
-		return list;
-		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
 	}
 
 	/**
@@ -573,7 +495,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			final String actionName = inheritedAction.getName();
 			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
 			if (userDeclared != null) {
-				if ((!inheritedAction.isBuiltIn() || !userDeclared.isBuiltIn())) {
+				if (!inheritedAction.isBuiltIn() || !userDeclared.isBuiltIn()) {
 					TypeDescription.assertActionsAreCompatible(userDeclared, inheritedAction,
 							inheritedAction.getOriginName());
 					if (inheritedAction.isBuiltIn()) {
@@ -662,36 +584,6 @@ public abstract class TypeDescription extends SymbolDescription {
 					+ " is not compatible with that in the definition of " + actionName + " in " + parentName;
 			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 		}
-
-		// final Map<String, IType<?>> myMap = StreamEx.of(myArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
-		// final Map<String, IType<?>> parentMap =
-		// StreamEx.of(parentArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
-		//
-		// final List<String> myNames = myAction.getArgNames();
-		// final List<String> parentNames = parentAction.getArgNames();
-		// boolean different = myNames.size() != parentNames.size();
-		// if (different) {
-		// final String error = "The number of arguments should be identical to that of the definition of "
-		// + actionName + " in " + parentName + ": " + parentNames + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// return;
-		// }
-		// different = !myNames.containsAll(parentNames);
-		// if (different) {
-		// final String error = "The names of arguments should be identical to those of the definition of "
-		// + actionName + " in " + parentName + " " + parentNames + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// return;
-		// }
-		// final List<IType<?>> myTypes = myAction.getArgTypes();
-		// final List<IType<?>> parentTypes = parentAction.getArgTypes();
-		// different = !myTypes.containsAll(parentTypes);
-		// if (different) {
-		// final String error = "The types of arguments should be identical to those in the definition of "
-		// + actionName + " in " + parentName + " " + parentTypes + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// }
-
 	}
 
 	@Override
@@ -718,7 +610,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean visitAllAttributes(final DescriptionVisitor<IDescription> visitor) {
-		if ((parent != null && parent != this) && !parent.visitAllAttributes(visitor)) return false;
+		if (parent != null && parent != this && !parent.visitAllAttributes(visitor)) return false;
 		return visitOwnAttributes(visitor);
 	}
 

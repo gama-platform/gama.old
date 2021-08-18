@@ -27,10 +27,12 @@ import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.TARGET;
 import static msi.gama.common.interfaces.IKeyword.WIDTH;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
+import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +41,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.jgrapht.Graphs;
+import org.jgrapht.alg.cycle.CycleDetector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.TopologicalOrderIterator;
+
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -47,7 +55,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -72,6 +79,7 @@ import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -81,6 +89,7 @@ import msi.gaml.types.GamaTopologyType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -159,15 +168,86 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	}
 
+	private Iterable<String> getUpdatableAttributeNames(final TypeDescription ecd) {
+
+		// June 2020: moving (back) to Iterables instead of Streams.
+		return Iterables.filter(getOrderedAttributeNames(ecd, UPDATE_DEPENDENCIES_FACETS),
+				input -> ecd.getAttribute(input).isUpdatable());
+	}
+
+	public Collection<String> getOrderedAttributeNames(final TypeDescription ecd, final Set<String> facetsToConsider) {
+		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
+
+		final DefaultDirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		final Map<String, VariableDescription> all = new HashMap<>();
+		ecd.visitAllAttributes(d -> {
+			all.put(d.getName(), (VariableDescription) d);
+			return true;
+		});
+
+		Graphs.addAllVertices(dependencies, all.keySet());
+		final VariableDescription shape = ecd.getAttribute(SHAPE);
+		final Collection<VariableDescription> shapeDependencies =
+				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
+
+		all.forEach((an, var) -> {
+			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
+				final String other = newVar.getName();
+				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
+				if (!dependencies.containsEdge(an, other)) {
+
+					dependencies.addEdge(other, an);
+				}
+			}
+			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
+			if (var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
+				dependencies.addEdge(SHAPE, an);
+			}
+		});
+
+		// TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES
+		// TODO: This method is a performance and memory bottleneck. Too many temp objects created
+
+		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables
+		// after
+		Set<String> varToAdd = new HashSet<>();
+		while (true) {
+			CycleDetector c = new CycleDetector<>(dependencies);
+			if (!c.detectCycles()) { break; }
+			Set<String> cycle = c.findCycles();
+			DEBUG.OUT("Finding cycles between " + cycle + " in " + this);
+			for (String s : cycle) {
+				dependencies.removeVertex(s);
+				varToAdd.add(s);
+				break;
+			}
+
+		}
+
+		// June 2020: moving (back) to Iterables instead of Streams.
+		// ArrayList<String> list = Lists.newArrayList((dependencies.vertexSet()));
+		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
+
+		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
+		for (String s : dependencies.vertexSet()) {
+			if (!list.contains(s)) { list.add(s); }
+		}
+		for (String s : varToAdd) {
+			if (!list.contains(s)) { list.add(s); }
+		}
+		return list;
+		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
+	}
+
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(EXPERIMENT)
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
-		orderedVarNames = ecd.getOrderedAttributeNames(INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
+		orderedVarNames = getOrderedAttributeNames(ecd, INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
 		updatableVars =
-				Iterables.toArray(transform(ecd.getUpdatableAttributeNames(), s -> species.getVar(s)), IVariable.class);
+				Iterables.toArray(transform(getUpdatableAttributeNames(ecd), s -> species.getVar(s)), IVariable.class);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
 		} else {
@@ -175,12 +255,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
 		final boolean[] result = { false, false };
-		species.getDescription().visitChildren((d) -> {
+		species.getDescription().visitChildren(d -> {
 			if (d instanceof ActionDescription && !d.isBuiltIn()) {
 				final String name = d.getName();
-				if (name.equals(ISpecies.initActionName)) {
+				if (ISpecies.initActionName.equals(name)) {
 					result[0] = true;
-				} else if (name.equals(ISpecies.stepActionName)) { result[1] = true; }
+				} else if (ISpecies.stepActionName.equals(name)) { result[1] = true; }
 			}
 			return true;
 		});
@@ -780,9 +860,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		final IAgent agent = a.getAgent();
-		if (agent == null) return false;
-		if (agent.getPopulation() != this) return false;
-		if (agent.dead()) return false;
+		if (agent == null || agent.getPopulation() != this || agent.dead()) return false;
 		final IAgent as = source.getAgent();
 		if (agent == as) return false;
 		// }
@@ -799,7 +877,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		final Predicate<IShape> toRemove = (each) -> {
+		final Predicate<IShape> toRemove = each -> {
 			final IAgent a = each.getAgent();
 			return a == null || a.dead()
 					|| a.getPopulation() != this
