@@ -1696,6 +1696,41 @@ public class DrivingSkill extends MovingSkill {
 			remainingTime = moveAcrossSegments(scope, accel, remainingTime, lowestLane);
 		}
 	}
+	
+
+	@action(
+		name = "force_move",
+		args = {
+			@arg(
+				name = "lane",
+				type = IType.INT,
+				optional = false,
+				doc = @doc("the lane on which to make the agent move")
+			),
+			@arg(
+				name = ACCELERATION,
+				type = IType.FLOAT,
+				optional = false,
+				doc = @doc("acceleration of the vehicle")
+			),
+			@arg(
+					name = "time",
+					type = IType.FLOAT,
+					optional = false,
+					doc = @doc("time of move")
+				)
+		},
+		doc = @doc(
+			value = "action to drive by chosen randomly the next road",
+			examples = { @example ("do drive_random init_node: some_node;") }
+		)
+	)
+	public void primForceMove(final IScope scope) throws GamaRuntimeException {
+		Integer lane = scope.getIntArg("lane");
+		Double acc = scope.getFloatArg(ACCELERATION);
+		Double time = scope.getFloatArg("time");
+		moveAcrossSegments(scope,acc,time,lane);
+	}
 
 	/**
 	 * Moves the vehicle from segment to segment on the current road.
@@ -1706,7 +1741,7 @@ public class DrivingSkill extends MovingSkill {
 	 * @param newLowestLane the lane to move on
 	 * @return the remaining amount of time in the simulation step
 	 */
-	private double moveAcrossSegments(final IScope scope,
+	public double moveAcrossSegments(final IScope scope,
 			final double accel,
 			final double time,
 			final int newLowestLane) {
@@ -1719,7 +1754,7 @@ public class DrivingSkill extends MovingSkill {
 		GamaPoint loc = (GamaPoint) vehicle.getLocation();
 
 		double speed = getSpeed(vehicle);
-		double distMoved, newSpeed;
+		double distMoved, newSpeed; 
 		if (speed == 0.0 && accel == 0.0) {
 			// Not moving at all
 			return 0.0;
@@ -1787,7 +1822,9 @@ public class DrivingSkill extends MovingSkill {
 
 		double dt = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(vehicle) + acceleration * dt;
-		return Math.max(0.0, speed);
+		speed = Math.min(speed, getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
+		speed = Math.max(0.0, speed);
+		return speed;
 	}
 
 	/**
