@@ -28,12 +28,11 @@ import ummisco.gama.dev.utils.DEBUG;
 public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
 	static {
-		DEBUG.OFF();
+		// DEBUG.ON();
 	}
 
-	protected boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue(); // so that it can be changed from
-																					// outside
-	protected int targetFPS = GamaPreferences.Displays.OPENGL_FPS.getValue(); // so that it can be changed from outside
+	protected boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue();
+	protected int targetFPS = GamaPreferences.Displays.OPENGL_FPS.getValue();
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
 
@@ -41,7 +40,7 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
 	protected volatile long startingTime, lastUpdateTime, fpsPeriod;
-	Semaphore pause = new Semaphore(1);
+	Semaphore pause = new Semaphore(0);
 
 	protected int frames = 0;
 
@@ -133,6 +132,7 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 	public boolean stop() {
 		this.stopRequested = true;
 		try {
+			pause.release();
 			this.animatorThread.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
@@ -144,9 +144,6 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 
 	@Override
 	public boolean pause() {
-		try {
-			pause.acquire();
-		} catch (InterruptedException e) {}
 		pauseRequested = true;
 		return true;
 	}
@@ -154,7 +151,6 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 	@Override
 	public boolean resume() {
 		pause.release();
-		pauseRequested = false;
 		return true;
 	}
 
@@ -167,27 +163,26 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 	@Override
 	public void run() {
 		while (!this.stopRequested) {
-			try {
-				pause.acquire();
-			} catch (InterruptedException e1) {}
-			try {
+			if (pauseRequested) {
+				try {
+					pause.drainPermits();
+					pause.acquire();
+					pauseRequested = false;
+				} catch (InterruptedException e1) {}
+			}
 
-				final long timeBegin = System.currentTimeMillis();
-				this.displayGL();
-				frames++;
-				lastUpdateTime = System.currentTimeMillis();
-				fpsPeriod = lastUpdateTime - timeBegin;
-				DEBUG.OUT("Animator main loop in " + fpsPeriod + "ms");
-				if (capFPS) {
-					final long frameDuration = 1000 / targetFPS;
-					final long timeSleep = frameDuration - fpsPeriod;
-					try {
-						if (timeSleep >= 0) { Thread.sleep(timeSleep); }
-					} catch (final InterruptedException e) {}
-
-				}
-			} finally {
-				pause.release();
+			final long timeBegin = System.currentTimeMillis();
+			this.displayGL();
+			frames++;
+			lastUpdateTime = System.currentTimeMillis();
+			fpsPeriod = lastUpdateTime - timeBegin;
+			// DEBUG.OUT("Animator main loop in " + fpsPeriod + "ms");
+			if (capFPS) {
+				final long frameDuration = 1000 / targetFPS;
+				final long timeSleep = frameDuration - fpsPeriod;
+				try {
+					if (timeSleep >= 0) { Thread.sleep(timeSleep); }
+				} catch (final InterruptedException e) {}
 			}
 		}
 	}
