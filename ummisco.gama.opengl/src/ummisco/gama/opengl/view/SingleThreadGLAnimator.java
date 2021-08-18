@@ -12,6 +12,7 @@
 package ummisco.gama.opengl.view;
 
 import java.io.PrintStream;
+import java.util.concurrent.Semaphore;
 
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -24,7 +25,11 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @author AqD (aqd@5star.com.tw)
  */
-public class OldAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	protected boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue(); // so that it can be changed from
 																					// outside
@@ -36,15 +41,15 @@ public class OldAnimator implements Runnable, GLAnimatorControl, GLAnimatorContr
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
 	protected volatile long startingTime, lastUpdateTime, fpsPeriod;
+	Semaphore pause = new Semaphore(1);
 
 	protected int frames = 0;
 
-	public OldAnimator(final GLAutoDrawable drawable) {
+	public SingleThreadGLAnimator(final GLAutoDrawable drawable) {
 		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
 		this.drawable = drawable;
 		drawable.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");
-		this.animatorThread.setDaemon(false);
 	}
 
 	@Override
@@ -139,12 +144,16 @@ public class OldAnimator implements Runnable, GLAnimatorControl, GLAnimatorContr
 
 	@Override
 	public boolean pause() {
+		try {
+			pause.acquire();
+		} catch (InterruptedException e) {}
 		pauseRequested = true;
 		return true;
 	}
 
 	@Override
 	public boolean resume() {
+		pause.release();
 		pauseRequested = false;
 		return true;
 	}
@@ -157,24 +166,28 @@ public class OldAnimator implements Runnable, GLAnimatorControl, GLAnimatorContr
 
 	@Override
 	public void run() {
-		// TODO: try not to use Thread.sleep()
-
 		while (!this.stopRequested) {
-			if (!pauseRequested) {
+			try {
+				pause.acquire();
+			} catch (InterruptedException e1) {}
+			try {
+
 				final long timeBegin = System.currentTimeMillis();
 				this.displayGL();
 				frames++;
 				lastUpdateTime = System.currentTimeMillis();
 				fpsPeriod = lastUpdateTime - timeBegin;
+				DEBUG.OUT("Animator main loop in " + fpsPeriod + "ms");
 				if (capFPS) {
 					final long frameDuration = 1000 / targetFPS;
 					final long timeSleep = frameDuration - fpsPeriod;
-					if (timeSleep >= 0) {
-						try {
-							Thread.sleep(timeSleep);
-						} catch (final InterruptedException e) {}
-					}
+					try {
+						if (timeSleep >= 0) { Thread.sleep(timeSleep); }
+					} catch (final InterruptedException e) {}
+
 				}
+			} finally {
+				pause.release();
 			}
 		}
 	}

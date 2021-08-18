@@ -26,7 +26,7 @@ import msi.gama.common.preferences.GamaPreferences;
  *
  * @author AD
  */
-public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.UncaughtExceptionHandler {
+public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorControl.UncaughtExceptionHandler {
 
 	private Timer timer = null;
 	private MainTask task = null;
@@ -35,8 +35,13 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 	private boolean isAnimating; // MainTask feedback
 	private volatile boolean pauseIssued; // MainTask trigger
 	private volatile boolean stopIssued; // MainTask trigger
+	private final Condition waitForStoppedCondition = this::isStarted;
+	private final Condition waitForResumeCondition = () -> !drawablesEmpty && !isAnimating && isStarted();
+	private final Condition waitForStartedAddedCondition = () -> !isStarted() || !isAnimating;
+	private final Condition waitForStartedEmptyCondition = () -> !isStarted() || isAnimating;
+	private final Condition waitForPausedCondition = () -> isStarted() && isAnimating;
 
-	public SWTGLAnimator(final GLAutoDrawable drawable) {
+	public MultithreadGLAnimator(final GLAutoDrawable drawable) {
 		this.fps = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue() ? GamaPreferences.Displays.OPENGL_FPS.getValue()
 				: 1000;
 		if (drawable != null) { add(drawable); }
@@ -84,7 +89,7 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 
 			if (justStarted) {
 				justStarted = false;
-				synchronized (SWTGLAnimator.this) {
+				synchronized (MultithreadGLAnimator.this) {
 					animThread = Thread.currentThread();
 					isAnimating = true;
 					if (drawablesEmpty) {
@@ -93,7 +98,7 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 						pauseIssued = false;
 						setDrawablesExclCtxState(exclusiveContext); // may re-enable exclusive context
 					}
-					SWTGLAnimator.this.notifyAll();
+					MultithreadGLAnimator.this.notifyAll();
 				}
 			}
 			if (!pauseIssued && !stopIssued) { // RUN
@@ -117,9 +122,9 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 						}
 					}
 					if (null == caughtException) {
-						synchronized (SWTGLAnimator.this) {
+						synchronized (MultithreadGLAnimator.this) {
 							isAnimating = false;
-							SWTGLAnimator.this.notifyAll();
+							MultithreadGLAnimator.this.notifyAll();
 						}
 					}
 				}
@@ -137,39 +142,26 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 							if (null == caughtException) {
 								caughtException = dre;
 							} else {
-								System.err
-										.println("FPSAnimator.setExclusiveContextThread: caught: " + dre.getMessage());
 								dre.printStackTrace();
 							}
 						}
 					}
 					boolean flushGLRunnables = false;
 					boolean throwCaughtException = false;
-					synchronized (SWTGLAnimator.this) {
-						if (DEBUG) {
-							System.err.println("FPSAnimator stop " + Thread.currentThread() + ": " + toString());
-							if (null != caughtException) {
-								System.err.println("Animator caught: " + caughtException.getMessage());
-								caughtException.printStackTrace();
-							}
-						}
+					synchronized (MultithreadGLAnimator.this) {
 						isAnimating = false;
 						if (null != caughtException) {
 							flushGLRunnables = true;
 							throwCaughtException = !handleUncaughtException(caughtException);
 						}
 						animThread = null;
-						SWTGLAnimator.this.notifyAll();
+						MultithreadGLAnimator.this.notifyAll();
 					}
 					if (flushGLRunnables) { flushGLRunnables(); }
 					if (throwCaughtException) throw caughtException;
 				}
 			}
 		}
-	}
-
-	private final boolean isAnimatingImpl() {
-		return animThread != null && isAnimating;
 	}
 
 	@Override
@@ -201,9 +193,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		return res;
 	}
 
-	private final Condition waitForStartedAddedCondition = () -> !isStarted() || !isAnimating;
-	private final Condition waitForStartedEmptyCondition = () -> !isStarted() || isAnimating;
-
 	/**
 	 * Stops this FPSAnimator. Due to the implementation of the FPSAnimator it is not guaranteed that the FPSAnimator
 	 * will be completely stopped by the time this method returns.
@@ -232,8 +221,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		return res;
 	}
 
-	private final Condition waitForStoppedCondition = this::isStarted;
-
 	@Override
 	public final synchronized boolean pause() {
 		if (!isStarted() || pauseIssued) return false;
@@ -253,12 +240,9 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		return res;
 	}
 
-	private final Condition waitForPausedCondition = () -> isStarted() && isAnimating;
-
 	@Override
 	public final synchronized boolean resume() {
 		if (!isStarted() || !pauseIssued) return false;
-		if (DEBUG) { System.err.println("FPSAnimator.resume() START: " + Thread.currentThread() + ": " + toString()); }
 		final boolean res;
 		if (drawablesEmpty) {
 			res = true;
@@ -273,8 +257,6 @@ public class SWTGLAnimator extends AnimatorBase implements GLAnimatorControl.Unc
 		}
 		return res;
 	}
-
-	private final Condition waitForResumeCondition = () -> !drawablesEmpty && !isAnimating && isStarted();
 
 	protected void displayGL() {
 		this.isAnimating = true;

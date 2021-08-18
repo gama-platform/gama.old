@@ -38,9 +38,9 @@ public class FLAGS {
 	}
 
 	/**
-	 * For debugging purposes, see #3164. False by default.
+	 * For debugging purposes, see #3164. True by default until bugs on Linux are solved
 	 */
-	public static final boolean USE_OLD_ANIMATOR = get("use_old_animator", false);
+	public static final boolean USE_OLD_ANIMATOR = get("use_old_animator", true);
 
 	/**
 	 * Used in LayeredDisplayView. True to use a combination of wait(), notify() and Thread.sleep() for synchronizing

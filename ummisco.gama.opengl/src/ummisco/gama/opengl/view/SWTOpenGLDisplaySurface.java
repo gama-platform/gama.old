@@ -139,7 +139,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setNumSamples(8);
 		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
 		canvas.setAutoSwapBufferMode(true);
-		GLAnimatorControl animator = FLAGS.USE_OLD_ANIMATOR ? new OldAnimator(canvas) : new SWTGLAnimator(canvas);
+		// See issue #3164. No multithreaded animator on Linux
+		GLAnimatorControl animator = FLAGS.USE_OLD_ANIMATOR || PlatformHelper.isLinux()
+				? new SingleThreadGLAnimator(canvas) : new MultithreadGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		renderer.setCanvas(canvas);
 		final FillLayout gl = new FillLayout();
