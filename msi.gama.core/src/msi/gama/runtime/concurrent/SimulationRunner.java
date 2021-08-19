@@ -25,24 +25,31 @@ import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 
 public class SimulationRunner {
 
-	final SimulationPopulation population;
 	final Map<SimulationAgent, Callable<Boolean>> runnables;
 	static final Function<SimulationAgent, Boolean> STEP = each -> each.getScope().step(each).passed();
 	final int concurrency;
 
 	private int activeThreads;
 
-	public SimulationRunner(final SimulationPopulation pop) {
-		population = pop;
-		runnables = new LinkedHashMap<>();
-		final IExperimentPlan plan = population.getHost().getSpecies();
+	public static SimulationRunner of(final SimulationPopulation pop) {
+		int concurrency = 0;
+		final IExperimentPlan plan = pop.getHost().getSpecies();
 		if (plan.isHeadless() && !plan.isBatch()) {
 			concurrency = 1;
 		} else {
-			concurrency = GamaExecutorService.getParallelism(population.getHost().getScope(), plan.getConcurrency(),
+			concurrency = GamaExecutorService.getParallelism(pop.getHost().getScope(), plan.getConcurrency(),
 					Caller.SIMULATION);
 		}
+		return withConcurrency(concurrency);
+	}
 
+	public static SimulationRunner withConcurrency(final int concurrency) {
+		return new SimulationRunner(concurrency < 0 ? 1 : concurrency);
+	}
+
+	private SimulationRunner(final int concurrency) {
+		this.concurrency = concurrency;
+		runnables = new LinkedHashMap<>();
 	}
 
 	public void remove(final SimulationAgent agent) {
@@ -65,13 +72,10 @@ public class SimulationRunner {
 
 	private int computeNumberOfThreads() {
 		final ExecutorService executor = getExecutor();
-		if (executor instanceof ForkJoinPool) {
-			// getActiveThreadCount() always overestimates the number of threads
+		if (executor instanceof ForkJoinPool) // getActiveThreadCount() always overestimates the number of threads
 			return Math.min(concurrency, ((ForkJoinPool) executor).getActiveThreadCount());
-		}
-		if (executor instanceof ThreadPoolExecutor) {
+		if (executor instanceof ThreadPoolExecutor)
 			return Math.min(concurrency, ((ThreadPoolExecutor) executor).getActiveCount());
-		}
 		return 1;
 	}
 

@@ -43,7 +43,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
 		super(agent, species);
-		runner = new SimulationRunner(this);
+		runner = SimulationRunner.of(this);
 	}
 
 	public int getMaxNumberOfConcurrentSimulations() {
