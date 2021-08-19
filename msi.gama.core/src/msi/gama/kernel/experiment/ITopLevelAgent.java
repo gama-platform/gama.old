@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ITopLevelAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gama.kernel.experiment.ITopLevelAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
@@ -19,36 +20,36 @@ import msi.gama.util.GamaColor;
 import msi.gaml.statements.IExecutable;
 
 /**
- * Class ITopLevelAgent.
+ * Class ITopLevelAgent Addition (Aug 2021): explicit inheritance of IScopedStepable
  *
  * @author drogoul
  * @since 27 janv. 2016
  *
  */
-public interface ITopLevelAgent extends IMacroAgent {
+public interface ITopLevelAgent extends IMacroAgent, IScopedStepable {
 
-	public SimulationClock getClock();
+	SimulationClock getClock();
 
-	public GamaColor getColor();
+	GamaColor getColor();
 
-	public RandomUtils getRandomGenerator();
+	RandomUtils getRandomGenerator();
 
-	public IOutputManager getOutputManager();
+	IOutputManager getOutputManager();
 
-	public void postEndAction(IExecutable executable);
+	void postEndAction(IExecutable executable);
 
-	public void postDisposeAction(IExecutable executable);
+	void postDisposeAction(IExecutable executable);
 
-	public void postOneShotAction(IExecutable executable);
+	void postOneShotAction(IExecutable executable);
 
-	public void executeAction(IExecutable executable);
+	void executeAction(IExecutable executable);
 
-	public boolean isOnUserHold();
+	boolean isOnUserHold();
 
-	public void setOnUserHold(boolean state);
+	void setOnUserHold(boolean state);
 
-	public SimulationAgent getSimulation();
+	SimulationAgent getSimulation();
 
-	public IExperimentAgent getExperiment();
+	IExperimentAgent getExperiment();
 
 }
