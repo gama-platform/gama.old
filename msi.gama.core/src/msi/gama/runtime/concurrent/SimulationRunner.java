@@ -95,7 +95,7 @@ public class SimulationRunner {
 
 	public void dispose() {
 		runnables.clear();
-		executor.shutdownNow();
+		if (executor != null) { executor.shutdownNow(); }
 	}
 
 	public int getActiveThreads() {
