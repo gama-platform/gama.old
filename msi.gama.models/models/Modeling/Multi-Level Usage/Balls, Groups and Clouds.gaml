@@ -190,7 +190,7 @@ species ball control: fsm {
 	//Species representing the group of balls
 species group {
 	rgb color <- rgb([rnd(255), rnd(255), rnd(255)]);
-	geometry shape <- polygon(ball_in_group) buffer 10 update: convex_hull(polygon(ball_in_group collect each.location));
+	geometry shape <- any_point_in(host) update: convex_hull(polygon(ball_in_group collect each.location));
 	float speed update: float(group_base_speed);
 
 	//Parameter to capture the balls contains in the perception range
@@ -350,7 +350,7 @@ species group {
 
 //Species cloud that will be created by an agglomeration of groups.
 species cloud {
-	geometry shape <- convex_hull(polygon(group_delegation collect ((each.shape).location))) update: convex_hull(polygon(group_delegation collect ((each.shape).location)));
+	geometry shape <- any_point_in(host) update: convex_hull(polygon(group_delegation collect ((each.shape).location)));
 	rgb color;
 
 	//Species contained in the cloud to represent the groups captured by the cloud agent

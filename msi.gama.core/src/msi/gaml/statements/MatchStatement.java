@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -36,7 +39,7 @@ import msi.gaml.types.Types;
  * @author drogoul 14 nov. 07
  */
 @symbol (
-		name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE },
+		name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE, IKeyword.MATCH_REGEX },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		concept = { IConcept.CONDITION },
 		with_sequence = true)
@@ -50,7 +53,7 @@ import msi.gaml.types.Types;
 				doc = @doc ("The value or values this statement tries to match")) },
 		omissible = IKeyword.VALUE)
 @doc (
-		value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used",
+		value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Four kinds of match can be used, equality, containment, betweenness and regex matching",
 		usages = { @usage (
 				value = IKeyword.MATCH + " block is executed if the switch value is equals to the value of the match:",
 				examples = { @example (
@@ -110,8 +113,9 @@ public class MatchStatement extends AbstractStatementSequence {
 		value = getFacet(IKeyword.VALUE);
 		final String keyword = desc.getKeyword();
 		setName(keyword + " " + (value == null ? "" : value.serialize(false)));
-		executer = IKeyword.MATCH.equals(keyword) ? new SimpleMatch() : IKeyword.MATCH_ONE.equals(keyword)
-				? new MatchOne() : IKeyword.MATCH_BETWEEN.equals(keyword) ? new MatchBetween() : null;
+		executer = IKeyword.MATCH.equals(keyword) ? new SimpleMatch()
+				: IKeyword.MATCH_ONE.equals(keyword) ? new MatchOne() : IKeyword.MATCH_BETWEEN.equals(keyword)
+						? new MatchBetween() : IKeyword.MATCH_REGEX.equals(keyword) ? new MatchRegex() : null;
 		if (executer != null) { executer.acceptValue(); }
 	}
 
@@ -155,10 +159,40 @@ public class MatchStatement extends AbstractStatementSequence {
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if ((constantValue != null) && !(constantValue instanceof IContainer)) {
-				if (!(constantValue instanceof GamaPoint)) {
-					constantValue = Types.LIST.cast(null, constantValue, null, false);
-				}
+			if (constantValue != null && !(constantValue instanceof IContainer)
+					&& !(constantValue instanceof GamaPoint)) {
+				constantValue = Types.LIST.cast(null, constantValue, null, false);
+			}
+		}
+	}
+
+	class MatchRegex extends MatchExecuter {
+
+		@Override
+		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
+			final Object val = getValue(scope);
+			if (!(switchValue instanceof String)) throw GamaRuntimeException.error(
+					"Can only match strings against a regular expression. " + switchValue + " is not a string", scope);
+			if (!(val instanceof String)) throw GamaRuntimeException
+					.error("Can only match strings against a regular expression. " + val + " is not a string", scope);
+			String target = (String) switchValue;
+			String pattern = (String) val;
+			if (pattern.isEmpty()) return false;
+			try {
+				Pattern p = Pattern.compile(pattern);
+				return p.matcher(target).find();
+			} catch (PatternSyntaxException e) {
+				// throw GamaRuntimeException.error(
+				// "The syntax of " + pattern + " is not a correct regular expression", scope);
+				return target.contains(pattern);
+			}
+		}
+
+		@Override
+		public void acceptValue() {
+			super.acceptValue();
+			if (constantValue != null && !(constantValue instanceof String)) {
+				constantValue = Types.STRING.cast(null, constantValue, null, false);
 			}
 		}
 	}
@@ -183,7 +217,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if ((constantValue != null) && !(constantValue instanceof GamaPoint)) {
+			if (constantValue != null && !(constantValue instanceof GamaPoint)) {
 				constantValue = Types.POINT.cast(null, constantValue, null, false);
 			}
 

@@ -60,7 +60,7 @@ global {
 //Species flock which represent the flock of boids, using the skill moving
 species flock skills: [moving] {
 	rgb color <- rgb(rnd(255), rnd(255), rnd(255));
-	geometry shape <- polygon(((boids_in_flock))) buffer 10;
+	geometry shape <- any_point_in(host);
 	//Range of perception of the flock
 	float perception_range <- float(base_perception_range + (rnd(5)));
 	//Speed of the flock
@@ -97,7 +97,7 @@ species flock skills: [moving] {
 					list<boids> released_boids;
 					ask f {
 						release members as: boids in: world returns: released_coms;
-						released_boids <- list(released_coms);
+						released_boids <- released_coms;
 						do die;
 					}
 
@@ -132,7 +132,7 @@ species flock skills: [moving] {
 		}
 		
 		loop com over: boids_in_flock {
-			(boids_in_flock(com)).location <- (boids_in_flock(com)).location + { dx, dy };
+			com.location <- com.location + { dx, dy };
 		}
 
 		shape <- convex_hull(polygon(list(boids_in_flock) collect (each.location)));
@@ -170,7 +170,7 @@ species flock skills: [moving] {
 		}
 
 		aspect default {
-			draw circle(my_age) color: ((host as flock).color).darker;
+			draw circle(my_age) color: (host.color).darker;
 		}
 
 	}

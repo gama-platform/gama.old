@@ -73,6 +73,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	double[] rgb = new double[3];
 	// The provider of color for the vertices
 	private IMeshColorProvider fill;
+	// Alpha
+	// private final double layerAlpha;
 
 	// NORMALS
 	// The normals used for quads drawing
@@ -84,6 +86,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
+		// layerAlpha = gl.getCurrentObjectAlpha();
 	}
 
 	@Override
@@ -235,6 +238,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			var i = indexBuffer.get(index);
 			int one = i * 3, two = i * 3 + 1, three = i * 3 + 2;
 			if (!gl.isWireframe() && outputsColors) {
+				// TODO Bug when using a gradient: some color components are outside the range
 				gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
 			}
 			if (outputsTextures) { gl.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
@@ -252,6 +256,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 		}
 		gl.endDrawing();
+		ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
 		ogl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -299,6 +304,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsColors || outputsLines) { gl.disable(GLPointerFunc.GL_COLOR_ARRAY); }
 			gl.disable(GLPointerFunc.GL_VERTEX_ARRAY);
 			// Putting back alpha to normal
+			ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
 			ogl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		}

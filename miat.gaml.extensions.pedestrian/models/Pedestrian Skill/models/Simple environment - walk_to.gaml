@@ -23,17 +23,29 @@ global {
 	bool P_avoid_other <- true parameter: true ;
 	float P_obstacle_consideration_distance <- 5.0 parameter: true ;
 	float P_pedestrian_consideration_distance <- 5.0 parameter: true ;
-	float P_minimal_distance <- 0.0 parameter: true;
 	float P_tolerance_waypoint <- 0.1 parameter: true;
 	bool P_use_geometry_waypoint <- true parameter: true;
 	
-	float P_A_pedestrian_SFM parameter: true <- 0.16 category: "SFM" ;
-	float P_A_obstacles_SFM parameter: true <- 1.9 category: "SFM" ;
-	float P_B_pedestrian_SFM parameter: true <- 0.1 category: "SFM" ;
-	float P_B_obstacles_SFM parameter: true <- 1.0 category: "SFM" ;
-	float P_relaxion_SFM parameter: true <- 0.5 category: "SFM" ;
-	float P_gama_SFM parameter: true <- 0.35 category: "SFM" ;
-	float P_lambda_SFM <- 0.1 parameter: true category: "SFM" ;
+	
+	
+	string P_model_type <- "advanced" among: ["simple", "advanced"] parameter: true ; 
+	
+	float P_A_pedestrian_SFM_advanced parameter: true <- 0.16 category: "SFM advanced" ;
+	float P_A_obstacles_SFM_advanced parameter: true <- 1.9 category: "SFM advanced" ;
+	float P_B_pedestrian_SFM_advanced parameter: true <- 0.1 category: "SFM advanced" ;
+	float P_B_obstacles_SFM_advanced parameter: true <- 1.0 category: "SFM advanced" ;
+	float P_relaxion_SFM_advanced  parameter: true <- 0.5 category: "SFM advanced" ;
+	float P_gama_SFM_advanced parameter: true <- 0.35 category: "SFM advanced" ;
+	float P_lambda_SFM_advanced <- 0.1 parameter: true category: "SFM advanced" ;
+	float P_minimal_distance_advanced <- 0.5 parameter: true category: "SFM advanced" ;
+	
+	
+	float P_n_prime_SFM_simple parameter: true <- 3.0 category: "SFM simple" ;
+	float P_n_SFM_simple parameter: true <- 2.0 category: "SFM simple" ;
+	float P_lambda_SFM_simple <- 2.0 parameter: true category: "SFM simple" ;
+	float P_gama_SFM_simple parameter: true <- 0.35 category: "SFM simple" ;
+	float P_relaxion_SFM_simple parameter: true <- 0.54 category: "SFM simple" ;
+	float P_A_pedestrian_SFM_simple parameter: true <-4.5category: "SFM simple" ;
 	
 	geometry shape <- square(environment_size);
 	geometry free_space <- copy(shape);
@@ -62,17 +74,28 @@ global {
 			shoulder_length <- P_shoulder_length;
 			avoid_other <- P_avoid_other;
 			proba_detour <- P_proba_detour;
-			minimal_distance <- P_minimal_distance;
-			A_pedestrians_SFM <- P_A_pedestrian_SFM;
-			A_obstacles_SFM <- P_A_obstacles_SFM;
-			B_pedestrians_SFM <- P_B_pedestrian_SFM;
-			B_obstacles_SFM <- P_B_obstacles_SFM;
-			relaxion_SFM <- P_relaxion_SFM;
-			gama_SFM <- P_gama_SFM;
-			lambda_SFM <- P_lambda_SFM;
 			use_geometry_waypoint <- P_use_geometry_waypoint;
 			tolerance_waypoint <- P_tolerance_waypoint;
-
+			
+			pedestrian_model <- P_model_type;
+			if (pedestrian_model = "simple") {
+				A_pedestrians_SFM <- P_A_pedestrian_SFM_simple;
+				relaxion_SFM <- P_relaxion_SFM_simple;
+				gama_SFM <- P_gama_SFM_simple;
+				lambda_SFM <- P_lambda_SFM_simple;
+				n_prime_SFM <- P_n_prime_SFM_simple;
+				n_SFM <- P_n_SFM_simple;
+			} else {
+				A_pedestrians_SFM <- P_A_pedestrian_SFM_advanced;
+				A_obstacles_SFM <- P_A_obstacles_SFM_advanced;
+				B_pedestrians_SFM <- P_B_pedestrian_SFM_advanced;
+				B_obstacles_SFM <- P_B_obstacles_SFM_advanced;
+				relaxion_SFM <- P_relaxion_SFM_advanced;
+				gama_SFM <- P_gama_SFM_advanced;
+				lambda_SFM <- P_lambda_SFM_advanced;
+				minimal_distance <- P_minimal_distance_advanced;
+			}
+			
 			pedestrian_species <- [people];
 			obstacle_species<-[obstacle];
 			switch scenario {
@@ -144,7 +167,7 @@ species obstacle {
 	}
 }
 experiment big_crowd type: gui {
-	float minimum_cycle_duration <- 0.05;
+	float minimum_cycle_duration <- 0.02;
 	action _init_ {
 		create simulation with: [scenario :: "big crowd", nb_people::500];
 	}
@@ -157,7 +180,7 @@ experiment big_crowd type: gui {
 }
 
 experiment frontal_crossing type: gui {
-	float minimum_cycle_duration <- 0.05;
+	float minimum_cycle_duration <- 0.02;
 	action _init_ {
 		create simulation with: [scenario :: "frontal crossing", nb_people::100];
 	}
@@ -173,7 +196,7 @@ experiment frontal_crossing type: gui {
 	}
 }
 experiment perpandicular_crossing type: gui {
-	float minimum_cycle_duration <- 0.05;
+	float minimum_cycle_duration <- 0.02;
 	action _init_ {
 		create simulation with: [scenario :: "perpandicular crossing", nb_people::100];
 	}

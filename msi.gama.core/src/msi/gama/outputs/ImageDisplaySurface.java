@@ -142,7 +142,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	private void drawAllDisplays() {
 		if (displayGraphics == null) return;
-		displayGraphics.fillBackground(data.getBackgroundColor(), 1);
+		displayGraphics.fillBackground(data.getBackgroundColor());
 		manager.drawLayersOn(displayGraphics);
 	}
 
@@ -464,11 +464,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public int getFPS() {
 		return 0;
 	}
-
-	@Override
-	public boolean isRealized() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean isRealized() {
+	// return true;
+	// }
 
 	/**
 	 * Method isRendered()

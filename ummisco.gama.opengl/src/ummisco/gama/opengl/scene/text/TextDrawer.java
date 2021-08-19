@@ -229,11 +229,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 					// We use the quads side buffer to render only the top (lines)
 					drawBorder();
 				} else {
-					// final var ogl = gl.getGL();
-					// Normally already set by beginObject() in OpenGL.
-					// ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 					drawSide();
-					// ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 				}
 			}
 		} finally {

@@ -6,7 +6,7 @@
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-guava-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-io-1.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-opt-1.5.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-core-1.5.1.jar" sourcepath="C:/Users/admin_ptaillandie/Desktop/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-core-1.5.1.jar" sourcepath="jgrapht 1.5.1/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/bigint-0.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/ehcache-2.10.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/imageio-ext-cog-streams-1.3.5.jar"/>

@@ -24,8 +24,15 @@ import com.google.common.collect.MultimapBuilder;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class FieldDiffuser {
+
+	static {
+		DEBUG.ON();
+	}
+
+	// static ThreadLocal<FieldDiffuser> CACHE = new ThreadLocal<>();
 
 	static LoadingCache<SimulationAgent, FieldDiffuser> CACHE =
 			CacheBuilder.newBuilder().build(new CacheLoader<SimulationAgent, FieldDiffuser>() {
@@ -33,9 +40,8 @@ public class FieldDiffuser {
 				@Override
 				public FieldDiffuser load(final SimulationAgent sim) throws Exception {
 					FieldDiffuser diffuser = new FieldDiffuser(sim.getScope());
-					sim.postEndAction(s -> {
-						return diffuser.diffuse();
-					});
+					DEBUG.OUT("Field Diffuser created for " + sim);
+					sim.postEndAction(s -> diffuser.diffuse());
 					sim.postDisposeAction(s -> {
 						CACHE.invalidate(sim);
 						return null;
@@ -44,12 +50,19 @@ public class FieldDiffuser {
 				}
 			});
 
+	// static SimulationLocal<FieldDiffuser> CACHE = SimulationLocal.withInitial(s -> {
+	// FieldDiffuser diffuser = new FieldDiffuser(s);
+	// s.getSimulation().postEndAction(scope -> diffuser.diffuse());
+	// return diffuser;
+	// });
+
 	public static FieldDiffuser getDiffuser(final IScope scope) {
 		try {
 			return CACHE.get(scope.getSimulation());
 		} catch (ExecutionException e) {
-			return new FieldDiffuser(scope);
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	protected final ListMultimap<DiffusionContext, GridDiffusion> diffusionsMap =
@@ -69,7 +82,7 @@ public class FieldDiffuser {
 		IDiffusionTarget target;
 		final String varName;
 
-		public DiffusionContext(final IScope scope, final String var_name, final IDiffusionTarget pop) {
+		public DiffusionContext(final String var_name, final IDiffusionTarget pop) {
 			varName = var_name;
 			nbRows = pop.getRows(scope);
 			nbCols = pop.getCols(scope);
@@ -111,20 +124,21 @@ public class FieldDiffuser {
 
 	public boolean compareArrays(final double[][] array1, final double[][] array2) {
 		if (array1 == null) return array2 == null;
-		if (array2 == null) return false;
-		if (array1.length != array2.length) return false;
+		if (array2 == null || array1.length != array2.length) return false;
 		for (int i = 0; i < array1.length; i++) {
 			if (!Arrays.equals(array1[i], array2[i])) return false;
 		}
 		return true;
 	}
 
-	public void addDiffusion(final IScope scope, final String varDiffu, final IDiffusionTarget pop,
-			final boolean method_diffu, final boolean isGradient, final double[][] matDiffu, final double[][] theMask,
-			final double minValue, final boolean avoidMask) {
+	public void addDiffusion(final String varDiffu, final IDiffusionTarget pop, final boolean method_diffu,
+			final boolean isGradient, final double[][] matDiffu, final double[][] theMask, final double minValue,
+			final boolean avoidMask) {
+		// DEBUG.OUT("Diffusion added for diffuser of " + this.scope.getSimulation() + " with scope of "
+		// + scope.getSimulation() + " for var " + varDiffu);
 		final GridDiffusion newGridDiff =
 				new GridDiffusion(method_diffu, isGradient, matDiffu, theMask, minValue, avoidMask);
-		final DiffusionContext keyValue = new DiffusionContext(scope, varDiffu, pop);
+		final DiffusionContext keyValue = new DiffusionContext(varDiffu, pop);
 		if (diffusionsMap.containsKey(keyValue)) {
 			final List<GridDiffusion> listWithSameVar = diffusionsMap.get(keyValue);
 			// try to mix diffusions if possible
@@ -258,17 +272,15 @@ public class FieldDiffuser {
 							if (output[j * context.nbCols + i] == -Double.MAX_VALUE) {
 								output[j * context.nbCols + i] = input[jj * context.nbCols + ii]
 										* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1];
-							} else {
-								if (diffusion.isGradient) {
-									if (output[j * context.nbCols + i] < input[jj * context.nbCols + ii]
-											* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1]) {
-										output[j * context.nbCols + i] = input[jj * context.nbCols + ii]
-												* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1];
-									}
-								} else {
-									output[j * context.nbCols + i] += input[jj * context.nbCols + ii]
+							} else if (diffusion.isGradient) {
+								if (output[j * context.nbCols + i] < input[jj * context.nbCols + ii]
+										* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1]) {
+									output[j * context.nbCols + i] = input[jj * context.nbCols + ii]
 											* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1];
 								}
+							} else {
+								output[j * context.nbCols + i] += input[jj * context.nbCols + ii]
+										* diffusion.diffusionMatrix[kRows - m - 1][kCols - n - 1];
 							}
 
 							// undo the changes if "avoid_mask" and if the
@@ -289,8 +301,8 @@ public class FieldDiffuser {
 					for (final int[] coord : non_masked_cells) {
 						if (output[coord[1] * context.nbCols + coord[0]] == -Double.MAX_VALUE) {
 							output[coord[1] * context.nbCols + coord[0]] = value_to_add;
-						} else {
-							if (!diffusion.isGradient) { output[coord[1] * context.nbCols + coord[0]] += value_to_add; }
+						} else if (!diffusion.isGradient) {
+							output[coord[1] * context.nbCols + coord[0]] += value_to_add;
 						}
 					}
 				}
@@ -341,14 +353,12 @@ public class FieldDiffuser {
 								final double matrixValue = diffusion.diffusionMatrix[m][n];
 								if (output[outputIndex] == -Double.MAX_VALUE) {
 									output[outputIndex] = input[inputIndex] * matrixValue;
-								} else {
-									if (diffusion.isGradient) {
-										if (output[outputIndex] < input[inputIndex] * matrixValue) {
-											output[outputIndex] = input[inputIndex] * matrixValue;
-										}
-									} else {
-										output[outputIndex] += input[inputIndex] * matrixValue;
+								} else if (diffusion.isGradient) {
+									if (output[outputIndex] < input[inputIndex] * matrixValue) {
+										output[outputIndex] = input[inputIndex] * matrixValue;
 									}
+								} else {
+									output[outputIndex] += input[inputIndex] * matrixValue;
 								}
 
 								// undo the changes if "avoid_mask" and if the
@@ -370,10 +380,8 @@ public class FieldDiffuser {
 						for (final int[] coord : non_masked_cells) {
 							if (output[coord[1] * context.nbCols + coord[0]] == -Double.MAX_VALUE) {
 								output[coord[1] * context.nbCols + coord[0]] = value_to_add;
-							} else {
-								if (!diffusion.isGradient) {
-									output[coord[1] * context.nbCols + coord[0]] += value_to_add;
-								}
+							} else if (!diffusion.isGradient) {
+								output[coord[1] * context.nbCols + coord[0]] += value_to_add;
 							}
 						}
 					}
@@ -406,14 +414,13 @@ public class FieldDiffuser {
 			int length = context.nbCols * context.nbRows;
 			if (input != null && input.length == length) {
 				Arrays.fill(input, 0);
-				Arrays.fill(output, -Double.MAX_VALUE);
 			} else {
 				input = new double[context.nbCols * context.nbRows];
 				output = new double[context.nbCols * context.nbRows];
-				Arrays.fill(output, -Double.MAX_VALUE);
 			}
+			Arrays.fill(output, -Double.MAX_VALUE);
 
-			diffusions.forEach((diffusion) -> {
+			diffusions.forEach(diffusion -> {
 				loadDiffProperties(diffusion);
 				if (!diffusion.useConvolution) {
 					diffusionWithDotProduct();

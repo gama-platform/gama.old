@@ -261,6 +261,7 @@ public interface IKeyword {
 	String MATCH = "match";
 	String MATCH_BETWEEN = "match_between";
 	String MATCH_ONE = "match_one";
+	String MATCH_REGEX = "match_regex";
 	String MASK = "mask";
 	String MAX = "max";
 	String MAXIMIZE = "maximize";

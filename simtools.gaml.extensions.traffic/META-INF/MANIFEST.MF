@@ -11,3 +11,4 @@ Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: simtools.gaml.extensions.traffic
+Class-Path: ../msi.gama.ext/geotools/commons-collections4-4.4.jar

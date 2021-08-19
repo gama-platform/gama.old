@@ -292,6 +292,11 @@ public class GamaToolbarFactory {
 					new CSVExportationController((IToolbarDecoratedView.CSVExportable) view);
 			csv.install(tb);
 		}
+		if (view instanceof IToolbarDecoratedView.LogExportable) {
+			final LogExportationController log =
+					new LogExportationController((IToolbarDecoratedView.LogExportable) view);
+			log.install(tb);
+		}
 
 		view.createToolItems(tb);
 		tb.refresh(true);

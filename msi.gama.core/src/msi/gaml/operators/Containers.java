@@ -43,7 +43,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.population.MetaPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.IGrid;
@@ -59,7 +58,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
@@ -182,7 +180,7 @@ public class Containers {
 				special_cases = "Passing 0 will return a singleton list with 0.")
 		@test ("range(2) = [0,1,2]")
 		public static IList range(final IScope scope, final Integer end) {
-			if (end == 0) return GamaListFactory.wrap(Types.INT, Integer.valueOf(0));
+			if (end == 0) return GamaListFactory.wrap(Types.INT, 0);
 			return range(scope, 0, end);
 		}
 
@@ -223,10 +221,8 @@ public class Containers {
 			if (end > start) {
 				if (step < 0)
 					throw GamaRuntimeException.error("Negative step would result in an infinite range", scope);
-			} else {
-				if (step > 0)
-					throw GamaRuntimeException.error("Positive step would result in an infinite range", scope);
-			}
+			} else if (step > 0)
+				throw GamaRuntimeException.error("Positive step would result in an infinite range", scope);
 			return IntStreamEx.rangeClosed(start, end, step).boxed().toCollection(listOf(Types.INT));
 
 		}
@@ -418,7 +414,7 @@ public class Containers {
 			if (Types.FILE.isAssignableFrom(type)) { type = type.getWrappedType(); }
 			final IType keyType = type.getKeyType();
 			final boolean wrongKey = keyType != Types.NO_TYPE && !indexType.isTranslatableInto(keyType)
-					&& !(Types.MATRIX.isAssignableFrom(type) && indexType == Types.INT);
+					&& (!Types.MATRIX.isAssignableFrom(type) || (indexType != Types.INT));
 			if (wrongKey) {
 				context.error("The contents of this " + type.getGamlType().getName() + " can only be accessed with "
 						+ type.getKeyType() + " keys", IGamlIssue.WRONG_TYPE, emfContext);
@@ -656,8 +652,7 @@ public class Containers {
 			masterDoc = true)
 	@no_test
 	public static Integer index_of(final IScope scope, final ISpecies s, final Object o) {
-		if (!(o instanceof IAgent)) return -1;
-		if (!((IAgent) o).isInstanceOf(notNull(scope, s), true)) return -1;
+		if (!(o instanceof IAgent) || !((IAgent) o).isInstanceOf(notNull(scope, s), true)) return -1;
 		return ((IAgent) o).getIndex();
 	}
 
@@ -1005,7 +1000,7 @@ public class Containers {
 	private static IList of_species(final IScope scope, final IContainer agents, final ISpecies s,
 			final boolean generic) {
 		return (IList) agents.stream(scope)
-				.filter((each) -> each instanceof IAgent && ((IAgent) each).isInstanceOf(s, !generic))
+				.filter(each -> each instanceof IAgent && ((IAgent) each).isInstanceOf(s, !generic))
 				.toCollection(listOf(scope.getType(s.getName())));
 	}
 
@@ -1058,6 +1053,7 @@ public class Containers {
 			final MetaPopulation mp = new MetaPopulation();
 			mp.addPopulationSet((IPopulationSet) c1);
 			mp.addPopulationSet((IPopulationSet) c2);
+			return mp;
 		}
 		return (IContainer) stream(scope, c1).append(stream(scope, c2)).toCollection(listLike(c1, c2));
 	}
@@ -1323,27 +1319,28 @@ public class Containers {
 		if (g == null) return 0.0;
 		return g.computeTotalWeight();
 	}
-	
+
 	@operator (
 			value = "cartesian_product",
-			//can_be_const = true,
+			// can_be_const = true,
 			doc = @doc ("Returns the cartesian product of elements in all given sub-lists"),
 			expected_content_type = { IType.LIST },
 			category = { IOperatorCategory.CONTAINER },
-			concept = { IConcept.CONTAINER }
-			)
+			concept = { IConcept.CONTAINER })
 	@test ("cartesian_product([['A','B'],['C','D']]) = [['A','C'],['A','D'],['B','C'],['B','D']]")
 	public static Object cart_prod(final IScope scope, final IList list) {
 		IType ct = list.getGamlType().getContentType();
 		if (!ct.isContainer()) { GamaRuntimeException.error("Must be a list of list", scope); }
-		
+
 		final IList<IList> l = notNull(scope, list).listValue(scope, list.getGamlType().getContentType(), false);
-		List<? extends Set<Object>> setOfSet = l.stream(scope).map(ilist -> new LinkedHashSet<>(ilist)).collect(Collectors.toList());
-		
+		List<? extends Set<Object>> setOfSet = l.stream(scope).map(LinkedHashSet::new).collect(Collectors.toList());
+
 		IList<IList> res = GamaListFactory.create(ct);
 		Set<List<Object>> cp = Sets.cartesianProduct(setOfSet);
-		for (List cartList : cp) { res.add(GamaListFactory.create(scope, ct.getContentType(), cartList)); }
-		
+		for (List cartList : cp) {
+			res.add(GamaListFactory.create(scope, ct.getContentType(), cartList));
+		}
+
 		return res;
 	}
 
@@ -1953,7 +1950,7 @@ public class Containers {
 
 		final StreamEx s = original.stream(scope);
 		final IType contentsType = original.getGamlType().getContentType();
-		return (IMap) s.collect(Collectors.toMap(with(scope, keyProvider), (a) -> a, (a, b) -> a,
+		return (IMap) s.collect(Collectors.toMap(with(scope, keyProvider), a -> a, (a, b) -> a,
 				asMapOf(keyProvider.getGamlType(), contentsType)));
 	}
 
@@ -1982,7 +1979,7 @@ public class Containers {
 		if (!(filter instanceof BinaryOperator))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
 		final BinaryOperator pair = (BinaryOperator) filter;
-		if (!pair.getName().equals("::"))
+		if (!"::".equals(pair.getName()))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);

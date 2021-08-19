@@ -43,13 +43,13 @@ import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
@@ -66,6 +66,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
@@ -99,6 +100,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
+	public IDisplaySynchronizer synchronizer;
 	final Composite parent;
 	volatile boolean disposed;
 	private volatile boolean alreadyUpdating;
@@ -112,10 +114,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		renderer.setDisplaySurface(this);
 		animator = createAnimator();
-
 		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-
 		animator.start();
 	}
 
@@ -138,19 +138,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setAlphaBits(8);
 		cap.setNumSamples(8);
 		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-
-		// {
-		//
-		// @SuppressWarnings ("restriction")
-		// @Override
-		// public Rectangle getClientArea() {
-		// // see Issue #2378
-		// // if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
-		// return super.getClientArea();
-		// }
-		// };
 		canvas.setAutoSwapBufferMode(true);
-		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		// See issue #3164. No multithreaded animator on Linux
+		GLAnimatorControl animator = FLAGS.USE_OLD_ANIMATOR || PlatformHelper.isLinux()
+				? new SingleThreadGLAnimator(canvas) : new MultithreadGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		renderer.setCanvas(canvas);
 		final FillLayout gl = new FillLayout();
@@ -172,7 +163,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public BufferedImage getImage(final int w, final int h) {
 		while (!isRendered()) {
 			try {
-				Thread.sleep(20);
+				Thread.sleep(1);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -475,10 +466,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			final Point origin = new Point(0, 0);
 			int xc = -origin.x;
 			int yc = -origin.y;
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			xc = xc + renderer.getCanvas().getSurfaceWidth();
 			yc = yc + renderer.getCanvas().getSurfaceHeight();
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			currentLayer.getData().setVisibleRegion(e);
 		}
 		return e;
@@ -665,6 +656,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
+		synchronizer.signalRenderingIsFinished();
 	}
 
 	@Override
@@ -751,13 +743,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return (int) this.animator.getTotalFPS();
 	}
 
-	@Override
-	public boolean isRealized() {
-		if (renderer == null) return false;
-		final GLAutoDrawable d = renderer.getCanvas();
-		if (d == null) return false;
-		return d.isRealized();
-	}
+	// @Override
+	// public boolean isRealized() {
+	// if (renderer == null) return false;
+	// final GLAutoDrawable d = renderer.getCanvas();
+	// if (d == null) return false;
+	// return d.isRealized();
+	// }
 
 	@Override
 	public boolean isRendered() {
@@ -826,6 +818,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void draggedTo(final int x, final int y) {
 		// Nothing to do (taken in charge by the camera
 
+	}
+
+	@Override
+	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
+		synchronizer = s;
+		synchronizer.signalSurfaceIsRealized();
 	}
 
 }

@@ -326,10 +326,10 @@ public class GamaPreferencesView {
 
 		});
 
-		final var buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
-		buttonExport.setText("Export...");
-		buttonExport.setToolTipText("Export preferences to a model that can be run to restore or share them...");
-		buttonExport.addSelectionListener(new SelectionAdapter() {
+		final var buttonExportToGaml = new Button(group1, SWT.PUSH | SWT.FLAT);
+		buttonExportToGaml.setText("Export to GAML");
+		buttonExportToGaml.setToolTipText("Export preferences to a model that can be run to restore or share them...");
+		buttonExportToGaml.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -339,7 +339,26 @@ public class GamaPreferencesView {
 				fd.setOverwrite(false);
 				final var path = fd.open();
 				if (path == null) return;
-				GamaPreferences.savePreferencesTo(path);
+				GamaPreferences.savePreferencesToGAML(path);
+			}
+
+		});
+
+		final var buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
+		buttonExport.setText("Export to preferences");
+		buttonExport
+				.setToolTipText("Export preferences in a format suitable to reimport them in another instance of GAMA");
+		buttonExport.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final var fd = new FileDialog(shell, SWT.SAVE);
+				fd.setFileName("gama.prefs");
+				fd.setFilterExtensions(new String[] { "*.prefs" });
+				fd.setOverwrite(false);
+				final var path = fd.open();
+				if (path == null) return;
+				GamaPreferences.savePreferencesToProperties(path);
 			}
 
 		});
@@ -393,10 +412,6 @@ public class GamaPreferencesView {
 						"Do you want to revert all preferences to their default values ? A restart of the platform will be performed immediately"))
 					return;
 				GamaPreferences.revertToDefaultValues(modelValues);
-				// for (final IParameterEditor ed : editors.values()) {
-				// // ed.forceUpdateValueAsynchronously();
-				// ed.updateValue(true);
-				// }
 				PlatformUI.getWorkbench().restart(true);
 			}
 

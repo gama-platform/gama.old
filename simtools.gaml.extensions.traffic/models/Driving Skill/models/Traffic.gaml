@@ -18,7 +18,7 @@ species road skills: [skill_road] {
 	string oneway;
 
 	aspect base {
-		draw shape color: color end_arrow: 2;
+		draw shape color: color end_arrow: 1;
 	}
 }
 
@@ -107,7 +107,7 @@ species base_vehicle skills: [advanced_driving] {
 		// Shifts the position of the vehicle perpendicularly to the road,
 		// in order to visualize different lanes
 		if (current_road != nil) {
-			float dist <- (road(current_road).lanes - current_lane -
+			float dist <- (road(current_road).num_lanes - current_lane -
 				mean(range(num_lanes_occupied - 1)) - 0.5) * lane_width;
 			if violating_oneway {
 				dist <- -dist;

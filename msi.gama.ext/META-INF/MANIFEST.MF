@@ -171,6 +171,8 @@ Export-Package: com.conversantmedia.util.collection,
  net.sourceforge.jtds.jdbcx,
  net.sourceforge.jtds.jdbcx.proxy,
  one.util.streamex,
+ org.apache.commons.collections4,
+ org.apache.commons.collections4.bidimap,
  org.apache.commons.dbcp;
   uses:="javax.naming.spi,
    org.apache.commons.pool.impl,

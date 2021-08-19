@@ -66,25 +66,12 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		ISpatialIndex index = spatialIndexes.getIfPresent(agent.getPopulation());
 		if (index != null) { index.remove(previous, agent); }
 	}
-	//
-	// @Override
-	// public boolean removeOrUpdate(final Envelope3D previous, final Envelope3D current, final IAgent agent) {
-	// if (disposed || agent == null) return false;
-	// ISpatialIndex index = spatialIndexes.getIfPresent(agent.getPopulation());
-	// if (index != null) return index.removeOrUpdate(previous, current, agent);
-	// return false;
-	// }
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		if (disposed) return null;
 		ISpatialIndex index = add(scope, f);
-		if (index != null) {
-			for (final double step : steps) {
-				IAgent first = index.firstAtDistance(scope, source, step, f);
-				if (first != null) return first;
-			}
-		} else {
+		if (index == null) {
 			try (final Collector.AsList<IAgent> shapes = Collector.getList()) {
 				for (final double step : steps) {
 					for (final ISpatialIndex si : spatialIndexes.asMap().values()) {
@@ -108,6 +95,10 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 				}
 				return min_agent;
 			}
+		}
+		for (final double step : steps) {
+			IAgent first = index.firstAtDistance(scope, source, step, f);
+			if (first != null) return first;
 		}
 		return null;
 	}
@@ -151,10 +142,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 			final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
 		if (disposed) return null;
 		ISpatialIndex index = add(scope, f);
-		if (index != null)
-			return nFirstAtDistanceInSpatialIndex(scope, source, f, number, alreadyChosen, index);
-		else
-			return nFirstAtDistanceInAllSpatialIndexes(scope, source, f, number, alreadyChosen);
+		if (index != null) return nFirstAtDistanceInSpatialIndex(scope, source, f, number, alreadyChosen, index);
+		return nFirstAtDistanceInAllSpatialIndexes(scope, source, f, number, alreadyChosen);
 	}
 
 	@Override

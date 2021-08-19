@@ -6,12 +6,13 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.opengl.view;
 
 import java.io.PrintStream;
+import java.util.concurrent.Semaphore;
 
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -24,36 +25,38 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @author AqD (aqd@5star.com.tw)
  */
-public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
 
-	static int FRAME_PER_SECOND = GamaPreferences.Displays.OPENGL_FPS.getValue();
-	protected int targetFPS = FRAME_PER_SECOND;
+	static {
+		// DEBUG.ON();
+	}
+
+	protected boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue();
+	protected int targetFPS = GamaPreferences.Displays.OPENGL_FPS.getValue();
 	protected final Thread animatorThread;
 	protected final GLAutoDrawable drawable;
 
 	protected volatile boolean stopRequested = false;
 	protected volatile boolean pauseRequested = false;
 	protected volatile boolean animating = false;
-	protected volatile long starting_time;
+	protected volatile long startingTime, lastUpdateTime, fpsPeriod;
+	Semaphore pause = new Semaphore(0);
 
 	protected int frames = 0;
 
-	public SWTGLAnimator(final GLAutoDrawable drawable) {
+	public SingleThreadGLAnimator(final GLAutoDrawable drawable) {
 		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
 		this.drawable = drawable;
 		drawable.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");
-		this.animatorThread.setDaemon(true);
 	}
 
 	@Override
-	public void setUpdateFPSFrames(final int frames, final PrintStream out) {
-		//
-	}
+	public void setUpdateFPSFrames(final int frames, final PrintStream out) {}
 
 	@Override
 	public void resetFPSCounter() {
-		//
+		startingTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -63,41 +66,37 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public long getFPSStartTime() {
-		return 0;
+		return startingTime;
 	}
 
 	@Override
 	public long getLastFPSUpdateTime() {
-		return 0;
+		return lastUpdateTime;
 	}
 
 	@Override
 	public long getLastFPSPeriod() {
-		return 0;
+		return fpsPeriod;
 	}
 
 	@Override
 	public float getLastFPS() {
-		final float result = (float) frames / ((System.currentTimeMillis() - starting_time) / 1000);
-		// frames = 0;
-		return result;
+		return frames / (getTotalFPSDuration() / 1000f);
 	}
 
 	@Override
 	public int getTotalFPSFrames() {
-		return 0;
+		return frames;
 	}
 
 	@Override
 	public long getTotalFPSDuration() {
-		return 0;
+		return lastUpdateTime - startingTime;
 	}
 
 	@Override
 	public float getTotalFPS() {
-		final float result = (float) frames / ((System.currentTimeMillis() - starting_time) / 1000);
-		// frames = 0;
-		return result;
+		return frames / ((System.currentTimeMillis() - startingTime) / 1000f);
 	}
 
 	@Override
@@ -125,7 +124,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 		this.stopRequested = false;
 		this.pauseRequested = false;
 		this.animatorThread.start();
-		starting_time = System.currentTimeMillis();
+		startingTime = System.currentTimeMillis();
 		return true;
 	}
 
@@ -133,6 +132,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	public boolean stop() {
 		this.stopRequested = true;
 		try {
+			pause.release();
 			this.animatorThread.join();
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
@@ -150,46 +150,39 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public boolean resume() {
-		pauseRequested = false;
+		pause.release();
 		return true;
 	}
 
 	@Override
-	public void add(final GLAutoDrawable drawable) {
-		// // this.autoDrawableList.addIfAbsent(drawable);
-		// if ( this.drawable != null ) {
-		// remove(this.drawable);
-		// }
-		// this.drawable = drawable;
-		// drawable.setAnimator(this);
-	}
+	public void add(final GLAutoDrawable drawable) {}
 
 	@Override
-	public void remove(final GLAutoDrawable drawable) {
-		// this.autoDrawableList.remove(drawable);
-		// if ( this.drawable == drawable ) {
-		// this.drawable = null;
-		// drawable.setAnimator(null);
-		// }
-	}
+	public void remove(final GLAutoDrawable drawable) {}
 
 	@Override
 	public void run() {
-		final long frameDuration = 1000 / this.targetFPS;
 		while (!this.stopRequested) {
-			if (!pauseRequested) {
-				final long timeBegin = System.currentTimeMillis();
-				this.displayGL();
-				frames++;
-				final long timeUsed = System.currentTimeMillis() - timeBegin;
-				final long timeSleep = frameDuration - timeUsed;
-				if (timeSleep >= 0) {
-					try {
-						Thread.sleep(timeSleep);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+			if (pauseRequested) {
+				try {
+					pause.drainPermits();
+					pause.acquire();
+					pauseRequested = false;
+				} catch (InterruptedException e1) {}
+			}
+
+			final long timeBegin = System.currentTimeMillis();
+			this.displayGL();
+			frames++;
+			lastUpdateTime = System.currentTimeMillis();
+			fpsPeriod = lastUpdateTime - timeBegin;
+			// DEBUG.OUT("Animator main loop in " + fpsPeriod + "ms");
+			if (capFPS) {
+				final long frameDuration = 1000 / targetFPS;
+				final long timeSleep = frameDuration - fpsPeriod;
+				try {
+					if (timeSleep >= 0) { Thread.sleep(timeSleep); }
+				} catch (final InterruptedException e) {}
 			}
 		}
 	}
@@ -197,9 +190,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	protected void displayGL() {
 		this.animating = true;
 		try {
-			if (drawable.isRealized()) {
-				drawable.display();
-			}
+			if (drawable.isRealized()) { drawable.display(); }
 		} catch (final RuntimeException ex) {
 			DEBUG.ERR("Exception in OpenGL:" + ex.getMessage());
 			ex.printStackTrace();
@@ -208,30 +199,14 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 		}
 	}
 
-	/**
-	 * Method getUncaughtExceptionHandler()
-	 * 
-	 * @see com.jogamp.opengl.GLAnimatorControl#getUncaughtExceptionHandler()
-	 */
 	@Override
 	public UncaughtExceptionHandler getUncaughtExceptionHandler() {
 		return this;
 	}
 
-	/**
-	 * Method setUncaughtExceptionHandler()
-	 * 
-	 * @see com.jogamp.opengl.GLAnimatorControl#setUncaughtExceptionHandler(com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler)
-	 */
 	@Override
 	public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {}
 
-	/**
-	 * Method uncaughtException()
-	 * 
-	 * @see com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler#uncaughtException(com.jogamp.opengl.GLAnimatorControl,
-	 *      com.jogamp.opengl.GLAutoDrawable, java.lang.Throwable)
-	 */
 	@Override
 	public void uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable,
 			final Throwable cause) {

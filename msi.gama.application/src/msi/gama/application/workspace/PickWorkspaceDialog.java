@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PickWorkspaceDialog.java, in plugin msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * 'PickWorkspaceDialog.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling and
+ * simulation platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
@@ -17,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -33,19 +34,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
 import com.google.common.io.Files;
 
 /**
- * Dialog that lets/forces a user to enter/select a workspace that will be used
- * when saving all configuration files and settings. This dialog is shown at
- * startup of the GUI just after the splash screen has shown. Inspired by
+ * Dialog that lets/forces a user to enter/select a workspace that will be used when saving all configuration files and
+ * settings. This dialog is shown at startup of the GUI just after the splash screen has shown. Inspired by
  * http://hexapixel.com/2009/01/12/rcp-workspaces
  */
 public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/*
-	 * This are our preferences we will be using as the IPreferenceStore is not
-	 * available yet
+	 * This are our preferences we will be using as the IPreferenceStore is not available yet
 	 */
 	// FIX: Removed the static reference in case it was causing trouble. Issue
 	// 240.
@@ -53,7 +53,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	// static Preferences preferences = Preferences.userRoot().node("gama");
 	/* Various dialog messages */
 	private static final String strMsg =
-		"Your workspace is where settings and files of your Gama models will be stored.";
+			"Your workspace is where settings and files of your Gama models will be stored.";
 	private static final String strInfo = "Please select a directory that will be the workspace root";
 	private static final String strError = "You must set a directory";
 
@@ -126,13 +126,11 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 			final String lastUsed = WorkspacePreferences.getLastUsedWorkspaces();
 			lastUsedWorkspaces = new ArrayList<>();
-			if ( lastUsed != null ) {
+			if (lastUsed != null) {
 				final String[] all = lastUsed.split(splitChar);
-				for ( final String str : all ) {
-					lastUsedWorkspaces.add(str);
-				}
+				Collections.addAll(lastUsedWorkspaces, all);
 			}
-			for ( final String last : lastUsedWorkspaces ) {
+			for (final String last : lastUsedWorkspaces) {
 				workspacePathCombo.add(last);
 			}
 
@@ -146,10 +144,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				dd.setMessage(strInfo);
 				dd.setFilterPath(workspacePathCombo.getText());
 				final String pick = dd.open();
-				if ( pick == null ) {
-					if ( workspacePathCombo.getText().length() == 0 ) {
-						setMessage(strError, IMessageProvider.ERROR);
-					}
+				if (pick == null) {
+					if (workspacePathCombo.getText().length() == 0) { setMessage(strError, IMessageProvider.ERROR); }
 				} else {
 					setMessage(strMsg);
 					workspacePathCombo.setText(pick);
@@ -173,12 +169,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	/* Suggests a default path based on the user.home/GAMA directory location */
 	private String getWorkspacePathSuggestion() {
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
 
 		String uHome = System.getProperty("user.home");
-		if ( uHome == null ) {
-			uHome = "c:";
-		}
+		if (uHome == null) { uHome = "c:"; }
 
 		buf.append(uHome).append(File.separator).append("gama_workspace");
 
@@ -196,11 +190,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * This function will copy files or directories from one location to
-	 * another. note that the source and the destination must be mutually
-	 * exclusive. This function can not be used to copy a directory to a sub
-	 * directory of itself. The function will also have problems if the
-	 * destination files already exist.
+	 * This function will copy files or directories from one location to another. note that the source and the
+	 * destination must be mutually exclusive. This function can not be used to copy a directory to a sub directory of
+	 * itself. The function will also have problems if the destination files already exist.
 	 *
 	 * @param src
 	 *            -- A File object that represents the source for the copy
@@ -211,28 +203,23 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 */
 	public static void copyFiles(final File src, final File dest) throws IOException {
 		/* Check to ensure that the source is valid... */
-		if ( !src.exists() ) {
-			throw new IOException("Can not find source: " + src.getAbsolutePath());
-		} else if ( !src.canRead() ) {
+		if (!src.exists()) throw new IOException("Can not find source: " + src.getAbsolutePath());
+		if (!src.canRead())
 			throw new IOException("Cannot read: " + src.getAbsolutePath() + ". Check file permissions.");
-		}
 		/* Is this a directory copy? */
 		final List<String> noCopy = Arrays.asList("org.eclipse.core.runtime", "org.eclipse.e4.workbench",
-			"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
-		if ( src.isDirectory() ) {
-			if ( noCopy.contains(src.getName()) ) { return; }
+				"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
+		if (src.isDirectory()) {
+			if (noCopy.contains(src.getName())) return;
 			/* Does the destination already exist? */
-			if ( !dest.exists() ) {
-				/* If not we need to make it exist if possible */
-				if ( !dest.mkdirs() ) {
-					throw new IOException("Could not create direcotry: " + dest.getAbsolutePath());
-				}
-			}
+			/* If not we need to make it exist if possible */
+			if (!dest.exists() && !dest.mkdirs())
+				throw new IOException("Could not create direcotry: " + dest.getAbsolutePath());
 			/* Get a listing of files... */
 			final String list[] = src.list();
 			/* Copy all the files in the list. */
-			if ( list != null ) {
-				for ( final String element : list ) {
+			if (list != null) {
+				for (final String element : list) {
 					final File dest1 = new File(dest, element);
 					final File src1 = new File(src, element);
 					copyFiles(src1, dest1);
@@ -246,16 +233,16 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	protected void cloneCurrentWorkspace() {
 		final String currentLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
-		if ( currentLocation == null || currentLocation.isEmpty() ) {
+		if (currentLocation == null || currentLocation.isEmpty()) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-				"No current workspace exists. Can only clone from an existing workspace");
+					"No current workspace exists. Can only clone from an existing workspace");
 			return;
 		}
 		final String newLocation = workspacePathCombo.getText();
 		// Fixes Issue #2848
-		if ( newLocation.startsWith(currentLocation) ) {
+		if (newLocation.startsWith(currentLocation)) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-				"The path entered is either that of the current wokspace or of a subdirectory of it. Neither can be used as a destination.");
+					"The path entered is either that of the current wokspace or of a subdirectory of it. Neither can be used as a destination.");
 			return;
 		}
 		cloning = true;
@@ -270,13 +257,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		final String str = workspacePathCombo.getText();
 		// scope.getGui().debug("Directory to create " + str);
-		if ( str.length() == 0 ) {
+		if (str.length() == 0) {
 			setMessage(strError, IMessageProvider.ERROR);
 			return;
 		}
 
 		final String ret = WorkspacePreferences.checkWorkspaceDirectory(str, true, true, cloning);
-		if ( ret != null ) {
+		if (ret != null) {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
 		}
@@ -284,14 +271,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Save it so we can show it in combo later */
 		lastUsedWorkspaces.remove(str);
 
-		if ( !lastUsedWorkspaces.contains(str) ) {
-			lastUsedWorkspaces.add(0, str);
-		}
+		if (!lastUsedWorkspaces.contains(str)) { lastUsedWorkspaces.add(0, str); }
 
 		/* Deal with the max history */
-		if ( lastUsedWorkspaces.size() > maxHistory ) {
+		if (lastUsedWorkspaces.size() > maxHistory) {
 			final List<String> remove = new ArrayList<>();
-			for ( int i = maxHistory; i < lastUsedWorkspaces.size(); i++ ) {
+			for (int i = maxHistory; i < lastUsedWorkspaces.size(); i++) {
 				remove.add(lastUsedWorkspaces.get(i));
 			}
 
@@ -299,12 +284,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Create a string concatenation of all our last used workspaces */
-		final StringBuffer buf = new StringBuffer();
-		for ( int i = 0; i < lastUsedWorkspaces.size(); i++ ) {
+		final StringBuilder buf = new StringBuilder();
+		for (int i = 0; i < lastUsedWorkspaces.size(); i++) {
 			buf.append(lastUsedWorkspaces.get(i));
-			if ( i != lastUsedWorkspaces.size() - 1 ) {
-				buf.append(splitChar);
-			}
+			if (i != lastUsedWorkspaces.size() - 1) { buf.append(splitChar); }
 		}
 
 		/* Save them onto our preferences */
@@ -313,7 +296,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* Now create it */
 		final boolean ok = checkAndCreateWorkspaceRoot(str);
-		if ( !ok ) {
+		if (!ok) {
 			// scope.getGui().debug("Problem creating " + str);
 			setMessage("No workspace could be created at location " + str + ", please check the error log");
 			return;
@@ -324,27 +307,27 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* And on our preferences as well */
 		// scope.getGui().debug("Writing " + str + " in the preferences");
-		if ( cloning ) {
+		if (cloning) {
 			final String previousLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
 			File workspaceDirectory = new File(previousLocation);
-			if ( !workspaceDirectory.exists() || previousLocation.equals(str) ) {
+			if (!workspaceDirectory.exists() || previousLocation.equals(str)) {
 				final DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
 				dialog.setText("Choose an existing workspace");
 				final String result = dialog.open();
-				if ( result != null ) {
+				if (result != null) {
 					workspaceDirectory = new File(result);
 				} else {
 					workspaceDirectory = null;
 				}
 			}
-			if ( workspaceDirectory != null ) {
+			if (workspaceDirectory != null) {
 				final File targetDirectory = new File(str);
 				try {
 					copyFiles(workspaceDirectory, targetDirectory);
-					WorkspacePreferences.setApplyPrefs(true);
+					// WorkspacePreferences.setApplyPrefs(true);
 				} catch (final Exception err) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-						"There was an error cloning the workspace: " + err.getMessage());
+							"There was an error cloning the workspace: " + err.getMessage());
 					return;
 				}
 
@@ -356,26 +339,23 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * Checks to see if a workspace exists at a given directory string, and if
-	 * not, creates it. Also puts our identifying file inside that workspace.
+	 * Checks to see if a workspace exists at a given directory string, and if not, creates it. Also puts our
+	 * identifying file inside that workspace.
 	 *
 	 * @param wsRoot
 	 *            Workspace root directory as string
-	 * @return true if all checks and creations succeeded, false if there was a
-	 *         problem
+	 * @return true if all checks and creations succeeded, false if there was a problem
 	 */
 	public static boolean checkAndCreateWorkspaceRoot(final String wsRoot) {
 		try {
 			final File fRoot = new File(wsRoot);
-			if ( !fRoot.exists() ) {
-				// scope.getGui().debug("Folder " + wsRoot + " does not exist");
+			if (!fRoot.exists()) // scope.getGui().debug("Folder " + wsRoot + " does not exist");
 				return false;
-			}
 
-			File dotFile = new File(wsRoot + File.separator + WorkspacePreferences.WS_IDENTIFIER);
-			if ( !dotFile.exists() ) {
+			File dotFile = new File(wsRoot + File.separator + WorkspacePreferences.WORKSPACE_IDENTIFIER);
+			if (!dotFile.exists()) {
 				final boolean created = dotFile.createNewFile();
-				if ( !created ) { return false; }
+				if (!created) return false;
 				dotFile = new File(wsRoot + File.separator + WorkspacePreferences.getModelIdentifier());
 				dotFile.createNewFile();
 			}

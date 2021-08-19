@@ -26,8 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -218,7 +217,7 @@ public class ModelAssembler {
 
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
-			if (sd.isExperiment()) { if (!sd.finalizeDescription()) return null; }
+			if (sd.isExperiment() && !sd.finalizeDescription()) return null;
 		}
 
 		// Issue #1708 (put before the finalization)
@@ -232,20 +231,26 @@ public class ModelAssembler {
 	}
 
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
-		final DefaultDirectedGraph<SpeciesDescription, Object> hierarchy = new DefaultDirectedGraph<>(Object.class);
-		final DescriptionVisitor visitor = desc -> {
+		final DirectedAcyclicGraph<SpeciesDescription, Object> hierarchy = new DirectedAcyclicGraph<>(Object.class);
+		final DescriptionVisitor<SpeciesDescription> visitor = desc -> {
 			if (desc instanceof ModelDescription) return true;
-			final SpeciesDescription sd = ((SpeciesDescription) desc).getParent();
+			final SpeciesDescription sd = desc.getParent();
 			if (sd == null || sd == desc) return false;
-			hierarchy.addVertex((SpeciesDescription) desc);
+			hierarchy.addVertex(desc);
 			if (!sd.isBuiltIn()) {
 				hierarchy.addVertex(sd);
-				hierarchy.addEdge(sd, (SpeciesDescription) desc);
+				try {
+					hierarchy.addEdge(sd, desc);
+				} catch (IllegalArgumentException e) {
+					// denotes the presence of a cycle in the hierarchy
+					desc.error("The hierarchy of " + desc.getName() + " is inconsistent.", IGamlIssue.WRONG_PARENT);
+					return false;
+				}
 			}
 			return true;
 		};
 		model.visitAllSpecies(visitor);
-		return () -> new TopologicalOrderIterator<>(hierarchy);
+		return () -> hierarchy.iterator();
 	}
 
 	private void createSchedulerSpecies(final ModelDescription model) {

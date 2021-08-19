@@ -12,12 +12,14 @@ package msi.gama.common.util;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.random.CellularAutomatonRNG;
 import msi.gama.util.random.GamaRNG;
 import msi.gama.util.random.JavaRNG;
@@ -246,9 +248,7 @@ public class RandomUtils {
 		final Object[] a = list.toArray(new Object[size]);
 		list.clear();
 		shuffleInPlace(a);
-		for (final Object o : a) {
-			list.add(o);
-		}
+		list.addAll(Arrays.asList(a));
 	}
 
 	public <T> void shuffleInPlace(final T[] a) {
@@ -387,7 +387,7 @@ public class RandomUtils {
 		}
 	}
 
-	private class BitString {
+	private static class BitString {
 
 		private static final int WORD_LENGTH = 32;
 
@@ -565,6 +565,13 @@ public class RandomUtils {
 	public boolean oneOf(final boolean[] c) {
 		if (c == null || c.length == 0) return false;
 		return c[between(0, c.length - 1)];
+	}
+
+	public GamaPoint between(final GamaPoint pMin, final GamaPoint pMax, final GamaPoint pStep) {
+		double x = between(pMin.x, pMax.x, pStep.x);
+		double y = between(pMin.y, pMax.y, pStep.y);
+		double z = between(pMin.z, pMax.z, pStep.z);
+		return new GamaPoint(x, y, z);
 	}
 
 	// public static void main(final String[] args) {

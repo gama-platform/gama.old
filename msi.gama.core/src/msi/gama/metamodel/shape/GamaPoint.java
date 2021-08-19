@@ -86,8 +86,16 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return x < other.x || y < other.y || z < other.z;
 	}
 
+	public boolean smallerThanOrEqualTo(final GamaPoint other) {
+		return x <= other.x || y <= other.y || z <= other.z;
+	}
+
 	public boolean biggerThan(final GamaPoint other) {
 		return x > other.x || y > other.y || z > other.z;
+	}
+
+	public boolean biggerThanOrEqualTo(final GamaPoint other) {
+		return x >= other.x || y >= other.y || z >= other.z;
 	}
 
 	@Override
@@ -310,17 +318,18 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		if (g.isPoint()) return this.equals(g.getLocation());
 		return g.intersects(this);
 	}
-	
+
+	@Override
 	public boolean touches(final IShape g) {
 		if (g.isPoint()) return false;
 		return g.touches(this);
 	}
-	
+
+	@Override
 	public boolean partiallyOverlaps(final IShape g) {
 		if (g.isPoint()) return false;
 		return g.partiallyOverlaps(this);
 	}
-
 
 	@Override
 	public boolean crosses(final IShape g) {
@@ -633,7 +642,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		if (Math.abs(x) <= threshold) {
 			final double inverse = 1 / sqrt(y * y + z * z);
 			return new GamaPoint(0, inverse * z, -inverse * y);
-		} else if (Math.abs(y) <= threshold) {
+		}
+		if (Math.abs(y) <= threshold) {
 			final double inverse = 1 / sqrt(x * x + z * z);
 			return new GamaPoint(-inverse * z, 0, inverse * x);
 		}

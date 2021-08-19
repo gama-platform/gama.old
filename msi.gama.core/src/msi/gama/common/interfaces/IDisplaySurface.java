@@ -163,7 +163,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * @return true if the surface is considered as "realized" (i.e. displayed on the UI)
 	 */
-	boolean isRealized();
+	// boolean isRealized();
 
 	/**
 	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
@@ -197,5 +197,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	default boolean canTriggerContextualMenu() {
 		return !getManager().hasMouseMenuEventLayer();
 	}
+
+	default void setDisplaySynchronizer(final IDisplaySynchronizer layeredDisplaySynchronizer) {}
 
 }

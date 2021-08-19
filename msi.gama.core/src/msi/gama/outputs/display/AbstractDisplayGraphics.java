@@ -59,7 +59,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void setOpacity(final double alpha) {
+	public void setAlpha(final double alpha) {
 		// 1 means opaque ; 0 means transparent
 		currentLayerAlpha = alpha;
 	}

@@ -11,6 +11,10 @@
 package msi.gaml.operators;
 
 import java.util.StringTokenizer;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -26,7 +30,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
@@ -37,11 +40,11 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes" })
 public class Strings {
 
-//	static {
-//		DEBUG.ON();
-//	}
+	// static {
+	// DEBUG.ON();
+	// }
 
-	public static final String LN = java.lang.System.getProperty("line.separator");
+	public static final String LN = java.lang.System.lineSeparator();
 	public static final String TAB = "\t";
 
 	@operator (
@@ -138,7 +141,7 @@ public class Strings {
 							equals = "false")))
 	public static Boolean opContainsAll(final String target, final IList l) {
 		for (final Object o : l) {
-			if (!(o instanceof String && opContains(target, (String) o))) return false;
+			if (!(o instanceof String) || !opContains(target, (String) o)) return false;
 		}
 		return true;
 	}
@@ -235,7 +238,7 @@ public class Strings {
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
 	@doc (
-			value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the second operand by the third operand",
+			value = "Returns the string obtained by replacing by the third operand, in the first operand, all the sub-strings equal to the second operand",
 			examples = @example (
 					value = "replace('to be or not to be,that is the question','to', 'do')",
 					equals = "'do be or not do be,that is the question'"),
@@ -250,14 +253,38 @@ public class Strings {
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
 	@doc (
-			value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding to the regular expression given in the second operand by the third operand",
+			value = "Returns the string obtained by replacing by the third operand, in the first operand, all the sub-strings that match the regular expression of the second operand",
 			examples = @example (
 					value = "replace_regex(\"colour, color\", \"colou?r\", \"col\")",
 					equals = "'col, col'"),
 			see = { "replace" })
 	public static String opReplaceRegex(final String target, final String pattern, final String replacement) {
-//		DEBUG.OUT("String pattern = " + pattern);
+		// DEBUG.OUT("String pattern = " + pattern);
 		return target.replaceAll(pattern, replacement);
+	}
+
+	@operator (
+			value = { "regex_matches" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns the list of sub-strings of the first operand that match the regular expression provided in the second operand",
+			examples = @example (
+					value = "regex_matches(\"colour, color\", \"colou?r\")",
+					equals = "['colour','color']"),
+			see = { "replace_regex" })
+	public static IList<String> opRegexMatches(final String target, final String pattern) {
+		if (pattern == null || pattern.isEmpty()) return GamaListFactory.create();
+		Pattern p;
+		try {
+			p = Pattern.compile(pattern);
+		} catch (PatternSyntaxException e) {
+			return target.contains(pattern) ? GamaListFactory.createWithoutCasting(Types.STRING, pattern)
+					: GamaListFactory.create();
+		}
+		return GamaListFactory.wrap(Types.STRING,
+				p.matcher(target).results().map(MatchResult::group).collect(Collectors.toList()));
 	}
 
 	@operator (
@@ -300,18 +327,16 @@ public class Strings {
 
 		// deal with any possible sign up front
 		final int start = s.charAt(0) == '-' ? 1 : 0;
-		if (sz > start + 1) {
-			if (s.charAt(start) == '#') {
-				int i = start + 1;
-				if (i == sz) return false; // str == "#"
-				// Checking hex (it can't be anything else)
-				for (; i < length; i++) {
-					final char c = s.charAt(i);
-					if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) return false;
-				}
-
-				return true;
+		if (sz > start + 1 && s.charAt(start) == '#') {
+			int i = start + 1;
+			if (i == sz) return false; // str == "#"
+			// Checking hex (it can't be anything else)
+			for (; i < length; i++) {
+				final char c = s.charAt(i);
+				if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) return false;
 			}
+
+			return true;
 		}
 
 		sz--; // Don't want to loop to the last char, check it afterwords for
@@ -327,36 +352,37 @@ public class Strings {
 			if (c >= '0' && c <= '9') {
 				foundDigit = true;
 				allowSigns = false;
-			} else if (c == '.') {
-				if (hasDecPoint || hasExp) // Two decimal points or dec in exponent
-					return false;
-				hasDecPoint = true;
-			} else if (c == 'e' || c == 'E') {
-				// We've already taken care of hex.
-				if (hasExp) // Two E's
-					return false;
-				if (foundDigit) {
-					hasExp = true;
-					allowSigns = true;
-				} else
-					return false;
-			} else if (c == '-') {
-				if (allowSigns) {
-					allowSigns = false;
-					foundDigit = false; // We need a digit after the E
-				} else
-					return false;
-			} else
-				return false;
+			} else {
+				switch (c) {
+					case '.':
+						if (hasDecPoint || hasExp) // Two decimal points or dec in exponent
+							return false;
+						hasDecPoint = true;
+						break;
+					case 'e':
+					case 'E':
+						// We've already taken care of hex.
+						if (hasExp || !foundDigit) return false;
+						hasExp = true;
+						allowSigns = true;
+						break;
+					case '-':
+						if (!allowSigns) return false;
+						allowSigns = false;
+						foundDigit = false; // We need a digit after the E
+						break;
+					default:
+						return false;
+				}
+			}
 
 			i++;
 		}
 
 		if (i < length) {
 			final char c = s.charAt(i);
-			if (c >= '0' && c <= '9')
-				return true; // No type qualifier, OK
-			else if (c == 'e' || c == 'E') return false; // can't have an E at the last byte
+			if (c >= '0' && c <= '9') return true; // No type qualifier, OK
+			if (c == 'e' || c == 'E') return false; // can't have an E at the last byte
 		}
 
 		// allowSigns is true iff the val ends in 'E'
@@ -471,7 +497,7 @@ public class Strings {
 							equals = "'\"'")))
 	static public String asChar(final Integer s) {
 		if (s == null) return "";
-		return Character.toString((char) s.intValue());
+		return Character.toString((char) s.byteValue());
 	}
 
 	@operator (

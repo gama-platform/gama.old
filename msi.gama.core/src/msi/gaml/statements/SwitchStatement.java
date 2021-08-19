@@ -26,8 +26,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -59,7 +59,9 @@ import msi.gaml.types.Types;
 				doc = @doc ("an expression")) },
 		omissible = IKeyword.VALUE)
 @doc (
-		value = "The \"switch... match\" statement is a powerful replacement for imbricated \"if ... else ...\" constructs. All the blocks that match are executed in the order they are defined. The block prefixed by default is executed only if none have matched (otherwise it is not).",
+		value = "The \"switch... match\" statement is a powerful replacement for imbricated \"if ... else ...\" constructs. "
+				+ "All the blocks that match are executed in the order they are defined, unless one invokes 'break', in which case "
+				+ "the switch statement is exited. The block prefixed by default is executed only if none have matched (otherwise it is not).",
 		usages = { @usage (
 				value = "The prototypical syntax is as follows:",
 				examples = { @example (
@@ -233,14 +235,12 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 			// match_one or match_between)
 			final Iterable<IDescription> matches = desc.getChildrenWithKeyword(MATCH);
 			final IExpression switchValue = desc.getFacetExpr(VALUE);
-			if (switchValue == null) { return; }
+			if (switchValue == null) return;
 			final IType switchType = switchValue.getGamlType();
-			if (switchType.equals(Types.NO_TYPE)) { return; }
+			if (switchType.equals(Types.NO_TYPE)) return;
 			for (final IDescription match : matches) {
 				final IExpression value = match.getFacetExpr(VALUE);
-				if (value == null) {
-					continue;
-				}
+				if (value == null) { continue; }
 				final IType<?> matchType = value.getGamlType();
 				// AD : special case introduced for ints and floats (a warning
 				// is emitted)
@@ -252,9 +252,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 					continue;
 				}
 
-				if (matchType.isTranslatableInto(switchType)) {
-					continue;
-				}
+				if (matchType.isTranslatableInto(switchType)) { continue; }
 				match.warning(
 						"The value " + value.serialize(false) + " of type " + matchType
 								+ " is compared to a value of type " + switchType + ", which will never match ",
@@ -287,7 +285,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 		final List<MatchStatement> cases = new ArrayList<>();
 		for (final ISymbol c : commands) {
 			if (c instanceof MatchStatement) {
-				if (((MatchStatement) c).getKeyword().equals(IKeyword.DEFAULT)) {
+				if (IKeyword.DEFAULT.equals(((MatchStatement) c).getKeyword())) {
 					defaultMatch = (MatchStatement) c;
 				} else {
 					cases.add((MatchStatement) c);
@@ -304,15 +302,15 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 		final Object switchValue = value.value(scope);
 		Object lastResult = null;
 		for (final MatchStatement matche : matches) {
-			if (scope.interrupted()) { return lastResult; }
+			if (scope.interrupted()) return lastResult;
 			if (matche.matches(scope, switchValue)) {
 				final ExecutionResult er = scope.execute(matche);
-				if (!er.passed()) { return lastResult; }
+				if (!er.passed()) return lastResult;
 				lastResult = er.getValue();
 				hasMatched = true;
 			}
 		}
-		if (!hasMatched && defaultMatch != null) { return scope.execute(defaultMatch).getValue(); }
+		if (!hasMatched && defaultMatch != null) return scope.execute(defaultMatch).getValue();
 		return lastResult;
 	}
 

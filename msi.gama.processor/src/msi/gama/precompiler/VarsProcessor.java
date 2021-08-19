@@ -4,8 +4,10 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -21,6 +23,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 	Map<Element, Map<String, ExecutableElement>> setters = new HashMap<>();
 	Map<Element, Map<String, ExecutableElement>> getters = new HashMap<>();
+	Set<String> temp = new HashSet<>();
 
 	@Override
 	public void process(final ProcessorContext context) {
@@ -45,6 +48,12 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		final boolean isField = !context.getTypeUtils().isAssignable(typeClass, context.getIVarAndActionSupport());
 
 		for (final variable node : vars.value()) {
+			String vName = node.name();
+			if (temp.contains(vName)) {
+				context.emitError("Attribute '" + vName + " is declared twice", e);
+			} else {
+				temp.add(vName);
+			}
 			verifyDoc(context, e, "attribute " + node.name(), node);
 			final String clazz = rawNameOf(context, e.asType());
 			final String clazzObject = toClassObject(clazz);
@@ -61,9 +70,10 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				sb.append("),");
 				writeHelpers(sb, context, node, clazz, e, isField, false);
 			}
+
 			sb.append(");");
 		}
-
+		temp.clear();
 	}
 
 	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final variable var,
@@ -92,7 +102,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 					final boolean scope = n > 0 && args[0].contains("IScope");
 					final String method = ex.getSimpleName().toString();
-					final boolean isDynamic = !scope && n == 2 || scope && n == 3;
+					final boolean isDynamic = (scope ? n == 3 : n == 2);
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
 					setterHelper = concat("(s,a,t,v)->{if (t != null) ((", clazz, ") t).", method, "(",
@@ -114,7 +124,7 @@ public class VarsProcessor extends ElementProcessor<vars> {
 				final boolean scope = n > 0 && args[0].contains("IScope");
 				final String method = ex.getSimpleName().toString();
 				final String returns = rawNameOf(context, ex.getReturnType());
-				final boolean dynamic = !scope && n > 0 || scope && n > 1;
+				final boolean dynamic = (scope ? n > 1 : n > 0);
 
 				if (isField) {
 					// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
@@ -145,14 +155,14 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 		final String[] dependencies = s.depends_on();
 		if (dependencies.length > 0) {
-			String depends = "[";
+			StringBuilder depends = new StringBuilder("[");
 			for (int i = 0; i < dependencies.length; i++) {
 				final String string = dependencies[i];
-				depends += string;
-				if (i < dependencies.length - 1) { depends += ","; }
+				depends.append(string);
+				if (i < dependencies.length - 1) { depends.append(","); }
 			}
-			depends += "]";
-			sb.append(',').append("\"depends_on\"").append(',').append(toJavaString(depends));
+			depends.append("]");
+			sb.append(',').append("\"depends_on\"").append(',').append(toJavaString(depends.toString()));
 		}
 		if (s.of() != 0) { sb.append(',').append("\"of\"").append(',').append(toJavaString(String.valueOf(s.of()))); }
 		final String init = s.init();
