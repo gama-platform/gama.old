@@ -366,6 +366,7 @@ public class Application implements IApplication {
 		
 		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
 		
+		expPlan.setHeadless(true);
 		expPlan.open();
 		
 		System.exit(0);

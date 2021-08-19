@@ -36,7 +36,7 @@ public class SimulationRunner {
 		population = pop;
 		runnables = new LinkedHashMap<>();
 		final IExperimentPlan plan = population.getHost().getSpecies();
-		if (plan.isHeadless()) {
+		if (plan.isHeadless() && !plan.isBatch()) {
 			concurrency = 1;
 		} else {
 			concurrency = GamaExecutorService.getParallelism(population.getHost().getScope(), plan.getConcurrency(),
