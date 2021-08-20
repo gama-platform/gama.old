@@ -95,7 +95,7 @@ import msi.gaml.variables.Variable;
 						name = IKeyword.VAR,
 						type = IType.ID,
 						optional = false,
-						doc = @doc ("the name of the variable (that should be declared in the global)")),
+						doc = @doc ("the name of the variable (that should be declared in global)")),
 				@facet (
 						name = IKeyword.UNIT,
 						type = IType.LABEL,
