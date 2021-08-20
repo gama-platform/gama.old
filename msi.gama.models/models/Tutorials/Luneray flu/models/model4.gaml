@@ -2,7 +2,7 @@
 * Name: Luneray's flu 4
 * Author: Patrick Taillandier
 * Description: Use of a graph to constraint the movements of people
-* Tags: graph, moving
+* Tags: graph, moving, tutorial
 */
 
 model model4

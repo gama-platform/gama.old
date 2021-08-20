@@ -2,7 +2,7 @@
 * Name: Luneray's flu 2
 * Author: Patrick Taillandier
 * Description: Additions of a chart, monitor and end condition
-* Tags: chart, monitor, pause
+* Tags: chart, monitor, pause, tutorial
 */
 
 model model2

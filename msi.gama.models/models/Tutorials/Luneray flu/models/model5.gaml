@@ -2,7 +2,7 @@
 * Name: Luneray's flu 5
 * Author: Patrick Taillandier
 * Description: Define a 3D display
-* Tags: 3D, obj, opengl
+* Tags: 3D, obj, opengl, tutorial
 */
 
 model model5
