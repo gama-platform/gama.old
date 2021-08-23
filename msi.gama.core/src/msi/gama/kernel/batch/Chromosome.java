@@ -23,15 +23,15 @@ import msi.gaml.types.IType;
 
 public class Chromosome implements Comparable<Chromosome> {
 
-	private double[] genes;
+	private Object[] genes;
 	private final String[] phenotype;
 	private double fitness;
 
-	public double[] getGenes() {
+	public Object[] getGenes() {
 		return genes;
 	}
 
-	public void setGenes(final double[] genes) {
+	public void setGenes(final Object[] genes) {
 		this.genes = genes;
 	}
 
@@ -45,7 +45,7 @@ public class Chromosome implements Comparable<Chromosome> {
 
 	public Chromosome(final Chromosome chromosome) {
 
-		genes = new double[chromosome.genes.length];
+		genes = new Object[chromosome.genes.length];
 		phenotype = new String[chromosome.phenotype.length];
 
 		for (int i = 0; i < genes.length; i++) {
@@ -65,7 +65,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	public Chromosome(final IScope scope, final List<IParameter.Batch> variables, final boolean reInitVal) {
-		genes = new double[variables.size()];
+		genes = new Object[variables.size()];
 		phenotype = new String[variables.size()];
 		int cpt = 0;
 		for (final IParameter.Batch var : variables) {
