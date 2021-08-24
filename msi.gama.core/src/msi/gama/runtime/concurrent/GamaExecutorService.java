@@ -58,7 +58,7 @@ public abstract class GamaExecutorService {
 			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS_ALL =
-			create("pref_parallel_simulations", "Allow parallel simulations with different parameter sets", false, IType.BOOL, true)
+			create("pref_parallel_simulations_all", "Allow parallel simulations with different parameter sets", false, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 	
 	public static final Pref<Boolean> CONCURRENCY_GRID =
