@@ -10,7 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -29,8 +31,10 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -222,7 +226,10 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				}
 				population.addAll(mutatePop.items());
 			}
-			computePopFitness(scope, population);
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue())
+				computePopFitnessAll(scope, population);
+			else
+				computePopFitness(scope, population);
 			population = population.stream().distinct().collect(Collectors.toList());
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
@@ -246,7 +253,30 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 		}
 	}
+	
+	private void computePopFitnessAll(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
+		List<ParametersSet> sets = new ArrayList<>();
+		Map<Chromosome,ParametersSet> paramToCh = GamaMapFactory.create();
+		for (final Chromosome chromosome : population) {
+			ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+			sets.add(sol );
+			paramToCh.put( chromosome, sol);
+		}
+		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(sets);
+		testedSolutions.putAll(fitnessRes);
+		for (final Chromosome chromosome : population) {
+			ParametersSet ps = paramToCh.get(chromosome);
+			if (ps != null) {
+				Double fitness = fitnessRes.get(ps);
+				if (fitness != null) chromosome.setFitness(fitness);
+			}
+				
+		}
+		
+		
+	}
 
+	
 	public void computeChroFitness(final IScope scope, final Chromosome chromosome) {
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);

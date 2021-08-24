@@ -57,6 +57,10 @@ public abstract class GamaExecutorService {
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
 			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS_ALL =
+			create("pref_parallel_simulations", "Allow parallel simulations with different parameter sets", false, IType.BOOL, true)
+					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
+	
 	public static final Pref<Boolean> CONCURRENCY_GRID =
 			create("pref_parallel_grids", "Make grids schedule their agents in parallel", false, IType.BOOL, true)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
@@ -98,6 +102,7 @@ public abstract class GamaExecutorService {
 		SPECIES, GRID, NONE, SIMULATION
 	}
 
+	
 	/**
 	 * Returns the level of parallelism from the expression passed and the preferences
 	 *

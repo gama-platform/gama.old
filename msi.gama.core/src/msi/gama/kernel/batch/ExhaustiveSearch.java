@@ -11,6 +11,7 @@
 package msi.gama.kernel.batch;
 
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -27,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gaml.descriptions.IDescription;
@@ -86,8 +88,102 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestFitness(null);
-		testSolutions(scope, new ParametersSet(), 0);
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue())
+			testSolutionsAll(scope);
+		else
+			testSolutions(scope, new ParametersSet(), 0);
 		return getBestSolution();
+	}
+	
+	
+	List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
+		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
+		final IParameter.Batch var = variables.get(index);
+		List<ParametersSet> sets2 = new ArrayList<>();
+		for (ParametersSet solution : sets) {
+			if (var.getAmongValue(scope) != null) {
+				for (final Object val : var.getAmongValue(scope)) {
+					ParametersSet ps = new ParametersSet(solution);
+					ps.put(var.getName(), val);
+					sets2.add(ps);
+				}
+				
+			} else {
+				switch (var.getType().id()) {
+					case IType.INT:
+						int intValue = Cast.asInt(scope, var.getMinValue(scope));
+						int maxIntValue = Cast.asInt(scope, var.getMaxValue(scope));
+						while (intValue <= maxIntValue) {
+							ParametersSet ps = new ParametersSet(solution);
+							ps.put(var.getName(), intValue);
+							sets2.add(ps);
+							
+							intValue = intValue + Cast.asInt(scope, var.getStepValue(scope));
+						}
+						break;
+					case IType.FLOAT:
+						double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
+						double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
+						while (floatValue <= maxFloatValue) {
+							
+							ParametersSet ps = new ParametersSet(solution);
+							ps.put(var.getName(), floatValue);
+							sets2.add(ps);
+							
+							floatValue = floatValue + Cast.asFloat(scope, var.getStepValue(scope));
+						}
+						break;
+					case IType.DATE:
+						GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
+						GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
+						while (dateValue.isSmallerThan(maxDateValue, false)) {
+							ParametersSet ps = new ParametersSet(solution);
+							ps.put(var.getName(), dateValue);
+							sets2.add(ps);
+							
+							dateValue = dateValue.plus(Cast.asFloat(scope, var.getStepValue(scope)), ChronoUnit.SECONDS);
+						}
+						break;
+					case IType.POINT:
+						GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
+						GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
+						while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
+							ParametersSet ps = new ParametersSet(solution);
+							ps.put(var.getName(), pointValue);
+							sets2.add(ps);
+							
+							pointValue = pointValue.plus(Cast.asPoint(scope, var.getStepValue(scope)));
+						}
+						break;
+					default:
+						double varValue = Cast.asFloat(scope, var.getMinValue(scope));
+						while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
+							ParametersSet ps = new ParametersSet(solution);
+							if (var.getType().id() == IType.INT) {
+								ps.put(var.getName(), (int) varValue);
+							} else if (var.getType().id() == IType.FLOAT) {
+								ps.put(var.getName(), varValue);
+							} else {
+								continue;
+							}
+							sets2.add(ps);
+							
+							varValue = varValue + Cast.asFloat(scope, var.getStepValue(scope));
+						}
+				}
+			}
+		}
+		if (index == (variables.size() - 1)) {
+			return sets2;
+		}
+		return buildParameterSets(scope,sets2,index+1);
+	}
+	
+	private void testSolutionsAll(final IScope scope) {
+		List<ParametersSet> sets = new ArrayList<>();
+		sets.add(new ParametersSet());
+		final List<ParametersSet> solutions = buildParameterSets(scope,sets, 0);
+		currentExperiment.launchSimulationsWithSolution(solutions);
 	}
 
 	private void testSolutions(final IScope scope, final ParametersSet sol, final int index)
