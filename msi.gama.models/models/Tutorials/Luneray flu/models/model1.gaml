@@ -2,7 +2,7 @@
 * Name: Luneray's flu 1
 * Author: Patrick Taillandier
 * Description: Describe here the model and its experiments
-* Tags: species, global, experiment, skill, moving
+* Tags: species, global, experiment, skill, moving, tutorial
 */
 
 model model1

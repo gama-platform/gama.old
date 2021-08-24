@@ -1,5 +1,6 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
+import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeedCoeff;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getDeltaIDM;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxAcceleration;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxDeceleration;
@@ -10,6 +11,8 @@ import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeHeadway;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+
+import simtools.gaml.extensions.traffic.RoadSkill;
 
 public class IDM {
 	/**
@@ -24,13 +27,14 @@ public class IDM {
 	 */
 	public static double computeAcceleration(final IScope scope,
 			final IAgent vehicle,
+			final IAgent road,
 			final double leadingDist,
 			final double leadingSpeed) {
 		// IDM params
 		double T = getTimeHeadway(vehicle);
 		double a = getMaxAcceleration(vehicle);
 		double b = getMaxDeceleration(vehicle);
-		double v0 = getMaxSpeed(vehicle);
+		double v0 = Math.min(getMaxSpeed(vehicle), getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
 		double s0 = getMinSafetyDistance(vehicle);
 		double delta = getDeltaIDM(vehicle);
 

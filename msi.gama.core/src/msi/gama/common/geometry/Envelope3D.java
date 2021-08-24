@@ -20,7 +20,6 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Comparison;
 import msi.gaml.types.GamaGeometryType;
@@ -35,10 +34,10 @@ import msi.gaml.types.GamaGeometryType;
  * @adapted for GAMA by A. Drogoul
  *
  */
-public class Envelope3D extends Envelope implements IDisposable {
+public class Envelope3D extends Envelope implements IDisposable, IIntersectable {
 
 	private final static PoolUtils.ObjectPool<Envelope3D> POOL =
-			PoolUtils.create("Envelope 3D", true, () -> new Envelope3D(), (from, to) -> to.set(from), null);
+			PoolUtils.create("Envelope 3D", true, Envelope3D::new, (from, to) -> to.set(from), null);
 
 	public static final Envelope3D EMPTY = create();
 
@@ -66,7 +65,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 		return of(s.getInnerGeometry());
 	}
 
-	public static Envelope3D of(final ILocation s) {
+	public static Envelope3D of(final GamaPoint s) {
 		return of((Coordinate) s);
 	}
 
@@ -380,7 +379,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	@Override
 	public boolean intersects(final Envelope other) {
 		if (!super.intersects(other)) return false;
-		return !(getMinZOf(other) > maxz || getMaxZOf(other) < minz);
+		return getMinZOf(other) <= maxz && getMaxZOf(other) >= minz;
 	}
 
 	/**
@@ -408,7 +407,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	protected boolean intersects(final double x, final double y, final double z) {
 		if (isNull()) return false;
-		return intersects(x, y) && !(z < minz || z > maxz);
+		return intersects(x, y) && z >= minz && z <= maxz;
 	}
 
 	/**
@@ -448,8 +447,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 	 */
 	@Override
 	public boolean covers(final Envelope other) {
-		if (isNull() || other.isNull()) return false;
-		if (!super.covers(other)) return false;
+		if (isNull() || other.isNull() || !super.covers(other)) return false;
 		return getMinZOf(other) >= minz && getMaxZOf(other) <= maxz;
 	}
 
@@ -488,9 +486,7 @@ public class Envelope3D extends Envelope implements IDisposable {
 
 	// ---------------------------------------------------------------------------------------------------------------
 
-	private Envelope3D() {
-		super();
-	}
+	private Envelope3D() {}
 
 	/**
 	 * Computes the intersection of two {@link Envelope}s.

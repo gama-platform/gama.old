@@ -54,7 +54,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 				viewer.setLayoutData(data);
 			}
 			viewer.setBackground(!ThemeHelper.isDark() ? IGamaColors.WHITE.color() : IGamaColors.DARK_GRAY.darker());
-			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
+			// viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
 			viewer.setSpacing(8);
 		}
 	}
@@ -74,15 +74,15 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 
 	protected ParameterExpandItem createItem(final Composite parent, final String name, final T data,
 			final Composite control, final ParameterExpandBar bar, final boolean expanded, final GamaUIColor color) {
-		final var i = buildConcreteItem(bar, data, color);
-		if (name != null) { i.setText(name); }
+		final var item = buildConcreteItem(bar, data, color);
+		if (name != null) { item.setText(name); }
 		control.pack(true);
 		control.layout();
-		i.setControl(control);
-		i.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		i.setExpanded(expanded);
+		item.setControl(control);
+		item.setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		item.setExpanded(expanded);
 		parent.layout(true, true);
-		return i;
+		return item;
 	}
 
 	protected ParameterExpandItem buildConcreteItem(final ParameterExpandBar bar, final T data,

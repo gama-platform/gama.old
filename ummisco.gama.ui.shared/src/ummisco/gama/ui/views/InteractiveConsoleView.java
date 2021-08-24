@@ -15,11 +15,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
@@ -29,6 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IOConsole;
@@ -61,8 +66,8 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public class InteractiveConsoleView extends GamaViewPart
-		implements IToolbarDecoratedView.Sizable, IGamaView.Console, IExecutionContext, IVarDescriptionProvider {
+public class InteractiveConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable,
+		IToolbarDecoratedView.LogExportable, IGamaView.Console, IExecutionContext, IVarDescriptionProvider {
 
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
@@ -188,14 +193,10 @@ public class InteractiveConsoleView extends GamaViewPart
 			return;
 		}
 		if (indexInHistory <= 0) {
-			if (back) {
-				ViewsHelper.requestUserAttention(this, "No more history");
-			}
+			if (back) { ViewsHelper.requestUserAttention(this, "No more history"); }
 			indexInHistory = 0;
 		} else if (indexInHistory >= history.size() - 1) {
-			if (!back) {
-				ViewsHelper.requestUserAttention(this, "No more history");
-			}
+			if (!back) { ViewsHelper.requestUserAttention(this, "No more history"); }
 			indexInHistory = history.size() - 1;
 		}
 		try {
@@ -227,9 +228,7 @@ public class InteractiveConsoleView extends GamaViewPart
 			try {
 				writer.append(text);
 				writer.flush();
-				if (showPrompt) {
-					showPrompt();
-				}
+				if (showPrompt) { showPrompt(); }
 			} catch (final IOException e) {}
 
 		});
@@ -257,7 +256,7 @@ public class InteractiveConsoleView extends GamaViewPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (viewer == null) { return null; }
+		if (viewer == null) return null;
 		return viewer.getTextWidget();
 	}
 
@@ -297,9 +296,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	@Override
 	public void append(final String text, final ITopLevelAgent agent, final GamaColor color) {
 		setExecutorAgent(agent);
-		if (text != null) {
-			append(text, false, true);
-		}
+		if (text != null) { append(text, false, true); }
 	}
 
 	private void setExecutorAgent(final ITopLevelAgent agent) {
@@ -310,9 +307,7 @@ public class InteractiveConsoleView extends GamaViewPart
 		if (agent == null) {
 
 			WorkbenchHelper.asyncRun(() -> {
-				if (toolbar != null && !toolbar.isDisposed()) {
-					toolbar.wipe(SWT.LEFT, true);
-				}
+				if (toolbar != null && !toolbar.isDisposed()) { toolbar.wipe(SWT.LEFT, true); }
 			});
 		} else {
 			scope = new ExecutionScope(agent, " in console", this);
@@ -338,9 +333,7 @@ public class InteractiveConsoleView extends GamaViewPart
 			} else {
 				try {
 					final var expr = GAML.compileExpression(s, agent, this, false);
-					if (expr != null) {
-						result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true);
-					}
+					if (expr != null) { result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true); }
 				} catch (final Exception e) {
 					error = true;
 					result = "> Error: " + e.getMessage();
@@ -348,13 +341,9 @@ public class InteractiveConsoleView extends GamaViewPart
 					agent.getSpecies().removeTemporaryAction();
 				}
 			}
-			if (result == null) {
-				result = "nil";
-			}
+			if (result == null) { result = "nil"; }
 			append(result, error, true);
-			if (!error && GAMA.getExperiment() != null) {
-				GAMA.getExperiment().refreshAllOutputs();
-			}
+			if (!error && GAMA.getExperiment() != null) { GAMA.getExperiment().refreshAllOutputs(); }
 		}
 
 	}
@@ -368,9 +357,7 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	private IAgent getListeningAgent() {
-		if (scope == null) {
-			setExecutorAgent(GAMA.getPlatformAgent());
-		}
+		if (scope == null) { setExecutorAgent(GAMA.getPlatformAgent()); }
 		return scope.getRoot();
 	}
 
@@ -445,6 +432,28 @@ public class InteractiveConsoleView extends GamaViewPart
 	@Override
 	public boolean hasAttribute(final String name) {
 		return temps.containsKey(name);
+	}
+
+	public String getContents() {
+		return viewer.getDocument().get();
+	}
+
+	@Override
+	public void saveAsLog() {
+		String text = getContents();
+		FileDialog fd = new FileDialog(WorkbenchHelper.getShell(), SWT.SAVE);
+		fd.setText("Choose a destination file");
+		fd.setFilterExtensions(new String[] { "*.log" });
+		if (GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
+			fd.setFilterPath(GAMA.getExperiment().getAgent().getProjectPath());
+		} else {
+			fd.setFilterPath(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
+		}
+		String f = fd.open();
+		if (f == null) return;
+		try {
+			Files.writeString(Path.of(f), text, StandardCharsets.UTF_8);
+		} catch (IOException e) {}
 	}
 
 }

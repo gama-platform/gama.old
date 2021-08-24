@@ -153,7 +153,7 @@ public class GamaNavigator extends CommonNavigator
 			}
 			final VirtualContent<?>[] sel = contents.toArray(new VirtualContent[0]);
 			if (sel.length > 0) {
-				getCommonViewer().setExpandedElements(sel);
+				getCommonViewer().setExpandedElements((Object) sel);
 				getCommonViewer().setSelection(new StructuredSelection(sel[sel.length - 1]));
 			}
 

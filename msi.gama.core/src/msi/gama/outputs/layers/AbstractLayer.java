@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.AbstractLayer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ * msi.gama.outputs.layers.AbstractLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8.1)
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -30,9 +30,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	public AbstractLayer(final ILayerStatement layer) {
 		definition = layer;
-		if (definition != null) {
-			setName(definition.getName());
-		}
+		if (definition != null) { setName(definition.getName()); }
 		data = createData();
 	}
 
@@ -57,14 +55,25 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (!g.is2D() && !getData().isDynamic() && hasBeenDrawnOnce) { return; }
-		if (g.isNotReadyToUpdate() && hasBeenDrawnOnce) { return; }
+		if (shouldNotDraw(g)) return;
 		getData().compute(scope, g);
-		g.setOpacity(1-getData().getTransparency(scope));
+		g.setAlpha(1 - getData().getTransparency(scope));
 		g.beginDrawingLayer(this);
 		privateDraw(scope, g);
 		g.endDrawingLayer(this);
 		hasBeenDrawnOnce = true;
+	}
+
+	/**
+	 * A layer should not be drawn if it has been drawn once and either (1) it is considered as static (and we are in
+	 * OpenGL), or (2) the graphics environment is not ready to update (we skip one frame)
+	 *
+	 * @param g
+	 *            the IGraphics instance on which we draw
+	 * @return true if ok to draw, false otherwise
+	 */
+	protected boolean shouldNotDraw(final IGraphics g) {
+		return hasBeenDrawnOnce && (!g.is2D() && !getData().isDynamic() || g.isNotReadyToUpdate());
 	}
 
 	protected abstract void privateDraw(IScope scope, final IGraphics g) throws GamaRuntimeException;

@@ -81,9 +81,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	protected boolean hasFacetsNotIn(final Set<String> others) {
 		if (facets == null) return false;
-		return !visitFacets((facetName, exp) -> {
-			return others.contains(facetName);
-		});
+		return !visitFacets((facetName, exp) -> others.contains(facetName));
 	}
 
 	@Override
@@ -263,7 +261,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void error(final String s, final String code, final String facet, final String... data) {
-		flagError(s, code, false, false, this.getUnderlyingElement(facet, code.equals(IGamlIssue.UNKNOWN_FACET)), data);
+		flagError(s, code, false, false, this.getUnderlyingElement(facet, IGamlIssue.UNKNOWN_FACET.equals(code)), data);
 	}
 
 	@Override
@@ -293,7 +291,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void warning(final String s, final String code, final String facet, final String... data) {
-		flagError(s, code, true, false, this.getUnderlyingElement(facet, code.equals(IGamlIssue.UNKNOWN_FACET)), data);
+		flagError(s, code, true, false, this.getUnderlyingElement(facet, IGamlIssue.UNKNOWN_FACET.equals(code)), data);
 	}
 
 	@Override
@@ -368,11 +366,9 @@ public abstract class SymbolDescription implements IDescription {
 			if (result != null) return result;
 		}
 		if (facet instanceof String) {
-			if (getMeta() != null && !returnFacet) {
-				if (facet.equals(getMeta().getOmissible())) {
-					final EObject o = GAML.getEcoreUtils().getExprOf(element);
-					if (o != null) return o;
-				}
+			if (getMeta() != null && !returnFacet && facet.equals(getMeta().getOmissible())) {
+				final EObject o = GAML.getEcoreUtils().getExprOf(element);
+				if (o != null) return o;
 			}
 			if (returnFacet) {
 				final EObject facetObject = GAML.getEcoreUtils().getFacetsMapOf(element).get(facet);
@@ -594,8 +590,7 @@ public abstract class SymbolDescription implements IDescription {
 		}
 
 		// We then validate its facets
-		if (!validateFacets()) return null;
-		if (!validateChildren()) return null;
+		if (!validateFacets() || !validateChildren()) return null;
 		if (proto.getDeprecated() != null) {
 			warning("'" + getKeyword() + "' is deprecated. " + proto.getDeprecated(), IGamlIssue.DEPRECATED);
 		}
@@ -675,6 +670,15 @@ public abstract class SymbolDescription implements IDescription {
 					final IType<?> actualType = exp.getGamlType();
 					final IType<?> contentType = fp.contentType;
 					final IType<?> keyType = fp.keyType;
+					// Special case for init. Temporary solution before we can pass ITypeProvider.OWNER_TYPE to the init
+					// facet. Concerned types are point and date, which belong to "NumberVariable" and can accept nil,
+					// while int and float cannot
+					if (INIT.equals(fp.name)) {
+						IType<?> requestedType = SymbolDescription.this.getGamlType();
+						if ((Types.POINT == requestedType || Types.DATE == requestedType)
+								&& actualType == Types.NO_TYPE)
+							return true;
+					}
 					for (final IType<?> type : fp.types) {
 						IType<?> requestedType1 = type;
 						if (requestedType1.isContainer()) {

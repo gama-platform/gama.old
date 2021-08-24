@@ -27,9 +27,8 @@ public class CommandEditor extends AbstractStatementEditor<UserCommandStatement>
 	@Override
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 		GamaUIColor color = GamaColors.get(getStatement().getColor(getScope()));
-		if (color == null)
-			color = IGamaColors.NEUTRAL;
-		textBox = FlatButton.button(composite, color, "").light().small();
+		if (color == null) { color = IGamaColors.NEUTRAL; }
+		textBox = FlatButton.button(composite, color, "");
 		textBox.setText(getStatement().getName() + "  ");
 		textBox.addSelectionListener(getListener());
 		return textBox;

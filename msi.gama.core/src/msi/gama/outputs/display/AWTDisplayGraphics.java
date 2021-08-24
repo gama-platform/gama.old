@@ -159,8 +159,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	}
 
 	@Override
-	public void setOpacity(final double alpha) {
-		super.setOpacity(alpha);
+	public void setAlpha(final double alpha) {
+		super.setAlpha(alpha);
 		currentRenderer.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
 	}
 
@@ -186,7 +186,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
 		return drawShape(shape.getInnerGeometry(),
-				new ShapeDrawingAttributes(shape.getLocation().toGamaPoint(), c, c, (IShape.Type) null));
+				new ShapeDrawingAttributes(shape.getLocation(), c, c, (IShape.Type) null));
 	}
 
 	AffineTransform imageTransform = new AffineTransform();
@@ -298,7 +298,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		if (geometry == null) return null;
 		if (geometry instanceof GeometryCollection) {
 			final Rectangle2D result = new Rectangle2D.Double();
-			GeometryUtils.applyToInnerGeometries(geometry, (g) -> result.add(drawShape(g, attributes)));
+			GeometryUtils.applyToInnerGeometries(geometry, g -> result.add(drawShape(g, attributes)));
 			return result;
 		}
 		final boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
@@ -326,8 +326,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	}
 
 	@Override
-	public void fillBackground(final Color bgColor, final double opacity) {
-		setOpacity(opacity);
+	public void fillBackground(final Color bgColor) {
+		setAlpha(1);
 		currentRenderer.setColor(bgColor);
 		currentRenderer.fillRect(0, 0, (int) surface.getDisplayWidth(), (int) surface.getDisplayHeight());
 	}

@@ -28,7 +28,7 @@ global
 species generic_species skills: [moving]
 {
 	float speed <- 1.0;
-	point goal <- nil;
+	point goal;
 	bool is_chased <- false;
 	reflex live_with_my_goal
 	{

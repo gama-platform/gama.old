@@ -13,7 +13,6 @@ package msi.gaml.skills;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
@@ -77,8 +76,8 @@ public class MovingSkill3D extends MovingSkill {
 
 	@Override
 	@getter (IKeyword.DESTINATION)
-	public ILocation getDestination(final IAgent agent) {
-		final ILocation actualLocation = agent.getLocation();
+	public GamaPoint getDestination(final IAgent agent) {
+		final GamaPoint actualLocation = agent.getLocation();
 		final double dist = this.computeDistance(agent.getScope(), agent);
 		final ITopology topology = getTopology(agent);
 		return topology.getDestination3D(actualLocation, getHeading(agent), getPitch(agent), dist, false);
@@ -122,9 +121,7 @@ public class MovingSkill3D extends MovingSkill {
 
 	protected double computePitch(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Integer pitch = scope.hasArg(IKeyword.PITCH) ? scope.getIntArg(IKeyword.PITCH) : null;
-		if (pitch != null) {
-			setPitch(agent, pitch);
-		}
+		if (pitch != null) { setPitch(agent, pitch); }
 		return getPitch(agent);
 	}
 
@@ -148,7 +145,7 @@ public class MovingSkill3D extends MovingSkill {
 							optional = true,
 							doc = @doc ("int, optional, the direction to take for this move (replaces the current value of pitch)")),
 					@arg (
-							name = IKeyword.HEADING,
+							name = IKeyword.ROLL,
 							type = IType.INT,
 							optional = true,
 							doc = @doc ("int, optional, the direction to take for this move (replaces the current value of roll)")),
@@ -162,11 +159,11 @@ public class MovingSkill3D extends MovingSkill {
 					value = "moves the agent forward, the distance being computed with respect to its speed and heading. The value of the corresponding variables are used unless arguments are passed."))
 	public IPath primMoveForward(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		final ILocation location = agent.getLocation();
+		final GamaPoint location = agent.getLocation();
 		final double dist = computeDistance(scope, agent);
 		final double heading = computeHeading(scope, agent);
 		final double pitch = computePitch(scope, agent);
-		final ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
+		final GamaPoint loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
@@ -187,18 +184,18 @@ public class MovingSkill3D extends MovingSkill {
 	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
-		final ILocation location = agent.getLocation();
+		final GamaPoint location = agent.getLocation();
 		final double heading = computeHeadingFromAmplitude(scope, agent);
 		final double pitch = computePitchFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-		ILocation loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
+		GamaPoint loc = scope.getTopology().getDestination3D(location, heading, pitch, dist, true);
 		if (loc == null) {
 			setHeading(agent, heading - 180);
 			setPitch(agent, -pitch);
 		} else {
 			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
 			Double newHeading = null;
-			if (on != null && on instanceof GamaSpatialGraph) {
+			if (on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
 				IMap<IShape, Double> probaDeplacement = null;
 				if (scope.hasArg("proba_edges")) {
@@ -220,7 +217,7 @@ public class MovingSkill3D extends MovingSkill {
 					}
 				}
 				if (geom.getInnerGeometry() != null) {
-					final ILocation loc2 = computeLocationForward(scope, dist, loc, geom);
+					final GamaPoint loc2 = computeLocationForward(scope, dist, loc, geom);
 					if (!loc2.equals(loc)) {
 						newHeading = heading - 180;
 						loc = loc2;
@@ -254,11 +251,11 @@ public class MovingSkill3D extends MovingSkill {
 		// le pitch, et cette méthode serait ainsi appelée par super.primGoto()
 
 		final Object target = scope.getArg("target", IType.NONE);
-		if (target == null) { return null; }
+		if (target == null) return null;
 		final IAgent agent = getCurrentAgent(scope);
-		final GamaPoint oldLocation = (GamaPoint) agent.getLocation();
+		final GamaPoint oldLocation = agent.getLocation();
 		super.primGoto(scope);
-		final GamaPoint newLocation = (GamaPoint) agent.getLocation();
+		final GamaPoint newLocation = agent.getLocation();
 		final GamaPoint diff = newLocation.minus(oldLocation);
 		final int signumX = Maths.signum(diff.x);
 		final int signumY = Maths.signum(diff.y);

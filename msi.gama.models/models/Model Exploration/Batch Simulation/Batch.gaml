@@ -124,6 +124,15 @@ experiment 'Exhaustive optimization' type: batch repeat: 5 keep_seed: true until
 	}
 }
 
+// This experiment explores two parameters with a PSO strategy,
+// repeating each simulation three times (the aggregated fitness correspond to the min fitness), 
+// in order to find the best combination of parameters to minimize the number of infected people
+experiment PSO type: batch keep_seed: true repeat: 3 until: ( time > 1000 ) {
+	parameter 'Infection rate' var: infection_rate min: 0.1 max:1.0 step:0.01;
+	parameter 'Speed of people:' var: speed_people min: 1.0 max: 10.0 step:1.0;
+	method pso num_particles: 5 weight_inertia:0.7 weight_cognitive: 1.5 weight_social: 1.5  iter_max: 5  minimize: nb_infected  aggregation: "min"; 
+}
+
 // This experiment explores two parameters with a GA strategy,
 // repeating each simulation three times (the aggregated fitness correspond to the min fitness), 
 // in order to find the best combination of parameters to minimize the number of infected people

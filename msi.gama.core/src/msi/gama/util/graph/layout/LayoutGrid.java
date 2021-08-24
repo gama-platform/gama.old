@@ -52,7 +52,7 @@ public class LayoutGrid {
 		final int nbV = graph.getVertices().size();
 		for (final IShape v : graph.getVertices()) {
 			final int d = graph.degreeOf(v);
-			locs.put(v, v.getLocation().copy(scope).toGamaPoint());
+			locs.put(v, v.getLocation().copy(scope));
 			degrees.put(v, d);
 			if (d > dmax) {
 				dmax = d;
@@ -61,7 +61,7 @@ public class LayoutGrid {
 		}
 		IShape center = Queries.overlapping(scope, places, envelopeGeometry.getLocation()).firstValue(scope);
 		places.remove(center);
-		locs.put(currentV, center.getLocation().toGamaPoint());
+		locs.put(currentV, center.getLocation());
 		final List<IShape> open = new ArrayList<>();
 		final List<IShape> remaining = new ArrayList<>();
 		remaining.addAll(graph.getVertices());
@@ -79,7 +79,7 @@ public class LayoutGrid {
 				if (remaining.contains(n)) {
 					center = Queries.closest_to(scope, places, locs.get(currentV));
 					places.remove(center);
-					locs.put(n, center.getLocation().toGamaPoint());
+					locs.put(n, center.getLocation());
 					open.add(n);
 					remaining.remove(n);
 				}
@@ -130,7 +130,7 @@ public class LayoutGrid {
 					center = places.size() > 0 ? places.anyValue(scope) : locs.get(nV);
 				}
 				places.remove(center);
-				locs.put(nV, center.getLocation().toGamaPoint());
+				locs.put(nV, center.getLocation());
 
 			}
 

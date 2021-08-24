@@ -2,7 +2,7 @@
 * Name: Luneray's flu 6
 * Author: Patrick Taillandier
 * Description: Exploration of the model
-* Tags: batch, genetic, save
+* Tags: batch, genetic, save, tutorial
 */
 
 model model6
@@ -102,6 +102,8 @@ experiment main type: gui {
 	parameter "Nb people infected at init" var: nb_infected_init min: 1 max: 2147;
 
 	output {
+		
+		layout #split ;
 		monitor "Infected people rate" value: infected_rate;
 		
 		display map {
@@ -110,7 +112,7 @@ experiment main type: gui {
 			species people aspect:circle;			
 		}
 	
-		display chart_display refresh: every(10 #cycles) {
+		display chart_display type: java2D refresh: every(10 #cycles) {
 			chart "Disease spreading" type: series {
 				data "susceptible" value: nb_people_not_infected color: #green;
 				data "infected" value: nb_people_infected color: #red;

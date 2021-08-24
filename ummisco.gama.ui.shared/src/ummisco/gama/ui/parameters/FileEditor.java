@@ -13,9 +13,9 @@ package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -24,6 +24,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFolderFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
@@ -37,51 +38,59 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	private FlatButton textBox;
+	private final boolean isFolder;
 
-	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l,
+			final boolean isFolder) {
 		super(scope, agent, param, l);
+		this.isFolder = isFolder;
 	}
 
-	FileEditor(final IScope scope, final Composite parent, final String title, final String value,
-			final EditorListener<IGamaFile> whenModified) {
+	FileEditor(final IScope scope, final EditorsGroup parent, final String title, final String value,
+			final EditorListener<IGamaFile> whenModified, final boolean isFolder) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.isFolder = isFolder;
+		this.createControls(parent);
 	}
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		textBox = FlatButton.menu(comp, IGamaColors.NEUTRAL, "").light().small();
-		textBox.setText("No file");
+		textBox.setText("No " + (isFolder ? "folder" : "file"));
 		textBox.addSelectionListener(this);
 		return textBox;
 	}
 
 	@Override
-	protected GridData getParameterGridData() {
-		final GridData d = new GridData(SWT.FILL, SWT.TOP, true, false);
-		d.minimumWidth = 50;
-		return d;
-	}
-
-	@Override
 	public void widgetSelected(final SelectionEvent e) {
-		final FileDialog dialog = new FileDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
-		IGamaFile file = currentValue ;
-		dialog.setFileName(file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath());
-		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
-		final String path = dialog.open();
-		if (path != null) {
-			file = Files.from(getScope(), path);
-			modifyAndDisplayValue(file);
+		IGamaFile file = currentValue;
+		String filter = file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath();
+		if (isFolder) {
+			final DirectoryDialog dialog = new DirectoryDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
+			if (!(file instanceof GamaFolderFile)) { file = null; }
+			dialog.setFilterPath(filter);
+			dialog.setText("Choose a folder for parameter '" + param.getTitle() + "'");
+			final String path = dialog.open();
+			if (path != null) { file = Files.folderFile(getScope(), path, false); }
+		} else {
+			final FileDialog dialog = new FileDialog(WorkbenchHelper.getDisplay().getActiveShell(), SWT.NULL);
+			dialog.setFileName(file != null ? file.getPath(getScope()) : GAMA.getModel().getFilePath());
+			dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
+			final String path = dialog.open();
+			if (path != null) {
+				file = Files.from(getScope(), path);
+
+			}
 		}
+		modifyAndDisplayValue(file);
 	}
 
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
 		if (currentValue == null) {
-			textBox.setText("No file");
+			textBox.setText("No " + (isFolder ? "folder" : "file"));
 		} else {
 			final IGamaFile file = currentValue;
 			String path;
@@ -95,11 +104,6 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 			textBox.setText(path);
 		}
 		internalModification = false;
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return textBox;
 	}
 
 	@Override

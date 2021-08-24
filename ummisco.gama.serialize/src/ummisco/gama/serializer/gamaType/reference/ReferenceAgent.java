@@ -16,7 +16,6 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -36,9 +35,7 @@ public class ReferenceAgent implements IReference, IAgent {
 		// super(null,-1);
 		agtAttr = new ArrayList<>();
 
-		if (_agt != null && agtAttrName != null) {
-			agtAttr.add(new AgentAttribute(_agt, agtAttrName));
-		}
+		if (_agt != null && agtAttrName != null) { agtAttr.add(new AgentAttribute(_agt, agtAttrName)); }
 		attributeValue = new ReferenceToAgent(agtAttrValue);
 	}
 
@@ -46,9 +43,7 @@ public class ReferenceAgent implements IReference, IAgent {
 		// super(null,-1);
 
 		agtAttr = new ArrayList<>();
-		if (refAgt != null && attrName != null) {
-			agtAttr.add(new AgentAttribute(refAgt, attrName));
-		}
+		if (refAgt != null && attrName != null) { agtAttr.add(new AgentAttribute(refAgt, attrName)); }
 		attributeValue = refAttrValue;
 	}
 
@@ -68,11 +63,10 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o == this) {
+		if (o == this)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 	@Override
@@ -103,7 +97,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation g) {
+	public double euclidianDistanceTo(final GamaPoint g) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -140,6 +134,19 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public boolean intersects(final IShape g) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touches(final IShape g) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -247,8 +254,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public IList<? extends ILocation> getPoints() {
-		// TODO Auto-generated method stub
+	public IList<GamaPoint> getPoints() {
 		return null;
 	}
 
@@ -367,15 +373,14 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public ILocation getLocation() {
+	public GamaPoint getLocation() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setLocation(final ILocation l) {
-		// TODO Auto-generated method stub
-
+	public GamaPoint setLocation(final GamaPoint l) {
+		return l;
 	}
 
 	@Override

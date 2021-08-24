@@ -17,9 +17,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +35,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 
 import com.google.inject.Injector;
@@ -43,6 +48,7 @@ import msi.gama.headless.batch.ModelLibraryRunner;
 import msi.gama.headless.batch.ModelLibraryTester;
 import msi.gama.headless.batch.ModelLibraryValidator;
 import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
+
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -55,7 +61,11 @@ import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -77,8 +87,8 @@ public class Application implements IApplication {
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
-	// -> Code still exist, but not documented nor used
 
+  // -> Code still exist, but not documented nor use
 	final public static String BATCH_PARAMETER = "-batch";
 	final public static String GAML_PARAMETER = "-gaml";
 
@@ -150,6 +160,7 @@ public class Application implements IApplication {
 				DEBUG.LOG("Log active", true);
 			}
 		}
+    
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
@@ -400,6 +411,25 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
+	public void runBatchSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
+		final String pathToModel = args.get(args.size() - 1);
+		
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+	
+		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final GamlModelBuilder builder = new GamlModelBuilder(injector);
+
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		
+		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
+		
+		expPlan.setHeadless(true);
+		expPlan.open();
+		
+		System.exit(0);
+	} 
+	
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
 		while (it.hasNext()) {

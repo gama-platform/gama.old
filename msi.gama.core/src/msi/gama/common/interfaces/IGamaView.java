@@ -62,7 +62,7 @@ public interface IGamaView {
 
 	}
 
-	public interface Display {
+	public interface Display extends IGamaView {
 
 		boolean containsPoint(int x, int y);
 
@@ -84,6 +84,7 @@ public interface IGamaView {
 
 		void showToolbar();
 
+		@Override
 		LayeredDisplayOutput getOutput();
 
 		int getIndex();
@@ -93,6 +94,8 @@ public interface IGamaView {
 		default List<String> getCameraNames() {
 			return Collections.EMPTY_LIST;
 		}
+
+		void takeSnapshot();
 	}
 
 	public interface Error {

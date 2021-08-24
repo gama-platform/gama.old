@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
-import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Iterators.transform;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
 import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
@@ -27,6 +27,7 @@ import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.TARGET;
 import static msi.gama.common.interfaces.IKeyword.WIDTH;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
+import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,9 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
+import org.jgrapht.graph.DirectedAcyclicGraph;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -47,7 +52,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -72,6 +76,7 @@ import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -81,6 +86,7 @@ import msi.gaml.types.GamaTopologyType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -89,6 +95,10 @@ import msi.gaml.variables.IVariable;
  *
  */
 public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPopulation<T> {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {
@@ -110,8 +120,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	protected ITopology topology;
 	protected final ISpecies species;
-	protected final String[] orderedVarNames;
-	protected final IVariable[] updatableVars;
+	protected final IVariable[] orderedVars, updatableVars;
 	protected int currentAgentIndex;
 	private final int hashCode;
 	private final boolean isInitOverriden, isStepOverriden;
@@ -159,15 +168,46 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	}
 
+	private void tryAdd(final DirectedAcyclicGraph<String, Object> graph, final String v, final String existing) {
+		graph.addVertex(v);
+		try {
+			graph.addEdge(v, existing);
+		} catch (IllegalArgumentException e) {
+			// AD Revision in Aug 2021 for Issue #3068: edge is not added if it creates a cycle
+		}
+	}
+
+	public IVariable[] orderAttributes(final TypeDescription ecd, final Predicate<VariableDescription> keep,
+			final Set<String> facetsToConsider) {
+		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
+		// AD Revised in Aug 2021 for Issue #3068: do not introduce cycles (which might exist in update blocks) in order
+		// to obtain a correct topological order
+		final DirectedAcyclicGraph<String, Object> graph = new DirectedAcyclicGraph<>(Object.class);
+		ecd.visitAllAttributes(d -> {
+			VariableDescription var = (VariableDescription) d;
+			if (keep.apply(var)) {
+				String name = var.getName();
+				graph.addVertex(name);
+				for (final VariableDescription dep : var.getDependencies(facetsToConsider, false, true)) {
+					if (keep.apply(dep)) { tryAdd(graph, dep.getName(), name); }
+				}
+				// Adding a constraint between the shape of the macrospecies and the populations of microspecies
+				if (var.isSyntheticSpeciesContainer()) { tryAdd(graph, SHAPE, name); }
+			}
+			return true;
+		});
+		return Iterators.toArray(transform(graph.iterator(), s -> getVar(s)), IVariable.class);
+
+	}
+
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(EXPERIMENT)
 				: host.getModel().getDescription().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
-		orderedVarNames = ecd.getOrderedAttributeNames(INIT_DEPENDENCIES_FACETS).toArray(new String[0]);
-		updatableVars =
-				Iterables.toArray(transform(ecd.getUpdatableAttributeNames(), s -> species.getVar(s)), IVariable.class);
+		orderedVars = orderAttributes(ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
+		updatableVars = orderAttributes(ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
 		} else {
@@ -175,12 +215,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		}
 		hashCode = Objects.hash(getSpecies(), getHost());
 		final boolean[] result = { false, false };
-		species.getDescription().visitChildren((d) -> {
+		species.getDescription().visitChildren(d -> {
 			if (d instanceof ActionDescription && !d.isBuiltIn()) {
 				final String name = d.getName();
-				if (name.equals(ISpecies.initActionName)) {
+				if (ISpecies.initActionName.equals(name)) {
 					result[0] = true;
-				} else if (name.equals(ISpecies.stepActionName)) { result[1] = true; }
+				} else if (ISpecies.stepActionName.equals(name)) { result[1] = true; }
 			}
 			return true;
 		});
@@ -249,8 +289,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void createVariablesFor(final IScope scope, final T agent) throws GamaRuntimeException {
-		for (final String s : orderedVarNames) {
-			final IVariable var = species.getVar(s);
+		for (final IVariable var : orderedVars) {
 			var.initializeWith(scope, agent, null);
 		}
 	}
@@ -440,15 +479,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			} else {
 				inits = initialValues.get(i);
 			}
-			for (final String s : orderedVarNames) {
-				final IVariable var = species.getVar(s);
-				final Object initGet = empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(s);
-				if (!update || initGet != null) { var.initializeWith(scope, a, initGet); } // else if initGet == null :
-																							// do not do anything, this
-																							// will
-																							// keep the previously
-																							// defined value for the
-																							// variable
+			for (final IVariable var : orderedVars) {
+				final Object initGet =
+						empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(var.getName());
+				if (!update || initGet != null) { var.initializeWith(scope, a, initGet); }
 			}
 		}
 	}
@@ -496,7 +530,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@SuppressWarnings ("unchecked")
 	@Override
-	public T getAgent(final IScope scope, final ILocation coord) {
+	public T getAgent(final IScope scope, final GamaPoint coord) {
 		final IAgentFilter filter = In.list(scope, this);
 		if (filter == null) return null;
 
@@ -780,9 +814,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		final IAgent agent = a.getAgent();
-		if (agent == null) return false;
-		if (agent.getPopulation() != this) return false;
-		if (agent.dead()) return false;
+		if (agent == null || agent.getPopulation() != this || agent.dead()) return false;
 		final IAgent as = source.getAgent();
 		if (agent == as) return false;
 		// }
@@ -799,7 +831,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		final Predicate<IShape> toRemove = (each) -> {
+		final Predicate<IShape> toRemove = each -> {
 			final IAgent a = each.getAgent();
 			return a == null || a.dead()
 					|| a.getPopulation() != this

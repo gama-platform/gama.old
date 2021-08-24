@@ -62,7 +62,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	protected final LayeredDisplayView view;
 	ToolItem fs = null;
 	protected Composite normalParentOfFullScreenControl;
-	int[] sideControlWeights = new int[] { 30, 70 };
+	int[] sideControlWeights = { 30, 70 };
 	protected Shell fullScreenShell;
 	protected Composite sidePanel;
 	public DisplayOverlay overlay;
@@ -80,8 +80,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		toggleOverlay =
 				new GamaCommand("display.overlay2", "Toggle overlay " + format(COMMAND, 'O'), e -> toggleOverlay());
 		takeSnapshot =
-				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "Take a snapshot", e -> SnapshotMaker
-						.getInstance().doSnapshot(view.getOutput(), view.getDisplaySurface(), view.surfaceComposite));
+				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "	", e -> SnapshotMaker.getInstance()
+						.doSnapshot(view.getDisplaySurface(), WorkbenchHelper.displaySizeOf(view.surfaceComposite)));
 		toggleFullScreen = new GamaCommand("display.fullscreen2", "Toggle fullscreen ESC", e -> toggleFullScreen());
 		toggleInteractiveConsole = new GamaCommand("display.presentation2",
 				"Toggle interactive console " + format(COMMAND, 'K'), e -> toggleInteractiveConsole());
@@ -107,9 +107,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
-			if (interactiveConsoleVisible) {
-				toggleInteractiveConsole();
-			}
+			if (interactiveConsoleVisible) { toggleInteractiveConsole(); }
 			view.controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
@@ -118,9 +116,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			view.setFocus();
 		} else {
 			fullScreenShell = createFullScreenShell();
-			if (DEBUG.IS_ON()) {
-				DEBUG.SECTION(" FULLSCREEN WITH SIZE " + fullScreenShell.getSize());
-			}
+			if (DEBUG.IS_ON()) { DEBUG.SECTION(" FULLSCREEN WITH SIZE " + fullScreenShell.getSize()); }
 			normalParentOfFullScreenControl = view.controlToSetFullScreen().getParent();
 			final Control display = view.controlToSetFullScreen();
 			display.setParent(fullScreenShell);
@@ -169,9 +165,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			final Composite forToolbar = toolbar.getParent();
 			toolbar.setParent(tp);
 			tp = null;
-			if (forToolbar != null && !forToolbar.isDisposed()) {
-				forToolbar.dispose();
-			}
+			if (forToolbar != null && !forToolbar.isDisposed()) { forToolbar.dispose(); }
 			view.getParentComposite().getParent().layout(true, true);
 		}
 		if (toolbar.isVisible()) {
@@ -191,13 +185,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			overlay.dispose();
 		}
 		overlay = new DisplayOverlay(view, view.surfaceComposite, view.getOutput().getOverlayProvider());
-		if (wasVisible) {
-			overlay.setVisible(true);
-		}
+		if (wasVisible) { overlay.setVisible(true); }
 
-		if (overlay.isVisible()) {
-			overlay.update();
-		}
+		if (overlay.isVisible()) { overlay.update(); }
 	}
 
 	public void createSidePanel(final SashForm form) {
@@ -232,9 +222,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			if (GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue()) {
 				toggle = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
 			}
-			if (toggle) {
-				WorkbenchHelper.runInUI("Fullscreen", 100, m -> toggleFullScreen());
-			}
+			if (toggle) { WorkbenchHelper.runInUI("Fullscreen", 100, m -> toggleFullScreen()); }
 		}
 	}
 
@@ -248,33 +236,25 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-				if (perspective.getId().equals(PerspectiveHelper.PERSPECTIVE_MODELING_ID)) {
-					if (view.getOutput() != null && view.getDisplaySurface() != null) {
-						if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
-							previousState = view.getOutput().isPaused();
-							view.getOutput().setPaused(true);
-						}
+				if (PerspectiveHelper.PERSPECTIVE_MODELING_ID.equals(perspective.getId())) {
+					if (view.getOutput() != null && view.getDisplaySurface() != null
+							&& !GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
+						previousState = view.getOutput().isPaused();
+						view.getOutput().setPaused(true);
 					}
-					if (overlay != null) {
-						overlay.hide();
-					}
+					if (overlay != null) { overlay.hide(); }
 				} else {
 					// Issue #2639
 					if (PlatformHelper.isMac() && !view.isOpenGL()) {
 						final IDisplaySurface ds = view.getDisplaySurface();
-						if (ds != null) {
-							ds.updateDisplay(true);
-						}
+						if (ds != null) { ds.updateDisplay(true); }
 					}
 
-					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue()) {
-						if (view.getOutput() != null && view.getDisplaySurface() != null) {
-							view.getOutput().setPaused(previousState);
-						}
+					if (!GamaPreferences.Displays.CORE_DISPLAY_PERSPECTIVE.getValue() && view.getOutput() != null
+							&& view.getDisplaySurface() != null) {
+						view.getOutput().setPaused(previousState);
 					}
-					if (overlay != null) {
-						overlay.update();
-					}
+					if (overlay != null) { overlay.update(); }
 				}
 
 			}
@@ -292,33 +272,29 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	}
 
 	private void destroyFullScreenShell() {
-		if (fullScreenShell == null) { return; }
+		if (fullScreenShell == null) return;
 		fullScreenShell.close();
 		fullScreenShell.dispose();
 		fullScreenShell = null;
 	}
 
 	protected Runnable displayOverlay = () -> {
-		if (overlay == null) { return; }
+		if (overlay == null) return;
 		updateOverlay();
 	};
 
 	protected void updateOverlay() {
-		if (overlay == null) { return; }
+		if (overlay == null) return;
 		if (view.forceOverlayVisibility()) {
 			if (!overlay.isVisible()) {
 				isOverlayTemporaryVisible = true;
 				overlay.setVisible(true);
 			}
-		} else {
-			if (isOverlayTemporaryVisible) {
-				isOverlayTemporaryVisible = false;
-				overlay.setVisible(false);
-			}
+		} else if (isOverlayTemporaryVisible) {
+			isOverlayTemporaryVisible = false;
+			overlay.setVisible(false);
 		}
-		if (overlay.isVisible()) {
-			overlay.update();
-		}
+		if (overlay.isVisible()) { overlay.update(); }
 
 	}
 
@@ -343,12 +319,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	}
 
 	public void toggleInteractiveConsole() {
-		if (!sideControlsVisible) {
-			toggleSideControls();
-		}
+		if (!sideControlsVisible) { toggleSideControls(); }
 		final InteractiveConsoleView view =
 				(InteractiveConsoleView) WorkbenchHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
-		if (view == null) { return; }
+		if (view == null) return;
 		if (interactiveConsoleVisible) {
 			view.getControlToDisplayInFullScreen().setParent(view.getParentOfControlToDisplayFullScreen());
 			view.getParentOfControlToDisplayFullScreen().layout();
@@ -401,25 +375,17 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		} catch (final Exception e) {
 
 		}
-		if (keyAndMouseListener != null) {
-			keyAndMouseListener.dispose();
-		}
-		if (overlay != null) {
-			overlay.close();
-		}
+		if (keyAndMouseListener != null) { keyAndMouseListener.dispose(); }
+		if (overlay != null) { overlay.close(); }
 
-		if (menuManager != null) {
-			menuManager.disposeMenu();
-		}
+		if (menuManager != null) { menuManager.disposeMenu(); }
 		menuManager = null;
 		toolbar = null;
 		fs = null;
 		tp = null;
 		sidePanel = null;
 		normalParentOfFullScreenControl = null;
-		if (fullScreenShell != null && !fullScreenShell.isDisposed()) {
-			fullScreenShell.dispose();
-		}
+		if (fullScreenShell != null && !fullScreenShell.isDisposed()) { fullScreenShell.dispose(); }
 		fullScreenShell = null;
 	}
 

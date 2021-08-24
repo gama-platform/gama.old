@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -72,7 +72,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public AbstractSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		isGrid = getKeyword().equals(IKeyword.GRID);
+		isGrid = IKeyword.GRID.equals(getKeyword());
 		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((SpeciesDescription) description).getJavaBase());
 		control = (IArchitecture) getDescription().getControl().createInstance();
 	}
@@ -121,9 +121,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		// return getPopulation(scope).listValue(scope, contentsType);
 		// hqnghi 16/04/14
 		IPopulation pop = getPopulation(scope);
-		if (pop == null) {
-			pop = scope.getSimulation().getPopulationFor(contentsType.getName());
-		}
+		if (pop == null) { pop = scope.getSimulation().getPopulationFor(contentsType.getName()); }
 		// AD 20/01/16 : Explicitly passes true in order to obtain a copy of the
 		// population
 		return pop.listValue(scope, contentsType, true);
@@ -174,9 +172,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		final IList<ISpecies> retVal = GamaListFactory.create(Types.SPECIES);
 		retVal.addAll(microSpecies.values());
 		final ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) {
-			retVal.addAll(parentSpecies.getMicroSpecies());
-		}
+		if (parentSpecies != null) { retVal.addAll(parentSpecies.getMicroSpecies()); }
 		return retVal;
 	}
 
@@ -185,9 +181,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		final IList<ISpecies> subspecies = GamaListFactory.create(Types.SPECIES);
 		final GamlModelSpecies model = (GamlModelSpecies) scope.getModel().getSpecies();
 		for (final ISpecies s : model.getAllSpecies().values()) {
-			if (s.getParentSpecies() == this) {
-				subspecies.add(s);
-			}
+			if (s.getParentSpecies() == this) { subspecies.add(s); }
 		}
 		return subspecies;
 	}
@@ -206,16 +200,16 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
 		final ISpecies retVal = microSpecies.get(microSpeciesName);
-		if (retVal != null) { return retVal; }
+		if (retVal != null) return retVal;
 		final ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) { return parentSpecies.getMicroSpecies(microSpeciesName); }
+		if (parentSpecies != null) return parentSpecies.getMicroSpecies(microSpeciesName);
 		return null;
 	}
 
 	@Override
 	public boolean containMicroSpecies(final ISpecies species) {
 		final ISpecies parentSpecies = this.getParentSpecies();
-		return microSpecies.values().contains(species)
+		return microSpecies.containsValue(species)
 				|| (parentSpecies != null ? parentSpecies.containMicroSpecies(species) : false);
 	}
 
@@ -253,7 +247,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		if (parentSpecies == null) {
 			final TypeDescription parentSpecDesc = getDescription().getParent();
 			// Takes care of invalid species (see Issue 711)
-			if (parentSpecDesc == null || parentSpecDesc == getDescription()) { return null; }
+			if (parentSpecDesc == null || parentSpecDesc == getDescription()) return null;
 			ISpecies currentMacroSpec = this.getMacroSpecies();
 			while (currentMacroSpec != null && parentSpecies == null) {
 				parentSpecies = currentMacroSpec.getMicroSpecies(parentSpecDesc.getName());
@@ -266,8 +260,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean extendsSpecies(final ISpecies s) {
 		final ISpecies parent = getParentSpecies();
-		if (parent == null) { return false; }
-		if (parent == s) { return true; }
+		if (parent == null) return false;
+		if (parent == s) return true;
 		return parent.extendsSpecies(s);
 	}
 
@@ -339,10 +333,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		// First we verify the control architecture
-		if (control == null) {
+		if (control == null)
 			throw GamaRuntimeException.error("The control of species " + description.getName() + " cannot be computed",
 					GAMA.getRuntimeScope());
-		}
 		// Then we classify the children in their categories
 		for (final ISymbol s : children) {
 			if (s instanceof ISpecies) {
@@ -415,11 +408,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		for (final IStatement s : behaviors) {
 			final boolean instance = clazz.isAssignableFrom(s.getClass());
 			if (instance) {
-				if (valueOfFacetName == null) { return (T) s; }
+				if (valueOfFacetName == null) return (T) s;
 				final String t = s.getDescription().getName();
 				if (t != null) {
 					final boolean named = t.equals(valueOfFacetName);
-					if (named) { return (T) s; }
+					if (named) return (T) s;
 				}
 			}
 		}
@@ -492,7 +485,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType,
-			final ILocation preferredSize, final boolean copy) throws GamaRuntimeException {
+			final GamaPoint preferredSize, final boolean copy) throws GamaRuntimeException {
 		final IPopulation<? extends IAgent> pop = getPopulation(scope);
 		return pop == null ? null : pop.matrixValue(scope, contentsType, preferredSize, copy);
 	}
@@ -515,16 +508,16 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	public ISkill getSkillInstanceFor(final Class skillClass) {
-		if (skillClass == null) { return null; }
-		if (skillClass.isAssignableFrom(control.getClass())) { return control; }
+		if (skillClass == null) return null;
+		if (skillClass.isAssignableFrom(control.getClass())) return control;
 		return getSkillInstanceFor(getDescription(), skillClass);
 	}
 
 	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {
 		for (final SkillDescription sk : sd.getSkills()) {
-			if (skillClass.isAssignableFrom(sk.getJavaBase())) { return sk.getInstance(); }
+			if (skillClass.isAssignableFrom(sk.getJavaBase())) return sk.getInstance();
 		}
-		if (sd.getParent() != null && sd.getParent() != sd) { return getSkillInstanceFor(sd.getParent(), skillClass); }
+		if (sd.getParent() != null && sd.getParent() != sd) return getSkillInstanceFor(sd.getParent(), skillClass);
 		return null;
 	}
 

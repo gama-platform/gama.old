@@ -49,9 +49,9 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	static {
 		DEBUG.OFF();
 	}
-	final int thumbWidth = 6;
-	final int thumbHeight = 13;
-	final int panelHeight = 3;
+	final static public int THUMB_WIDTH = 6;
+	final static public int THUMB_HEIGHT = 13;
+	final static public int PANEL_HEIGHT = 3;
 	final Composite parent;
 	final Thumb thumb;
 
@@ -83,7 +83,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				mouseDown = true;
-				moveThumbHorizontally(e.x - thumbWidth / 2);
+				moveThumbHorizontally(e.x - THUMB_WIDTH / 2);
 			}
 
 			@Override
@@ -92,7 +92,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			}
 		});
 		leftRegion.addMouseMoveListener(e -> {
-			if (mouseDown) { moveThumbHorizontally(e.x - thumbWidth / 2); }
+			if (mouseDown) { moveThumbHorizontally(e.x - THUMB_WIDTH / 2); }
 		});
 		thumb = new Thumb(this, thumbColor);
 		thumb.addMouseListener(new MouseAdapter() {
@@ -100,7 +100,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				mouseDown = true;
-				moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2);
+				moveThumbHorizontally(leftRegion.getBounds().width + e.x - THUMB_WIDTH / 2);
 			}
 
 			@Override
@@ -109,7 +109,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			}
 		});
 		thumb.addMouseMoveListener(e -> {
-			if (mouseDown) { moveThumbHorizontally(leftRegion.getBounds().width + e.x - thumbWidth / 2); }
+			if (mouseDown) { moveThumbHorizontally(leftRegion.getBounds().width + e.x - THUMB_WIDTH / 2); }
 		});
 
 		rightRegion = new Panel(this, rightColor, true);
@@ -186,7 +186,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	void moveThumbHorizontally(final int x) {
-		final int width = getClientArea().width - thumbWidth;
+		final int width = getClientArea().width - THUMB_WIDTH;
 		int pos = x < 0 ? 0 : x > width ? width : x;
 		double percentage = pos / (double) width;
 		if (step != null) { percentage = Math.round(percentage / step) * step; }
@@ -211,7 +211,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		if (percentage < 0) {
 			percentage = 0;
 		} else if (percentage > 1) { percentage = 1; }
-		final int usefulWidth = getClientArea().width - thumbWidth;
+		final int usefulWidth = getClientArea().width - THUMB_WIDTH;
 		final int width = (int) Math.round(usefulWidth * percentage);
 		moveThumbHorizontally(width);
 		previousPosition = percentage;
@@ -291,7 +291,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			super(parent, NO_BACKGROUND);
 			color = thumbColor;
 			addPaintListener(this);
-			swtDefaults().hint(thumbWidth, thumbHeight).minSize(thumbWidth, thumbHeight).align(BEGINNING, SWT.FILL)
+			swtDefaults().hint(THUMB_WIDTH, THUMB_HEIGHT).minSize(THUMB_WIDTH, THUMB_HEIGHT).align(BEGINNING, SWT.FILL)
 					.grab(false, true).applyTo(this);
 		}
 
@@ -302,7 +302,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		@Override
 		public Point computeSize(final int w, final int h) {
-			return new Point(thumbWidth, thumbHeight);
+			return new Point(THUMB_WIDTH, THUMB_HEIGHT);
 		}
 
 		@Override
@@ -314,7 +314,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
-			gc.fillRoundRectangle(0, (r.height - thumbHeight) / 2 + 1, thumbWidth, thumbHeight, 3, 3);
+			gc.fillRoundRectangle(0, (r.height - THUMB_HEIGHT) / 2 + 1, THUMB_WIDTH, THUMB_HEIGHT, 3, 3);
 		}
 	}
 
@@ -329,7 +329,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		public Panel(final Composite parent, final Color color, final boolean last) {
 			super(parent, DOUBLE_BUFFERED | NO_BACKGROUND);
-			gd = swtDefaults().minSize(0, panelHeight).align(last ? FILL : BEGINNING, BEGINNING).grab(last, false)
+			gd = swtDefaults().minSize(0, PANEL_HEIGHT).align(last ? FILL : BEGINNING, BEGINNING).grab(last, false)
 					.create();
 			this.color = color;
 			setLayoutData(gd);
@@ -355,7 +355,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
-			gc.fillRoundRectangle(r.x, (int) ((double) r.height / 2 - 1d), r.width, panelHeight, 3, 3);
+			gc.fillRoundRectangle(r.x, (int) ((double) r.height / 2 - 1d), r.width, PANEL_HEIGHT, 3, 3);
 		}
 
 	}

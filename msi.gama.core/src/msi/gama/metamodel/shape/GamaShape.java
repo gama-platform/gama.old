@@ -154,7 +154,7 @@ public class GamaShape implements IShape {
 	 *            can be null
 	 */
 
-	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final ILocation newLocation) {
+	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation) {
 		this(source, geom);
 		if (!isPoint() && rotation != null) {
 			Double normalZ = null;
@@ -184,7 +184,7 @@ public class GamaShape implements IShape {
 	 *            indicates whether the previous parameter should be considered as an absolute bounding box (width,
 	 *            height, ) or as a set of coefficients.
 	 */
-	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final ILocation newLocation,
+	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation,
 			final Scaling3D bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
 		if (bounds != null && !isPoint()) {
@@ -213,7 +213,7 @@ public class GamaShape implements IShape {
 	 * @param newLocation
 	 *            can be null
 	 */
-	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final ILocation newLocation,
+	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation,
 			final Double scaling) {
 		this(source, geom, rotation, newLocation);
 		if (scaling != null && !isPoint()) {
@@ -293,15 +293,16 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public void setLocation(final ILocation l) {
+	public GamaPoint setLocation(final GamaPoint l) {
 		if (isPoint()) {
-			geometry = GEOMETRY_FACTORY.createPoint(l.toGamaPoint());
+			geometry = GEOMETRY_FACTORY.createPoint(l);
 		} else {
-			translate(geometry, getLocation(), l.toGamaPoint());
+			translate(geometry, getLocation(), l);
 		}
+		return l;
 	}
 
-	public GamaShape translatedTo(final IScope scope, final ILocation target) {
+	public GamaShape translatedTo(final IScope scope, final GamaPoint target) {
 		final GamaShape result = copy(scope);
 		result.setLocation(target);
 		return result;
@@ -351,7 +352,7 @@ public class GamaShape implements IShape {
 		if (geometry instanceof GeometryCollection) {
 			final int[] result = new int[1];
 			GeometryUtils.applyToInnerGeometries((GeometryCollection) geometry,
-					(g) -> result[0] += GeometryUtils.getContourCoordinates(g).getLength());
+					g -> result[0] += GeometryUtils.getContourCoordinates(g).getLength());
 			return result[0];
 		}
 		final ICoordinates seq = GeometryUtils.getContourCoordinates(geometry);
@@ -443,9 +444,9 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<GamaPoint> getPoints() {
 		if (getInnerGeometry() == null) return create(POINT);
-		return (IList<? extends ILocation>) GamaListFactory.wrap(POINT, getInnerGeometry().getCoordinates());
+		return GamaListFactory.wrap(POINT, GeometryUtils.getPointsOf(getInnerGeometry()));
 	}
 
 	@Override
@@ -542,7 +543,7 @@ public class GamaShape implements IShape {
 	@Override
 	public boolean covers(final IShape g) {
 		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects((Coordinate) g.getLocation(), geometry);
+		if (g.isPoint()) return pl.intersects(g.getLocation(), geometry);
 		try {
 			return geometry.covers(g.getInnerGeometry());
 		} catch (final TopologyException e) {
@@ -573,7 +574,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation g) {
+	public double euclidianDistanceTo(final GamaPoint g) {
 		// WARNING Only 2D now
 		if (isPoint()) return g.euclidianDistanceTo(getLocation());
 		return getInnerGeometry().distance(g.getInnerGeometry());
@@ -585,7 +586,7 @@ public class GamaShape implements IShape {
 	@Override
 	public boolean intersects(final IShape g) {
 		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects((Coordinate) g.getLocation(), getInnerGeometry());
+		if (g.isPoint()) return pl.intersects(g.getLocation(), getInnerGeometry());
 		try {
 			return getInnerGeometry().intersects(g.getInnerGeometry());
 		} catch (final TopologyException e) {
@@ -607,7 +608,7 @@ public class GamaShape implements IShape {
 	@Override
 	public boolean crosses(final IShape g) {
 		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects((Coordinate) g.getLocation(), getInnerGeometry());
+		if (g.isPoint()) return pl.intersects(g.getLocation(), getInnerGeometry());
 		try {
 			return geometry.crosses(g.getInnerGeometry());
 		} catch (final TopologyException e) {
@@ -619,6 +620,48 @@ public class GamaShape implements IShape {
 		} catch (final AssertionFailedException e) {
 			try {
 				return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		try {
+			return geometry.overlaps(g.getInnerGeometry());
+		} catch (final TopologyException e) {
+			try {
+				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean touches(final IShape g) {
+		try {
+			return geometry.touches(g.getInnerGeometry());
+		} catch (final TopologyException e) {
+			try {
+				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
 			} catch (final AssertionFailedException e2) {
 				return false;
 			}

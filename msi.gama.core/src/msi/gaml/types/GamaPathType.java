@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaPathType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gaml.types.GamaPathType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -39,15 +39,15 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPathType extends GamaType<IPath> {
 
-	@doc(value="Cast any object as a path",   
-			usages = {
-				@usage(value = "if the operand is a path, returns this path"), 
-				@usage(value = "if the operand is a geometry of an agent, returns a path from the list of points of the geometry"),
-				@usage(value = "if the operand is a list, cast each element of the list as a point and create a path from these points",
-					examples = {
-						@example("path p <- path([{12,12},{30,30},{50,50}]);")
-					}) 
-			})
+	@doc (
+			value = "Cast any object as a path",
+			usages = { @usage (
+					value = "if the operand is a path, returns this path"),
+					@usage (
+							value = "if the operand is a geometry of an agent, returns a path from the list of points of the geometry"),
+					@usage (
+							value = "if the operand is a list, cast each element of the list as a point and create a path from these points",
+							examples = { @example ("path p <- path([{12,12},{30,30},{50,50}]);") }) })
 	@Override
 	public IPath cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -60,22 +60,20 @@ public class GamaPathType extends GamaType<IPath> {
 	}
 
 	public static IPath staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
-		if (obj instanceof IPath) { return (IPath) obj; }
-		if (obj instanceof IShape) { 
-			IShape shape = ((IShape) obj);
-			return PathFactory.newInstance(scope, (IList<IShape>) shape.getPoints(), false);
+		if (obj instanceof IPath) return (IPath) obj;
+		if (obj instanceof IShape) {
+			IShape shape = (IShape) obj;
+			return PathFactory.newInstance(scope, shape.getPoints(), false);
 		}
-		 
+
 		if (obj instanceof List) {
-			// List<ILocation> list = new GamaList();
+			// List<GamaPoint> list = new GamaList();
 			final List<IShape> list = GamaListFactory.create(Types.GEOMETRY);
 			boolean isEdges = true;
 
 			for (final Object p : (List) obj) {
 				list.add(Cast.asPoint(scope, p));
-				if (isEdges && !(p instanceof IShape && ((IShape) p).isLine())) {
-					isEdges = false;
-				}
+				if (isEdges && (!(p instanceof IShape) || !((IShape) p).isLine())) { isEdges = false; }
 			}
 			// return new GamaPath(scope.getTopology(), list);
 			return PathFactory.newInstance(scope, isEdges ? (IList<IShape>) obj : (IList<IShape>) list, isEdges);

@@ -16,7 +16,6 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -36,21 +35,21 @@ import msi.gaml.operators.Cast;
 @type (
 		name = IKeyword.POINT,
 		id = IType.POINT,
-		wraps = { ILocation.class, GamaPoint.class },
+		wraps = { GamaPoint.class },
 		kind = ISymbolKind.Variable.NUMBER,
 		concept = { IConcept.TYPE, IConcept.POINT },
 		doc = @doc ("Represent locations in either 2 or 3 dimensions"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaPointType extends GamaType<ILocation> {
+public class GamaPointType extends GamaType<GamaPoint> {
 
 	@Override
-	public ILocation cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+	public GamaPoint cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
 	}
 
-	public static ILocation staticCast(final IScope scope, final Object obj, final boolean copy) {
-		if (obj instanceof ILocation) return (ILocation) obj;
+	public static GamaPoint staticCast(final IScope scope, final Object obj, final boolean copy) {
+		if (obj instanceof GamaPoint) return (GamaPoint) obj;
 		if (obj instanceof IShape) return ((IShape) obj).getLocation();
 		if (obj instanceof List) {
 			final List l = (List) obj;
@@ -83,7 +82,7 @@ public class GamaPointType extends GamaType<ILocation> {
 	}
 
 	@Override
-	public ILocation getDefault() {
+	public GamaPoint getDefault() {
 		return null;
 	}
 

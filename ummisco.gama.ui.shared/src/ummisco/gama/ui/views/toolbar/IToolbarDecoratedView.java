@@ -11,11 +11,21 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchSite;
 
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class IToolbarDecoratedView.
@@ -58,7 +68,6 @@ public interface IToolbarDecoratedView {
 	}
 
 	public interface Colorizable extends IToolbarDecoratedView {
-
 		String[] getColorLabels();
 
 		GamaUIColor getColor(int index);
@@ -67,13 +76,32 @@ public interface IToolbarDecoratedView {
 	}
 
 	public interface CSVExportable extends IToolbarDecoratedView {
-
 		void saveAsCSV();
+	}
 
+	public interface LogExportable extends IToolbarDecoratedView {
+		default void saveAsLog() {
+			String text = getContents();
+			FileDialog fd = new FileDialog(WorkbenchHelper.getShell(), SWT.SAVE);
+			fd.setText("Choose a destination file");
+			fd.setFilterExtensions(new String[] { "*.log" });
+			if (GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
+				fd.setFilterPath(GAMA.getExperiment().getAgent().getProjectPath());
+			} else {
+				fd.setFilterPath(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
+			}
+			String f = fd.open();
+			if (f == null) return;
+			try {
+				Files.writeString(Path.of(f), text, StandardCharsets.UTF_8);
+			} catch (IOException e) {}
+
+		}
+
+		String getContents();
 	}
 
 	public interface Zoomable extends IToolbarDecoratedView {
-
 		void zoomIn();
 
 		void zoomOut();

@@ -20,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -71,9 +70,9 @@ public class EditorsDialog extends Dialog {
 
 	@Override
 	protected Control createButtonBar(final Composite parent) {
-		final var composite = super.createButtonBar(parent);
+
 		// composite.setBackground(IGamaColors.WHITE.color());
-		return composite;
+		return super.createButtonBar(parent);
 	}
 
 	/**
@@ -83,27 +82,29 @@ public class EditorsDialog extends Dialog {
 	 */
 	@Override
 	protected Control createContents(final Composite parent) {
-		final var composite = super.createContents(parent);
+
 		// composite.setBackground(IGamaColors.WHITE.color());
-		return composite;
+		return super.createContents(parent);
 	}
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		final var composite = (Composite) super.createDialogArea(parent);
+		final var above = (Composite) super.createDialogArea(parent);
 		// composite.setBackground(IGamaColors.WHITE.color());
-		final var layout = (GridLayout) composite.getLayout();
-		layout.numColumns = 2;
+		final var composite = new EditorsGroup(above);
+		// final var layout = (GridLayout) composite.getLayout();
+		// layout.numColumns = 2;
 		final var text = new Label(composite, SWT.None);
 		text.setBackground(IGamaColors.OK.inactive());
 		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
-		if (font != null) 
+		if (font != null) {
 			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
+		}
 		text.setText(title);
-		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		text.setLayoutData(data);
 		final var sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		data.heightHint = 20;
 		sep.setLayoutData(data);
 		parameters.forEach(param -> {

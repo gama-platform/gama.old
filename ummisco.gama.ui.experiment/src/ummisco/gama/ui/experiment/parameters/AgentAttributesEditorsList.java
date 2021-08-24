@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
@@ -37,12 +37,11 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public String getItemDisplayName(final IAgent ag, final String name) {
-		if (name == null) { return AGENT_MARKER + ag.getName(); }
+		if (name == null) return AGENT_MARKER + ag.getName();
 		if (ag.dead() && !name.contains(DEAD_MARKER)) {
 			final long cycle = ag.getScope().getClock().getCycle();
-			final String result = AGENT_MARKER + ItemList.ERROR_CODE
-					+ name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) + DEAD_MARKER + cycle;
-			return result;
+			return AGENT_MARKER + ItemList.ERROR_CODE + name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1)
+					+ DEAD_MARKER + cycle;
 		}
 		return name;
 	}
@@ -54,15 +53,13 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
-		if (addItem(agent)) {
-			if (!agent.dead()) {
-				final IScope scope = agent.getScope().copy("for " + agent.getName());
-				for (final IExperimentDisplayable var : params) {
-					if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
-						final IParameterEditor<?> gp =
-								EditorFactory.getInstance().create(scope, agent, (IParameter) var, null);
-						categories.get(agent).put(gp.getParam().getName(), gp);
-					}
+		if (addItem(agent) && !agent.dead()) {
+			final IScope scope = agent.getScope().copy("for " + agent.getName());
+			for (final IExperimentDisplayable var : params) {
+				if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
+					final IParameterEditor<?> gp =
+							EditorFactory.getInstance().create(scope, agent, (IParameter) var, null);
+					categories.get(agent).put(gp.getParam().getName(), gp);
 				}
 			}
 		}
@@ -82,7 +79,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			if (!entry.getKey().dead()) {
 				for (final IParameterEditor<?> gp : entry.getValue().values()) {
-					gp.forceUpdateValueAsynchronously();
+					gp.updateWithValueOfParameter();
 				}
 
 			}
@@ -91,7 +88,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	/**
 	 * Method handleMenu()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override

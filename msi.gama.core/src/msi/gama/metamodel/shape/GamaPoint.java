@@ -14,16 +14,22 @@ import static java.lang.Math.sqrt;
 import static msi.gaml.operators.Maths.round;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.util.NumberUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.geometry.IIntersectable;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IAttributed;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.variable;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -40,13 +46,19 @@ import msi.gaml.types.Types;
  * @author drogoul 11 oct. 07
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-
-public class GamaPoint extends Coordinate implements ILocation {
-
-	@Override
-	public GamaPoint toGamaPoint() {
-		return this;
-	}
+@vars ({ @variable (
+		name = IKeyword.X,
+		type = IType.FLOAT,
+		doc = { @doc ("Returns the x ordinate of this point") }),
+		@variable (
+				name = IKeyword.Y,
+				type = IType.FLOAT,
+				doc = { @doc ("Returns the y ordinate of this point") }),
+		@variable (
+				name = IKeyword.Z,
+				type = IType.FLOAT,
+				doc = { @doc ("Returns the z ordinate of this point") }) })
+public class GamaPoint extends Coordinate implements IShape, ILocation, IIntersectable {
 
 	public GamaPoint() {
 		x = 0.0d;
@@ -74,16 +86,19 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return x < other.x || y < other.y || z < other.z;
 	}
 
+	public boolean smallerThanOrEqualTo(final GamaPoint other) {
+		return x <= other.x || y <= other.y || z <= other.z;
+	}
+
 	public boolean biggerThan(final GamaPoint other) {
 		return x > other.x || y > other.y || z > other.z;
 	}
 
-	@Override
-	public void setLocation(final ILocation al) {
-		if (al == this) return;
-		setLocation(al.getX(), al.getY(), al.getZ());
+	public boolean biggerThanOrEqualTo(final GamaPoint other) {
+		return x >= other.x || y >= other.y || z >= other.z;
 	}
 
+	@Override
 	public GamaPoint setLocation(final GamaPoint al) {
 		if (al == this) return this;
 		return setLocation(al.x, al.y, al.z);
@@ -132,19 +147,19 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	@getter ("x")
+	@getter (IKeyword.X)
 	public double getX() {
 		return x;
 	}
 
 	@Override
-	@getter ("y")
+	@getter (IKeyword.Y)
 	public double getY() {
 		return y;
 	}
 
 	@Override
-	@getter ("z")
+	@getter (IKeyword.Z)
 	public double getZ() {
 		return z;
 	}
@@ -177,13 +192,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public String stringValue(final IScope scope) {
 		return "{" + x + "," + y + "," + z + "}";
-	}
-
-	@Override
-	public void add(final ILocation loc) {
-		setX(x + loc.getX());
-		setY(y + loc.getY());
-		setZ(z + loc.getZ());
 	}
 
 	public GamaPoint add(final GamaPoint loc) {
@@ -298,13 +306,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public double euclidianDistanceTo(final ILocation p) {
-		final double dx = p.getX() - x;
-		final double dy = p.getY() - y;
-		final double dz = p.getZ() - z;
-		return sqrt(dx * dx + dy * dy + dz * dz);
-	}
-
 	public double euclidianDistanceTo(final GamaPoint p) {
 		return distance3D(p);
 	}
@@ -316,6 +317,18 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public boolean intersects(final IShape g) {
 		if (g.isPoint()) return this.equals(g.getLocation());
 		return g.intersects(this);
+	}
+
+	@Override
+	public boolean touches(final IShape g) {
+		if (g.isPoint()) return false;
+		return g.touches(this);
+	}
+
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		if (g.isPoint()) return false;
+		return g.partiallyOverlaps(this);
 	}
 
 	@Override
@@ -461,7 +474,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 * @see msi.gama.metamodel.shape.IShape#getPoints()
 	 */
 	@Override
-	public IList<? extends ILocation> getPoints() {
+	public IList<GamaPoint> getPoints() {
 		final IList result = GamaListFactory.create(Types.POINT);
 		result.add(clone());
 		return result;
@@ -470,7 +483,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 	/**
 	 * @return the point with y negated (for OpenGL, for example), without side effect on the point.
 	 */
-	@Override
 	public GamaPoint yNegated() {
 		return new GamaPoint(x, -y, z);
 	}
@@ -630,7 +642,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if (Math.abs(x) <= threshold) {
 			final double inverse = 1 / sqrt(y * y + z * z);
 			return new GamaPoint(0, inverse * z, -inverse * y);
-		} else if (Math.abs(y) <= threshold) {
+		}
+		if (Math.abs(y) <= threshold) {
 			final double inverse = 1 / sqrt(x * x + z * z);
 			return new GamaPoint(-inverse * z, 0, inverse * x);
 		}
@@ -638,7 +651,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(inverse * y, -inverse * x, 0);
 	}
 
-	@Override
 	public GamaPoint withPrecision(final int i) {
 		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}
@@ -651,32 +663,38 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(x, y, z);
 	}
 
-	// @Override
-	// public Map<String, Object> getAttributes() {
-	// return null;
-	// }
-
-	//
-	// public int compareTo(final GamaPoint o) {
-	//
-	// if (x < o.x) return -1;
-	// if (x > o.x) return 1;
-	// if (y < o.y) return -1;
-	// if (y > o.y) return 1;
-	// if (z < o.z) return -1;
-	// if (z > o.z) return 1;
-	// return 0;
-	// }
-	//
-	// @Override
-	// public int compareTo(final ILocation location) {
-	// return compareTo(location.toGamaPoint());
-	// }
-
 	@Override
 	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
 
 	@Override
 	public void copyAttributesOf(final IAttributed source) {}
+
+	@Override
+	@Deprecated
+	public void add(final ILocation p) {
+		add(p.toGamaPoint());
+	}
+
+	@Override
+	@Deprecated
+	public double euclidianDistanceTo(final ILocation targ) {
+		return euclidianDistanceTo(targ.toGamaPoint());
+	}
+
+	@Override
+	@Deprecated
+	public GamaPoint toGamaPoint() {
+		return this;
+	}
+
+	@Override
+	public boolean intersects(final Envelope env) {
+		return env.intersects(this);
+	}
+
+	@Override
+	public boolean intersects(final Coordinate env) {
+		return this.equals3D(env);
+	}
 
 }

@@ -33,7 +33,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.FileOutput;
@@ -251,8 +251,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void createVariables(final IScope scope, final IAgent a, final Map<String, Object> inits)
 				throws GamaRuntimeException {
 			final Set<String> names = inits.keySet();
-			for (final String s : orderedVarNames) {
-				final IVariable var = getVar(s);
+			for (final IVariable var : orderedVars) {
+
+				String s = var.getName();
 				var.initializeWith(scope, a, inits.get(s));
 				names.remove(s);
 			}
@@ -268,7 +269,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public ExperimentAgent getAgent(final IScope scope, final ILocation value) {
+		public ExperimentAgent getAgent(final IScope scope, final GamaPoint value) {
 			return agent;
 		}
 
@@ -495,9 +496,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (isHeadless()) {
 			// Always auto start in headless mode
 			this.getController().userStart();
-		}else {
-			if (isBatch()) {
-				agent.getScope().getGui().getStatus(agent.getScope())
+		} else if (isBatch()) {
+			agent.getScope().getGui().getStatus(agent.getScope())
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 				agent.getScope().getGui().updateExperimentState(agent.getScope());
 			}

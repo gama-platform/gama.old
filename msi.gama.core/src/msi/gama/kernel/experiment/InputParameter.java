@@ -15,8 +15,8 @@ import java.util.List;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class InputParameter extends ParameterAdapter {
@@ -27,7 +27,7 @@ public class InputParameter extends ParameterAdapter {
 	private Comparable step;
 
 	public InputParameter(final String name, final Object value) {
-		this(name, value, Types.get(value == null ? Object.class : (Class<Object>) value.getClass()));
+		this(name, value, GamaType.of(value));
 	}
 
 	public InputParameter(final String name, final Object value, final IType type) {

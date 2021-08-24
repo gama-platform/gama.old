@@ -49,8 +49,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		final var data = currentValue != null ? currentValue
 				: toGamaFont(WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0]);
 		edit.setText(currentValue == null ? "Default" : data.toString());
-		//Font old = edit.getFont();
-		//if (old != null && old != WorkbenchHelper.getDisplay().getSystemFont()) { old.dispose(); }
+		// Font old = edit.getFont();
+		// if (old != null && old != WorkbenchHelper.getDisplay().getSystemFont()) { old.dispose(); }
 		edit.setFont(new Font(WorkbenchHelper.getDisplay(), toFontData(data)));
 		internalModification = false;
 	}
@@ -61,11 +61,6 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 
 	private FontData toFontData(final GamaFont gf) {
 		return new FontData(gf.getName(), gf.getSize(), gf.getStyle());
-	}
-
-	@Override
-	public Control getEditorControl() {
-		return edit;
 	}
 
 	@Override

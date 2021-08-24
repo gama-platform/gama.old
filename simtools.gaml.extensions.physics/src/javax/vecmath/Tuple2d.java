@@ -87,8 +87,8 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
      */
     public Tuple2d(Tuple2f t1)
     {
-	this.x = (double) t1.x;
-	this.y = (double) t1.y;
+	this.x = t1.x;
+	this.y = t1.y;
     }
 
     /**
@@ -142,8 +142,8 @@ public abstract class Tuple2d implements java.io.Serializable, Cloneable {
      */
     public final void set(Tuple2f t1)
     {
-	this.x = (double) t1.x;
-	this.y = (double) t1.y;
+	this.x = t1.x;
+	this.y = t1.y;
     }
 
    /**

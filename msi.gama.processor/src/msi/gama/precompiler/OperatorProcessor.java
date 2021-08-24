@@ -48,7 +48,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final boolean hasScope = n > 0 && args[0].contains("IScope");
 		final Set<Modifier> modifiers = method.getModifiers();
 		final boolean isStatic = modifiers.contains(Modifier.STATIC);
-		if (n == 0 && !isStatic || isStatic && hasScope && n == 1) {
+		if (isStatic && (n == 0 || hasScope && n == 1)) {
 			context.emitError("an operator needs to have at least one operand", method);
 			return;
 		}
@@ -96,7 +96,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 				return;
 			default:
 		}
-		if (ret.equals("void")) {
+		if ("void".equals(ret)) {
 			context.emitError("operators need to return a value", method);
 			return;
 		}
@@ -257,9 +257,9 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 
 	@Override
 	protected boolean validateElement(final ProcessorContext context, final Element e) {
-		boolean result = assertElementIsPublic(context, true, e);
+
 		// TODO: move all other warnings and errors here
-		return result;
+		return assertElementIsPublic(context, true, e);
 	}
 
 }

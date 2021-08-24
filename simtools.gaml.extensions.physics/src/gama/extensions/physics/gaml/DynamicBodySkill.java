@@ -71,8 +71,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public GamaPoint getVelocity(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return new GamaPoint();
-		GamaPoint result = body.getLinearVelocity(null);
-		return result;
+		return body.getLinearVelocity(null);
 	}
 
 	@setter (VELOCITY)
@@ -86,7 +85,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public Double getDamping(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getLinearDamping());
+		return (double) body.getLinearDamping();
 	}
 
 	@setter (DAMPING)
@@ -100,7 +99,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public Double getContactDamping(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getContactDamping());
+		return (double) body.getContactDamping();
 	}
 
 	@setter (CONTACT_DAMPING)
@@ -114,7 +113,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public Double getAngularDamping(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getAngularDamping());
+		return (double) body.getAngularDamping();
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public Double getMass(final IAgent scope) {
 		IBody body = getBody(scope);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getMass());
+		return (double) body.getMass();
 	}
 
 	@Override
@@ -144,8 +143,7 @@ public class DynamicBodySkill extends StaticBodySkill {
 	public GamaPoint getAngularVelocity(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return new GamaPoint();
-		GamaPoint result = body.getAngularVelocity(null);
-		return result;
+		return body.getAngularVelocity(null);
 	}
 
 	@setter (ANGULAR_VELOCITY)
@@ -187,13 +185,13 @@ public class DynamicBodySkill extends StaticBodySkill {
 			return this;
 		}
 		GamaPoint impulse = Cast.asPoint(scope, scope.getArg(IMPULSE, IType.POINT));
-		body.applyImpulse(impulse);
+		if (impulse != null) { body.applyImpulse(impulse); }
 
 		GamaPoint force = Cast.asPoint(scope, scope.getArg(FORCE, IType.POINT));
-		body.applyForce(force);
+		if (force != null) { body.applyForce(force); }
 
 		GamaPoint torque = Cast.asPoint(scope, scope.getArg(TORQUE, IType.POINT));
-		body.applyTorque(torque);
+		if (torque != null) { body.applyTorque(torque); }
 
 		return this;
 	}

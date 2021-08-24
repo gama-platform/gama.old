@@ -33,9 +33,7 @@ public interface IParameterEditor<T> extends IScoped {
 
 	IParameter getParam();
 
-	void updateValue(boolean force);
-
-	void forceUpdateValueAsynchronously();
+	void updateWithValueOfParameter();
 
 	void setActive(Boolean value);
 

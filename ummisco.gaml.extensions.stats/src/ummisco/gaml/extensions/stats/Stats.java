@@ -31,7 +31,7 @@ import com.google.common.collect.Ordering;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -526,10 +526,10 @@ public class Stats {
 
 		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[1];
 		Number maxNum = null;
-		ILocation maxPoint = null;
+		GamaPoint maxPoint = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation && maxNum == null) {
-				if (maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) { maxPoint = (ILocation) o; }
+			if (o instanceof GamaPoint && maxNum == null) {
+				if (maxPoint == null || ((GamaPoint) o).compareTo(maxPoint) > 0) { maxPoint = (GamaPoint) o; }
 			} else if (o instanceof Number && maxPoint == null
 					&& (maxNum == null || ((Number) o).doubleValue() > maxNum.doubleValue())) {
 				maxNum = (Number) o;
@@ -585,10 +585,10 @@ public class Stats {
 	public static Object min(final IScope scope, final IContainer l) {
 		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[0];
 		Number minNum = null;
-		ILocation minPoint = null;
+		GamaPoint minPoint = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation && minNum == null) {
-				if (minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) { minPoint = (ILocation) o; }
+			if (o instanceof GamaPoint && minNum == null) {
+				if (minPoint == null || ((GamaPoint) o).compareTo(minPoint) < 0) { minPoint = (GamaPoint) o; }
 			} else if (o instanceof Number && minPoint == null
 					&& (minNum == null || ((Number) o).doubleValue() < minNum.doubleValue())) {
 				minNum = (Number) o;
@@ -644,12 +644,12 @@ public class Stats {
 		final DataSet x = new DataSet();
 		DataSet y = null, z = null;
 		for (final Object o : l.iterable(scope)) {
-			if (o instanceof ILocation) {
+			if (o instanceof GamaPoint) {
 				if (y == null) {
 					y = new DataSet();
 					z = new DataSet();
 				}
-				final ILocation p = (ILocation) o;
+				final GamaPoint p = (GamaPoint) o;
 				x.addValue(p.getX());
 				y.addValue(p.getY());
 				z.addValue(p.getZ());
@@ -702,7 +702,7 @@ public class Stats {
 				final DataSet y = new DataSet();
 				final DataSet z = new DataSet();
 				for (final Object o : values.iterable(scope)) {
-					final ILocation p = (ILocation) o;
+					final GamaPoint p = (GamaPoint) o;
 					x.addValue(p.getX());
 					y.addValue(p.getY());
 					z.addValue(p.getZ());

@@ -36,5 +36,5 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.gaml.impl,
  msi.gama.lang.gaml.gaml.util
 Import-Package: org.apache.commons.lang;version="2.4.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: msi.gama.lang.gaml

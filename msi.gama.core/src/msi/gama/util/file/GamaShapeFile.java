@@ -93,6 +93,7 @@ public class GamaShapeFile extends GamaGisFile {
 			int number = 0;
 			try {
 				store = getDataStore(url);
+				
 				final SimpleFeatureSource source = store.getFeatureSource();
 				final SimpleFeatureCollection features = source.getFeatures();
 				try {
@@ -111,12 +112,15 @@ public class GamaShapeFile extends GamaGisFile {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
 					} catch (final Exception e) {
+						if (store != null) store.dispose();
 						throw e;
 					}
 				}
 				try {
 					number = features.size();
 				} catch (final Exception e) {
+
+					if (store != null) store.dispose();
 					DEBUG.ERR("Error in loading shapefile: " + e.getMessage());
 				}
 				final java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
@@ -359,6 +363,7 @@ public class GamaShapeFile extends GamaGisFile {
 				}
 			}, counter);
 		} catch (final IOException e) {
+			
 			throw GamaRuntimeException.create(e, scope);
 		}
 		// finally {
@@ -382,7 +387,11 @@ public class GamaShapeFile extends GamaGisFile {
 			query.getHints().put(Hints.JTS_COORDINATE_SEQUENCE_FACTORY, GamaGeometryFactory.COORDINATES_FACTORY);
 			query.getHints().put(Hints.JTS_GEOMETRY_FACTORY, GeometryUtils.GEOMETRY_FACTORY);
 			// AD
-			return source.getFeatures(query);
+			SimpleFeatureCollection collection = source.getFeatures(query);
+			if (source.getDataStore() != null) 
+				source.getDataStore().dispose();
+			return collection;
+			
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

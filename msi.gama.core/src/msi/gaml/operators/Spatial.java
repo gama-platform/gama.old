@@ -45,6 +45,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.operation.buffer.BufferOp;
 import org.locationtech.jts.operation.buffer.BufferParameters;
 import org.locationtech.jts.operation.distance.DistanceOp;
 import org.locationtech.jts.precision.EnhancedPrecisionOp;
@@ -67,8 +68,9 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -178,7 +180,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="See Creation.experiment in test models : {Circle tests with tolerance}")
 		public static IShape circle(final IScope scope, final Double radius) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) return new GamaShape(location);
@@ -201,7 +203,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape circle(final IScope scope, final Double radius, final GamaPoint position) {
-			ILocation location;
+			GamaPoint location;
 			location = position;
 			if (radius <= 0) return new GamaShape(location);
 			return GamaGeometryType.buildCircle(radius, location);
@@ -333,7 +335,7 @@ public abstract class Spatial {
 			IShape shape = new GamaShape(GeometryUtils.GEOMETRY_FACTORY.createLineString(pts));
 			shape = Transformations.rotated_by(scope, shape, Relations.towards(scope, pt2, pt1));
 			shape = Transformations.translated_by(scope, shape,
-					pt1.minus(shape.getPoints().firstValue(scope).toGamaPoint()));
+					pt1.minus(shape.getPoints().firstValue(scope)));
 			return shape;
 		}
 
@@ -397,7 +399,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) return new GamaShape(location);
@@ -421,7 +423,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape sphere(final IScope scope, final Double radius) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) return new GamaShape(location);
@@ -444,7 +446,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test // (comment="Dummy init in test models > Creation.experiment")
 		public static IShape teapot(final IScope scope, final Double size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (size <= 0) return new GamaShape(location);
@@ -473,7 +475,7 @@ public abstract class Spatial {
 			final Double min_angle = Maths.checkHeading(p1);
 			final Double max_angle = Maths.checkHeading(p2);
 			final IAgent a = scope.getAgent();
-			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
+			final GamaPoint origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			final double originx = origin.getX();
 			final double originy = origin.getY();
 			final double worldWidth = scope.getTopology().getWidth();// -
@@ -483,11 +485,11 @@ public abstract class Spatial {
 			final double max = Math.max(worldWidth, worldHeight);
 			final double min_point_x = originx + Maths.cos(min_angle) * max;
 			final double min_point_y = originy + Maths.sin(min_angle) * max;
-			final ILocation minPoint = new GamaPoint(min_point_x, min_point_y);
+			final GamaPoint minPoint = new GamaPoint(min_point_x, min_point_y);
 
 			final double max_point_x = originx + Maths.cos(max_angle) * max;
 			final double max_point_y = originy + Maths.sin(max_angle) * max;
-			final ILocation maxPoint = new GamaPoint(max_point_x, max_point_y);
+			final GamaPoint maxPoint = new GamaPoint(max_point_x, max_point_y);
 
 			return polygon(scope, GamaListFactory.wrap(Types.POINT, origin, minPoint, maxPoint));
 		}
@@ -526,7 +528,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) return new GamaShape(location);
@@ -554,7 +556,7 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("square(10).area = 100")
 		public static IShape square(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) return new GamaShape(location);
@@ -578,7 +580,7 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("cube(10).volume = 1000")
 		public static IShape cube(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) return new GamaShape(location);
@@ -600,7 +602,7 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("rectangle({10, 5}).area = 50.0")
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
@@ -624,7 +626,7 @@ public abstract class Spatial {
 						"triangle" })
 		@test ("rectangle(10, 5).area = 50.0")
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(x, y, location);
@@ -645,7 +647,7 @@ public abstract class Spatial {
 		@test ("rectangle({0.0,0.0}, {10.0,10.0}).area = 100.0")
 		public static IShape rectangle(final IScope scope, final GamaPoint upperLeftCorner,
 				final GamaPoint lowerRightCorner) {
-			ILocation location;
+			GamaPoint location;
 			final double width = Math.abs(upperLeftCorner.x - lowerRightCorner.x);
 			final double height = Math.abs(upperLeftCorner.y - lowerRightCorner.y);
 			final GamaPoint realTopLeftCorner = new GamaPoint(Math.min(upperLeftCorner.x, lowerRightCorner.x),
@@ -675,7 +677,7 @@ public abstract class Spatial {
 				see = { "around", "circle", "sphere", "cone", "line", "link", "norm", "point", "polygon", "polyline",
 						"square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final GamaPoint p) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
@@ -698,7 +700,7 @@ public abstract class Spatial {
 						"square", "cube", "triangle" })
 		@test ("box(10,5,5).volume = 250")
 		public static IShape box(final IScope scope, final double x, final double y, final double z) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(x, y, z, location);
@@ -720,7 +722,7 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape triangle(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) return new GamaShape(location);
@@ -743,7 +745,7 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape triangle(final IScope scope, final Double base, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (base <= 0 || height <= 0) return new GamaShape(location);
@@ -767,7 +769,7 @@ public abstract class Spatial {
 						"square" })
 		@no_test
 		public static IShape pyramid(final IScope scope, final Double side_size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) return new GamaShape(location);
@@ -791,7 +793,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final Double size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (size <= 0) return new GamaShape(location);
@@ -812,7 +814,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final GamaPoint size) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			final Double width = size.x;
@@ -835,7 +837,7 @@ public abstract class Spatial {
 						"triangle" })
 		@no_test
 		public static IShape hexagon(final IScope scope, final Double width, final Double height) {
-			ILocation location;
+			GamaPoint location;
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (width == null || height == null || width <= 0 || height <= 0) return new GamaShape(location);
@@ -1411,7 +1413,7 @@ public abstract class Spatial {
 			try {
 				if (env.isNull()) { env = Envelope3D.of(0, 100, 0, 100, 0, 100); }
 				return GamaGeometryType.buildBox(env.getWidth(), env.getHeight(), env.getDepth(),
-						env.centre().toGamaPoint());
+						env.centre());
 			} finally {
 				env.dispose();
 			}
@@ -1642,7 +1644,7 @@ public abstract class Spatial {
 						value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}",
 						returnType = "geometry",
 						equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
-		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
+		public static IShape add_point(final IScope scope, final IShape g, final GamaPoint p) {
 			if (p == null || g == null) return g;
 			final Coordinate point = (Coordinate) p;
 			final Geometry geometry = g.getInnerGeometry();
@@ -1654,7 +1656,7 @@ public abstract class Spatial {
 				geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createLineString(coord);
 			} else if (geometry instanceof MultiPoint) {
 				final Coordinate[] coordinates = new Coordinate[geometry.getNumPoints() + 1];
-				coordinates[coordinates.length - 1] = GeometryUtils.toCoordinate(p);
+				coordinates[coordinates.length - 1] = (p);
 				geom_Tmp = GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(coordinates);
 			} else if (geometry instanceof LineString) {
 				geom_Tmp = createLineStringWithPoint(geometry, point);
@@ -1809,14 +1811,14 @@ public abstract class Spatial {
 			final IAgent a = scope.getAgent();
 			final List<IShape> obst =
 					obstacles == null ? new ArrayList<>() : obstacles.listValue(scope, Types.GEOMETRY, false);
-			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			final GamaPoint location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			final Geometry visiblePercept = GeometryUtils.GEOMETRY_FACTORY.createGeometry(source.getInnerGeometry());
 			final boolean isPoint = source.isPoint();
 			if (obstacles != null && !obstacles.isEmpty(scope)) {
-				final Geometry pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(GeometryUtils.toCoordinate(location));
+				final Geometry pt = GeometryUtils.GEOMETRY_FACTORY.createPoint((location));
 				final Geometry locG = pt.buffer(0.01).getEnvelope();
 				double percep_dist = 0;
-				for (final ILocation p : source.getPoints()) {
+				for (final GamaPoint p : source.getPoints()) {
 					final double dist = location.euclidianDistanceTo(p);
 					if (dist > percep_dist) { percep_dist = dist; }
 				}
@@ -1944,12 +1946,12 @@ public abstract class Spatial {
 				examples = { @example (
 						value = "polyline([{1,2},{4,6}]) split_at {7,6}",
 						equals = "[polyline([{1.0,2.0},{7.0,6.0}]), polyline([{7.0,6.0},{4.0,6.0}])]") })
-		public static IList<IShape> split_at(final IShape geom, final ILocation pt) {
+		public static IList<IShape> split_at(final IShape geom, final GamaPoint pt) {
 			final IList<IShape> lines = GamaListFactory.create(Types.GEOMETRY);
 			List<Geometry> geoms = null;
 			if (geom.getInnerGeometry() instanceof LineString) {
 				final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
-				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt.getLocation().toGamaPoint());
+				final Point pt1 = GeometryUtils.GEOMETRY_FACTORY.createPoint(pt.getLocation());
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -1969,11 +1971,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation().toGamaPoint());
+				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation().toGamaPoint());
+				coords2[0] = new GamaPoint(pt.getLocation());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -1998,7 +2000,7 @@ public abstract class Spatial {
 				}
 				final Coordinate[] coords = ((LineString) geom2).getCoordinates();
 				final Point pt1 =
-						GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation().toGamaPoint()));
+						GeometryUtils.GEOMETRY_FACTORY.createPoint(new GamaPoint(pt.getLocation()));
 				final int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -2018,11 +2020,11 @@ public abstract class Spatial {
 				for (int i = 0; i <= indexTarget; i++) {
 					coords1[i] = coords[i];
 				}
-				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation().toGamaPoint());
+				coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
 
 				nbSp = coords.length - indexTarget;
 				final Coordinate[] coords2 = new Coordinate[nbSp];
-				coords2[0] = new GamaPoint(pt.getLocation().toGamaPoint());
+				coords2[0] = new GamaPoint(pt.getLocation());
 				int k = 1;
 				for (int i = indexTarget + 1; i < coords.length; i++) {
 					coords2[k] = coords[i];
@@ -2190,6 +2192,50 @@ public abstract class Spatial {
 			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
 			return null;
 		}
+		
+		@operator (
+				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (
+				usages = { @usage (
+						value = "if the left-hand operand is a geometry and the right-hand operands a float, an integer, one of #round, #square or #flat and a boolean, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand and a flat, square or round end cap style and single sided is the boolean is true",
+						examples = { @example (
+								value = "line([{10,10}, {50,50}]) + (5,32,#round, true)",
+								equals = "A ploygon corresponding to the buffer generated",
+								test = false) }) })
+		@test ("(line([{10,10}, {50,50}]) + (5,32,#round, true)).area with_precision 1 = 282.8")
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
+				final Integer numberOfSegments, final Integer endCap, final Boolean isSingleSided) {
+			if (g == null) return null;
+			BufferParameters param = new BufferParameters(numberOfSegments, endCap);
+			param.setSingleSided(isSingleSided);
+			Geometry gg = BufferOp.bufferOp(g.getInnerGeometry(), size,param);
+			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
+			return null;
+		}
+		
+		@operator (
+				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_TRANSFORMATIONS },
+				concept = {})
+		@doc (
+				usages = { @usage (
+						value = "if the left-hand operand is a geometry and the right-hand operands a float and a boolean, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), single sided is the boolean is true",
+						examples = { @example (
+								value = "line([{10,10}, {50,50}]) + (5, true)",
+								equals = "A ploygon corresponding to the buffer generated",
+								test = false) }) })
+		@test ("(line([{10,10}, {50,50}]) + (5, true)).area with_precision 1 = 282.8")
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size, final Boolean isSingleSided) {
+			if (g == null) return null;
+			BufferParameters param = new BufferParameters();
+			param.setSingleSided(isSingleSided);
+			Geometry gg = BufferOp.bufferOp(g.getInnerGeometry(), size,param);
+			if (gg != null && !gg.isEmpty()) return new GamaShape(g, gg);
+			return null;
+		}
+
 
 		@operator (
 				value = { IKeyword.PLUS, "buffer", "enlarged_by" },
@@ -2469,7 +2515,7 @@ public abstract class Spatial {
 								value = " (box({10, 10 , 5}) at_location point(50,50,0)).location.x",
 								equals = "50.0",
 								returnType = "float") })
-		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
+		public static IShape at_location(final IScope scope, final IShape g, final GamaPoint p)
 				throws GamaRuntimeException {
 			if (g == null) return null;
 			return new GamaShape(g, null, (AxisAngle) null, p);
@@ -3152,8 +3198,8 @@ public abstract class Spatial {
 					final List<IShape> ls = gg == null ? GamaListFactory.create()
 							: (List<IShape>) Spatial.Queries.overlapping(scope, lines2, gg);
 					if (!ls.isEmpty()) {
-						final ILocation pto = l.getPoints().firstValue(scope);
-						final ILocation ptd = l.getPoints().lastValue(scope);
+						final GamaPoint pto = l.getPoints().firstValue(scope);
+						final GamaPoint ptd = l.getPoints().lastValue(scope);
 						final PreparedGeometry pg = PreparedGeometryFactory.prepare(gg.getInnerGeometry());
 						for (final IShape l2 : ls) {
 							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) { continue; }
@@ -3161,7 +3207,7 @@ public abstract class Spatial {
 
 							if (it == null || it.getPerimeter() > 0.0) { continue; }
 							if (!it.getLocation().equals(pto) || !it.getLocation().equals(ptd)) {
-								final ILocation pt = it.getPoints().firstValue(scope);
+								final GamaPoint pt = it.getPoints().firstValue(scope);
 								final IList<IShape> res1 = Spatial.Operators.split_at(l2, pt);
 								res1.removeIf(a -> a.getPerimeter() == 0.0);
 								final IList<IShape> res2 = Spatial.Operators.split_at(l, pt);
@@ -3250,14 +3296,14 @@ public abstract class Spatial {
 
 				while (modif) {
 					for (final IShape geom : geomsTmp) {
-						final GamaPoint ptF = geom.getPoints().firstValue(scope).toGamaPoint();
+						final GamaPoint ptF = geom.getPoints().firstValue(scope);
 						modif = connectLine(scope, ptF, geom, true, geoms, results, tolerance);
 						if (modif) {
 							geomsTmp = GamaListFactory.create();
 							geomsTmp.addAll(geoms);
 							break;
 						}
-						final GamaPoint ptL = geom.getPoints().lastValue(scope).toGamaPoint();
+						final GamaPoint ptL = geom.getPoints().lastValue(scope);
 						modif = connectLine(scope, ptL, geom, false, geoms, results, tolerance);
 						if (modif) {
 							geomsTmp = GamaListFactory.create();
@@ -3497,7 +3543,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					final GamaSpatialPath path = topo.pathBetween(scope, previous, gg);
 					if (path != null && path.getEdgeList() != null) { edges.addAll(path.getEdgeList()); }
 				}
@@ -3548,7 +3594,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					if (topo instanceof GridTopology) {
 						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
@@ -3604,7 +3650,7 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of ILocation
+					// TODO Take the case of GamaPoint
 					if (topo instanceof GridTopology) {
 						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
@@ -3864,9 +3910,9 @@ public abstract class Spatial {
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{10,20},{20,20},{20,30},{10,30}]) = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps {15,15} = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) partially_overlaps polygon([{35,35},{35,45},{45,45},{45,35}]) = false")
-		public static Boolean partially_overlaps(final IShape g1, final IShape g) {
-			if (g == null) return false;
-			return g1.getInnerGeometry().overlaps(g.getInnerGeometry());
+		public static Boolean partially_overlaps(final IShape g1, final IShape g2) {
+			if (g1 == null || g2 == null) return false;
+			return g1.partiallyOverlaps(g2);
 		}
 
 		/**
@@ -3923,9 +3969,9 @@ public abstract class Spatial {
 		@test ("polyline([{10,10},{20,20}]) touches polyline([{5,5},{15,15}]) = false")
 		@test ("polyline([{10,10},{20,20}]) touches {15,15} = false")
 		@test ("polygon([{10,10},{10,20},{20,20},{20,10}]) touches {15,15} = false")
-		public static Boolean touches(final IShape g, final IShape g2) {
-			if (g == null) return false;
-			return g2.getInnerGeometry().touches(g.getInnerGeometry());
+		public static Boolean touches(final IShape g1, final IShape g2) {
+			if (g1 == null || g2 == null) return false;
+			return g1.touches(g2);
 		}
 
 		/**
@@ -4011,7 +4057,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
 		@test (" centroid(world) = {50.0, 50.0, 0.0} ")
-		public static ILocation centroidArea(final IScope scope, final IShape g) {
+		public static GamaPoint centroidArea(final IScope scope, final IShape g) {
 			if (g == null || g.getInnerGeometry() == null) return null;
 			final Centroid cent = new Centroid(g.getInnerGeometry());
 			return new GamaPoint(cent.getCentroid());
@@ -4030,7 +4076,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
 		@no_test
-		public static ILocation any_location_in(final IScope scope, final IShape g) {
+		public static GamaPoint any_location_in(final IScope scope, final IShape g) {
 			return GeometryUtils.pointInGeom(g, scope.getRandom());
 		}
 
@@ -4102,11 +4148,11 @@ public abstract class Spatial {
 						test = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 
-		public static IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
+		public static IList<GamaPoint> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if (distance == null || nbLoc == null) // scope.setStatus(ExecutionStatus.failure);
 				throw GamaRuntimeException.error("Impossible to compute points_at", scope);
-			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
-			final ILocation loc = scope.getAgent().getLocation();
+			final IList<GamaPoint> locations = GamaListFactory.create(Types.POINT);
+			final GamaPoint loc = scope.getAgent().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * Math.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
@@ -4150,7 +4196,7 @@ public abstract class Spatial {
 						equals = "the farthest point of geom to pt",
 						isExecutable = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
-		public static ILocation farthest_point_to(final IShape g, final GamaPoint p) {
+		public static GamaPoint farthest_point_to(final IShape g, final GamaPoint p) {
 			if (g == null) return p.getLocation();
 			if (p == null) return g.getLocation();
 
@@ -4177,18 +4223,18 @@ public abstract class Spatial {
 		 * @param poly
 		 *            a polygon
 		 */
-		public static ILocation _closest_point_to(final IShape pt, final IShape geom) {
+		public static GamaPoint _closest_point_to(final IShape pt, final IShape geom) {
 			if (pt == null) return null;
 			if (geom == null) return pt.getLocation();
 			final Coordinate[] cp = new DistanceOp(geom.getInnerGeometry(), pt.getInnerGeometry()).nearestPoints();
 			return new GamaPoint(cp[0]);
 		}
 
-		public static ILocation _closest_point_to(final ILocation pt, final IShape geom) {
+		public static GamaPoint _closest_point_to(final GamaPoint pt, final IShape geom) {
 			if (pt == null) return null;
 			if (geom == null) return pt;
 			final PointPairDistance ppd = new PointPairDistance();
-			DistanceToPoint.computeDistance(geom.getInnerGeometry(), GeometryUtils.toCoordinate(pt), ppd);
+			DistanceToPoint.computeDistance(geom.getInnerGeometry(), (pt), ppd);
 			return new GamaPoint(ppd.getCoordinate(0));
 		}
 
@@ -4342,6 +4388,16 @@ public abstract class Spatial {
 			}
 			return geoms;
 		}
+		
+		
+		static IList<? extends IShape>  relatedEntities(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source, ITopology.SpatialRelation relation) {
+			final IType contentType = list.getGamlType().getContentType();
+			if (contentType.isAgentType())
+				return _gather(scope, In.list(scope, list), source, relation);
+			else if (contentType == Types.GEOMETRY) return geomsRelated(scope, list, source, relation);
+			return GamaListFactory.EMPTY_LIST;
+		}
 
 		@operator (
 				value = { "inside" },
@@ -4364,15 +4420,109 @@ public abstract class Spatial {
 		@no_test // already done in Spatial tests Models
 		public static IList<? extends IShape> inside(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source) {
-			final IType contentType = list.getGamlType().getContentType();
-			if (contentType.isAgentType())
-				return _gather(scope, In.list(scope, list), source, true);
-			else if (contentType == Types.GEOMETRY) return geomOverlapping(scope, list, source, true);
-			return GamaListFactory.EMPTY_LIST;
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.INSIDE ); 
+		}
+		
+		
+		
+		@operator (
+				value = { "covering" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), covering the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] covering(self)",
+						equals = "the agents among ag1, ag2 and ag3 that cover the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) covering (self)",
+								equals = "the agents among species species1 and species2 that covers the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> covering(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) {
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.COVER ); 
+		}
+		
+		@operator (
+				value = { "crossing" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), crossing the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] crossing(self)",
+						equals = "the agents among ag1, ag2 and ag3 that cross the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) crossing (self)",
+								equals = "the agents among species species1 and species2 that cross the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> crossing(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.CROSS ); 
 		}
 
 		@operator (
-				value = { "overlapping" },
+				value = { "touching" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), touching the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] toucing(self)",
+						equals = "the agents among ag1, ag2 and ag3 that touch the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) touching (self)",
+								equals = "the agents among species species1 and species2 that touch the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> touching(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.TOUCH ); 
+		}
+		
+		@operator (
+				value = { "partially_overlapping" },
+				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents or geometries among the left-operand list, species or meta-population (addition of species), partially_overlapping the operand (casted as a geometry).",
+				examples = { @example (
+						value = "[ag1, ag2, ag3] partially_overlapping(self)",
+						equals = "the agents among ag1, ag2 and ag3 that partially_overlap the shape of the right-hand argument.",
+						isExecutable = false),
+						@example (
+								value = "(species1 + species2) partially_overlapping (self)",
+								equals = "the agents among species species1 and species2 that partially_overlap the shape of the right-hand argument.",
+								isExecutable = false) },
+				see = { "neighbors_at", "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "inside",
+						"agents_inside", "agent_closest_to" })
+		@no_test // already done in Spatial tests Models
+		public static IList<? extends IShape> partiallyOverlapping(final IScope scope, final IContainer<?, ? extends IShape> list,
+				final IShape source) { 
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.PARTIALLY_OVERLAP ); 
+		}
+		
+		@operator (
+				value = { "overlapping", "intersecting" },
 				content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
@@ -4391,27 +4541,25 @@ public abstract class Spatial {
 		@no_test // test already done in Spatial tests models
 		public static IList<? extends IShape> overlapping(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final IShape source) {
-			final IType contentType = list.getGamlType().getContentType();
-			if (contentType.isAgentType())
-				return _gather(scope, In.list(scope, list), source, false);
-			else if (contentType == Types.GEOMETRY) return geomOverlapping(scope, list, source, false);
-			return GamaListFactory.EMPTY_LIST;
+			return relatedEntities(scope,list,source,ITopology.SpatialRelation.OVERLAP ); 
 		}
 
-		public static IList<? extends IShape> geomOverlapping(final IScope scope,
-				final IContainer<?, ? extends IShape> list, final IShape source, final boolean cover) {
+		public static IList<? extends IShape> geomsRelated(final IScope scope,
+				final IContainer<?, ? extends IShape> list, final IShape source, final ITopology.SpatialRelation relation) {
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
+			PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
+			PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
 				if (!(shape instanceof IShape)) { continue; }
-				if (cover) {
-					if (source.covers((IShape) shape)) { geoms.add((IShape) shape); }
-				} else {
-					if (source.intersects((IShape) shape)) { geoms.add((IShape) shape); }
+				if (AbstractTopology.accept(pg, ((IShape) shape).getInnerGeometry(), relation)){ 
+					geoms.add((IShape) shape); 
 				}
-
 			}
 			return geoms;
 		}
+		
+	
+
 
 		@operator (
 				value = { "closest_to" },
@@ -4582,6 +4730,78 @@ public abstract class Spatial {
 			return _farthest(scope, Different.with(), source);
 		}
 
+		
+		
+		@operator (
+				value = "agents_touching",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents touching the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_touching(self)",
+						equals = "the agents that touch the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_touching(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.TOUCH);
+		}
+		@operator (
+				value = "agents_crossing",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents cross the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_crossing(self)",
+						equals = "the agents that crossing the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_crossing(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.CROSS);
+		}
+		
+		@operator (
+				value = "agents_partially_overlapping",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents that partially overlap the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_partially_overlapping(self)",
+						equals = "the agents that partially overlap the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_partially_overlapping(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.PARTIALLY_OVERLAP);
+		}
+		
+		@operator (
+				value = "agents_covering",
+				content_type = IType.AGENT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.AGENT_LOCATION })
+		@doc (
+				value = "A list of agents covered by the operand (casted as a geometry).",
+				examples = { @example (
+						value = "agents_covering(self)",
+						equals = "the agents that cover the shape of the agent applying the operator.",
+						test = false) },
+				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
+		@no_test // already done in Spacial tests Models
+		public static IList<IAgent> agents_cover(final IScope scope, final Object source) {
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.COVER);
+		}
 		@operator (
 				value = "agents_inside",
 				content_type = IType.AGENT,
@@ -4597,11 +4817,11 @@ public abstract class Spatial {
 				see = { "agent_closest_to", "agents_overlapping", "closest_to", "inside", "overlapping" })
 		@no_test // already done in Spacial tests Models
 		public static IList<IAgent> agents_inside(final IScope scope, final Object source) {
-			return _gather(scope, Different.with(), source, true);
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.INSIDE);
 		}
 
 		@operator (
-				value = "agents_overlapping",
+				value = {"agents_overlapping", "agent_intersecting"},
 				content_type = IType.AGENT,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_QUERIES },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
@@ -4616,7 +4836,7 @@ public abstract class Spatial {
 						"overlapping", "at_distance" })
 		@no_test // already done in Spatial tests Models
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object source) {
-			return _gather(scope, Different.with(), source, false);
+			return _gather(scope, Different.with(), source, ITopology.SpatialRelation.OVERLAP);
 		}
 
 		@operator (
@@ -4640,11 +4860,11 @@ public abstract class Spatial {
 		// Support methods used by the different queries
 
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
-				final boolean inside) {
+				final ITopology.SpatialRelation relation) {
 			if (filter == null || source == null) return GamaListFactory.EMPTY_LIST;
 			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.wrap(type,
-					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
+					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, relation));
 		}
 
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
@@ -5010,9 +5230,9 @@ public abstract class Spatial {
 						equals = "a list of points",
 						isExecutable = false) },
 				see = {})
-		public static IList<ILocation> rgb_to_xyz(final IScope scope, final GamaFile file) {
+		public static IList<GamaPoint> rgb_to_xyz(final IScope scope, final GamaFile file) {
 
-			final IList<ILocation> points = GamaListFactory.create(Types.POINT);
+			final IList<GamaPoint> points = GamaListFactory.create(Types.POINT);
 			BufferedImage texture = null;
 			int rows, cols, x, y;
 
@@ -5122,7 +5342,7 @@ public abstract class Spatial {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
-			if (g instanceof ILocation) return s.getLocation();
+			if (g instanceof GamaPoint) return s.getLocation();
 			return s;
 		}
 
@@ -5142,7 +5362,7 @@ public abstract class Spatial {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.transform(g.getInnerGeometry()));
-			if (g instanceof ILocation) return s.getLocation();
+			if (g instanceof GamaPoint) return s.getLocation();
 			return s;
 		}
 
@@ -5168,7 +5388,7 @@ public abstract class Spatial {
 			}
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.transform(g.getInnerGeometry()));
-			if (g instanceof ILocation) return s.getLocation();
+			if (g instanceof GamaPoint) return s.getLocation();
 			return s;
 		}
 
@@ -5195,7 +5415,7 @@ public abstract class Spatial {
 			}
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
-			if (g instanceof ILocation) return s.getLocation();
+			if (g instanceof GamaPoint) return s.getLocation();
 			return s;
 		}
 
@@ -5241,7 +5461,7 @@ public abstract class Spatial {
 			}
 			if (targetGeometry == null) return null;
 			final IShape s = new GamaShape(targetGeometry);
-			if (g instanceof ILocation) return s.getLocation();
+			if (g instanceof GamaPoint) return s.getLocation();
 			return s;
 		}
 	}

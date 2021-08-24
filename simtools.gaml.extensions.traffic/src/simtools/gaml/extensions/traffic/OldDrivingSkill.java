@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -287,7 +287,7 @@ public class OldDrivingSkill extends MovingSkill {
 							@example ("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		final ILocation source = agent.getLocation().copy(scope);
+		final GamaPoint source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
 		final double tolerance = computeTolerance(scope, agent);
 		final double livingSpace = computeLivingSpace(scope, agent);
@@ -512,7 +512,7 @@ public class OldDrivingSkill extends MovingSkill {
 			// The current edge is over, agent moves to the next one
 		}
 		if (currentLocation.equals(falseTarget)) {
-			currentLocation = ((IShape) path.getEndVertex()).getLocation().toGamaPoint();
+			currentLocation = ((IShape) path.getEndVertex()).getLocation();
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);

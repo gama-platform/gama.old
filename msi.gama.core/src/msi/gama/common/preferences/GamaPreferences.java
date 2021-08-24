@@ -10,15 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.common.preferences;
 
-import static msi.gama.common.util.StringUtils.toJavaString;
-import static msi.gama.util.GamaDate.fromISOString;
-import static msi.gaml.operators.Cast.asBool;
-import static msi.gaml.operators.Cast.asFloat;
-import static msi.gaml.operators.Cast.asInt;
-import static msi.gaml.operators.Cast.asPoint;
-import static msi.gaml.operators.Cast.asString;
+import static msi.gama.common.preferences.GamaPreferenceStore.getStore;
 
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -27,34 +20,29 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.InvalidPreferencesFormatException;
-import java.util.prefs.Preferences;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.geotools.referencing.CRS;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaDate;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
-import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
 
 /**
- * Class GamaPreferencesView.
+ * Class GamaPreferences.
  *
  * @author drogoul
  * @since 26 août 2013
@@ -251,7 +239,7 @@ public class GamaPreferences {
 				create("pref_experiment_ask_closing", "Ask to close the previous experiment when launching a new one",
 						true, IType.BOOL, true).in(NAME, EXECUTION);
 		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
-				create("pref_experiment_ask_fullscreen", "Ask to go to fullscreen mode", false, IType.BOOL, true)
+				create("pref_experiment_ask_fullscreen", "Ask before entering fullscreen mode", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
 		// public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
 		// "Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
@@ -334,7 +322,6 @@ public class GamaPreferences {
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
 				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
 						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
-		// Unused code found by UCDetector
 		// public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
 		// "Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
@@ -414,27 +401,24 @@ public class GamaPreferences {
 		/**
 		 * Options
 		 */
-		// public static final String OPTIONS = "OpenGL ";
 		public static final Pref<Double> OPENGL_ZOOM =
 				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0, 1);
+		public static final Pref<Boolean> OPENGL_CAP_FPS =
+				create("pref_display_cap_fps", "Limit the number of frames per second", false, IType.BOOL, true)
+						.in(NAME, RENDERING).activates("pref_display_max_fps");
 		public static final Pref<Integer> OPENGL_FPS =
-				create("pref_display_max_fps", "Max. number of frames per second", 20, IType.INT, true).in(NAME,
+				create("pref_display_max_fps", "Max. number of frames per second", 60, IType.INT, true).in(NAME,
 						RENDERING);
-		// public static final Pref<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
-		// "Enable OpenGL background loading of textures (faster, but can cause issues on Linux and Windows)",
-		// false, IType.BOOL).in(NAME, OPTIONS);
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
 				IType.BOOL, true).in(NAME, RENDERING);
-		public static final Pref<Boolean> OPENGL_TRIANGULATOR = create("pref_display_triangulator",
-				"Use OpenGL tesselator (false is more precise, but more CPU intensive)", true, IType.BOOL, true)
-						.in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
 				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true).in(NAME, RENDERING);
 		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
 				"Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
 				true).in(NAME, RENDERING);
+
 	}
 
 	public static class External {
@@ -477,12 +461,16 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIMIZATIONS = "Optimizations";
 		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
-				"Optimize constant expressions (experimental)", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+				"Optimize constant expressions (experimental, performs a rebuild of models)", false, IType.BOOL, true)
+						.in(NAME, OPTIMIZATIONS).onChange(v -> {
+							try {
+								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+							} catch (CoreException e) {}
+						});
+
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
 				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
 						OPTIMIZATIONS);
-		// public static final Pref<Boolean> MATH_OPTIMIZATION = create("pref_optimize_math_functions",
-		// "Use faster (but less accurate) arithmetic functions", false, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
 						.in(NAME, OPTIMIZATIONS);
@@ -563,37 +551,12 @@ public class GamaPreferences {
 			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
 			else if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
-			if (os.startsWith("Windows")) {
-				return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
-			}
+			if (os.startsWith("Windows")) return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			return "";
 		}
 	}
 
-	// TAB NAMES
-
-	static Preferences store;
 	private static Map<String, Pref<? extends Object>> prefs = new LinkedHashMap<>();
-	private static List<String> storeKeys;
-
-	static {
-
-		try {
-			store = Preferences.userRoot().node("gama");
-			try {
-				store.flush();
-			} catch (final BackingStoreException e1) {
-				e1.printStackTrace();
-			}
-			try {
-				storeKeys = Arrays.asList(store.keys());
-			} catch (final BackingStoreException e) {
-				e.printStackTrace();
-			}
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public static <T> Pref<T> get(final String key, final Class<T> clazz) {
 		return (Pref<T>) prefs.get(key);
@@ -617,11 +580,6 @@ public class GamaPreferences {
 	/**
 	 * Lazy create (tries not to compute immediately the value)
 	 *
-	 * @param key
-	 * @param title
-	 * @param value
-	 * @param type
-	 * @return
 	 */
 	public static <T> Pref<T> create(final String key, final String title, final ValueProvider<T> provider,
 			final int type, final boolean inGaml) {
@@ -630,100 +588,16 @@ public class GamaPreferences {
 		return e;
 	}
 
-	static final String DEFAULT_FONT = "Default";
-
 	private static void register(final Pref gp) {
-		final IScope scope = null;
 		final var key = gp.key;
 		if (key == null) return;
 		prefs.put(key, gp);
-		final var value = gp.value;
-		if (storeKeys.contains(key)) {
-			switch (gp.type) {
-				case IType.POINT:
-					gp.init(() -> asPoint(scope, store.get(key, asString(scope, value)), false));
-					break;
-				case IType.INT:
-					gp.init(() -> store.getInt(key, asInt(scope, value)));
-					break;
-				case IType.FLOAT:
-					gp.init(() -> store.getDouble(key, asFloat(scope, value)));
-					break;
-				case IType.BOOL:
-					gp.init(() -> store.getBoolean(key, asBool(scope, value)));
-					break;
-				case IType.STRING:
-					gp.init(() -> store.get(key, toJavaString(asString(scope, value))));
-					break;
-				case IType.FILE:
-					gp.init(() -> new GenericFile(store.get(key, (String) value), false));
-					break;
-				case IType.COLOR:
-					gp.init(() -> GamaColor.getInt(store.getInt(key, asInt(scope, value))));
-					break;
-				case IType.FONT:
-					gp.init(() -> {
-						final var font = store.get(key, asString(scope, value));
-						if (DEFAULT_FONT.equals(font)) return null;
-						return GamaFontType.staticCast(scope, font, false);
-					});
-					break;
-				case IType.DATE:
-					gp.init(() -> fromISOString(toJavaString(store.get(key, asString(scope, value)))));
-					break;
-				default:
-					gp.init(() -> store.get(key, asString(scope, value)));
-			}
-		}
-		try {
-			store.flush();
-		} catch (final BackingStoreException ex) {
-			ex.printStackTrace();
-		}
+		getStore().register(gp);
 		// Adds the preferences to the platform species if it is already created
 		final var spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
 		if (spec != null && !spec.hasAttribute(key)) {
 			spec.addPref(key, gp);
 			spec.validate();
-		}
-		// Registers the preferences in the variable of the scope provider
-
-	}
-
-	public static void writeToStore(final Pref gp) {
-		final var key = gp.key;
-		final var value = gp.value;
-		switch (gp.type) {
-			case IType.INT:
-				store.putInt(key, (Integer) value);
-				break;
-			case IType.FLOAT:
-				store.putDouble(key, (Double) value);
-				break;
-			case IType.BOOL:
-				store.putBoolean(key, (Boolean) value);
-				break;
-			case IType.STRING:
-				store.put(key, toJavaString((String) value));
-				break;
-			case IType.FILE:
-				store.put(key, ((GamaFile) value).getPath(null));
-				break;
-			case IType.COLOR:
-				final var code = ((GamaColor) value).getRGB();
-				store.putInt(key, code);
-				break;
-			case IType.POINT:
-				store.put(key, ((GamaPoint) value).stringValue(null));
-				break;
-			case IType.FONT:
-				store.put(key, value == null ? DEFAULT_FONT : value.toString());
-				break;
-			case IType.DATE:
-				store.put(key, toJavaString(((GamaDate) value).toISOString()));
-				break;
-			default:
-				store.put(key, (String) value);
 		}
 	}
 
@@ -753,42 +627,17 @@ public class GamaPreferences {
 			final Pref e = prefs.get(name);
 			if (e == null) { continue; }
 			e.set(modelValues.get(name));
-			writeToStore(e);
-			try {
-				store.flush();
-			} catch (final BackingStoreException ex) {
-				ex.printStackTrace();
-			}
+			getStore().write(e);
 		}
 	}
 
-	/**
-	 *
-	 */
 	public static void revertToDefaultValues(final Map<String, Object> modelValues) {
-		// First we erase all preferences
-		final var store = Preferences.userRoot().node("gama");
-		try {
-			store.removeNode();
-		} catch (BackingStoreException e1) {
-			e1.printStackTrace();
-		}
-		// storeKeys.clear();
-		// reloadPreferences(modelValues);
-		//
-		//
-		// for (final String name : modelValues.keySet()) {
-		// final Pref e = prefs.get(name);
-		// if (e == null) {
-		// continue;
-		// }
-		// modelValues.put(name, e.getInitialValue(null));
-		// e.set(e.initial);
-		// }
-
+		getStore().clear();
 	}
 
-	private static void reloadPreferences(final Map<String, Object> modelValues) {
+	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
+		// DEBUG.OUT("Apply preferences from " + path);
+		getStore().loadFromProperties(path);
 		final List<Pref> entries = new ArrayList(prefs.values());
 		for (final Pref e : entries) {
 			register(e);
@@ -796,17 +645,7 @@ public class GamaPreferences {
 		}
 	}
 
-	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
-		// DEBUG.OUT("Apply preferences from " + path);
-		try (final var is = new FileInputStream(path);) {
-			Preferences.importPreferences(is);
-			reloadPreferences(modelValues);
-		} catch (final IOException | InvalidPreferencesFormatException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void savePreferencesTo(final String path) {
+	public static void savePreferencesToGAML(final String path) {
 		try (var os = new FileWriter(path)) {
 			final var entries = StreamEx.ofValues(prefs).sortedBy(Pref::getName).toList();
 
@@ -838,6 +677,10 @@ public class GamaPreferences {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void savePreferencesToProperties(final String path) {
+		getStore().saveToProperties(path);
 	}
 
 	// To force preferences to load

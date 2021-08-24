@@ -197,7 +197,7 @@ public class Vector3d extends Tuple3d implements java.io.Serializable {
       double vDot = this.dot(v1) / ( this.length()*v1.length() );
       if( vDot < -1.0) vDot = -1.0;
       if( vDot >  1.0) vDot =  1.0;
-      return((double) (Math.acos( vDot )));
+      return((Math.acos( vDot )));
    }
 
 

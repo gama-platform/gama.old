@@ -15,7 +15,6 @@ import java.util.stream.IntStream;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -25,7 +24,6 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -51,8 +49,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		final GamaPoint size = param instanceof GamaPoint ? (GamaPoint) param : null;
 
 		if (size == null) {
-			if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
-				return ((IFieldMatrixProvider) obj).getField(scope);
+			// if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
+			// return ((IFieldMatrixProvider) obj).getField(scope);
 			if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, copy);
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
 		} else if (size.x <= 0 || size.y < 0)
@@ -70,7 +68,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	}
 
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
-			final ILocation preferredSize) {
+			final GamaPoint preferredSize) {
 		if (list == null || list.isEmpty()) return new GamaObjectMatrix(0, 0, desiredType);
 		if (desiredType.id() == IType.INT)
 			return new GamaIntMatrix(scope, list, preferredSize);
@@ -95,7 +93,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 * @return
 	 */
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
-			final ILocation preferredSize, final boolean copy) {
+			final GamaPoint preferredSize, final boolean copy) {
 		final IType contentsType = matrix.getGamlType().getContentType();
 		if (!GamaType.requiresCasting(desiredType, contentsType)) return matrix.copy(scope, preferredSize, copy);
 		int cols, rows;

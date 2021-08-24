@@ -24,7 +24,6 @@ import com.jogamp.opengl.swt.GLCanvas;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.charts.ChartOutput;
@@ -49,6 +48,7 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -115,8 +115,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public void fillBackground(final Color bgColor, final double opacity) {
-		openGL.setCurrentObjectAlpha(opacity);
+	public void fillBackground(final Color bgColor) {
+		openGL.setCurrentObjectAlpha(1);
 	}
 
 	@Override
@@ -195,20 +195,16 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	}
 
-	@SuppressWarnings ("restriction")
+	boolean first = true;
+
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
-		int width = w, height = h;
+		int width = PlatformHelper.autoScaleDown(w), height = PlatformHelper.autoScaleDown(h);
+		// int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
 		// height = scaleDownIfMac(height);
-		if (width <= 0 || height <= 0) return;
-		if (openGL.getViewWidth() == width && openGL.getViewHeight() == height) return;
-		// DEBUG.OUT("Reshaped to " + width + " x " + height);
-		// DEBUG.OUT("Zoom size: " + DPIUtil.getDeviceZoom());
-		// DEBUG.OUT("AutoScale down = ", false);
-		// DEBUG.OUT(DPIUtil.autoScaleDown(new int[] { width, height }));
-		// DEBUG.OUT("Size of window:" + ((GLCanvas) drawable).getClientArea());
+		if (width <= 0 || height <= 0 || openGL.getViewWidth() == width && openGL.getViewHeight() == height) return;
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
@@ -370,28 +366,28 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 
 	@Override
-	public final ILocation getCameraPos() {
+	public final GamaPoint getCameraPos() {
 		return cameraHelper.getPosition();
 	}
 
 	@Override
-	public final ILocation getCameraTarget() {
+	public final GamaPoint getCameraTarget() {
 		return cameraHelper.getTarget();
 	}
 
 	@Override
-	public final ILocation getCameraOrientation() {
+	public final GamaPoint getCameraOrientation() {
 		return cameraHelper.getOrientation();
 	}
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return openGL.getRatios().x;
+		return PlatformHelper.autoScaleDown(openGL.getRatios().x);
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return openGL.getRatios().y;
+		return PlatformHelper.autoScaleDown(openGL.getRatios().y);
 	}
 
 	/*

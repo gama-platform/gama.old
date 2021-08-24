@@ -51,6 +51,6 @@ Export-Package: msi.gama.lang.gaml.ide,
  ummisco.gama.ui.perspective,
  ummisco.gama.ui.views
 Bundle-Activator: ummisco.gama.ui.modeling.internal.ModelingActivator
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: ummisco.gama.ui.modeling
 Import-Package: msi.gama.headless.core

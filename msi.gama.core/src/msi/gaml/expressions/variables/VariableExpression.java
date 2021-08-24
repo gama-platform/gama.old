@@ -20,14 +20,14 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	protected final String name;
 	protected final boolean isNotModifiable;
-	private final IDescription definitionDescription;
+	private final IDescription enclosingDescription;
 
 	protected VariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription definitionDescription) {
 		name = n;
 		setType(type);
 		isNotModifiable = notModifiable;
-		this.definitionDescription = definitionDescription;
+		this.enclosingDescription = definitionDescription;
 	}
 
 	@Override
@@ -62,12 +62,17 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public boolean isConst() {
-		if (type.isContainer()) { return false; }
-		return isNotModifiable;
+		return false;
+		// Consider all variables to be "not const" for the moment, so that they are not optimize
+		// Only "species wide" constant should be optimized: for instance gridX and gridY are constant
+		// for one agent, but not for the species. So an expression defined at the species level cannot
+		// be optimized. Only global variables can be considered as 'const'
+		// if (type.isContainer()) { return false; }
+		// return isNotModifiable;
 	}
 
 	public IDescription getDefinitionDescription() {
-		return definitionDescription;
+		return enclosingDescription;
 	}
 
 	protected void setType(final IType<?> type) {
@@ -78,7 +83,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	public String getTitle() {
 
 		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + getGamlType()
-				+ (definitionDescription != null ? " defined in " + getDefinitionDescription().getTitle() : "");
+				+ (enclosingDescription != null ? " defined in " + getDefinitionDescription().getTitle() : "");
 	}
 
 	@Override

@@ -136,7 +136,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public void updateItemValues() {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			for (final IParameterEditor gp : entry.getValue().values()) {
-				gp.updateValue(true);
+				gp.updateWithValueOfParameter();
 			}
 		}
 	}

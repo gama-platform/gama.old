@@ -1,17 +1,20 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.MatchStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ * msi.gaml.statements.MatchStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -32,11 +35,11 @@ import msi.gaml.types.Types;
 
 /**
  * IfPrototype.
- * 
+ *
  * @author drogoul 14 nov. 07
  */
 @symbol (
-		name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE },
+		name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE, IKeyword.MATCH_REGEX },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		concept = { IConcept.CONDITION },
 		with_sequence = true)
@@ -50,7 +53,7 @@ import msi.gaml.types.Types;
 				doc = @doc ("The value or values this statement tries to match")) },
 		omissible = IKeyword.VALUE)
 @doc (
-		value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used",
+		value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Four kinds of match can be used, equality, containment, betweenness and regex matching",
 		usages = { @usage (
 				value = IKeyword.MATCH + " block is executed if the switch value is equals to the value of the match:",
 				examples = { @example (
@@ -110,15 +113,14 @@ public class MatchStatement extends AbstractStatementSequence {
 		value = getFacet(IKeyword.VALUE);
 		final String keyword = desc.getKeyword();
 		setName(keyword + " " + (value == null ? "" : value.serialize(false)));
-		executer = keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE)
-				? new MatchOne() : keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween() : null;
-		if (executer != null) {
-			executer.acceptValue();
-		}
+		executer = IKeyword.MATCH.equals(keyword) ? new SimpleMatch()
+				: IKeyword.MATCH_ONE.equals(keyword) ? new MatchOne() : IKeyword.MATCH_BETWEEN.equals(keyword)
+						? new MatchBetween() : IKeyword.MATCH_REGEX.equals(keyword) ? new MatchRegex() : null;
+		if (executer != null) { executer.acceptValue(); }
 	}
 
 	public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-		if (executer == null) { return false; }
+		if (executer == null) return false;
 		return executer.matches(scope, switchValue);
 	}
 
@@ -127,9 +129,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		abstract boolean matches(IScope scope, Object switchValue) throws GamaRuntimeException;
 
 		void acceptValue() {
-			if (value.isConst()) {
-				constantValue = value.getConstValue();
-			}
+			if (value.isConst()) { constantValue = value.getConstValue(); }
 		}
 
 		Object getValue(final IScope scope) throws GamaRuntimeException {
@@ -152,19 +152,47 @@ public class MatchStatement extends AbstractStatementSequence {
 		@Override
 		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 			final Object val = getValue(scope);
-			if (val instanceof IContainer) { return ((IContainer) val).contains(scope, switchValue); }
+			if (val instanceof IContainer) return ((IContainer) val).contains(scope, switchValue);
 			return Cast.asList(scope, val).contains(switchValue);
 		}
 
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if (constantValue != null) {
-				if (!(constantValue instanceof IContainer)) {
-					if (!(constantValue instanceof ILocation)) {
-						constantValue = Types.LIST.cast(null, constantValue, null, false);
-					}
-				}
+			if (constantValue != null && !(constantValue instanceof IContainer)
+					&& !(constantValue instanceof GamaPoint)) {
+				constantValue = Types.LIST.cast(null, constantValue, null, false);
+			}
+		}
+	}
+
+	class MatchRegex extends MatchExecuter {
+
+		@Override
+		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
+			final Object val = getValue(scope);
+			if (!(switchValue instanceof String)) throw GamaRuntimeException.error(
+					"Can only match strings against a regular expression. " + switchValue + " is not a string", scope);
+			if (!(val instanceof String)) throw GamaRuntimeException
+					.error("Can only match strings against a regular expression. " + val + " is not a string", scope);
+			String target = (String) switchValue;
+			String pattern = (String) val;
+			if (pattern.isEmpty()) return false;
+			try {
+				Pattern p = Pattern.compile(pattern);
+				return p.matcher(target).find();
+			} catch (PatternSyntaxException e) {
+				// throw GamaRuntimeException.error(
+				// "The syntax of " + pattern + " is not a correct regular expression", scope);
+				return target.contains(pattern);
+			}
+		}
+
+		@Override
+		public void acceptValue() {
+			super.acceptValue();
+			if (constantValue != null && !(constantValue instanceof String)) {
+				constantValue = Types.STRING.cast(null, constantValue, null, false);
 			}
 		}
 	}
@@ -173,14 +201,12 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		@Override
 		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-			if (!(switchValue instanceof Number)) { throw GamaRuntimeException.error(
-					"Can only match if a number is in an interval. " + switchValue + " is not a number", scope); }
+			if (!(switchValue instanceof Number)) throw GamaRuntimeException
+					.error("Can only match if a number is in an interval. " + switchValue + " is not a number", scope);
 			Object val = value.value(scope);
-			if (!(val instanceof ILocation)) {
-				val = Cast.asPoint(scope, val);
-			}
-			final double min = ((ILocation) val).getX();
-			final double max = ((ILocation) val).getY();
+			if (!(val instanceof GamaPoint)) { val = Cast.asPoint(scope, val); }
+			final double min = ((GamaPoint) val).getX();
+			final double max = ((GamaPoint) val).getY();
 			final double in = ((Number) switchValue).doubleValue();
 			return in >= min && in <= max;
 		}
@@ -191,10 +217,8 @@ public class MatchStatement extends AbstractStatementSequence {
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if (constantValue != null) {
-				if (!(constantValue instanceof ILocation)) {
-					constantValue = Types.POINT.cast(null, constantValue, null, false);
-				}
+			if (constantValue != null && !(constantValue instanceof GamaPoint)) {
+				constantValue = Types.POINT.cast(null, constantValue, null, false);
 			}
 
 		}

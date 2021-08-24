@@ -11,9 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.java2d;
 
+import java.awt.Panel;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JApplet;
 
 import org.eclipse.swt.SWT;
 
@@ -32,9 +31,9 @@ public class WorkaroundForIssue2476 {
 		GAMA.getGui().setMouseLocationInModel(surface.getModelCoordinates());
 	}
 
-	public static void installOn(final JApplet applet, final IDisplaySurface surface) {
+	public static void installOn(final Panel applet, final IDisplaySurface surface) {
 		// Install only on Linux
-		if (!ummisco.gama.ui.utils.PlatformHelper.isLinux()) { return; }
+		if (!ummisco.gama.ui.utils.PlatformHelper.isLinux()) return;
 		applet.addMouseWheelListener(e -> {
 			if (e.getPreciseWheelRotation() > 0) {
 				surface.zoomOut();
@@ -81,15 +80,11 @@ public class WorkaroundForIssue2476 {
 
 			@Override
 			public void mouseClicked(final java.awt.event.MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					surface.zoomFit();
-				}
+				if (e.getClickCount() == 2) { surface.zoomFit(); }
 				if (e.getButton() == 3 && !inMenu) {
 					inMenu = surface.canTriggerContextualMenu();
 					setMousePosition(surface, e.getX(), e.getY());
-					if (inMenu) {
-						surface.selectAgentsAroundMouse();
-					}
+					if (inMenu) { surface.selectAgentsAroundMouse(); }
 					surface.dispatchMouseEvent(SWT.MenuDetect);
 					return;
 				}

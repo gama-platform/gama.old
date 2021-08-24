@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Envelope;
 import msi.gama.common.geometry.Envelope3D;
 // import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
@@ -128,9 +128,9 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	double getDisplayHeight();
 
-	ILocation getModelCoordinates();
+	GamaPoint getModelCoordinates();
 
-	ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels);
 
 	Collection<IAgent> selectAgent(final int x, final int y);
@@ -163,7 +163,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * @return true if the surface is considered as "realized" (i.e. displayed on the UI)
 	 */
-	boolean isRealized();
+	// boolean isRealized();
 
 	/**
 	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
@@ -197,5 +197,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	default boolean canTriggerContextualMenu() {
 		return !getManager().hasMouseMenuEventLayer();
 	}
+
+	default void setDisplaySynchronizer(final IDisplaySynchronizer layeredDisplaySynchronizer) {}
 
 }

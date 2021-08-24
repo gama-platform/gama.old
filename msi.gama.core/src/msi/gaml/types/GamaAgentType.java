@@ -11,7 +11,7 @@
 package msi.gaml.types;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -38,20 +38,16 @@ public class GamaAgentType extends GamaType<IAgent> {
 		id = speciesId;
 		support = base;
 		// supports = new Class[] { base };
-		if (species != null) {
-			setDefiningPlugin(species.getDefiningPlugin());
-		}
+		if (species != null) { setDefiningPlugin(species.getDefiningPlugin()); }
 	}
 
 	@Override
 	public boolean isAssignableFrom(final IType<?> t) {
 		final boolean assignable = super.isAssignableFrom(t);
-		if (!assignable) {
-			// Hack to circumvent issue #1999. Should be better handled by
-			// letting type managers of comodels inherit from the type managers
-			// of imported models.
-			if (t.isAgentType() && t.getSpecies() == getSpecies()) { return true; }
-		}
+		// Hack to circumvent issue #1999. Should be better handled by
+		// letting type managers of comodels inherit from the type managers
+		// of imported models.
+		if (!assignable && (t.isAgentType() && t.getSpecies() == getSpecies())) return true;
 		return assignable;
 	}
 
@@ -63,17 +59,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) { return null; }
+		if (obj == null) return null;
 		ISpecies species = (ISpecies) param;
-		if (species == null) {
-			species = scope.getModel().getSpecies(this.species.getName());
-		}
-		if (species == null) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
-		if (obj instanceof IAgent) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
-		if (obj instanceof Integer) { return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj); }
-		if (obj instanceof ILocation) {
-			return scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
-		}
+		if (species == null) { species = scope.getModel().getSpecies(this.species.getName()); }
+		if (species == null) return (IAgent) Types.AGENT.cast(scope, obj, param, copy);
+		if (obj instanceof IAgent) return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null;
+		if (obj instanceof Integer) return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj);
+		if (obj instanceof GamaPoint)
+			return scope.getAgent().getPopulationFor(species).getAgent(scope, (GamaPoint) obj);
 		return null;
 	}
 
@@ -105,7 +98,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
 		final boolean b = super.canBeTypeOf(scope, obj);
-		if (b) { return true; }
+		if (b) return true;
 		if (obj instanceof IAgent) {
 			final ISpecies s = scope.getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);

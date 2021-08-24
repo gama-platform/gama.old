@@ -22,12 +22,12 @@ global
 	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 1000;
 	int day_time update: cycle mod 144;
-	int min_work_start <- 36;
-	int max_work_start <- 60;
-	int min_work_end <- 84;
-	int max_work_end <- 132;
-	float min_speed <- 50.0;
-	float max_speed <- 100.0;
+	int min_work_start <- 36 const: true;
+	int max_work_start <- 60 const: true;
+	int min_work_end <- 84 const: true;
+	int max_work_end <- 132 const: true;
+	float min_speed <- 50.0 const: true;
+	float max_speed <- 100.0 const: true;
 	list<building> residential_buildings;
 	list<building> industrial_buildings;
 
@@ -85,7 +85,7 @@ species people skills: [moving]
 	int start_work <- min_work_start + rnd(max_work_start - min_work_start);
 	int end_work <- min_work_end + rnd(max_work_end - min_work_end);
 	string objectif;
-	point the_target <- nil;
+	point the_target;
 	reflex time_to_work when: day_time = start_work
 	{
 		objectif <- 'working';
@@ -131,7 +131,7 @@ experiment road_traffic type: gui
 	parameter 'Latest hour to end work' var: max_work_end category: 'People';
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
-	parameter 'Number of people agents' var: nb_people category: 'People' min: 0 max: 1000 
+	parameter 'Number of people agents' var: nb_people category: 'People' min: 0 max: 100000 
 	{
 		int nb <- length(people);
 		ask simulation
@@ -150,7 +150,7 @@ experiment road_traffic type: gui
 	}
 	output
 	{
-		display city_display type:opengl 
+		display city_display type: opengl 
 		{
 			species building aspect: base refresh: true;
 			species road aspect: base ;

@@ -60,7 +60,7 @@ public class ContactID implements Comparable<ContactID> {
   public byte typeB;
 
   public int getKey() {
-    return ((int) indexA) << 24 | ((int) indexB) << 16 | ((int) typeA) << 8 | ((int) typeB);
+    return (indexA) << 24 | (indexB) << 16 | (typeA) << 8 | (typeB);
   }
 
   public boolean isEqual(final ContactID cid) {

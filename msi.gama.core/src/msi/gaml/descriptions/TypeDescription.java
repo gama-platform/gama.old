@@ -12,30 +12,19 @@ package msi.gaml.descriptions;
 
 import static msi.gaml.descriptions.VariableDescription.FUNCTION_DEPENDENCIES_FACETS;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
-import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.connectivity.ConnectivityInspector;
-import org.jgrapht.alg.cycle.CycleDetector;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.traverse.TopologicalOrderIterator;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.GamaMapFactory;
@@ -44,6 +33,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * A class that represents skills and species (either built-in or introduced by users) The class TypeDescription.
@@ -54,6 +44,10 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
 	// lazily
@@ -69,15 +63,13 @@ public abstract class TypeDescription extends SymbolDescription {
 		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
 		addChildren(cp);
 		// parent can be null
-		if (parent != null) {
-			setParent(parent);
-		}
+		if (parent != null) { setParent(parent); }
 		if (plugin != null && isBuiltIn()) {
 			this.originName = plugin;
 			// DEBUG.LOG("Origin name " + getOriginName() + " and plugin "
 			// + plugin + " of " + this);
 		}
-		
+
 	}
 
 	public String getAttributeDocumentation() {
@@ -106,8 +98,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public String getDefiningPlugin() {
-		if (isBuiltIn())
-			return originName;
+		if (isBuiltIn()) return originName;
 		return null;
 	}
 
@@ -118,7 +109,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	 */
 
 	public Iterable<VariableDescription> getAttributes() {
-		return Iterables.transform(getAttributeNames(), input -> getAttribute(input));
+		return Iterables.transform(getAttributeNames(), this::getAttribute);
 	}
 
 	public Iterable<VariableDescription> getOwnAttributes() {
@@ -130,9 +121,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				parent != null && parent != this ? parent.getAttributeNames() : new LinkedHashSet<>();
 		if (attributes != null) {
 			attributes.forEachKey(s -> {
-				if (accumulator.contains(s)) {
-					accumulator.remove(s);
-				}
+				if (accumulator.contains(s)) { accumulator.remove(s); }
 				accumulator.add(s);
 				return true;
 			});
@@ -142,16 +131,12 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public VariableDescription getAttribute(final String vn) {
 		final VariableDescription attribute = attributes == null ? null : attributes.get(vn);
-		if (attribute == null && parent != null && parent != this)
-			return getParent().getAttribute(vn);
+		if (attribute == null && parent != null && parent != this) return getParent().getAttribute(vn);
 		return attribute;
 	}
 
 	public boolean redefinesAttribute(final String vn) {
-		if (!attributes.containsKey(name))
-			return false;
-		if (parent == null || parent == this)
-			return false;
+		if (!attributes.containsKey(name) || parent == null || parent == this) return false;
 		return parent.hasAttribute(name);
 	}
 
@@ -165,18 +150,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	public IExpression getVarExpr(final String n, final boolean asField) {
 		final VariableDescription vd = getAttribute(n);
 		if (vd == null) {
-			final IDescription desc = getAction(n);
-			if (desc != null)
-				return new DenotedActionExpression(desc);
+			final StatementDescription desc = getAction(n);
+			if (desc != null) return new DenotedActionExpression(desc);
 			return null;
 		}
 		return vd.getVarExpr(asField);
 	}
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
-		if (attributes == null) {
-			attributes = GamaMapFactory.create();
-		}
+		if (attributes == null) { attributes = GamaMapFactory.create(); }
 		// synchronized (this) {
 		attributes.put(vd.getName(), vd);
 		// }
@@ -184,8 +166,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
 			final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn())
-			return true;
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) return true;
 		final IType existingType = existingVar.getGamlType();
 		final IType newType = newVar.getGamlType();
 		if (!newType.isTranslatableInto(existingType)) {
@@ -232,14 +213,12 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn())
-			return;
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) return;
 		if (newVar.getOriginName().equals(existingVar.getOriginName())) {
 			// TODO must be review carefully the inheritance in comodel
 			/// temporay fix for co-model, variable in micro-model can be
 			// defined multi time
-			if (!newVar.getModelDescription().getAlias().equals(""))
-				return;
+			if (!"".equals(newVar.getModelDescription().getAlias())) return;
 			///
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);
@@ -278,11 +257,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (existing != null) {
 			// A previous definition has been found
 			// We assert whether their types are compatible or not
-			if (assertAttributesAreCompatible(existing, vd)) {
-				markAttributeRedefinition(existing, vd);
-				vd.copyFrom(existing);
-			} else
-				return;
+			if (!assertAttributesAreCompatible(existing, vd)) return;
+			markAttributeRedefinition(existing, vd);
+			vd.copyFrom(existing);
 		}
 
 		addAttributeNoCheck(vd);
@@ -297,168 +274,72 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (attributes != null) {
 			final VariableDescription existing = attributes.get(inheritedVarName);
 			if (existing != null && assertAttributesAreCompatible(vd, existing)) {
-				if (!existing.isBuiltIn()) {
-					markAttributeRedefinition(vd, existing);
-				}
+				if (!existing.isBuiltIn()) { markAttributeRedefinition(vd, existing); }
 				existing.copyFrom(vd);
 			}
 		}
 	}
 
-	public Iterable<String> getUpdatableAttributeNames() {
-
-		// June 2020: moving (back) to Iterables instead of Streams.
-		return Iterables.filter(getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS),
-				input -> getAttribute(input).isUpdatable());
-		// final Collection<String> vars = getOrderedAttributeNames(UPDATE_DEPENDENCIES_FACETS);
-		// return StreamEx.of(vars).filter(input -> getAttribute(input).isUpdatable()).toList();
-	}
-
-	public Collection<String> getOrderedAttributeNames(final Set<String> facetsToConsider) {
-		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
-		
-		final DefaultDirectedGraph<String, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		final Map<String, VariableDescription> all = new HashMap<>();
-		this.visitAllAttributes((d) -> {
-			all.put(d.getName(), (VariableDescription) d);
-			return true;
-		});
-		
-		Graphs.addAllVertices(dependencies, all.keySet());
-		final VariableDescription shape = getAttribute(SHAPE);
-		final Collection<VariableDescription> shapeDependencies =
-				shape == null ? Collections.EMPTY_LIST : shape.getDependencies(facetsToConsider, false, true);
-		
-		all.forEach((an, var) -> {
-			for (final VariableDescription newVar : var.getDependencies(facetsToConsider, false, true)) {
-				final String other = newVar.getName();
-				// AD Revision in April 2019 for Issue #2624: prevent cycles when building the graph
-				if (!dependencies.containsEdge(an, other)) {
-					
-					dependencies.addEdge(other, an);
-				}
-			}
-			// Adding a constraint between the shape of the macrospecies and the populations of microspecies
-			if (var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(SHAPE, an);
-			}
-		});
-		
-		//TODO: WE HAVE TO FIND A SOLUTION FOR CYCLES IN VARIABLES 
-		
-		// June 2021: Temporary patch remove cycles to avoid infinite loop in TopologicalOrderIterator and add variables after
-		Set<String> varToAdd = new HashSet<>();
-		while (true) {
-			CycleDetector c  = new CycleDetector<>(dependencies);
-			if (c.detectCycles()) {
-				Set<String> cycle = c.findCycles();
-				for(String s : cycle) {
-					dependencies.removeVertex(s);
-					varToAdd.add(s);
-					break;
-				}
+	/**
+	 * Tries to create a new edge of dependency between two variables in the passed graph. If this raises an exception
+	 * (meaning a cycle is being introduced by the addition of a variable), then emits an error on the first
+	 * non-built-in variable involved in the cycle
+	 *
+	 * @return true if the addition has been done, false otherwise
+	 */
+	private boolean add(final DirectedAcyclicGraph<VariableDescription, Object> graph, final VariableDescription source,
+			final VariableDescription target, final String type) {
+		graph.addVertex(source);
+		graph.addVertex(target);
+		try {
+			graph.addEdge(source, target);
+		} catch (IllegalArgumentException e) {
+			// Thrown if a cycle is introduced
+			VariableDescription errored;
+			if (source.isBuiltIn() || source.isSyntheticSpeciesContainer()) {
+				if (target.isBuiltIn() || target.isSyntheticSpeciesContainer()) return false;
+				errored = target;
 			} else {
-				break;
+				errored = source;
 			}
-			
+			String vName = errored.getName();
+			String oName = (errored == source ? target : source).getName();
+			errored.error(
+					"Cycle detected in the " + type + " of " + vName + " (through the " + type + " of " + oName + ")");
+			return false;
 		}
-			
-		// June 2020: moving (back) to Iterables instead of Streams.
-		//ArrayList<String> list = Lists.newArrayList((dependencies.vertexSet()));
-		ArrayList<String> list = Lists.newArrayList(new TopologicalOrderIterator<>(dependencies));
-		
-		// March 2021: Temporary patch for #3068 - just add missing variables. TopologicalOrderIterator have to be fixed
-		for (String s : dependencies.vertexSet()) {
-			if (!list.contains(s)) {
-				list.add(s);
-			}
-		}
-		for (String s : varToAdd) {
-			if (!list.contains(s)) {
-				list.add(s);
-			}
-		}
-		return list;
-		// return StreamEx.of(new TopologicalOrderIterator<>(dependencies)).toList();
+		return true;
 	}
 
 	/**
+	 * Verification is done through the construction of a directed acyclic graph that gathers all the variables and
+	 * their dependencies. As soon as a cycle is introduced, an error is raised and this method also returns false
 	 *
-	 *
-	 * @return
+	 * @return true if the verification is correct, false otherwise
 	 */
 	protected boolean verifyAttributeCycles() {
-		if (attributes == null || attributes.size() <= 1)
-			return true;
+		if (attributes == null || attributes.size() <= 1) return true;
 		final VariableDescription shape = attributes.get(SHAPE);
-		final DefaultDirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		if (shape != null) {
-			dependencies.addVertex(shape);
-		}
-		final Collection<VariableDescription> shapeDependencies =
+		final DirectedAcyclicGraph<VariableDescription, Object> graph = new DirectedAcyclicGraph<>(Object.class);
+		final Collection<VariableDescription> shapeDeps =
 				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
-
-		attributes.forEachPair((aName, var) -> {
-			dependencies.addVertex(var);
-			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
-				dependencies.addEdge(shape, var);
+		Set<VariableDescription> varSet = new LinkedHashSet<>(attributes.values());
+		for (VariableDescription var : varSet) {
+			if (shape != null && var.isSyntheticSpeciesContainer() && !add(graph, shape, var, INIT)) return false;
+			final Collection<VariableDescription> varDeps =
+					var == shape ? shapeDeps : var.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
+			for (final VariableDescription newVar : varDeps) {
+				if (varSet.contains(newVar) && !add(graph, newVar, var, INIT)) return false;
 			}
-
-			for (final VariableDescription newVar : var.getDependencies(INIT_DEPENDENCIES_FACETS, false, true)) {
-				if (attributes.containsValue(newVar)) {
-					dependencies.addVertex(newVar);
-					dependencies.addEdge(newVar, var);
+			if (var.hasFacet(FUNCTION)) {
+				graph.removeAllVertices(varSet);
+				for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true,
+						false)) {
+					if (varSet.contains(newVar) && !add(graph, newVar, var, FUNCTION)) return false;
 				}
 			}
-			return true;
-		});
-
-		final CycleDetector cycleDetector = new CycleDetector<>(dependencies);
-		if (cycleDetector.detectCycles()) {
-			final Set<VariableDescription> inCycles = cycleDetector.findCycles();
-			for (final VariableDescription vd : inCycles) {
-				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
-					continue;
-				}
-				final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
-				strings.remove(vd.getName());
-				vd.error("Cycle detected between " + vd.getName() + " and " + strings
-						+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
-						+ getKeyword());
-			}
-			return false;
 		}
 
-		final DefaultDirectedGraph<VariableDescription, Object> fDependencies = new DefaultDirectedGraph<>(Object.class);
-		attributes.forEachPair((aName, var) -> {
-			if (!var.hasFacet(FUNCTION))
-				return true;
-			fDependencies.addVertex(var);
-			for (final VariableDescription newVar : var.getDependencies(FUNCTION_DEPENDENCIES_FACETS, true, false)) {
-				if (attributes.containsValue(newVar)) {
-					fDependencies.addVertex(newVar);
-					fDependencies.addEdge(newVar, var);
-				}
-			}
-			return true;
-		});
-
-		if (!fDependencies.vertexSet().isEmpty()) {
-			final CycleDetector functionCycleDetector = new CycleDetector<>(fDependencies);
-			if (functionCycleDetector.detectCycles()) {
-				final Set<VariableDescription> inCycles = functionCycleDetector.findCycles();
-				for (final VariableDescription vd : inCycles) {
-					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn()) {
-						continue;
-					}
-					final Collection<String> strings = new HashSet(Collections2.transform(inCycles, TO_NAME));
-					vd.error("Cycle detected between " + vd.getName() + " and " + strings
-							+ "; attributes declared as functions cannot contain references to themselves in their function");
-				}
-				return false;
-
-			}
-		}
 		return true;
 	}
 
@@ -470,7 +351,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		final String aName = one.getName();
 		final String key = one.getKeyword();
 		if (!one.getOriginName().equals(two.getOriginName())) {
-			if (key.equals(REFLEX)) {
+			if (REFLEX.equals(key)) {
 				one.info(
 						"The order in which reflex " + aName + " will be executed in " + one.getOriginName()
 								+ " can differ from the order defined in " + two.getOriginName(),
@@ -489,9 +370,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		final String actionName = newAction.getName();
 		if (actions != null) {
 			final StatementDescription existing = actions.get(actionName);
-			if (existing != null) {
-				duplicateInfo(newAction, existing);
-			}
+			if (existing != null) { duplicateInfo(newAction, existing); }
 		} else {
 			actions = GamaMapFactory.createUnordered();
 		}
@@ -499,22 +378,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean redefinesAction(final String theName) {
-		if (!actions.containsKey(theName))
-			return false;
-		if (parent == null || parent == this)
-			return false;
+		if (!actions.containsKey(theName) || parent == null || parent == this) return false;
 		return parent.hasAction(theName, false);
 	}
 
 	@Override
 	public ActionDescription getAction(final String aName) {
 		ActionDescription ownAction = null;
-		if (actions != null) {
-			ownAction = actions.get(aName);
-		}
-		if (ownAction == null && parent != null && parent != this) {
-			ownAction = getParent().getAction(aName);
-		}
+		if (actions != null) { ownAction = actions.get(aName); }
+		if (ownAction == null && parent != null && parent != this) { ownAction = getParent().getAction(aName); }
 		return ownAction;
 	}
 
@@ -523,8 +395,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void removeAction(final String temp) {
-		if (actions == null)
-			return;
+		if (actions == null) return;
 		actions.remove(temp);
 
 	}
@@ -532,21 +403,18 @@ public abstract class TypeDescription extends SymbolDescription {
 	public Collection<String> getActionNames() {
 		final Collection<String> allNames =
 				new LinkedHashSet(actions == null ? Collections.EMPTY_LIST : actions.keySet());
-		if (parent != null && parent != this) {
-			allNames.addAll(getParent().getActionNames());
-		}
+		if (parent != null && parent != this) { allNames.addAll(getParent().getActionNames()); }
 		return allNames;
 	}
 
 	public Iterable<ActionDescription> getActions() {
-		return Iterables.transform(getActionNames(), input -> getAction(input));
+		return Iterables.transform(getActionNames(), this::getAction);
 	}
 
 	@Override
 	public boolean hasAction(final String a, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null || parent == this)
-				return false;
+			if (parent == null || parent == this) return false;
 			return parent.hasAction(a, false);
 		}
 		return actions != null && actions.containsKey(a)
@@ -556,19 +424,16 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String vn, final boolean superInvocation) {
 		if (superInvocation) {
-			if (parent == null)
-				return null;
+			if (parent == null) return null;
 			return parent.getDescriptionDeclaringAction(vn, false);
 		}
 		return hasAction(vn, false) ? this : null;
 	}
 
 	public final boolean isAbstract() {
-		if (isAbstract)
-			return true;
+		if (isAbstract) return true;
 		for (final ActionDescription a : getActions()) {
-			if (a.isAbstract())
-				return true;
+			if (a.isAbstract()) return true;
 		}
 		return false;
 	}
@@ -580,8 +445,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean isArgOf(final String op, final String arg) {
 		final ActionDescription action = getAction(op);
-		if (action != null)
-			return action.containsArg(arg);
+		if (action != null) return action.containsArg(arg);
 		return false;
 	}
 
@@ -598,8 +462,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	public void dispose() {
 
 		super.dispose();
-		if (isBuiltIn())
-			return;
+		if (isBuiltIn()) return;
 		actions = null;
 		attributes = null;
 		parent = null;
@@ -614,17 +477,16 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritActionsFrom(final TypeDescription p) {
-		if (p == null || p == this)
-			return;
+		if (p == null || p == this) return;
 		for (final ActionDescription inheritedAction : p.getActions()) {
 			final String actionName = inheritedAction.getName();
 			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
 			if (userDeclared != null) {
-				if (!(inheritedAction.isBuiltIn() && userDeclared.isBuiltIn())) {
+				if (!inheritedAction.isBuiltIn() || !userDeclared.isBuiltIn()) {
 					TypeDescription.assertActionsAreCompatible(userDeclared, inheritedAction,
 							inheritedAction.getOriginName());
 					if (inheritedAction.isBuiltIn()) {
-						if (actionName.equals("die")) {
+						if ("die".equals(actionName)) {
 							userDeclared.warning(
 									"Redefining the built-in primitive 'die' is not advised as it can lead to potential troubles in the disposal of simulations. If it was not your intention, consider renaming this action.",
 									IGamlIssue.GENERAL);
@@ -709,91 +571,50 @@ public abstract class TypeDescription extends SymbolDescription {
 					+ " is not compatible with that in the definition of " + actionName + " in " + parentName;
 			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement());
 		}
-
-		// final Map<String, IType<?>> myMap = StreamEx.of(myArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
-		// final Map<String, IType<?>> parentMap =
-		// StreamEx.of(parentArgs.iterator()).toMap(d -> d.getName(), d -> d.getType());
-		//
-		// final List<String> myNames = myAction.getArgNames();
-		// final List<String> parentNames = parentAction.getArgNames();
-		// boolean different = myNames.size() != parentNames.size();
-		// if (different) {
-		// final String error = "The number of arguments should be identical to that of the definition of "
-		// + actionName + " in " + parentName + ": " + parentNames + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// return;
-		// }
-		// different = !myNames.containsAll(parentNames);
-		// if (different) {
-		// final String error = "The names of arguments should be identical to those of the definition of "
-		// + actionName + " in " + parentName + " " + parentNames + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// return;
-		// }
-		// final List<IType<?>> myTypes = myAction.getArgTypes();
-		// final List<IType<?>> parentTypes = parentAction.getArgTypes();
-		// different = !myTypes.containsAll(parentTypes);
-		// if (different) {
-		// final String error = "The types of arguments should be identical to those in the definition of "
-		// + actionName + " in " + parentName + " " + parentTypes + "";
-		// myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
-		// }
-
 	}
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : getAttributes()) {
-			if (!visitor.process(d))
-				return false;
+			if (!visitor.process(d)) return false;
 		}
 		for (final IDescription d : getActions()) {
-			if (!visitor.process(d))
-				return false;
+			if (!visitor.process(d)) return false;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		if (!visitOwnAttributes(visitor))
-			return false;
+		if (!visitOwnAttributes(visitor)) return false;
 		return visitOwnActions(visitor);
 	}
 
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
-		if (!visitOwnAttributes(visitor))
-			return false;
+		if (!visitOwnAttributes(visitor)) return false;
 		return visitOwnActionsRecursively(visitor);
 	}
 
 	public boolean visitAllAttributes(final DescriptionVisitor<IDescription> visitor) {
-		if (parent != null && parent != this) {
-			if (!parent.visitAllAttributes(visitor))
-				return false;
-		}
+		if (parent != null && parent != this && !parent.visitAllAttributes(visitor)) return false;
 		return visitOwnAttributes(visitor);
 	}
 
 	public boolean visitOwnAttributes(final DescriptionVisitor<IDescription> visitor) {
-		if (attributes == null)
-			return true;
+		if (attributes == null) return true;
 		return attributes.forEachValue(visitor);
 	}
 
 	public boolean visitOwnActions(final DescriptionVisitor<IDescription> visitor) {
-		if (actions == null)
-			return true;
+		if (actions == null) return true;
 		return actions.forEachValue(visitor);
 	}
 
 	public boolean visitOwnActionsRecursively(final DescriptionVisitor<IDescription> visitor) {
-		if (actions == null)
-			return true;
+		if (actions == null) return true;
 		return actions.forEachValue(each -> {
-			if (!visitor.process(each))
-				return false;
+			if (!visitor.process(each)) return false;
 			return each.visitOwnChildrenRecursively(visitor);
 		});
 	}
@@ -806,11 +627,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated)
-			return this;
+		if (validated) return this;
 		final IDescription result = super.validate();
-		if (result != null && !verifyAttributeCycles())
-			return null;
+		if (result != null && !verifyAttributeCycles()) return null;
 		return result;
 	}
 

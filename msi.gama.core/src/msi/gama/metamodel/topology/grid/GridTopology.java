@@ -19,10 +19,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationSet;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
-import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.DifferentList;
@@ -51,7 +50,7 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
-		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop);
+		// ((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop);
 		super.initialize(scope, pop);
 	}
 
@@ -167,7 +166,7 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#isValidLocation(msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public boolean isValidLocation(final IScope scope, final ILocation p) {
+	public boolean isValidLocation(final IScope scope, final GamaPoint p) {
 		return getPlaces().getPlaceAt(p) != null;
 
 	}
@@ -186,14 +185,14 @@ public class GridTopology extends AbstractTopology {
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
-		if (!isValidGeometry(scope, source) || !isValidGeometry(scope, target)) { return Double.MAX_VALUE; }
+		if (!isValidGeometry(scope, source) || !isValidGeometry(scope, target)) return Double.MAX_VALUE;
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
-	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
-		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) { return Double.MAX_VALUE; }
+	public Double distanceBetween(final IScope scope, final GamaPoint source, final GamaPoint target) {
+		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) return Double.MAX_VALUE;
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
@@ -219,15 +218,13 @@ public class GridTopology extends AbstractTopology {
 		// agents
 		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
 			// case where the filter is the complete population set
-			if (filter instanceof IPopulationSet) {
+			if (filter instanceof IPopulationSet)
 				return placesConcerned;
-			} else {
+			else {
 				// otherwise, we return only the accepted cells
 				try (ICollector<IAgent> agents = Collector.getSet()) {
 					for (final IAgent ag : placesConcerned) {
-						if (filter.accept(scope, null, ag)) {
-							agents.add(ag);
-						}
+						if (filter.accept(scope, null, ag)) { agents.add(ag); }
 					}
 					return agents.items();
 				}
@@ -242,10 +239,8 @@ public class GridTopology extends AbstractTopology {
 				: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
 		final Collection<IAgent> agents = getAgentsIn(scope,
 				GamaGeometryType.geometriesToGeometry(scope, GamaListFactory.wrap(Types.AGENT, placesConcerned)), fDL,
-				false);
-		if (!normalFilter) {
-			agents.addAll(placesConcerned);
-		}
+				SpatialRelation.OVERLAP);
+		if (!normalFilter) { agents.addAll(placesConcerned); }
 		return agents;
 
 	}
@@ -264,7 +259,7 @@ public class GridTopology extends AbstractTopology {
 	// }
 	//
 	// @Override
-	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
+	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final GamaPoint source, final GamaPoint target,
 	// final int k) {
 	// // TODO for the moment, returns only 1 shortest path.... need to fix it!
 	// return super.KpathsBetween(scope, source, target, k);

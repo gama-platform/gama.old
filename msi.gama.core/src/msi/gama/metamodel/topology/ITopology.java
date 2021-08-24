@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -57,6 +57,15 @@ import msi.gaml.types.IType;
 		 */
 })
 public interface ITopology extends IValue {
+	
+	enum SpatialRelation {
+		OVERLAP,
+		COVER,
+		INSIDE,
+		TOUCH,
+		CROSS,
+		PARTIALLY_OVERLAP
+	}
 
 	ISpatialIndex getSpatialIndex();
 
@@ -77,7 +86,9 @@ public interface ITopology extends IValue {
 	Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance, IAgentFilter filter)
 			throws GamaRuntimeException;
 
-	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, boolean covered);
+	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, SpatialRelation relation);
+
+	
 
 	boolean isTorus();
 
@@ -96,11 +107,11 @@ public interface ITopology extends IValue {
 	 */
 	Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
-	Double distanceBetween(IScope scope, final ILocation source, final ILocation target);
+	Double distanceBetween(IScope scope, final GamaPoint source, final GamaPoint target);
 
 	GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target) throws GamaRuntimeException;
 
-	GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
+	GamaSpatialPath pathBetween(IScope scope, final GamaPoint source, final GamaPoint target)
 			throws GamaRuntimeException;
 
 	/**
@@ -117,7 +128,7 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	ILocation getDestination(final ILocation source, final double direction, final double distance,
+	GamaPoint getDestination(final GamaPoint source, final double direction, final double distance,
 			boolean nullIfOutside);
 
 	/**
@@ -134,7 +145,7 @@ public interface ITopology extends IValue {
 	 *            tells wether to return the destination point or null if the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	ILocation getDestination3D(final ILocation source, final double heading, final double pitch, final double distance,
+	GamaPoint getDestination3D(final GamaPoint source, final double heading, final double pitch, final double distance,
 			boolean nullIfOutside);
 
 	/**
@@ -143,7 +154,7 @@ public interface ITopology extends IValue {
 	 *
 	 * @return a point, or null if no random locations are available
 	 */
-	ILocation getRandomLocation(IScope scope);
+	GamaPoint getRandomLocation(IScope scope);
 
 	/**
 	 * Return the collection of places (IGeometry) defined by this topology. For continuous topologies, it is a GamaList
@@ -173,7 +184,7 @@ public interface ITopology extends IValue {
 	 *            tells whether to return null or to coerce p if p is outside the bounds of the topology
 	 * @return a valid point or null if nullIfOutside is true and the point is outside
 	 */
-	ILocation normalizeLocation(final ILocation p, boolean nullIfOutside);
+	GamaPoint normalizeLocation(final GamaPoint p, boolean nullIfOutside);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -192,7 +203,7 @@ public interface ITopology extends IValue {
 
 	void dispose();
 
-	boolean isValidLocation(IScope scope, ILocation p);
+	boolean isValidLocation(IScope scope, GamaPoint p);
 
 	boolean isValidGeometry(IScope scope, IShape g);
 
@@ -208,7 +219,7 @@ public interface ITopology extends IValue {
 
 	IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
 
-	IList<GamaSpatialPath> KpathsBetween(IScope scope, ILocation source, ILocation target, int k);
+	IList<GamaSpatialPath> KpathsBetween(IScope scope, GamaPoint source, GamaPoint target, int k);
 
 	void setRoot(IScope scope, RootTopology rt);
 

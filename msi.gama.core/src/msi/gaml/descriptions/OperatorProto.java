@@ -80,16 +80,15 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 		try {
 			if (semanticValidator != null) {
 				final boolean semantic = semanticValidator.validate(context, currentEObject, exprs);
-				if (!semantic) { return null; }
+				if (!semantic) return null;
 			}
 			switch (signature.size()) {
 				case 1:
-					if (isVarOrField) { return new TypeFieldExpression(this, context, exprs[0]); }
+					if (isVarOrField) return new TypeFieldExpression(this, context, exprs[0]);
 					return UnaryOperator.create(this, context, exprs[0]);
 				case 2:
-					if (isVarOrField) {
+					if (isVarOrField)
 						return new BinaryOperator.BinaryVarOperator(this, context, exprs[0], (IVarExpression) exprs[1]);
-					}
 					return BinaryOperator.create(this, context, exprs);
 				default:
 					return NAryOperator.create(this, exprs);
@@ -121,9 +120,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 		super(name, method, plugin);
 		iterator = IExpressionCompiler.ITERATORS.contains(name);
 
-		if (name.equals(IKeyword.AS)) {
-			AS = this;
-		}
+		if (IKeyword.AS.equals(name)) { AS = this; }
 		IValidator tempValidator = null;
 		String[] dependencies = null;
 		if (method != null) {
@@ -153,18 +150,15 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 
 	private boolean[] computeLazyness(final AnnotatedElement method) {
 		final boolean[] result = new boolean[signature.size()];
-		if (result.length == 0) { return result; }
+		if (result.length == 0) return result;
 		if (method instanceof Method) {
 			final Method m = (Method) method;
 			final Class[] classes = m.getParameterTypes();
+			if (classes.length == 0) return result;
 			int begin = 0;
-			if (classes[0] == IScope.class) {
-				begin = 1;
-			}
+			if (classes[0] == IScope.class) { begin = 1; }
 			for (int i = begin; i < classes.length; i++) {
-				if (IExpression.class.isAssignableFrom(classes[i])) {
-					result[i - begin] = true;
-				}
+				if (IExpression.class.isAssignableFrom(classes[i])) { result[i - begin] = true; }
 			}
 		}
 		return result;
@@ -187,22 +181,20 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 
 	@Override
 	public String getTitle() {
-		if (isVarOrField) {
-			return "field " + getName() + " of type " + returnType + ", for values of type "
-					+ signature.asPattern(false);
-		}
+		if (isVarOrField) return "field " + getName() + " of type " + returnType + ", for values of type "
+				+ signature.asPattern(false);
 		return "operator " + getName() + "(" + signature.asPattern(false) + "), returns " + returnType;
 	}
 
 	@Override
 	public String getDocumentation() {
-		if (!isVarOrField) { return super.getDocumentation(); }
+		if (!isVarOrField) return super.getDocumentation();
 		final vars annot = getSupport().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {
 				if (v.name().equals(getName())) {
-					if (v.doc().length > 0) { return v.doc()[0].value(); }
+					if (v.doc().length > 0) return v.doc()[0].value();
 					break;
 				}
 			}
@@ -211,8 +203,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	}
 
 	public void verifyExpectedTypes(final IDescription context, final IType<?> rightType) {
-		if (expectedContentType == null || expectedContentType.length == 0) { return; }
-		if (context == null) { return; }
+		if (expectedContentType == null || expectedContentType.length == 0 || (context == null)) return;
 		if (expectedContentType.length == 1 && iterator) {
 			final IType<?> expected = Types.get(expectedContentType[0]);
 			if (!rightType.isTranslatableInto(expected)) {
@@ -221,7 +212,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 			}
 		} else if (signature.isUnary()) {
 			for (final int element : expectedContentType) {
-				if (rightType.isTranslatableInto(Types.get(element))) { return; }
+				if (rightType.isTranslatableInto(Types.get(element))) return;
 			}
 			context.error("Operator " + getName() + " expects arguments of type " + rightType, IGamlIssue.WRONG_TYPE);
 		}
@@ -233,18 +224,16 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	}
 
 	public String getCategory() {
-		if (support == null) { return "Other"; }
+		if (support == null) return "Other";
 		final operator op = support.getAnnotation(operator.class);
-		if (op == null) // Happens sometimes for synthetic operators
-		{
+		if (op == null)
 			return "Other";
-		} else {
+		else {
 			final String[] strings = op.category();
-			if (strings.length > 0) {
+			if (strings.length > 0)
 				return op.category()[0];
-			} else {
+			else
 				return "Other";
-			}
 		}
 	}
 
@@ -265,18 +254,14 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 		final int size = signature.size();
 		final String aName = getName();
 		if (size == 1 || size > 2) {
-			if (noMandatoryParenthesis.contains(aName)) {
+			if (noMandatoryParenthesis.contains(aName))
 				return aName + signature.asPattern(withVariables);
-			} else {
+			else
 				return aName + "(" + signature.asPattern(withVariables) + ")";
-			}
-		} else { // size == 2
-			if (binaries.contains(aName)) {
-				return signature.get(0).asPattern() + " " + aName + " " + signature.get(1).asPattern();
-			} else {
-				return aName + "(" + signature.asPattern(withVariables) + ")";
-			}
-		}
+		} else if (binaries.contains(aName))
+			return signature.get(0).asPattern() + " " + aName + " " + signature.get(1).asPattern();
+		else
+			return aName + "(" + signature.asPattern(withVariables) + ")";
 	}
 
 	// @Override
@@ -292,26 +277,22 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
-		if (alreadyProcessed.contains(this)) { return; }
+		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
-		if (depends_on == null) { return; }
+		if (depends_on == null) return;
 		for (final String s : depends_on) {
-			if (species.hasAttribute(s)) {
-				result.add(species.getAttribute(s));
-			}
+			if (species.hasAttribute(s)) { result.add(species.getAttribute(s)); }
 		}
 	}
 
 	@Override
 	public doc getDocAnnotation() {
 		doc d = super.getDocAnnotation();
-		if (d != null) { return d; }
+		if (d != null) return d;
 		if (support != null && support.isAnnotationPresent(operator.class)) {
 			final operator op = support.getAnnotation(operator.class);
 			final doc[] docs = op.doc();
-			if (docs != null && docs.length > 0) {
-				d = docs[0];
-			}
+			if (docs != null && docs.length > 0) { d = docs[0]; }
 		}
 		return d;
 	}

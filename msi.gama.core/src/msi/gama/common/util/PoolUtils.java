@@ -13,11 +13,11 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PoolUtils {
 
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
-	static boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
+	static public boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
 	static {
 		DEBUG.OFF();
 		GamaPreferences.External.USE_POOLING.onChange(v -> {
-			POOLS.forEach((p) -> p.dispose());
+			POOLS.forEach(ObjectPool::dispose);
 			POOL = v;
 		});
 	}
@@ -25,7 +25,7 @@ public class PoolUtils {
 	public static void WriteStats() {
 		if (!DEBUG.IS_ON()) return;
 		DEBUG.SECTION("Pool statistics");
-		POOLS.forEach((p) -> {
+		POOLS.forEach(p -> {
 			long percentage = p.accessed == 0 ? 100 : 100 - (long) (p.created * 100d / p.accessed);
 			DEBUG.OUT(p.name, 30, "instances created " + p.created + " / instances asked " + p.accessed + " = "
 					+ percentage + "% of coverage");

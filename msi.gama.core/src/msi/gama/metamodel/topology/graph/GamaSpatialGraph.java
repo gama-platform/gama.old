@@ -17,15 +17,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
-
 import org.locationtech.jts.geom.Coordinate;
 
-import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -132,16 +129,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		for (final IShape o1 : list.iterable(scope)) { // Try to create
 														// automatic edges
-			if (o1.getAgent() != null) {
-				o1.getAgent().setAttribute("attached_graph", this);
-			}
+			if (o1.getAgent() != null) { o1.getAgent().setAttribute("attached_graph", this); }
 			for (final IShape o2 : list.iterable(scope)) {
-				if (vertexRelation.equivalent(scope, o1, o2)) {
-					continue;
-				}
-				if (vertexRelation.related(scope, o1, o2)) {
-					addEdge(o1, o2);
-				}
+				if (vertexRelation.equivalent(scope, o1, o2)) { continue; }
+				if (vertexRelation.related(scope, o1, o2)) { addEdge(o1, o2); }
 			}
 		}
 	}
@@ -181,9 +172,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	public ITopology getTopology(final IScope scope) {
-		if (topology == null) {
-			setTopology(new GraphTopology(scope, this));
-		}
+		if (topology == null) { setTopology(new GraphTopology(scope, this)); }
 		return topology;
 	}
 
@@ -196,10 +185,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		boolean related, already;
 		for (final IShape s1 : vSet) {
 			for (final IShape s2 : vSet) {
-				if (graphScope.interrupted()) { return; }
-				if (vertexRelation.equivalent(graphScope, s1, s2)) {
-					continue;
-				}
+				if (graphScope.interrupted()) return;
+				if (vertexRelation.equivalent(graphScope, s1, s2)) { continue; }
 				already = this.containsEdge(s1, s2);
 				if ((related = vertexRelation.related(graphScope, s1, s2)) && !already) {
 					addEdge(s1, s2);
@@ -213,9 +200,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
-		if (v1 instanceof IShape && v2 instanceof IShape) {
+		if (v1 instanceof IShape && v2 instanceof IShape)
 			return GamaGeometryType.buildLink(graphScope, (IShape) v1, (IShape) v2);
-		}
 		return super.generateEdgeObject(v1, v2);
 	}
 
@@ -265,53 +251,47 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public IShape getBuiltVertex(final Coordinate vertex) {
-		if (tolerance == 0) { return verticesBuilt.get(vertex.hashCode()); }
+		if (tolerance == 0) return verticesBuilt.get(vertex.hashCode());
 		final IShape sh = verticesBuilt.get(vertex.hashCode());
-		if (sh != null) { return sh; }
+		if (sh != null) return sh;
 		for (final Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
-				return (IShape) v;
-			}
+			if (vertex.distance3D(((IShape) v).getLocation()) <= tolerance) return (IShape) v;
 		}
 		return null;
 	}
 
-	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) { 
-		
+	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
+
 		/*
-		 * Do we want to have intersections that are not connected to any road ?
-		 * At least put this in the next loop to avoid duplicates
+		 * Do we want to have intersections that are not connected to any road ? At least put this in the next loop to
+		 * avoid duplicates
 		 *
-		for (final Object ag : vertices.iterable(scope)) {
-			super.addVertex(ag);
-		}
-		*/
-		
-		final IMap<ILocation, IShape> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
+		 * for (final Object ag : vertices.iterable(scope)) { super.addVertex(ag); }
+		 */
+
+		final IMap<GamaPoint, IShape> nodes = GamaMapFactory.create(Types.POINT, getGamlType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			super.addVertex(ag);
 			nodes.put(((IShape) ag).getLocation(), (IShape) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {
 			final boolean addEdge = addEdgeWithNodes(scope, (IShape) p, nodes);
-			if (!addEdge) {
-				continue;
-			}
+			if (!addEdge) { continue; }
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
 
-	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<ILocation, IShape> nodes) {
-		if (containsEdge(e)) { return false; }
+	public boolean addEdgeWithNodes(final IScope scope, final IShape e, final IMap<GamaPoint, IShape> nodes) {
+		if (containsEdge(e)) return false;
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		final IShape ptS = new GamaPoint(coord[0]);
 		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		final IShape v1 = nodes.get(ptS);
-		if (v1 == null) { return false; }
+		if (v1 == null) return false;
 		final IShape v2 = nodes.get(ptT);
-		if (v2 == null) { return false; }
-		
-		if (e instanceof IAgent && (((IAgent) e).getSpecies().implementsSkill("skill_road"))) {
+		if (v2 == null) return false;
+
+		if (e instanceof IAgent && ((IAgent) e).getSpecies().implementsSkill("skill_road")) {
 			final IShape ag = e.getAgent();
 			final List v1ro = (List) v1.getAttribute("roads_out");
 			v1ro.add(ag);
@@ -320,7 +300,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			ag.setAttribute("source_node", v1);
 			ag.setAttribute("target_node", v2);
 		}
-		
+
 		addVertex(v1);
 		addVertex(v2);
 		_Edge<IShape, IShape> edge;
@@ -353,10 +333,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	@Override
 	public ISpecies getSpecies() {
-		if (edgeSpecies != null) { return edgeSpecies; }
-		final IType contents = getGamlType().getContentType();
-		return getScope().getModel().getSpecies(contents.getSpeciesName());
-		// return null; // See if we can identify the species of edges / vertices
+		return getEdgeSpecies();
 	}
 
 	@Override

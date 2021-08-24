@@ -14,7 +14,7 @@ import com.google.common.collect.Iterators;
 
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.ConsumerWithPruning;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -212,9 +212,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	default V buildValue(final IScope scope, final Object object) {
 		// If we pass a pair to this method, but the content type is not a pair,
 		// then it is is interpreted as a key + a value by addValue()
-		if (object instanceof GamaPair) {
-			if (!getGamlType().getContentType().isTranslatableInto(Types.PAIR)) return (V) object;
-		}
+		if (object instanceof GamaPair && !getGamlType().getContentType().isTranslatableInto(Types.PAIR))
+			return (V) object;
 		return (V) getGamlType().getContentType().cast(scope, object, null, false);
 	}
 
@@ -289,7 +288,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	}
 
 	@Override
-	default IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	default IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return matrixValue(scope, contentsType, copy);
 	}
@@ -310,13 +309,10 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 						coerceValue ? result.buildValue(scope, entry.getValue()) : entry.getValue());
 			}
 			return result;
-		} else {
-			if (copy) {
-				final IMap result = copy(scope);
-				return result;
-			} else
-				return this;
-		}
+		} else if (copy)
+			return copy(scope);
+		else
+			return this;
 
 	}
 
@@ -371,7 +367,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 */
 	@Override
 	default void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
-		values().removeIf((v) -> Objects.equal(value, v));
+		values().removeIf(v -> Objects.equal(value, v));
 	}
 
 	/**
@@ -401,7 +397,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 
 	@getter ("values")
 	default IList<V> getValues() {
-		return GamaListFactory.<V> wrap(getGamlType().getContentType(), values());
+		return GamaListFactory.<V> wrap((IType<V>) getGamlType().getContentType(), values());
 	}
 
 	@Override

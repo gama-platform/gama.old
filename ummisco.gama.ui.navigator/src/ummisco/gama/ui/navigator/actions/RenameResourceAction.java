@@ -7,11 +7,14 @@
  *******************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
+import static org.eclipse.ui.internal.ide.IDEWorkbenchMessages.RenameResourceAction_operationTitle;
+
 import java.text.MessageFormat;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -19,6 +22,7 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -31,12 +35,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceAction;
 import org.eclipse.ui.ide.undo.MoveResourcesOperation;
-import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.contents.LinkedFile;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -60,7 +63,9 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * The new path.
 	 */
-	private IPath newPath;
+	// private IPath newPath;
+
+	private String newNameWithoutExtension;
 
 	private String[] modelProviderIds;
 
@@ -119,8 +124,7 @@ public class RenameResourceAction extends WorkspaceAction {
 				message = PROJECT_EXISTS_MESSAGE;
 				title = PROJECT_EXISTS_TITLE;
 			}
-			result[0] =
-					MessageDialog.openQuestion(shell, title, MessageFormat.format(message, new Object[] { pathName }));
+			result[0] = MessageDialog.openQuestion(shell, title, MessageFormat.format(message, pathName));
 		};
 
 		shell.getDisplay().syncExec(query);
@@ -135,14 +139,12 @@ public class RenameResourceAction extends WorkspaceAction {
 	 */
 	private boolean checkReadOnlyAndNull(final IResource currentResource) {
 		// Do a quick read only and null check
-		if (currentResource == null) { return false; }
+		if (currentResource == null) return false;
 
 		// Do a quick read only check
 		final ResourceAttributes attributes = currentResource.getResourceAttributes();
-		if (attributes != null && attributes.isReadOnly()) {
-			return MessageDialog.openQuestion(WorkbenchHelper.getShell(), CHECK_RENAME_TITLE,
-					MessageFormat.format(CHECK_RENAME_MESSAGE, new Object[] { currentResource.getName() }));
-		}
+		if (attributes != null && attributes.isReadOnly()) return MessageDialog.openQuestion(WorkbenchHelper.getShell(),
+				CHECK_RENAME_TITLE, MessageFormat.format(CHECK_RENAME_MESSAGE, currentResource.getName()));
 
 		return true;
 	}
@@ -182,14 +184,11 @@ public class RenameResourceAction extends WorkspaceAction {
 		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
 		final IInputValidator validator = string -> {
-			if (resource.getName().equals(string)) {
-				return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
-			}
+			if (resource.getName().equals(string)) return IDEWorkbenchMessages.RenameResourceAction_nameMustBeDifferent;
 			final IStatus status = workspace.validateName(string, resource.getType());
-			if (!status.isOK()) { return status.getMessage(); }
-			if (workspace.getRoot().exists(prefix.append(string))) {
+			if (!status.isOK()) return status.getMessage();
+			if (workspace.getRoot().exists(prefix.append(string)))
 				return IDEWorkbenchMessages.RenameResourceAction_nameExists;
-			}
 			return null;
 		};
 
@@ -198,7 +197,7 @@ public class RenameResourceAction extends WorkspaceAction {
 						IDEWorkbenchMessages.RenameResourceAction_inputDialogMessage, resource.getName(), validator);
 		dialog.setBlockOnOpen(true);
 		final int result = dialog.open();
-		if (result == Window.OK) { return dialog.getValue(); }
+		if (result == Window.OK) return dialog.getValue();
 		return null;
 	}
 
@@ -208,37 +207,41 @@ public class RenameResourceAction extends WorkspaceAction {
 	@Override
 	public void run() {
 		final IResource currentResource = getCurrentResource();
-		if (currentResource == null || !currentResource.exists()) { return; }
-		if (LTKLauncher.openRenameWizard(getStructuredSelection())) { return; }
+		// if (LTKLauncher.openRenameWizard(getStructuredSelection())) { return; }
 		// Do a quick read only and null check
-		if (!checkReadOnlyAndNull(currentResource)) { return; }
+		if (currentResource == null || !currentResource.exists() || !checkReadOnlyAndNull(currentResource)) return;
 		final String newName = queryNewResourceName(currentResource);
-		if (newName == null || newName.equals("")) { //$NON-NLS-1$
-			return;
-		}
-		newPath = currentResource.getFullPath().removeLastSegments(1).append(newName);
+		if (newName == null || "".equals(newName)) return;
+		newNameWithoutExtension = new Path(newName).removeFileExtension().toOSString();
+
 		super.run();
 	}
 
 	/**
-	 * Return the currently selected resource. Only return an IResouce if there is one and only one resource selected.
+	 * Return the currently selected resource. Only return an IResouce if there is one and only one resource selected or
+	 * if it is a shapefile
 	 *
 	 * @return IResource or <code>null</code> if there is zero or more than one resources selected.
 	 */
 	private IResource getCurrentResource() {
-		final List<?> resources = getSelectedResources();
-		if (resources.size() == 1) { return (IResource) resources.get(0); }
+		final List<? extends IResource> resources = getSelectedResources();
+		if (resources.size() == 0) return null;
+		IResource r = resources.get(0);
+		if (FileMetaDataProvider.getInstance().hasSupportFiles(r) || resources.size() == 1) return r;
 		return null;
 
 	}
 
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
-		final IStructuredSelection selection = getStructuredSelection();
-		if (selection.toList().stream().anyMatch(each -> (each instanceof LinkedFile))) {
-			return Collections.EMPTY_LIST;
+		final List<IResource> list = new ArrayList<>();
+		for (final IResource r : super.getSelectedResources()) {
+			list.add(r);
+			if (FileMetaDataProvider.getInstance().hasSupportFiles(r)) {
+				list.addAll(FileMetaDataProvider.getInstance().getSupportFilesOf((IFile) r));
+			}
 		}
-		return super.getSelectedResources();
+		return list;
 	}
 
 	/**
@@ -247,12 +250,11 @@ public class RenameResourceAction extends WorkspaceAction {
 	 */
 	@Override
 	protected boolean updateSelection(final IStructuredSelection selection) {
-
-		if (selection.size() > 1) { return false; }
-		if (!super.updateSelection(selection)) { return false; }
-
+		if (selection.size() == 0 || selection.size() > 1 || selection.getFirstElement() instanceof LinkedFile
+				|| !super.updateSelection(selection))
+			return false;
 		final IResource currentResource = getCurrentResource();
-		if (currentResource == null || !currentResource.exists()) { return false; }
+		if (currentResource == null || !currentResource.exists()) return false;
 
 		return true;
 	}
@@ -292,23 +294,21 @@ public class RenameResourceAction extends WorkspaceAction {
 	protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
 		return monitor -> {
 			final IResource[] resources = getActionResources().toArray(new IResource[getActionResources().size()]);
-			// Rename is only valid for a single resource. This has already
-			// been validated.
-			if (resources.length == 1) {
-				// check for overwrite
-				final IWorkspaceRoot workspaceRoot = resources[0].getWorkspace().getRoot();
-				final IResource newResource = workspaceRoot.findMember(newPath);
+			final IWorkspaceRoot root = resources[0].getWorkspace().getRoot();
+			for (IResource r : resources) {
+				String fileExtension = r.getFullPath().getFileExtension();
+				IPath newPath = r.getFullPath().removeLastSegments(1).append(fileExtension == null
+						? newNameWithoutExtension : newNameWithoutExtension + "." + fileExtension);
+				final IResource newResource = root.findMember(newPath);
 				boolean go = true;
-				if (newResource != null) {
-					go = checkOverwrite(WorkbenchHelper.getShell(), newResource);
-				}
+				if (newResource != null) { go = checkOverwrite(WorkbenchHelper.getShell(), newResource); }
 				if (go) {
-					final MoveResourcesOperation op = new MoveResourcesOperation(resources[0], newPath,
-							IDEWorkbenchMessages.RenameResourceAction_operationTitle);
+					final MoveResourcesOperation op =
+							new MoveResourcesOperation(r, newPath, RenameResourceAction_operationTitle);
 					op.setModelProviderIds(getModelProviderIds());
 					try {
 						PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, monitor,
-								WorkspaceUndoUtil.getUIInfoAdapter(WorkbenchHelper.getShell()));
+								null);
 					} catch (final ExecutionException e) {
 						if (e.getCause() instanceof CoreException) {
 							errorStatus[0] = ((CoreException) e.getCause()).getStatus();
@@ -318,6 +318,7 @@ public class RenameResourceAction extends WorkspaceAction {
 					}
 				}
 			}
+
 		};
 	}
 }

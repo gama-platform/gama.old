@@ -117,12 +117,14 @@ import msi.gaml.types.IType;
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc ("Allows to declare an attribute of a species or experiment")
-public class NumberVariable<T extends Comparable> extends Variable {
+public class NumberVariable<T extends Comparable, Step extends Comparable> extends Variable {
 
 	/** The max. */
 	private final IExpression min, max, step;
-	private T minVal, maxVal, stepVal;
+	private T minVal, maxVal;
+	private Step stepVal;
 
+	@SuppressWarnings ("unchecked")
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		final IScope scope = null;
@@ -167,16 +169,17 @@ public class NumberVariable<T extends Comparable> extends Variable {
 		if (step != null && step.isConst()) {
 			switch (type.id()) {
 				case IType.INT:
-					stepVal = (T) Cast.asInt(scope, step.value(scope));
+					stepVal = (Step) Cast.asInt(scope, step.value(scope));
 					break;
 				case IType.FLOAT:
-					stepVal = (T) Cast.asFloat(scope, step.value(scope));
+					stepVal = (Step) Cast.asFloat(scope, step.value(scope));
 					break;
 				case IType.POINT:
-					stepVal = (T) Cast.asPoint(scope, step.value(scope));
+					stepVal = (Step) Cast.asPoint(scope, step.value(scope));
 					break;
 				case IType.DATE:
-					stepVal = (T) GamaDateType.staticCast(scope, step.value(scope), null, false);
+					// Step for dates are durations expressed in seconds ?
+					stepVal = (Step) Cast.asFloat(scope, step.value(scope));
 			}
 		} else {
 			stepVal = null;
@@ -195,10 +198,10 @@ public class NumberVariable<T extends Comparable> extends Variable {
 				return checkMinMax(agent, scope, (GamaDate) val);
 			case IType.POINT:
 				return checkMinMax(agent, scope, (GamaPoint) val);
+			default:
+				throw GamaRuntimeException.error("Impossible to create " + getName(), scope);
 		}
 
-		if (type.id() == IType.INT) return checkMinMax(agent, scope, (Integer) val);
-		return checkMinMax(agent, scope, (Double) val);
 	}
 
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
@@ -272,7 +275,7 @@ public class NumberVariable<T extends Comparable> extends Variable {
 	}
 
 	@Override
-	public T getStepValue(final IScope scope) {
+	public Step getStepValue(final IScope scope) {
 		return stepVal;
 	}
 

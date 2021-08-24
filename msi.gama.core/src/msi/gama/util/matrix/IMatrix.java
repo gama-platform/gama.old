@@ -13,7 +13,6 @@ package msi.gama.util.matrix;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -53,8 +52,8 @@ import one.util.streamex.StreamEx;
 				type = IType.INT,
 				doc = { @doc ("Returns the number of columns of the receiver matrix") }) })
 @SuppressWarnings ({ "rawtypes" })
-public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation, T>,
-		IAddressableContainer<ILocation, T, ILocation, T>, IFieldMatrixProvider {
+public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint, T>,
+		IAddressableContainer<GamaPoint, T, GamaPoint, T>, IFieldMatrixProvider {
 
 	/**
 	 * Cols, rows instead of row cols because intended to work with xSize and ySize dimensions.
@@ -105,7 +104,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 					value = "rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]") },
 			see = "columns_list")
-	IList<IList<T>> getRowsList(IScope scope);
+	IList<IList<T>> getRowsList();
 
 	@operator (
 			value = "columns_list",
@@ -120,7 +119,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 					value = "columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]))",
 					equals = "[[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]") },
 			see = "rows_list")
-	IList<IList<T>> getColumnsList(IScope scope);
+	IList<IList<T>> getColumnsList();
 
 	@operator (
 			value = "row_at",
@@ -134,7 +133,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2",
 					equals = "[\"el13\",\"el23\",\"el33\"]") },
 			see = { "column_at", "columns_list" })
-	IList<T> getRow(IScope scope, Integer num_line);
+	IList<T> getRow(Integer num_line);
 
 	@operator (
 			value = "column_at",
@@ -148,7 +147,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 					value = "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2",
 					equals = "[\"el31\",\"el32\",\"el33\"]") },
 			see = { "row_at", "rows_list" })
-	IList<T> getColumn(IScope scope, Integer num_line);
+	IList<T> getColumn(Integer num_line);
 
 	@operator (
 			value = IKeyword.PLUS,
@@ -293,7 +292,7 @@ public interface IMatrix<T> extends IModifiableContainer<ILocation, T, ILocation
 	@Override
 	IMatrix copy(IScope scope) throws GamaRuntimeException;
 
-	IMatrix copy(IScope scope, ILocation preferredSize, boolean copy);
+	IMatrix copy(IScope scope, GamaPoint preferredSize, boolean copy);
 
 	@Override
 	IMatrix<T> reverse(final IScope scope) throws GamaRuntimeException;

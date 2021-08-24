@@ -327,6 +327,11 @@ public class Variable extends Symbol implements IVariable {
 					return;
 				}
 				assertValueFacetsTypes(cd, targetedVar.getGamlType());
+				if (cd.isNotModifiable() || targetedVar.isNotModifiable()) {
+					final String p = "Parameter '" + cd.getParameterName() + "' ";
+					cd.info(p + "Since the variable is declared as const, this parameter will be read-only.",
+							IGamlIssue.REMOVE_CONST);
+				}
 			}
 			assertValueFacetsTypes(cd, cd.getGamlType());
 			final IExpression min = cd.getFacetExpr(MIN);
@@ -366,10 +371,11 @@ public class Variable extends Symbol implements IVariable {
 			// IGamlIssue.NOT_CONST, INIT);
 			// return;
 			// }
-			if (cd.hasFacet(UPDATE) || cd.hasFacet(VALUE) || cd.hasFacet(FUNCTION)) {
+			if (cd.hasFacet(UPDATE) || cd.hasFacet(VALUE) || cd.isFunction()) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + "cannot have an 'update', 'value' or 'function' facet", IGamlIssue.REMOVE_VALUE);
 			}
+
 		}
 
 	}
@@ -649,7 +655,7 @@ public class Variable extends Symbol implements IVariable {
 		if (functionExpression != null) return scope.evaluate(functionExpression, agent).getValue();
 		// Var not yet initialized. May happen when asking for its value while initializing an editor
 		// See Issue #2781
-		if (!agent.hasAttribute(name) && isNotModifiable) return getInitialValue(scope);
+		if (!agent.hasAttribute(name) && isNotModifiable && !description.isBuiltIn()) return getInitialValue(scope);
 		return agent.getAttribute(name);
 	}
 

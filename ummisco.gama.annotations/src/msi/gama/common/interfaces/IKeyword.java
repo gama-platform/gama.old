@@ -215,6 +215,7 @@ public interface IKeyword {
 	String HER = "her";
 	String HIGHLIGHT = "highlight";
 	String HILL_CLIMBING = "hill_climbing";
+	String PSO = "pso";
 	String HIS = "his";
 	String HISTOGRAM = "histogram";
 	String HOST = "host";
@@ -260,6 +261,7 @@ public interface IKeyword {
 	String MATCH = "match";
 	String MATCH_BETWEEN = "match_between";
 	String MATCH_ONE = "match_one";
+	String MATCH_REGEX = "match_regex";
 	String MASK = "mask";
 	String MAX = "max";
 	String MAXIMIZE = "maximize";
@@ -481,7 +483,7 @@ public interface IKeyword {
 	String Y_SERIE = "y_serie";
 	String Z = "z";
 	String ZFIGHTING = "z_fighting";
-	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE };
+	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO };
 	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	String USER_INIT = "user_init";
 	// public static final String AS_SKILL = "as_skill";

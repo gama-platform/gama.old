@@ -88,6 +88,10 @@ public class VariableDescription extends SymbolDescription {
 		return _isSyntheticSpeciesContainer;
 	}
 
+	public boolean isFunction() {
+		return hasFacet(FUNCTION);
+	}
+
 	public boolean isDefinedInExperiment() {
 		return getEnclosingDescription() instanceof ExperimentDescription;
 	}

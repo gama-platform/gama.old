@@ -36,15 +36,14 @@ import msi.gaml.types.Types;
 
 public abstract class Collector<E, C extends Collection<E>> implements ICollector<E>, Collection<E> {
 
-	private static final PoolUtils.ObjectPool<ICollector<?>> LISTS = PoolUtils.create("Ordered Collectors", true,
-			() -> new Collector.AsList<>(), (from, to) -> to.set(from), c -> c.clear());
+	private static final PoolUtils.ObjectPool<ICollector<?>> LISTS =
+			PoolUtils.create("Ordered Collectors", true, AsList::new, (from, to) -> to.set(from), ICollector::clear);
 
-	private static final PoolUtils.ObjectPool<ICollector<?>> SETS = PoolUtils.create("Unique Collectors", true,
-			() -> new Collector.AsSet<>(), (from, to) -> to.set(from), c -> c.clear());
+	private static final PoolUtils.ObjectPool<ICollector<?>> SETS =
+			PoolUtils.create("Unique Collectors", true, AsSet::new, (from, to) -> to.set(from), ICollector::clear);
 
-	private static final PoolUtils.ObjectPool<ICollector<?>> ORDERED_SETS =
-			PoolUtils.create("Unique Ordered Collectors", true, () -> new Collector.AsOrderedSet<>(),
-					(from, to) -> to.set(from), c -> c.clear());
+	private static final PoolUtils.ObjectPool<ICollector<?>> ORDERED_SETS = PoolUtils.create(
+			"Unique Ordered Collectors", true, AsOrderedSet::new, (from, to) -> to.set(from), ICollector::clear);
 
 	@SuppressWarnings ("unchecked")
 	public static final <T> Collector.AsList<T> getList() {

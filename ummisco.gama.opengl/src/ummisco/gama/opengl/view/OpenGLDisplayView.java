@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
-import com.jogamp.opengl.util.GLDrawableUtil;
-
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
@@ -61,13 +59,6 @@ public class OpenGLDisplayView extends SWTDisplayView {
 	@Override
 	public List<String> getCameraNames() {
 		return new ArrayList<>(CameraHelper.PRESETS.keySet());
-	}
-
-	@Override
-	public void fullScreenSet() {
-		// DEBUG.OUT("Invoking explicit reshape + display");
-		getDisplaySurface().renderer.getCanvas().invoke(false,
-				new GLDrawableUtil.ReshapeGLEventListener(getDisplaySurface().renderer, true));
 	}
 
 }

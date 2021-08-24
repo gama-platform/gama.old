@@ -34,7 +34,7 @@ import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -199,7 +199,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 	
 	protected void addToLists(IScope scope, DXFPolyline pline, DXFVertex start, DXFVertex end, IList list) {
-		IList<ILocation> locs = GamaListFactory.create(Types.POINT);
+		IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 		locs.add(new GamaPoint(start.getPoint().getX(), start.getPoint().getY(), start.getPoint().getZ()));
 			  // calculte the height
              GamaPoint startPt = toGamaPoint(start);
@@ -219,7 +219,7 @@ public class GamaDXFFile extends GamaGeometryFile {
             
     }
  
-	 public IList<ILocation> getPoints(IScope scope, final DXFPolyline obj) {
+	 public IList<GamaPoint> getPoints(IScope scope, final DXFPolyline obj) {
 	        IList list = GamaListFactory.create(Types.POINT);
 			
 	        Iterator i = obj.getVertexIterator();
@@ -248,8 +248,8 @@ public class GamaDXFFile extends GamaGeometryFile {
 	        while (change) {
 	        	change = false;
 	        	 for (int k = 0; k < list.size() - 1; k ++) {
-	 	        	ILocation pt1 = (ILocation)list.get(k);
-	 	        	ILocation pt2 = (ILocation)list.get(k+1);
+	 	        	GamaPoint pt1 = (GamaPoint)list.get(k);
+	 	        	GamaPoint pt2 = (GamaPoint)list.get(k+1);
 	 	        	if (pt1.euclidianDistanceTo(pt2) < 0.000001) {
 	 	        		list.remove(k+1);
 	 	        		change = true;
@@ -262,7 +262,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	    }
 	public IShape manageObj(final IScope scope, final DXFPolyline obj) {
 		if (obj == null) { return null; }
-		IList<ILocation> list_ = getPoints(scope,obj);
+		IList<GamaPoint> list_ = getPoints(scope,obj);
 		
 		final GamaPoint pt = (GamaPoint) list_.get(list_.size() - 1);
 		if (pt.getX() == 0 && pt.getY() == 0 && pt.getZ() == 0) {
@@ -273,7 +273,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 		IList<GamaPoint> list = GamaListFactory.create(Types.POINT);
 		
 		
-		for (ILocation p : list_) {
+		for (GamaPoint p : list_) {
 			list.add(new GamaPoint(p.getX() * (unit == null ? 1 : unit) - x_t,
 					p.getY() * (unit == null ? 1 : unit) - y_t, p.getZ() * (unit == null ? 1 : unit)));
 		}

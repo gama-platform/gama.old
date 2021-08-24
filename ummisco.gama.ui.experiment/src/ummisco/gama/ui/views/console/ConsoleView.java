@@ -43,8 +43,8 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public class ConsoleView extends GamaViewPart
-		implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable, IGamaView.Console {
+public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable,
+		IToolbarDecoratedView.LogExportable, IGamaView.Console {
 
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
@@ -131,9 +131,7 @@ public class ConsoleView extends GamaViewPart
 					pauseBuffer.delete(0, pauseBuffer.length() - maxMemorized - 1);
 					pauseBuffer.insert(0, "(...)\n");
 				}
-			} else if (maxMemorized == -1) {
-				pauseBuffer.append(text);
-			}
+			} else if (maxMemorized == -1) { pauseBuffer.append(text); }
 			if (!indicated) {
 				WorkbenchHelper.run(() -> {
 					if (toolbar != null) {
@@ -167,7 +165,7 @@ public class ConsoleView extends GamaViewPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (viewer == null) { return null; }
+		if (viewer == null) return null;
 		return viewer.getTextWidget();
 	}
 
@@ -229,5 +227,10 @@ public class ConsoleView extends GamaViewPart
 	 */
 	@Override
 	public void synchronizeChanged() {}
+
+	@Override
+	public String getContents() {
+		return viewer.getDocument().get();
+	}
 
 }

@@ -2,9 +2,11 @@ package gama.extensions.physics.box2d_version;
 
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
 import gama.extensions.physics.common.AbstractPhysicalWorld;
+import gama.extensions.physics.common.IBody;
 import gama.extensions.physics.common.IShapeConverter;
 import gama.extensions.physics.gaml.PhysicalSimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -12,7 +14,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2> implements IBox2DPhysicalEntity {
 
-	protected Box2DPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
+	public Box2DPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		super(physicalSimulationAgent);
 	}
 
@@ -23,14 +25,13 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	public void unregisterAgent(final IAgent agent) {
-		// TODO Auto-generated method stub
+		Body body = (Body) agent.getAttribute(BODY);
+		getWorld().destroyBody(body);
 
 	}
 
 	@Override
-	public void setCCD(final boolean ccd) {
-
-	}
+	public void setCCD(final boolean ccd) {}
 
 	@Override
 	public void setGravity(final GamaPoint gravity) {
@@ -39,14 +40,24 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		if (world != null) {
+			Body b = world.getBodyList();
+			while (b != null) {
+				world.destroyBody(b);
+				b = b.getNext();
+			}
+			world = null;
+		}
 	}
 
 	@Override
 	public void updatePositionsAndRotations() {
-		// TODO Auto-generated method stub
-
+		Body b = world.getBodyList();
+		while (b != null) {
+			IBody body = (IBody) b.getUserData();
+			if (b.isActive()) { body.transferLocationAndRotationToAgent(); }
+			b = b.getNext();
+		}
 	}
 
 	@Override
@@ -65,8 +76,14 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	protected void updateAgentsShape() {
-		// TODO Auto-generated method stub
-
+		// We update the agents
+		for (IAgent a : updatableAgents) {
+			unregisterAgent(a);
+		}
+		for (IAgent a : updatableAgents) {
+			registerAgent(a);
+		}
+		updatableAgents.clear();
 	}
 
 	@Override

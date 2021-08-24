@@ -86,7 +86,7 @@ public class CProfileManager {
 	public static float getTimeSinceReset() {
 		long time = BulletStats.profileGetTicks();
 		time -= resetTime;
-		return (float) time / BulletStats.profileGetTickRate();
+		return time / BulletStats.profileGetTickRate();
 	}
 
 	public static CProfileIterator getIterator() {

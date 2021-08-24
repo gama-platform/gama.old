@@ -78,13 +78,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			applyRotation(object);
 			applyTranslation(object);
 			applyScaling(object);
-			final boolean solid = object.isFilled() || gl.isTextured();
-			final Color border = !solid && object.getAttributes().getBorder() == null
+			// final boolean solid = object.isFilled() || gl.isTextured();
+			final Color border = !object.isFilled() && object.getAttributes().getBorder() == null
 					? object.getAttributes().getColor() : object.getAttributes().getBorder();
 			final Geometry geometry = object.getObject();
-			final double height = object.getAttributes().getDepth() == null ? 0d : object.getAttributes().getDepth();
+			Double d = object.getAttributes().getDepth();
+			final double height = d == null ? 0d : d;
 			final IShape.Type type = object.getAttributes().getType();
-			drawGeometry(geometry, solid, border, height, type);
+			drawGeometry(geometry, /* solid, */ border, height, type);
 		} finally {
 			gl.popMatrix();
 		}
@@ -107,33 +108,33 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	 * @param type
 	 *            the type of the geometry
 	 */
-	public void drawGeometry(final Geometry geom, final boolean solid, final Color border, final double height,
+	public void drawGeometry(final Geometry geom, /* final boolean solid, */ final Color border, final double height,
 			final IShape.Type type) {
 		switch (type) {
 			case SPHERE:
-				drawSphere(geom, solid, height, border);
+				drawSphere(geom, /* solid, */ height, border);
 				break;
 			case CONE:
-				drawCone3D(geom, solid, height, border);
+				drawCone3D(geom, /* solid, */ height, border);
 				break;
 			case TEAPOT:
-				drawTeapot(geom, solid, height, border);
+				drawTeapot(geom, /* solid, */height, border);
 				break;
 			case PYRAMID:
-				drawPyramid(geom, solid, height, border);
+				drawPyramid(geom, /* solid, */ height, border);
 				break;
 			case CYLINDER:
-				drawCylinder(geom, solid, height, border);
+				drawCylinder(geom, /* solid, */ height, border);
 				break;
 			case LINECYLINDER:
-				drawLineCylinder(geom, solid, height, border);
+				drawLineCylinder(geom, /* solid, */ height, border);
 				break;
 			case CIRCLE:
-				drawCircle(geom, solid, height, border);
+				drawCircle(geom, /* solid, */ height, border);
 				break;
 			case CUBE:
 			case BOX:
-				drawCube(geom, solid, height, border);
+				drawCube(geom, /* solid, */ height, border);
 				break;
 			case POLYGON:
 			case SQUARE:
@@ -141,43 +142,44 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case GRIDLINE:
 				if (geom instanceof Polygon) {
 					if (height != 0) {
-						drawPolyhedron((Polygon) geom, solid, height, border);
+						drawPolyhedron((Polygon) geom, /* solid, */ height, border);
 					} else {
-						drawPolygon((Polygon) geom, solid, border, true, true);
+						drawPolygon((Polygon) geom, /* solid, */ border, true, true);
 					}
 				}
 				break;
 			case LINESTRING:
 				if (height != 0) {
-					drawLineCylinder(geom, solid, height, border);
+					drawLineCylinder(geom, /* solid, */ height, border);
 					break;
 				}
 				//$FALL-THROUGH$
 			case LINEARRING:
 			case PLAN:
 			case POLYPLAN:
-				drawPlan(geom, solid, height, border);
+				drawPlan(geom, /* solid, */ height, border);
 				break;
 			case POINT:
-				drawPoint(geom, solid, gl.getMaxEnvDim() / 800d, border);
+				drawPoint(geom, /* solid, */ gl.getMaxEnvDim() / 800d, border);
 				break;
 			default:
-				applyToInnerGeometries(geom, (g) -> {
-					drawGeometry(g, solid, border, height, getTypeOf(g));
+				applyToInnerGeometries(geom, g -> {
+					drawGeometry(g, /* solid, */ border, height, getTypeOf(g));
 				});
 		}
 	}
 
-	private void drawPolyhedron(final Polygon polygon, final boolean solid, final double height, final Color border) {
+	private void drawPolyhedron(final Polygon polygon, /* final boolean solid, */final double height,
+			final Color border) {
 		// final boolean hasHoles = getHolesNumber(polygon) > 0;
 		// Draw bottom
-		drawPolygon(polygon, solid, border, /* hasHoles ? border : null, */ true, true);
+		drawPolygon(polygon, /* solid, */ border, /* hasHoles ? border : null, */ true, true);
 		_vertices.getNormal(true, height, _normal);
 		try {
 			gl.pushMatrix();
 			gl.translateBy(_normal.x, _normal.y, _normal.z);
 			// Draw top
-			drawPolygon(polygon, solid, border, /* hasHoles ? border null, */ true, false);
+			drawPolygon(polygon, /* solid, */ border, /* hasHoles ? border null, */ true, false);
 		} finally {
 			gl.popMatrix();
 		}
@@ -186,22 +188,22 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.visit((pj, pk) -> {
 			_quadvertices.setTo(pk.x, pk.y, pk.z, pk.x + _normal.x, pk.y + _normal.y, pk.z + _normal.z,
 					pj.x + _normal.x, pj.y + _normal.y, pj.z + _normal.z, pj.x, pj.y, pj.z, pk.x, pk.y, pk.z);
-			gl.drawSimpleShape(_quadvertices, 4, solid, true, true, border);
+			gl.drawSimpleShape(_quadvertices, 4, /* solid, */ true, true, border);
 		});
 
 	}
 
-	private void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise,
+	private void drawPolygon(final Polygon p, /* final boolean solid, */final Color border, final boolean clockwise,
 			final boolean computeVertices) {
 		if (computeVertices) { _vertices.setToYNegated(getContourCoordinates(p)); }
-		if (solid) {
+		if (!gl.isWireframe()) {
 			gl.setNormal(_vertices, clockwise);
 			final boolean hasHoles = getHolesNumber(p) > 0;
 			final int size = _vertices.size();
 			if (hasHoles || size > 5) {
 				gl.drawPolygon(p, _vertices, clockwise);
 			} else {
-				gl.drawSimpleShape(_vertices, size - 1, solid, clockwise, false, null);
+				gl.drawSimpleShape(_vertices, size - 1, /* solid, */clockwise, false, null);
 			}
 		}
 		if (border != null) {
@@ -210,74 +212,74 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		}
 	}
 
-	private void drawPlan(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawPlan(final Geometry p, /* final boolean solid, */final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		if (height != 0) {
 			_vertices.visit((pj, pk) -> {
 				_quadvertices.setTo(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + height, pj.x, pj.y, pj.z + height, pj.x, pj.y,
 						pj.z, pk.x, pk.y, pk.z);
-				gl.drawSimpleShape(_quadvertices, 4, solid, true, true, border);
+				gl.drawSimpleShape(_quadvertices, 4, /* solid, */ true, true, border);
 			});
 		} else {
 			gl.drawLine(_vertices, -1);
 		}
 	}
 
-	private void drawCachedGeometry(final IShape.Type type, final boolean solid, final Color border) {
+	private void drawCachedGeometry(final IShape.Type type, /* final boolean solid, */ final Color border) {
 		gl.pushMatrix();
 		gl.translateBy(_center);
 		gl.rotateBy(_rot.rotateToHorizontal(_normal, _tangent, false).revertInPlace());
 		gl.scaleBy(_scale);
-		gl.drawCachedGeometry(type, solid, border);
+		gl.drawCachedGeometry(type, /* solid, */ border);
 		gl.popMatrix();
 
 	}
 
-	private void drawPoint(final Geometry point, final boolean solid, final double height, final Color border) {
+	private void drawPoint(final Geometry point, /* final boolean solid, */ final double height, final Color border) {
 		_center.setCoordinate(point.getCoordinate());
 		_center.y *= -1;
 		_scale.setTo(height);
 		_rot.setToIdentity();
-		drawCachedGeometry(Type.POINT, solid, border);
+		drawCachedGeometry(Type.POINT, /* solid, */ border);
 	}
 
-	private void drawCube(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawCube(final Geometry p, /* final boolean solid, */ final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
 		_scale.setTo(_tangent.norm(), _vertices.at(2).euclidianDistanceTo(_vertices.at(1)), height);
-		drawCachedGeometry(Type.CUBE, solid, border);
+		drawCachedGeometry(Type.CUBE, /* solid, */ border);
 	}
 
-	private void drawPyramid(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawPyramid(final Geometry p, /* final boolean solid, */final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_vertices.at(0)).subtract(_vertices.at(1));
 		_scale.setTo(height);
-		drawCachedGeometry(Type.PYRAMID, solid, border);
+		drawCachedGeometry(Type.PYRAMID, /* solid, */ border);
 	}
 
-	private void drawSphere(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawSphere(final Geometry p, /* final boolean solid, */ final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(height);
-		drawCachedGeometry(Type.SPHERE, solid, border);
+		drawCachedGeometry(Type.SPHERE, /* solid, */ border);
 	}
 
-	private void drawCircle(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawCircle(final Geometry p, /* final boolean solid, */final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(height);
-		drawCachedGeometry(Type.CIRCLE, solid, border);
+		drawCachedGeometry(Type.CIRCLE, /* solid, */border);
 	}
 
-	// public void drawRoundedRectangle(final GamaPoint pos, final boolean solid, final double width, final double
+	// public void drawRoundedRectangle(final GamaPoint pos, /*final boolean solid,*/final double width, final double
 	// height,
 	// final Color fill, final Color border) {
 	// _center.setCoordinate(pos);
@@ -286,17 +288,18 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	// drawCachedGeometry(Type.ROUNDED, solid, border);
 	// }
 
-	private void drawCylinder(final Geometry g, final boolean solid, final double height, final Color border) {
+	private void drawCylinder(final Geometry g, /* final boolean solid, */ final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(g));
 		final double radius = g instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : height;
 		_vertices.getCenter(_center);
 		_vertices.getNormal(true, 1, _normal);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_scale.setTo(radius, radius, height);
-		drawCachedGeometry(Type.CYLINDER, solid, border);
+		drawCachedGeometry(Type.CYLINDER, /* solid, */ border);
 	}
 
-	private void drawLineCylinder(final Geometry g, final boolean solid, final double radius, final Color border) {
+	private void drawLineCylinder(final Geometry g, /* final boolean solid, */ final double radius,
+			final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(g));
 		for (int i = 0, n = _vertices.size(); i < n - 1; i++) {
 			final GamaPoint v1 = _vertices.at(i);
@@ -310,17 +313,17 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			_normal.normalize();
 			if (i > 0) {
 				_scale.setTo(radius);
-				drawCachedGeometry(Type.SPHERE, solid, border);
+				drawCachedGeometry(Type.SPHERE, /* solid, */ border);
 			}
 			// draw tube
 			_scale.setTo(radius, radius, height);
-			drawCachedGeometry(Type.CYLINDER, solid, border);
+			drawCachedGeometry(Type.CYLINDER, /* solid, */border);
 
 		}
 
 	}
 
-	private void drawCone3D(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawCone3D(final Geometry p, /* final boolean solid, */final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		final double radius = p instanceof Polygon ? _vertices.getLength() / (2 * Math.PI) : _vertices.getLength();
 		_vertices.getCenter(_center);
@@ -328,10 +331,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
 		_rot.rotateToHorizontal(_normal, _tangent, false).revertInPlace();
 		_scale.setTo(radius, radius, height);
-		drawCachedGeometry(Type.CONE, solid, border);
+		drawCachedGeometry(Type.CONE, /* solid, */ border);
 	}
 
-	private void drawTeapot(final Geometry p, final boolean solid, final double height, final Color border) {
+	private void drawTeapot(final Geometry p, /* final boolean solid, */final double height, final Color border) {
 		_vertices.setToYNegated(getContourCoordinates(p));
 		try {
 			gl.pushMatrix();
@@ -339,7 +342,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			gl.translateBy(_center);
 			gl.rotateBy(90, 1.0, 0.0, 0.0);
 			final GLUT glut = gl.getGlut();
-			if (solid) {
+			if (!gl.isWireframe()) {
 				glut.glutSolidTeapot(height);
 				if (border != null) {
 					gl.setCurrentColor(border);
@@ -364,7 +367,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Polygon polygon = envelope.yNegated().toGeometry();
 		gl.setCurrentColor(0, 0.5, 0, 0.15);
 		gl.setZIncrement(0);
-		drawPolyhedron(polygon, true, envelope.getMaxZ(), DEFAULT_BORDER);
+		boolean old = gl.isWireframe();
+		gl.setObjectWireframe(false);
+		drawPolyhedron(polygon, /* true, */ envelope.getMaxZ(), DEFAULT_BORDER);
+		gl.setObjectWireframe(old);
 	}
 
 	/**
@@ -380,7 +386,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		gl.setCurrentColor(Color.gray, 0.3);
 		final GamaPoint position = target.yNegated().add(0, 0, -height);
 		final Geometry point = GamaGeometryType.buildCircle(height, position).getInnerGeometry();
-		drawSphere(point, true, height, DEFAULT_BORDER);
+		boolean old = gl.isWireframe();
+		gl.setObjectWireframe(false);
+		drawSphere(point, /* true, */ height, DEFAULT_BORDER);
+		gl.setObjectWireframe(old);
 	}
 
 	@Override

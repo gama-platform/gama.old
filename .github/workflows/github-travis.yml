@@ -49,14 +49,23 @@ jobs:
         env:
           MSG: ${ github.event.head_commit.message }
 
-             
+      - name: Set Travis env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+             echo "[WARNING] Forcing travis version release"
+             echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
+          else
+             echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
+          fi
+          echo $TRAVIS_MSG
+
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
         env:  
           SSH_USER_PWD: ${{ secrets.USER_PWD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          MSG: ${ github.event.head_commit.message }
+          MSG: ${{ env.TRAVIS_MSG }}
           GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}

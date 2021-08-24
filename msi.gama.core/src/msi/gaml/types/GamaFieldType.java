@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -162,7 +162,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the rectangular shape that corresponds to the 'cell' in the field at this location. This cell has no attributes. A future version may load it with the value of the field at this attribute") })
-	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final ILocation location) {
+	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final GamaPoint location) {
 		return field.getCellShapeAt(scope, location);
 	}
 

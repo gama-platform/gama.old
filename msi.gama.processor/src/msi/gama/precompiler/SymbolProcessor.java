@@ -1,5 +1,8 @@
 package msi.gama.precompiler;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
@@ -9,6 +12,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 
 public class SymbolProcessor extends ElementProcessor<symbol> {
+	Set<String> temp = new HashSet<>();
 
 	@Override
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e,
@@ -41,8 +45,14 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 			sb.append("P(");
 			for (int i = 0; i < facets.value().length; i++) {
 				final facet child = facets.value()[i];
+				String fName = child.name();
+				if (temp.contains(fName)) {
+					context.emitError("Facet '" + fName + " is declared twice", e);
+				} else {
+					temp.add(fName);
+				}
 				if (i > 0) { sb.append(','); }
-				sb.append("_facet(").append(toJavaString(child.name())).append(',');
+				sb.append("_facet(").append(toJavaString(fName)).append(',');
 				toArrayOfInts(child.type(), sb).append(',').append(child.of()).append(',').append(child.index())
 						.append(',');
 				final String[] values = child.values();
@@ -52,6 +62,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 				verifyDoc(context, e, "facet " + child.name(), child);
 				sb.append(')');
 			}
+			temp.clear();
 			sb.append(')');
 		}
 		sb.append(',').append(toJavaString(omissible)).append(',').append("(x)->new ").append(clazz).append("(x)");

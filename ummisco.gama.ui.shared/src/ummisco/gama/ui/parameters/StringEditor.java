@@ -6,14 +6,12 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import java.util.List;
-
-import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -29,31 +27,21 @@ public class StringEditor extends ExpressionBasedEditor<String> {
 		super(scope, agent, param, l);
 	}
 
-	StringEditor(final IScope scope, final Composite parent, final String title, final Object value,
+	StringEditor(final IScope scope, final EditorsGroup parent, final String title, final Object value,
 			final EditorListener<String> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
-	StringEditor(final IScope scope, final Composite parent, final String title, final String value,
-			final List<String> among, final EditorListener<String> whenModified, final boolean asLabel) {
+	StringEditor(final IScope scope, final EditorsGroup parent, final String title, final String value,
+			final List<String> among, final EditorListener<String> whenModified) {
 		super(scope, new InputParameter(title, value, Types.STRING, among), whenModified);
-		this.createComposite(parent);
+		this.createControls(parent);
 	}
 
 	@Override
 	public IType<String> getExpectedType() {
 		return Types.STRING;
-	}
-
-	@Override
-	protected int[] getToolItems() {
-		return new int[] { REVERT };
-	}
-
-	@Override
-	public boolean evaluateExpression() {
-		return true;
 	}
 
 }

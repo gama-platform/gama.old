@@ -4,7 +4,7 @@ Bundle-Name: Shared UI components
 Bundle-SymbolicName: ummisco.gama.ui.shared;singleton:=true
 Eclipse-BundleShape: dir
 Bundle-Version: 1.8.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.swt,
  org.eclipse.jface,

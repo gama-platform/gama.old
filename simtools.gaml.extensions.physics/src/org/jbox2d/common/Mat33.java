@@ -92,15 +92,15 @@ public class Mat33 implements Serializable {
   }
 
   public void setIdentity() {
-    ex.x = (float) 1;
-    ex.y = (float) 0;
-    ex.z = (float) 0;
-    ey.x = (float) 0;
-    ey.y = (float) 1;
-    ey.z = (float) 0;
-    ez.x = (float) 0;
-    ez.y = (float) 0;
-    ez.z = (float) 1;
+    ex.x = 1;
+    ex.y = 0;
+    ex.z = 0;
+    ey.x = 0;
+    ey.y = 1;
+    ey.z = 0;
+    ez.x = 0;
+    ez.y = 0;
+    ez.z = 1;
   }
 
   // / Multiply a matrix times a vector.

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.NullDisplaySurface.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gama.outputs.display.NullDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -41,7 +41,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getImage()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
@@ -56,7 +56,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method dispose()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#dispose()
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method updateDisplay()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#updateDisplay()
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method zoomIn()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#zoomIn()
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method zoomOut()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#zoomOut()
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method zoomFit()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#zoomFit()
 	 */
 	@Override
@@ -96,7 +96,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getManager()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getManager()
 	 */
 	@Override
@@ -106,7 +106,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method focusOn()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#focusOn(msi.gama.metamodel.shape.IShape)
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getWidth()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getWidth()
 	 */
 	@Override
@@ -124,7 +124,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getHeight()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getHeight()
 	 */
 	@Override
@@ -134,7 +134,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method initialize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.LayeredDisplayOutput)
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method addMouseListener()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#addMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
@@ -150,7 +150,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method removeMouseListener()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#removeMouseListener(java.awt.event.MouseListener)
 	 */
 	@Override
@@ -158,7 +158,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getEnvWidth()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvWidth()
 	 */
 	@Override
@@ -168,7 +168,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getEnvHeight()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvHeight()
 	 */
 	@Override
@@ -178,7 +178,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getDisplayWidth()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayWidth()
 	 */
 	@Override
@@ -188,7 +188,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getDisplayHeight()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayHeight()
 	 */
 	@Override
@@ -198,7 +198,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setZoomListener()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
 	 */
 	// @Override
@@ -206,7 +206,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getModelCoordinates()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getModelCoordinatesFrom()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
 	 */
 	@Override
@@ -227,7 +227,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method selectAgent()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#selectAgent(int, int)
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method followAgent()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
@@ -254,7 +254,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getZoomLevel()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()
 	 */
 	@Override
@@ -264,7 +264,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSize()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSize(int, int)
 	 */
 	@Override
@@ -272,7 +272,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getOutput()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
@@ -282,7 +282,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method waitForUpdateAndRun()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#waitForUpdateAndRun(java.lang.Runnable)
 	 */
 	@Override
@@ -290,7 +290,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getData()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
 	 */
 	@Override
@@ -300,7 +300,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method setSWTMenuManager()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
 	 */
 	// @Override
@@ -309,7 +309,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method layersChanged()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#layersChanged()
 	 */
 	@Override
@@ -317,7 +317,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method changed()
-	 * 
+	 *
 	 * @see msi.gama.outputs.LayeredDisplayData.DisplayDataListener#changed(msi.gama.outputs.LayeredDisplayData.Changes,
 	 *      boolean)
 	 */
@@ -331,7 +331,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getVisibleRegionForLayer()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getVisibleRegionForLayer(msi.gama.common.interfaces.ILayer)
 	 */
 	@Override
@@ -341,22 +341,22 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/**
 	 * Method getFPS()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
 	public int getFPS() {
 		return 0;
 	}
-
-	@Override
-	public boolean isRealized() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean isRealized() {
+	// return true;
+	// }
 
 	/**
 	 * Method isRendered()
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
 	@Override
@@ -376,7 +376,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
 	 */
 	@Override

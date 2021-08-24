@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import static ummisco.gama.ui.utils.PlatformHelper.scaleDownIfMac;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -28,12 +26,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.locationtech.jts.geom.Envelope;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -42,17 +40,16 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.swt.GLCanvas;
-import com.jogamp.opengl.util.GLBuffers;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.outputs.LayeredDisplayData;
@@ -69,11 +66,13 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -101,6 +100,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected DisplaySurfaceMenu menuManager;
 	protected IExpression temp_focus;
 	IScope scope;
+	public IDisplaySynchronizer synchronizer;
 	final Composite parent;
 	volatile boolean disposed;
 	private volatile boolean alreadyUpdating;
@@ -114,16 +114,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		renderer.setDisplaySurface(this);
 		animator = createAnimator();
-
 		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
-
 		animator.start();
 	}
 
 	protected IOpenGLRenderer createRenderer() {
-		final IOpenGLRenderer r = new JOGLRenderer();
-		return r;
+		return new JOGLRenderer();
 	}
 
 	private GLAnimatorControl createAnimator() {
@@ -140,18 +137,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		cap.setSampleBuffers(true);
 		cap.setAlphaBits(8);
 		cap.setNumSamples(8);
-		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null) {
-
-			@SuppressWarnings ("restriction")
-			@Override
-			public Rectangle getClientArea() {
-				// see Issue #2378
-				// if (isWindows() || isLinux()) { return autoScaleUp(super.getClientArea()); }
-				return super.getClientArea();
-			}
-		};
+		final GLCanvas canvas = new GLCanvas(parent, SWT.NONE, cap, null);
 		canvas.setAutoSwapBufferMode(true);
-		final SWTGLAnimator animator = new SWTGLAnimator(canvas);
+		// See issue #3164. No multithreaded animator on Linux
+		GLAnimatorControl animator = FLAGS.USE_OLD_ANIMATOR || PlatformHelper.isLinux()
+				? new SingleThreadGLAnimator(canvas) : new MultithreadGLAnimator(canvas);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		renderer.setCanvas(canvas);
 		final FillLayout gl = new FillLayout();
@@ -173,7 +163,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public BufferedImage getImage(final int w, final int h) {
 		while (!isRendered()) {
 			try {
-				Thread.sleep(20);
+				Thread.sleep(1);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -195,7 +185,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected ByteBuffer getBuffer(final int w, final int h) {
 
 		if (buffer == null || buffer.capacity() != w * h * 4) {
-			buffer = GLBuffers.newDirectByteBuffer(w * h * 4);
+			buffer = Buffers.newDirectByteBuffer(w * h * 4);
 		} else {
 			buffer.rewind();
 		}
@@ -206,8 +196,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		final int width = scaleDownIfMac(ww);
-		final int height = scaleDownIfMac(hh);
+		final int width = PlatformHelper.autoScaleDown(ww);
+		final int height = PlatformHelper.autoScaleDown(hh);
 		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		final Graphics graphics = screenshot.getGraphics();
 
@@ -256,7 +246,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					focusOn(geometry);
 				}
 			}
-			if (force) { if (oldState) { animator.pause(); } }
+			if (force && oldState) { animator.pause(); }
 		} finally {
 			alreadyUpdating = false;
 		}
@@ -440,7 +430,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
-	public ILocation getModelCoordinates() {
+	public GamaPoint getModelCoordinates() {
 		final GamaPoint mp = renderer.getCameraHelper().getMousePosition();
 		if (mp == null) return null;
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
@@ -461,7 +451,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			return;
 		}
 		// By default, returns the coordinates in the world.
-		final ILocation point = getModelCoordinates();
+		final GamaPoint point = getModelCoordinates();
 		final String x = point == null ? "N/A" : String.format("%8.6f", point.getX());
 		final String y = point == null ? "N/A" : String.format("%8.6f", point.getY());
 		sb.append(String.format("X%15s | Y%15s", x, y));
@@ -476,10 +466,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			final Point origin = new Point(0, 0);
 			int xc = -origin.x;
 			int yc = -origin.y;
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			xc = xc + renderer.getCanvas().getSurfaceWidth();
 			yc = yc + renderer.getCanvas().getSurfaceHeight();
-			e.expandToInclude((GamaPoint) currentLayer.getModelCoordinatesFrom(xc, yc, this));
+			e.expandToInclude(currentLayer.getModelCoordinatesFrom(xc, yc, this));
 			currentLayer.getData().setVisibleRegion(e);
 		}
 		return e;
@@ -491,7 +481,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
 	 */
 	@Override
-	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
 		final GamaPoint mp = new GamaPoint(xOnScreen, yOnScreen);
 		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
@@ -505,7 +495,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
-		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
+		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		return scope.getRoot().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
 				renderer.getMaxEnvDim() / 100, Different.with());
 	}
@@ -666,6 +656,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
+		synchronizer.signalRenderingIsFinished();
 	}
 
 	@Override
@@ -752,13 +743,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return (int) this.animator.getTotalFPS();
 	}
 
-	@Override
-	public boolean isRealized() {
-		if (renderer == null) return false;
-		final GLAutoDrawable d = renderer.getCanvas();
-		if (d == null) return false;
-		return d.isRealized();
-	}
+	// @Override
+	// public boolean isRealized() {
+	// if (renderer == null) return false;
+	// final GLAutoDrawable d = renderer.getCanvas();
+	// if (d == null) return false;
+	// return d.isRealized();
+	// }
 
 	@Override
 	public boolean isRendered() {
@@ -827,6 +818,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void draggedTo(final int x, final int y) {
 		// Nothing to do (taken in charge by the camera
 
+	}
+
+	@Override
+	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
+		synchronizer = s;
+		synchronizer.signalSurfaceIsRealized();
 	}
 
 }

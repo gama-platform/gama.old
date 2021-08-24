@@ -19,7 +19,6 @@ import com.google.common.primitives.Ints;
 
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
@@ -101,7 +100,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		matrix = mat;
 	}
 
-	public GamaIntMatrix(final IScope scope, final List objects, final ILocation preferredSize) {
+	public GamaIntMatrix(final IScope scope, final List objects, final GamaPoint preferredSize) {
 		super(scope, objects, preferredSize, Types.INT);
 		matrix = new int[numRows * numCols];
 		if (preferredSize != null) {
@@ -195,8 +194,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		final GamaIntMatrix aprime = _reverse(scope);
 		final GamaIntMatrix bprime = b._reverse(scope);
 		final GamaIntMatrix c = aprime._opAppendVertically(scope, bprime);
-		final GamaIntMatrix cprime = c._reverse(scope);
-		return cprime;
+		return c._reverse(scope);
 	}
 
 	@Override
@@ -214,7 +212,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
+	protected IMatrix _matrixValue(final IScope scope, final GamaPoint preferredSize, final IType type,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}
@@ -231,7 +229,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public GamaIntMatrix copy(final IScope scope, final ILocation preferredSize, final boolean copy) {
+	public GamaIntMatrix copy(final IScope scope, final GamaPoint preferredSize, final boolean copy) {
 		if (preferredSize == null) {
 			if (copy)
 				return new GamaIntMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length));
@@ -301,7 +299,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public boolean _removeFirst(final IScope scope, final Integer o) {
-		return remove(o.intValue());
+		return remove(o);
 	}
 
 	public boolean removeAll(final int o) {
@@ -318,7 +316,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	@Override
 	public boolean _removeAll(final IScope scope, final IContainer<?, Integer> list) {
 		for (final Integer o : list.iterable(scope)) {
-			removeAll(o.intValue());
+			removeAll(o);
 		}
 		// TODO Make a test to verify the return
 		return true;
@@ -504,8 +502,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	@Override
 	public Integer getNthElement(final Integer index) {
-		if (index == null) return 0;
-		if (index > getMatrix().length) return 0;
+		if (index == null || index > getMatrix().length) return 0;
 		return getMatrix()[index];
 	}
 
@@ -513,11 +510,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	protected void setNthElement(final IScope scope, final int index, final Object value) {
 		getMatrix()[index] = Cast.asInt(scope, value);
 	}
-
-	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "matrix<int>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
-	}
+	//
+	// @Override
+	// public String serialize(final boolean includingBuiltIn) {
+	// return "matrix<int>(" + getRowsList().serialize(includingBuiltIn) + ")";
+	// }
 
 	@Override
 	public StreamEx<Integer> stream(final IScope scope) {

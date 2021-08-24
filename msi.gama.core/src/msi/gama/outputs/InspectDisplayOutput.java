@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.InspectDisplayOutput.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
+ * msi.gama.outputs.InspectDisplayOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
+ * and simulation platform (v. 1.8.1)
+ *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -129,7 +129,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		}
 		type = getLiteral(IKeyword.TYPE);
 		if (type == null) {
-			if (getKeyword().equals(IKeyword.BROWSE)) {
+			if (IKeyword.BROWSE.equals(getKeyword())) {
 				type = IKeyword.TABLE;
 			} else {
 				type = IKeyword.AGENT;
@@ -141,16 +141,12 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
-		if (type.equals(IKeyword.AGENT) && getValue() != null) {
-			lastValue = getValue().value(getScope());
-		}
+		if (IKeyword.AGENT.equals(type) && getValue() != null) { lastValue = getValue().value(getScope()); }
 		if (attributes != null) {
 			listOfAttributes = (Map<String, String>) Types.MAP.of(Types.STRING, Types.STRING).cast(getScope(),
 					attributes.value(getScope()), null, true);
 		}
-		if (rootAgent == null || rootAgent.dead()) {
-			rootAgent = getScope().getRoot();
-		}
+		if (rootAgent == null || rootAgent.dead()) { rootAgent = getScope().getRoot(); }
 		return true;
 	}
 
@@ -204,7 +200,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	}
 
 	public void launch(final IScope scope) throws GamaRuntimeException {
-		if (!scope.init(InspectDisplayOutput.this).passed()) { return; }
+		if (!scope.init(InspectDisplayOutput.this).passed()) return;
 		// TODO What to do in case of multi-simulations ???
 		if (scope.getSimulation() != null) {
 			scope.getSimulation().addOutput(InspectDisplayOutput.this);
@@ -221,9 +217,9 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	public boolean step(final IScope scope) {
 		// ((AbstractScope) getScope()).traceAgents = true;
 		if (IKeyword.TABLE.equals(type)) {
-			if (rootAgent == null || rootAgent.dead()) { return false; }
-			if (getValue() == null) { return true; }
-			if (getScope().interrupted()) { return false; }
+			if (rootAgent == null || rootAgent.dead()) return false;
+			if (getValue() == null) return true;
+			if (getScope().interrupted()) return false;
 			getScope().setCurrentSymbol(this);
 			lastValue = getScope().evaluate(getValue(), rootAgent).getValue();
 		}
@@ -232,7 +228,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	@Override
 	public boolean isUnique() {
-		return !type.equals(IKeyword.TABLE);
+		return !IKeyword.TABLE.equals(type);
 	}
 
 	@Override
@@ -242,42 +238,37 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	@Override
 	public String getViewId() {
-		if (IKeyword.TABLE.equals(type)) { return IGui.TABLE_VIEW_ID; }
+		if (IKeyword.TABLE.equals(type)) return IGui.TABLE_VIEW_ID;
 		return IGui.AGENT_VIEW_ID;
 
 	}
 
-	final static IAgent[] EMPTY = new IAgent[0];
+	final static IAgent[] EMPTY = {};
 
 	@Override
 	public IAgent[] getLastValue() {
-		if (IKeyword.TABLE.equals(type)) {
-			if (rootAgent == null || rootAgent.dead()) { return EMPTY; }
-		}
+		if (IKeyword.TABLE.equals(type) && (rootAgent == null || rootAgent.dead())) return EMPTY;
 		// DEBUG.LOG("Last value :" + lastValue);
-		if (lastValue instanceof IAgent) { return new IAgent[] { (IAgent) lastValue }; }
+		if (lastValue instanceof IAgent) return new IAgent[] { (IAgent) lastValue };
 		if (lastValue instanceof ISpecies && rootAgent != null) {
 			final IPopulation pop = rootAgent.getMicroPopulation((ISpecies) lastValue);
-			final IAgent[] result = pop.toArray();
-			return result;
+			return pop.toArray();
 		}
-		if (lastValue instanceof IContainer) { return ((IContainer<?, ?>) lastValue)
-				.listValue(getScope(), Types.NO_TYPE, false).toArray(new IAgent[0]); }
+		if (lastValue instanceof IContainer)
+			return ((IContainer<?, ?>) lastValue).listValue(getScope(), Types.NO_TYPE, false).toArray(new IAgent[0]);
 		return EMPTY;
 	}
 
 	public ISpecies getSpecies() {
 		final IExpression valueExpr = getValue();
-		if (valueExpr == null) { return null; }
+		if (valueExpr == null) return null;
 		final IType theType = valueExpr.getGamlType().getContentType();
-		if (theType == Types.get(IKeyword.MODEL)) { return getScope().getModel().getSpecies(); }
+		if (theType == Types.get(IKeyword.MODEL)) return getScope().getModel().getSpecies();
 		final SpeciesDescription sd = theType.getSpecies();
-		if (sd == null) { return getScope().getModel().getSpecies(IKeyword.AGENT); }
-		if (sd.equals(getScope().getModel().getDescription())) { return getScope().getModel().getSpecies(); }
+		if (sd == null) return getScope().getModel().getSpecies(IKeyword.AGENT);
+		if (sd.equals(getScope().getModel().getDescription())) return getScope().getModel().getSpecies();
 		String speciesName = sd.getName();
-		if (speciesName == null) {
-			speciesName = IKeyword.AGENT;
-		}
+		if (speciesName == null) { speciesName = IKeyword.AGENT; }
 		return rootAgent.getSpecies().getMicroSpecies(speciesName);
 	}
 
@@ -301,9 +292,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		final IType theType = value.getGamlType();
 		if (theType.isAgentType()) {
 			GAMA.getGui().setSelectedAgent((IAgent) value.value(scope));
-		} else if (theType.isContainer()) {
-			ValuedDisplayOutputFactory.browse(scope.getRoot(), value);
-		}
+		} else if (theType.isContainer()) { ValuedDisplayOutputFactory.browse(scope.getRoot(), value); }
 		return value.value(scope);
 	}
 

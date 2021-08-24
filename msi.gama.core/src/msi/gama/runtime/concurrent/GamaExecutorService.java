@@ -14,17 +14,8 @@ import static msi.gama.common.preferences.GamaPreferences.create;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.util.concurrent.MoreExecutors;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
@@ -62,8 +53,6 @@ public abstract class GamaExecutorService {
 	};
 
 	public static volatile ForkJoinPool AGENT_PARALLEL_EXECUTOR;
-	public static volatile ExecutorService SIMULATION_PARALLEL_EXECUTOR;
-	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.newDirectExecutorService();// sameThreadExecutor();
 
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS =
 			create("pref_parallel_simulations", "Make experiments run simulations in parallel", true, IType.BOOL, true)
@@ -77,62 +66,32 @@ public abstract class GamaExecutorService {
 	public static final Pref<Integer> CONCURRENCY_THRESHOLD =
 			create("pref_parallel_threshold", "Number under which agents are executed sequentially", 20, IType.INT,
 					true).between(1, null).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
-	public static final Pref<Integer> CONCURRENCY_THREADS_NUMBER =
+	public static final Pref<Integer> THREADS_NUMBER =
 			create("pref_parallel_threads",
 					"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors()
 							+ ")",
 					4, IType.INT, true).between(1, null)
 							.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY)
 							.onChange(newValue -> {
-								setConcurrencyLevel(newValue);
+								reset();
 								System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
 										String.valueOf(newValue));
 							});
 
-	public static void startUp() {
+	public static void reset() {
 		// Called by the activator to init the preferences and executor services
-		setConcurrencyLevel(CONCURRENCY_THREADS_NUMBER.getValue());
+		setConcurrencyLevel(THREADS_NUMBER.getValue());
 	}
 
 	public static void setConcurrencyLevel(final int nb) {
-		if (AGENT_PARALLEL_EXECUTOR != null) {
-			AGENT_PARALLEL_EXECUTOR.shutdown();
-		}
+		if (AGENT_PARALLEL_EXECUTOR != null) { AGENT_PARALLEL_EXECUTOR.shutdown(); }
 		AGENT_PARALLEL_EXECUTOR = new ForkJoinPool(nb) {
 			@Override
 			public UncaughtExceptionHandler getUncaughtExceptionHandler() {
 				return EXCEPTION_HANDLER;
-			};
+			}
 		};
-		if (SIMULATION_PARALLEL_EXECUTOR != null) {
-			SIMULATION_PARALLEL_EXECUTOR.shutdown();
-		}
-		SIMULATION_PARALLEL_EXECUTOR =
-				new ThreadPoolExecutor(nb, nb, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()) {
 
-					@Override
-					protected void afterExecute(final Runnable r, final Throwable exception) {
-						Throwable t = exception;
-						super.afterExecute(r, t);
-						if (t == null && r instanceof Future<?>) {
-							try {
-								final Future<?> future = (Future<?>) r;
-								if (future.isDone()) {
-									future.get();
-								}
-							} catch (final CancellationException ce) {
-								t = ce;
-							} catch (final ExecutionException ee) {
-								t = ee.getCause();
-							} catch (final InterruptedException ie) {
-								Thread.currentThread().interrupt(); // ignore/reset
-							}
-						}
-						if (t != null) {
-							EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), t);
-						}
-					}
-				};
 	}
 
 	public enum Caller {
@@ -150,44 +109,34 @@ public abstract class GamaExecutorService {
 	 *         threshold of n
 	 */
 	public static int getParallelism(final IScope scope, final IExpression concurrency, final Caller caller) {
-		if (concurrency == null) {
-			switch (caller) {
-				case SIMULATION:
-					if (CONCURRENCY_SIMULATIONS.getValue()) {
-						return CONCURRENCY_THREADS_NUMBER.getValue();
-					} else {
-						return 0;
-					}
-				case SPECIES:
-					if (CONCURRENCY_SPECIES.getValue()) {
-						return CONCURRENCY_THRESHOLD.getValue();
-					} else {
-						return 0;
-					}
-				case GRID:
-					if (CONCURRENCY_GRID.getValue()) {
-						return CONCURRENCY_THRESHOLD.getValue();
-					} else {
-						return 0;
-					}
-				default:
-					return 0;
-			}
-		} else {
+		if (concurrency != null) {
 			final Object o = concurrency.value(scope);
 			if (o instanceof Boolean) {
-				if (o.equals(Boolean.FALSE)) {
-					return 0;
-				} else {
-					if (caller == Caller.SIMULATION) { return CONCURRENCY_THREADS_NUMBER.getValue(); }
-					return CONCURRENCY_THRESHOLD.getValue();
-				}
-			} else if (o instanceof Integer) {
-				final Integer i = Math.abs((Integer) o);
-				return i;
-			} else {
-				return getParallelism(scope, null, caller);
+				if (o.equals(Boolean.FALSE)) return 0;
+				if (caller == Caller.SIMULATION) return THREADS_NUMBER.getValue();
+				return CONCURRENCY_THRESHOLD.getValue();
 			}
+			if (o instanceof Integer) return Math.abs((Integer) o);
+			return getParallelism(scope, null, caller);
+		}
+		switch (caller) {
+			case SIMULATION:
+				if (CONCURRENCY_SIMULATIONS.getValue())
+					return THREADS_NUMBER.getValue();
+				else
+					return 0;
+			case SPECIES:
+				if (CONCURRENCY_SPECIES.getValue())
+					return CONCURRENCY_THRESHOLD.getValue();
+				else
+					return 0;
+			case GRID:
+				if (CONCURRENCY_GRID.getValue())
+					return CONCURRENCY_THRESHOLD.getValue();
+				else
+					return 0;
+			default:
+				return 0;
 		}
 	}
 
@@ -223,9 +172,7 @@ public abstract class GamaExecutorService {
 			final ISpecies species) {
 		try (final StopWatch w = GAMA.benchmark(scope, species)) {
 			int concurrency = threshold;
-			if (array.length <= threshold) {
-				concurrency = 0;
-			}
+			if (array.length <= threshold) { concurrency = 0; }
 			switch (concurrency) {
 				case 0:
 					for (final A aa : array) {
@@ -233,7 +180,7 @@ public abstract class GamaExecutorService {
 						if (agent.dead()) {
 							continue; // add this condition to avoid the activation of dead agents
 						}
-						if (!scope.step(agent).passed()) { return false; }
+						if (!scope.step(agent).passed()) return false;
 					}
 					break;
 				case 1:
@@ -251,9 +198,7 @@ public abstract class GamaExecutorService {
 	public static <A extends IShape> void execute(final IScope scope, final IExecutable executable, final A[] array,
 			final IExpression parallel) throws GamaRuntimeException {
 		int threshold = getParallelism(scope, parallel, Caller.NONE);
-		if (array.length <= threshold) {
-			threshold = 0;
-		}
+		if (array.length <= threshold) { threshold = 0; }
 		switch (threshold) {
 			case 0:
 				for (final A agent : array) {

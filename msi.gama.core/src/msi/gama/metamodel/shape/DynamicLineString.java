@@ -25,8 +25,6 @@ import org.locationtech.jts.geom.GeometryFilter;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
-import msi.gama.common.geometry.GeometryUtils;
-
 /**
  * A dynamical geometry that represents a link between two IShape.
  *
@@ -86,7 +84,7 @@ public class DynamicLineString extends LineString {
 	 */
 	@Override
 	public Coordinate getCoordinate() {
-		return GeometryUtils.toCoordinate(source.getLocation());
+		return source.getLocation();
 	}
 
 	/*
@@ -96,8 +94,7 @@ public class DynamicLineString extends LineString {
 	 */
 	@Override
 	public Coordinate[] getCoordinates() {
-		return new Coordinate[] { GeometryUtils.toCoordinate(source.getLocation()),
-				GeometryUtils.toCoordinate(target.getLocation()) };
+		return new Coordinate[] { source.getLocation(), target.getLocation() };
 	}
 
 	@Override
@@ -152,7 +149,7 @@ public class DynamicLineString extends LineString {
 
 	@Override
 	public Point getEndPoint() {
-		return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
+		return getFactory().createPoint(target.getLocation());
 	}
 
 	/*
@@ -182,7 +179,7 @@ public class DynamicLineString extends LineString {
 	 */
 	@Override
 	public boolean equalsExact(final Geometry other, final double tolerance) {
-		if (!(other instanceof DynamicLineString)) { return false; }
+		if (!(other instanceof DynamicLineString)) return false;
 		final DynamicLineString dls = (DynamicLineString) other;
 		return Objects.equals(dls.source, source) && Objects.equals(dls.target, target);
 	}
@@ -190,12 +187,11 @@ public class DynamicLineString extends LineString {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = ((source == null) ? 0 : source.hashCode());
-		result = prime * result + ((target == null) ? 0 : target.hashCode());
-		return result;
+		int result = source == null ? 0 : source.hashCode();
+		return prime * result + (target == null ? 0 : target.hashCode());
 	}
 
-		/*
+	/*
 	 * (non-Javadoc)
 	 *
 	 * @see org.locationtech.jts.geom.Geometry#apply(org.locationtech.jts.geom. CoordinateFilter)
@@ -203,7 +199,7 @@ public class DynamicLineString extends LineString {
 	@Override
 	public void apply(final CoordinateFilter filter) {
 		filter.filter(getCoordinate());
-		filter.filter(GeometryUtils.toCoordinate(target.getLocation()));
+		filter.filter(target.getLocation());
 	}
 
 	/*
@@ -215,11 +211,9 @@ public class DynamicLineString extends LineString {
 	public void apply(final CoordinateSequenceFilter filter) {
 		final CoordinateSequence points = getCoordinateSequence();
 		filter.filter(points, 0);
-		if (filter.isDone()) { return; }
+		if (filter.isDone()) return;
 		filter.filter(points, 1);
-		if (filter.isGeometryChanged()) {
-			geometryChanged();
-		}
+		if (filter.isGeometryChanged()) { geometryChanged(); }
 	}
 
 	/*
@@ -287,7 +281,7 @@ public class DynamicLineString extends LineString {
 	protected int compareToSameClass(final Object o) {
 		final DynamicLineString line = (DynamicLineString) o;
 		final int comparison = source.getLocation().compareTo(line.source.getLocation());
-		if (comparison != 0) { return comparison; }
+		if (comparison != 0) return comparison;
 		return target.getLocation().compareTo(line.target.getLocation());
 	}
 
@@ -320,15 +314,15 @@ public class DynamicLineString extends LineString {
 
 	@Override
 	public Point getPointN(final int n) {
-		if (n == 0) { return getFactory().createPoint(getCoordinate()); }
-		if (n == 1) { return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation())); }
+		if (n == 0) return getFactory().createPoint(getCoordinate());
+		if (n == 1) return getFactory().createPoint(target.getLocation());
 		return null;
 	}
 
 	@Override
 	public Coordinate getCoordinateN(final int n) {
-		if (n == 0) { return getCoordinate(); }
-		if (n == 1) { return GeometryUtils.toCoordinate(target.getLocation()); }
+		if (n == 0) return getCoordinate();
+		if (n == 1) return target.getLocation();
 		return null;
 
 	}

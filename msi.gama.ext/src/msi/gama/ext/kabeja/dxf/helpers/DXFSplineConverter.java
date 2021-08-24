@@ -64,7 +64,7 @@ public class DXFSplineConverter {
             SplinePoint sp = (SplinePoint) i.next();
 
             if (sp.isControlPoint()) {
-                list.add((Point) sp);
+                list.add(sp);
             }
         }
 

@@ -5,7 +5,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
@@ -23,7 +25,7 @@ import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
 
 public class KeystoneHelper extends AbstractRendererHelper {
 
-	private final Pass finishingHelper = () -> finishRenderToTexture();
+	private final Pass finishingHelper = this::finishRenderToTexture;
 	private FrameBufferObject fboScene;
 	protected boolean drawKeystoneHelper = false;
 	protected int cornerSelected = -1, cornerHovered = -1;
@@ -32,7 +34,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	private int indexBufferIndex;
 	private KeystoneShaderProgram shader;
 	private boolean worldCorners = false;
-	private static final Color[] FILL_COLORS = new Color[] { NamedGamaColor.getNamed("gamared").withAlpha(0.3),
+	private static final Color[] FILL_COLORS = { NamedGamaColor.getNamed("gamared").withAlpha(0.3),
 			NamedGamaColor.getNamed("gamablue").withAlpha(0.3), NamedGamaColor.getNamed("black").withAlpha(0.3) };
 
 	final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(new int[] { 0, 1, 2, 0, 2, 3 });
@@ -78,7 +80,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	}
 
 	public void switchCorners() {
-		worldCorners = !getData().KEYSTONE_IDENTITY.getEnvelope().covers(getData().getKeystone().getEnvelope());
+		getData();
+		worldCorners =
+				!LayeredDisplayData.KEYSTONE_IDENTITY.getEnvelope().covers(getData().getKeystone().getEnvelope());
 	}
 
 	public void dispose() {
@@ -93,7 +97,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	public void beginRenderToTexture() {
 		final GL2 gl = getGL();
 		gl.glClearColor(0, 0, 0, 1.0f);
-		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL.GL_STENCIL_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		if (fboScene == null) { fboScene = new FrameBufferObject(gl, getViewWidth(), getViewHeight()); }
 		// redirect the rendering to the fbo_scene (will be rendered later, as a texture)
 		fboScene.bindFrameBuffer();
@@ -106,7 +110,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		openGL.translateBy(centerX, centerY, centerY);
 		openGL.setCurrentColor(fill);
 		openGL.scaleBy(Scaling3D.of(width, height, 1));
-		openGL.drawCachedGeometry(IShape.Type.SQUARE, true, null);
+		openGL.drawCachedGeometry(IShape.Type.SQUARE, null);
 		openGL.popMatrix();
 	}
 
@@ -139,10 +143,10 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			vertices.at(3).setLocation(1 - xOffsetIn01, yOffsetIn01, 0);
 		}
 
-		openGL.pushIdentity(GL2.GL_PROJECTION);
+		openGL.pushIdentity(GLMatrixFunc.GL_PROJECTION);
 		gl.glOrtho(0, 1, 0, 1, 1, -1);
 		openGL.setLighting(false);
-		openGL.push(GL2.GL_MODELVIEW);
+		openGL.push(GLMatrixFunc.GL_MODELVIEW);
 		vertices.visit((id, x, y, z) -> {
 			// Basic computations on text and color
 			final String text = floor4Digit(getCoords()[id].x) + "," + floor4Digit(getCoords()[id].y);
@@ -164,9 +168,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			openGL.getGL().glRasterPos2d(xPosIn01, yPosIn01);
 			openGL.getGlut().glutBitmapString(GLUT.BITMAP_HELVETICA_18, text);
 		}, 4, true);
-		openGL.pop(GL2.GL_MODELVIEW);
+		openGL.pop(GLMatrixFunc.GL_MODELVIEW);
 		openGL.setLighting(true);
-		openGL.pop(GL2.GL_PROJECTION);
+		openGL.pop(GLMatrixFunc.GL_PROJECTION);
 
 	}
 
@@ -192,7 +196,7 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			createScreenSurface();
 			// draw
 			final GL2 gl = getGL();
-			gl.glDrawElements(GL2.GL_TRIANGLES, 6, GL2.GL_UNSIGNED_INT, 0);
+			gl.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, 0);
 			theShader.stop();
 		}
 
@@ -222,10 +226,10 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		// http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0)
 		// transform the coordinates [0,1] --> [-1,+1]
 		final ICoordinates coords = getData().getKeystone();
-		final float[] p0 = new float[] { (float) coords.at(0).x * 2f - 1f, (float) (coords.at(0).y * 2f - 1f) }; // bottom-left
-		final float[] p1 = new float[] { (float) coords.at(1).x * 2f - 1f, (float) coords.at(1).y * 2f - 1f }; // top-left
-		final float[] p2 = new float[] { (float) coords.at(2).x * 2f - 1f, (float) coords.at(2).y * 2f - 1f }; // top-right
-		final float[] p3 = new float[] { (float) coords.at(3).x * 2f - 1f, (float) coords.at(3).y * 2f - 1f }; // bottom-right
+		final float[] p0 = { (float) coords.at(0).x * 2f - 1f, (float) (coords.at(0).y * 2f - 1f) }; // bottom-left
+		final float[] p1 = { (float) coords.at(1).x * 2f - 1f, (float) coords.at(1).y * 2f - 1f }; // top-left
+		final float[] p2 = { (float) coords.at(2).x * 2f - 1f, (float) coords.at(2).y * 2f - 1f }; // top-right
+		final float[] p3 = { (float) coords.at(3).x * 2f - 1f, (float) coords.at(3).y * 2f - 1f }; // bottom-right
 
 		final float ax = (p2[0] - p0[0]) / 2f;
 		final float ay = (p2[1] - p0[1]) / 2f;
@@ -248,10 +252,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			final float q3 = 1 / s;
 
 			// I can now pass (u * q, v * q, q) to OpenGL
-			final float[] listVertices =
-					new float[] { p0[0], p0[1], 1f, p1[0], p1[1], 0f, p2[0], p2[1], 0f, p3[0], p3[1], 1f };
+			final float[] listVertices = { p0[0], p0[1], 1f, p1[0], p1[1], 0f, p2[0], p2[1], 0f, p3[0], p3[1], 1f };
 			final float[] listUvMapping =
-					new float[] { 0f, 1f * q0, 0f, q0, 0f, 0f, 0f, q1, 1f * q2, 0f, 0f, q2, 1f * q3, 1f * q3, 0f, q3 };
+					{ 0f, 1f * q0, 0f, q0, 0f, 0f, 0f, q1, 1f * q2, 0f, 0f, q2, 1f * q3, 1f * q3, 0f, q3 };
 			// VERTICES POSITIONS BUFFER
 			storeAttributes(AbstractShader.POSITION_ATTRIBUTE_IDX, verticesBufferIndex, 3, listVertices);
 			// UV MAPPING (If a texture is defined)
@@ -263,8 +266,8 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		// gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
 		getOpenGL().bindTexture(fboScene.getFBOTexture());
 		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, 24, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
+		gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, 24, ibIdxBuff, GL.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
 	}
 
@@ -272,15 +275,15 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			final float[] data) {
 		final GL2 gl = getGL();
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIndex);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferIndex);
 		// Associate Vertex attribute with the last bound VBO
-		gl.glVertexAttribPointer(shaderAttributeType, size, GL2.GL_FLOAT, false, 0, 0 /* offset */);
+		gl.glVertexAttribPointer(shaderAttributeType, size, GL.GL_FLOAT, false, 0, 0 /* offset */);
 		// compute the total size of the buffer :
 		final int numBytes = data.length * 4;
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, null, GL2.GL_STATIC_DRAW);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, null, GL.GL_STATIC_DRAW);
 
 		final FloatBuffer fbData = Buffers.newDirectFloatBuffer(data);
-		gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, 0, numBytes, fbData);
+		gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, numBytes, fbData);
 		gl.glEnableVertexAttribArray(shaderAttributeType);
 	}
 
@@ -300,12 +303,10 @@ public class KeystoneHelper extends AbstractRendererHelper {
 				return 1;
 			else
 				return 0;
-		} else {
-			if (mouse.y < getViewHeight() / 2)
-				return 2;
-			else
-				return 3;
-		}
+		} else if (mouse.y < getViewHeight() / 2)
+			return 2;
+		else
+			return 3;
 	}
 
 	public int cornerHovered(final GamaPoint mouse) {
@@ -314,12 +315,10 @@ public class KeystoneHelper extends AbstractRendererHelper {
 				return 1;
 			else
 				return 0;
-		} else {
-			if (mouse.y < getViewHeight() / 2)
-				return 2;
-			else
-				return 3;
-		}
+		} else if (mouse.y < getViewHeight() / 2)
+			return 2;
+		else
+			return 3;
 	}
 
 	public void setCornerHovered(final int cornerId) {

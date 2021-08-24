@@ -19,7 +19,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -88,7 +88,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	boolean isHighlightAspect;
 
-	static final Map<String, Integer> SHAPES = new HashMap<String, Integer>() {
+	static final Map<String, Integer> SHAPES = new HashMap<>() {
 
 		{
 			put("circle", 1);
@@ -105,11 +105,9 @@ public class AspectStatement extends AbstractStatementSequence {
 		final IAgent agent = scope.getAgent();
 		if (agent != null && !agent.dead()) {
 			final IGraphics g = scope.getGraphics();
-			if (g == null) { return null; }
+			if (g == null) return null;
 			try {
-				if (agent == scope.getGui().getHighlightedAgent()) {
-					g.beginHighlight();
-				}
+				if (agent == scope.getGui().getHighlightedAgent()) { g.beginHighlight(); }
 				final boolean hasColor = agent.getSpecies().hasVar(IKeyword.COLOR);
 				GamaColor color;
 				if (hasColor) {
@@ -124,7 +122,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 				if (index != null) {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
-					final ILocation point = agent.getLocation();
+					final GamaPoint point = agent.getLocation();
 
 					switch (SHAPES.get(defaultShape)) {
 						case 1:
@@ -168,7 +166,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	public AspectStatement(final IDescription desc) {
 		super(desc);
 		setName(getLiteral(IKeyword.NAME, IKeyword.DEFAULT));
-		isHighlightAspect = getName().equals("highlighted");
+		isHighlightAspect = "highlighted".equals(getName());
 	}
 
 	@Override
@@ -178,24 +176,18 @@ public class AspectStatement extends AbstractStatementSequence {
 		if (agent != null && !agent.dead()) {
 			IGraphics g = scope.getGraphics();
 			// hqnghi: try to find scope from experiment
-			if (g == null) {
-				g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics();
-			}
+			if (g == null) { g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics(); }
 			// end-hqnghi
-			if (g == null) { return null; }
+			if (g == null) return null;
 			try {
-				if (scope.interrupted()) { return null; }
-				if (shouldHighlight) {
-					g.beginHighlight();
-				}
+				if (scope.interrupted()) return null;
+				if (shouldHighlight) { g.beginHighlight(); }
 				return (Rectangle2D) super.executeOn(scope);
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed
 				e.printStackTrace();
 			} finally {
-				if (shouldHighlight) {
-					g.endHighlight();
-				}
+				if (shouldHighlight) { g.endHighlight(); }
 				// agent.releaseLock();
 			}
 
@@ -207,7 +199,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final IGraphics g = scope.getGraphics();
-		if (g == null) { return null; }
+		if (g == null) return null;
 		super.privateExecuteIn(scope);
 		return g.getAndWipeTemporaryEnvelope();
 	}

@@ -56,8 +56,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 5;
 		intermediate.setLayout(parentLayout);
-		view.pack();
-		view.layout();
+		// view.pack();
+		// view.layout();
 		setParentComposite(intermediate);
 	}
 
@@ -84,16 +84,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		// tb.button(GamaIcons.create(IGamaIcons.SMALL_EXPAND).getCode(), "Collapse All", "Collapse All", e -> {
-		// for (final ParameterExpandItem p : getViewer().getItems()) {
-		// p.setExpanded(false);
-		// }
-		// }, SWT.RIGHT);
-		// tb.button(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).getCode(), "Expand All", "Expand All", e -> {
-		// for (final ParameterExpandItem p : getViewer().getItems()) {
-		// p.setExpanded(true);
-		// }
-		// }, SWT.RIGHT);
 		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", e -> {
 					final EditorsList<?> eds = editors;

@@ -41,7 +41,7 @@ class TextExecuter extends DrawExecuter {
 				data.rotation.get(), data.getLocation(), data.color.get());
 		// We push the location of the agent if none has been provided
 		if (attributes.getLocation() == null) {
-			attributes.setLocation(scope.getAgent().getLocation().toGamaPoint().clone());
+			attributes.setLocation(scope.getAgent().getLocation().clone());
 		}
 		attributes.setFont(data.font.get());
 		attributes.setAnchor(data.getAnchor());

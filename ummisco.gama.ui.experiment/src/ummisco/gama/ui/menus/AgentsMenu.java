@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -45,7 +44,6 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
-import ummisco.gama.ui.utils.SwtGui;
 
 public class AgentsMenu extends ContributionItem {
 
@@ -140,9 +138,7 @@ public class AgentsMenu extends ContributionItem {
 		super(id);
 	}
 
-	public AgentsMenu() {
-		super();
-	}
+	public AgentsMenu() {}
 
 	private static SelectionAdapter inspector = new SelectionAdapter() {
 
@@ -178,15 +174,9 @@ public class AgentsMenu extends ContributionItem {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final List<IDisplaySurface> surfaces = SwtGui.allDisplaySurfaces();
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			for (final IDisplaySurface surface : surfaces) {
-				if (a instanceof ITopLevelAgent) {
-					surface.zoomFit();
-				} else if (a != null && !a.dead()) { surface.focusOn(a); }
-			}
-			GAMA.getExperiment().refreshAllOutputs();
+			if (a != null && !a.dead()) { GAMA.getGui().setFocusOn(a); }
 		}
 	}
 
@@ -224,7 +214,7 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem source = (MenuItem) e.widget;
 			final IAgent a = (IAgent) source.getData("agent");
 			final IStatement c = (IStatement) source.getData("command");
-			// final ILocation p = (ILocation) source.getData("location");
+			// final GamaPoint p = (GamaPoint) source.getData("location");
 
 			// We run into the scope provided by the simulation to which this
 			// agent belongs
@@ -313,13 +303,11 @@ public class AgentsMenu extends ContributionItem {
 			}
 		} else {
 			int nb = size / subMenuSize + 1;
-			if (PlatformHelper.isWindows()) {
-				// See Issue #2967
-				if (nb > 90) {
-					// Absolutely no idea about the reality of this hard-coded limit
-					nb = 90;
-					subMenuSize = size / nb;
-				}
+			// See Issue #2967
+			if (PlatformHelper.isWindows() && nb > 90) {
+				// Absolutely no idea about the reality of this hard-coded limit
+				nb = 90;
+				subMenuSize = size / nb;
 			}
 			for (int i = 0; i < nb; i++) {
 				final int begin = i * subMenuSize;

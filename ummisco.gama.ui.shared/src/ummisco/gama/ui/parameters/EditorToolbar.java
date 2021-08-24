@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 
@@ -82,11 +83,8 @@ public class EditorToolbar {
 		commands[VALUE] = build(null, "", "Value of the parameter", null);
 	}
 
-	EditorToolbar(final AbstractEditor editor) {
+	EditorToolbar(final AbstractEditor editor, final Composite composite) {
 		this.editor = editor;
-	}
-
-	void createOn(final Composite composite) {
 		final Composite t = new Composite(composite, SWT.NONE);
 		final GridData d = new GridData(SWT.END, SWT.CENTER, false, false);
 		t.setLayoutData(d);
@@ -94,7 +92,8 @@ public class EditorToolbar {
 				.fill(true).pack(true).extendedMargins(0, 0, 0, 0).justify(false).wrap(false).create();
 		final RowData gd = RowDataFactory.swtDefaults().create();
 		t.setLayout(id);
-		if (editor.isEditable) {
+		IParameter p = editor.getParam();
+		if (p != null && p.isEditable()) {
 			for (final int i : editor.getToolItems()) {
 				MouseListener listener = new MouseAdapter() {
 

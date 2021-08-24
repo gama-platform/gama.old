@@ -105,11 +105,11 @@ public class LayoutForceDirected {
 			for (final IShape u : graph.vertexSet()) {
 				if (!v.equals(u)) {
 					// normalized difference position vector of v and u
-					GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
+					GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u));
 					final double length = Points.norm(scope, deltaPos);
 
 					if (length != 0) {
-						deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) / length).toGamaPoint();
+						deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) / length);
 					}
 
 					vDisp.add(deltaPos);
@@ -123,11 +123,11 @@ public class LayoutForceDirected {
 			final IShape u = graph.getEdgeSource(e);
 			final IShape v = graph.getEdgeTarget(e);
 			// normalized difference position vector of v and u
-			GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u)).toGamaPoint();
+			GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u));
 			final double length = Points.norm(scope, deltaPos);
 
 			if (length != 0) {
-				deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) / length).toGamaPoint();
+				deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) / length);
 			}
 
 			disp.get(v).minus(deltaPos);
@@ -149,24 +149,24 @@ public class LayoutForceDirected {
 			}
 			// limit maximum displacement by temperature t
 			if (length != 0) {
-				d = Points.multiply(d, Math.min(length, t) / length).toGamaPoint();
+				d = Points.multiply(d, Math.min(length, t) / length);
 			}
 			final GamaPoint l = loc.get(v);
 			l.add(d);
 			if (!bounds.intersects(l)) {
-				loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
+				loc.put(v, Punctal._closest_point_to(l, bounds));
 			}
 
 		}
 		final GamaPoint center = (GamaPoint) Containers.mean(scope, GamaListFactory.wrap(Types.POINT, loc.values()));
 		if (center.distance3D(bounds.getCentroid()) > toleranceCenter) {
-			final GamaPoint d = Points.subtract(bounds.getCentroid(), center).toGamaPoint();
+			final GamaPoint d = Points.subtract(bounds.getCentroid(), center);
 			d.multiplyBy(0.5);
 			for (final IShape v : graph.vertexSet()) {
 				final GamaPoint l = loc.get(v);
 				l.add(d);
 				if (!bounds.intersects(l)) {
-					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
+					loc.put(v, Punctal._closest_point_to(l, bounds));
 				}
 			}
 		}
@@ -175,14 +175,14 @@ public class LayoutForceDirected {
 			maxDist = distanceMinCenter - maxDist;
 			for (final IShape v : graph.vertexSet()) {
 				final GamaPoint l = loc.get(v);
-				final GamaPoint d = Points.subtract(l, center).toGamaPoint();
+				final GamaPoint d = Points.subtract(l, center);
 				final double len = d.norm();
 				if (len > 0) {
 					d.multiplyBy(maxDist / d.norm());
 				}
 				l.add(d);
 				if (!bounds.intersects(l)) {
-					loc.put(v, Punctal._closest_point_to(l, bounds).toGamaPoint());
+					loc.put(v, Punctal._closest_point_to(l, bounds));
 				}
 			}
 		}

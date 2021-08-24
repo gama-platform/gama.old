@@ -10,7 +10,7 @@
 model Restitution
 
 global parent: physical_world {
-	string library <- use_native_library ? "Native":"Java";
+	string library_name <- use_native ? "Native":"Java";
 	float wall_restitution <- 1.0  min: 0.0 max: 1.0 ;
 	float ball_restitution <- 0.8  min: 0.0 max: 1.0 ;
 	point ball_impulse <- {100,100,0} ;
@@ -110,10 +110,10 @@ experiment "Test it !" type: gui {
  		gama.pref_append_simulation_name <- true;
 		gama.pref_experiment_expand_params <- true; 
 		bool native <- user_confirm("Native", "Compare using native library ? ");
-		create simulation with: [seed:: 1.0, use_native_library :: native, step::1/60];
-		create simulation with: [seed:: 1.0, use_native_library :: native, step::1/30];
-		create simulation with: [seed:: 1.0, use_native_library :: native, step::1/15];
-		create simulation with: [seed:: 1.0, use_native_library :: native, step::1/10];
+		create simulation with: [seed:: 1.0, use_native :: native, step::1/60];
+		create simulation with: [seed:: 1.0, use_native :: native, step::1/30];
+		create simulation with: [seed:: 1.0, use_native :: native, step::1/15];
+		create simulation with: [seed:: 1.0, use_native :: native, step::1/10];
 		gama.pref_experiment_expand_params <- prev0;
 		gama.pref_append_simulation_name <- prev1;
 	}

@@ -60,21 +60,10 @@ public class OverlayLayer extends GraphicLayer {
 
 	@Override
 	protected void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		g.setOpacity(1);
+		g.beginOverlay(this);
 		final IAgent agent = scope.getAgent();
 		scope.execute(((OverlayStatement) definition).getAspect(), agent, null);
-	}
-
-	@Override
-	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (scope == null) { return; }
-		getData().compute(scope, g);
-		g.beginDrawingLayer(this);
-		g.setOpacity(1 - getData().getTransparency(scope));
-		g.beginOverlay(this);
-		privateDraw(scope, g);
 		g.endOverlay();
-		g.endDrawingLayer(this);
 	}
 
 	@Override

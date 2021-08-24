@@ -16,7 +16,7 @@ import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
@@ -46,7 +46,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 
 	void setCellSpecies(final IPopulation<? extends IAgent> pop);
 
-	IAgent getAgentAt(final ILocation c);
+	IAgent getAgentAt(final GamaPoint c);
 
 	GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException;
@@ -55,7 +55,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 			final ITopology topo, final Map<IAgent, Object> on) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getNeighborsOf(final IScope scope, final
-	// ILocation shape, final Double
+	// GamaPoint shape, final Double
 	// distance,
 	// IAgentFilter filter);
 
@@ -63,7 +63,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 
 	int manhattanDistanceBetween(final IShape g1, final IShape g2);
 
-	IShape getPlaceAt(final ILocation c);
+	IShape getPlaceAt(final GamaPoint c);
 
 	int[] getDisplayData();
 

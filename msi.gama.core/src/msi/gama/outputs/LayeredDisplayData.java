@@ -24,7 +24,7 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
@@ -107,7 +107,7 @@ public class LayeredDisplayData {
 	private double envWidth = 0d;
 	private double envHeight = 0d;
 	private boolean isAntialiasing = GamaPreferences.Displays.CORE_ANTIALIAS.getValue();
-	private ILocation imageDimension = new GamaPoint(-1, -1);
+	private GamaPoint imageDimension = new GamaPoint(-1, -1);
 	private Double zoomLevel = INITIAL_ZOOM;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	public static final ICoordinates KEYSTONE_IDENTITY =
@@ -502,7 +502,7 @@ public class LayeredDisplayData {
 	/**
 	 * @return the imageDimension
 	 */
-	public ILocation getImageDimension() {
+	public GamaPoint getImageDimension() {
 		return imageDimension;
 	}
 
@@ -510,7 +510,7 @@ public class LayeredDisplayData {
 	 * @param imageDimension
 	 *            the imageDimension to set
 	 */
-	public void setImageDimension(final ILocation imageDimension) {
+	public void setImageDimension(final GamaPoint imageDimension) {
 		this.imageDimension = imageDimension;
 	}
 

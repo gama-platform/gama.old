@@ -168,6 +168,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			case IVarExpression.AGENT:
 				return new AgentVariableExpression(name, type, isConst, definitionDescription);
 			case IVarExpression.TEMP:
+				// TODO AD possibility to optimize the code if the variable is not changed anywhere in the code
 				return new TempVariableExpression(name, type, definitionDescription);
 			case IVarExpression.EACH:
 				return new EachExpression(name, type);
@@ -223,9 +224,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if (!hasOperator(op, context, eObject, args)) {
 			final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
-			String msg = "No operator found for applying '" + op + "' to " + userSignature;
-			if (ops != null) { msg += " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")"; }
-			context.error(msg, IGamlIssue.UNMATCHED_OPERANDS, eObject);
+			StringBuilder msg = new StringBuilder("No operator found for applying '").append(op).append("' to ")
+					.append(userSignature);
+			if (ops != null) {
+				msg.append(" (operators available for ").append(Arrays.toString(ops.keySet().toArray())).append(")");
+			}
+			context.error(msg.toString(), IGamlIssue.UNMATCHED_OPERANDS, eObject);
 			return null;
 		}
 		// We get the possible sets of types registered in OPERATORS

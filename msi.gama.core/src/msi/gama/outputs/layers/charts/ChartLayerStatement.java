@@ -353,7 +353,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public static final String Y2_LOGSCALE = "y2_log_scale";
 
 	public static final String YTICKUNIT = "y_tick_unit";
-	public static final String Y2TICKUNIT = "y_tick_unit";
+	public static final String Y2TICKUNIT = "y2_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
 
 	public static final String XTICKLINEVISIBLE = "x_tick_line_visible";
@@ -384,7 +384,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	ChartDataSet chartdataset;
 
-	public class DataDeclarationSequence extends AbstractStatementSequence {
+	public static class DataDeclarationSequence extends AbstractStatementSequence {
 
 		public DataDeclarationSequence(final IDescription desc) {
 			super(desc);
@@ -437,27 +437,17 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		chartoutput = ChartJFreeChartOutput.createChartOutput(scope, getName(), string1);
 
 		string1 = getFacet(IKeyword.STYLE);
-		if (string1 != null) {
-			chartoutput.setStyle(scope, Cast.asString(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setStyle(scope, Cast.asString(scope, string1.value(scope))); }
 
 		string1 = getFacet(IKeyword.REVERSE_AXIS);
-		if (string1 != null) {
-			chartoutput.setReverseAxis(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setReverseAxis(scope, Cast.asBool(scope, string1.value(scope))); }
 		string1 = getFacet(ChartLayerStatement.X_LOGSCALE);
-		if (string1 != null) {
-			chartoutput.setX_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setX_LogScale(scope, Cast.asBool(scope, string1.value(scope))); }
 		string1 = getFacet(ChartLayerStatement.Y_LOGSCALE);
-		if (string1 != null) {
-			chartoutput.setY_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setY_LogScale(scope, Cast.asBool(scope, string1.value(scope))); }
 
 		string1 = getFacet(ChartLayerStatement.Y2_LOGSCALE);
-		if (string1 != null) {
-			chartoutput.setY2_LogScale(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setY2_LogScale(scope, Cast.asBool(scope, string1.value(scope))); }
 
 		chartoutput.createChart(scope);
 		updateValues(scope);
@@ -465,9 +455,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		//
 		boolean memorize = GamaPreferences.Displays.CHART_MEMORIZE.getValue();
 		final IExpression face = getFacet(MEMORIZE);
-		if (face != null) {
-			memorize = Cast.asBool(scope, face.value(scope));
-		}
+		if (face != null) { memorize = Cast.asBool(scope, face.value(scope)); }
 
 		chartoutput.initChart(scope, getName());
 		final boolean isBatch = scope.getExperiment().getSpecies().isBatch();
@@ -523,24 +511,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public boolean updateValues(final IScope scope) {
 
 		IExpression string1 = getFacet(ChartLayerStatement.XLABEL);
-		if (string1 != null) {
-			chartoutput.setXLabel(scope, Cast.asString(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setXLabel(scope, Cast.asString(scope, string1.value(scope))); }
 
 		string1 = getFacet(ChartLayerStatement.YLABEL);
-		if (string1 != null) {
-			chartoutput.setYLabel(scope, Cast.asString(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setYLabel(scope, Cast.asString(scope, string1.value(scope))); }
 
 		string1 = getFacet(ChartLayerStatement.Y2LABEL);
-		if (string1 != null) {
-			chartoutput.setY2Label(scope, Cast.asString(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setY2Label(scope, Cast.asString(scope, string1.value(scope))); }
 
 		string1 = getFacet(ChartLayerStatement.SERIES_LABEL_POSITION);
-		if (string1 != null) {
-			chartoutput.setSeriesLabelPosition(scope, Cast.asString(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setSeriesLabelPosition(scope, Cast.asString(scope, string1.value(scope))); }
 
 		IExpression expr = getFacet(XRANGE);
 		if (expr != null) {
@@ -619,49 +599,31 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 		GamaColor colorvalue = new GamaColor(Color.black);
 		IExpression color = getFacet(IKeyword.AXES);
-		if (color != null) {
-			colorvalue = Cast.asColor(scope, color.value(scope));
-		}
+		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setAxesColorValue(scope, colorvalue);
 
 		colorvalue = new GamaColor(Color.black);
 		color = getFacet(ChartLayerStatement.TICKLINECOLOR);
-		if (color != null) {
-			colorvalue = Cast.asColor(scope, color.value(scope));
-		}
+		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setTickColorValue(scope, colorvalue);
 
 		string1 = getFacet(ChartLayerStatement.XTICKVALUEVISIBLE);
-		if (string1 != null) {
-			chartoutput.setXTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setXTickValueVisible(scope, Cast.asBool(scope, string1.value(scope))); }
 		string1 = getFacet(ChartLayerStatement.YTICKVALUEVISIBLE);
-		if (string1 != null) {
-			chartoutput.setYTickValueVisible(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setYTickValueVisible(scope, Cast.asBool(scope, string1.value(scope))); }
 		string1 = getFacet(ChartLayerStatement.TITLEVISIBLE);
-		if (string1 != null) {
-			chartoutput.setTitleVisible(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setTitleVisible(scope, Cast.asBool(scope, string1.value(scope))); }
 
 		string1 = getFacet(ChartLayerStatement.XTICKLINEVISIBLE);
-		if (string1 != null) {
-			chartoutput.setXTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setXTickLineVisible(scope, Cast.asBool(scope, string1.value(scope))); }
 		string1 = getFacet(ChartLayerStatement.YTICKLINEVISIBLE);
-		if (string1 != null) {
-			chartoutput.setYTickLineVisible(scope, Cast.asBool(scope, string1.value(scope)));
-		}
+		if (string1 != null) { chartoutput.setYTickLineVisible(scope, Cast.asBool(scope, string1.value(scope))); }
 		color = getFacet(IKeyword.COLOR);
-		if (color != null) {
-			colorvalue = Cast.asColor(scope, color.value(scope));
-		}
+		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setColorValue(scope, colorvalue);
 		colorvalue = new GamaColor(Color.white);
 		color = getFacet(IKeyword.BACKGROUND);
-		if (color != null) {
-			colorvalue = Cast.asColor(scope, color.value(scope));
-		}
+		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setBackgroundColorValue(scope, colorvalue);
 
 		GamaFont font = null;
@@ -722,44 +684,28 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		face = getFacet(TICKFONTSIZE);
-		if (face != null) {
-			chartoutput.setTickFontSize(scope, Cast.asInt(scope, face.value(scope)).intValue());
-		}
+		if (face != null) { chartoutput.setTickFontSize(scope, Cast.asInt(scope, face.value(scope))); }
 		face = getFacet(LABELFONTSIZE);
-		if (face != null) {
-			chartoutput.setLabelFontSize(scope, Cast.asInt(scope, face.value(scope)).intValue());
-		}
+		if (face != null) { chartoutput.setLabelFontSize(scope, Cast.asInt(scope, face.value(scope))); }
 		face = getFacet(LEGENDFONTSIZE);
-		if (face != null) {
-			chartoutput.setLegendFontSize(scope, Cast.asInt(scope, face.value(scope)).intValue());
-		}
+		if (face != null) { chartoutput.setLegendFontSize(scope, Cast.asInt(scope, face.value(scope))); }
 		face = getFacet(TITLEFONTSIZE);
-		if (face != null) {
-			chartoutput.setTitleFontSize(scope, Cast.asInt(scope, face.value(scope)).intValue());
-		}
+		if (face != null) { chartoutput.setTitleFontSize(scope, Cast.asInt(scope, face.value(scope))); }
 		face = getFacet(TICKFONTSTYLE);
-		if (face != null) {
-			chartoutput.setTickFontStyle(scope, toFontStyle(getLiteral(TICKFONTSTYLE)));
-		}
+		if (face != null) { chartoutput.setTickFontStyle(scope, toFontStyle(getLiteral(TICKFONTSTYLE))); }
 		face = getFacet(LABELFONTSTYLE);
-		if (face != null) {
-			chartoutput.setLabelFontStyle(scope, toFontStyle(getLiteral(LABELFONTSTYLE)));
-		}
+		if (face != null) { chartoutput.setLabelFontStyle(scope, toFontStyle(getLiteral(LABELFONTSTYLE))); }
 		face = getFacet(LEGENDFONTSTYLE);
-		if (face != null) {
-			chartoutput.setLegendFontStyle(scope, toFontStyle(getLiteral(LEGENDFONTSTYLE)));
-		}
+		if (face != null) { chartoutput.setLegendFontStyle(scope, toFontStyle(getLiteral(LEGENDFONTSTYLE))); }
 		face = getFacet(TITLEFONTSTYLE);
-		if (face != null) {
-			chartoutput.setTitleFontStyle(scope, toFontStyle(getLiteral(TITLEFONTSTYLE)));
-		}
+		if (face != null) { chartoutput.setTitleFontStyle(scope, toFontStyle(getLiteral(TITLEFONTSTYLE))); }
 
 		return true;
 	}
 
 	int toFontStyle(final String style) {
-		if (style.equals("bold")) { return Font.BOLD; }
-		if (style.equals("italic")) { return Font.ITALIC; }
+		if ("bold".equals(style)) return Font.BOLD;
+		if ("italic".equals(style)) return Font.ITALIC;
 		return Font.PLAIN;
 	}
 
@@ -779,18 +725,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void dispose() {
-		if (chartoutput != null) {
-			chartoutput.dispose(null);
-		}
+		if (chartoutput != null) { chartoutput.dispose(null); }
 		chartoutput = null;
 		// chart = null;
 		super.dispose();
 	}
 
 	public void saveHistory() {
-		if (!getDataSet().keepsHistory()) { return; }
+		if (!getDataSet().keepsHistory()) return;
 		final IScope scope = this.getDisplayOutput().getScope().copy("in save");
-		if (scope == null) { return; }
+		if (scope == null) return;
 		try {
 			this.getDataSet().saveHistory(scope, this.getName() + "_cycle_" + scope.getClock().getCycle());
 		} catch (final Exception e) {

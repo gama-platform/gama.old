@@ -230,8 +230,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseMove(final MouseEvent e) {
-		mousePosition.x = PlatformHelper.scaleToHiDPI(e.x);
-		mousePosition.y = PlatformHelper.scaleToHiDPI(e.y);
+		mousePosition.x = PlatformHelper.autoScaleUp(e.x);
+		mousePosition.y = PlatformHelper.autoScaleUp(e.y);
 		setCtrlPressed(GamaKeyBindings.ctrl(e));
 		setShiftPressed(GamaKeyBindings.shift(e));
 	}
@@ -298,8 +298,8 @@ public abstract class AbstractCamera implements ICamera {
 	private int clickOnKeystone(final MouseEvent e) {
 		// int x = e.x;
 		// int y = e.y;
-		final int x = PlatformHelper.scaleUpIfWin(e.x);
-		final int y = PlatformHelper.scaleUpIfWin(e.y);
+		final int x = PlatformHelper.autoScaleUp(e.x);
+		final int y = PlatformHelper.autoScaleUp(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone.
 		// final GamaPoint p = getNormalizedCoordinates(e);
@@ -309,8 +309,8 @@ public abstract class AbstractCamera implements ICamera {
 	protected int hoverOnKeystone(final MouseEvent e) {
 		// int x = e.x;
 		// int y = e.y;
-		final int x = PlatformHelper.scaleUpIfWin(e.x);
-		final int y = PlatformHelper.scaleUpIfWin(e.y);
+		final int x = PlatformHelper.autoScaleUp(e.x);
+		final int y = PlatformHelper.autoScaleUp(e.y);
 		// return the number of the corner clicked. Return -1 if no click on
 		// keystone. Return 10 if click on the center.
 		// final GamaPoint p = getNormalizedCoordinates(e);
@@ -318,8 +318,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
-		final int x = PlatformHelper.scaleUpIfWin(e.x);
-		final int y = PlatformHelper.scaleUpIfWin(e.y);
+		final int x = PlatformHelper.autoScaleUp(e.x);
+		final int y = PlatformHelper.autoScaleUp(e.y);
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition.setLocation(x, y, 0);
 			firsttimeMouseDown = false;
@@ -338,21 +338,19 @@ public abstract class AbstractCamera implements ICamera {
 		if (e.button == 3 && !keystoneMode) {
 			if (renderer.getOpenGLHelper().mouseInROI(lastMousePressedPosition)) {
 				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
-			} else {
-				if (renderer.getSurface().canTriggerContextualMenu()) { renderer.getPickingHelper().setPicking(true); }
+			} else if (renderer.getSurface().canTriggerContextualMenu()) {
+				renderer.getPickingHelper().setPicking(true);
 			}
 		} else if (e.button == 2 && cameraInteraction) { // mouse wheel
 			resetPivot();
-		} else {
-			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) { startROI(e); }
-			// else {
-			// renderer.getPickingState().setPicking(false);
-			// }
-		}
+		} else if (GamaKeyBindings.shift(e) && isViewInXYPlan()) { startROI(e); }
+		// else {
+		// renderer.getPickingState().setPicking(false);
+		// }
 		getMousePosition().x = x;
 		getMousePosition().y = y;
 
-		setMouseLeftPressed(e.button == 1 ? true : false);
+		setMouseLeftPressed((e.button == 1));
 		setCtrlPressed(e.button == 1 ? GamaKeyBindings.ctrl(e) : false);
 		setShiftPressed(e.button == 1 ? GamaKeyBindings.shift(e) : false);
 
@@ -377,14 +375,14 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected void internalMouseUp(final MouseEvent e) {
 		firsttimeMouseDown = true;
-		if (canSelectOnRelease(e) && isViewInXYPlan()) { if (GamaKeyBindings.shift(e)) { finishROISelection(); } }
+		if (canSelectOnRelease(e) && isViewInXYPlan() && GamaKeyBindings.shift(e)) { finishROISelection(); }
 		if (e.button == 1) { setMouseLeftPressed(false); }
 
 	}
 
 	private void startROI(final org.eclipse.swt.events.MouseEvent e) {
-		getMousePosition().x = PlatformHelper.scaleUpIfWin(e.x);
-		getMousePosition().y = PlatformHelper.scaleUpIfWin(e.y);
+		getMousePosition().x = PlatformHelper.autoScaleUp(e.x);
+		getMousePosition().y = PlatformHelper.autoScaleUp(e.y);
 		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition), new GamaPoint(mousePosition));
 		ROICurrentlyDrawn = true;
 	}
@@ -496,16 +494,16 @@ public abstract class AbstractCamera implements ICamera {
 						if (cameraInteraction) { zoom(false); }
 						break;
 					case '4':
-						if (cameraInteraction) { if (useNumKeys) { quickLeftTurn(); } }
+						if (cameraInteraction && useNumKeys) { quickLeftTurn(); }
 						break;
 					case '6':
-						if (cameraInteraction) { if (useNumKeys) { quickRightTurn(); } }
+						if (cameraInteraction && useNumKeys) { quickRightTurn(); }
 						break;
 					case '8':
-						if (cameraInteraction) { if (useNumKeys) { quickUpTurn(); } }
+						if (cameraInteraction && useNumKeys) { quickUpTurn(); }
 						break;
 					case '2':
-						if (cameraInteraction) { if (useNumKeys) { quickDownTurn(); } }
+						if (cameraInteraction && useNumKeys) { quickDownTurn(); }
 						break;
 					case 'k':
 						if (!GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
@@ -513,10 +511,7 @@ public abstract class AbstractCamera implements ICamera {
 					default:
 						return true;
 				}
-			} else if (e.character == 'k') {
-				if (!GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
-				return true;
-			}
+			} else if ((e.character == 'k') && !GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
 			return true;
 		});
 	}

@@ -14,7 +14,8 @@ package gama.extensions.physics.gaml;
 
 import java.util.Collection;
 
-import gama.extensions.physics.BulletActivator;
+import gama.extensions.physics.PhysicsActivator;
+import gama.extensions.physics.box2d_version.Box2DPhysicalWorld;
 import gama.extensions.physics.common.IPhysicalConstants;
 import gama.extensions.physics.common.IPhysicalWorld;
 import gama.extensions.physics.java_version.BulletPhysicalWorld;
@@ -42,11 +43,12 @@ import msi.gaml.types.IType;
 
 /**
  * A simulation agent that provides physical capabilities to simulations, in particular the possiblity to register and
- * manage agents that implement the 'static_body' / 'dynamic_body' skill/ This class is a gateway to a JBullet/Bullet
- * dynamics "world" that combines collision detection and physics. Serves as the entry point of physical simulations in
- * GAMA and conveys to the agents the events that occur in the physical world (contacts, mainly). Two libraries are
- * provided. One in Java (JBullet) corresponding to Bullet 2.8.x and one native (LibBulletJME) always up to date. The
- * modeler can choose which one to use by setting the value of 'use_native_library' to true or false
+ * manage agents that implement the 'static_body' / 'dynamic_body' skill/ This class is a gateway to a
+ * JBullet/Bullet/Box2D dynamics "world" that combines collision detection and physics either in 3D (for the Bullet
+ * libraries) or in 2D (Box2D). Serves as the entry point of physical simulations in GAMA and conveys to the agents the
+ * events that occur in the physical world (contacts, mainly). Three libraries are provided. Two in Java (JBullet &
+ * Box2D) in 3D and 2D, a bit outdated and one native (LibBulletJME) always up to date. The modeler can choose which one
+ * to use by setting the value of 'use_native_library' to true or false
  *
  * @author Alexis Drogoul 2021 (remotely based on the work of Javier Gil-Quijano - Arnaud Grignard - (2012 Gama Winter
  *         School))
@@ -88,6 +90,11 @@ import msi.gaml.types.IType;
 				type = IType.BOOL,
 				doc = { @doc ("This attribute allows to manually switch between the Java version of the Bullet library (JBullet, a modified version of https://github.com/stephengold/jbullet, which corresponds to version 2.72 of the original library) and the native Bullet library (Libbulletjme, https://github.com/stephengold/Libbulletjme, which is kept up-to-date with the 3.x branch of the original library)."
 						+ "The native version is the default one unless the libraries cannot be loaded, making JBullet the default") }),
+		@variable (
+				name = IPhysicalConstants.LIBRARY_NAME,
+				type = IType.STRING,
+				doc = { @doc ("This attribute allows to manually switch between two physics library, named 'bullet' and 'box2D'. The Bullet library, which comes in two flavors (see 'use_native') and the Box2D libray in its Java version (https://github.com/jbox2d/jbox2d). "
+						+ "Bullet is the default library but models in 2D should better use Box2D") }),
 
 		@variable (
 				name = IPhysicalConstants.ACCURATE_COLLISION_DETECTION,
@@ -102,7 +109,8 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	final GamaPoint gravity = new GamaPoint(0, 0, -9.81d);
 	IField terrain;
 	IPhysicalWorld gateway;
-	Boolean useNativeLibrary = BulletActivator.NATIVE_BULLET_LIBRARY_LOADED;
+	Boolean useNativeLibrary = PhysicsActivator.NATIVE_BULLET_LIBRARY_LOADED;
+	String libraryToUse = BULLET_LIBRARY_NAME;
 
 	private final AsOrderedSet<IAgent> registeredAgents = Collector.getOrderedSet();
 
@@ -194,7 +202,19 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	@setter (USE_NATIVE)
 	public void useNativeLibrary(final IScope scope, final Boolean v) {
 		// If we have not successfully loaded the library, then the setting should remain false.
-		useNativeLibrary = BulletActivator.NATIVE_BULLET_LIBRARY_LOADED && v;
+		useNativeLibrary = PhysicsActivator.NATIVE_BULLET_LIBRARY_LOADED && v;
+	}
+
+	@getter (
+			value = LIBRARY_NAME,
+			initializer = true)
+	public String libraryToUse(final IScope scope) {
+		return libraryToUse;
+	}
+
+	@setter (LIBRARY_NAME)
+	public void libraryToUse(final IScope scope, final String v) {
+		libraryToUse = v;
 	}
 
 	@getter (
@@ -250,7 +270,16 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 
 	IPhysicalWorld getGateway() {
 		if (gateway == null) {
-			gateway = useNativeLibrary ? new NativeBulletPhysicalWorld(this) : new BulletPhysicalWorld(this);
+			boolean isBullet = BULLET_LIBRARY_NAME.equals(libraryToUse);
+			if (isBullet) {
+				if (useNativeLibrary) {
+					gateway = new NativeBulletPhysicalWorld(this);
+				} else {
+					gateway = new BulletPhysicalWorld(this);
+				}
+			} else {
+				gateway = new Box2DPhysicalWorld(this);
+			}
 		}
 		return gateway;
 	}

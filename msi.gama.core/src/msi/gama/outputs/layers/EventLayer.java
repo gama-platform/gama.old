@@ -15,7 +15,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -101,7 +101,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 
 	// We explicitly translate by the origin of the surface
 	@Override
-	public ILocation getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
 		if (xOnScreen == -1 && yOnScreen == -1) return new GamaPoint(0, 0);
 		return g.getModelCoordinates();
 	}
@@ -152,7 +152,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 		if (agent == null) return;
 		final IExecutable executer = ((EventLayerStatement) definition).getExecutable(executionScope);
 		if (executer == null) return;
-		final ILocation pp = getModelCoordinatesFrom(x, y, surface);
+		final GamaPoint pp = getModelCoordinatesFrom(x, y, surface);
 		if (pp == null) return;
 		// DEBUG.OUT("Coordinates in env (before test)" + pp);
 		if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()

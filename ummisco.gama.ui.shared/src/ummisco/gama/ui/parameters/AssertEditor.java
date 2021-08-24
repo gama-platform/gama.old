@@ -27,7 +27,7 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 
 	@Override
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
-		textBox = FlatButton.button(composite, getColor(), getText()).small();
+		textBox = FlatButton.button(composite, getColor(), getText());
 		textBox.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -46,7 +46,6 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 
 	private String getText() {
 		final AbstractSummary<?> summary = getStatement();
-
 		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED)
 			return getStatement().getState().toString() + ": " + ((AssertionSummary) getStatement()).getError() + "  ";
 		return getStatement().getState().toString() + "  ";
