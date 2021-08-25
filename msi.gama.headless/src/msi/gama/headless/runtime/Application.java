@@ -385,10 +385,6 @@ public class Application implements IApplication {
 	}
 
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		if (!checkParameters(args)) {
-			System.exit(-1);
-		}
-
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
 		Reader in = null;
