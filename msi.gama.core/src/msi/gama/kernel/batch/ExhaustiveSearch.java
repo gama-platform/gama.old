@@ -88,7 +88,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestFitness(null);
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue())
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty())
 			testSolutionsAll(scope);
 		else
 			testSolutions(scope, new ParametersSet(), 0);
@@ -97,9 +97,11 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 	
 	
 	List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
-		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		final IParameter.Batch var = variables.get(index);
 		List<ParametersSet> sets2 = new ArrayList<>();
+		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
+		if (variables.isEmpty()) return sets2;
+			
+		final IParameter.Batch var = variables.get(index);
 		for (ParametersSet solution : sets) {
 			if (var.getAmongValue(scope) != null) {
 				for (final Object val : var.getAmongValue(scope)) {
