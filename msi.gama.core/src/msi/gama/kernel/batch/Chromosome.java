@@ -78,7 +78,7 @@ public class Chromosome implements Comparable<Chromosome> {
 			} else if (var.getType().id() == IType.INT) {
 				genes[cpt] = Cast.asInt(scope, var.value(scope));
 			} else {
-				genes[cpt] = 0;
+				genes[cpt] = var.value(scope);
 			}
 			cpt++;
 		}
