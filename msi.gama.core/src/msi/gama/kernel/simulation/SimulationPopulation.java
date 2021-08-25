@@ -47,7 +47,6 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	public int getMaxNumberOfConcurrentSimulations() {
-		if (getHost().getSpecies().isHeadless()) return 1;
 		return GamaExecutorService.getParallelism(getHost().getScope(), getSpecies().getConcurrency(),
 				Caller.SIMULATION);
 	}
