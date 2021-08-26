@@ -75,21 +75,6 @@ public class ParametersSet extends HashMap<String, Object> {
 		return super.put(s, o);
 	}
 
-	public Double getFitness() {
-		return fitness;
-	}
-
-	public void setFitness(Double fitness) {
-		this.fitness = fitness;
-	}
-
-	public int getCurrentIndex() {
-		return currentIndex;
-	}
-
-	public void setCurrentIndex(int currentIndex) {
-		this.currentIndex = currentIndex;
-	}
-
+	
 	
 }

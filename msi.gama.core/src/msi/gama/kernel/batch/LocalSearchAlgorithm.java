@@ -11,6 +11,7 @@
 package msi.gama.kernel.batch;
 
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
@@ -18,12 +19,17 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 
 public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 
+	protected static final String INIT_SOL = "init_solution";
+	
 	protected Neighborhood neighborhood;
 	protected ParametersSet solutionInit;
 
+	protected IExpression initSolExpression;
 	public LocalSearchAlgorithm(final IDescription species) {
 		super(species);
 	}
@@ -34,6 +40,21 @@ public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 		final List<IParameter.Batch> v = agent.getParametersToExplore();
 		neighborhood = new Neighborhood1Var(v);
 		solutionInit = new ParametersSet(scope, v, true);
+		initSolExpression = getFacet(INIT_SOL);
+		if (initSolExpression != null) {
+			Map<String,Object> vals = Cast.asMap(scope, initSolExpression.value(scope), false);
+			if (vals != null) {
+				initSolution(scope,vals);
+			}
+		}
+	}
+	
+	public void initSolution(final IScope scope, Map<String, Object> initVals) {
+		for (String name : initVals.keySet()) {
+			if (solutionInit.containsKey(name)) {
+				solutionInit.put(name, initVals.get(name));
+			}
+		}
 	}
 
 }

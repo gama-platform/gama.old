@@ -55,6 +55,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("final temperature")),
 				@facet (
+						name = HillClimbing.INIT_SOL,
+						type = IType.MAP,
+						optional = true,
+						doc = @doc ("init solution: key: name of the variable, value: value of the variable")),
+				@facet (
 						name = SimulatedAnnealing.TEMP_DECREASE,
 						type = IType.FLOAT,
 						optional = true,
