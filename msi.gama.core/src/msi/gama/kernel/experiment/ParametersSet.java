@@ -24,11 +24,17 @@ import msi.gama.util.file.GamaFile;
 @SuppressWarnings({ "rawtypes" })
 public class ParametersSet extends HashMap<String, Object> {
 
+	private Double fitness;
+	private int currentIndex;
 	public ParametersSet() {
+		fitness = Double.NaN;
+		currentIndex = 0;
 	}
 
 	public ParametersSet(final ParametersSet solution) {
 		this.putAll(solution);
+		fitness = solution.fitness;
+		currentIndex = solution.currentIndex;
 	}
 
 	public ParametersSet(final IScope scope, final Map<String, IParameter> variables, final boolean reinit)
@@ -41,6 +47,8 @@ public class ParametersSet extends HashMap<String, Object> {
 			}
 			put(var, varBat.value(scope));
 		}
+		fitness = Double.NaN;
+		currentIndex = 0;
 
 	}
 
@@ -52,6 +60,8 @@ public class ParametersSet extends HashMap<String, Object> {
 			}
 			put(p.getName(), p.value(scope));
 		}
+		fitness = Double.NaN;
+		currentIndex = 0;
 	}
 
 	@Override
@@ -65,4 +75,6 @@ public class ParametersSet extends HashMap<String, Object> {
 		return super.put(s, o);
 	}
 
+	
+	
 }

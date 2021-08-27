@@ -1,14 +1,11 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
-import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAccGainThreshold;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getAllowedLanes;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLCCooldown;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLaneChangeLimit;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLowestLane;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSafeDeceleration;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getPolitenessFactor;
@@ -17,6 +14,7 @@ import static simtools.gaml.extensions.traffic.DrivingSkill.getRightSideDriving;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeed;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeSinceLC;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
+import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingSpeed;
 import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingVehicle;
@@ -30,12 +28,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import simtools.gaml.extensions.traffic.DrivingSkill;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 
@@ -65,6 +62,13 @@ public class MOBIL {
 		int numCurrentLanes = RoadSkill.getNumLanes(road);
 		int linkedLaneLimit = Utils.computeLinkedLaneLimit(vehicle, road);
 		List<Integer> allowedLanes = getAllowedLanes(vehicle);
+
+		int numValidRoadLanes = numCurrentLanes + linkedLaneLimit;
+		if (numLanesOccupied > numValidRoadLanes) {
+			String msg = String.format("%s occupies %d lanes, and it is unable to enter %s where there are only %d lane(s) available",
+					vehicle.getName(), numLanesOccupied, road.getName(), numValidRoadLanes);
+			throw GamaRuntimeException.error(msg, scope);
+		}
 
 		// Determine the lanes which is considered for switching
 		int laneChangeLimit = getLaneChangeLimit(vehicle);
@@ -101,8 +105,7 @@ public class MOBIL {
 			stayAccelM = IDM.computeAcceleration(scope, vehicle, road, leadingDist, leadingSpeed);
 			// Do not allow changing lane when approaching intersections
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
-			// but it can gain acceleration by switching lanes to follow a fast vehicle.
-			// TODO: do this when leader is not a intersection
+			// but it can gain acceleration by switching lanes to follow another moving vehicle.
 			if ((leadingVehicle != null &&
 					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) ||
 					getTimeSinceLC(vehicle) < getLCCooldown(vehicle)) {

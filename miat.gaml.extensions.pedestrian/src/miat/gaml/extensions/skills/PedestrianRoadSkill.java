@@ -272,6 +272,7 @@ public class PedestrianRoadSkill extends Skill {
 				IShape g = Spatial.Operators.inter(scope, freeSpace, bds);
 				if (g != null) { freeSpace = g; }
 			}
+			if (freeSpace == null) return ;
 			if (freeSpace.getGeometries().size() > 1) {
 				for (IShape g : freeSpace.getGeometries()) {
 					if (agent.intersects(g)) {

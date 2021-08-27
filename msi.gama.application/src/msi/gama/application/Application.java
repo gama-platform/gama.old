@@ -22,7 +22,6 @@ import static org.eclipse.jface.dialogs.MessageDialog.openConfirm;
 import static org.eclipse.jface.dialogs.MessageDialog.openError;
 import static org.eclipse.jface.dialogs.MessageDialog.openQuestion;
 import static org.eclipse.ui.PlatformUI.RETURN_RESTART;
-import static org.eclipse.ui.PlatformUI.createAndRunWorkbench;
 import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eclipse.ui.PlatformUI.isWorkbenchRunning;
 import static org.eclipse.ui.internal.util.PrefUtil.getInternalPreferenceStore;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 
 import msi.gama.application.workbench.ApplicationWorkbenchAdvisor;
@@ -124,21 +124,18 @@ public class Application implements IApplication {
 		createProcessor();
 		final Object check = checkWorkspace();
 		if (EXIT_OK.equals(check)) return EXIT_OK;
-		// if ( check == EXIT_RESTART ) {
-		// ClearWorkspace(true);
-		// No need to restart : the value will be checked later
-		// return EXIT_RESTART;
-		// }
 		Display display = null;
 		try {
 			display = PlatformUI.createDisplay();
 			checkWorkbenchXMI();
-			// final String splash = getProperty("org.eclipse.equinox.launcher.splash.location");
-			// if ( splash != null ) {
-			// setProperty("org.eclipse.equinox.launcher.splash.location", splash.replace("bmp", "png"));
-			// }
-			final int returnCode = createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-			if (returnCode == RETURN_RESTART) return EXIT_RESTART;
+
+			try {
+				final int returnCode = Workbench.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+				if (returnCode == RETURN_RESTART) return EXIT_RESTART;
+			} catch (Throwable t) {
+				DEBUG.OUT("Error in application: " + t.getMessage());
+			}
+
 			return EXIT_OK;
 		} finally {
 			if (display != null) { display.dispose(); }

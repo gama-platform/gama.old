@@ -16,16 +16,16 @@ done
 
 workspaceCreate=0
 case "$@" in 
-  *-help*|*-version*|*-validate*|*-failed*|*-xml*|*-lsp*)
+  *-help*|*-version*|*-validate*|*-failed*|*-xml*|*-lsp*|*-batch*)
     workspaceCreate=1
     ;;
 esac
 
 
 echo "******************************************************************"
-echo "* GAMA version 1.8.1                                             *"
+echo "* GAMA version 1.8.2                                             *"
 echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "* (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.workspace
 # w/ output folder

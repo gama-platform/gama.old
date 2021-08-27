@@ -2,7 +2,7 @@
 * Name: Luneray's flu 3
 * Author: Patrick Taillandier
 * Description: Importation of GIS data
-* Tags: Tag1, Tag2, TagN
+* Tags: gis, tutorial
 */
 
 model model3

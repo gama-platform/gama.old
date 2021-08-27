@@ -523,7 +523,7 @@ public class Colors {
 	public static GamaPalette brewerPaletteColors(final IScope scope, final String type) {
 		if (!BREWER.hasPalette(type)) throw GamaRuntimeException.error(type + " does not exist", scope);
 		try {
-			return BREWER_CACHE.get(type);
+			return new GamaPalette(BREWER_CACHE.get(type));
 		} catch (ExecutionException e) {
 			throw GamaRuntimeException.error(type + " cannot be retrieved", scope);
 		}
@@ -546,13 +546,13 @@ public class Colors {
 			see = { "brewer_palettes" })
 	@no_test
 	public static GamaPalette brewerPaletteColors(final IScope scope, final String type, final int nbClasses) {
-		final var cols = brewerPaletteColors(scope, type);
+		final GamaPalette cols = brewerPaletteColors(scope, type);
 		if (cols.size() < nbClasses)
 			throw GamaRuntimeException.error(type + " has less than " + nbClasses + " colors", scope);
-		while (cols.size() > nbClasses) {
-			cols.remove(cols.size() - 1);
-		}
-		return cols;
+		final IList<GamaColor> colors = GamaListFactory.create(Types.COLOR);
+		for (int i = 0; i < nbClasses; i++) 
+			colors.add(cols.get(i));
+		return new GamaPalette(colors);
 	}
 
 	@operator (

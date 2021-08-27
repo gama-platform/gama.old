@@ -17,7 +17,7 @@ global {
 	 * closest_to: the geometry closest to the source geometry
 	 * farthest_to: the geometry farthest to the source geometry
 	 */
-	string type_query <- "overlapping" among: ["overlapping", "inside", "touching", "crossing", "covering", "closest_to", "farthest_to"] ;
+	string type_query <- "overlapping" among: ["overlapping", "partially_overlapping", "intersecting", "inside", "touching", "crossing", "covering", "closest_to", "farthest_to"] ;
 	agent_base selected_agent;
 	
 	init {
@@ -46,6 +46,12 @@ global {
 		switch type_query {
 			match "overlapping" {
 				agents_concerned <- (polygon_agent + polyline_agent + point_agent) overlapping selected_agent;
+			}
+			match "partially_overlapping"  {
+				agents_concerned <- (polygon_agent + polyline_agent + point_agent) partially_overlapping selected_agent;				
+			}
+			match "intersecting" {
+				agents_concerned <- (polygon_agent + polyline_agent + point_agent) intersecting selected_agent;								
 			}
 			match "inside" {
 				agents_concerned <- (polygon_agent + polyline_agent + point_agent) inside selected_agent;

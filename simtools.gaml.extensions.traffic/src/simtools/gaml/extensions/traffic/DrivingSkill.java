@@ -1592,8 +1592,8 @@ public class DrivingSkill extends MovingSkill {
 		setDistanceToCurrentTarget(vehicle, newDistToCurrentTarget);
 		setLowestLane(vehicle, newLowestLane);
 	}
-	
-	private void moveAcrossRoads(final IScope scope, 
+
+	private void moveAcrossRoads(final IScope scope,
 			final boolean isDrivingRandomly,
 			final GamaSpatialGraph graph,
 			final Map<IAgent, Double> roadProba) {
@@ -1754,7 +1754,7 @@ public class DrivingSkill extends MovingSkill {
 		GamaPoint loc = (GamaPoint) vehicle.getLocation();
 
 		double speed = getSpeed(vehicle);
-		double distMoved, newSpeed; 
+		double distMoved, newSpeed;
 		if (speed == 0.0 && accel == 0.0) {
 			// Not moving at all
 			return 0.0;
@@ -1772,7 +1772,7 @@ public class DrivingSkill extends MovingSkill {
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
 		GamaPoint endPt = !violatingOneway ?
 			new GamaPoint(coords[currentSegment + 1]) : new GamaPoint(coords[currentSegment]);
-		if (distMoved > distToGoal || distToGoal < EPSILON) {
+		while (distMoved >= distToGoal || distToGoal < EPSILON) {
 			updateVehicleOrdering(scope, newLowestLane,
 					getDistanceToCurrentTarget(vehicle) - distToGoal);
 			if (endPt.equals(currentTarget.getLocation())) {
@@ -1782,7 +1782,6 @@ public class DrivingSkill extends MovingSkill {
 				// Return to the main loop in `drive` to continue moving across the intersection
 				return distToGoal < EPSILON ? time : distToGoal / newSpeed;
 			} else {
-				// TODO: need a loop to skip multiple segments
 				// Move to a new segment
 				distMoved -= distToGoal;
 				loc = endPt;
@@ -1822,9 +1821,7 @@ public class DrivingSkill extends MovingSkill {
 
 		double dt = scope.getSimulation().getClock().getStepInSeconds();
 		double speed = getSpeed(vehicle) + acceleration * dt;
-		speed = Math.min(speed, getSpeedCoeff(vehicle) * RoadSkill.getMaxSpeed(road));
-		speed = Math.max(0.0, speed);
-		return speed;
+		return Math.max(0.0, speed);
 	}
 
 	/**

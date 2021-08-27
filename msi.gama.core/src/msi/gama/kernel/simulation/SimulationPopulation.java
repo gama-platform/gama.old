@@ -43,11 +43,10 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
 		super(agent, species);
-		runner = new SimulationRunner(this);
+		runner = SimulationRunner.of(this);
 	}
 
 	public int getMaxNumberOfConcurrentSimulations() {
-		if (getHost().getSpecies().isHeadless()) return 1;
 		return GamaExecutorService.getParallelism(getHost().getScope(), getSpecies().getConcurrency(),
 				Caller.SIMULATION);
 	}
