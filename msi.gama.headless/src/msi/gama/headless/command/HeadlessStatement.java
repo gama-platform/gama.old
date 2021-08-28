@@ -74,7 +74,7 @@ public class HeadlessStatement extends AbstractStatement {
 	private int maxSimulationID = 0;
 
 	public String getSimulationId() {
-		return new Integer(maxSimulationID++).toString();
+		return String.valueOf(maxSimulationID++);
 	}
 
 	public HeadlessStatement(final IDescription desc) {

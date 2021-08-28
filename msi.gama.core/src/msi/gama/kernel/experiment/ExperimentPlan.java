@@ -499,13 +499,22 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else if (isBatch()) {
 			agent.getScope().getGui().getStatus(agent.getScope())
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
-			agent.getScope().getGui().updateExperimentState(agent.getScope());
+				agent.getScope().getGui().updateExperimentState(agent.getScope());
+			}
 		}
 	}
 
 	@Override
 	public synchronized void open() {
-		open(null);
+		Double seed = null;
+		if (isHeadless()) {
+			try {
+				seed = this.getAgent().getSeed();
+			} catch (Exception e) { // Catch no seed
+				seed = null;
+			}
+		}
+		open(seed);
 	}
 
 	/*
