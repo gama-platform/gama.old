@@ -502,7 +502,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				agent.getScope().getGui().updateExperimentState(agent.getScope());
 			}
 		}
-	}
+	
 
 	@Override
 	public synchronized void open() {
