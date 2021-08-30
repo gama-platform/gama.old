@@ -43,7 +43,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
 	@SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
 			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
-					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class};
+					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class, ExplicitExploration.class};
 
 	static {
 		AbstractGamlAdditions._constants(COMBINATIONS);
@@ -97,7 +97,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		isMaximize = hasFacet(IKeyword.MAXIMIZE);
 		final String ag = getLiteral(IKeyword.AGGREGATION);
 		combination = IKeyword.MAX.equals(ag) ? C_MAX : IKeyword.MIN.equals(ag) ? C_MIN : C_MEAN;
-
+		bestFitness = isMaximize ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 	}
 
 	@Override
@@ -183,8 +183,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		if (fitness == null)
 			return;
 		Double best = getBestFitness();
-		if (best == null)
-			best = 0d;
 		if (bestSolution == null || (isMaximize() ? fitness > best : fitness < best)) {
 			setBestFitness(fitness);
 			setBestSolution(solution);

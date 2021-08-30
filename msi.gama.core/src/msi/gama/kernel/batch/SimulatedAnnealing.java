@@ -178,12 +178,16 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					testedSolutions.put(neighborSol, neighborFitness);
 				}
 
-				if (isMaximize() && (neighborFitness >= currentFitness
-						|| scope.getRandom().next() < Math.exp((neighborFitness - currentFitness) / temperature))
-						|| !isMaximize() && (neighborFitness <= currentFitness || scope.getRandom().next() < Math
-								.exp((currentFitness - neighborFitness) / temperature))) {
+				if (isMaximize()) {
+					if (neighborFitness >= currentFitness || scope.getRandom().next() < Math.exp(Math.abs(neighborFitness - currentFitness) / temperature)) {
+						bestSolutionAlgo = neighborSol;
+						currentFitness = neighborFitness;
+					}
+				
+				} else if (neighborFitness <= currentFitness || scope.getRandom().next() < Math.exp(Math.abs(currentFitness - neighborFitness) / temperature)) {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness;
+					
 				}
 				iter++;
 			}

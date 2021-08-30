@@ -31,6 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -182,6 +183,15 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
 		}
 	}
+	
+	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
+		if (isMaximize() && neighborFitness > bestFitnessAlgo
+				|| !isMaximize() && neighborFitness < bestFitnessAlgo)  {
+			//setBestFitness(neighborFitness);
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
@@ -193,8 +203,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 
-		double bestFitnessAlgo = currentFitness;
-
+		
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
 
@@ -213,39 +222,52 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			if (neighbors.isEmpty()) {
 				break;
 			}
+			double bestFitnessAlgo;
+				
 			if (isMaximize()) {
-				bestFitnessAlgo = Double.MIN_VALUE;
+				bestFitnessAlgo = Double.NEGATIVE_INFINITY;
 			} else {
-				bestFitnessAlgo = Double.MAX_VALUE;
+				bestFitnessAlgo = Double.POSITIVE_INFINITY;
 			}
 			ParametersSet bestNeighbor = null;
 
-			for (final ParametersSet neighborSol : neighbors) {
-				if (neighborSol == null) {
-					continue;
+			
+
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet,Double> result = testSolutions(neighbors);
+				for (ParametersSet p : result.keySet()) {
+					if (keepSol(p, result.get(p), bestFitnessAlgo)) {
+						bestNeighbor = p;
+						if (testedSolutions.containsKey(p)) {
+							nbTestWithoutCollision = 0;
+							if (tabuListSize < tabuListSizeMax) {
+								tabuListSize++;
+							}
+						}
+					}	
 				}
-				if (testedSolutions.containsKey(neighborSol)) {
-					nbTestWithoutCollision = 0;
-					if (tabuListSize < tabuListSizeMax) {
-						tabuListSize++;
+			} else {
+				for (final ParametersSet neighborSol : neighbors) {
+					if (neighborSol == null) {
+						continue;
+					}
+					if (testedSolutions.containsKey(neighborSol)) {
+						nbTestWithoutCollision = 0;
+						if (tabuListSize < tabuListSizeMax) {
+							tabuListSize++;
+						}
+					}
+					Double neighborFitness = testedSolutions.get(neighborSol);
+					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
+						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					}
+					testedSolutions.put(neighborSol, neighborFitness);
+					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) {
+						bestNeighbor = neighborSol;
 					}
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
-				}
-				testedSolutions.put(neighborSol, neighborFitness);
-
-				if (isMaximize() && neighborFitness > bestFitnessAlgo
-						|| !isMaximize() && neighborFitness < bestFitnessAlgo) {
-					bestNeighbor = neighborSol;
-					bestFitnessAlgo = neighborFitness;
-				}
-				nbIt++;
-				if (nbIt > iterMax) {
-					break;
-				}
 			}
+			
 			if (bestNeighbor == null) {
 				break;
 			}
@@ -287,8 +309,6 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			if (tabuList.size() > tabuListSize) {
 				tabuList.remove(0);
 			}
-			// currentFitness = bestFitnessAlgo;
-
 			if (nbTestWithoutCollision == nbTestWithoutCollisionMax) {
 				nbTestWithoutCollision = 0;
 				if (tabuListSize > this.tabuListSizeMin) {
@@ -299,9 +319,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
-		// DEBUG.LOG("Best solution : " + currentSol + " fitness : "
-		// + currentFitness);
-
+	
 		return getBestSolution();
 	}
 
