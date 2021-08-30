@@ -191,7 +191,7 @@ public class Application implements IApplication {
 
 		// Commands
 		// ========================
-		if (args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) ) {
+		if (args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) || args.contains(VALIDATE_LIBRARY_PARAMETER) || args.contains(TEST_LIBRARY_PARAMETER) ) {
 			size = size - 1;
 			mustContainOutFile = mustContainInFile = false;
 		}
