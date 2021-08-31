@@ -7,6 +7,8 @@ Bundle-Version: 1.8.1.qualifier
 Bundle-SymbolicName: msi.gama.lang.gaml.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: msi.gama.lang.gaml,
+ msi.gama.ext;bundle-version="1.8.1",
+ org.eclipse.core.runtime;bundle-version="3.20.100",
  org.eclipse.xtext.ide,
  org.eclipse.xtext.xbase.ide,
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"

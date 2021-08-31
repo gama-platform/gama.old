@@ -189,6 +189,7 @@
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>
+		<module>../msi.gama.lang.gaml.ide</module>
 		<module>../msi.gama.documentation</module>
 		<module>../ummisco.gama.ui.modeling</module>
 		<module>../ummisco.gama.ui.shared</module>
@@ -503,11 +504,11 @@
 							<id>org.eclipse.xtext.common.types.ui</id>
 							<removeAll />
 						</filter>
-						<filter>
-							<type>eclipse-plugin</type>
-							<id>org.eclipse.xtext.common.types</id>
-							<removeAll />
-						</filter>
+						<!-- <filter> -->
+						<!-- 	<type>eclipse-plugin</type> -->
+						<!-- 	<id>org.eclipse.xtext.common.types</id> -->
+						<!-- 	<removeAll /> -->
+						<!-- </filter> -->
 						<!-- <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.ecore</id><removeAll/></filter> -->
 						<filter>
 							<type>eclipse-plugin</type>
