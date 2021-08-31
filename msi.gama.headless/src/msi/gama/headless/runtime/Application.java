@@ -216,7 +216,9 @@ public class Application implements IApplication {
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 
 		if (args.contains(RUN_LSP)) {
-			Injector inj = GamlIdeSetup.createInjector();
+			GamlIdeSetup setup = new GamlIdeSetup();
+			Injector inj = setup.createInjector();
+			HeadlessSimulationLoader.preloadGAMA(inj);
 		}
 		else {
 			HeadlessSimulationLoader.preloadGAMA();
