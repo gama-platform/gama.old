@@ -62,7 +62,7 @@ import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
 
-import msi.gama.lang.gaml.RunLSP;
+import msi.gama.lang.gaml.ide.RunLSP;
 import msi.gama.lang.gaml.ide.GamlIdeSetup;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
