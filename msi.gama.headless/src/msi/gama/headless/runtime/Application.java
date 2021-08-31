@@ -215,12 +215,12 @@ public class Application implements IApplication {
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 
-		if (args.contains(RUN_LSP)) {
-			GamlIdeSetup setup = new GamlIdeSetup();
-			Injector inj = setup.createInjector();
-			HeadlessSimulationLoader.preloadGAMA(inj);
-		}
-		else {
+		if (!args.contains(RUN_LSP)) {
+//			GamlIdeSetup setup = new GamlIdeSetup();
+//			Injector inj = setup.createInjector();
+//			HeadlessSimulationLoader.preloadGAMA(inj);
+//		}
+//		else {
 			HeadlessSimulationLoader.preloadGAMA();
 		}
 		
