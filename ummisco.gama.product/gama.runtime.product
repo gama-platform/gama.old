@@ -30,8 +30,8 @@
 -XX:+UseG1GC
 -XX:+UseStringDeduplication
 -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false
--Xms4096m
--Xmx4096m
+-Xms14096m
+-Xmx14096m
 -Xss128m
 -Xmn1024m
 -XX:+UseAdaptiveSizePolicy
@@ -277,9 +277,9 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="eclipse.buildId" value="${build.id}" />
       <property name="version" value="1.8.2" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
    <repositories>

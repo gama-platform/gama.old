@@ -10,50 +10,66 @@
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static msi.gama.runtime.concurrent.GamaExecutorService.EXCEPTION_HANDLER;
+import static msi.gama.runtime.concurrent.GamaExecutorService.THREADS_NUMBER;
+import static msi.gama.runtime.concurrent.GamaExecutorService.getParallelism;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.Function;
 
+import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
 
 public class SimulationRunner {
-
-	final SimulationPopulation population;
-	final Map<SimulationAgent, Callable<Boolean>> runnables;
-	static final Function<SimulationAgent, Boolean> STEP = each -> each.getScope().step(each).passed();
+	public volatile ExecutorService executor;
+	final Map<IScopedStepable, Callable<Boolean>> runnables;
 	final int concurrency;
+	volatile int activeThreads;
 
-	private int activeThreads;
-
-	public SimulationRunner(final SimulationPopulation pop) {
-		population = pop;
-		runnables = new LinkedHashMap<>();
-		final IExperimentPlan plan = population.getHost().getSpecies();
-		if (plan.isHeadless()) {
+	public static SimulationRunner of(final SimulationPopulation pop) {
+		int concurrency = 0;
+		final IExperimentPlan plan = pop.getHost().getSpecies();
+		if (plan.isHeadless() && !plan.isBatch()) {
 			concurrency = 1;
 		} else {
-			concurrency = GamaExecutorService.getParallelism(population.getHost().getScope(), plan.getConcurrency(),
-					Caller.SIMULATION);
+			concurrency = getParallelism(pop.getHost().getScope(), plan.getConcurrency(), Caller.SIMULATION);
 		}
-
+		return withConcurrency(concurrency);
 	}
 
-	public void remove(final SimulationAgent agent) {
+	public static SimulationRunner withConcurrency(final int concurrency) {
+		return new SimulationRunner(concurrency < 0 ? 1 : concurrency);
+	}
+
+	private SimulationRunner(final int concurrency) {
+		this.concurrency = concurrency;
+		runnables = new LinkedHashMap<>();
+	}
+
+	public void remove(final IScopedStepable agent) {
 		runnables.remove(agent);
 	}
 
-	public void add(final SimulationAgent agent) {
-		runnables.put(agent, () -> {
+	public void add(final IScopedStepable agent) {
+		add(agent, () -> {
 			activeThreads = computeNumberOfThreads();
-			return STEP.apply(agent);
+			return agent.step();
 		});
+	}
+
+	public void add(final IScopedStepable agent, final Callable<Boolean> callable) {
+		runnables.put(agent, callable);
 	}
 
 	public void step() {
@@ -65,23 +81,21 @@ public class SimulationRunner {
 
 	private int computeNumberOfThreads() {
 		final ExecutorService executor = getExecutor();
-		if (executor instanceof ForkJoinPool) {
-			// getActiveThreadCount() always overestimates the number of threads
-			return Math.min(concurrency, ((ForkJoinPool) executor).getActiveThreadCount());
-		}
-		if (executor instanceof ThreadPoolExecutor) {
+		if (executor instanceof ThreadPoolExecutor)
 			return Math.min(concurrency, ((ThreadPoolExecutor) executor).getActiveCount());
-		}
 		return 1;
 	}
 
 	protected ExecutorService getExecutor() {
-		return concurrency == 0 ? GamaExecutorService.SAME_THREAD_EXECUTOR
-				: GamaExecutorService.SIMULATION_PARALLEL_EXECUTOR;
+		if (executor == null) {
+			executor = concurrency == 0 ? newSingleThreadExecutor() : new Executor(THREADS_NUMBER.getValue());
+		}
+		return executor;
 	}
 
 	public void dispose() {
 		runnables.clear();
+		if (executor != null) { executor.shutdownNow(); }
 	}
 
 	public int getActiveThreads() {
@@ -90,6 +104,32 @@ public class SimulationRunner {
 
 	public boolean hasSimulations() {
 		return runnables.size() > 0;
+	}
+
+	static class Executor extends ThreadPoolExecutor {
+		Executor(final int nb) {
+			super(nb, nb, 0L, MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		}
+
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable exception) {
+			Throwable t = exception;
+			super.afterExecute(r, t);
+			if (t == null && r instanceof Future<?>) {
+				try {
+					final Future<?> future = (Future<?>) r;
+					if (future.isDone()) { future.get(); }
+				} catch (final CancellationException ce) {
+					t = ce;
+				} catch (final ExecutionException ee) {
+					t = ee.getCause();
+				} catch (final InterruptedException ie) {
+					Thread.currentThread().interrupt(); // ignore/reset
+				}
+			}
+			if (t != null) { EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), t); }
+		}
+
 	}
 
 }

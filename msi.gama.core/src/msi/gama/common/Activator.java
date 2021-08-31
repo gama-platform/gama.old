@@ -24,7 +24,7 @@ public class Activator implements BundleActivator {
 		/* Early build of the contributions made by plugins to GAMA */
 //		new Thread(() -> {
 			GamaBundleLoader.preBuildContributions();
-			GamaExecutorService.startUp();
+			GamaExecutorService.reset();
 			Dates.initialize();
 //		}).start();
 

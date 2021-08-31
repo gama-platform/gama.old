@@ -31,7 +31,7 @@ public class CrossOver1Pt implements CrossOver {
 		final Chromosome child1 = new Chromosome(parent1);
 		final Chromosome child2 = new Chromosome(parent2);
 		for (int i = 0; i < cutPt; i++) {
-			final double val1 = child1.getGenes()[i];
+			final Object val1 = child1.getGenes()[i];
 			child1.getGenes()[i] = child2.getGenes()[i];
 			child2.getGenes()[i] = val1;
 		}

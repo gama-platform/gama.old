@@ -56,6 +56,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("number of iterations")),
 				@facet (
+						name = HillClimbing.INIT_SOL,
+						type = IType.MAP,
+						optional = true,
+						doc = @doc ("init solution: key: name of the variable, value: value of the variable")),
+				@facet (
 						name = IKeyword.MAXIMIZE,
 						type = IType.FLOAT,
 						optional = true,
@@ -93,6 +98,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	public HillClimbing(final IDescription species) {
 		super(species);
 		initParams();
+		
 	}
 
 	@Override

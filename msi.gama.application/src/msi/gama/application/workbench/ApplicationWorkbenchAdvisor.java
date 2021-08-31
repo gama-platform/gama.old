@@ -188,7 +188,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 		try {
-			// saveEclipsePreferences();
 			GAMA.closeAllExperiments(true, true);
 			PerspectiveHelper.deleteCurrentSimulationPerspective();
 			// So that they are not saved to the workbench.xmi file
@@ -220,16 +219,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if (checkCopyOfBuiltInModels()) { WorkspaceModelsManager.linkSampleModelsToWorkspace(); }
 
 	}
-	//
-	// private void saveEclipsePreferences() {
-	// final IPreferencesService service = Platform.getPreferencesService();
-	//
-	// try (final FileOutputStream outputStream =
-	// new FileOutputStream(Platform.getInstanceLocation().getURL().getPath() + "/.gama.epf")) {
-	// service.exportPreferences(service.getRootNode(), WorkspacePreferences.getPreferenceFilters(), outputStream);
-	// } catch (final CoreException | IOException e1) {}
-	//
-	// }
 
 	/**
 	 * Method getWorkbenchErrorHandler()
@@ -251,11 +240,16 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				final String message = statusAdapter.getStatus().getMessage();
 				// Stupid Eclipse
 				if (!message.contains("File toolbar contribution item") && !message.contains("Duplicate template id")) {
-					DEBUG.OUT("GAMA Caught a workbench message : " + message);
+					DEBUG.OUT("GAMA caught a workbench message : " + message);
 				}
-				if (e != null) { e.printStackTrace(); }
+				if (e != null) { DEBUG.OUT("GAMA caught an error in the main application loop: " + e.getMessage()); }
 			}
 		};
+	}
+
+	@Override
+	public void eventLoopException(final Throwable t) {
+		DEBUG.OUT("GAMA caught an error in the main application loop: " + t.getMessage());
 	}
 
 }

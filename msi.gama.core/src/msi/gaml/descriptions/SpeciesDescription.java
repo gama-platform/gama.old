@@ -572,9 +572,8 @@ public class SpeciesDescription extends TypeDescription {
 				if (desc == parent) {
 					result[0] = true;
 					return false;
-				} else {
-					desc.visitMicroSpecies(this);
 				}
+				desc.visitMicroSpecies(this);
 				return true;
 			}
 		});
@@ -586,11 +585,8 @@ public class SpeciesDescription extends TypeDescription {
 		while (currentSpeciesDesc != null) {
 			final SpeciesDescription p = currentSpeciesDesc.getParent();
 			// Takes care of invalid species (see Issue 711)
-			if (p == currentSpeciesDesc || p == this)
-				return true;
-			else {
-				currentSpeciesDesc = p;
-			}
+			if (p == currentSpeciesDesc || p == this) return true;
+			currentSpeciesDesc = p;
 		}
 		return false;
 	}
@@ -599,11 +595,8 @@ public class SpeciesDescription extends TypeDescription {
 		if (getParent().isExperiment()) return false;
 		SpeciesDescription host = getMacroSpecies();
 		while (host != null) {
-			if (host == parent || host.getMicroSpecies(parent.getName()) != null)
-				return true;
-			else {
-				host = host.getMacroSpecies();
-			}
+			if (host == parent || host.getMicroSpecies(parent.getName()) != null) return true;
+			host = host.getMacroSpecies();
 		}
 		return false;
 	}
@@ -718,39 +711,6 @@ public class SpeciesDescription extends TypeDescription {
 		if (microSpecies == null) { microSpecies = GamaMapFactory.create(); }
 		return microSpecies;
 	}
-
-	// public Iterable<SpeciesDescription> getSortedMicroSpecies() {
-	// final GamaTree<SpeciesDescription> tree = GamaTree.withRoot(this);
-	//
-	// final Iterable<SpeciesDescription> before = microSpecies.values();
-	// DEBUG.OUT(Iterables.transform(before, each -> each.getName()));
-	// final boolean[] found = { false };
-	// for (final SpeciesDescription sd : before) {
-	// tree.visitPreOrder(tree.getRoot(), n -> {
-	// if (sd.getParent() == n.getData()) {
-	// n.addChild(sd);
-	// found[0] = true;
-	// }
-	// });
-	// if (found[0]) {
-	// found[0] = false;
-	// } else {
-	// tree.getRoot().addChild(sd);
-	// }
-	// }
-	// DEBUG.OUT(Iterables.transform(tree.list(Order.PRE_ORDER), each -> each.getData().getName()));
-	// final List<GamaNode<SpeciesDescription>> list = tree.list(Order.PRE_ORDER);
-	// list.remove(0);
-	// return Iterables.transform(list, each -> each.getData());
-	//
-	// }
-
-	// protected void addAttributeNoCheck(final VariableDescription vd) {
-	// super.addAttributeNoCheck(vd);
-	// this.getSkills().forEach(s->{
-	// if (s.)
-	// });
-	// }
 
 	public boolean isMirror() {
 		return hasFacet(MIRRORS);
