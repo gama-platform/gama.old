@@ -1781,7 +1781,7 @@ public class DrivingSkill extends MovingSkill {
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
 				// Return to the main loop in `drive` to continue moving across the intersection
-				return distToGoal < EPSILON ? time : distToGoal / newSpeed;
+				return distToGoal < EPSILON ? time : Math.max(0,(time - (distToGoal / newSpeed)));
 			} else {
 				// Move to a new segment
 				distMoved -= distToGoal;
