@@ -1,6 +1,9 @@
 package msi.gama.kernel.batch;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -15,7 +18,9 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -153,7 +158,6 @@ public class Swarm extends ParamSpaceExploAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
-		bestFitness = isMaximize ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 		Particle[] particles = initialize(scope);
 		
 		int nbIt = 0;
@@ -161,52 +165,100 @@ public class Swarm extends ParamSpaceExploAlgorithm {
         final Map<String, Object> endingCritParams = new Hashtable<>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
-		   
-            for (Particle p : particles) {
-                p.updatePersonalBest();
-                updateGlobalBest(p);
-            }
-
+			 Map<ParametersSet, List<Particle>> soltTotest = (Map<ParametersSet, List<Particle>>) GamaMapFactory.create();
+		      
+			 if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+				  for (Particle particle : particles ) {
+					  List<Particle> ps = null;
+		            if (soltTotest.containsKey(particle.getPosition())) {
+		            	ps = soltTotest.get(particle.getPosition());
+		            } else {
+		            	ps = new ArrayList<>();
+		            }
+		            ps.add(particle);
+		            soltTotest.put(particle.getPosition(), ps);
+				  }
+        	}
+	        evaluation(particles, soltTotest);
             for (Particle p : particles) {
                 updateVelocity(scope, p);
                 p.updatePosition(scope);
             }
             
             nbIt++;
-			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
+         	endingCritParams.put("Iteration", Integer.valueOf(nbIt));
         }
 
        
 		return getBestSolution();
     }
 
+	public Map<ParametersSet, Double> testSolutions(Collection<ParametersSet> solutions) {
+		Map<ParametersSet, Double> results = GamaMapFactory.create();
+		solutions.removeIf(a -> a == null);
+		List<ParametersSet> solTotest = new ArrayList<>();
+		for (ParametersSet sol : solutions) {
+			if (testedSolutions.containsKey(sol)) {
+				results.put(sol, testedSolutions.get(sol));
+			} else {
+				solTotest.add(sol);
+			}
+		}
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest);
+		testedSolutions.putAll(res);
+		results.putAll(res);
+		
+		return results;
+	}
+	
+	public void evaluation(Particle[] particles,  Map<ParametersSet, List<Particle>> soltTotest ) {
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+    		Map<ParametersSet, Double> res = testSolutions(soltTotest.keySet());
+    		for (ParametersSet ps : res.keySet()) {
+    			for (Particle particle : soltTotest.get(ps)) {
+    				particle.updatePersonalBest();
+    				//updateGlobalBest(particle);
+    			}
+    		}
+    	
+    	} else {
+    		 for (int i = 0; i < numParticles; i++) {
+    			 Particle particle = particles[i];
+    			 particle.eval();
+
+    	         particle.updatePersonalBest();
+ 				// updateGlobalBest(particle);
+    		 }
+    	}
+        
+	}
     /**
      * Create a set of particles, each with random starting positions.
      * @return  an array of particles
      */
     private Particle[] initialize (IScope scope) {
         Particle[] particles = new Particle[numParticles];
+        Map<ParametersSet, List<Particle>> soltTotest = (Map<ParametersSet, List<Particle>>) GamaMapFactory.create();
         for (int i = 0; i < numParticles; i++) {
             Particle particle = new Particle(scope, currentExperiment, this, testedSolutions);
             particles[i] = particle;
-            updateGlobalBest(particle);
+        	if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+        	    List<Particle> ps = null;
+	            if (soltTotest.containsKey(particle.getPosition())) {
+	            	ps = soltTotest.get(particle.getPosition());
+	            } else {
+	            	ps = new ArrayList<>();
+	            }
+	            ps.add(particle);
+	            soltTotest.put(particle.getPosition(), ps);
+        	}
         }
+        evaluation(particles, soltTotest);
+    	
         return particles;
     }
 
-    /**
-     * Update the global best solution if a the specified particle has
-     * a better solution
-     * @param particle  the particle to analyze
-     */
-    private void updateGlobalBest (Particle particle) {
-      
-    	  if (isMaximize() && particle.getBestEval() > bestFitness
-  				|| !isMaximize() && particle.getBestEval() < bestFitness) {
-           bestSolution = new ParametersSet(particle.getBestPosition());
-           bestFitness = particle.getBestEval();
-        }
-    }
+  
 
     /**
      * Update the velocity of a particle using the velocity update formula
@@ -233,10 +285,9 @@ public class Swarm extends ParamSpaceExploAlgorithm {
 
         // The third product of the formula.
         gBest = sub(scope,gBest,pos);
-        pBest= mul(scope, gBest,weightSocial);
-        pBest = mul(scope, gBest, r2);
+        gBest= mul(scope, gBest,weightSocial);
+        gBest = mul(scope, gBest, r2);
         newVelocity = add(scope, newVelocity,gBest);
-
 
         particle.setVelocity(newVelocity);
     }
@@ -251,14 +302,14 @@ public class Swarm extends ParamSpaceExploAlgorithm {
     
     protected ParametersSet sub(IScope scope, ParametersSet set1,  ParametersSet set2) {
     	for (String key : set1.keySet()) {
-      		set1.put(key, Cast.asFloat(scope, set1.get(key))+  Cast.asFloat(scope, set2.get(key)) );
+      		set1.put(key, Cast.asFloat(scope, set1.get(key))-  Cast.asFloat(scope, set2.get(key)) );
       	}
     	return set1;
     }
     
     protected ParametersSet add(IScope scope,ParametersSet set1,  ParametersSet set2) {
     	for (String key : set1.keySet()) {
-      		set1.put(key, Cast.asFloat(scope, set1.get(key)) - Cast.asFloat(scope, set2.get(key)) );
+      		set1.put(key, Cast.asFloat(scope, set1.get(key)) + Cast.asFloat(scope, set2.get(key)) );
       	}
     	return set1;
     }

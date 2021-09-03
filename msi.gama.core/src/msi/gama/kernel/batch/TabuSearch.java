@@ -31,7 +31,10 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -109,6 +112,16 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 	}
 
+	
+	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
+		final boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
+		if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) {
+			//setBestFitness(neighborFitness);
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
@@ -121,7 +134,6 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		setBestFitness(currentFitness);
 
 		int nbIt = 0;
-		double bestFitnessAlgo = currentFitness;
 		final Map<String, Object> endingCritParams = new Hashtable<>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
@@ -134,40 +146,45 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				neighbors.add(tabuList.get(scope.getRandom().between(0, tabuList.size() - 1)));
 			}
+			double bestFitnessAlgo;
+			
 			if (isMaximize()) {
-				bestFitnessAlgo = -Double.MAX_VALUE;
+				bestFitnessAlgo = Double.NEGATIVE_INFINITY;
 			} else {
-				bestFitnessAlgo = Double.MAX_VALUE;
+				bestFitnessAlgo = Double.POSITIVE_INFINITY;
 			}
 			ParametersSet bestNeighbor = null;
 
-			for (final ParametersSet neighborSol : neighbors) {
-				// scope.getGui().debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
-				if (neighborSol == null) {
-					continue;
+			nbIt++;
+			
+			
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet,Double> result = testSolutions(neighbors);
+				for (ParametersSet p : result.keySet()) {
+					if (keepSol(p, result.get(p), bestFitnessAlgo)) {
+						bestNeighbor = p;
+					}	
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
-					nbIt++;
-				} else {
-					continue;
-				}
-				testedSolutions.put(neighborSol, neighborFitness);
-
-				// scope.getGui().debug("TabuSearch.findBestSolution neighborFitness = " + neighborFitness +
-				// " bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
-				// " current fitness = " + currentFitness);
-				final boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
-				if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) {
-					bestNeighbor = neighborSol;
-					bestFitnessAlgo = neighborFitness;
-				}
-
-				if (nbIt > iterMax) {
-					break;
+			} else {
+				for (final ParametersSet neighborSol : neighbors) {
+					if (neighborSol == null) {
+						continue;
+					}
+					Double neighborFitness = testedSolutions.get(neighborSol);
+					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
+						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					} else {
+						continue;
+					}
+					testedSolutions.put(neighborSol, neighborFitness);
+					
+					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) {
+						bestNeighbor = neighborSol;
+					}
+					
 				}
 			}
+			
 			if (bestNeighbor != null) {
 				bestSolutionAlgo = bestNeighbor;
 				tabuList.add(bestSolutionAlgo);

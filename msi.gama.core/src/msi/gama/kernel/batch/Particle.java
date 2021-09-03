@@ -27,6 +27,8 @@ class Particle {
 	final Map<String, GamaPoint> parameters;
 	 
 	ParamSpaceExploAlgorithm algo;
+	
+	double currentVal;
     /**
      * Construct a Particle with a random starting position.
      * @param beginRange    the minimum xyz values of the position (inclusive)
@@ -36,6 +38,7 @@ class Particle {
         currentExperiment = agent;
         algo = algorithm;
         this.testedSolutions = testedSolutionsMap;
+        bestEval = algo.isMaximize() ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         final List<IParameter.Batch> v = agent.getParametersToExplore();
         parameters = new HashMap<>();
         for (IParameter p : v ) {
@@ -46,23 +49,24 @@ class Particle {
         }
 		position = new ParametersSet(scope, v, true);
         velocity = new ParametersSet(scope, v, true); 
-        bestPosition = new ParametersSet(velocity);
-        bestEval = eval();
+        for (String key : velocity.keySet()) {
+        	velocity.put(key, Cast.asFloat(scope, velocity.get(key))-  Cast.asFloat(scope, position.get(key)) );
+      	}
+        bestPosition = new ParametersSet(position);
     }
+    
+    
 
     /**
      * The evaluation of the current position.
      * @return      the evaluation
      */
-    private double eval () {
+    public double eval () {
     	Double fitness = testedSolutions.get(position);
 		if (fitness == null) {
 			fitness = currentExperiment.launchSimulationsWithSolution(position);
+			testedSolutions.put(position, fitness);
 		}
-		testedSolutions.put(position, fitness);
-
-		/**/
-		
 		return fitness.doubleValue();
     }
     
@@ -70,10 +74,10 @@ class Particle {
      * Update the personal best if the current evaluation is better.
      */
     void updatePersonalBest () {
-        double eval = eval();
-        if (algo.isMaximize() && eval > bestEval
-				|| !algo.isMaximize() && eval < bestEval) {
-        	bestEval = eval;
+      //  double eval = eval();
+        if ((algo.isMaximize() && currentVal > bestEval)
+				|| (!algo.isMaximize() && currentVal < bestEval)) {
+        	bestEval = currentVal;
         	bestPosition = new ParametersSet(position);
         }
     }

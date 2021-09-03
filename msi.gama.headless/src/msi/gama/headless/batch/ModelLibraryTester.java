@@ -1,4 +1,4 @@
-package msi.gama.headless.batch.test;
+package msi.gama.headless.batch;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,7 +16,6 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.headless.batch.AbstractModelLibraryRunner;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -33,16 +32,17 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	private static ModelLibraryTester instance;
-	private final static String FAILED_PARAMETER = "-failed";
 
 	PrintStream original;
 	PrintStream nullStream;
 
-	private ModelLibraryTester() {}
+	private ModelLibraryTester() {
+		DEBUG.ON();
+	}
+	
 
 	@Override
-	public int start(final List<String> args) throws IOException {
-		DEBUG.ON();
+	public int start() throws IOException {
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 
@@ -55,9 +55,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		});
 		final int[] count = { 0 };
 		final int[] code = { 0 };
-		final boolean onlyFailed = args.contains(FAILED_PARAMETER);
-		final boolean oldPref = GamaPreferences.Runtime.FAILED_TESTS.getValue();
-		GamaPreferences.Runtime.FAILED_TESTS.set(onlyFailed);
 		final Multimap<Bundle, String> plugins = GamaBundleLoader.getPluginsWithTests();
 		final List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : plugins.keySet()) {
@@ -77,7 +74,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		builder.loadURLs(allURLs);
 
 		allURLs.forEach(u -> test(builder, count, code, u));
-		GamaPreferences.Runtime.FAILED_TESTS.set(oldPref);
 
 		DEBUG.OUT("" + count[0] + " tests executed in built-in library and plugins. " + code[0] + " failed or aborted");
 		DEBUG.OUT(code[0]);

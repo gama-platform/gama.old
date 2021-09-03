@@ -30,6 +30,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -101,6 +102,14 @@ public class HillClimbing extends LocalSearchAlgorithm {
 		
 	}
 
+	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness ) {
+		if (isMaximize() && neighborFitness.doubleValue() > getBestFitness()
+				|| !isMaximize() && neighborFitness.doubleValue() < getBestFitness()) {
+			setBestFitness(neighborFitness);
+			return true;
+		}
+		return false;
+	}
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestSolution(this.solutionInit);
@@ -118,23 +127,34 @@ public class HillClimbing extends LocalSearchAlgorithm {
 			}
 			setBestFitness(currentFitness);
 			ParametersSet bestNeighbor = null;
-
-			for (final ParametersSet neighborSol : neighbors) {
-				if (neighborSol == null) {
-					continue;
+			
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet,Double> result = testSolutions(neighbors);
+				for (ParametersSet p : result.keySet()) {
+					if (keepSol(p, result.get(p))) {
+						bestNeighbor = p;
+					}	
 				}
-				Double neighborFitness = testedSolutions.get(neighborSol);
-				if (neighborFitness == null) {
-					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
-				}
-				testedSolutions.put(neighborSol, neighborFitness);
+			} else {
+				for (final ParametersSet neighborSol : neighbors) {
+					if (neighborSol == null) {
+						continue;
+					}
+					Double neighborFitness = testedSolutions.get(neighborSol);
+					if (neighborFitness == null) {
+						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					}
+					testedSolutions.put(neighborSol, neighborFitness);
 
-				if (isMaximize() && neighborFitness.doubleValue() > getBestFitness()
-						|| !isMaximize() && neighborFitness.doubleValue() < getBestFitness()) {
-					bestNeighbor = neighborSol;
-					setBestFitness(neighborFitness);
+					if (keepSol(neighborSol, neighborFitness)) {
+						bestNeighbor = neighborSol;
+					}
+					
 				}
 			}
+				
+			
+			
 			if (bestNeighbor != null) {
 				setBestSolution(bestNeighbor);
 				currentFitness = getBestFitness();
