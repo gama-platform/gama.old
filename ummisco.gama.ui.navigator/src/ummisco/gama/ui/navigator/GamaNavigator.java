@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.navigator.GamaNavigator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaNavigator.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -63,13 +63,28 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 import ummisco.gama.ui.views.toolbar.Selector;
 
+/**
+ * The Class GamaNavigator.
+ */
 public class GamaNavigator extends CommonNavigator
 		implements IToolbarDecoratedView, ISelectionChangedListener, IToolbarDecoratedView.Expandable {
+
+	/** The link. */
 	IAction link;
+
+	/** The link item. */
 	ToolItem linkItem;
+
+	/** The parent. */
 	protected Composite parent;
+
+	/** The toolbar. */
 	protected GamaToolbar2 toolbar;
+
+	/** The properties. */
 	private PropertyDialogAction properties;
+
+	/** The find control. */
 	private NavigatorSearchControl findControl;
 
 	@Override
@@ -134,6 +149,9 @@ public class GamaNavigator extends CommonNavigator
 		super.saveState(newMemento);
 	}
 
+	/**
+	 * Restore state.
+	 */
 	private void restoreState() {
 		if (memento == null) return;
 		final String saved = memento.getString("EXPANDED_STATE");
@@ -196,9 +214,7 @@ public class GamaNavigator extends CommonNavigator
 	}
 
 	@Override
-	protected Object getInitialInput() {
-		return NavigatorRoot.getInstance();
-	}
+	protected Object getInitialInput() { return NavigatorRoot.getInstance(); }
 
 	@Override
 	protected void handleDoubleClick(final DoubleClickEvent anEvent) {
@@ -234,6 +250,7 @@ public class GamaNavigator extends CommonNavigator
 		};
 	}
 
+	/** The by date. */
 	final GamaCommand byDate = new GamaCommand("action.toolbar.sort2", "", "Sort by modification date", trigger -> {
 		final boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
@@ -249,6 +266,7 @@ public class GamaNavigator extends CommonNavigator
 
 	});
 
+	/** The link command. */
 	final GamaCommand linkCommand =
 			new GamaCommand("navigator/navigator.link3", "", "Stay in sync with the editor", e -> link.run());
 
@@ -290,6 +308,12 @@ public class GamaNavigator extends CommonNavigator
 		showStatus(element);
 	}
 
+	/**
+	 * Show status.
+	 *
+	 * @param element
+	 *            the element
+	 */
 	private void showStatus(final VirtualContent<?> element) {
 		final String message = element.getStatusMessage();
 		final String tooltip = element.getStatusTooltip();
@@ -303,13 +327,18 @@ public class GamaNavigator extends CommonNavigator
 	@Override
 	public void expandAll() {
 		getCommonViewer().expandAll();
-
 	}
 
 	@Override
 	public void collapseAll() {
 		getCommonViewer().collapseAll();
-
 	}
+
+	/**
+	 * Gets the selection.
+	 *
+	 * @return the selection
+	 */
+	public IStructuredSelection getSelection() { return getCommonViewer().getStructuredSelection(); }
 
 }
