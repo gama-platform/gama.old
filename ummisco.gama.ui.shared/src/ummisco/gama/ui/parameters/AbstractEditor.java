@@ -1,18 +1,19 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AbstractEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * AbstractEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import static msi.gama.runtime.GAMA.getRuntimeScope;
+import static msi.gama.runtime.GAMA.reportError;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.create;
+import static ummisco.gama.ui.utils.WorkbenchHelper.asyncRun;
 
 import java.util.Objects;
 
@@ -43,43 +44,108 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class AbstractEditor.
+ *
+ * @param <T>
+ *            the generic type
+ */
 public abstract class AbstractEditor<T>
 		implements SelectionListener, ModifyListener, Comparable<AbstractEditor<T>>, IParameterEditor<T> {
 
+	/** The order. */
 	private static int ORDER;
+
+	/** The order. */
 	private final int order = ORDER++;
+
+	/** The listener. */
 	@Nullable private final EditorListener<T> listener;
+
+	/** The agent. */
 	@Nullable private final IAgent agent;
+
+	/** The scope. */
 	private final IScope scope;
+
+	/** The name. */
 	protected String name;
+
+	/** The param. */
 	@Nullable protected final IParameter param;
 
+	/** The step value. */
 	// Values
 	protected T originalValue, currentValue, minValue, maxValue, stepValue;
 
+	/** The accept null. */
 	// Properties
 	protected boolean noScope = false, acceptNull = true;
+
+	/** The is sub parameter. */
 	protected /* almost final */ boolean isSubParameter;
+
+	/** The internal modification. */
 	protected volatile boolean internalModification;
+
+	/** The expected type. */
 	protected IType<?> expectedType = Types.NO_TYPE;
 
+	/** The composite. */
 	// UI Components
 	protected Composite composite;
+
+	/** The parent. */
 	protected EditorsGroup parent;
+
+	/** The editor toolbar. */
 	protected EditorToolbar editorToolbar;
+
+	/** The editor label. */
 	protected EditorLabel editorLabel;
+
+	/** The editor control. */
 	protected EditorControl editorControl;
 
+	/**
+	 * Instantiates a new abstract editor.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param l
+	 *            the l
+	 */
 	public AbstractEditor(final IScope scope, final EditorListener<T> l) {
 		this(scope, null, l);
 	}
 
+	/**
+	 * Instantiates a new abstract editor.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param variable
+	 *            the variable
+	 * @param l
+	 *            the l
+	 */
 	public AbstractEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
 		this(scope, null, variable, l);
 	}
 
+	/**
+	 * Instantiates a new abstract editor.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param parameter
+	 *            the parameter
+	 * @param l
+	 *            the l
+	 */
 	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nullable final IParameter parameter,
 			@Nullable final EditorListener<T> l) {
 		this.scope = scope;
@@ -107,6 +173,11 @@ public abstract class AbstractEditor<T>
 		isSubParameter = b;
 	}
 
+	/**
+	 * Gets the tool items.
+	 *
+	 * @return the tool items
+	 */
 	protected abstract int[] getToolItems();
 
 	/**
@@ -119,9 +190,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public IType<?> getExpectedType() {
-		return expectedType;
-	}
+	public IType<?> getExpectedType() { return expectedType; }
 
 	@Override
 	public IScope getScope() {
@@ -139,21 +208,40 @@ public abstract class AbstractEditor<T>
 		editorControl.setActive(active);
 	}
 
+	/**
+	 * Retrieve value of parameter.
+	 *
+	 * @return the t
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("unchecked")
 	protected T retrieveValueOfParameter() throws GamaRuntimeException {
-		if (param == null) return null;
-		Object result;
-		if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
-			result = param.value(scope);
-		} else {
-			result = scope.getAgentVarValue(getAgent(), param.getName());
+		try {
+			if (param == null) return null;
+			Object result;
+			if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
+				result = param.value(scope);
+			} else {
+				result = scope.getAgentVarValue(getAgent(), param.getName());
+			}
+			if (getExpectedType() == Types.STRING)
+				return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
+			return (T) getExpectedType().cast(scope, result, null, false);
+		} catch (Exception e) {
+			throw create(e, scope);
 		}
-		if (getExpectedType() == Types.STRING)
-			return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
-		return (T) getExpectedType().cast(scope, result, null, false);
 
 	}
 
+	/**
+	 * Modify value of parameter with.
+	 *
+	 * @param newValue
+	 *            the new value
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	private final void modifyValueOfParameterWith(final Object newValue) throws GamaRuntimeException {
 		var a = agent;
 		if (param instanceof ExperimentParameter) {
@@ -180,14 +268,26 @@ public abstract class AbstractEditor<T>
 		return Ints.compare(order, e.order);
 	}
 
-	public EditorLabel getLabel() {
-		return editorLabel;
-	}
+	/**
+	 * Gets the label.
+	 *
+	 * @return the label
+	 */
+	public EditorLabel getLabel() { return editorLabel; }
 
-	public Control getEditor() {
-		return editorControl.getControl();
-	}
+	/**
+	 * Gets the editor.
+	 *
+	 * @return the editor
+	 */
+	public Control getEditor() { return editorControl.getControl(); }
 
+	/**
+	 * Creates the controls.
+	 *
+	 * @param parent
+	 *            the parent
+	 */
 	public void createControls(final EditorsGroup parent) {
 		this.parent = parent;
 		internalModification = true;
@@ -203,6 +303,11 @@ public abstract class AbstractEditor<T>
 		parent.layout();
 	}
 
+	/**
+	 * Creates the value composite.
+	 *
+	 * @return the composite
+	 */
 	Composite createValueComposite() {
 		composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(parent.getBackground());
@@ -214,17 +319,32 @@ public abstract class AbstractEditor<T>
 		return composite;
 	}
 
+	/**
+	 * Creates the editor label.
+	 *
+	 * @return the editor label
+	 */
 	EditorLabel createEditorLabel() {
 		editorLabel = new EditorLabel(this, parent, name, isSubParameter);
 		return editorLabel;
 	}
 
+	/**
+	 * Creates the editor toolbar.
+	 *
+	 * @return the editor toolbar
+	 */
 	EditorToolbar createEditorToolbar() {
 		editorToolbar = new EditorToolbar(this, parent);
 		updateToolbar();
 		return editorToolbar;
 	}
 
+	/**
+	 * Creates the editor control.
+	 *
+	 * @return the editor control
+	 */
 	EditorControl createEditorControl() {
 		boolean isCombo = param != null && param.getAmongValue(getScope()) != null;
 		boolean isEditable = param != null && param.isEditable() || param == null /* statement */;
@@ -243,53 +363,94 @@ public abstract class AbstractEditor<T>
 		return editorControl;
 	}
 
-	protected T getMinValue() {
-		return minValue;
-	}
+	/**
+	 * Gets the min value.
+	 *
+	 * @return the min value
+	 */
+	protected T getMinValue() { return minValue; }
 
-	protected T getMaxValue() {
-		return maxValue;
-	}
+	/**
+	 * Gets the max value.
+	 *
+	 * @return the max value
+	 */
+	protected T getMaxValue() { return maxValue; }
 
-	protected T getStepValue() {
-		return stepValue;
-	}
+	/**
+	 * Gets the step value.
+	 *
+	 * @return the step value
+	 */
+	protected T getStepValue() { return stepValue; }
 
-	protected EditorListener<?> getListener() {
-		return listener;
-	}
+	/**
+	 * Gets the listener.
+	 *
+	 * @return the listener
+	 */
+	protected EditorListener<?> getListener() { return listener; }
 
+	/**
+	 * Sets the parameter value.
+	 *
+	 * @param val
+	 *            the new parameter value
+	 */
 	protected void setParameterValue(final T val) {
-		WorkbenchHelper.asyncRun(() -> {
+		asyncRun(() -> {
 			try {
 				if (listener == null) {
 					modifyValueOfParameterWith(val);
 				} else {
 					listener.valueModified(val);
 				}
-			} catch (final GamaRuntimeException e) {
-				e.addContext("Value of " + name + " cannot be modified");
-				GAMA.reportError(getRuntimeScope(), create(e, getRuntimeScope()), false);
+			} catch (final Exception e) {
+				GamaRuntimeException ex = create(e, scope);
+				ex.addContext("Value of " + name + " cannot be modified");
+				GAMA.reportError(scope, ex, false);
 				return;
 			}
 		});
 	}
 
+	/**
+	 * Gets the parameter grid data.
+	 *
+	 * @return the parameter grid data
+	 */
 	protected GridData getParameterGridData() {
 		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		d.minimumWidth = 100;
 		return d;
 	}
 
+	/**
+	 * Creates the custom parameter control.
+	 *
+	 * @param comp
+	 *            the comp
+	 * @return the control
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected abstract Control createCustomParameterControl(Composite comp) throws GamaRuntimeException;
 
+	/**
+	 * Display parameter value.
+	 */
 	protected abstract void displayParameterValue();
 
 	@Override
-	public boolean isValueModified() {
-		return isValueDifferentFrom(getOriginalValue());
-	}
+	public boolean isValueModified() { return isValueDifferentFrom(getOriginalValue()); }
 
+	/**
+	 * Checks if is value different from.
+	 *
+	 * @param newVal
+	 *            the new val
+	 * @return true, if is value different from
+	 */
 	public boolean isValueDifferentFrom(final Object newVal) {
 		return !Objects.equals(currentValue, newVal);
 	}
@@ -300,10 +461,17 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public IParameter getParam() {
-		return param;
-	}
+	public IParameter getParam() { return param; }
 
+	/**
+	 * Modify value.
+	 *
+	 * @param val
+	 *            the val
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("unchecked")
 	// Passes Object on purpose so that Float and Int editors can cast it.
 	// Returns whether or not the modification is **accepted**
@@ -320,7 +488,7 @@ public abstract class AbstractEditor<T>
 		try {
 			final var newVal = retrieveValueOfParameter();
 			currentValue = newVal;
-			WorkbenchHelper.asyncRun(() -> {
+			asyncRun(() -> {
 				internalModification = true;
 				if (!parent.isDisposed()) {
 					editorLabel.signalChanged(isValueModified());
@@ -333,24 +501,38 @@ public abstract class AbstractEditor<T>
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+			reportError(getRuntimeScope(), e, false);
 			return;
 		}
 	}
 
+	/**
+	 * Modify and display value.
+	 *
+	 * @param val
+	 *            the val
+	 */
 	protected final void modifyAndDisplayValue(final T val) {
 		modifyValue(val);
-		WorkbenchHelper.asyncRun(() -> {
+		asyncRun(() -> {
 			editorControl.displayParameterValue();
 			updateToolbar();
 		});
 
 	}
 
+	/**
+	 * Update toolbar.
+	 */
 	protected void updateToolbar() {
 		editorToolbar.update();
 	}
 
+	/**
+	 * Gets the agent.
+	 *
+	 * @return the agent
+	 */
 	protected IAgent getAgent() {
 		if (agent != null) return agent;
 		if (scope == null) return null;
@@ -367,41 +549,82 @@ public abstract class AbstractEditor<T>
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent e) {}
 
-	protected T getOriginalValue() {
-		return originalValue;
-	}
+	/**
+	 * Gets the original value.
+	 *
+	 * @return the original value
+	 */
+	protected T getOriginalValue() { return originalValue; }
 
 	@Override
-	public T getCurrentValue() {
-		return currentValue;
-	}
+	public T getCurrentValue() { return currentValue; }
 
-	protected void setOriginalValue(final T originalValue) {
-		this.originalValue = originalValue;
-	}
+	/**
+	 * Sets the original value.
+	 *
+	 * @param originalValue
+	 *            the new original value
+	 */
+	protected void setOriginalValue(final T originalValue) { this.originalValue = originalValue; }
 
+	/**
+	 * Apply plus.
+	 *
+	 * @return the t
+	 */
 	protected T applyPlus() {
 		return null;
 	}
 
+	/**
+	 * Apply minus.
+	 *
+	 * @return the t
+	 */
 	protected T applyMinus() {
 		return null;
 	}
 
+	/**
+	 * Apply revert.
+	 *
+	 * @return the t
+	 */
 	protected T applyRevert() {
 		return getOriginalValue();
 	}
 
+	/**
+	 * Apply browse.
+	 */
 	protected void applyBrowse() {}
 
+	/**
+	 * Apply inspect.
+	 */
 	protected void applyInspect() {}
 
+	/**
+	 * Apply edit.
+	 */
 	protected void applyEdit() {}
 
+	/**
+	 * Apply change.
+	 */
 	protected void applyChange() {}
 
+	/**
+	 * Apply define.
+	 */
 	protected void applyDefine() {}
 
+	/**
+	 * Dont use scope.
+	 *
+	 * @param dont
+	 *            the dont
+	 */
 	public void dontUseScope(final boolean dont) {
 		this.noScope = dont;
 	}
