@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.fipa.FIPASkill.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * FIPASkill.java, in msi.gaml.extensions.fipa, is part of the source code of the GAMA modeling and simulation platform
+ * (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -132,6 +132,9 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class FIPASkill extends MessagingSkill {
 
+	/**
+	 * The Class Deprecated.
+	 */
 	@doc (
 			deprecated = "Use the keyword 'fipa' instead")
 	@skill (
@@ -158,17 +161,6 @@ public class FIPASkill extends MessagingSkill {
 	// }
 
 	// }
-
-	@Override
-	@getter (
-			value = MAILBOX,
-			initializer = true)
-	public GamaMailbox getMailbox(final IAgent agent) {
-		final GamaMailbox mailbox = super.getMailbox(agent);
-		mailbox.clear();
-		mailbox.addAll(MessageBroker.getInstance(agent.getScope()).getMessagesFor(agent));
-		return mailbox;
-	}
 
 	/**
 	 * @throws GamaRuntimeException
@@ -211,34 +203,25 @@ public class FIPASkill extends MessagingSkill {
 		final FIPAMessage message = new FIPAMessage(scope);
 
 		final IList receivers = Cast.asList(scope, scope.getArg(IKeyword.TO, IType.LIST));
-		if (receivers == null || receivers.isEmpty() || receivers.contains(null)) {
+		if (receivers == null || receivers.isEmpty() || receivers.contains(null))
 			throw GamaRuntimeException.error("receivers can not be empty or null", scope);
-		}
 		message.setReceivers(receivers);
 
 		message.setSender(getCurrentAgent(scope));
 
 		final IList content = Cast.asList(scope, scope.getArg(GamaMessage.CONTENTS, IType.LIST));
-		if (content != null) {
-			message.setContents(content);
-		}
+		if (content != null) { message.setContents(content); }
 
 		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
 
-		if (performative != null) {
-			message.setPerformative(Performative.valueOf(performative));
-		} else {
-			throw GamaRuntimeException.error("performative can not be null", scope);
-		}
+		if (performative == null) throw GamaRuntimeException.error("performative can not be null", scope);
+		message.setPerformative(Performative.valueOf(performative));
 
-		if (message.getPerformative() == null) {
+		if (message.getPerformative() == null)
 			throw GamaRuntimeException.error(performative + " performative is unknown", scope);
-		}
 
 		String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
-		if (protocol == null) {
-			protocol = FIPAProtocol.Names.no_protocol.name();
-		}
+		if (protocol == null) { protocol = FIPAProtocol.Names.no_protocol.name(); }
 
 		MessageBroker.getInstance(scope).scheduleForDelivery(scope, message, protocol);
 
@@ -309,12 +292,10 @@ public class FIPASkill extends MessagingSkill {
 					value = "Replies a message. This action should be only used to reply a message in a 'no-protocol' conversation and with a 'user defined performative'. For performatives supported by GAMA (i.e., standard FIPA performatives), please use the 'action' with the same name of 'performative'. For example, to reply a message with a 'request' performative message, the modeller should use the 'request' action."))
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
-		if (performative == null) { throw GamaRuntimeException.error("'performative' argument is mandatory", scope); }
+		if (performative == null) throw GamaRuntimeException.error("'performative' argument is mandatory", scope);
 
 		return replyMessage(scope, originals, Performative.valueOf(performative), getContentArg(scope));
 	}
@@ -364,10 +345,24 @@ public class FIPASkill extends MessagingSkill {
 		return originals;
 	}
 
+	/**
+	 * Gets the content arg.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the content arg
+	 */
 	private IList getContentArg(final IScope scope) {
-		return Cast.asList(scope, scope.getArg(FIPAMessage.CONTENTS, IType.LIST));
+		return Cast.asList(scope, scope.getArg(GamaMessage.CONTENTS, IType.LIST));
 	}
 
+	/**
+	 * Gets the message arg.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the message arg
+	 */
 	private IList<FIPAMessage> getMessageArg(final IScope scope) {
 		return Cast.asList(scope, scope.getArg(GamaMessageType.MESSAGE_STR, IType.LIST));
 	}
@@ -398,9 +393,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with an 'accept_proposal' performative message."))
 	public Object primAcceptProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, accept_proposal, getContentArg(scope));
 	}
@@ -431,7 +424,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with an 'agree' performative message."))
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) { return null; }
+		if (originals == null || originals.size() == 0) return null;
 
 		return replyMessage(scope, originals, agree, getContentArg(scope));
 	}
@@ -462,9 +455,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'cancel' peformative message."))
 	public Object primCancel(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, cancel, getContentArg(scope));
 	}
@@ -495,9 +486,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'cfp' performative message."))
 	public Object primCfp(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, cfp, getContentArg(scope));
 	}
@@ -528,9 +517,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Reply a message with an 'end_conversation' peprformative message. This message marks the end of a conversation. In a 'no-protocol' conversation, it is the responsible of the modeler to explicitly send this message to mark the end of a conversation/interaction protocol."))
 	public Object primEndConversation(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, Performative.end_conversation, getContentArg(scope));
 	}
@@ -561,9 +548,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'failure' performative message."))
 	public Object primFailure(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, failure, getContentArg(scope));
 	}
@@ -594,9 +579,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with an 'inform' performative message."))
 	public Object primInform(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, inform, getContentArg(scope));
 	}
@@ -627,9 +610,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'propose' performative message."))
 	public Object primPropose(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, propose, getContentArg(scope));
 	}
@@ -660,9 +641,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'query' performative message."))
 	public Object primQuery(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, query, getContentArg(scope));
 	}
@@ -693,9 +672,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'refuse' performative message."))
 	public Object primRefuse(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, refuse, getContentArg(scope));
 	}
@@ -726,9 +703,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'reject_proposal' performative message."))
 	public Object primRejectProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, reject_proposal, getContentArg(scope));
 	}
@@ -759,9 +734,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'request' performative message."))
 	public Object primRequest(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, request, getContentArg(scope));
 	}
@@ -792,9 +765,7 @@ public class FIPASkill extends MessagingSkill {
 			doc = @doc ("Replies a message with a 'subscribe' performative message."))
 	public Object primSubscribe(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
-		if (originals == null || originals.size() == 0) {
-			throw GamaRuntimeException.error("No message to reply", scope);
-		}
+		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
 
 		return replyMessage(scope, originals, subscribe, getContentArg(scope));
 
@@ -812,12 +783,21 @@ public class FIPASkill extends MessagingSkill {
 		result.addAll(received);
 		for (final Iterator<FIPAMessage> it = result.iterator(); it.hasNext();) {
 			final FIPAMessage m = it.next();
-			if (!m.isUnread()) {
-				it.remove();
-			}
+			if (!m.isUnread()) { it.remove(); }
 		}
 
 		return result;
+	}
+
+	@Override
+	@getter (
+			value = MAILBOX,
+			initializer = true)
+	public GamaMailbox<FIPAMessage> getMailbox(final IScope scope, final IAgent agent) {
+		final GamaMailbox<FIPAMessage> mailbox = super.getMailbox(scope, agent);
+		mailbox.clear();
+		mailbox.addAll(getMessages(scope, agent));
+		return mailbox;
 	}
 
 	/**
@@ -857,8 +837,7 @@ public class FIPASkill extends MessagingSkill {
 	 */
 	@getter ("cfps")
 	public IList<FIPAMessage> getCfpMsgs(final IScope scope, final IAgent agent) {
-		final IList cfps = filter(scope, agent, cfp);
-		return cfps;
+		return filter(scope, agent, cfp);
 	}
 
 	/**
@@ -878,8 +857,7 @@ public class FIPASkill extends MessagingSkill {
 	 */
 	@getter ("informs")
 	public IList<FIPAMessage> getInformMsgs(final IScope scope, final IAgent agent) {
-		final IList informs = filter(scope, agent, inform);
-		return informs;
+		return filter(scope, agent, inform);
 	}
 
 	/**
@@ -929,8 +907,7 @@ public class FIPASkill extends MessagingSkill {
 	 */
 	@getter ("requests")
 	public IList<FIPAMessage> getRequestMsgs(final IScope scope, final IAgent agent) {
-		final IList requests = filter(scope, agent, request);
-		return requests;
+		return filter(scope, agent, request);
 	}
 
 	/**
@@ -963,14 +940,12 @@ public class FIPASkill extends MessagingSkill {
 	 */
 	private IList<FIPAMessage> filter(final IScope scope, final IAgent agent, final Performative performative) {
 		final IList<FIPAMessage> inBox = getMessages(scope, agent);
-		if (inBox.isEmpty()) { return GamaListFactory.EMPTY_LIST; }
+		if (inBox.isEmpty()) return GamaListFactory.EMPTY_LIST;
 		final IList<FIPAMessage> result = GamaListFactory.create(scope.getType(GamaMessageType.MESSAGE_STR));
 		for (final FIPAMessage m : inBox) {
 			final boolean unread = m.isUnread();
 			final Performative mperf = m.getPerformative();
-			if (unread && mperf == performative) {
-				result.add(m);
-			}
+			if (unread && mperf == performative) { result.add(m); }
 		}
 		return result;
 	}
