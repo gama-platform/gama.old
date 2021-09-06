@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.GamlExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamlExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -63,12 +63,28 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionFactory implements IExpressionFactory {
 
+	/**
+	 * The Interface ParserProvider.
+	 */
 	public interface ParserProvider {
+
+		/**
+		 * Gets the.
+		 *
+		 * @return the i expression compiler
+		 */
 		IExpressionCompiler get();
 	}
 
+	/** The parser. */
 	static ThreadLocal<IExpressionCompiler> parser;
 
+	/**
+	 * Register parser provider.
+	 *
+	 * @param f
+	 *            the f
+	 */
 	public static void registerParserProvider(final ParserProvider f) {
 		parser = new ThreadLocal() {
 			@Override
@@ -79,9 +95,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpressionCompiler getParser() {
-		return parser.get();
-	}
+	public IExpressionCompiler getParser() { return parser.get(); }
 
 	@Override
 	public void resetParser() {
@@ -133,9 +147,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createExpr(final IExpressionDescription ied, final IDescription context) {
-		if (ied == null) return null;
-		final IExpression p = ied.getExpression();
-		return p == null ? getParser().compile(ied, context) : p;
+		return getParser().compile(ied, context);
 	}
 
 	@Override
@@ -188,6 +200,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return ListExpression.create(elements);
 	}
 
+	/**
+	 * Creates a new GamlExpression object.
+	 *
+	 * @param elements
+	 *            the elements
+	 * @return the i expression
+	 */
 	public IExpression createList(final IExpression[] elements) {
 		return ListExpression.create(elements);
 	}
@@ -202,9 +221,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final IExpression... args) {
 		// If arguments are invalid, we have no match
 		if (args == null || args.length == 0) return false;
-		for (final IExpression exp : args) {
-			if (exp == null) return false;
-		}
+		for (final IExpression exp : args) { if (exp == null) return false; }
 		// If the operator is not known, we have no match
 		if (!OPERATORS.containsKey(op)) return false;
 		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
@@ -246,7 +263,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			if (size == 0)
 				// It is a varArg, we call recursively the method
 				return createOperator(op, context, eObject, createList(args));
-			else if (size == 1) {
+			if (size == 1) {
 				// Only one choice
 				userSignature = matching[0];
 			} else {
@@ -257,7 +274,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					if (dist == 0) {
 						userSignature = s;
 						break;
-					} else if (dist < distance) {
+					}
+					if (dist < distance) {
 						distance = dist;
 						userSignature = s;
 					}
@@ -290,6 +308,19 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return OperatorProto.AS.create(context, null, toCast, type);
 	}
 
+	/**
+	 * Creates a new GamlExpression object.
+	 *
+	 * @param context
+	 *            the context
+	 * @param eObject
+	 *            the e object
+	 * @param proto
+	 *            the proto
+	 * @param args
+	 *            the args
+	 * @return the i expression
+	 */
 	private IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
 			final IExpression... args) {
 		// We finally make an instance of the operator and init it with the arguments
@@ -329,9 +360,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final ActionDescription desc = (ActionDescription) DescriptionFactory.create(IKeyword.ACTION, context,
 				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.UNKNOWN, IKeyword.NAME, TEMPORARY_ACTION_NAME);
 		final List<IDescription> children = getParser().compileBlock(action, context, tempContext);
-		for (final IDescription child : children) {
-			desc.addChild(child);
-		}
+		for (final IDescription child : children) { desc.addChild(child); }
 		desc.validate();
 		context.addChild(desc);
 		final ActionStatement a = (ActionStatement) desc.compile();

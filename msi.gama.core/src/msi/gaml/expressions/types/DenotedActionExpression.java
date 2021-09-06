@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.DenotedActionExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * DenotedActionExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,8 +15,17 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.types.Types;
 
+/**
+ * The Class DenotedActionExpression.
+ */
 public class DenotedActionExpression extends VariableExpression {
 
+	/**
+	 * Instantiates a new denoted action expression.
+	 *
+	 * @param action
+	 *            the action
+	 */
 	public DenotedActionExpression(final StatementDescription action) {
 		super(action.getName(), Types.ACTION, true, action);
 	}
@@ -27,17 +36,13 @@ public class DenotedActionExpression extends VariableExpression {
 	}
 
 	@Override
-	public String getTitle() {
-		return getDefinitionDescription().getTitle();
-	}
+	public String getTitle() { return getDefinitionDescription().getTitle(); }
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() {
-		return "This expression denotes the description of " + getTitle();
-	}
+	public String getDocumentation() { return getDefinitionDescription().getDocumentation(); }
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) {}
