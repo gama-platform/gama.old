@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlHoverProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlHoverProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
 import org.eclipse.emf.ecore.EObject;
@@ -45,14 +44,11 @@ import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Definition;
-import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
-import msi.gama.lang.gaml.gaml.VarDefinition;
-import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
@@ -61,6 +57,9 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class GamlHoverProvider.
+ */
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	// public static class NonXRefEObjectAtOffset extends EObjectAtOffsetHelper {
@@ -73,12 +72,18 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	//
 	// }
 
+	/**
+	 * The Class GamlDispatchingEObjectTextHover.
+	 */
 	public static class GamlDispatchingEObjectTextHover extends DispatchingEObjectTextHover {
 
+		/** The e object at offset helper. */
 		@Inject private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 
+		/** The location in file provider. */
 		@Inject private ILocationInFileProvider locationInFileProvider;
 
+		/** The correct. */
 		EObject correct = null;
 
 		@Override
@@ -112,22 +117,18 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 						region = locationInFileProvider.getFullTextRegion(o);
 					}
 				}
-				if (region == null) {
-					region = locationInFileProvider.getSignificantTextRegion(o);
-				}
+				if (region == null) { region = locationInFileProvider.getSignificantTextRegion(o); }
 				final IRegion region2 = new Region(region.getOffset(), region.getLength());
 				/*
 				 * if ( TextUtilities.overlaps(region2, new Region(offset, 0)) )
 				 */ {
 					return Tuples.create(o, region2);
 				}
-			} else {
-				final ILeafNode node =
-						NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(), offset);
-				if (node != null && node.getGrammarElement() instanceof Keyword) {
-					final IRegion region2 = new Region(node.getOffset(), node.getLength());
-					return Tuples.create(node.getGrammarElement(), region2);
-				}
+			}
+			final ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(), offset);
+			if (node != null && node.getGrammarElement() instanceof Keyword) {
+				final IRegion region2 = new Region(node.getOffset(), node.getLength());
+				return Tuples.create(node.getGrammarElement(), region2);
 			}
 			return null;
 		}
@@ -139,6 +140,9 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	}
 
+	/**
+	 * The Class GamlHoverControlCreator.
+	 */
 	public class GamlHoverControlCreator extends HoverControlCreator {
 
 		/**
@@ -148,6 +152,9 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			super(informationPresenterControlCreator);
 		}
 
+		/**
+		 * The Class GamlInformationControl.
+		 */
 		public class GamlInformationControl extends XtextBrowserInformationControl {
 
 			@Override
@@ -191,19 +198,17 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 						};
 				addLinkListener(iControl);
 				return iControl;
-			} else {
-				return new DefaultInformationControl(parent, tooltipAffordanceString);
 			}
+			return new DefaultInformationControl(parent, tooltipAffordanceString);
 		}
 	}
 
+	/** The creator. */
 	private IInformationControlCreator creator;
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		if (creator == null) {
-			creator = new GamlHoverControlCreator(getInformationPresenterControlCreator());
-		}
+		if (creator == null) { creator = new GamlHoverControlCreator(getInformationPresenterControlCreator()); }
 		return creator;
 	}
 
@@ -236,65 +241,71 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			String uri = ((Import) o).getImportURI();
 			uri = uri.substring(uri.lastIndexOf('/') + 1);
 			final String model = ((Import) o).getName() != null ? "micro-model" : "model";
-			return "Import of the " + model + " defined in <b>" + uri + "</b>";
+			return "<b>Import of the " + model + " defined in <i>" + uri + "</i></b>";
 		}
-		if (o instanceof S_Global) { return "Global definitions of " + getFirstLine(o.eContainer().eContainer()); }
+		if (o instanceof S_Global) return "<b>Global definitions of </b>" + getFirstLine(o.eContainer().eContainer());
 		final Statement s = EGaml.getInstance().getStatement(o);
-		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
+		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o)
 			return getFirstLine(s);
-		}
-		// Case of do xxx;
-		if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-			final VarDefinition vd = ((VariableRef) o).getRef();
-			final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-			if (description != null) {
-				String result = description.getTitle();
-				if (result == null || result.isEmpty()) { return ""; }
-				result = "<b>" + result + "</b>";
-				return result;
-			}
-		}
+		// Case of do xxx; 
+		// if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+		// final VarDefinition vd = ((VariableRef) o).getRef();
+		// final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+		// if (description != null) {
+		// String result = description.getTitle();
+		// if (result == null || result.isEmpty()) return "";
+		// return "<b>" + result + "</b>";
+		// }
+		// if (vd != null && vd.eContainer() == null) {
+		// final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
+		// if (desc != null) {
+		// String userData = desc.getUserData("title");
+		// if (userData != null && !userData.isEmpty()) return "<b>" + userData + "</b>";
+		// }
+		// }
+		// }
 		if (o instanceof Function) {
 			final ActionRef ref = getActionFrom((Function) o);
 			if (ref != null) {
 				final ActionDefinition def = ref.getRef();
 				if (def != null) {
 					final String temp = getFirstLine(def);
-					if (!temp.isEmpty()) { return temp; }
+					if (!temp.isEmpty()) return temp;
 				}
 			}
 		} else if (o instanceof UnitName) {
 			final UnitFakeDefinition fake = ((UnitName) o).getRef();
-			if (fake == null) { return "<b> Unknown unit or constant </b>"; }
+			if (fake == null) return "<b> Unknown unit or constant </b>";
 			final UnitConstantExpression unit = IUnits.UNITS_EXPR.get(fake.getName());
-			if (unit == null) { return "<b> Unknown unit or constant </b>"; }
+			if (unit == null) return "<b> Unknown unit or constant </b>";
 			return "<b>" + unit.getTitle() + "</b>";
 		}
 
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
-		if (description == null) {
-			if (o instanceof Facet) { return "<b>" + getFirstLineOf((Facet) o) + "</b>"; }
-
-			if (s != null && DescriptionFactory.isStatementProto(EGaml.getInstance().getKeyOf(o))) {
-				if (s == o) { return ""; }
-				return getFirstLine(s);
-			} else {
-				if (o instanceof TypeRef) {
-					return "Type " + EGaml.getInstance().getKeyOf(o);
-				} else {
-					return "";
-				}
-			}
-		} else {
+		if (description != null) {
 			String result = description.getTitle();
-			if (result == null || result.isEmpty()) { return ""; }
-			result = "<b>" + result + "</b>";
-			return result;
+			if (result == null || result.isEmpty()) return "";
+			return "<b>" + result + "</b>";
 		}
+		if (o instanceof Facet) return "<b>" + getFirstLineOf((Facet) o) + "</b>";
+
+		if (s != null && DescriptionFactory.isStatementProto(EGaml.getInstance().getKeyOf(o))) {
+			if (s == o) return "";
+			return getFirstLine(s);
+		}
+		if (o instanceof TypeRef) return "<b>Type " + EGaml.getInstance().getKeyOf(o) + "</b>";
+		return "";
 	}
 
+	/**
+	 * Gets the action from.
+	 *
+	 * @param f
+	 *            the f
+	 * @return the action from
+	 */
 	private ActionRef getActionFrom(final Function f) {
-		if (f.getLeft() instanceof ActionRef) { return (ActionRef) f.getLeft(); }
+		if (f.getLeft() instanceof ActionRef) return (ActionRef) f.getLeft();
 		return null;
 	}
 
@@ -311,7 +322,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		final SymbolProto p = DescriptionFactory.getProto(key, null);
 		if (p != null) {
 			final FacetProto f = p.getPossibleFacets().get(facetName);
-			if (f != null) { return f.getTitle(); }
+			if (f != null) return f.getTitle();
 		}
 		return "Facet " + o.getKey();
 

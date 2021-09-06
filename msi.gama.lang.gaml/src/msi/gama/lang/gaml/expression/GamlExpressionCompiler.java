@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlExpressionCompiler.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlExpressionCompiler.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
 import static com.google.common.collect.Iterables.toArray;
@@ -128,16 +127,30 @@ import msi.gaml.types.Types;
  * The Class GamlExpressionCompiler. Transforms Strings or XText Expressions into GAML IExpressions. Normally invoked by
  * an IExpressionFactory (the default being GAML.getExpressionFactory())
  */
+
+/**
+ * The Class GamlExpressionCompiler.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
+	/** The iterator contexts. */
 	private final Deque<IVarExpression> iteratorContexts = new LinkedList();
+
+	/** The current expression description. */
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
+
+	/** The current types manager. */
 	private ITypesManager currentTypesManager;
+
+	/** The Constant constantSyntheticExpressions. */
 	private final static Map<String, IExpression> constantSyntheticExpressions = GamaMapFactory.createUnordered();
+
+	/** The Constant builder. */
 	private static final ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
+	/** The current context. */
 	/*
 	 * The context (IDescription) in which the parser operates. If none is given, the global context of the current
 	 * simulation is returned (via simulation.getModel().getDescription()) if it is available. Otherwise, only simple
@@ -153,6 +166,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression compile(final IExpressionDescription s, final IDescription parsingContext) {
 		// Cf. Issue 782. Returns the expression if an expression needs its
 		// compiled version to be compiled.
+
 		if (s.isConst() || s == getCurrentExpressionDescription()) return s.getExpression();
 		setCurrentExpressionDescription(s);
 		final EObject o = s.getTarget();
@@ -163,8 +177,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		final IDescription previous = setContext(parsingContext);
 		try {
-			final IExpression result = compile(o);
-			return result;
+			return compile(o);
 		} finally {
 			setContext(previous);
 			setCurrentExpressionDescription(null);
@@ -192,6 +205,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 	}
 
+	/**
+	 * Compile.
+	 *
+	 * @param s
+	 *            the s
+	 * @return the i expression
+	 */
 	private IExpression compile(final EObject s) {
 		if (s == null) // No error, since the null expressions come from previous (more
 			// focused) errors and not from the parser itself.
@@ -202,16 +222,32 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return expr;
 	}
 
+	/**
+	 * Skill.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the i expression
+	 */
 	private IExpression skill(final String name) {
 		return getFactory().createConst(name, Types.SKILL);
 	}
 
+	/**
+	 * Unary.
+	 *
+	 * @param op
+	 *            the op
+	 * @param e
+	 *            the e
+	 * @return the i expression
+	 */
 	// KEEP
 	private IExpression unary(final String op, final Expression e) {
 		if (op == null) return null;
 		final IExpression expr = compile(e);
 		if (expr == null) return null;
-		if (op.equals(MY)) {
+		if (MY.equals(op)) {
 			final IVarDescriptionProvider desc = getContext().getDescriptionDeclaringVar(MYSELF);
 			if (desc instanceof IDescription) {
 				// We are in a remote context, so 'my' refers to the calling
@@ -226,8 +262,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// The unary "unit" operator should let the value of its child pass
 		// through
-		if (op.equals("°") || op.equals("#")) return expr;
-		if (op.equals("every") && expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
+		if ("°".equals(op) || "#".equals(op)) return expr;
+		if ("every".equals(op) && expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
 			getContext().warning(
 					"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
 					IGamlIssue.DEPRECATED, e);
@@ -238,6 +274,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return getFactory().createOperator(op, getContext(), e, expr);
 	}
 
+	/**
+	 * Casting.
+	 *
+	 * @param type
+	 *            the type
+	 * @param toCast
+	 *            the to cast
+	 * @param typeObject
+	 *            the type object
+	 * @return the i expression
+	 */
 	private IExpression casting(final String type, final IExpression toCast, final Expression typeObject) {
 		if (toCast == null) return null;
 		final IType castingType = currentTypesManager.get(type).typeIfCasting(toCast);
@@ -278,13 +325,20 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				getFactory().createTypeExpression(result));
 	}
 
+	/**
+	 * From type ref.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the i type
+	 */
 	IType fromTypeRef(final TypeRef object) {
 		if (object == null) return null;
 		String primary = EGaml.getInstance().getKeyOf(object);
 
 		if (primary == null) {
 			primary = object.getRef().getName();
-		} else if (primary.equals(SyntacticFactory.SPECIES_VAR)) { primary = SPECIES; }
+		} else if (SyntacticFactory.SPECIES_VAR.equals(primary)) { primary = SPECIES; }
 
 		final IType t = currentTypesManager.get(primary);
 
@@ -298,16 +352,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final TypeInfo parameter = object.getParameter();
 			if (parameter == null) return t;
 			final TypeRef first = (TypeRef) parameter.getFirst();
-			if (first == null)
-				return t;
-			else {
-				final ITypesManager savedTypesManager = currentTypesManager;
-				try {
-					currentTypesManager = t.getSpecies().getModelDescription().getTypesManager();
-					return fromTypeRef(first);
-				} finally {
-					currentTypesManager = savedTypesManager;
-				}
+			if (first == null) return t;
+			final ITypesManager savedTypesManager = currentTypesManager;
+			try {
+				currentTypesManager = t.getSpecies().getModelDescription().getTypesManager();
+				return fromTypeRef(first);
+			} finally {
+				currentTypesManager = savedTypesManager;
 			}
 		}
 
@@ -336,17 +387,27 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				// We return it anyway with a default key
 			}
 			return GamaType.from(t, t.getKeyType(), fromTypeRef(first));
-		} else {
-			if (numberOfParameter == 1) {
-				// Emit an error (see #2875)
-				getContext().error(t + " expects only one type parameter", IGamlIssue.WRONG_TYPE, object);
-				// We return null
-				return null;
-			}
+		}
+		if (numberOfParameter == 1) {
+			// Emit an error (see #2875)
+			getContext().error(t + " expects only one type parameter", IGamlIssue.WRONG_TYPE, object);
+			// We return null
+			return null;
 		}
 		return GamaType.from(t, fromTypeRef(first), fromTypeRef(second));
 	}
 
+	/**
+	 * Binary.
+	 *
+	 * @param op
+	 *            the op
+	 * @param left
+	 *            the left
+	 * @param originalExpression
+	 *            the original expression
+	 * @return the i expression
+	 */
 	private IExpression binary(final String op, final IExpression left, final Expression originalExpression) {
 		if (left == null) return null;
 		Expression rightMember = originalExpression;
@@ -397,11 +458,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (size > 1) {
 				final IExpression[] compiledArgs = new IExpression[size + 1];
 				compiledArgs[0] = left;
-				for (int i = 0; i < size; i++) {
-					compiledArgs[i + 1] = compile(list.get(i));
-				}
-				final IExpression result = getFactory().createOperator(op, getContext(), rightMember, compiledArgs);
-				return result;
+				for (int i = 0; i < size; i++) { compiledArgs[i + 1] = compile(list.get(i)); }
+				return getFactory().createOperator(op, getContext(), rightMember, compiledArgs);
 			}
 		}
 
@@ -415,6 +473,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	}
 
+	/**
+	 * Find iterator arg name.
+	 *
+	 * @param e2
+	 *            the e 2
+	 * @return the string
+	 */
 	private String findIteratorArgName(final Expression e2) {
 		if (!(e2 instanceof ExpressionList)) return IKeyword.EACH;
 		final ExpressionList params = (ExpressionList) e2;
@@ -426,6 +491,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return EGaml.getInstance().getKeyOf(p);
 	}
 
+	/**
+	 * Find iterator expr.
+	 *
+	 * @param e2
+	 *            the e 2
+	 * @return the expression
+	 */
 	private Expression findIteratorExpr(final Expression e2) {
 		if (!(e2 instanceof ExpressionList)) return e2;
 		final ExpressionList params = (ExpressionList) e2;
@@ -437,6 +509,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return p.getRight();
 	}
 
+	/**
+	 * Binary is.
+	 *
+	 * @param left
+	 *            the left
+	 * @param e2
+	 *            the e 2
+	 * @return the i expression
+	 */
 	private IExpression binaryIs(final IExpression left, final Expression e2) {
 		final String type = EGaml.getInstance().getKeyOf(e2);
 		if (isTypeName(type)) return getFactory().createOperator(IS, getContext(), e2.eContainer(), left,
@@ -448,6 +529,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return null;
 	}
 
+	/**
+	 * Binary as.
+	 *
+	 * @param left
+	 *            the left
+	 * @param e2
+	 *            the e 2
+	 * @return the i expression
+	 */
 	private IExpression binaryAs(final IExpression left, final Expression e2) {
 		final String type = EGaml.getInstance().getKeyOf(e2);
 		// if ( isSpeciesName(type) ) { return factory.createOperator(op,
@@ -462,12 +552,36 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return null;
 	}
 
+	/**
+	 * Action.
+	 *
+	 * @param name
+	 *            the name
+	 * @param callee
+	 *            the callee
+	 * @param args
+	 *            the args
+	 * @param action
+	 *            the action
+	 * @return the i expression
+	 */
 	private IExpression action(final String name, final IExpression callee, final EObject args,
 			final ActionDescription action) {
 		final Arguments arguments = parseArguments(action, args, getContext(), true);
 		return getFactory().createAction(name, getContext(), action, callee, arguments);
 	}
 
+	/**
+	 * Binary.
+	 *
+	 * @param op
+	 *            the op
+	 * @param e1
+	 *            the e 1
+	 * @param right
+	 *            the right
+	 * @return the i expression
+	 */
 	// KEEP
 	private IExpression binary(final String op, final Expression e1, final Expression right) {
 
@@ -478,10 +592,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return binary(op, left, right);
 	}
 
+	/**
+	 * Gets the species context.
+	 *
+	 * @param e
+	 *            the e
+	 * @return the species context
+	 */
 	private SpeciesDescription getSpeciesContext(final String e) {
 		return getContext().getSpeciesDescription(e);
 	}
 
+	/**
+	 * Checks if is species name.
+	 *
+	 * @param s
+	 *            the s
+	 * @return true, if is species name
+	 */
 	private boolean isSpeciesName(final String s) {
 		final ModelDescription m = getContext().getModelDescription();
 		if (m == null) // can occur when building the kernel
@@ -490,10 +618,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return sd != null && !(sd instanceof ExperimentDescription);
 	}
 
+	/**
+	 * Checks if is skill name.
+	 *
+	 * @param s
+	 *            the s
+	 * @return true, if is skill name
+	 */
 	private boolean isSkillName(final String s) {
 		return GamaSkillRegistry.INSTANCE.hasSkill(s);
 	}
 
+	/**
+	 * Checks if is type name.
+	 *
+	 * @param s
+	 *            the s
+	 * @return true, if is type name
+	 */
 	private boolean isTypeName(final String s) {
 
 		if (!currentTypesManager.containsType(s)) return false;
@@ -503,6 +645,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return true;
 	}
 
+	/**
+	 * Compile named experiment field expr.
+	 *
+	 * @param leftExpr
+	 *            the left expr
+	 * @param name
+	 *            the name
+	 * @return the i expression
+	 */
 	private IExpression compileNamedExperimentFieldExpr(final Expression leftExpr, final String name) {
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) return null;
@@ -519,18 +670,26 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return null;
 	}
 
+	/**
+	 * Compile field expr.
+	 *
+	 * @param leftExpr
+	 *            the left expr
+	 * @param fieldExpr
+	 *            the field expr
+	 * @return the i expression
+	 */
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) return null;
 		final IType type = owner.getGamlType();
 		final TypeDescription species = type.getSpecies();
 		// hqnghi 28-05-14 search input variable from model, not experiment
-		if (type instanceof ParametricType && type.getGamlType().id() == IType.SPECIES) {
-			if (type.getContentType().getSpecies() instanceof ModelDescription) {
-				final ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
-				final String var = EGaml.getInstance().getKeyOf(fieldExpr);
-				if (sd.hasExperiment(var)) return getFactory().createConst(var, GamaType.from(sd.getExperiment(var)));
-			}
+		if (type instanceof ParametricType && type.getGamlType().id() == IType.SPECIES
+				&& type.getContentType().getSpecies() instanceof ModelDescription) {
+			final ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
+			final String var = EGaml.getInstance().getKeyOf(fieldExpr);
+			if (sd.hasExperiment(var)) return getFactory().createConst(var, GamaType.from(sd.getExperiment(var)));
 		}
 		// end-hqnghi
 		if (species == null) {
@@ -562,7 +721,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				if (species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var)) {
 					final IType t = Types.get(IKeyword.SPECIES);
 					expr = getFactory().createTypeExpression(GamaType.from(t, Types.INT, species.getTypeNamed(var)));
-				} else if (species.getName().equals(IKeyword.PLATFORM) && GAMA.isInHeadLessMode())
+				} else if (IKeyword.PLATFORM.equals(species.getName()) && GAMA.isInHeadLessMode())
 					// Special case (see #2259 for headless validation of GUI preferences)
 					return ((PlatformSpeciesDescription) species).getFakePrefExpression(var);
 				else {
@@ -573,7 +732,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
-		} else if (fieldExpr instanceof Function) {
+		}
+		if (fieldExpr instanceof Function) {
 			final String name = EGaml.getInstance().getKeyOf(fieldExpr);
 			final ActionDescription action = species.getAction(name);
 			if (action != null) {
@@ -599,6 +759,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// return world;
 	// }
 
+	/**
+	 * Sets the context.
+	 *
+	 * @param context
+	 *            the context
+	 * @return the i description
+	 */
 	private IDescription setContext(final IDescription context) {
 		final IDescription previous = currentContext;
 		currentContext = context == null ? GAML.getModelContext() : context;
@@ -613,10 +780,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return previous;
 	}
 
-	private IDescription getContext() {
-		return currentContext;
-	}
+	/**
+	 * Gets the context.
+	 *
+	 * @return the context
+	 */
+	private IDescription getContext() { return currentContext; }
 
+	/**
+	 * Gets the validation context.
+	 *
+	 * @return the validation context
+	 */
 	private ValidationContext getValidationContext() {
 		if (currentContext == null) return null;
 		return currentContext.getValidationContext();
@@ -794,9 +969,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseArgumentPair(final ArgumentPair object) {
-		final IExpression result =
-				binary("::", caseVar(EGaml.getInstance().getKeyOf(object), object), object.getRight());
-		return result;
+		return binary("::", caseVar(EGaml.getInstance().getKeyOf(object), object), object.getRight());
 	}
 
 	@Override
@@ -809,18 +982,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final String name = EGaml.getInstance().toString(object.getRight());
 		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(name))
 			return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
-		// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to
-		// the whole expression.
-		// final IExpression right = compile(object.getRight());
-		final IExpression result = binary("*", object.getLeft(), object.getRight());
-		// AD: removal of the hack to address #1325 -- needs to be tested in
-		// OpenGL
-		// if ( result != null && ((BinaryOperator) result).arg(1) instanceof
-		// PixelUnitExpression ) {
-		// result = factory.createOperator("+", getContext(), object,
-		// factory.createConst(1, Types.INT), result);
-		// }
-		return result;
+		return binary("*", object.getLeft(), object.getRight());
 	}
 
 	@Override
@@ -828,17 +990,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return unary(EGaml.getInstance().getKeyOf(object), object.getRight());
 	}
 
+	/**
+	 * Case dot.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the i expression
+	 */
 	public IExpression caseDot(final Access object) {
 		final Expression right = object.getRight();
 		if (right instanceof StringLiteral)
 			return compileNamedExperimentFieldExpr(object.getLeft(), EGaml.getInstance().getKeyOf(right));
-		else if (right != null) return compileFieldExpr(object.getLeft(), right);
+		if (right != null) return compileFieldExpr(object.getLeft(), right);
 		return null;
 	}
 
 	@Override
 	public IExpression caseAccess(final Access object) {
-		if (object.getOp().equals(".")) return caseDot(object);
+		if (".".equals(object.getOp())) return caseDot(object);
 		final IExpression container = compile(object.getLeft());
 		// If no container is defined, return a null expression
 		if (container == null) return null;
@@ -855,22 +1024,19 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				if (e != null) {
 					final IType elementType = e.getGamlType();
 					// See Issue #3099
-					if (size == 1 && Types.PAIR.isAssignableFrom(elementType)) {
-						if (Types.LIST.isAssignableFrom(contType)) {
-							if (Types.INT == elementType.getKeyType() && Types.INT == elementType.getContentType())
-								return getFactory().createOperator("internal_between", getContext(), object, container,
-										e);
-						}
+					if (size == 1 && Types.PAIR.isAssignableFrom(elementType)
+							&& Types.LIST.isAssignableFrom(contType)) {
+						if (Types.INT == elementType.getKeyType() && Types.INT == elementType.getContentType())
+							return getFactory().createOperator("internal_between", getContext(), object, container, e);
 					}
-					if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)) {
-						if (!(isMatrix && elementType.id() == IType.INT)) {
-							getContext().warning("a " + contType.toString() + " should not be accessed using a "
-									+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
-						}
-						// if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
-						//
-						// }
+					if (keyType != Types.NO_TYPE && !keyType.isAssignableFrom(elementType)
+							&& (!isMatrix || elementType.id() != IType.INT)) {
+						getContext().warning("a " + contType.toString() + " should not be accessed using a "
+								+ elementType.toString() + " index", IGamlIssue.WRONG_TYPE, eExpr);
 					}
+					// if (!(isMatrix && elementType.id() == IType.INT && size > 1)) {
+					//
+					// }
 					result.add(e);
 				}
 			}
@@ -909,7 +1075,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// Awkward expression, but necessary to fix Issue #2612
 		final boolean allPairs = !list.isEmpty() && Iterables.all(list,
 				each -> each instanceof ArgumentPair || "::".equals(EGaml.getInstance().getKeyOf(each)));
-		final Iterable<IExpression> result = Iterables.transform(list, input -> compile(input));
+		final Iterable<IExpression> result = Iterables.transform(list, this::compile);
 		return allPairs ? getFactory().createMap(result) : getFactory().createList(result);
 	}
 
@@ -940,8 +1106,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					"A sequence of expressions is not expected here. Only the first expression will be evaluated",
 					IGamlIssue.UNKNOWN_ARGUMENT, object);
 		}
-		final IExpression expr = compile(list.get(0));
-		return expr;
+		return compile(list.get(0));
 	}
 
 	@Override
@@ -962,10 +1127,19 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				return binary(op, args.get(0), args.get(1));
 			default:
 				return getFactory().createOperator(op, getContext(), object,
-						toArray(transform(args, a -> compile(a)), IExpression.class));
+						toArray(transform(args, this::compile), IExpression.class));
 		}
 	}
 
+	/**
+	 * Try casting function.
+	 *
+	 * @param op
+	 *            the op
+	 * @param object
+	 *            the object
+	 * @return the i expression
+	 */
 	private IExpression tryCastingFunction(final String op, final Function object) {
 		if (!isCastingFunction(op, object)) return null;
 		final List<Expression> args = EGaml.getInstance().getExprsOf(object.getRight());
@@ -974,11 +1148,20 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (size == 1) {
 			toCast = compile(args.get(0));
 		} else {
-			toCast = getFactory().createList(transform(args, a -> compile(a)));
+			toCast = getFactory().createList(transform(args, this::compile));
 		}
 		return binaryAs(toCast, object);
 	}
 
+	/**
+	 * Try action call.
+	 *
+	 * @param op
+	 *            the op
+	 * @param object
+	 *            the object
+	 * @return the i expression
+	 */
 	private IExpression tryActionCall(final String op, final Function object) {
 		final SpeciesDescription sd = getContext().getSpeciesContext();
 		if (sd == null) return null;
@@ -990,6 +1173,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return action(op, caseVar(isSuper ? SUPER : SELF, object), params, action);
 	}
 
+	/**
+	 * Checks if is casting function.
+	 *
+	 * @param op
+	 *            the op
+	 * @param object
+	 *            the object
+	 * @return true, if is casting function
+	 */
 	private boolean isCastingFunction(final String op, final Function object) {
 		// If the operator is not a type name, no match
 		if (!isTypeName(op)) {
@@ -1010,7 +1202,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (size == 1) return true;
 		// If more than one, we need to check if there are operators that match. If yes, we return false
 		return !getFactory().hasOperator(op, getContext(), object,
-				toArray(transform(args, a -> compile(a)), IExpression.class));
+				toArray(transform(args, this::compile), IExpression.class));
 	}
 
 	@Override
@@ -1059,7 +1251,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseBooleanLiteral(final BooleanLiteral object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
 		if (s == null) return null;
-		return s.equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
+		return TRUE.equalsIgnoreCase(s) ? TRUE_EXPR : FALSE_EXPR;
 	}
 
 	@Override
@@ -1072,6 +1264,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return null;
 	}
 
+	/**
+	 * Case var.
+	 *
+	 * @param varName
+	 *            the var name
+	 * @param object
+	 *            the object
+	 * @return the i expression
+	 */
 	private IExpression caseVar(final String varName, final EObject object) {
 		if (varName == null) {
 			getContext().error("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
@@ -1105,33 +1306,27 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		// check if the var has been declared in an iterator context
-		for (final IVarExpression it : iteratorContexts) {
-			if (it.getName().equals(varName)) return it;
-		}
+		for (final IVarExpression it : iteratorContexts) { if (it.getName().equals(varName)) return it; }
 
 		final IVarDescriptionProvider temp_sd =
 				getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 
 		if (temp_sd != null) {
-			if (temp_sd instanceof SpeciesDescription) {
-				final SpeciesDescription remote_sd = getContext().getSpeciesContext();
-				if (remote_sd != null) {
-					final SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
+			if (!(temp_sd instanceof SpeciesDescription)) return temp_sd.getVarExpr(varName, false);
+			final SpeciesDescription remote_sd = getContext().getSpeciesContext();
+			if (remote_sd != null) {
+				final SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
 
-					if (remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd)) {
-						getContext().error(
-								"The variable " + varName + " is not accessible in this context (" + remote_sd.getName()
-										+ "), but in the context of " + found_sd.getName()
-										+ ". It should be preceded by 'myself.'",
-								IGamlIssue.UNKNOWN_VAR, object, varName);
-					}
+				if (remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd)) {
+					getContext().error("The variable " + varName + " is not accessible in this context ("
+							+ remote_sd.getName() + "), but in the context of " + found_sd.getName()
+							+ ". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, varName);
 				}
+			}
 
-				// See Issue #3085. We give priority to the variables sporting species names unless they represent the
-				// species withing the agents
-				if (!isSpeciesName(varName)) return temp_sd.getVarExpr(varName, false);
-			} else
-				return temp_sd.getVarExpr(varName, false);
+			// See Issue #3085. We give priority to the variables sporting species names unless they represent the
+			// species withing the agents
+			if (!isSpeciesName(varName)) return temp_sd.getVarExpr(varName, false);
 		}
 
 		// See Issue #3085
@@ -1174,6 +1369,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	}
 
+	/**
+	 * Gets the e object of.
+	 *
+	 * @param string
+	 *            the string
+	 * @param tempContext
+	 *            the temp context
+	 * @return the e object of
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	private EObject getEObjectOf(final String string, final IExecutionContext tempContext) throws GamaRuntimeException {
 		EObject result = null;
 		final String s = "dummy <- " + string;
@@ -1187,13 +1393,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				return null;
 			}
 
-			if (!resource.hasErrors()) {
-				final EObject e = resource.getContents().get(0);
-				if (e instanceof StringEvaluator) { result = ((StringEvaluator) e).getExpr(); }
-			} else {
+			if (resource.hasErrors()) {
 				final Resource.Diagnostic d = resource.getErrors().get(0);
 				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
+			final EObject e = resource.getContents().get(0);
+			if (e instanceof StringEvaluator) { result = ((StringEvaluator) e).getExpr(); }
 
 			return result;
 		} finally {
@@ -1214,24 +1419,20 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				e1.printStackTrace();
 				return null;
 			} finally {}
-			if (!resource.hasErrors()) {
-				final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
-				// We have a problem -- can be simply an empty block or an expression
-				if (!elt.hasChildren()) {
-					if (elt.hasFacet(IKeyword.FUNCTION)) {
-						// Compile the expression is the best way to know if this expression is correct
-						elt.getExpressionAt(IKeyword.FUNCTION).compile(actionContext);
-					}
-				}
-				elt.visitChildren(e -> {
-					final IDescription desc = DescriptionFactory.create(e, actionContext, null);
-					result.add(desc);
-				});
-
-			} else {
+			if (resource.hasErrors()) {
 				final Resource.Diagnostic d = resource.getErrors().get(0);
 				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
+			final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
+			// We have a problem -- can be simply an empty block or an expression
+			if (!elt.hasChildren() && elt.hasFacet(IKeyword.FUNCTION)) {
+				// Compile the expression is the best way to know if this expression is correct
+				elt.getExpressionAt(IKeyword.FUNCTION).compile(actionContext);
+			}
+			elt.visitChildren(e -> {
+				final IDescription desc = DescriptionFactory.create(e, actionContext, null);
+				result.add(desc);
+			});
 			return result.items();
 		} finally {
 			GamlResourceServices.discardTemporaryResource(resource);
@@ -1242,6 +1443,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// end-hqnghi
 	//
 
+	/**
+	 * Gets the each expr.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the each expr
+	 */
 	public IVarExpression getEachExpr(final EObject object) {
 		final IVarExpression p = iteratorContexts.peek();
 		if (p == null) {
@@ -1251,17 +1459,29 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return p;
 	}
 
-	private IExpressionDescription getCurrentExpressionDescription() {
-		return currentExpressionDescription;
-	}
+	/**
+	 * Gets the current expression description.
+	 *
+	 * @return the current expression description
+	 */
+	private IExpressionDescription getCurrentExpressionDescription() { return currentExpressionDescription; }
 
+	/**
+	 * Sets the current expression description.
+	 *
+	 * @param currentExpressionDescription
+	 *            the new current expression description
+	 */
 	private void setCurrentExpressionDescription(final IExpressionDescription currentExpressionDescription) {
 		this.currentExpressionDescription = currentExpressionDescription;
 	}
 
-	private IExpressionFactory getFactory() {
-		return GAML.getExpressionFactory();
-	}
+	/**
+	 * Gets the factory.
+	 *
+	 * @return the factory
+	 */
+	private IExpressionFactory getFactory() { return GAML.getExpressionFactory(); }
 
 	@Override
 	public void dispose() {

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlSyntacticConverter.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlSyntacticConverter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.ACTION;
@@ -130,16 +129,26 @@ import msi.gaml.statements.Facets;
  */
 public class GamlSyntacticConverter {
 
+	/** The Constant builder. */
 	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
+	/** The synthetic action. */
 	private static int SYNTHETIC_ACTION = 0;
 
+	/**
+	 * Gets the absolute container folder path of.
+	 *
+	 * @param r
+	 *            the r
+	 * @return the absolute container folder path of
+	 */
 	public static String getAbsoluteContainerFolderPathOf(final Resource r) {
 		URI uri = r.getURI();
 		if (uri.isFile()) {
 			uri = uri.trimSegments(1);
 			return uri.toFileString();
-		} else if (uri.isPlatform()) {
+		}
+		if (uri.isPlatform()) {
 			final IPath path = GamlResourceServices.getPathOf(r);
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			final IContainer folder = file.getParent();
@@ -149,9 +158,19 @@ public class GamlSyntacticConverter {
 
 	}
 
+	/** The Constant STATEMENTS_WITH_ATTRIBUTES. */
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
 			Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
+	/**
+	 * Builds the syntactic contents.
+	 *
+	 * @param root
+	 *            the root
+	 * @param errors
+	 *            the errors
+	 * @return the i syntactic element
+	 */
 	public ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if (root instanceof StandaloneBlock) {
 			final SyntacticModelElement elt = SyntacticFactory.createSyntheticModel(root);
@@ -182,6 +201,13 @@ public class GamlSyntacticConverter {
 		return model;
 	}
 
+	/**
+	 * Collect pragmas.
+	 *
+	 * @param m
+	 *            the m
+	 * @return the list
+	 */
 	private List<String> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) return null;
 		final List<Pragma> pragmas = m.getPragmas();
@@ -195,6 +221,13 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Does not define attributes.
+	 *
+	 * @param keyword
+	 *            the keyword
+	 * @return true, if successful
+	 */
 	private boolean doesNotDefineAttributes(final String keyword) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		if (p == null) return true;
@@ -202,16 +235,24 @@ public class GamlSyntacticConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
+	/**
+	 * Conv statement.
+	 *
+	 * @param upper
+	 *            the upper
+	 * @param stm
+	 *            the stm
+	 * @param errors
+	 *            the errors
+	 * @return the i syntactic element
+	 */
 	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getInstance().getKeyOf(stm);
-		if (keyword == null)
-			throw new NullPointerException(
-					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
-		else {
-			keyword = convertKeyword(keyword, upper.getKeyword());
-		}
+		if (keyword == null) throw new NullPointerException(
+				"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
+		keyword = convertKeyword(keyword, upper.getKeyword());
 
 		final boolean isVar = stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)
 				&& !doesNotDefineAttributes(upper.getKeyword()) && !EGaml.getInstance().hasChildren(stm);
@@ -248,8 +289,11 @@ public class GamlSyntacticConverter {
 			// V1, ID2:V2)"
 			final Expression e = stm.getExpr();
 			addFacet(elt, ACTION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
+			// Systematically adds the internal function (see #2915) in order to have the right documentation
+			// TODO AD: verify that 'ACTION' is still necessary in that case
+			addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 			if (e instanceof Function) {
-				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
+				// addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				final Function f = (Function) e;
 
 				final ExpressionList list = f.getRight();
@@ -311,10 +355,32 @@ public class GamlSyntacticConverter {
 		return elt;
 	}
 
+	/**
+	 * Convert block.
+	 *
+	 * @param elt
+	 *            the elt
+	 * @param block
+	 *            the block
+	 * @param errors
+	 *            the errors
+	 */
 	public void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
 		if (block != null) { convStatements(elt, EGaml.getInstance().getStatementsOf(block), errors); }
 	}
 
+	/**
+	 * Adds the facet.
+	 *
+	 * @param e
+	 *            the e
+	 * @param key
+	 *            the key
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 */
 	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
 		if (e.hasFacet(key)) {
@@ -324,6 +390,16 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Conv else.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param elt
+	 *            the elt
+	 * @param errors
+	 *            the errors
+	 */
 	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final EObject elseBlock = stm.getElse();
 		if (elseBlock != null) {
@@ -338,6 +414,16 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Conv catch.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param elt
+	 *            the elt
+	 * @param errors
+	 *            the errors
+	 */
 	private void convCatch(final S_Try stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final EObject catchBlock = stm.getCatch();
 		if (catchBlock != null) {
@@ -348,6 +434,16 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Convert args.
+	 *
+	 * @param args
+	 *            the args
+	 * @param elt
+	 *            the elt
+	 * @param errors
+	 *            the errors
+	 */
 	private void convertArgs(final ActionArguments args, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		if (args != null) {
 			for (final ArgumentDefinition def : EGaml.getInstance().getArgsOf(args)) {
@@ -362,6 +458,21 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Convert assignment.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param originalKeyword
+	 *            the original keyword
+	 * @param elt
+	 *            the elt
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @return the string
+	 */
 	private String convertAssignment(final S_Assignment stm, final String originalKeyword, final ISyntacticElement elt,
 			final Expression expr, final Set<Diagnostic> errors) {
 		final IExpressionDescription value = convExpr(stm.getValue(), errors);
@@ -436,6 +547,18 @@ public class GamlSyntacticConverter {
 		return keyword;
 	}
 
+	/**
+	 * Convert facets.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param keyword
+	 *            the keyword
+	 * @param elt
+	 *            the elt
+	 * @param errors
+	 *            the errors
+	 */
 	private void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
@@ -466,6 +589,16 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Convert facets.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param elt
+	 *            the elt
+	 * @param errors
+	 *            the errors
+	 */
 	private void convertFacets(final HeadlessExperiment stm, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(EXPERIMENT, null);
@@ -483,6 +616,15 @@ public class GamlSyntacticConverter {
 		if (!elt.hasFacet(TYPE)) { addFacet(elt, TYPE, convertToLabel(null, HEADLESS_UI), errors); }
 	}
 
+	/**
+	 * Convert keyword.
+	 *
+	 * @param k
+	 *            the k
+	 * @param upper
+	 *            the upper
+	 * @return the string
+	 */
 	private String convertKeyword(final String k, final String upper) {
 		String keyword = k;
 		if ((BATCH.equals(upper) || EXPERIMENT.equals(upper)) && SAVE.equals(keyword)) {
@@ -497,16 +639,45 @@ public class GamlSyntacticConverter {
 		return keyword;
 	}
 
+	/**
+	 * Conv expr.
+	 *
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @return the i expression description
+	 */
 	private final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
 		if (expr == null) return null;
 		return builder.create(expr/* , errors */);
 	}
 
+	/**
+	 * Conv expr.
+	 *
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @return the i expression description
+	 */
 	private final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
 		if (expr == null) return null;
 		return ExpressionDescriptionBuilder.create(expr, errors);
 	}
 
+	/**
+	 * Conv expr.
+	 *
+	 * @param facet
+	 *            the facet
+	 * @param label
+	 *            the label
+	 * @param errors
+	 *            the errors
+	 * @return the i expression description
+	 */
 	private final IExpressionDescription convExpr(final Facet facet, final boolean label,
 			final Set<Diagnostic> errors) {
 		if (facet != null) {
@@ -527,7 +698,17 @@ public class GamlSyntacticConverter {
 		return null;
 	}
 
+	/**
+	 * Convert to label.
+	 *
+	 * @param target
+	 *            the target
+	 * @param string
+	 *            the string
+	 * @return the i expression description
+	 */
 	final IExpressionDescription convertToLabel(final EObject target, final String string) {
+
 		final IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if (target != null) {
@@ -536,6 +717,16 @@ public class GamlSyntacticConverter {
 		return ed;
 	}
 
+	/**
+	 * Conv statements.
+	 *
+	 * @param elt
+	 *            the elt
+	 * @param ss
+	 *            the ss
+	 * @param errors
+	 *            the errors
+	 */
 	final void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
 			final Set<Diagnostic> errors) {
 		for (final Statement stm : ss) {
@@ -549,6 +740,15 @@ public class GamlSyntacticConverter {
 		}
 	}
 
+	/**
+	 * Find expr.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param errors
+	 *            the errors
+	 * @return the i expression description
+	 */
 	private final IExpressionDescription findExpr(final Statement stm, final Set<Diagnostic> errors) {
 		if (stm == null) return null;
 		// The order below should be important
@@ -559,6 +759,15 @@ public class GamlSyntacticConverter {
 		return null;
 	}
 
+	/**
+	 * Find expr.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param errors
+	 *            the errors
+	 * @return the i expression description
+	 */
 	private final IExpressionDescription findExpr(final HeadlessExperiment stm, final Set<Diagnostic> errors) {
 		if (stm == null) return null;
 		// The order below should be important

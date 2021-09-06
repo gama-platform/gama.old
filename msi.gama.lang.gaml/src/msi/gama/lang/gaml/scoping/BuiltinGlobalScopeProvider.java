@@ -1,21 +1,22 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BuiltinGlobalScopeProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BuiltinGlobalScopeProvider.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform (v.2.0.0).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
-import java.util.Arrays;
+import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.allImportsOf;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
 import org.eclipse.xtext.scoping.impl.SelectableBasedScope;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
@@ -59,6 +59,7 @@ import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.IUnits;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
@@ -83,19 +84,41 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		DEBUG.ON();
 	}
 
+	/** The Constant EMPTY_MAP. */
 	static final IMap EMPTY_MAP = GamaMapFactory.createUnordered();
+
+	/** The global scopes. */
 	private static IMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = GamaMapFactory.createUnordered();
+
+	/** The all names. */
 	private static Set<QualifiedName> allNames;
+
+	/** The resources. */
 	private static IMap<EClass, Resource> resources;
+
+	/** The descriptions. */
 	private static IMap<EClass, IMap<QualifiedName, IEObjectDescription>> descriptions = null;
+
+	/** The e equation. */
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
+	/** The rs. */
 	static XtextResourceSet rs = new XtextResourceSet();
 
+	/**
+	 * The Class ImmutableMap.
+	 */
 	public static class ImmutableMap implements Map<String, String> {
 
+		/** The contents. */
 		private final String[] contents;
 
+		/**
+		 * Instantiates a new immutable map.
+		 *
+		 * @param strings
+		 *            the strings
+		 */
 		public ImmutableMap(final String... strings) {
 			contents = strings == null ? new String[0] : strings;
 		}
@@ -116,9 +139,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 * @see java.util.Map#isEmpty()
 		 */
 		@Override
-		public boolean isEmpty() {
-			return contents.length == 0;
-		}
+		public boolean isEmpty() { return contents.length == 0; }
 
 		/**
 		 * Method containsKey()
@@ -203,7 +224,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		 */
 		@Override
 		public void putAll(final Map<? extends String, ? extends String> m) {
-			m.forEach((k, v) -> put(k, v));
+			m.forEach(this::put);
 		}
 
 		/**
@@ -222,9 +243,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		@Override
 		public Set<String> keySet() {
 			final HashSet<String> keys = new HashSet<>();
-			for (int i = 0; i < contents.length; i += 2) {
-				keys.add(contents[i]);
-			}
+			for (int i = 0; i < contents.length; i += 2) { keys.add(contents[i]); }
 			return keys;
 		}
 
@@ -236,9 +255,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		@Override
 		public Collection<String> values() {
 			final HashSet<String> values = new HashSet<>();
-			for (int i = 1; i < contents.length; i += 2) {
-				values.add(contents[i]);
-			}
+			for (int i = 1; i < contents.length; i += 2) { values.add(contents[i]); }
 			return values;
 		}
 
@@ -277,12 +294,22 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 	}
 
+	/**
+	 * Creates the resource.
+	 *
+	 * @param uri
+	 *            the uri
+	 * @return the resource
+	 */
 	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri, false), false);
 		if (r == null) { r = rs.createResource(URI.createURI(uri, false)); }
 		return r;
 	}
 
+	/**
+	 * Inits the resources.
+	 */
 	static void initResources() {
 		eType = GamlPackage.eINSTANCE.getTypeDefinition();
 		eVar = GamlPackage.eINSTANCE.getVarDefinition();
@@ -307,10 +334,26 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		allNames = new HashSet<>();
 	}
 
+	/**
+	 * Contains.
+	 *
+	 * @param name
+	 *            the name
+	 * @return true, if successful
+	 */
 	public boolean contains(final QualifiedName name) {
 		return allNames.contains(name);
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param eClass
+	 *            the e class
+	 * @param t
+	 *            the t
+	 * @return the gaml definition
+	 */
 	static GamlDefinition add(final EClass eClass, final String t) {
 		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
@@ -321,6 +364,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		return stub;
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param eClass
+	 *            the e class
+	 * @param t
+	 *            the t
+	 * @param o
+	 *            the o
+	 */
 	static void add(final EClass eClass, final String t, final OperatorProto o) {
 		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
@@ -340,11 +393,26 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 	}
 
-	public static void addVar(final String t, final IGamlDescription o, final String keyword) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eVar);
-		// TODO Add the fields definition here
-		stub.setName(t);
-		resources.get(eVar).getContents().add(stub);
+	/**
+	 * Adds the var.
+	 *
+	 * @param t
+	 *            the t
+	 * @param o
+	 *
+	 * @param keyword
+	 *            the keyword indicating the type of the stub (variable, action, etc.)
+	 * @return the last stub constructed
+	 */
+	public static GamlDefinition addWithDoc(final String t, final IGamlDescription o, final String keyword,
+			final EClass... classes) {
+
+//		DEBUG.OUT("Adding stub for " + keyword + " " + t);
+
+
+		GamlDefinition stub = null;
+		QualifiedName qName = QualifiedName.create(t);
+		allNames.add(qName);
 		final IGamlDescription d =
 				GAMA.isInHeadLessMode() ? null : GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		Map<String, String> doc;
@@ -353,32 +421,39 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		} else {
 			doc = new ImmutableMap("type", keyword);
 		}
-		final IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		descriptions.get(eVar).put(e.getName(), e);
-		allNames.add(e.getName());
+		for (EClass eClass : classes) {
+			stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
+			stub.setName(t);
+			resources.get(eClass).getContents().add(stub);
+			IMap<QualifiedName, IEObjectDescription> eClassDescriptions = descriptions.get(eClass);
 
-	}
-
-	static void addAction(final EClass eClass, final String t, final IGamlDescription o) {
-		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
-		// TODO Add the fields definition here
-		stub.setName(t);
-		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d =
-				GAMA.isInHeadLessMode() ? null : GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(stub, o, false, true);
-		Map<String, String> doc;
-		if (d != null) {
-			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
-		} else {
-			doc = new ImmutableMap("type", "action");
+			final IEObjectDescription existing = eClassDescriptions.get(qName);
+			// If it already exists, then the previous doc is added to the current and the existing IEObjectDescription
+			// is discarded
+			if (existing != null) {
+				String body = existing.getUserData("doc");
+				if (body != null) {
+					String title = existing.getUserData("title");
+					doc.put("doc", doc.get("doc") + Strings.LN + "<p/><hr><p/>" + Strings.LN + "<b>" + title
+							+ "</b><p/>" + body);
+				}
+			}
+			// We create the new IEObjectDescription
+			IEObjectDescription e = EObjectDescription.create(qName, stub, doc);
+			eClassDescriptions.put(qName, e);
+			// GamlResourceServices.getResourceDocumenter().setGamlDocumentation(stub, o, true, true);
 		}
-		final IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		descriptions.get(eClass).put(e.getName(), e);
-		allNames.add(e.getName());
-
+		return stub;
 	}
 
+	/**
+	 * Adds the unit.
+	 *
+	 * @param eClass
+	 *            the e class
+	 * @param t
+	 *            the t
+	 */
 	static void addUnit(final EClass eClass, final String t) {
 		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		stub.setName(t);
@@ -391,6 +466,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 	}
 
+	/**
+	 * Adds the type.
+	 *
+	 * @param eClass
+	 *            the e class
+	 * @param t
+	 *            the t
+	 * @param type
+	 *            the type
+	 */
 	static void addType(final EClass eClass, final String t, final IType type) {
 		final GamlDefinition stub = (GamlDefinition) EGaml.getInstance().getFactory().create(eClass);
 		// TODO Add the fields definition here
@@ -411,6 +496,13 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		return descriptions.get(eClass);
 	}
 
+	/**
+	 * Gets the global scope.
+	 *
+	 * @param eClass
+	 *            the e class
+	 * @return the global scope
+	 */
 	public TerminalMapBasedScope getGlobalScope(final EClass eClass) {
 		if (GLOBAL_SCOPES.containsKey(eClass)) return GLOBAL_SCOPES.get(eClass);
 		IMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
@@ -420,6 +512,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		return result;
 	}
 
+	/**
+	 * Creates the descriptions.
+	 */
 	public static void createDescriptions() {
 		if (descriptions == null) {
 			initResources();
@@ -433,24 +528,21 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 				add(eType, t);
 				add(eVar, t);
 			}
-			for (final String t : IUnits.UNITS_EXPR.keySet()) {
-				addUnit(eUnit, t);
-			}
+			for (final String t : IUnits.UNITS_EXPR.keySet()) { addUnit(eUnit, t); }
 			for (final OperatorProto t : AbstractGamlAdditions.getAllFields()) {
-				addVar(t.getName(), t, "field");
+				addWithDoc(t.getName(), t, "field", eVar);
 			}
-			if (!GAMA.isInHeadLessMode()) { addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform"); }
+			if (!GAMA.isInHeadLessMode()) { addWithDoc(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform", eVar); }
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
-				addVar(t.getName(), t, "variable");
+				addWithDoc(t.getName(), t, "variable", eVar);
 			}
 			for (final String t : GamaSkillRegistry.INSTANCE.getAllSkillNames()) {
 				add(eSkill, t);
 				add(eVar, t);
 			}
 			for (final IDescription t : AbstractGamlAdditions.getAllActions()) {
-				addAction(eAction, t.getName(), t);
-				final GamlDefinition def = add(eVar, t.getName());
-				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true, true);
+				addWithDoc(t.getName(), t, "action", eAction, eVar);
+				// GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
 			IExpressionCompiler.OPERATORS.forEachPair((a, b) -> {
@@ -466,14 +558,24 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		}
 	}
 
+	/**
+	 * Gets the all imported URIs.
+	 *
+	 * @param resource
+	 *            the resource
+	 * @param set
+	 *            the set
+	 * @return the all imported UR is
+	 */
 	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
 		return GamlResourceIndexer.allLabeledImportsOf((GamlResource) resource);
 	}
 
 	@Override
 	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
-		final LinkedHashSet<URI> result = new LinkedHashSet(
-				Arrays.asList(Iterators.toArray(GamlResourceIndexer.allImportsOf(resource.getURI()), URI.class)));
+		LinkedHashSet<URI> result = new LinkedHashSet<>();
+		Iterator<URI> uris = allImportsOf(resource.getURI());
+		while (uris.hasNext()) { result.add(uris.next()); }
 		return result;
 	}
 
@@ -487,10 +589,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		urisAsList.remove(resource.getURI());
 		Collections.reverse(urisAsList);
 		final IResourceDescriptions descriptions = getResourceDescriptions(resource, urisAsList);
-		scope = SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
-		return scope;
+		return SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
 	}
 
+	/**
+	 * Gets the var.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the var
+	 */
 	public static IEObjectDescription getVar(final String name) {
 		if (name == null) return null;
 		return descriptions.get(eVar).get(QualifiedName.create(name));

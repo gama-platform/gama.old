@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlProposalProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlProposalProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -54,10 +52,15 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// private static Image facetImage =
 	// ImageDescriptor.createFromFile(GamlProposalProvider.class,
 	// "/icons/_facet.png")
+	/** The type image. */
 	// .createImage();
 	static Image typeImage =
 			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png").createImage();
+
+	/** The var image. */
 	static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png").createImage();
+
+	/** The action image. */
 	static Image actionImage =
 			ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png").createImage();
 
@@ -66,8 +69,12 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// "/icons/_skills.png")
 	// .createImage();
 
+	/**
+	 * The Class GamlProposalCreator.
+	 */
 	class GamlProposalCreator extends DefaultProposalCreator {
 
+		/** The context. */
 		ContentAssistContext context;
 
 		/**
@@ -88,52 +95,44 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			boolean isOperator = false;
 			String doc = candidate.getUserData("doc");
 			final String title = candidate.getUserData("title");
-			if (doc == null) {
-				doc = "Not documented yet";
-			}
+			if (doc == null) { doc = "Not documented yet"; }
 			if (cp != null) {
 				cp.setAdditionalProposalInfo("<b>" + title + "</b><p/><p>" + doc + "</p>");
 
 				final String type = candidate.getUserData("type");
 				if (type != null) {
-					if (type.equals("operator")) {
+					cp.setDisplayString(cp.getDisplayString().concat(" (Built-in " + type + ") "));
+					if ("operator".equals(type)) {
 						isOperator = true;
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in operator) "));
 						cp.setImage(actionImage);
-					} else if (type.equals("variable")) {
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in variable) "));
+					} else if ("variable".equals(type) || "field".equals(type)) {
 						cp.setImage(varImage);
-					} else if (type.equals("field")) {
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in field) "));
-						cp.setImage(varImage);
-					} else if (type.equals("action")) {
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in action) "));
+					} else if ("action".equals(type)) {
 						cp.setImage(actionImage);
-					} else if (type.equals("unit")) {
+					} else if ("unit".equals(type)) {
 						isOperator = true;
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in unit) "));
 						cp.setImage(null);
-					} else if (type.equals("type")) {
+					} else if ("type".equals(type)) {
 						isOperator = true;
-						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in type) "));
 						cp.setImage(typeImage);
 					}
 					cp.setPriority(1000);
 				}
 			}
 
-			if (context.getPrefix().equals(".")) {
-				if (isOperator) { return null; }
-				if (cp != null && cp.getPriority() > 500) {
-					cp.setPriority(200);
-				}
+			if (".".equals(context.getPrefix())) {
+				if (isOperator) return null;
+				if (cp != null && cp.getPriority() > 500) { cp.setPriority(200); }
 			}
 			return cp;
 		}
 
-	};
+	}
 
-	class GamlCompletionProposal extends ConfigurableCompletionProposal {
+	/**
+	 * The Class GamlCompletionProposal.
+	 */
+	static class GamlCompletionProposal extends ConfigurableCompletionProposal {
 
 		/**
 		 * @param replacementString
@@ -155,26 +154,41 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 		@Override
 		public IInformationControlCreator getInformationControlCreator() {
-			return parent -> {
-				final IInformationControl control = new DefaultInformationControl(parent, true);
-				return control;
-
-			};
+			return parent -> new DefaultInformationControl(parent, true);
 		}
 
 	}
 
 	// private DefaultProposalCreator creator;
 
+	/**
+	 * The Class BuiltInProposal.
+	 */
 	static class BuiltInProposal {
 
+		/** The name. */
 		String name;
+
+		/** The title. */
 		StyledString title;
+
+		/** The image. */
 		Image image;
+
+		/** The documentation. */
 		String documentation;
 
+		/**
+		 * Instantiates a new built in proposal.
+		 *
+		 * @param name
+		 *            the name
+		 * @param title
+		 *            the title
+		 * @param image
+		 *            the image
+		 */
 		public BuiltInProposal(final String name, final StyledString title, final Image image) {
-			super();
 			this.name = name;
 			this.title = title;
 			this.image = image;
@@ -183,32 +197,29 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		/**
 		 * @param documentation
 		 */
-		public void setDoc(final String documentation) {
-			this.documentation = documentation;
-		}
+		public void setDoc(final String documentation) { this.documentation = documentation; }
 	}
 
 	@Override
 	protected String getDisplayString(final EObject element, final String q, final String shortName) {
 		String qualifiedNameAsString = q;
+		if (qualifiedNameAsString == null) { qualifiedNameAsString = shortName; }
 		if (qualifiedNameAsString == null) {
-			qualifiedNameAsString = shortName;
-		}
-		if (qualifiedNameAsString == null) {
-			if (element != null) {
-				qualifiedNameAsString = provider.getText(element);
-			} else {
-				return null;
-			}
+			if (element == null) return null;
+			qualifiedNameAsString = provider.getText(element);
 		}
 		return qualifiedNameAsString;
 	}
 
+	/** The Constant proposals. */
 	static final List<BuiltInProposal> proposals = new ArrayList<>();
+
+	/** The Constant facets. */
 	static final Set<String> fields = new HashSet(), vars = new HashSet(), actions = new HashSet(),
 			types = new HashSet(), skills = new HashSet(), constants = new HashSet(), units = new HashSet(),
 			statements = new HashSet(), facets = new HashSet();
 
+	/** The provider. */
 	@Inject GamlLabelProvider provider;
 
 	// @Inject
@@ -217,14 +228,14 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// @Inject
 	// private GamlJavaValidator validator;
 
+	/** The ga. */
 	@Inject private GamlGrammarAccess ga;
 
 	@Override
 	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
 		// Disabling for comments (see Issue 786)
 		final EObject grammarElement = context.getCurrentNode().getGrammarElement();
-		if (grammarElement == ga.getML_COMMENTRule()) { return; }
-		if (grammarElement == ga.getSL_COMMENTRule()) { return; }
+		if (grammarElement == ga.getML_COMMENTRule() || grammarElement == ga.getSL_COMMENTRule()) return;
 		//
 		addBuiltInElements(context, acceptor);
 		super.createProposals(context, acceptor);
@@ -239,15 +250,13 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Override
 	protected ConfigurableCompletionProposal doCreateProposal(final String proposal, final StyledString displayString,
 			final Image image, final int priority, final ContentAssistContext context) {
-		final ConfigurableCompletionProposal cp =
-				super.doCreateProposal(proposal, displayString, image, priority, context);
-		return cp;
+		return super.doCreateProposal(proposal, displayString, image, priority, context);
 	}
 
 	/**
 	 * @param context
 	 * @param acceptor
-	 * 
+	 *
 	 *            TODO Filter the proposals (passing an argument ?) depending on the context in the dispatcher (see
 	 *            commented methods below). TODO Build this list at once instead of recomputing it everytime (might be
 	 *            done in a dedicated data structure somewhere) and separate it by types (vars, units, etc.)
@@ -339,9 +348,9 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	@Override
 	protected boolean isValidProposal(final String proposal, final String prefix, final ContentAssistContext context) {
-		if (prefix.equals(
-				".")) { return !types.contains(proposal) && !units.contains(proposal) && !constants.contains(proposal)
-						&& !skills.contains(proposal) && isValidProposal(proposal, "", context); }
+		if (".".equals(prefix))
+			return !types.contains(proposal) && !units.contains(proposal) && !constants.contains(proposal)
+					&& !skills.contains(proposal) && isValidProposal(proposal, "", context);
 		return super.isValidProposal(proposal, prefix, context);
 	}
 
