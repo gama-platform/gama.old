@@ -216,11 +216,11 @@ public class Application implements IApplication {
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 
 		if (!args.contains(RUN_LSP)) {
-//			GamlIdeSetup setup = new GamlIdeSetup();
-//			Injector inj = setup.createInjector();
-//			HeadlessSimulationLoader.preloadGAMA(inj);
-//		}
-//		else {
+			GamlIdeSetup setup = new GamlIdeSetup();
+			Injector inj = setup.createInjector();
+			HeadlessSimulationLoader.preloadGAMA(inj);
+		}
+		else {
 			HeadlessSimulationLoader.preloadGAMA();
 		}
 		
@@ -230,7 +230,13 @@ public class Application implements IApplication {
 		}
 		else if (args.contains(RUN_LSP)) {
 			DEBUG.ON();
-			RunLSP.main(mm.get("application.args"));
+			try {
+				DEBUG.LOG("Starting LSP Server");
+				RunLSP.main(mm.get("application.args"));
+			} catch (Exception e) {
+				DEBUG.LOG(e.toString());
+				DEBUG.LOG("LSP Error");
+			}
 			return null;
 		}
 		else if (args.contains(HELP_PARAMETER)) {
