@@ -937,7 +937,17 @@ public class DrivingSkill extends MovingSkill {
 
 	@getter(LEADING_DISTANCE)
 	public static double getLeadingDistance(final IAgent vehicle) {
-		return (double) vehicle.getAttribute(LEADING_DISTANCE);
+		Double d =  (Double) vehicle.getAttribute(LEADING_DISTANCE);
+		if (d == null) return 0.0;
+		return d.doubleValue();
+	}
+	
+
+	@getter(LEADING_SPEED)
+	public static double getLeadingSpeed(final IAgent vehicle) {
+		Double d =  (Double) vehicle.getAttribute(LEADING_SPEED);
+		if (d == null) return 0.0;
+		return d.doubleValue();
 	}
 
 	@setter(LEADING_DISTANCE)
