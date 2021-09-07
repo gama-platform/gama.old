@@ -44,7 +44,6 @@ import org.w3c.dom.Document;
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
-
 import msi.gama.headless.batch.ModelLibraryRunner;
 import msi.gama.headless.batch.ModelLibraryTester;
 import msi.gama.headless.batch.ModelLibraryValidator;
@@ -61,18 +60,15 @@ import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
-
-import msi.gama.lang.gaml.ide.RunLSP;
-import msi.gama.lang.gaml.ide.GamlIdeSetup;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-
 import ummisco.gama.dev.utils.DEBUG;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.ide.RunLSP;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 
 public class Application implements IApplication {
@@ -92,7 +88,8 @@ public class Application implements IApplication {
 	final public static String BUILD_XML_PARAMETER = "-xml";
 	final public static String CHECK_MODEL_PARAMETER = "-check";
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
-	final public static String RUN_LSP = "-lsp";
+	final public static String RUN_LSP  = "-lsp";
+
   // -> Code still exist, but not documented nor use
 	final public static String BATCH_PARAMETER = "-batch";
 	final public static String GAML_PARAMETER = "-gaml";
@@ -104,14 +101,13 @@ public class Application implements IApplication {
 	public boolean tunnelingMode = false;
 	public boolean verbose = false;
 	public SimulationRuntime processorQueue;
-  
+
 	private static void showVersion() {
 		DEBUG.ON();
 		DEBUG.LOG(
 			"Welcome to Gama-platform.org version " + GAMA.VERSION + "\n"
 		);
 		DEBUG.OFF();
-
 	}
 
 	private static void showHelp() {
@@ -142,7 +138,6 @@ public class Application implements IApplication {
 			+ "\n\t\t                             -- build an xml parameter file from a model"
 			+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
 			+ "\n\t\t                             -- default usage of GAMA headless"
-      + "\n\t\t" + RUN_LSP + " -- Run Gaml Language server"
 		);
 		DEBUG.OFF();
 	}
@@ -167,10 +162,12 @@ public class Application implements IApplication {
 				DEBUG.LOG("Log active", true);
 			}
 		}
-    
-    if (args.contains(RUN_LSP)) {
+		
+		if (args.contains(RUN_LSP)) {
 			size = size - 1;
 			mustContainInFile = false;
+			mustContainOutFile = false;
+			this.consoleMode = apply;
 		}
     
 		if (args.contains(CONSOLE_PARAMETER)) {
@@ -257,6 +254,7 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
+
 		final Map<String, String[]> mm = context.getArguments();
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 		
@@ -269,12 +267,12 @@ public class Application implements IApplication {
 		// No GAMA run
 		// ========================		
 		boolean shouldExit = false;
-		final Map<String, String[]> mm = context.getArguments();
-		final List<String> args = Arrays.asList(mm.get("application.args"));
-
-	
+		
 		if (args.contains(GAMA_VERSION)) {
 			showVersion();
+			shouldExit = true;
+		} else if (args.contains(RUN_LSP)) {
+			RunLSP.main(null);
 			shouldExit = true;
 		} else if (args.contains(HELP_PARAMETER)) {
 			showHelp();
@@ -287,14 +285,7 @@ public class Application implements IApplication {
 		// ========================
 		// With GAMA run
 		// ========================
-		if (args.contains(RUN_LSP)) {
-			GamlIdeSetup setup = new GamlIdeSetup();
-			Injector inj = setup.createInjector();
-			HeadlessSimulationLoader.preloadGAMA(inj);
-		}
-		else {
-			HeadlessSimulationLoader.preloadGAMA();
-		}
+		HeadlessSimulationLoader.preloadGAMA();
 		DEBUG.OFF();
 		
 		// Debug runner
