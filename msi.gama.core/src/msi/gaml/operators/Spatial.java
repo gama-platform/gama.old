@@ -3339,6 +3339,7 @@ public abstract class Spatial {
 			tot.addAll(results);
 			tot.remove(shape);
 			final IShape closest = Queries.closest_to(scope, tot, pt);
+			if (closest == null) return false;
 			if (closest.intersects(shape)) return false;
 			if (closest.euclidianDistanceTo(pt) <= tolerance) {
 				final GamaPoint fp = (GamaPoint) closest.getPoints().firstValue(scope);

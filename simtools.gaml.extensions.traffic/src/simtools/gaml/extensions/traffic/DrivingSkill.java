@@ -1328,7 +1328,7 @@ public class DrivingSkill extends MovingSkill {
 
 		IAgent initNode = null;
 		// initialize vehicle's location
-		if (getNextRoad(vehicle) == null) {
+		if (getCurrentRoad(vehicle) == null) {
 			IList<IShape> nodes = graph.getVertices();
 			IShape shape = Queries.closest_to(scope, nodes, vehicle);
 			initNode = shape.getAgent();
@@ -1616,6 +1616,7 @@ public class DrivingSkill extends MovingSkill {
 				return;
 			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				IAgent newRoad = getNextRoad(vehicle);
+				if (newRoad == null) return;
 				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
 				// check traffic lights and vehicles coming from other roads
@@ -1780,7 +1781,7 @@ public class DrivingSkill extends MovingSkill {
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
 				// Return to the main loop in `drive` to continue moving across the intersection
-				return distToGoal < EPSILON ? time : distToGoal / newSpeed;
+				return distToGoal < EPSILON ? time : Math.max(0,(time - (distToGoal / newSpeed)));
 			} else {
 				// Move to a new segment
 				distMoved -= distToGoal;

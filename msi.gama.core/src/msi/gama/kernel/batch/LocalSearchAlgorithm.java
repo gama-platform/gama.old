@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -32,6 +34,24 @@ public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 	protected IExpression initSolExpression;
 	public LocalSearchAlgorithm(final IDescription species) {
 		super(species);
+	}
+	
+	public Map<ParametersSet, Double>  testSolutions(List<ParametersSet> solutions) {
+		Map<ParametersSet, Double> results = GamaMapFactory.create();
+		solutions.removeIf(a -> a == null);
+		List<ParametersSet> solTotest = new ArrayList<>();
+		for (ParametersSet sol : solutions) {
+			if (testedSolutions.containsKey(sol)) {
+				results.put(sol, testedSolutions.get(sol));
+			} else {
+				solTotest.add(sol);
+			}
+		}
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest);
+		testedSolutions.putAll(res);
+		results.putAll(res);
+		
+		return results;
 	}
 
 	@Override
