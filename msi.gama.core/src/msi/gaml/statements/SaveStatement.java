@@ -44,6 +44,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
 import org.jgrapht.nio.GraphExporter;
@@ -1122,8 +1123,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			featureCollection.add(ff);
 		}
 
-		final FeatureJSON io = new FeatureJSON();
-		io.writeFeatureCollection(featureCollection, f.getAbsolutePath());
+		final FeatureJSON io = new FeatureJSON(new GeometryJSON(20)); 
+		io.writeFeatureCollection(featureCollection, f.getAbsolutePath()); 
 
 	}
 
