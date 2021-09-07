@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * Java2DDisplaySurface.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
- * platform (v.2.0.0).
+ * platform (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -75,7 +75,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.PlatformHelper;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 /**
@@ -223,9 +222,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final Point origin = getOrigin();
 		setOrigin(origin.x + PlatformHelper.autoScaleUp(x) - getMousePosition().x,
 				origin.y + PlatformHelper.autoScaleUp(y) - getMousePosition().y);
-		DEBUG.OUT("Translation on X : " + (PlatformHelper.autoScaleUp(x) - getMousePosition().x) + " | on Y : "
-				+ (PlatformHelper.autoScaleUp(y) - getMousePosition().y));
-		DEBUG.OUT("Old Origin = " + origin + " | New Origin = " + getOrigin());
+		// DEBUG.OUT("Translation on X : " + (PlatformHelper.autoScaleUp(x) - getMousePosition().x) + " | on Y : "
+		// + (PlatformHelper.autoScaleUp(y) - getMousePosition().y));
+		// DEBUG.OUT("Old Origin = " + origin + " | New Origin = " + getOrigin());
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
@@ -477,8 +476,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @return true, if successful
 	 */
 	public boolean resizeImage(final int x, final int y, final boolean force) {
-		DEBUG.OUT("Try to resize image to " + x + " " + y + "(current size is: " + getDisplayWidth() + " "
-				+ getDisplayHeight());
+		// DEBUG.OUT("Try to resize image to " + x + " " + y + "(current size is: " + getDisplayWidth() + " "
+		// + getDisplayHeight());
 		if (!force && x == getDisplayWidth() && y == getDisplayHeight()) return true;
 		if (x < 10 || y < 10 || getWidth() <= 0 && getHeight() <= 0) return false;
 
@@ -487,7 +486,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int imageHeight = Math.max(1, point[1]);
 		setDisplayHeight(imageHeight);
 		setDisplayWidth(imageWidth);
-		DEBUG.OUT("Resize Image suceeded : " + imageWidth + " " + imageHeight);
+		// DEBUG.OUT("Resize Image suceeded : " + imageWidth + " " + imageHeight);
 		iGraphics = new AWTDisplayGraphics((Graphics2D) this.getGraphics());
 		iGraphics.setDisplaySurface(this);
 		return true;
@@ -793,7 +792,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int yc = mousey - origin.y;
 		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		if (layers.isEmpty()) return;
-		WorkbenchHelper.run(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
+		try {
+			EventQueue.invokeAndWait(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
+		} catch (InvocationTargetException | InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
