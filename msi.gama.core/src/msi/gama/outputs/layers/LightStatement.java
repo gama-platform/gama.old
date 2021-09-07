@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.LightStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * LightStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,7 +12,6 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -38,6 +37,9 @@ import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class LightStatement.
+ */
 @symbol (
 		name = "light",
 		kind = ISymbolKind.LAYER,
@@ -119,6 +121,9 @@ import msi.gaml.types.Types;
 		see = { IKeyword.DISPLAY })
 public class LightStatement extends AbstractLayerStatement {
 
+	/**
+	 * The Class LightStatementValidator.
+	 */
 	public static class LightStatementValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -176,20 +181,38 @@ public class LightStatement extends AbstractLayerStatement {
 
 	}
 
+	/** The aspect. */
 	AspectStatement aspect;
+
+	/** The i. */
 	static int i;
+
+	/** The update. */
 	boolean update = true;
 
+	/**
+	 * Instantiates a new light statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public LightStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		layerToCreate = false;
 		final IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + i++);
 		aspect = new AspectStatement(d);
 	}
 
-	public AspectStatement getAspect() {
-		return aspect;
-	}
+	@Override
+	public boolean isToCreate() { return false; }
+
+	/**
+	 * Gets the aspect.
+	 *
+	 * @return the aspect
+	 */
+	public AspectStatement getAspect() { return aspect; }
 
 	@Override
 	protected boolean _init(final IScope scope) {
@@ -207,13 +230,17 @@ public class LightStatement extends AbstractLayerStatement {
 
 	@Override
 	protected boolean _step(final IScope scope) {
-		if (update) {
-			setLightProperties(scope);
-		}
+		if (update) { setLightProperties(scope); }
 		// TODO Auto-generated method stub
 		return true;
 	}
 
+	/**
+	 * Sets the light properties.
+	 *
+	 * @param scope
+	 *            the new light properties
+	 */
 	private void setLightProperties(final IScope scope) {
 		final int lightId = Cast.asInt(scope, getFacetValue(scope, IKeyword.ID));
 

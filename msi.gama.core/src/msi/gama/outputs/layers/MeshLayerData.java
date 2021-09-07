@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayerData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * MeshLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -26,35 +26,75 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFieldType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class MeshLayerData.
+ */
 public class MeshLayerData extends LayerData {
 
+	/** The default line color. */
 	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
+
+	/** The should compute values. */
 	boolean shouldComputeValues = true;
+
+	/** The values. */
 	IField values;
+
+	/** The line. */
 	Attribute<GamaColor> line;
+
+	/** The texture. */
 	Attribute<GamaImageFile> texture;
+
+	/** The smooth. */
 	Attribute<Integer> smooth;
+
+	/** The elevation. */
 	Attribute<IField> elevation;
+
+	/** The triangulation. */
 	Attribute<Boolean> triangulation;
+
+	/** The grayscale. */
 	Attribute<Boolean> grayscale;
+
+	/** The text. */
 	Attribute<Boolean> text;
+
+	/** The wireframe. */
 	Attribute<Boolean> wireframe;
+
+	/** The no data. */
 	Attribute<Double> noData;
+
+	/** The color. */
 	Attribute<Object> color;
+
+	/** The scale. */
 	Attribute<Double> scale;
+
+	/** The cell size. */
 	private GamaPoint cellSize;
+
+	/** The dim. */
 	private final GamaPoint dim = new GamaPoint();
 
+	/**
+	 * Instantiates a new mesh layer data.
+	 *
+	 * @param def
+	 *            the def
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("unchecked")
 	public MeshLayerData(final ILayerStatement def) throws GamaRuntimeException {
 		super(def);
 		size = create(IKeyword.SIZE, (scope, exp) -> {
 			Object result = exp.value(scope);
-			if (result instanceof Number)
-				return new GamaPoint(1, 1, ((Number) result).doubleValue());
-			else
-				return Cast.asPoint(scope, result);
-		}, Types.POINT, new GamaPoint(1, 1, 1), (e) -> {
+			if (result instanceof Number) return new GamaPoint(1, 1, ((Number) result).doubleValue());
+			return Cast.asPoint(scope, result);
+		}, Types.POINT, new GamaPoint(1, 1, 1), e -> {
 			Object v = e.getConstValue();
 			return v instanceof Number ? new GamaPoint(1, 1, ((Number) v).doubleValue()) : Cast.asPoint(null, v);
 		});
@@ -67,7 +107,7 @@ public class MeshLayerData extends LayerData {
 		smooth = create(IKeyword.SMOOTH, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			return result instanceof Boolean ? (Boolean) result ? 1 : 0 : Cast.asInt(scope, result);
-		}, Types.INT, 0, (e) -> {
+		}, Types.INT, 0, e -> {
 			Object v = e.getConstValue();
 			return v instanceof Boolean ? (Boolean) v ? 1 : 0 : Cast.asInt(null, v);
 		});
@@ -79,24 +119,32 @@ public class MeshLayerData extends LayerData {
 		noData = create("no_data", Types.FLOAT, IField.NO_NO_DATA);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
-			if (result instanceof GamaImageFile)
-				return (GamaImageFile) exp.value(scope);
-			else
-				throw GamaRuntimeException.error("The texture of a field must be an image file", scope);
+			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
+			throw GamaRuntimeException.error("The texture of a field must be an image file", scope);
 		}, Types.FILE, null, null);
 	}
 
 	@Override
-	public void compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public boolean compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		final Envelope env2 = scope.getSimulation().getEnvelope();
 		final double width = env2.getWidth();
 		final double height = env2.getHeight();
-		super.compute(scope, g);
+		boolean result = super.compute(scope, g);
 		shouldComputeValues = super.getRefresh();
 		// The size
 		cellSize = new GamaPoint(width / dim.x, height / dim.y);
+		return result;
 	}
 
+	/**
+	 * Builds the values.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param from
+	 *            the from
+	 * @return the i field
+	 */
 	private IField buildValues(final IScope scope, final Object from) {
 		if (values == null || shouldComputeValues) {
 			values = GamaFieldType.buildField(scope, from);
@@ -105,61 +153,113 @@ public class MeshLayerData extends LayerData {
 		return values;
 	}
 
-	public Boolean isTriangulated() {
-		return triangulation.get();
-	}
+	/**
+	 * Checks if is triangulated.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isTriangulated() { return triangulation.get(); }
 
-	public Boolean isGrayScaled() {
-		return grayscale.get();
-	}
+	/**
+	 * Checks if is gray scaled.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isGrayScaled() { return grayscale.get(); }
 
-	public Boolean isWireframe() {
-		return wireframe.get();
-	}
+	/**
+	 * Checks if is wireframe.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isWireframe() { return wireframe.get(); }
 
-	public Boolean isShowText() {
-		return text.get();
-	}
+	/**
+	 * Checks if is show text.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isShowText() { return text.get(); }
 
+	/**
+	 * Texture file.
+	 *
+	 * @return the gama image file
+	 */
 	public GamaImageFile textureFile() {
 		return texture.get();
 	}
 
-	public GamaColor getLineColor() {
-		return line.get() == null && wireframe.get() ? defaultLineColor : line.get();
-	}
+	/**
+	 * Gets the line color.
+	 *
+	 * @return the line color
+	 */
+	public GamaColor getLineColor() { return line.get() == null && wireframe.get() ? defaultLineColor : line.get(); }
 
+	/**
+	 * Draw lines.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean drawLines() {
 		return line.get() != null || wireframe.get();
 	}
 
-	public GamaPoint getCellSize() {
-		return cellSize;
-	}
+	/**
+	 * Gets the cell size.
+	 *
+	 * @return the cell size
+	 */
+	public GamaPoint getCellSize() { return cellSize; }
 
-	public GamaPoint getDimension() {
-		return dim;
-	}
+	/**
+	 * Gets the dimension.
+	 *
+	 * @return the dimension
+	 */
+	public GamaPoint getDimension() { return dim; }
 
+	/**
+	 * Gets the elevation matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the elevation matrix
+	 */
 	public IField getElevationMatrix(final IScope scope) {
 		return elevation.get();
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public Object getColor() {
 		// Should be a bit more complex in the future when color scales / palettes are introduced
 		return color.get();
 	}
 
-	public Integer getSmooth() {
-		return smooth.get();
-	}
+	/**
+	 * Gets the smooth.
+	 *
+	 * @return the smooth
+	 */
+	public Integer getSmooth() { return smooth.get(); }
 
-	public Double getScale() {
-		return scale.get();
-	}
+	/**
+	 * Gets the scale.
+	 *
+	 * @return the scale
+	 */
+	public Double getScale() { return scale.get(); }
 
-	public double getNoDataValue() {
-		return noData.get();
-	}
+	/**
+	 * Gets the no data value.
+	 *
+	 * @return the no data value
+	 */
+	public double getNoDataValue() { return noData.get(); }
 
 }

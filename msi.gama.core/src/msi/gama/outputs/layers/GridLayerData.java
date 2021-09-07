@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayerData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GridLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,7 +24,6 @@ import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
@@ -36,26 +35,67 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GridLayerData.
+ */
 public class GridLayerData extends LayerData {
 
+	/** The default line color. */
 	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
 
+	/** The grid. */
 	IGrid grid;
+
+	/** The name. */
 	final String name;
+
+	/** The turn grid on. */
 	Boolean turnGridOn;
+
+	/** The should compute image. */
 	private final boolean shouldComputeImage;
+
+	/** The line. */
 	Attribute<GamaColor> line;
+
+	/** The texture. */
 	Attribute<GamaImageFile> texture;
+
+	/** The elevation. */
 	Attribute<double[]> elevation;
+
+	/** The smooth. */
 	Attribute<Boolean> smooth;
+
+	/** The triangulation. */
 	Attribute<Boolean> triangulation;
+
+	/** The grayscale. */
 	Attribute<Boolean> grayscale;
+
+	/** The text. */
 	Attribute<Boolean> text;
+
+	/** The cell size. */
 	private GamaPoint cellSize;
+
+	/** The wireframe. */
 	Attribute<Boolean> wireframe;
+
+	/** The image. */
 	BufferedImage image;
+
+	/** The dim. */
 	private final GamaPoint dim = new GamaPoint();
 
+	/**
+	 * Instantiates a new grid layer data.
+	 *
+	 * @param def
+	 *            the def
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("unchecked")
 	public GridLayerData(final ILayerStatement def) throws GamaRuntimeException {
 		super(def);
@@ -73,10 +113,8 @@ public class GridLayerData extends LayerData {
 					case IType.INT:
 						return grid.getGridValueOf(scope, exp);
 					case IType.BOOL:
-						if ((Boolean) exp.value(scope))
-							return grid.getGridValue();
-						else
-							return null;
+						if ((Boolean) exp.value(scope)) return grid.getGridValue();
+						return null;
 				}
 			}
 			return null;
@@ -87,20 +125,17 @@ public class GridLayerData extends LayerData {
 		text = create(IKeyword.TEXT, Types.BOOL, false);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
-			if (result instanceof GamaImageFile)
-				return (GamaImageFile) exp.value(scope);
-			else
-				throw GamaRuntimeException.error("The texture of a grid must be an image file", scope);
+			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
+			throw GamaRuntimeException.error("The texture of a grid must be an image file", scope);
 		}, Types.FILE, null, null);
 	}
 
 	@Override
-	public void compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public boolean compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		if (grid == null) {
 			final IPopulation<? extends IAgent> gridPop = scope.getAgent().getPopulationFor(name);
-			if (gridPop == null)
-				throw error("No grid species named " + name + " can be found", scope);
-			else if (!gridPop.isGrid()) throw error("Species named " + name + " is not a grid", scope);
+			if (gridPop == null) throw error("No grid species named " + name + " can be found", scope);
+			if (!gridPop.isGrid()) throw error("Species named " + name + " is not a grid", scope);
 			grid = (IGrid) gridPop.getTopology().getPlaces();
 			// final Envelope env = grid.getEnvironmentFrame().getEnvelope();
 			final Envelope env2 = scope.getSimulation().getEnvelope();
@@ -113,63 +148,119 @@ public class GridLayerData extends LayerData {
 			cellSize = new GamaPoint(width / cols, height / rows);
 			dim.setLocation(grid.getDimensions());
 		}
-		super.compute(scope, g);
+		boolean result = super.compute(scope, g);
 		if (shouldComputeImage) { computeImage(scope, g); }
+		return result;
 	}
 
-	public Boolean isTriangulated() {
-		return triangulation.get();
-	}
+	/**
+	 * Checks if is triangulated.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isTriangulated() { return triangulation.get(); }
 
-	public Boolean isGrayScaled() {
-		return grayscale.get();
-	}
+	/**
+	 * Checks if is gray scaled.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isGrayScaled() { return grayscale.get(); }
 
-	public Boolean isShowText() {
-		return text.get();
-	}
+	/**
+	 * Checks if is show text.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isShowText() { return text.get(); }
 
+	/**
+	 * Texture file.
+	 *
+	 * @return the gama image file
+	 */
 	public GamaImageFile textureFile() {
 		return texture.get();
 	}
 
-	public GamaColor getLineColor() {
-		return line.get() == null ? defaultLineColor : line.get();
-	}
+	/**
+	 * Gets the line color.
+	 *
+	 * @return the line color
+	 */
+	public GamaColor getLineColor() { return line.get() == null ? defaultLineColor : line.get(); }
 
+	/**
+	 * Draw lines.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean drawLines() {
 		return line.get() != null && turnGridOn;
 	}
 
-	public void setDrawLines(final Boolean newValue) {
-		turnGridOn = newValue;
-	}
+	/**
+	 * Sets the draw lines.
+	 *
+	 * @param newValue
+	 *            the new draw lines
+	 */
+	public void setDrawLines(final Boolean newValue) { turnGridOn = newValue; }
 
-	public IGrid getGrid() {
-		return grid;
-	}
+	/**
+	 * Gets the grid.
+	 *
+	 * @return the grid
+	 */
+	public IGrid getGrid() { return grid; }
 
-	public Collection<IAgent> getAgentsToDisplay() {
-		return grid.getAgents();
-	}
+	/**
+	 * Gets the agents to display.
+	 *
+	 * @return the agents to display
+	 */
+	public Collection<IAgent> getAgentsToDisplay() { return grid.getAgents(); }
 
-	public GamaPoint getCellSize() {
-		return cellSize;
-	}
+	/**
+	 * Gets the cell size.
+	 *
+	 * @return the cell size
+	 */
+	public GamaPoint getCellSize() { return cellSize; }
 
-	public BufferedImage getImage() {
-		return image;
-	}
+	/**
+	 * Gets the image.
+	 *
+	 * @return the image
+	 */
+	public BufferedImage getImage() { return image; }
 
-	public Boolean isWireframe() {
-		return wireframe.get();
-	}
+	/**
+	 * Checks if is wireframe.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isWireframe() { return wireframe.get(); }
 
+	/**
+	 * Sets the image.
+	 *
+	 * @param im
+	 *            the new image
+	 */
 	public void setImage(final BufferedImage im) {
 		if (image != null) { image.flush(); }
 		image = im;
 	}
 
+	/**
+	 * Compute image.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 */
 	protected void computeImage(final IScope scope, final IGraphics g) {
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) grid;
@@ -178,16 +269,29 @@ public class GridLayerData extends LayerData {
 		}
 	}
 
+	/**
+	 * Gets the elevation matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the elevation matrix
+	 */
 	public double[] getElevationMatrix(final IScope scope) {
 		return elevation.get();
 	}
 
-	public GamaPoint getDimensions() {
-		return dim;
-	}
+	/**
+	 * Gets the dimensions.
+	 *
+	 * @return the dimensions
+	 */
+	public GamaPoint getDimensions() { return dim; }
 
-	public Boolean isSmooth() {
-		return smooth.get();
-	}
+	/**
+	 * Checks if is smooth.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isSmooth() { return smooth.get(); }
 
 }

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.SpeciesLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * SpeciesLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -93,6 +93,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Used in conjunction with 'trace:', allows to apply a fading effect to the previous traces. Default is false")),
 				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
+				@facet (
 						name = IKeyword.SPECIES,
 						type = IType.SPECIES,
 						optional = false,
@@ -162,6 +167,9 @@ import msi.gaml.types.IType;
 @validator (SpeciesLayerValidator.class)
 public class SpeciesLayerStatement extends AgentLayerStatement {
 
+	/**
+	 * The Class SpeciesLayerSerializer.
+	 */
 	public static class SpeciesLayerSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
@@ -172,6 +180,9 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	}
 
+	/**
+	 * The Class SpeciesLayerValidator.
+	 */
 	public static class SpeciesLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -179,10 +190,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 			// IExpressionDescription ed = description.getFacet(SPECIES);
 			SpeciesDescription target = null;
 			target = description.getGamlType().getDenotedSpecies();
-			if (target == null) {
-				// Already caught by the type checking
+			if (target == null) // Already caught by the type checking
 				return;
-			}
 			final IExpressionDescription ed = description.getFacet(ASPECT);
 			if (ed != null) {
 				final String a = description.getLitteral(ASPECT);
@@ -198,12 +207,26 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	}
 
+	/** The aspect. */
 	private IExecutable aspect;
 
+	/** The host species. */
 	protected ISpecies hostSpecies;
+
+	/** The species. */
 	protected ISpecies species;
+
+	/** The micro species layers. */
 	protected List<SpeciesLayerStatement> microSpeciesLayers;
 
+	/**
+	 * Instantiates a new species layer statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public SpeciesLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
@@ -213,22 +236,14 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		// top level species layer is a direct micro-species of "world_species"
 		// for sure
-		if (hostSpecies == null && scope.getSimulation() != null) {
-			hostSpecies = scope.getSimulation().getSpecies();
-		}
+		if (hostSpecies == null && scope.getSimulation() != null) { hostSpecies = scope.getSimulation().getSpecies(); }
 		species = Cast.asSpecies(scope, getFacet(IKeyword.SPECIES).value(scope));
-		if (species == null && hostSpecies != null) {
-			species = hostSpecies.getMicroSpecies(getName());
-		}
-		if (species == null) {
-			throw GamaRuntimeException.error("not a suitable species to display: " + getName(), scope);
-		}
-		if (super._init(scope)) {
-			if (microSpeciesLayers != null) {
-				for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
-					microLayer.hostSpecies = species;
-					if (!scope.init(microLayer).passed()) { return false; }
-				}
+		if (species == null && hostSpecies != null) { species = hostSpecies.getMicroSpecies(getName()); }
+		if (species == null) throw GamaRuntimeException.error("not a suitable species to display: " + getName(), scope);
+		if (super._init(scope) && (microSpeciesLayers != null)) {
+			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
+				microLayer.hostSpecies = species;
+				if (!scope.init(microLayer).passed()) return false;
 			}
 		}
 		return true;
@@ -244,9 +259,12 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		return LayerType.SPECIES;
 	}
 
-	public List<String> getAspects() {
-		return species.getAspectNames();
-	}
+	/**
+	 * Gets the aspects.
+	 *
+	 * @return the aspects
+	 */
+	public List<String> getAspects() { return species.getAspectNames(); }
 
 	@Override
 	public void setAspect(final String currentAspect) {
@@ -256,19 +274,20 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public void computeAspectName(final IScope sim) throws GamaRuntimeException {
-		if (aspect != null) { return; }
+		if (aspect != null) return;
 		super.computeAspectName(sim);
 		aspect = species.getAspect(constantAspectName);
 	}
 
 	@Override
-	public IExecutable getAspect() {
-		return aspect;
-	}
+	public IExecutable getAspect() { return aspect; }
 
-	public ISpecies getSpecies() {
-		return species;
-	}
+	/**
+	 * Gets the species.
+	 *
+	 * @return the species
+	 */
+	public ISpecies getSpecies() { return species; }
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
@@ -276,9 +295,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 		for (final ISymbol c : commands) {
 			if (c instanceof SpeciesLayerStatement) {
-				if (microSpeciesLayers == null) {
-					microSpeciesLayers = new ArrayList<>();
-				}
+				if (microSpeciesLayers == null) { microSpeciesLayers = new ArrayList<>(); }
 				microSpeciesLayers.add((SpeciesLayerStatement) c);
 			} else {
 				aspectStatements.add((IStatement) c);
@@ -298,9 +315,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	 *
 	 * @return
 	 */
-	public List<SpeciesLayerStatement> getMicroSpeciesLayers() {
-		return microSpeciesLayers;
-	}
+	public List<SpeciesLayerStatement> getMicroSpeciesLayers() { return microSpeciesLayers; }
 
 	@Override
 	public String toString() {

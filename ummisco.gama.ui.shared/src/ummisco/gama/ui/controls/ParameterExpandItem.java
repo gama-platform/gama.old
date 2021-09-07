@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ParameterExpandItem.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ParameterExpandItem.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
 import org.eclipse.swt.SWT;
@@ -35,31 +34,88 @@ import ummisco.gama.ui.resources.IGamaIcons;
  */
 public class ParameterExpandItem extends Item {
 
+	/** The parent. */
 	private ParameterExpandBar parent;
+
+	/** The control. */
 	Composite control;
+
+	/** The expanded. */
 	boolean expanded;
+
+	/** The height. */
 	int x, y, width, height;
+
+	/** The pause position. */
 	int pausePosition = -1;
+
+	/** The visible position. */
 	int visiblePosition = -1;
+
+	/** The selectable position. */
 	int selectablePosition = -1;
+
+	/** The close position. */
 	int closePosition = -1;
+
+	/** The header color. */
 	Color headerColor = ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
 
+	/** The image width. */
 	private static int imageHeight = 16, imageWidth = 16;
+
+	/** The is paused. */
 	boolean isPaused = false;
-	boolean isVisible = true;
+
+	/** The is selectable. */
 	boolean isSelectable = true;
+
+	/** The on expand block. */
 	private Runnable onExpandBlock;
+
+	/** The Constant TEXT_INSET. */
 	private static final int TEXT_INSET = 4;
+
+	/** The Constant SEPARATION. */
 	private static final int SEPARATION = 3;
+
+	/** The Constant BORDER. */
 	static final int BORDER = 4;
+
+	/** The Constant CHEVRON_SIZE. */
 	static final int CHEVRON_SIZE = 20;
 
+	/**
+	 * Instantiates a new parameter expand item.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @param data
+	 *            the data
+	 * @param style
+	 *            the style
+	 * @param color
+	 *            the color
+	 */
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style,
 			final GamaUIColor color) {
 		this(parent, data, style, parent.getItemCount(), color);
 	}
 
+	/**
+	 * Instantiates a new parameter expand item.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @param data
+	 *            the data
+	 * @param style
+	 *            the style
+	 * @param index
+	 *            the index
+	 * @param color
+	 *            the color
+	 */
 	public ParameterExpandItem(final ParameterExpandBar parent, final Object data, final int style, final int index,
 			final GamaUIColor color) {
 		super(parent, style);
@@ -82,6 +138,14 @@ public class ParameterExpandItem extends Item {
 
 	}
 
+	/**
+	 * Draw item.
+	 *
+	 * @param gc
+	 *            the gc
+	 * @param drawHover
+	 *            the draw hover
+	 */
 	void drawItem(final GC gc, final boolean drawHover) {
 		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
@@ -119,8 +183,8 @@ public class ParameterExpandItem extends Item {
 		}
 
 		if (parent.hasVisibleToggle) {
-			final var image =
-					isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
+			final var image = parent.isVisible(this) ? GamaIcons.create("small.inspect").image()
+					: GamaIcons.create("small.hidden").image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			visiblePosition = endX;
 			gc.drawImage(image, endX, imageY);
@@ -186,6 +250,13 @@ public class ParameterExpandItem extends Item {
 		return Math.max(parent.bandHeight, imageHeight);
 	}
 
+	/**
+	 * Gets the preferred width.
+	 *
+	 * @param gc
+	 *            the gc
+	 * @return the preferred width
+	 */
 	int getPreferredWidth(final GC gc) {
 		var width = ParameterExpandItem.TEXT_INSET * 2 + ParameterExpandItem.CHEVRON_SIZE;
 		if (getImage() != null) { width += ParameterExpandItem.TEXT_INSET + imageWidth; }
@@ -197,6 +268,9 @@ public class ParameterExpandItem extends Item {
 		return width;
 	}
 
+	/**
+	 * Redraw.
+	 */
 	void redraw() {
 		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
@@ -206,6 +280,22 @@ public class ParameterExpandItem extends Item {
 		parent.redraw(x, y, width, headerHeight + height, false);
 	}
 
+	/**
+	 * Sets the bounds.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param move
+	 *            the move
+	 * @param size
+	 *            the size
+	 */
 	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
 			final boolean size) {
 		redraw();
@@ -292,9 +382,7 @@ public class ParameterExpandItem extends Item {
 				onExpandBlock.run();
 				setHeight(control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 			} else {
-				for (final Control c : control.getChildren()) {
-					c.dispose();
-				}
+				for (final Control c : control.getChildren()) { c.dispose(); }
 				if (control instanceof ScrolledComposite) { ((ScrolledComposite) control).setContent(null); }
 			}
 		}
@@ -338,6 +426,17 @@ public class ParameterExpandItem extends Item {
 		redraw();
 	}
 
+	/**
+	 * Click in.
+	 *
+	 * @param x2
+	 *            the x 2
+	 * @param y2
+	 *            the y 2
+	 * @param xmin
+	 *            the xmin
+	 * @return true, if successful
+	 */
 	private boolean clickIn(final int x2, final int y2, final int xmin) {
 		final var xmax = xmin + imageWidth;
 		final var headerHeight = parent.bandHeight;
@@ -346,21 +445,57 @@ public class ParameterExpandItem extends Item {
 		return x2 >= xmin && x2 <= xmax && y2 >= ymin && y2 <= ymax;
 	}
 
+	/**
+	 * Close requested.
+	 *
+	 * @param x2
+	 *            the x 2
+	 * @param y2
+	 *            the y 2
+	 * @return true, if successful
+	 */
 	public boolean closeRequested(final int x2, final int y2) {
 		if (closePosition == -1) return false;
 		return clickIn(x2, y2, x + closePosition);
 	}
 
+	/**
+	 * Pause requested.
+	 *
+	 * @param x2
+	 *            the x 2
+	 * @param y2
+	 *            the y 2
+	 * @return true, if successful
+	 */
 	public boolean pauseRequested(final int x2, final int y2) {
 		if (pausePosition == -1) return false;
 		return clickIn(x2, y2, x + pausePosition);
 	}
 
+	/**
+	 * Visible requested.
+	 *
+	 * @param x2
+	 *            the x 2
+	 * @param y2
+	 *            the y 2
+	 * @return true, if successful
+	 */
 	public boolean visibleRequested(final int x2, final int y2) {
 		if (visiblePosition == -1) return false;
 		return clickIn(x2, y2, x + visiblePosition);
 	}
 
+	/**
+	 * Selectable requested.
+	 *
+	 * @param x2
+	 *            the x 2
+	 * @param y2
+	 *            the y 2
+	 * @return true, if successful
+	 */
 	public boolean selectableRequested(final int x2, final int y2) {
 		if (selectablePosition == -1) return false;
 		return clickIn(x2, y2, x + selectablePosition);
@@ -373,12 +508,21 @@ public class ParameterExpandItem extends Item {
 		if (color != null) { headerColor = GamaColors.get(color).color(); }
 	}
 
+	/**
+	 * On expand.
+	 *
+	 * @param r
+	 *            the r
+	 */
 	public void onExpand(final Runnable r) {
 		onExpandBlock = r;
 	}
 
-	public Control getControl() {
-		return control;
-	}
+	/**
+	 * Gets the control.
+	 *
+	 * @return the control
+	 */
+	public Control getControl() { return control; }
 
 }

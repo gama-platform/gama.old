@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.AgentLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AgentLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -95,6 +95,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
 				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
+				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,
 						optional = true,
@@ -145,6 +150,9 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION })
 public class AgentLayerStatement extends AbstractLayerStatement {
 
+	/**
+	 * The Class AgentLayerValidator.
+	 */
 	public static class AgentLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
@@ -157,22 +165,18 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 			// Should be broken down in subclasses
 			IExpressionDescription ed = description.getFacet(VALUE);
 			SpeciesDescription target = null;
-			if (ed == null || ed.getExpression() == null) { return; }
+			if (ed == null || ed.getExpression() == null) return;
 			target = ed.getExpression().getGamlType().getContentType().getSpecies();
-			if (target == null) {
-				// Already caught by the type checking
+			if (target == null) // Already caught by the type checking
 				return;
-			}
 			ed = description.getFacet(ASPECT);
 			if (ed != null) {
 				final String a = description.getLitteral(ASPECT);
 				if (target.getAspect(a) != null) {
 					ed.compileAsLabel();
-				} else {
-					if (a != null && !a.equals(DEFAULT)) {
-						description.error(a + " is not the name of an aspect of " + target.getName(),
-								IGamlIssue.GENERAL, description.getFacet(ASPECT).getTarget());
-					}
+				} else if (a != null && !DEFAULT.equals(a)) {
+					description.error(a + " is not the name of an aspect of " + target.getName(), IGamlIssue.GENERAL,
+							description.getFacet(ASPECT).getTarget());
 				}
 
 			}
@@ -180,21 +184,32 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	}
 
+	/** The agents expr. */
 	private IExpression agentsExpr;
+
+	/** The constant aspect name. */
 	protected String constantAspectName = null;
+
+	/** The aspect expr. */
 	protected IExpression aspectExpr;
+
+	/** The aspect. */
 	private IExecutable aspect = null;
 
+	/**
+	 * Instantiates a new agent layer statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
-		if (name == null && agentsExpr != null) {
-			setName(agentsExpr.serialize(false));
-		}
+		if (name == null && agentsExpr != null) { setName(agentsExpr.serialize(false)); }
 		aspectExpr = getFacet(IKeyword.ASPECT);
-		if (aspectExpr != null && aspectExpr.isConst()) {
-			constantAspectName = aspectExpr.literalValue();
-		}
+		if (aspectExpr != null && aspectExpr.isConst()) { constantAspectName = aspectExpr.literalValue(); }
 	}
 
 	@Override
@@ -213,6 +228,14 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		return LayerType.AGENTS;
 	}
 
+	/**
+	 * Compute aspect name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {
 		final String aspectName = constantAspectName == null
 				? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(scope, aspectExpr.value(scope))
@@ -220,34 +243,47 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 		setAspect(aspectName);
 	}
 
-	public void setAspect(final String currentAspect) {
-		this.constantAspectName = currentAspect;
-	}
+	/**
+	 * Sets the aspect.
+	 *
+	 * @param currentAspect
+	 *            the new aspect
+	 */
+	public void setAspect(final String currentAspect) { this.constantAspectName = currentAspect; }
 
-	public String getAspectName() {
-		return constantAspectName;
-	}
+	/**
+	 * Gets the aspect name.
+	 *
+	 * @return the aspect name
+	 */
+	public String getAspectName() { return constantAspectName; }
 
-	public void setAgentsExpr(final IExpression setOfAgents) {
-		this.agentsExpr = setOfAgents;
-	}
+	/**
+	 * Sets the agents expr.
+	 *
+	 * @param setOfAgents
+	 *            the new agents expr
+	 */
+	public void setAgentsExpr(final IExpression setOfAgents) { this.agentsExpr = setOfAgents; }
 
-	IExpression getAgentsExpr() {
-		return agentsExpr;
-	}
+	/**
+	 * Gets the agents expr.
+	 *
+	 * @return the agents expr
+	 */
+	IExpression getAgentsExpr() { return agentsExpr; }
 
-	public IExecutable getAspect() {
-		return aspect;
-	}
+	/**
+	 * Gets the aspect.
+	 *
+	 * @return the aspect
+	 */
+	public IExecutable getAspect() { return aspect; }
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<IStatement> aspectStatements = new ArrayList<>();
-		for (final ISymbol c : commands) {
-			if (c instanceof IStatement) {
-				aspectStatements.add((IStatement) c);
-			}
-		}
+		for (final ISymbol c : commands) { if (c instanceof IStatement) { aspectStatements.add((IStatement) c); } }
 		if (!aspectStatements.isEmpty()) {
 			constantAspectName = "inline";
 			final IDescription d =

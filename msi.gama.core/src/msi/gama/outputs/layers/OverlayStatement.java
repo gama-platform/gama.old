@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.OverlayStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * OverlayStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,6 +39,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class OverlayStatement.
+ */
 @symbol (
 		name = IKeyword.OVERLAY,
 		kind = ISymbolKind.LAYER,
@@ -79,6 +82,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("an expression that will be evaluated and displayed in the left section of the bottom overlay")),
 				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
+				@facet (
 						name = IKeyword.RIGHT,
 						type = IType.NONE,
 						optional = true,
@@ -112,17 +120,37 @@ import msi.gaml.types.IType;
 				IKeyword.IMAGE, IKeyword.POPULATION })
 public class OverlayStatement extends GraphicLayerStatement implements IOverlayProvider<OverlayInfo> {
 
+	/** The color. */
 	final IExpression left, right, center, color;
+
+	/** The center value. */
 	String leftValue, rightValue, centerValue;
+
+	/** The constant colors. */
 	List<int[]> constantColors;
+
+	/** The overlay. */
 	IUpdaterTarget<OverlayInfo> overlay;
 
+	/**
+	 * The Class OverlayInfo.
+	 */
 	public static class OverlayInfo implements IUpdaterMessage {
 
+		/** The infos. */
 		public String[] infos;
 
+		/** The colors. */
 		public java.util.List<int[]> colors;
 
+		/**
+		 * Instantiates a new overlay info.
+		 *
+		 * @param infos
+		 *            the infos
+		 * @param colors
+		 *            the colors
+		 */
 		OverlayInfo(final String[] infos, final java.util.List<int[]> colors) {
 			this.infos = infos;
 			this.colors = colors;
@@ -130,6 +158,14 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 
 	}
 
+	/**
+	 * Instantiates a new overlay statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public OverlayStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		left = getFacet(IKeyword.LEFT);
@@ -137,36 +173,46 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 		center = getFacet(IKeyword.CENTER);
 		color = getFacet(IKeyword.COLOR);
 
-		if (color != null && color.isConst()) {
-			constantColors = computeColors(null);
-		}
+		if (color != null && color.isConst()) { constantColors = computeColors(null); }
 	}
 
+	/**
+	 * Compute colors.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the list
+	 */
 	private List<int[]> computeColors(final IScope scope) {
-		if (constantColors != null) { return constantColors; }
-		if (color == null) { return null; }
-		if (color.getGamlType().id() == IType.LIST) {
-			final IList<?> list = Cast.asList(scope, color.value(scope));
-			final List<int[]> result = new ArrayList<>();
-			int i = 0;
-			for (final Object o : list) {
-				final int[] rgb = computeColor(scope, o);
-				result.add(rgb);
-				if (++i > 2) {
-					break;
-				}
-			}
-			return result;
-		} else {
+		if (constantColors != null) return constantColors;
+		if (color == null) return null;
+		if (color.getGamlType().id() != IType.LIST) {
 			final int[] rgb = computeColor(scope, color.value(scope));
 			return Arrays.asList(rgb, rgb, rgb);
 		}
+		final IList<?> list = Cast.asList(scope, color.value(scope));
+		final List<int[]> result = new ArrayList<>();
+		int i = 0;
+		for (final Object o : list) {
+			final int[] rgb = computeColor(scope, o);
+			result.add(rgb);
+			if (++i > 2) { break; }
+		}
+		return result;
 	}
 
+	/**
+	 * Compute color.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
+	 * @return the int[]
+	 */
 	private static int[] computeColor(final IScope scope, final Object color) {
 		final GamaColor c = Cast.asColor(scope, color);
-		final int[] rgb = new int[] { c.red(), c.green(), c.blue() };
-		return rgb;
+		return new int[] { c.red(), c.green(), c.blue() };
 	}
 
 	@Override
@@ -176,7 +222,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 
 	@Override
 	protected boolean _step(final IScope scope) {
-		if (overlay == null) { return true; }
+		if (overlay == null) return true;
 		leftValue = left == null ? null : Cast.asString(scope, left.value(scope));
 		rightValue = right == null ? null : Cast.asString(scope, right.value(scope));
 		centerValue = center == null ? null : Cast.asString(scope, center.value(scope));
@@ -184,9 +230,12 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 		return true;
 	}
 
-	private String[] getValues() {
-		return new String[] { leftValue, centerValue, rightValue };
-	}
+	/**
+	 * Gets the values.
+	 *
+	 * @return the values
+	 */
+	private String[] getValues() { return new String[] { leftValue, centerValue, rightValue }; }
 
 	@Override
 	public void setTarget(final IUpdaterTarget<OverlayInfo> overlay, final IDisplaySurface surface) {
@@ -195,9 +244,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	}
 
 	@Override
-	public boolean isToCreate() {
-		return !aspect.isEmpty();
-	}
+	public boolean isToCreate() { return !aspect.isEmpty(); }
 
 	/**
 	 * @return

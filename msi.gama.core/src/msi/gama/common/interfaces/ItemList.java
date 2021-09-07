@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.ItemList.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ItemList.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -23,33 +22,137 @@ import msi.gama.util.GamaColor;
  */
 public interface ItemList<T> {
 
-	public static final Character ERROR_CODE = '\u00F7';
-	public static final Character INFO_CODE = '\u00F8';
-	public static final Character WARNING_CODE = '\u00FE';
-	public static final Character SEPARATION_CODE = '\u00FF';
+	/** The Constant ERROR_CODE. */
+	Character ERROR_CODE = '\u00F7';
 
+	/** The Constant INFO_CODE. */
+	Character INFO_CODE = '\u00F8';
+
+	/** The Constant WARNING_CODE. */
+	Character WARNING_CODE = '\u00FE';
+
+	/** The Constant SEPARATION_CODE. */
+	Character SEPARATION_CODE = '\u00FF';
+
+	/**
+	 * Adds the item.
+	 *
+	 * @param obj
+	 *            the obj
+	 * @return true, if successful
+	 */
 	boolean addItem(T obj);
 
-	void removeItem(T obj);
+	/**
+	 * Removes the item.
+	 *
+	 * @param obj
+	 *            the obj
+	 */
+	default void removeItem(final T obj) {}
 
-	void pauseItem(T obj);
+	/**
+	 * Pause item.
+	 *
+	 * @param obj
+	 *            the obj
+	 */
+	default void pauseItem(final T obj) {}
 
-	void resumeItem(T obj);
+	/**
+	 * Resume item.
+	 *
+	 * @param obj
+	 *            the obj
+	 */
+	default void resumeItem(final T obj) {}
 
-	void focusItem(T obj);
+	/**
+	 * Focus item.
+	 *
+	 * @param obj
+	 *            the obj
+	 */
+	default void focusItem(final T obj) {}
 
-	public List<T> getItems();
+	/**
+	 * Gets the items.
+	 *
+	 * @return the items
+	 */
+	List<T> getItems();
 
+	/**
+	 * Gets the item display name.
+	 *
+	 * @param obj
+	 *            the obj
+	 * @param previousName
+	 *            the previous name
+	 * @return the item display name
+	 */
 	String getItemDisplayName(T obj, String previousName);
 
-	void updateItemValues();
+	/**
+	 * Update item values.
+	 */
+	default void updateItemValues() {}
 
-	void makeItemSelectable(T data, boolean b);
+	/**
+	 * Make item selectable.
+	 *
+	 * @param data
+	 *            the data
+	 * @param b
+	 *            the b
+	 */
+	default void makeItemSelectable(final T data, final boolean b) {}
 
-	void makeItemVisible(T obj, boolean b);
+	/**
+	 * Make item visible.
+	 *
+	 * @param obj
+	 *            the obj
+	 * @param b
+	 *            the b
+	 */
+	default void makeItemVisible(final T obj, final boolean b) {}
 
-	GamaColor getItemDisplayColor(T data);
+	/**
+	 * Checks if is item visible.
+	 *
+	 * @param obj
+	 *            the obj
+	 * @return true, if is item visible
+	 */
+	default boolean isItemVisible(final T obj) {
+		return true;
+	}
 
-	Map<String, Runnable> handleMenu(T data, int x, int y);
+	/**
+	 * Gets the item display color.
+	 *
+	 * @param data
+	 *            the data
+	 * @return the item display color
+	 */
+	default GamaColor getItemDisplayColor(final T data) {
+		return null;
+	}
+
+	/**
+	 * Handle menu.
+	 *
+	 * @param data
+	 *            the data
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @return the map
+	 */
+	default Map<String, Runnable> handleMenu(final T data, final int x, final int y) {
+		return null;
+	}
 
 }

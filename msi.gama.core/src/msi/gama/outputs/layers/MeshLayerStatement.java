@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * MeshLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -65,6 +65,11 @@ import msi.gaml.types.IType;
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
+				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
 				@facet (
 						name = IKeyword.BORDER,
 						type = IType.COLOR,
@@ -133,6 +138,14 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION })
 public class MeshLayerStatement extends AbstractLayerStatement {
 
+	/**
+	 * Instantiates a new mesh layer statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public MeshLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SOURCE).literalValue());

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GraphicLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GraphicLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,6 +29,9 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GraphicLayerStatement.
+ */
 @symbol (
 		name = "graphics",
 		kind = ISymbolKind.LAYER,
@@ -62,6 +65,11 @@ import msi.gaml.types.IType;
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
+				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,
@@ -99,9 +107,20 @@ import msi.gaml.types.IType;
 				IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
 public class GraphicLayerStatement extends AbstractLayerStatement {
 
+	/** The aspect. */
 	AspectStatement aspect;
+
+	/** The Layer index. */
 	static int LayerIndex;
 
+	/**
+	 * Instantiates a new graphic layer statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		final IDescription d =
@@ -114,9 +133,12 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 		aspect.setChildren(children);
 	}
 
-	public AspectStatement getAspect() {
-		return aspect;
-	}
+	/**
+	 * Gets the aspect.
+	 *
+	 * @return the aspect
+	 */
+	public AspectStatement getAspect() { return aspect; }
 
 	@Override
 	public LayerType getType(final LayeredDisplayOutput output) {

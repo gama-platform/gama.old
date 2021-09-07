@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.ImageLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ImageLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -68,6 +68,11 @@ import msi.gaml.types.IType;
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
+				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
 				@facet (
 						name = IKeyword.NAME,
 						type = { IType.STRING, IType.FILE },
@@ -147,6 +152,9 @@ import msi.gaml.types.IType;
 @validator (ImageLayerValidator.class)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
+	/**
+	 * The Class ImageLayerValidator.
+	 */
 	public static class ImageLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -156,18 +164,24 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE,
 							IGamlIssue.MISSING_FACET, description.getUnderlyingElement(), FILE, "\"\"");
 				}
-			} else {
-				if (description.hasFacet(FILE)) {
-					description.error("gis: and file: cannot be defined at the same time",
-							IGamlIssue.CONFLICTING_FACETS);
-				}
+			} else if (description.hasFacet(FILE)) {
+				description.error("gis: and file: cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS);
 			}
 		}
 
 	}
 
+	/** The file. */
 	IExpression file;
 
+	/**
+	 * Instantiates a new image layer statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		file = getFacet(IKeyword.FILE, IKeyword.NAME);
@@ -179,15 +193,13 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	@Override
 	public IExpression getRefreshFacet() {
 		IExpression exp = super.getRefreshFacet();
-		if (exp == null) {
-			exp = IExpressionFactory.FALSE_EXPR;
-		}
+		if (exp == null) { exp = IExpressionFactory.FALSE_EXPR; }
 		return exp;
 	}
 
 	@Override
 	public LayerType getType(final LayeredDisplayOutput output) {
-		if (hasFacet(IKeyword.GIS)) { return LayerType.GIS; }
+		if (hasFacet(IKeyword.GIS)) return LayerType.GIS;
 		return LayerType.IMAGE;
 	}
 
