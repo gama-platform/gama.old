@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * NavigatorResourceDropAssistant.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
 import java.lang.reflect.InvocationTargetException;
@@ -5,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -51,14 +62,22 @@ import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.resources.ResourceDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
 
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.TopLevelFolder;
 
+/**
+ * The Class NavigatorResourceDropAssistant.
+ */
 public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant {
 
-	private static final IResource[] NO_RESOURCES = new IResource[0];
+	/** The Constant NO_RESOURCES. */
+	private static final IResource[] NO_RESOURCES = {};
 
+	/** The refactoring status. */
 	private RefactoringStatus refactoringStatus;
+
+	/** The return status. */
 	private IStatus returnStatus;
 
 	@Override
@@ -70,47 +89,39 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	public IStatus validateDrop(final Object target, final int aDropOperation, final TransferData transferType) {
 		final IResource resource = ResourceManager.getResource(target);
 		if (!(target instanceof TopLevelFolder)) {
-			if (resource == null) {
-				return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
-						WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
-			}
-			if (!resource.isAccessible()) {
-				return WorkbenchNavigatorPlugin.createErrorStatus(0,
-						WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
-			}
+			if (resource == null) return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
+					WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
+			if (!resource.isAccessible()) return WorkbenchNavigatorPlugin.createErrorStatus(0,
+					WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
 			final IContainer destination = getActualTarget(resource);
-			if (destination.getType() == IResource.ROOT) {
-				return WorkbenchNavigatorPlugin.createErrorStatus(0,
-						WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
-			}
+			if (destination.getType() == IResource.ROOT) return WorkbenchNavigatorPlugin.createErrorStatus(0,
+					WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
 		}
 		String message = null;
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 			final IResource[] selectedResources = getSelectedResources();
 
-			if (allProjects(selectedResources) && target instanceof TopLevelFolder) { return Status.OK_STATUS; }
+			if (allProjects(selectedResources) && target instanceof TopLevelFolder) return Status.OK_STATUS;
 			if (anyProjects(selectedResources)) {
 				// drop of projects not supported on other IResources
 				// "Path for project must have only one segment."
 				message = WorkbenchNavigatorMessages.DropAdapter_canNotDropProjectIntoProject;
+			} else if (selectedResources.length == 0) {
+				message = WorkbenchNavigatorMessages.DropAdapter_dropOperationErrorOther;
 			} else {
-				if (selectedResources.length == 0) {
-					message = WorkbenchNavigatorMessages.DropAdapter_dropOperationErrorOther;
+				CopyFilesAndFoldersOperation operation;
+				if (aDropOperation == DND.DROP_COPY) {
+					operation = new CopyFilesAndFoldersOperation(getShell());
 				} else {
-					CopyFilesAndFoldersOperation operation;
-					if (aDropOperation == DND.DROP_COPY) {
-						operation = new CopyFilesAndFoldersOperation(getShell());
-					} else {
-						operation = new MoveFilesAndFoldersOperation(getShell());
-					}
-					final IContainer destination = getActualTarget(resource);
-					if (destination == null) {
-						message = "Not permitted";
-					} else if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setVirtualFolders(true);
-						message = operation.validateDestination(destination, selectedResources);
-					}
+					operation = new MoveFilesAndFoldersOperation(getShell());
+				}
+				final IContainer destination = getActualTarget(resource);
+				if (destination == null) {
+					message = "Not permitted";
+				} else if (operation.validateDestination(destination, selectedResources) != null) {
+					operation.setVirtualFolders(true);
+					message = operation.validateDestination(destination, selectedResources);
 				}
 			}
 		} // file import?
@@ -130,23 +141,33 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 				message = copyOperation.validateImportDestination(destination, sourceNames);
 			}
 		}
-		if (message != null) { return WorkbenchNavigatorPlugin.createErrorStatus(0, message, null); }
+		if (message != null) return WorkbenchNavigatorPlugin.createErrorStatus(0, message, null);
 		return Status.OK_STATUS;
 	}
 
+	/**
+	 * All projects.
+	 *
+	 * @param res
+	 *            the res
+	 * @return true, if successful
+	 */
 	private boolean allProjects(final IResource[] res) {
-		if (res == null || res.length == 0) { return false; }
-		for (final IResource re : res) {
-			if (re.getType() != IResource.PROJECT) { return false; }
-		}
+		if (res == null || res.length == 0) return false;
+		for (final IResource re : res) { if (re.getType() != IResource.PROJECT) return false; }
 		return true;
 	}
 
+	/**
+	 * Any projects.
+	 *
+	 * @param res
+	 *            the res
+	 * @return true, if successful
+	 */
 	private boolean anyProjects(final IResource[] res) {
-		if (res == null || res.length == 0) { return false; }
-		for (final IResource re : res) {
-			if (re.getType() == IResource.PROJECT) { return true; }
-		}
+		if (res == null || res.length == 0) return false;
+		for (final IResource re : res) { if (re.getType() == IResource.PROJECT) return true; }
 		return false;
 	}
 
@@ -167,7 +188,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 		} else {
 			final IResource aTarget = ResourceManager.getResource(t);
 			// alwaysOverwrite = false;
-			if (aTarget == null || aDropTargetEvent.data == null) { return Status.CANCEL_STATUS; }
+			if (aTarget == null || aDropTargetEvent.data == null) return Status.CANCEL_STATUS;
 
 			if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
 				status = performFileDrop(aDropAdapter, aDropTargetEvent.data);
@@ -191,6 +212,17 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 		return status;
 	}
 
+	/**
+	 * Perform project copy.
+	 *
+	 * @param aDropAdapter
+	 *            the a drop adapter
+	 * @param shell
+	 *            the shell
+	 * @param resources
+	 *            the resources
+	 * @return the i status
+	 */
 	private IStatus performProjectCopy(final CommonDropAdapter aDropAdapter, final Shell shell,
 			final IResource[] resources) {
 		ResourceManager.setSelectedFolder(aDropAdapter.getCurrentTarget());
@@ -203,20 +235,14 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 
 	@Override
 	public IStatus validatePluginTransferDrop(final IStructuredSelection aDragSelection, final Object aDropTarget) {
-		if (!ResourceManager.isResource(aDropTarget)) {
-			return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
-					WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
-		}
+		if (!ResourceManager.isResource(aDropTarget)) return WorkbenchNavigatorPlugin.createStatus(IStatus.INFO, 0,
+				WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource, null);
 		final IResource resource = ResourceManager.getResource(aDropTarget);
-		if (!resource.isAccessible()) {
-			return WorkbenchNavigatorPlugin.createErrorStatus(0,
-					WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
-		}
+		if (!resource.isAccessible()) return WorkbenchNavigatorPlugin.createErrorStatus(0,
+				WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject, null);
 		final IContainer destination = getActualTarget(resource);
-		if (destination.getType() == IResource.ROOT) {
-			return WorkbenchNavigatorPlugin.createErrorStatus(0,
-					WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
-		}
+		if (destination.getType() == IResource.ROOT) return WorkbenchNavigatorPlugin.createErrorStatus(0,
+				WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings, null);
 
 		final IResource[] selectedResources = getSelectedResources(aDragSelection);
 
@@ -229,7 +255,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 			operation = new MoveFilesAndFoldersOperation(getShell());
 			message = operation.validateDestination(destination, selectedResources);
 		}
-		if (message != null) { return WorkbenchNavigatorPlugin.createErrorStatus(0, message, null); }
+		if (message != null) return WorkbenchNavigatorPlugin.createErrorStatus(0, message, null);
 		return Status.OK_STATUS;
 	}
 
@@ -256,9 +282,9 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * enabled, the target is also the parent.
 	 */
 	private IContainer getActualTarget(final IResource mouseTarget) {
-		if (mouseTarget == null) { return null; }
+		if (mouseTarget == null) return null;
 		/* if cursor is on a file, return the parent */
-		if (mouseTarget.getType() == IResource.FILE) { return mouseTarget.getParent(); }
+		if (mouseTarget.getType() == IResource.FILE) return mouseTarget.getParent();
 		/* otherwise the mouseTarget is the real target */
 		return (IContainer) mouseTarget;
 	}
@@ -271,9 +297,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	private IResource[] getSelectedResources() {
 
 		final ISelection selection = LocalSelectionTransfer.getTransfer().getSelection();
-		if (selection instanceof IStructuredSelection) {
-			return getSelectedResources((IStructuredSelection) selection);
-		}
+		if (selection instanceof IStructuredSelection) return getSelectedResources((IStructuredSelection) selection);
 		return NO_RESOURCES;
 	}
 
@@ -283,15 +307,19 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(final IStructuredSelection selection) {
+		// if (selection.toList().stream().anyMatch(each -> (each instanceof LinkedFile))) return new IResource[0];
 		final ArrayList<IResource> selectedResources = new ArrayList<>();
-
 		for (final Iterator<?> i = selection.iterator(); i.hasNext();) {
 			final IResource r = ResourceManager.getResource(i.next());
 			if (r != null) {
 				selectedResources.add(r);
+				if (ResourceManager.isFile(r)) {
+					selectedResources.addAll(FileMetaDataProvider.getInstance().getSupportFilesOf((IFile) r));
+				}
 			}
 		}
 		return selectedResources.toArray(new IResource[selectedResources.size()]);
+		// return selectedResources.toArray(new IResource[selectedResources.size()]);
 	}
 
 	/**
@@ -325,7 +353,6 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 		// automatically create links
 		if (shouldLinkAutomatically) {
 			operation.setCreateLinks(true);
-			operation.copyResources(sources, target);
 		} else {
 			boolean allSourceAreLinksOrVirtualFolders = true;
 			for (final IResource source : sources) {
@@ -342,31 +369,20 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 						target.isVirtual() ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE
 								: IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
 
-				if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
+				if (IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT.equals(dndPreference)) {
 					final ImportTypeDialog dialog =
 							new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
 					dialog.setResource(target);
-					if (dialog.open() == Window.OK) {
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS) {
-							operation.setVirtualFolders(true);
-						}
-						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK) {
-							operation.setCreateLinks(true);
-						}
-						if (dialog.getVariable() != null) {
-							operation.setRelativeVariable(dialog.getVariable());
-						}
-						operation.copyResources(sources, target);
-					} else {
-						return problems;
+					if (dialog.open() != Window.OK) return problems;
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS) {
+						operation.setVirtualFolders(true);
 					}
-				} else {
-					operation.copyResources(sources, target);
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK) { operation.setCreateLinks(true); }
+					if (dialog.getVariable() != null) { operation.setRelativeVariable(dialog.getVariable()); }
 				}
-			} else {
-				operation.copyResources(sources, target);
 			}
 		}
+		operation.copyResources(sources, target);
 
 		return problems;
 	}
@@ -422,7 +438,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					}
 				};
 
-				if (returnStatus != null) { return returnStatus; }
+				if (returnStatus != null) return returnStatus;
 
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(false, false, checkOp);
@@ -436,7 +452,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					final Dialog dialog = RefactoringUI.createLightWeightStatusDialog(refactoringStatus, getShell(),
 							WorkbenchNavigatorMessages.MoveResourceAction_title);
 					final int result = dialog.open();
-					if (result != IStatus.OK) { return Status.CANCEL_STATUS; }
+					if (result != IStatus.OK) return Status.CANCEL_STATUS;
 				}
 
 				final PerformRefactoringOperation op =
@@ -454,7 +470,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 					}
 				};
 
-				if (returnStatus != null) { return returnStatus; }
+				if (returnStatus != null) return returnStatus;
 
 				try {
 					PlatformUI.getWorkbench().getProgressService().run(false, false, refactorOp);
@@ -498,20 +514,14 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * Ensures that the drop target meets certain criteria
 	 */
 	private IStatus validateTarget(final Object target, final TransferData transferType, final int dropOperation) {
-		if (!ResourceManager.isResource(target)) {
-			return WorkbenchNavigatorPlugin
-					.createInfoStatus(WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource);
-		}
+		if (!ResourceManager.isResource(target)) return WorkbenchNavigatorPlugin
+				.createInfoStatus(WorkbenchNavigatorMessages.DropAdapter_targetMustBeResource);
 		final IResource resource = ResourceManager.getResource(target);
-		if (!resource.isAccessible()) {
-			return WorkbenchNavigatorPlugin
-					.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
-		}
+		if (!resource.isAccessible()) return WorkbenchNavigatorPlugin
+				.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_canNotDropIntoClosedProject);
 		final IContainer destination = getActualTarget(resource);
-		if (destination.getType() == IResource.ROOT) {
-			return WorkbenchNavigatorPlugin
-					.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
-		}
+		if (destination.getType() == IResource.ROOT) return WorkbenchNavigatorPlugin
+				.createErrorStatus(WorkbenchNavigatorMessages.DropAdapter_resourcesCanNotBeSiblings);
 		String message = null;
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
@@ -523,16 +533,12 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 				CopyFilesAndFoldersOperation operation;
 				if (dropOperation == DND.DROP_COPY || dropOperation == DND.DROP_LINK) {
 					operation = new CopyFilesAndFoldersOperation(getShell());
-					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setVirtualFolders(true);
-						message = operation.validateDestination(destination, selectedResources);
-					}
 				} else {
 					operation = new MoveFilesAndFoldersOperation(getShell());
-					if (operation.validateDestination(destination, selectedResources) != null) {
-						operation.setVirtualFolders(true);
-						message = operation.validateDestination(destination, selectedResources);
-					}
+				}
+				if (operation.validateDestination(destination, selectedResources) != null) {
+					operation.setVirtualFolders(true);
+					message = operation.validateDestination(destination, selectedResources);
 				}
 			}
 		} // file import?
@@ -547,7 +553,7 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 			final CopyFilesAndFoldersOperation copyOperation = new CopyFilesAndFoldersOperation(getShell());
 			message = copyOperation.validateImportDestination(destination, sourceNames);
 		}
-		if (message != null) { return WorkbenchNavigatorPlugin.createErrorStatus(message); }
+		if (message != null) return WorkbenchNavigatorPlugin.createErrorStatus(message);
 		return Status.OK_STATUS;
 	}
 
@@ -556,16 +562,14 @@ public class NavigatorResourceDropAssistant extends ResourceDropAdapterAssistant
 	 * children are added.
 	 */
 	private void mergeStatus(final MultiStatus status, final IStatus toMerge) {
-		if (!toMerge.isOK()) {
-			status.merge(toMerge);
-		}
+		if (!toMerge.isOK()) { status.merge(toMerge); }
 	}
 
 	/**
 	 * Opens an error dialog if necessary. Takes care of complex rules necessary for making the error dialog look nice.
 	 */
 	private void openError(final IStatus status) {
-		if (status == null) { return; }
+		if (status == null) return;
 
 		final String genericTitle = WorkbenchNavigatorMessages.DropAdapter_title;
 		final int codes = IStatus.ERROR | IStatus.WARNING;
