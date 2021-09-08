@@ -1328,7 +1328,7 @@ public class DrivingSkill extends MovingSkill {
 			examples = { @example ("do drive_random init_node: some_node;") }
 		)
 	)
-	public void primDriveRandom(final IScope scope) throws GamaRuntimeException {
+	public Boolean primDriveRandom(final IScope scope) throws GamaRuntimeException {
 		IAgent vehicle = getCurrentAgent(scope);
 		GamaSpatialGraph graph = (GamaSpatialGraph) scope.getArg("graph", IType.GRAPH);
 		Map<IAgent, Double> roadProba = (Map) scope.getArg("proba_roads", IType.MAP);
@@ -1347,7 +1347,7 @@ public class DrivingSkill extends MovingSkill {
 			setNextRoad(vehicle, chooseNextRoadRandomly(scope, graph, initNode, roadProba));
 		}
 
-		moveAcrossRoads(scope, true, graph, roadProba);
+		return moveAcrossRoads(scope, true, graph, roadProba);
 	}
 
 	@action(
@@ -1603,7 +1603,7 @@ public class DrivingSkill extends MovingSkill {
 		setLowestLane(vehicle, newLowestLane);
 	}
 
-	private void moveAcrossRoads(final IScope scope,
+	private Boolean moveAcrossRoads(final IScope scope,
 			final boolean isDrivingRandomly,
 			final GamaSpatialGraph graph,
 			final Map<IAgent, Double> roadProba) {
@@ -1623,15 +1623,15 @@ public class DrivingSkill extends MovingSkill {
 
 			if (!isDrivingRandomly && loc.equals(finalTarget.getLocation())) {  // Final node in path
 				clearDrivingStates(scope);
-				return;
+				return true;
 			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				IAgent newRoad = getNextRoad(vehicle);
-				if (newRoad == null) return;
+				if (newRoad == null) return false;
 				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
 				// check traffic lights and vehicles coming from other roads
 				if (!readyToCross(scope, vehicle, currentTarget, newRoad)) {
-					return;
+					return true;
 				}
 				
 				// Choose a lane on the new road
@@ -1642,7 +1642,7 @@ public class DrivingSkill extends MovingSkill {
 				int lowestLane = (int) actionCL.executeOn(scope);
 				laneAndAccPair = MOBIL.chooseLane(scope, vehicle, newRoad, lowestLane);
 				if (laneAndAccPair == null) {
-					return;
+					return true;
 				}
 				double newAccel = laneAndAccPair.getRight();
 				double newSpeed = computeSpeed(scope, newAccel, newRoad);
@@ -1657,7 +1657,7 @@ public class DrivingSkill extends MovingSkill {
 					if (currentRoad != null && goingToBlock) {
 						blockIntersection(scope, currentRoad, newRoad, currentTarget);
 					}
-					return;
+					return true;
 				}
 				IStatement.WithArgs actionOnNewRoad = context.getAction("on_entering_new_road");
 				actionOnNewRoad.executeOn(scope);
@@ -1668,7 +1668,7 @@ public class DrivingSkill extends MovingSkill {
 				actionImpactEF.setRuntimeArgs(scope, argsEF);
 				remainingTime = (Double) actionImpactEF.executeOn(scope);
 				if (remainingTime <= 0.0) {
-					return;
+					return true;
 				}
 
 				// Find the new next road in advance in order to look for leaders further ahead
@@ -1705,7 +1705,9 @@ public class DrivingSkill extends MovingSkill {
 			int lowestLane = laneAndAccPair.getLeft();
 			double accel = laneAndAccPair.getRight();
 			remainingTime = moveAcrossSegments(scope, accel, remainingTime, lowestLane);
+		
 		}
+		return true;
 	}
 	
 
