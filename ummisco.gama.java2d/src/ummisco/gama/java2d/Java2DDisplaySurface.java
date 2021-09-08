@@ -205,11 +205,16 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void dispatchKeyEvent(final char e) {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
+	
+	int autoScaleUp(int c) { 
+		if (PlatformHelper.isWindows() && PlatformHelper.getDeviceZoom() > 100) return c;
+		return PlatformHelper.autoScaleUp(c);
+	}
 
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
-		final int x = PlatformHelper.autoScaleUp(xm);
-		final int y = PlatformHelper.autoScaleUp(ym);
+		final int x = autoScaleUp(xm);
+		final int y = autoScaleUp(ym);
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -220,11 +225,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void draggedTo(final int x, final int y) {
 		final Point origin = getOrigin();
-		setOrigin(origin.x + PlatformHelper.autoScaleUp(x) - getMousePosition().x,
-				origin.y + PlatformHelper.autoScaleUp(y) - getMousePosition().y);
-		// DEBUG.OUT("Translation on X : " + (PlatformHelper.autoScaleUp(x) - getMousePosition().x) + " | on Y : "
-		// + (PlatformHelper.autoScaleUp(y) - getMousePosition().y));
-		// DEBUG.OUT("Old Origin = " + origin + " | New Origin = " + getOrigin());
+		setOrigin(origin.x + autoScaleUp(x) - getMousePosition().x,
+				origin.y + autoScaleUp(y) - getMousePosition().y);
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
