@@ -205,9 +205,16 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void dispatchKeyEvent(final char e) {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
-	
-	int autoScaleUp(int c) { 
-		if (PlatformHelper.isWindows() && PlatformHelper.getDeviceZoom() > 100) return c;
+
+	/**
+	 * Auto scale up.
+	 *
+	 * @param c
+	 *            the c
+	 * @return the int
+	 */
+	int autoScaleUp(final int c) {
+		if (PlatformHelper.getDeviceZoom() > 100) return c;
 		return PlatformHelper.autoScaleUp(c);
 	}
 
@@ -225,8 +232,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void draggedTo(final int x, final int y) {
 		final Point origin = getOrigin();
-		setOrigin(origin.x + autoScaleUp(x) - getMousePosition().x,
-				origin.y + autoScaleUp(y) - getMousePosition().y);
+		setOrigin(origin.x + autoScaleUp(x) - getMousePosition().x, origin.y + autoScaleUp(y) - getMousePosition().y);
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
