@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ApplicationWorkbenchWindowAdvisor.java, in plugin msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * ApplicationWorkbenchWindowAdvisor.java, in msi.gama.application, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.application.workbench;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -21,17 +19,23 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import org.osgi.framework.Bundle;
+
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 
+/**
+ * The Class ApplicationWorkbenchWindowAdvisor.
+ */
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
 	@Override
@@ -39,8 +43,16 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		return new GamaActionBarAdvisor(configurer);
 	}
 
+	/**
+	 * Instantiates a new application workbench window advisor.
+	 *
+	 * @param adv
+	 *            the adv
+	 * @param configurer
+	 *            the configurer
+	 */
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
-		final IWorkbenchWindowConfigurer configurer) {
+			final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
 
 		// Hack and workaround for the inability to find launcher icons...
@@ -48,7 +60,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		final Bundle bundle = Platform.getBundle("msi.gama.application");
 
 		final ImageDescriptor myImage =
-			ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
+				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
 		configurer.getWindow().getShell().setImage(myImage.createImage());
 	}
 
@@ -61,11 +73,11 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 			@Override
 			public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-				final String changeId) {}
+					final String changeId) {}
 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-				if ( PerspectiveHelper.isSimulationPerspective() ) {
+				if (PerspectiveHelper.isSimulationPerspective()) {
 					// DEBUG.OUT("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
@@ -95,6 +107,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(false);
 		configurer.setTitle(GAMA.VERSION);
+		PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
 		Resource.setNonDisposeHandler(null);
 	}
 
