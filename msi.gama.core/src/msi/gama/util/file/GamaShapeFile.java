@@ -345,7 +345,12 @@ public class GamaShapeFile extends GamaGisFile {
 			collection.accepts(feature -> {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-					if (!with3D && !g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
+					if (!with3D && g.getNumPoints() > 2)
+						try {
+							if (!g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
+						} catch(Exception e) {
+							g = GeometryUtils.cleanGeometry(g); 
+						}
 					g = gis.transform(g);
 					if (!with3D) {
 						g.apply(ZERO_Z);
