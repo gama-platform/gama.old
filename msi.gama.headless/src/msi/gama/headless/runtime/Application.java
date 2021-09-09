@@ -15,7 +15,9 @@ package msi.gama.headless.runtime;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,9 +37,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 
@@ -60,6 +65,7 @@ import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
@@ -68,6 +74,7 @@ import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 
 public class Application implements IApplication {
@@ -91,6 +98,7 @@ public class Application implements IApplication {
   // -> Code still exist, but not documented nor use
 	final public static String BATCH_PARAMETER = "-batch";
 	final public static String GAML_PARAMETER = "-gaml";
+	final public static String WRITE_XMI = "-write-xmi";
 
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
@@ -191,7 +199,7 @@ public class Application implements IApplication {
 
 		// Commands
 		// ========================
-		if (args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) || args.contains(VALIDATE_LIBRARY_PARAMETER) || args.contains(TEST_LIBRARY_PARAMETER) ) {
+		if (args.contains(WRITE_XMI) || args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) || args.contains(VALIDATE_LIBRARY_PARAMETER) || args.contains(TEST_LIBRARY_PARAMETER) ) {
 			size = size - 1;
 			mustContainOutFile = mustContainInFile = false;
 		}
@@ -285,6 +293,24 @@ public class Application implements IApplication {
 			return ModelLibraryRunner.getInstance().start();
 		else if (args.contains(CHECK_MODEL_PARAMETER))
 			ModelLibraryGenerator.start(this, args);
+		else if (args.contains(WRITE_XMI)) {
+			String outputDir = "all-resources";
+			DEBUG.ON();
+			DEBUG.LOG("Writing xmi files to " + outputDir);
+			IMap<EClass, Resource> resources = BuiltinGlobalScopeProvider.getResources();
+			resources.forEach((k, res) -> {
+				String out = k.getName() + ".xmi";
+				OutputStream outf;
+				try {
+					outf = new FileOutputStream(out);
+					res.save(outf, null);
+					DEBUG.LOG("Resource written to " + out);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			});
+			DEBUG.LOG("Done");
+		}
 
 		// User runner
 		else if (args.contains(BATCH_PARAMETER))
