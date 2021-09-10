@@ -470,7 +470,7 @@ public class Application implements IApplication {
 	 * @param experimentName
 	 * @param pathToModel
 	 */
-	public void runBatchSimulation(String experimentName, String pathToModel) {
+	public void runBatchSimulation(String experimentName, String pathToModel) throws FileNotFoundException, InterruptedException {
 		if (!GamlFileExtension.isGaml(pathToModel)) {
 			System.exit(-1);
 		}
