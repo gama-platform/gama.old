@@ -43,8 +43,8 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.css.sac.CSSParseException;
-import org.w3c.dom.stylesheets.StyleSheet;
-import org.w3c.dom.stylesheets.StyleSheetList;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.preferences.Pref;
 import msi.gaml.types.IType;
@@ -196,7 +196,6 @@ public class ThemeHelper {
 			eventBroker.subscribe(IThemeEngine.Events.THEME_CHANGED, themeChangedHandler);
 		}
 		chooseThemeBasedOnPreferences();
-		// injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
 	}
 
 	/**
@@ -301,32 +300,28 @@ public class ThemeHelper {
 	 */
 	public static void injectCSS(final String cssText) {
 		StringBuilder sb = new StringBuilder();
-		// FIXME: expose these new protocols: resetCurrentTheme() and
-		// getCSSEngines()
 		getThemeEngine().resetCurrentTheme();
+		CSSEngine engine = Iterables.getFirst(getThemeEngine().getCSSEngines(), null);
+		if (engine == null) return;
+		// sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
+		ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
+		// List<StyleSheet> sheets = new ArrayList<>();
+		// StyleSheetList list = doc.getStyleSheets();
+		// for (int i = 0; i < list.getLength(); i++) { sheets.add(list.item(i)); }
 
-		int count = 0;
-		for (CSSEngine engine : getThemeEngine().getCSSEngines()) {
-			if (count++ > 0) { sb.append("\n\n"); }
-			sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
-			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
-			List<StyleSheet> sheets = new ArrayList<>();
-			StyleSheetList list = doc.getStyleSheets();
-			for (int i = 0; i < list.getLength(); i++) { sheets.add(list.item(i)); }
+		try {
+			Reader reader = new StringReader(cssText);
+			doc.addStyleSheet(engine.parseStyleSheet(reader));
+			// sheets.add(/* 0, */ engine.parseStyleSheet(reader));
+			// doc.removeAllStyleSheets();
+			// for (StyleSheet sheet : sheets) { doc.addStyleSheet(sheet); }
+			engine.reapply();
 
-			try {
-				Reader reader = new StringReader(cssText);
-				sheets.add(0, engine.parseStyleSheet(reader));
-				doc.removeAllStyleSheets();
-				for (StyleSheet sheet : sheets) { doc.addStyleSheet(sheet); }
-				engine.reapply();
-
-			} catch (CSSParseException e) {
-				sb.append("\nError: line ").append(e.getLineNumber()).append(" col ").append(e.getColumnNumber())
-						.append(": ").append(e.getLocalizedMessage());
-			} catch (IOException e) {
-				sb.append("\nError: ").append(e.getLocalizedMessage());
-			}
+		} catch (CSSParseException e) {
+			sb.append("\nError: line ").append(e.getLineNumber()).append(" col ").append(e.getColumnNumber())
+					.append(": ").append(e.getLocalizedMessage());
+		} catch (IOException e) {
+			sb.append("\nError: ").append(e.getLocalizedMessage());
 		}
 	}
 

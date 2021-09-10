@@ -32,6 +32,7 @@ import org.osgi.framework.Bundle;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The Class ApplicationWorkbenchWindowAdvisor.
@@ -101,6 +102,10 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void pageOpened(final IWorkbenchPage page) {}
 		});
+		// See #3187 -
+		if (FLAGS.USE_OLD_TABS) {
+			ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
+		}
 		configurer.setShowMenuBar(true);
 		configurer.setShowCoolBar(true);
 		configurer.setShowStatusLine(true);

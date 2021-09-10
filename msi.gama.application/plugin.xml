@@ -139,34 +139,7 @@
                </property>
             </product>
          </extension>
-                     <extension
-         point="org.eclipse.e4.ui.css.swt.theme">
-      <stylesheet
-            uri="css/tabs.css">
-         <themeid
-               refid="org.eclipse.e4.ui.css.theme.e4_default">
-         </themeid>
-         <themeid
-               refid="org.eclipse.e4.ui.css.theme.e4_classic">
-         </themeid>
-         <themeid
-               refid="org.eclipse.e4.ui.css.theme.e4_dark">
-         </themeid>
-         <themeid
-               refid="org.eclipse.e4.ui.css.theme.e4_system">
-         </themeid>
-      </stylesheet>
-   </extension>
-            <extension
-                  id="gama.theming"
-                  name="Dark theme for GAMA"
-                  point="org.eclipse.e4.ui.css.swt.theme">
-               <theme
-                     basestylesheeturi="msi.gama.application.theme1"
-                     id="gama.dark.theme"
-                     label="Gama Dark Theme">
-               </theme>
-            </extension>
+
          <extension
                id="testNature"
                name="GAMA test project"
