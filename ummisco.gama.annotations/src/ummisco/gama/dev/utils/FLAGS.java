@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * FLAGS.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.dev.utils;
 
 /**
@@ -38,7 +48,8 @@ public class FLAGS {
 	}
 
 	/**
-	 * For debugging purposes, see #3164. True by default until bugs on Linux are solved
+	 * For debugging purposes, see #3164. True by default until bugs on Linux regarding the use of multiple threads in
+	 * UI processes are solved.
 	 */
 	public static final boolean USE_OLD_ANIMATOR = get("use_old_animator", true);
 
@@ -59,6 +70,13 @@ public class FLAGS {
 	 * classes). Set to false to suppress all logging. True by default
 	 */
 	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
+
+	/**
+	 * Used in msi.gama.application.Application to transmit the value of "quarter" (if true) to property
+	 * org.eclipse.swt.internal.DPIUtil.SWT_AUTOSCALE, enabling more precise scaling methods for HiDPI screens.
+	 * Otherwise the default is used by DPIUtil (see #3180). False by default.
+	 */
+	public static final boolean USE_PRECISE_AUTOSCALE = get("use_precise_autoscale", false);
 
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.

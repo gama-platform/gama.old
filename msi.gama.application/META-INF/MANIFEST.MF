@@ -23,7 +23,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.css.swt;bundle-version="0.13.1100",
  org.eclipse.e4.ui.workbench.addons.swt;bundle-version="1.3.1100",
  org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="0.14.1300",
- org.eclipse.e4.ui.workbench.swt;bundle-version="0.14.1100"
+ org.eclipse.e4.ui.workbench.swt;bundle-version="0.14.1100",
+ org.eclipse.e4.ui.css.core;bundle-version="0.13.0",
+ org.w3c.css.sac;bundle-version="1.3.1"
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.8.1.qualifier
 Bundle-ManifestVersion: 2

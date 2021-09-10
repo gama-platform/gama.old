@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Application.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * Application.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.application;
 
 import static java.lang.System.setProperty;
@@ -48,35 +47,60 @@ import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
 	{
 		DEBUG.OFF();
+		if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
 	}
 
+	/** The processor. */
 	public static OpenDocumentEventProcessor processor;
 
+	/** The Constant CLEAR_WORKSPACE. */
 	public static final String CLEAR_WORKSPACE = "clearWorkspace";
 
+	/**
+	 * Clear workspace.
+	 *
+	 * @param clear
+	 *            the clear
+	 */
 	public static void ClearWorkspace(final boolean clear) {
 		getInternalPreferenceStore().setValue(CLEAR_WORKSPACE, Boolean.toString(clear));
 		saveInternalPrefs();
 	}
 
+	/**
+	 * Checks if is clear workspace.
+	 *
+	 * @return true, if successful
+	 */
 	public static boolean IsClearWorkspace() {
 		final boolean result = getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE);
 		DEBUG.OUT("Value of clearWorkspace pref: " + result);
 		return result;
 	}
 
+	/**
+	 * The Class OpenDocumentEventProcessor.
+	 */
 	public static class OpenDocumentEventProcessor extends DelayedEventsProcessor {
 
+		/**
+		 * Instantiates a new open document event processor.
+		 *
+		 * @param display
+		 *            the display
+		 */
 		OpenDocumentEventProcessor(final Display display) {
 			super(display);
 		}
 
+		/** The files to open. */
 		private final ArrayList<String> filesToOpen = new ArrayList<>(1);
 
 		@Override
@@ -94,12 +118,13 @@ public class Application implements IApplication {
 			final String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
 			filesToOpen.clear();
 
-			for (final String path : filePaths) {
-				WorkspaceModelsManager.instance.openModelPassedAsArgument(path);
-			}
+			for (final String path : filePaths) { WorkspaceModelsManager.instance.openModelPassedAsArgument(path); }
 		}
 	}
 
+	/**
+	 * Creates the processor.
+	 */
 	public static void createProcessor() {
 		final Display display = Display.getDefault();
 		if (display == null) return;
@@ -145,6 +170,9 @@ public class Application implements IApplication {
 
 	}
 
+	/**
+	 * Check workbench XMI.
+	 */
 	private void checkWorkbenchXMI() {
 		final boolean removeWorkbenchXMI = IsClearWorkspace();
 		if (removeWorkbenchXMI) {
@@ -154,6 +182,15 @@ public class Application implements IApplication {
 
 	}
 
+	/**
+	 * Check workspace.
+	 *
+	 * @return the object
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws MalformedURLException
+	 *             the malformed URL exception
+	 */
 	public static Object checkWorkspace() throws IOException, MalformedURLException {
 		final Location instanceLoc = Platform.getInstanceLocation();
 		if (instanceLoc == null) {
@@ -221,9 +258,7 @@ public class Application implements IApplication {
 		final IWorkbench workbench = getWorkbench();
 		if (workbench == null) return;
 		final Display display = workbench.getDisplay();
-		display.syncExec(() -> {
-			if (!display.isDisposed()) { workbench.close(); }
-		});
+		display.syncExec(() -> { if (!display.isDisposed()) { workbench.close(); } });
 	}
 
 }

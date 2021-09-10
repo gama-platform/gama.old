@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaIcons.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamaIcons.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
 import java.util.HashMap;
@@ -24,6 +23,7 @@ import org.eclipse.swt.graphics.RGB;
 
 import msi.gama.application.workbench.IIconProvider;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -35,39 +35,94 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class GamaIcons implements IIconProvider {
 
+	/** The Constant PLUGIN_ID. */
 	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
 
+	/** The instance. */
 	static private GamaIcons instance = new GamaIcons();
 
-	public static GamaIcons getInstance() {
-		return instance;
-	}
+	/**
+	 * Gets the single instance of GamaIcons.
+	 *
+	 * @return single instance of GamaIcons
+	 */
+	public static GamaIcons getInstance() { return instance; }
 
+	/** The Constant DEFAULT_PATH. */
 	static public final String DEFAULT_PATH = "/icons/";
+
+	/** The Constant SIZER_PREFIX. */
 	static final String SIZER_PREFIX = "sizer_";
+
+	/** The Constant COLOR_PREFIX. */
 	static final String COLOR_PREFIX = "color_";
 
+	/** The icon cache. */
 	Map<String, GamaIcon> iconCache = new HashMap<>();
+
+	/** The image cache. */
 	Map<String, Image> imageCache = new HashMap<>();
 
+	/**
+	 * Gets the icon.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the icon
+	 */
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
 	}
 
+	/**
+	 * Put image in cache.
+	 *
+	 * @param name
+	 *            the name
+	 * @param image
+	 *            the image
+	 * @return the image
+	 */
 	Image putImageInCache(final String name, final Image image) {
 		imageCache.put(name, image);
 		return image;
 
 	}
 
+	/**
+	 * Put icon in cache.
+	 *
+	 * @param name
+	 *            the name
+	 * @param icon
+	 *            the icon
+	 */
 	void putIconInCache(final String name, final GamaIcon icon) {
 		iconCache.put(name, icon);
 	}
 
+	/**
+	 * Gets the image in cache.
+	 *
+	 * @param code
+	 *            the code
+	 * @return the image in cache
+	 */
 	Image getImageInCache(final String code) {
 		return imageCache.get(code);
 	}
 
+	/**
+	 * Creates the sizer.
+	 *
+	 * @param color
+	 *            the color
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the gama icon
+	 */
 	public static GamaIcon createSizer(final Color color, final int width, final int height) {
 		final String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
@@ -84,14 +139,41 @@ public class GamaIcons implements IIconProvider {
 		return sizer;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param s
+	 *            the s
+	 * @return the gama icon
+	 */
 	public static GamaIcon create(final String s) {
 		return create(s, PLUGIN_ID);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param code
+	 *            the code
+	 * @param plugin
+	 *            the plugin
+	 * @return the gama icon
+	 */
 	public static GamaIcon create(final String code, final String plugin) {
 		return create(code, code, plugin);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param code
+	 *            the code
+	 * @param path
+	 *            the path
+	 * @param plugin
+	 *            the plugin
+	 * @return the gama icon
+	 */
 	public static GamaIcon create(final String code, final String path, final String plugin) {
 		GamaIcon result = getInstance().getIcon(code);
 		if (result == null) {
@@ -101,6 +183,19 @@ public class GamaIcons implements IIconProvider {
 		return result;
 	}
 
+	/**
+	 * Creates the color icon.
+	 *
+	 * @param s
+	 *            the s
+	 * @param gcolor
+	 *            the gcolor
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the gama icon
+	 */
 	public static GamaIcon createColorIcon(final String s, final GamaUIColor gcolor, final int width,
 			final int height) {
 		final String name = COLOR_PREFIX + s;
@@ -136,40 +231,54 @@ public class GamaIcons implements IIconProvider {
 	public static Image createTempColorIcon(final GamaUIColor gcolor) {
 		final String name = "color" + gcolor.getRGB().toString();
 		final GamaIcon icon = getInstance().getIcon(name);
-		if (icon != null) { return icon.image(); }
+		if (icon != null) return icon.image();
 		// Color color = gcolor.color();
 		final GamaIcon blank = create("display.color2");
 		final Image image = new Image(WorkbenchHelper.getDisplay(), blank.image().getImageData());
 		final GC gc = new GC(image);
-		gc.setAntialias(SWT.ON);
+		// gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
 		gc.fillRoundRectangle(6, 6, 12, 12, 4, 4);
-		if (!gcolor.isDark()) {
-			gc.setForeground(IGamaColors.BLACK.color());
-			gc.drawRoundRectangle(6, 6, 12, 12, 4, 4);
-		}
-		gc.dispose();
+		// if (!gcolor.isDark()) {
+		// gc.setForeground(IGamaColors.BLACK.color());
+		// gc.drawRoundRectangle(6, 6, 12, 12, 4, 4);
+		// }
+		// See Issue #3138 about weird artefacts in handmade icons. dispose() does it on Retina screens. If removing
+		// this condition, the weird artefacts come back on Retina screens. Otherwise they do not.
+		if (!PlatformHelper.isMac() || !PlatformHelper.isHiDPI()) { gc.dispose(); }
 		getInstance().putImageInCache(name, image);
 		getInstance().putIconInCache(name, new GamaIcon(name));
 		return image;
 	}
 
+	/**
+	 * Creates the temp round color icon.
+	 *
+	 * @param gcolor
+	 *            the gcolor
+	 * @return the image
+	 */
 	public static Image createTempRoundColorIcon(final GamaUIColor gcolor) {
 		final String name = "roundcolor" + gcolor.getRGB().toString();
 		final GamaIcon icon = getInstance().getIcon(name);
-		if (icon != null) { return icon.image(); }
+		if (icon != null) return icon.image();
 		// Color color = gcolor.color();
 		final GamaIcon blank = create("display.color3");
 		final Image image = new Image(WorkbenchHelper.getDisplay(), blank.image().getImageData());
+
 		final GC gc = new GC(image);
-		gc.setAntialias(SWT.ON);
+		gc.setAdvanced(true);
+		// gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
-		gc.fillOval(6, 6, 12, 12);
-		if (!gcolor.isDark()) {
-			gc.setForeground(IGamaColors.BLACK.color());
-			gc.drawOval(6, 6, 12, 12);
-		}
-		gc.dispose();
+		gc.fillOval(6, 7, 12, 12);
+		// if (!gcolor.isDark()) {
+		// gc.setForeground(IGamaColors.BLACK.color());
+		// gc.drawOval(6, 6, 12, 12);
+		// }
+		// See Issue #3138 about weird artefacts in handmade icons. dispose() does it on Retina screens. If removing
+		// this condition, the weird artefacts come back on Retina screens. Otherwise they do not.
+		if (!PlatformHelper.isMac() || !PlatformHelper.isHiDPI()) { gc.dispose(); }
+
 		getInstance().putImageInCache(name, image);
 		getInstance().putIconInCache(name, new GamaIcon(name));
 		return image;
