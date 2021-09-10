@@ -604,4 +604,12 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		return descriptions.get(eVar).get(QualifiedName.create(name));
 	}
 
+	
+	public static XtextResourceSet getResourceSet() {
+		return rs;
+	}
+
+	public static IMap<EClass, Resource> getResources() {
+		return resources;
+	}
 }
