@@ -433,25 +433,6 @@ public class Application implements IApplication {
 
 		System.exit(0);
 	}
-
-	public void runBatchSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		final String pathToModel = args.get(args.size() - 1);
-		
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-	
-		final Injector injector = HeadlessSimulationLoader.getInjector();
-		final GamlModelBuilder builder = new GamlModelBuilder(injector);
-
-		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
-		
-		final IExperimentPlan expPlan = mdl.getExperiment(args.get(args.size() - 2));
-		
-		expPlan.setHeadless(true);
-		expPlan.open();
-		
-		System.exit(0);
-	} 
 	
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
@@ -501,8 +482,8 @@ public class Application implements IApplication {
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
+		
 		expPlan.setHeadless(true);
-
 		expPlan.open();
 
 		System.exit(0);
