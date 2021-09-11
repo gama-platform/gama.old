@@ -262,4 +262,10 @@ public class MeshLayerData extends LayerData {
 	 */
 	public double getNoDataValue() { return noData.get(); }
 
+	/**
+	 * Mesh objects are not selectable
+	 */
+	@Override
+	public Boolean isSelectable() { return false; }
+
 }

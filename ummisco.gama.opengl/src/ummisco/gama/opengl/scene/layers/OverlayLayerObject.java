@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * OverlayLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
 import com.jogamp.opengl.GL;
@@ -15,12 +25,23 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
+/**
+ * The Class OverlayLayerObject.
+ */
 public class OverlayLayerObject extends LayerObject {
 
 	static {
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Instantiates a new overlay layer object.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 * @param layer
+	 *            the layer
+	 */
 	public OverlayLayerObject(final IOpenGLRenderer renderer, final ILayer layer) {
 		super(renderer, layer);
 	}
@@ -30,6 +51,12 @@ public class OverlayLayerObject extends LayerObject {
 		scale.setLocation(0.9, 0.9, 1);
 	}
 
+	/**
+	 * Adds the frame.
+	 *
+	 * @param gl
+	 *            the gl
+	 */
 	protected void addFrame(final OpenGL gl) {
 		GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
 		final IScope scope = renderer.getSurface().getScope();
@@ -49,9 +76,7 @@ public class OverlayLayerObject extends LayerObject {
 	}
 
 	@Override
-	public boolean isOverlay() {
-		return true;
-	}
+	public boolean isOverlay() { return true; }
 
 	@Override
 	protected void increaseZ() {}
@@ -89,6 +114,9 @@ public class OverlayLayerObject extends LayerObject {
 			drawObjects(gl, currentList, alpha, picking);
 		}
 	}
+
+	@Override
+	protected boolean isPickable() { return false; }
 
 	@Override
 	protected void stopDrawing(final OpenGL gl) {
