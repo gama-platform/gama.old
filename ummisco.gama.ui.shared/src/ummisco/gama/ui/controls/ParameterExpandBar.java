@@ -764,20 +764,4 @@ public class ParameterExpandBar extends Composite {
 		return underlyingObjects == null ? true : underlyingObjects.isItemVisible(item.getData());
 	}
 
-	// final Color backgroundColor =
-	// ThemeHelper.isDark() ? IGamaColors.DARK_GRAY.color() : IGamaColors.VERY_LIGHT_GRAY.color();
-	//
-	// @Override
-	// public Color getBackground() {
-	// return backgroundColor;
-	// }
-	//
-	// @Override
-	// public void setBackground(final Color c) {
-	// DEBUG.OUT("Viewer set with background: " + c);
-	// // String background = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
-	// // setData("style", " background-color: " + background + ";");
-	// super.setBackground(c);
-	// }
-
 }

@@ -1,14 +1,24 @@
+/*******************************************************************************************************
+ *
+ * FixedValueEditorControl.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import static msi.gama.application.workbench.ThemeHelper.isDark;
 import static msi.gama.common.util.StringUtils.toGaml;
-import static ummisco.gama.ui.resources.IGamaColors.BLACK;
-import static ummisco.gama.ui.resources.IGamaColors.VERY_LIGHT_GRAY;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * The Class FixedValueEditorControl.
+ */
 public class FixedValueEditorControl extends EditorControl<CLabel> {
 
 	/**
@@ -19,7 +29,7 @@ public class FixedValueEditorControl extends EditorControl<CLabel> {
 	 */
 	FixedValueEditorControl(final AbstractEditor editor, final Composite parent) {
 		super(editor, new CLabel(parent, SWT.READ_ONLY));
-		setForeground(isDark() ? VERY_LIGHT_GRAY.color() : BLACK.color());
+		// setForeground(isDark() ? VERY_LIGHT_GRAY.color() : BLACK.color());
 		// force text color, see #2601
 	}
 

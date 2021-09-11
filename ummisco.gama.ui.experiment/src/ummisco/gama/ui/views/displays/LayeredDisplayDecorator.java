@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.views.displays.LayeredDisplayDecorator.java, in plugin ummisco.gama.ui.experiment, is part of the
- * source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * LayeredDisplayDecorator.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -51,28 +51,61 @@ import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
+/**
+ * The Class LayeredDisplayDecorator.
+ */
 public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	static {
 		DEBUG.OFF();
 	}
 
+	/** The key and mouse listener. */
 	protected SWTLayeredDisplayMultiListener keyAndMouseListener;
+
+	/** The menu manager. */
 	protected DisplaySurfaceMenu menuManager;
+
+	/** The view. */
 	protected final LayeredDisplayView view;
+
+	/** The fs. */
 	ToolItem fs = null;
+
+	/** The normal parent of full screen control. */
 	protected Composite normalParentOfFullScreenControl;
+
+	/** The side control weights. */
 	int[] sideControlWeights = { 30, 70 };
+
+	/** The full screen shell. */
 	protected Shell fullScreenShell;
+
+	/** The side panel. */
 	protected Composite sidePanel;
+
+	/** The overlay. */
 	public DisplayOverlay overlay;
+
+	/** The toolbar. */
 	public GamaToolbar2 toolbar;
 
+	/** The interactive console visible. */
 	boolean isOverlayTemporaryVisible, sideControlsVisible, interactiveConsoleVisible;
+
+	/** The perspective listener. */
 	protected IPerspectiveListener perspectiveListener;
+
+	/** The relaunch experiment. */
 	final GamaCommand toggleSideControls, toggleOverlay, takeSnapshot, toggleFullScreen, toggleInteractiveConsole,
 			runExperiment, stepExperiment, closeExperiment, relaunchExperiment;
 
+	/**
+	 * Instantiates a new layered display decorator.
+	 *
+	 * @param view
+	 *            the view
+	 */
 	LayeredDisplayDecorator(final LayeredDisplayView view) {
 		this.view = view;
 		toggleSideControls = new GamaCommand("display.layers2", "Toggle side controls " + format(COMMAND, 'L'),
@@ -105,6 +138,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	}
 
+	/**
+	 * Toggle full screen.
+	 */
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
 			if (interactiveConsoleVisible) { toggleInteractiveConsole(); }
@@ -129,8 +165,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		}
 	}
 
+	/** The tp. */
 	Composite tp;
 
+	/**
+	 * Toggle toolbar.
+	 */
 	public void toggleToolbar() {
 		if (toolbar.isVisible()) {
 			toolbar.hide();
@@ -139,6 +179,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		}
 	}
 
+	/**
+	 * Adapt toolbar.
+	 */
 	private void adaptToolbar() {
 		final boolean isFullScreen = isFullScreen();
 		fs.setImage(GamaIcons.create(isFullScreen ? "display.fullscreen3" : "display.fullscreen2").image());
@@ -178,6 +221,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	}
 
+	/**
+	 * Creates the overlay.
+	 */
 	public void createOverlay() {
 		boolean wasVisible = false;
 		if (overlay != null) {
@@ -190,6 +236,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (overlay.isVisible()) { overlay.update(); }
 	}
 
+	/**
+	 * Creates the side panel.
+	 *
+	 * @param form
+	 *            the form
+	 */
 	public void createSidePanel(final SashForm form) {
 
 		sidePanel = new Composite(form, SWT.BORDER);
@@ -202,6 +254,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		// sidePanel.setBackground(IGamaColors.WHITE.color());
 	}
 
+	/**
+	 * Creates the decorations.
+	 *
+	 * @param form
+	 *            the form
+	 */
 	public void createDecorations(final SashForm form) {
 		final LayerSideControls side = new LayerSideControls();
 		side.fill(sidePanel, view);
@@ -226,6 +284,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		}
 	}
 
+	/**
+	 * Adds the perspective listener.
+	 */
 	public void addPerspectiveListener() {
 		perspectiveListener = new IPerspectiveListener() {
 			boolean previousState = false;
@@ -262,15 +323,26 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		WorkbenchHelper.getWindow().addPerspectiveListener(perspectiveListener);
 	}
 
-	public boolean isFullScreen() {
-		return fullScreenShell != null;
-	}
+	/**
+	 * Checks if is full screen.
+	 *
+	 * @return true, if is full screen
+	 */
+	public boolean isFullScreen() { return fullScreenShell != null; }
 
+	/**
+	 * Creates the full screen shell.
+	 *
+	 * @return the shell
+	 */
 	private Shell createFullScreenShell() {
 		final int monitorId = view.getOutput().getData().fullScreen();
 		return WorkbenchHelper.obtainFullScreenShell(monitorId);
 	}
 
+	/**
+	 * Destroy full screen shell.
+	 */
 	private void destroyFullScreenShell() {
 		if (fullScreenShell == null) return;
 		fullScreenShell.close();
@@ -278,11 +350,15 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		fullScreenShell = null;
 	}
 
+	/** The display overlay. */
 	protected Runnable displayOverlay = () -> {
 		if (overlay == null) return;
 		updateOverlay();
 	};
 
+	/**
+	 * Update overlay.
+	 */
 	protected void updateOverlay() {
 		if (overlay == null) return;
 		if (view.forceOverlayVisibility()) {
@@ -298,6 +374,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	}
 
+	/**
+	 * Toggle overlay.
+	 */
 	public void toggleOverlay() {
 		overlay.setVisible(!overlay.isVisible());
 	}
@@ -306,6 +385,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	// overlay.setVisible(GamaPreferences.Displays.CORE_OVERLAY.getValue());
 	// }
 
+	/**
+	 * Toggle side controls.
+	 */
 	public void toggleSideControls() {
 		if (sideControlsVisible) {
 			sideControlWeights = view.form.getWeights();
@@ -318,6 +400,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		}
 	}
 
+	/**
+	 * Toggle interactive console.
+	 */
 	public void toggleInteractiveConsole() {
 		if (!sideControlsVisible) { toggleSideControls(); }
 		final InteractiveConsoleView view =
@@ -334,6 +419,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		sidePanel.layout(true, true);
 	}
 
+	/**
+	 * Presentation menu.
+	 *
+	 * @return the menu manager
+	 */
 	private MenuManager presentationMenu() {
 		final MenuManager mm = new MenuManager();
 
@@ -345,9 +435,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				GamaIcons.create("display.fullscreen.toolbar2").descriptor()) {
 
 			@Override
-			public boolean isEnabled() {
-				return true;
-			}
+			public boolean isEnabled() { return true; }
 
 			@Override
 			public void run() {
@@ -357,6 +445,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		return mm;
 	}
 
+	/**
+	 * Creates the tool items.
+	 *
+	 * @param tb
+	 *            the tb
+	 */
 	public void createToolItems(final GamaToolbar2 tb) {
 		toolbar = tb;
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
@@ -365,9 +459,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.menu(IGamaIcons.MENU_POPULATION, "Browse displayed agents by layers", "Browse through all displayed agents",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
-		tb.setBackground(GamaColors.get(view.getOutput().getData().getToolbarColor()).color());
+		tb.setBackgroundColor(GamaColors.get(view.getOutput().getData().getToolbarColor()).color());
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		// FIXME Remove the listeners
 		try {

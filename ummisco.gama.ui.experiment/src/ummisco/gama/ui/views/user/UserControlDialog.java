@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'UserControlDialog.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * UserControlDialog.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.user;
 
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class EditorsDialog.
@@ -57,13 +55,29 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class UserControlDialog extends AbstractDetailsDialog {
 
+	/**
+	 * The Class PreviousDialog.
+	 */
 	public static class PreviousDialog {
 
+		/** The location. */
 		final Point location;
+
+		/** The extent. */
 		final Point extent;
+
+		/** The toggled. */
 		final boolean toggled;
+
+		/** The name. */
 		final String name;
 
+		/**
+		 * Instantiates a new previous dialog.
+		 *
+		 * @param d
+		 *            the d
+		 */
 		PreviousDialog(final UserControlDialog d) {
 			location = d.getShell().getLocation();
 			extent = d.getShell().getSize();
@@ -73,12 +87,26 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	}
 
+	/** The current. */
 	public static UserControlDialog current = null;
+
+	/** The previous. */
 	private static PreviousDialog previous = null;
 
+	/** The user commands. */
 	private final List<IStatement> userCommands;
+
+	/** The scope. */
 	final IScope scope;
 
+	/**
+	 * Instantiates a new user control dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param panel
+	 *            the panel
+	 */
 	public UserControlDialog(final IScope scope, final UserPanelStatement panel) {
 		super((Shell) null, "[" + scope.getAgent().getName() + "] " + panel.getName(), null, null);
 		setShellStyle(SWT.CLOSE | SWT.BORDER | SWT.TOOL | SWT.MODELESS | SWT.RESIZE);
@@ -172,9 +200,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
+	protected boolean isResizable() { return true; }
 
 	@Override
 	protected void toggleDetailsArea() {
@@ -223,7 +249,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	@Override
 	protected Control createDetailsArea(final Composite parent) {
 		final EditorsGroup compo = new EditorsGroup(parent, SWT.BORDER | SWT.SHADOW_IN);
-		compo.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY));
+		// compo.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 		final FillLayout layout = new FillLayout();
 		compo.setLayout(layout);
 		final IAgent agent = scope.getAgent();
@@ -233,9 +259,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		if (parameters != null) {
 			final List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);
-			for (final AbstractEditor gpParam : list) {
-				gpParam.createControls(compo);
-			}
+			for (final AbstractEditor gpParam : list) { gpParam.createControls(compo); }
 		}
 		return compo;
 

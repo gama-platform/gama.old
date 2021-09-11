@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.views.toolbar.GamaToolbarFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaToolbarFactory.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -26,7 +26,6 @@ import org.eclipse.ui.IWorkbenchSite;
 import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The class GamaToolbarFactory.
@@ -41,10 +40,22 @@ public class GamaToolbarFactory {
 	// .create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL, false)
 	// .in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
 
+	/**
+	 * The Class GamaComposite.
+	 */
 	public static class GamaComposite extends Composite {
 
+		/** The displayer. */
 		ITooltipDisplayer displayer;
 
+		/**
+		 * Instantiates a new gama composite.
+		 *
+		 * @param parent
+		 *            the parent
+		 * @param displayer
+		 *            the displayer
+		 */
 		public GamaComposite(final Composite parent, final ITooltipDisplayer displayer) {
 			super(parent, SWT.None);
 			this.displayer = displayer;
@@ -52,84 +63,158 @@ public class GamaToolbarFactory {
 
 	}
 
+	/**
+	 * Find tooltip displayer.
+	 *
+	 * @param c
+	 *            the c
+	 * @return the i tooltip displayer
+	 */
 	public static ITooltipDisplayer findTooltipDisplayer(final Control c) {
 		final GamaComposite gc = findGamaComposite(c);
 		return gc == null ? null : gc.displayer;
 	}
 
+	/**
+	 * Find gama composite.
+	 *
+	 * @param c
+	 *            the c
+	 * @return the gama composite
+	 */
 	public static GamaComposite findGamaComposite(final Control c) {
 		if (c instanceof Shell) return null;
 		if (c instanceof GamaComposite) return (GamaComposite) c;
 		return findGamaComposite(c.getParent());
 	}
 
+	/**
+	 * The Class ToggleAction.
+	 */
 	public static abstract class ToggleAction extends Action {
 
+		/**
+		 * Instantiates a new toggle action.
+		 */
 		ToggleAction() {
 			super("Toggle toolbar", IAction.AS_PUSH_BUTTON);
 			setId("toolbar.toggle");
 			setIcon(true);
 		}
 
+		/**
+		 * Sets the icon.
+		 *
+		 * @param show
+		 *            the new icon
+		 */
 		protected abstract void setIcon(boolean show);
 
 	}
 
+	/**
+	 * The Class ExpandAll.
+	 */
 	public static class ExpandAll extends Action {
 
+		/**
+		 * Instantiates a new expand all.
+		 */
 		ExpandAll() {
 			super("Expand all items", IAction.AS_PUSH_BUTTON);
 			setIcon();
 		}
 
+		/**
+		 * Sets the icon.
+		 */
 		protected void setIcon() {
 			setImageDescriptor(GamaIcons.create("action.toolbar.expand2").descriptor());
 		}
 
 	}
 
+	/**
+	 * The Class CollapseAll.
+	 */
 	public static class CollapseAll extends Action {
 
+		/**
+		 * Instantiates a new collapse all.
+		 */
 		CollapseAll() {
 			super("Collapse all items", IAction.AS_PUSH_BUTTON);
 			setIcon();
 		}
 
+		/**
+		 * Sets the icon.
+		 */
 		protected void setIcon() {
 			setImageDescriptor(GamaIcons.create("action.toolbar.collapse2").descriptor());
 		}
 
 	}
 
+	/**
+	 * The Class ToggleSideControls.
+	 */
 	public static class ToggleSideControls extends Action {
 
+		/**
+		 * Instantiates a new toggle side controls.
+		 */
 		ToggleSideControls() {
 			super("Toggle Side Controls", IAction.AS_PUSH_BUTTON);
 			setIcon();
 		}
 
+		/**
+		 * Sets the icon.
+		 */
 		protected void setIcon() {
 			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.side2").descriptor());
 		}
 
 	}
 
+	/**
+	 * The Class ToggleOverlay.
+	 */
 	public static class ToggleOverlay extends Action {
 
+		/**
+		 * Instantiates a new toggle overlay.
+		 */
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
 			setIcon();
 		}
 
+		/**
+		 * Sets the icon.
+		 */
 		protected void setIcon() {
 			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.overlay2").descriptor());
 		}
 
 	}
 
+	/** The toolbar height. */
 	public static int TOOLBAR_HEIGHT = 24; // CORE_ICONS_HEIGHT.getValue();
+
+	/** The toolbar sep. */
 	public static int TOOLBAR_SEP = 4;
 
+	/**
+	 * Creates a new GamaToolbar object.
+	 *
+	 * @param view
+	 *            the view
+	 * @param composite
+	 *            the composite
+	 * @return the composite
+	 */
 	private static Composite createIntermediateCompositeFor(final IToolbarDecoratedView view,
 			final Composite composite) {
 		// First, we create the background composite
@@ -152,12 +237,22 @@ public class GamaToolbarFactory {
 		return parentComposite;
 	}
 
+	/**
+	 * Gets the layout data for child.
+	 *
+	 * @return the layout data for child
+	 */
 	public static GridData getLayoutDataForChild() {
 		final GridData result = new GridData(SWT.FILL, SWT.FILL, true, true);
 		result.verticalSpan = 5;
 		return result;
 	}
 
+	/**
+	 * Gets the layout for child.
+	 *
+	 * @return the layout for child
+	 */
 	public static FillLayout getLayoutForChild() {
 		final FillLayout layout = new FillLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
@@ -165,6 +260,13 @@ public class GamaToolbarFactory {
 		return layout;
 	}
 
+	/**
+	 * Creates a new GamaToolbar object.
+	 *
+	 * @param composite
+	 *            the composite
+	 * @return the composite
+	 */
 	public static Composite createToolbarComposite(final Composite composite) {
 		final Composite toolbarComposite = new Composite(composite, SWT.None);
 		final GridData toolbarCompositeData2 = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -178,12 +280,21 @@ public class GamaToolbarFactory {
 		layout.marginBottom = margin;
 		layout.marginHeight = margin;
 		toolbarComposite.setLayout(layout);
-		toolbarComposite.setBackground(IGamaColors.WHITE.color());
+		// toolbarComposite.setBackground(IGamaColors.WHITE.color());
 
 		return toolbarComposite;
 
 	}
 
+	/**
+	 * Creates a new GamaToolbar object.
+	 *
+	 * @param view
+	 *            the view
+	 * @param composite
+	 *            the composite
+	 * @return the composite
+	 */
 	public static Composite createToolbars(final IToolbarDecoratedView view, final Composite composite) {
 		final Composite intermediateComposite = createIntermediateCompositeFor(view, composite);
 		final Composite toolbarComposite = createToolbarComposite(intermediateComposite);
@@ -266,10 +377,26 @@ public class GamaToolbarFactory {
 		return childComposite;
 	}
 
+	/**
+	 * Dispose toolbar.
+	 *
+	 * @param view
+	 *            the view
+	 * @param tb
+	 *            the tb
+	 */
 	public static void disposeToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if (tb != null && !tb.isDisposed()) { tb.dispose(); }
 	}
 
+	/**
+	 * Builds the toolbar.
+	 *
+	 * @param view
+	 *            the view
+	 * @param tb
+	 *            the tb
+	 */
 	public static void buildToolbar(final IToolbarDecoratedView view, final GamaToolbar2 tb) {
 		if (view instanceof IToolbarDecoratedView.Sizable) {
 			final FontSizer fs = new FontSizer((IToolbarDecoratedView.Sizable) view);

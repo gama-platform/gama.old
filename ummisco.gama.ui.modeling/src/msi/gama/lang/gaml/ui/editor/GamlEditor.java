@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlEditor.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.Collections;
@@ -136,6 +135,9 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 import ummisco.gama.ui.views.toolbar.Selector;
 
+/**
+ * The Class GamlEditor.
+ */
 /*
  * The class GamlEditor.
  *
@@ -154,38 +156,78 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		store.setValue("spellingEnabled", false);
 	}
 
+	/**
+	 * Instantiates a new gaml editor.
+	 */
 	public GamlEditor() {
 		dndHandler = new GamlEditorDragAndDropHandler(this);
 	}
 
+	/** The part listeners. */
 	protected static Map<IPartService, IPartListener2> partListeners;
 
+	/** The decorator. */
 	IBoxDecorator decorator;
+
+	/** The state. */
 	GamlEditorState state = new GamlEditorState(null, Collections.EMPTY_LIST);
+
+	/** The toolbar. */
 	GamaToolbar2 toolbar;
+
+	/** The toolbar parent. */
 	Composite toolbarParent;
+
+	/** The find control. */
 	private EditorSearchControls findControl;
+
+	/** The decoration enabled. */
 	boolean decorationEnabled = GamaPreferences.Modeling.EDITBOX_ENABLED.getValue();
 	// boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
+	/** The resource set provider. */
 	@Inject public IResourceSetProvider resourceSetProvider;
+
+	/** The injector. */
 	@Inject Injector injector;
+
+	/** The runner. */
 	@Inject IModelRunner runner;
+
+	/** The template dialog factory. */
 	@Inject private GamlEditTemplateDialogFactory templateDialogFactory;
+
+	/** The template store. */
 	@Inject private TemplateStore templateStore;
+
+	/** The validator. */
 	@Inject private IResourceValidator validator;
+
+	/** The marker creator. */
 	@Inject private MarkerCreator markerCreator;
+
+	/** The marker type provider. */
 	@Inject private MarkerTypeProvider markerTypeProvider;
+
+	/** The issue resolver. */
 	@Inject private IssueResolutionProvider issueResolver;
+
+	/** The highlighting configuration. */
 	@Inject private IHighlightingConfiguration highlightingConfiguration;
+
+	/** The dnd handler. */
 	private final GamlEditorDragAndDropHandler dndHandler;
+
+	/** The dnd changed listener. */
 	private final IPreferenceAfterChangeListener dndChangedListener = newValue -> {
 		uninstallTextDragAndDrop(getInternalSourceViewer());
 		installTextDragAndDrop(getInternalSourceViewer());
 	};
 
+	/** The is text drag and drop installed. */
 	private boolean fIsTextDragAndDropInstalled;
 
+	/** The file URI. */
 	private URI fileURI;
 
 	@Override
@@ -195,6 +237,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		assignBoxPartListener();
 	}
 
+	/** The image provider. */
 	static GamlAnnotationImageProvider imageProvider = new GamlAnnotationImageProvider();
 
 	@Override
@@ -255,18 +298,33 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		super.dispose();
 	}
 
-	public GamlTemplateStore getTemplateStore() {
-		return (GamlTemplateStore) templateStore;
-	}
+	/**
+	 * Gets the template store.
+	 *
+	 * @return the template store
+	 */
+	public GamlTemplateStore getTemplateStore() { return (GamlTemplateStore) templateStore; }
 
-	public GamlEditTemplateDialogFactory getTemplateFactory() {
-		return templateDialogFactory;
-	}
+	/**
+	 * Gets the template factory.
+	 *
+	 * @return the template factory
+	 */
+	public GamlEditTemplateDialogFactory getTemplateFactory() { return templateDialogFactory; }
 
+	/**
+	 * Sets the show other enabled.
+	 *
+	 * @param showOtherEnabled
+	 *            the new show other enabled
+	 */
 	public void setShowOtherEnabled(final boolean showOtherEnabled) {
 		buildRightToolbar();
 	}
 
+	/**
+	 * Builds the right toolbar.
+	 */
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.LEFT, true);
 		final var t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(), null,
@@ -285,14 +343,26 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				: false;
 	}
 
-	public boolean isRangeIndicatorEnabled() {
-		return getInternalSourceViewer().isProjectionMode();
-	}
+	/**
+	 * Checks if is range indicator enabled.
+	 *
+	 * @return true, if is range indicator enabled
+	 */
+	public boolean isRangeIndicatorEnabled() { return getInternalSourceViewer().isProjectionMode(); }
 
-	public final IPreferenceStore getAdvancedPreferenceStore() {
-		return super.getPreferenceStore();
-	}
+	/**
+	 * Gets the advanced preference store.
+	 *
+	 * @return the advanced preference store
+	 */
+	public final IPreferenceStore getAdvancedPreferenceStore() { return super.getPreferenceStore(); }
 
+	/**
+	 * Configure tab folder.
+	 *
+	 * @param compo
+	 *            the compo
+	 */
 	private void configureTabFolder(final Composite compo) {
 		var c = compo;
 		while (c != null) {
@@ -325,7 +395,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		layout.marginLeft = 0;
 		layout.marginRight = -5;
 		toolbarParent.setLayout(layout);
-		toolbarParent.setBackground(IGamaColors.WHITE.color());
+		// toolbarParent.setBackground(IGamaColors.WHITE.color());
 
 		// Asking the editor to fill the rest
 		// final int style = GamaToolbarFactory.REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? SWT.NONE : SWT.BORDER;
@@ -340,9 +410,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	@Override
-	public boolean isEditable() {
-		return FLAGS.IS_READ_ONLY ? false : super.isEditable();
-	}
+	public boolean isEditable() { return FLAGS.IS_READ_ONLY ? false : super.isEditable(); }
 
 	@Override
 	protected void initializeDirtyStateSupport() {
@@ -354,6 +422,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		}
 	}
 
+	/**
+	 * Schedule validation job.
+	 */
 	private void scheduleValidationJob() {
 		// if (!isEditable()) return;
 		final IValidationIssueProcessor processor = new MarkerIssueProcessor(getResource(),
@@ -392,17 +463,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	@Override
-	public GamaSourceViewer getInternalSourceViewer() {
-		return (GamaSourceViewer) super.getInternalSourceViewer();
-	}
+	public GamaSourceViewer getInternalSourceViewer() { return (GamaSourceViewer) super.getInternalSourceViewer(); }
 
+	/**
+	 * Install gestures.
+	 */
 	private void installGestures() {
 		final var text = this.getInternalSourceViewer().getTextWidget();
-		if (text != null) {
-			text.addGestureListener(ge -> {
-				if (ge.detail == SWT.GESTURE_END) { updateBoxes(); }
-			});
-		}
+		if (text != null) { text.addGestureListener(ge -> { if (ge.detail == SWT.GESTURE_END) { updateBoxes(); } }); }
 	}
 
 	@Override
@@ -421,12 +489,22 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		this.markInNavigationHistory();
 	}
 
+	/**
+	 * Enable button.
+	 *
+	 * @param index
+	 *            the index
+	 * @param text
+	 *            the text
+	 * @param listener
+	 *            the listener
+	 */
 	private void enableButton(final int index, final String text, final SelectionListener listener) {
 		if (text == null) return;
 		final var expType = state.types.get(index);
 		final var image = IKeyword.BATCH.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
 				: IKeyword.MEMORIZE.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BACK).image()
-						: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
+				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
 
 		final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 		final var type =
@@ -439,6 +517,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		toolbar.sep(4, SWT.LEFT);
 	}
 
+	/**
+	 * Update toolbar.
+	 *
+	 * @param newState
+	 *            the new state
+	 * @param forceState
+	 *            the force state
+	 */
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
@@ -512,6 +598,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		}
 	}
 
+	/**
+	 * The Class GamaSourceViewerConfiguration.
+	 */
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
 
 		@Override
@@ -533,6 +622,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		super.doSaveAs();
 	}
 
+	/**
+	 * Before save.
+	 */
 	private void beforeSave() {
 		if (!GamaPreferences.Modeling.EDITOR_CLEAN_UP.getValue()) return;
 		final SourceViewer sv = getInternalSourceViewer();
@@ -573,9 +665,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	/**
 	 * @return
 	 */
-	private StyledText getStyledText() {
-		return (StyledText) super.getAdapter(Control.class);
-	}
+	private StyledText getStyledText() { return (StyledText) super.getAdapter(Control.class); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor#decorate()
@@ -595,20 +685,28 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		getDecorator().enableUpdates(visible);
 	}
 
-	public void setDecorationEnabled(final boolean toggle) {
-		decorationEnabled = toggle;
-	}
+	/**
+	 * Sets the decoration enabled.
+	 *
+	 * @param toggle
+	 *            the new decoration enabled
+	 */
+	public void setDecorationEnabled(final boolean toggle) { decorationEnabled = toggle; }
 
+	/**
+	 * Update boxes.
+	 */
 	public void updateBoxes() {
 		if (!decorationEnabled) return;
 		getDecorator().forceUpdate();
 	}
 
 	@Override
-	public boolean isDecorationEnabled() {
-		return decorationEnabled;
-	}
+	public boolean isDecorationEnabled() { return decorationEnabled; }
 
+	/**
+	 * Assign box part listener.
+	 */
 	private void assignBoxPartListener() {
 		final var partService = getSite().getWorkbenchWindow().getPartService();
 		if (partService == null) return;
@@ -621,6 +719,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		}
 	}
 
+	/**
+	 * Insert text.
+	 *
+	 * @param s
+	 *            the s
+	 */
 	public void insertText(final String s) {
 		final var selection = (ITextSelection) getSelectionProvider().getSelection();
 		final var offset = selection.getOffset();
@@ -634,6 +738,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		getSelectionProvider().setSelection(new TextSelection(getDocument(), offset + s.length(), 0));
 	}
 
+	/**
+	 * Gets the selected text.
+	 *
+	 * @return the selected text
+	 */
 	public String getSelectedText() {
 		final var sel = (ITextSelection) getSelectionProvider().getSelection();
 		final var length = sel.getLength();
@@ -689,6 +798,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		}
 	}
 
+	/**
+	 * Apply template.
+	 *
+	 * @param t
+	 *            the t
+	 */
 	public void applyTemplate(final Template t) {
 		// TODO Create a specific context type (with GAML specific variables ??)
 		final var ct = new XtextTemplateContextType();
@@ -703,6 +818,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		tp.apply(getInternalSourceViewer(), (char) 0, 0, offset);
 	}
 
+	/**
+	 * Open outline popup.
+	 */
 	public void openOutlinePopup() {
 
 		getDocument().readOnly(new CancelableUnitOfWork<Object, XtextResource>() {
@@ -747,6 +865,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		}
 	}
 
+	/**
+	 * Do search.
+	 */
 	public void doSearch() {
 		if (findControl.getFindControl().isFocusControl()) {
 			findControl.findNext();
@@ -774,8 +895,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	/**
 	 * @return
 	 */
-	public URI getURI() {
-		return fileURI;
-	}
+	public URI getURI() { return fileURI; }
 
 }

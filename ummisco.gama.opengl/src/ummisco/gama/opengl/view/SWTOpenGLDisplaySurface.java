@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.view.SWTOpenGLDisplaySurface.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * SWTOpenGLDisplaySurface.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -91,20 +91,51 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		DEBUG.OFF();
 	}
 
+	/** The animator. */
 	GLAnimatorControl animator;
+
+	/** The renderer. */
 	IOpenGLRenderer renderer;
+
+	/** The zoom fit. */
 	protected boolean zoomFit = true;
+
+	/** The listeners. */
 	Set<IEventLayerListener> listeners = new HashSet<>();
+
+	/** The output. */
 	final LayeredDisplayOutput output;
+
+	/** The layer manager. */
 	final LayerManager layerManager;
+
+	/** The menu manager. */
 	protected DisplaySurfaceMenu menuManager;
+
+	/** The temp focus. */
 	protected IExpression temp_focus;
+
+	/** The scope. */
 	IScope scope;
+
+	/** The synchronizer. */
 	public IDisplaySynchronizer synchronizer;
+
+	/** The parent. */
 	final Composite parent;
+
+	/** The disposed. */
 	volatile boolean disposed;
+
+	/** The already updating. */
 	private volatile boolean alreadyUpdating;
 
+	/**
+	 * Instantiates a new SWT open GL display surface.
+	 *
+	 * @param objects
+	 *            the objects
+	 */
 	public SWTOpenGLDisplaySurface(final Object... objects) {
 		output = (LayeredDisplayOutput) objects[0];
 		parent = (Composite) objects[1];
@@ -119,15 +150,32 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		animator.start();
 	}
 
+	/**
+	 * Creates the renderer.
+	 *
+	 * @return the i open GL renderer
+	 */
 	protected IOpenGLRenderer createRenderer() {
 		return new JOGLRenderer();
 	}
 
+	/**
+	 * Creates the animator.
+	 *
+	 * @return the GL animator control
+	 */
 	private GLAnimatorControl createAnimator() {
 		final GLAutoDrawable drawable = createCanvas(parent);
 		return drawable.getAnimator();
 	}
 
+	/**
+	 * Creates the canvas.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @return the GL canvas
+	 */
 	public GLCanvas createCanvas(final Composite parent) {
 		final GLProfile profile = GLProfile.getDefault();
 		final GLCapabilities cap = new GLCapabilities(profile);
@@ -150,9 +198,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public void setMenuManager(final Object menuManager) {
-		this.menuManager = (DisplaySurfaceMenu) menuManager;
-	}
+	public void setMenuManager(final Object menuManager) { this.menuManager = (DisplaySurfaceMenu) menuManager; }
 
 	/**
 	 * Method getImage()
@@ -180,8 +226,18 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// return ImageUtils.resize(image, w, h);
 	}
 
+	/** The buffer. */
 	ByteBuffer buffer;
 
+	/**
+	 * Gets the buffer.
+	 *
+	 * @param w
+	 *            the w
+	 * @param h
+	 *            the h
+	 * @return the buffer
+	 */
 	protected ByteBuffer getBuffer(final int w, final int h) {
 
 		if (buffer == null || buffer.capacity() != w * h * 4) {
@@ -193,6 +249,17 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return buffer;
 	}
 
+	/**
+	 * Gets the image.
+	 *
+	 * @param gl3
+	 *            the gl 3
+	 * @param ww
+	 *            the ww
+	 * @param hh
+	 *            the hh
+	 * @return the image
+	 */
 	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
@@ -253,14 +320,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public double getDisplayWidth() {
-		return renderer.getWidth();
-	}
+	public double getDisplayWidth() { return renderer.getWidth(); }
 
 	@Override
-	public double getDisplayHeight() {
-		return renderer.getHeight();
-	}
+	public double getDisplayHeight() { return renderer.getHeight(); }
 
 	/**
 	 * Method zoomIn()
@@ -306,9 +369,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getManager()
 	 */
 	@Override
-	public ILayerManager getManager() {
-		return layerManager;
-	}
+	public ILayerManager getManager() { return layerManager; }
 
 	/**
 	 * Method focusOn()
@@ -400,9 +461,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public Collection<IEventLayerListener> getLayerListeners() {
-		return listeners;
-	}
+	public Collection<IEventLayerListener> getLayerListeners() { return listeners; }
 
 	/**
 	 * Method getEnvWidth()
@@ -410,9 +469,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvWidth()
 	 */
 	@Override
-	public double getEnvWidth() {
-		return output.getData().getEnvWidth();
-	}
+	public double getEnvWidth() { return output.getData().getEnvWidth(); }
 
 	/**
 	 * Method getEnvHeight()
@@ -420,9 +477,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvHeight()
 	 */
 	@Override
-	public double getEnvHeight() {
-		return output.getData().getEnvHeight();
-	}
+	public double getEnvHeight() { return output.getData().getEnvHeight(); }
 
 	/**
 	 * Method getModelCoordinates()
@@ -526,6 +581,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return output.getData().getZoomLevel();
 	}
 
+	/**
+	 * Compute initial zoom level.
+	 *
+	 * @return the double
+	 */
 	protected Double computeInitialZoomLevel() {
 		return renderer.getCameraHelper().zoomLevel();
 	}
@@ -536,9 +596,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayScope()
 	 */
 	@Override
-	public IScope getScope() {
-		return scope;
-	}
+	public IScope getScope() { return scope; }
 
 	/**
 	 * Method getOutput()
@@ -546,9 +604,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
-	public LayeredDisplayOutput getOutput() {
-		return output;
-	}
+	public LayeredDisplayOutput getOutput() { return output; }
 
 	/**
 	 * Method setPaused()
@@ -564,6 +620,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
+	/** The cleanup. */
 	final Runnable cleanup = () -> WorkbenchHelper.asyncRun(() -> renderer.getPickingHelper().setPicking(false));
 
 	/**
@@ -640,6 +697,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	}
 
+	/**
+	 * Sets the display scope.
+	 *
+	 * @param scope
+	 *            the new display scope
+	 */
 	protected void setDisplayScope(final IScope scope) {
 		if (this.scope != null) { GAMA.releaseScope(this.scope); }
 		this.scope = scope;
@@ -660,9 +723,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public LayeredDisplayData getData() {
-		return output.getData();
-	}
+	public LayeredDisplayData getData() { return output.getData(); }
 
 	/**
 	 * Method changed()
@@ -727,10 +788,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	}
 
+	/**
+	 * Invalidate visible regions.
+	 */
 	public void invalidateVisibleRegions() {
-		for (final ILayer layer : layerManager.getItems()) {
-			layer.getData().setVisibleRegion(null);
-		}
+		for (final ILayer layer : layerManager.getItems()) { layer.getData().setVisibleRegion(null); }
 	}
 
 	/**
@@ -739,9 +801,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
-	public int getFPS() {
-		return (int) this.animator.getTotalFPS();
-	}
+	public int getFPS() { return Math.round(this.animator.getLastFPS()); }
 
 	// @Override
 	// public boolean isRealized() {
@@ -758,20 +818,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public boolean isDisposed() {
-		return disposed;
-	}
+	public boolean isDisposed() { return disposed; }
 
 	@Override
-	public Envelope3D getROIDimensions() {
-		return renderer.getOpenGLHelper().getROIEnvelope();
-	}
+	public Envelope3D getROIDimensions() { return renderer.getOpenGLHelper().getROIEnvelope(); }
 
 	@Override
 	public void dispatchKeyEvent(final char e) {
-		for (final IEventLayerListener gl : listeners) {
-			gl.keyPressed(String.valueOf(e));
-		}
+		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
 	@Override

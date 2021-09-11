@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditorSearchControls.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * EditorSearchControls.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -51,15 +50,35 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
  */
 public class EditorSearchControls {
 
+	/** The Constant EMPTY. */
 	static final String EMPTY = "Find... (" + GamaKeyBindings.format(SWT.MOD1, 'G') + ")"; //$NON-NLS-1$
+
+	/** The find. */
 	Text find;
+
+	/** The incremental offset. */
 	int incrementalOffset = -1;
+
+	/** The editor. */
 	final GamlEditor editor;
 
+	/**
+	 * Instantiates a new editor search controls.
+	 *
+	 * @param editor
+	 *            the editor
+	 */
 	public EditorSearchControls(final GamlEditor editor) {
 		this.editor = editor;
 	}
 
+	/**
+	 * Fill.
+	 *
+	 * @param toolbar
+	 *            the toolbar
+	 * @return the editor search controls
+	 */
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 		Composite parent = toolbar;
 		if (PlatformHelper.isWindows()) {
@@ -79,8 +98,8 @@ public class EditorSearchControls {
 		data.heightHint = 24;
 		data.widthHint = 100;
 		find.setLayoutData(data);
-		find.setBackground(IGamaColors.WHITE.color());
-		find.setForeground(IGamaColors.BLACK.color());
+		// find.setBackground(IGamaColors.WHITE.color());
+		// find.setForeground(IGamaColors.BLACK.color());
 		find.setMessage(EMPTY);
 		find.addFocusListener(new FocusListener() {
 
@@ -105,9 +124,7 @@ public class EditorSearchControls {
 
 			@Override
 			public void keyPressed(final KeyEvent e) {
-				if (e.character == SWT.ESC) {
-					editor.setFocus();
-				}
+				if (e.character == SWT.ESC) { editor.setFocus(); }
 			}
 		});
 		this.adjustEnablement(false, null);
@@ -115,10 +132,14 @@ public class EditorSearchControls {
 
 	}
 
-	public Text getFindControl() {
-		return find;
-	}
+	/**
+	 * Gets the find control.
+	 *
+	 * @return the find control
+	 */
+	public Text getFindControl() { return find; }
 
+	/** The modify listener. */
 	private final ModifyListener modifyListener = new ModifyListener() {
 
 		private String lastText = EMPTY;
@@ -128,9 +149,7 @@ public class EditorSearchControls {
 
 			boolean wrap = true;
 			final String text = find.getText();
-			if (lastText.startsWith(text)) {
-				wrap = false;
-			}
+			if (lastText.startsWith(text)) { wrap = false; }
 			lastText = text;
 			if (EMPTY.equals(text) || "".equals(text)) {
 				adjustEnablement(false, null);
@@ -148,34 +167,84 @@ public class EditorSearchControls {
 		}
 	};
 
+	/**
+	 * Adjust enablement.
+	 *
+	 * @param found
+	 *            the found
+	 * @param color
+	 *            the color
+	 */
 	void adjustEnablement(final boolean found, final Color color) {
 		if (color == null) {
-			find.setForeground(IGamaColors.VERY_LIGHT_GRAY.color());
+			find.setForeground(IGamaColors.WIDGET_FOREGROUND.color());
 		} else {
 			find.setForeground(color);
 		}
 	}
 
+	/**
+	 * Find previous.
+	 */
 	public void findPrevious() {
 		find(false);
 	}
 
+	/**
+	 * Find next.
+	 */
 	public void findNext() {
 		find(true);
 	}
 
+	/**
+	 * Find.
+	 *
+	 * @param forward
+	 *            the forward
+	 */
 	private void find(final boolean forward) {
 		find(forward, false);
 	}
 
+	/**
+	 * Find.
+	 *
+	 * @param forward
+	 *            the forward
+	 * @param incremental
+	 *            the incremental
+	 */
 	private void find(final boolean forward, final boolean incremental) {
 		find(forward, incremental, true, false);
 	}
 
+	/**
+	 * Find.
+	 *
+	 * @param forward
+	 *            the forward
+	 * @param incremental
+	 *            the incremental
+	 * @param wrap
+	 *            the wrap
+	 */
 	void find(final boolean forward, final boolean incremental, final boolean wrap) {
 		find(forward, incremental, wrap, false);
 	}
 
+	/**
+	 * Find.
+	 *
+	 * @param forward
+	 *            the forward
+	 * @param incremental
+	 *            the incremental
+	 * @param wrap
+	 *            the wrap
+	 * @param wrapping
+	 *            the wrapping
+	 */
 	private void find(final boolean forward, final boolean incremental, final boolean wrap, final boolean wrapping) {
 
 		final IFindReplaceTarget findReplaceTarget = editor.getAdapter(IFindReplaceTarget.class);
@@ -197,23 +266,19 @@ public class EditorSearchControls {
 					} else {
 						offset = sourceViewer.getDocument().getLength() - 1;
 					}
-				} else {
-					if (forward) {
-						if (incremental) {
-							if (incrementalOffset == -1) {
-								incrementalOffset = offset;
-							} else {
-								offset = incrementalOffset;
-							}
+				} else if (forward) {
+					if (incremental) {
+						if (incrementalOffset == -1) {
+							incrementalOffset = offset;
 						} else {
-							incrementalOffset = selection.x;
+							offset = incrementalOffset;
 						}
 					} else {
 						incrementalOffset = selection.x;
-						if (selection.x != offset) {
-							offset = selection.x;
-						}
 					}
+				} else {
+					incrementalOffset = selection.x;
+					if (selection.x != offset) { offset = selection.x; }
 				}
 				int newOffset = -1;
 				if (findReplaceTarget instanceof IFindReplaceTargetExtension3) {
@@ -227,15 +292,11 @@ public class EditorSearchControls {
 				if (newOffset != -1) {
 					adjustEnablement(true, IGamaColors.OK.inactive());
 					selection = textWidget.getSelection();
-					if (!forward) {
-						incrementalOffset = selection.x;
-					}
+					if (!forward) { incrementalOffset = selection.x; }
 				} else {
-					if (wrap) {
-						if (!wrapping) {
-							find(forward, incremental, wrap, true);
-							return;
-						}
+					if (wrap && !wrapping) {
+						find(forward, incremental, wrap, true);
+						return;
 					}
 					if (!EMPTY.equals(findText) && !"".equals(findText)) {
 						adjustEnablement(false, IGamaColors.ERROR.inactive());
@@ -255,7 +316,5 @@ public class EditorSearchControls {
 	/**
 	 * @return the sourceView of the active textEditor
 	 */
-	private ISourceViewer getSourceViewer() {
-		return (ISourceViewer) editor.getAdapter(ITextOperationTarget.class);
-	}
+	private ISourceViewer getSourceViewer() { return (ISourceViewer) editor.getAdapter(ITextOperationTarget.class); }
 }

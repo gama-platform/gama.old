@@ -1,19 +1,17 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'NewFileWizardPage.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * NewExperimentWizardPage.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 import java.util.Arrays;
 
-import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,9 +35,18 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 
 public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 
+	/** The model chooser. */
 	Text modelChooser;
+
+	/** The type of experiment. */
 	String typeOfExperiment = AbstractNewModelWizard.GUI;
 
+	/**
+	 * Instantiates a new new experiment wizard page.
+	 *
+	 * @param selection
+	 *            the selection
+	 */
 	public NewExperimentWizardPage(final ISelection selection) {
 		super(selection);
 		setTitle("Experiment file");
@@ -57,7 +64,7 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		rightSection.setLayout(layout);
 
 		modelChooser = new Text(rightSection, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);
-		modelChooser.setBackground(parent.getBackground());
+		modelChooser.setBackground(rightSection.getBackground());
 		applyGridData(modelChooser, 1);
 		modelChooser.addModifyListener(e -> dialogChanged());
 		final Button button = new Button(rightSection, SWT.PUSH);
@@ -82,9 +89,7 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		Arrays.asList(AbstractNewModelWizard.GUI, AbstractNewModelWizard.HEADLESS).forEach(s -> {
 			final Button b = new Button(middleComposite, SWT.RADIO);
 			b.setText(s);
-			if (s.equals(AbstractNewModelWizard.GUI)) {
-				b.setSelection(true);
-			}
+			if (AbstractNewModelWizard.GUI.equals(s)) { b.setSelection(true); }
 			b.addSelectionListener(new SelectionAdapter() {
 
 				@Override
@@ -92,7 +97,7 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 					typeOfExperiment = ((Button) e.widget).getText();
 					updateStatus(null);
 					dialogChanged();
-					setDescription(typeOfExperiment.equals(AbstractNewModelWizard.GUI)
+					setDescription(AbstractNewModelWizard.GUI.equals(typeOfExperiment)
 							? "Creates a new experiment with a graphical user interface"
 							: "Creates a new experiment intended to be used in headless runs");
 
@@ -113,10 +118,14 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		modelChooser.setText("");
 	}
 
-	String getType() {
-		return typeOfExperiment;
-	}
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
+	String getType() { return typeOfExperiment; }
 
+	/** The dialog. */
 	private FilteredResourcesSelectionDialog dialog;
 
 	/**
@@ -126,7 +135,7 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 	 */
 	void handleBrowse() {
 		final IContainer p = ResourcesPlugin.getWorkspace().getRoot();
-		dialog = new FilteredResourcesSelectionDialog(getShell(), false, p, Resource.FILE);
+		dialog = new FilteredResourcesSelectionDialog(getShell(), false, p, IResource.FILE);
 		dialog.setInitialPattern("*.gaml");
 		dialog.setTitle("Choose a gaml model in project " + p.getName());
 		if (dialog.open() == Window.OK) {
@@ -138,14 +147,15 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 		}
 	}
 
-	public String getExperimentedModelPath() {
-		return modelChooser.getText();
-	}
+	/**
+	 * Gets the experimented model path.
+	 *
+	 * @return the experimented model path
+	 */
+	public String getExperimentedModelPath() { return modelChooser.getText(); }
 
 	@Override
-	public String getExtension() {
-		return ".experiment";
-	}
+	public String getExtension() { return ".experiment"; }
 
 	@Override
 	public String gamlType() {
@@ -153,14 +163,10 @@ public class NewExperimentWizardPage extends AbstractNewModelWizardPage {
 	}
 
 	@Override
-	public String getTemplateType() {
-		return AbstractNewModelWizard.EXPERIMENT;
-	}
+	public String getTemplateType() { return AbstractNewModelWizard.EXPERIMENT; }
 
 	@Override
-	public String getTemplatePath() {
-		return AbstractNewModelWizard.TEMPLATES.get(getTemplateType());
-	}
+	public String getTemplatePath() { return AbstractNewModelWizard.TEMPLATES.get(getTemplateType()); }
 
 	@Override
 	public boolean createDoc() {

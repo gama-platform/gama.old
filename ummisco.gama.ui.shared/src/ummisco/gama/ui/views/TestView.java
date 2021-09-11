@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ErrorView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * TestView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
 import static msi.gama.common.preferences.GamaPreferences.Runtime.FAILED_TESTS;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IViewSite;
@@ -49,20 +47,29 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
+/**
+ * The Class TestView.
+ */
 public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements IGamaView.Test {
 
+	/** The Constant BY_ORDER. */
 	static final Comparator<AbstractSummary<?>> BY_ORDER = (o1, o2) -> Ints.compare(o1.getIndex(), o2.getIndex());
+
+	/** The Constant BY_SEVERITY. */
 	static final Comparator<AbstractSummary<?>> BY_SEVERITY = (o1, o2) -> {
 		final TestState s1 = o1.getState();
 		final TestState s2 = o2.getState();
-		if (s1 == s2)
-			return BY_ORDER.compare(o1, o2);
-		else
-			return s1.compareTo(s2);
+		if (s1 == s2) return BY_ORDER.compare(o1, o2);
+		return s1.compareTo(s2);
 	};
+
+	/** The experiments. */
 	public final List<AbstractSummary<?>> experiments = new ArrayList<>();
+
+	/** The running all tests. */
 	private boolean runningAllTests;
 
+	/** The id. */
 	public static String ID = IGui.TEST_VIEW_ID;
 
 	@Override
@@ -79,6 +86,9 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		return false;
 	}
 
+	/**
+	 * Resort tests.
+	 */
 	protected void resortTests() {
 		final Comparator<AbstractSummary<?>> comp = TESTS_SORTED.getValue() ? BY_SEVERITY : BY_ORDER;
 		experiments.sort(comp);
@@ -90,9 +100,8 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		experiments.clear();
 		WorkbenchHelper.run(() -> {
 			if (toolbar != null) {
-				toolbar.status(null, "Run experiment to see the tests results", e -> {
-					GAMA.startFrontmostExperiment();
-				}, IGamaColors.BLUE, SWT.LEFT);
+				toolbar.status(null, "Run experiment to see the tests results",
+						e -> { GAMA.startFrontmostExperiment(); }, IGamaColors.BLUE, SWT.LEFT);
 			}
 		});
 		super.reset();
@@ -131,7 +140,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
-		view.setBackground(IGamaColors.WHITE.color());
+		// view.setBackground(IGamaColors.WHITE.color());
 	}
 
 	// Experimental: creates a deferred item
@@ -159,6 +168,14 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		return compo;
 	}
 
+	/**
+	 * Creates the editors.
+	 *
+	 * @param compo
+	 *            the compo
+	 * @param test
+	 *            the test
+	 */
 	public void createEditors(final EditorsGroup compo, final AbstractSummary<?> test) {
 		Map<String, ? extends AbstractSummary<?>> assertions = test.getSummaries();
 		for (final Map.Entry<String, ? extends AbstractSummary<?>> assertion : assertions.entrySet()) {
@@ -174,6 +191,18 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		}
 	}
 
+	/**
+	 * Creates the editor.
+	 *
+	 * @param compo
+	 *            the compo
+	 * @param globalTest
+	 *            the global test
+	 * @param subTest
+	 *            the sub test
+	 * @param name
+	 *            the name
+	 */
 	public void createEditor(final EditorsGroup compo, final AbstractSummary<?> globalTest,
 			final AbstractSummary<?> subTest, final String name) {
 		if (GamaPreferences.Runtime.FAILED_TESTS.getValue()) {
@@ -245,9 +274,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	public void focusItem(final AbstractSummary<?> data) {}
 
 	@Override
-	public List<AbstractSummary<?>> getItems() {
-		return experiments;
-	}
+	public List<AbstractSummary<?>> getItems() { return experiments; }
 
 	@Override
 	public void updateItemValues() {}
@@ -276,9 +303,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	@Override
 	public Map<String, Runnable> handleMenu(final AbstractSummary<?> item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
-		result.put("Copy summary to clipboard", () -> {
-			WorkbenchHelper.copy(item.toString());
-		});
+		result.put("Copy summary to clipboard", () -> { WorkbenchHelper.copy(item.toString()); });
 		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getURI()));
 		return result;
 	}

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * DEBUG.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.dev.utils;
 
 import static java.lang.System.currentTimeMillis;
@@ -23,18 +33,38 @@ public class DEBUG {
 	 * A custom security manager that exposes the getClassContext() information
 	 */
 	static class MySecurityManager extends SecurityManager {
+
+		/**
+		 * Gets the caller class name.
+		 *
+		 * @param callStackDepth
+		 *            the call stack depth
+		 * @return the caller class name
+		 */
 		public String getCallerClassName(final int callStackDepth) {
 			return getClassContext()[callStackDepth].getName();
 		}
+
 	}
 
+	/** The Constant SECURITY_MANAGER. */
 	private final static MySecurityManager SECURITY_MANAGER = new MySecurityManager();
 
+	/** The Constant REGISTERED. */
 	// AD 08/18: Changes to ConcurrentHashMap for multi-threaded DEBUG operations
 	private static final ConcurrentHashMap<String, String> REGISTERED = new ConcurrentHashMap<>();
+
+	/** The Constant COUNTERS. */
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
+
+	/** The Constant TO_STRING. */
 	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
+
+	/** The Constant LOG_WRITERS. */
 	private static final ThreadLocal<PrintStream> LOG_WRITERS = ThreadLocal.withInitial(() -> System.out);
+
+	/** The Constant stackWalker. */
+	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
 	static {
 		TO_STRING.put(int.class, o -> Arrays.toString((int[]) o));
@@ -95,7 +125,20 @@ public class DEBUG {
 		if (REGISTERED.containsKey(s) && COUNTERS.containsKey(s)) { COUNTERS.put(s, -1); }
 	}
 
+	/**
+	 * The Interface RunnableWithException.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 */
 	public interface RunnableWithException<T extends Throwable> {
+
+		/**
+		 * Run.
+		 *
+		 * @throws T
+		 *             the t
+		 */
 		void run() throws T;
 	}
 
@@ -123,6 +166,18 @@ public class DEBUG {
 		LOG(title + " " + (currentTimeMillis() - start) + "ms");
 	}
 
+	/**
+	 * Timer with exceptions.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param title
+	 *            the title
+	 * @param runnable
+	 *            the runnable
+	 * @throws T
+	 *             the t
+	 */
 	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
 			final RunnableWithException<T> runnable) throws T {
 		if (!ENABLE_LOGGING || !IS_ON(findCallingClassName())) {
@@ -242,10 +297,19 @@ public class DEBUG {
 		}
 	}
 
+	/**
+	 * Register log writer.
+	 *
+	 * @param writer
+	 *            the writer
+	 */
 	public static void REGISTER_LOG_WRITER(final OutputStream writer) {
 		LOG_WRITERS.set(new PrintStream(writer, true));
 	}
 
+	/**
+	 * Unregister log writer.
+	 */
 	public static void UNREGISTER_LOG_WRITER() {
 		LOG_WRITERS.remove();
 	}
@@ -262,24 +326,30 @@ public class DEBUG {
 		if (object == null) return "null";
 		if (object.getClass().isArray()) {
 			final Class<?> clazz = object.getClass().getComponentType();
-			if (clazz.isPrimitive())
-				return TO_STRING.get(clazz).apply(object);
-			else
-				return Arrays.deepToString((Object[]) object);
+			if (clazz.isPrimitive()) return TO_STRING.get(clazz).apply(object);
+			return Arrays.deepToString((Object[]) object);
 		}
 		return object.toString();
 
 	}
 
+	/**
+	 * Checks if is on.
+	 *
+	 * @param className
+	 *            the class name
+	 * @return true, if successful
+	 */
 	private static boolean IS_ON(final String className) {
 		// Necessary to loop on the names as the call can emanate from an inner class or an anonymous class of the
 		// "allowed" class
-		for (final String name : REGISTERED.keySet()) {
-			if (className.startsWith(name)) return true;
-		}
+		for (final String name : REGISTERED.keySet()) { if (className.startsWith(name)) return true; }
 		return false;
 	}
 
+	/**
+	 * Instantiates a new debug.
+	 */
 	private DEBUG() {}
 
 	/**
@@ -366,10 +436,32 @@ public class DEBUG {
 		if (string.length() >= minLength) return string;
 		final StringBuilder sb = new StringBuilder(minLength);
 		sb.append(string);
-		for (int i = string.length(); i < minLength; i++) {
-			sb.append(c);
-		}
+		for (int i = string.length(); i < minLength; i++) { sb.append(c); }
 		return sb.toString();
+	}
+
+	/**
+	 * Return the caller method.
+	 *
+	 * @return the string
+	 */
+	public static String METHOD() {
+		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
+		return frame == null ? "no calling method" : frame.getMethodName();
+		// return String.format("caller: %s#%s, %s", frame.getClassName(), frame.getMethodName(),
+		// frame.getLineNumber());
+	}
+
+	/**
+	 * Return the caller class.
+	 *
+	 * @return the string
+	 */
+	public static String CALLER() {
+		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
+		return frame == null ? "no one" : frame.getClassName();
+		// return String.format("caller: %s#%s, %s", frame.getClassName(), frame.getMethodName(),
+		// frame.getLineNumber());
 	}
 
 }
