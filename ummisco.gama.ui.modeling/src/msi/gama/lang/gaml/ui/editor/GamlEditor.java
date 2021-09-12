@@ -131,6 +131,7 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -529,7 +530,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		b.addSelectionListener(listener);
 		t.setData("index", index);
 		b.setData("exp", text);
-		// toolbar.sep(4, SWT.LEFT);
+
 	}
 
 	/**
@@ -545,7 +546,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) return;
 				toolbar.wipe(SWT.LEFT, true);
-				// if (PlatformHelper.isWindows()) { toolbar.sep(4, SWT.LEFT); }
+				// without the following line, the display of the
+				// text "msg" is not updated
+				// correctly (at least for Windows OS)
+				if (PlatformHelper.isWindows()) { toolbar.sep(2, maxImageHeight, SWT.LEFT); }
 
 				final var c = state.getColor();
 				var msg = state.getStatus();
@@ -569,10 +573,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				if (msg != null) {
 					final var t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
 
-					// without the following line, the display of the
-					// text "msg" is not updated
-					// correctly (at least for Windows OS)
-					// if (PlatformHelper.isWindows()) { toolbar.sep(4, SWT.LEFT); }
 				} else {
 					var i = 0;
 					if (newState.showExperiments) {
