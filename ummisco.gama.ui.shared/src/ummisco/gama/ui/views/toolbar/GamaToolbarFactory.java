@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -25,7 +27,10 @@ import org.eclipse.ui.IWorkbenchSite;
 
 import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class GamaToolbarFactory.
@@ -221,6 +226,7 @@ public class GamaToolbarFactory {
 		final FillLayout backgroundLayout = new FillLayout(SWT.VERTICAL);
 		backgroundLayout.marginHeight = 0;
 		backgroundLayout.marginWidth = 0;
+		backgroundLayout.spacing = 0;
 		composite.setLayout(backgroundLayout);
 		Composite parentComposite;
 		if (view instanceof ITooltipDisplayer) {
@@ -275,13 +281,14 @@ public class GamaToolbarFactory {
 		layout.verticalSpacing = 0;
 		layout.horizontalSpacing = 0;
 		layout.marginWidth = 0;
-		final int margin = 1; // REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
+		final int margin = 0; // REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? -1 : 0;
 		layout.marginTop = margin;
 		layout.marginBottom = margin;
 		layout.marginHeight = margin;
 		toolbarComposite.setLayout(layout);
 		// toolbarComposite.setBackground(IGamaColors.WHITE.color());
-
+		GamaColors.setBackground(toolbarComposite,
+				isDark() ? WorkbenchHelper.getShell().getBackground() : IGamaColors.WHITE.color());
 		return toolbarComposite;
 
 	}

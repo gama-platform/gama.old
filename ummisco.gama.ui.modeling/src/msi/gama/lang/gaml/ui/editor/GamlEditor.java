@@ -416,7 +416,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 		// Asking the editor to fill the rest
 		// final int style = GamaToolbarFactory.REDUCED_VIEW_TOOLBAR_HEIGHT.getValue() ? SWT.NONE : SWT.BORDER;
-		final var editor = new Composite(toolbarParent, SWT.BORDER);
+		final var editor = new Composite(toolbarParent, SWT.NONE);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());

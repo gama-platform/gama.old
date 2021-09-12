@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -31,7 +33,9 @@ import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 
 /**
@@ -77,6 +81,14 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	/**
+	 * Empty to prevent the CSS engine from changing the color now and then (apparently randomly)
+	 */
+	@Override
+	public void setBackground(final Color c) {
+		// DEBUG.OUT("setBackground() Called by " + DEBUG.CALLER() + "." + DEBUG.METHOD());
+	}
+
+	/**
 	 * Sets the background color.
 	 *
 	 * @param c
@@ -86,6 +98,8 @@ public class GamaToolbar2 extends Composite {
 	public void setBackgroundColor(final Color c) {
 		// DEBUG.OUT("setBackgroundColor() called by = " + DEBUG.METHOD() + " of " + DEBUG.CALLER());
 		GamaColors.setBackground(this, c);
+		// Calls super explicitly
+		super.setBackground(c);
 		if (left != null) { GamaColors.setBackground(left, c); }
 		if (right != null) { GamaColors.setBackground(right, c); }
 	}
@@ -100,7 +114,6 @@ public class GamaToolbar2 extends Composite {
 	 * Creates the layout.
 	 */
 	public void createLayout() {
-		// setBackground(isDark() ? WIDGET_BACKGROUND.color() : WHITE.color());
 		final var layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
@@ -113,20 +126,19 @@ public class GamaToolbar2 extends Composite {
 	 * Creates the toolbars.
 	 */
 	public void createToolbars() {
-		left = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS, getBackground());
+		left = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS | SWT.INHERIT_FORCE);
 		var data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.verticalIndent = 0;
 		data.horizontalAlignment = SWT.LEFT;
 		data.minimumWidth = height * 2;
 		left.setLayoutData(data);
-
-		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS, getBackground());
+		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS);
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		data.verticalIndent = 0;
 		data.horizontalAlignment = SWT.RIGHT;
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
-
+		setBackgroundColor(isDark() ? WorkbenchHelper.getShell().getBackground() : IGamaColors.WHITE.color());
 	}
 
 	@Override
