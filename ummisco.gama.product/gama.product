@@ -274,12 +274,11 @@
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.8.1" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="version" value="1.8.1" />
       <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
