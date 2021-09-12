@@ -36,7 +36,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
+import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
@@ -81,6 +83,7 @@ public class EditorSearchControls {
 	 */
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 		Composite parent = toolbar;
+		Color c = parent.getBackground();
 		if (PlatformHelper.isWindows()) {
 			parent = new Composite(toolbar, SWT.NONE);
 			final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -89,6 +92,7 @@ public class EditorSearchControls {
 			parent.setLayoutData(data);
 			final GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
+			GamaColors.setBackground(parent, c);
 		}
 		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
@@ -112,9 +116,10 @@ public class EditorSearchControls {
 			public void focusGained(final FocusEvent e) {
 				adjustEnablement(false, null);
 				incrementalOffset = -1;
-			}
+			} 
 		});
-
+		GamaColors.setBackground(find, c);
+		GamaColors.setForeground(find, ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.VERY_DARK_GRAY.color());
 		toolbar.control(parent == toolbar ? find : parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {

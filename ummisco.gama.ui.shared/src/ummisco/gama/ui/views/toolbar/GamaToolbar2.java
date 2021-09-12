@@ -538,7 +538,9 @@ public class GamaToolbar2 extends Composite {
 			button.setImage(im);
 		}
 		if (listener != null) { button.addSelectionListener(listener); }
-		if (control != null) { button.setControl(control); }
+		if (control != null) {
+			//GamaColors.setBackground(control, getBackground());
+			button.setControl(control); }
 		normalizeToolbars();
 
 		return button;
