@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
+import static msi.gama.common.interfaces.IKeyword.BATCH;
+import static msi.gama.common.interfaces.IKeyword.MEMORIZE;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +56,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -127,7 +131,6 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -149,11 +152,24 @@ import ummisco.gama.ui.views.toolbar.Selector;
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGamlEditor, IBoxEnabledEditor,
 		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
 
+	/** The images. */
+	static Map<String, Image> images = new HashMap();
+
+	/** The max image height. */
+	static int maxImageHeight = 0;
+
+	/** The button padding. How much space between each experiment button */
+	static int buttonPadding = 4;
 	static {
 		final var store = EditorsUI.getPreferenceStore();
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
 		store.setValue("spellingEnabled", false);
+		images.put(IKeyword.BATCH, GamaIcons.create(IGamaIcons.BUTTON_BATCH).image());
+		images.put(IKeyword.MEMORIZE, GamaIcons.create(IGamaIcons.BUTTON_BACK).image());
+		images.put("regular", GamaIcons.create(IGamaIcons.BUTTON_GUI).image());
+		images.put("new", GamaIcons.create("small.plus").image());
+		for (Image im : images.values()) { maxImageHeight = Math.max(maxImageHeight, im.getBounds().height); }
 	}
 
 	/**
@@ -499,22 +515,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 * @param listener
 	 *            the listener
 	 */
-	private void enableButton(final int index, final String text, final SelectionListener listener) {
+	private void enableExperimentButton(final int index, final String text, final SelectionListener listener) {
 		if (text == null) return;
 		final var expType = state.types.get(index);
-		final var image = IKeyword.BATCH.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
-				: IKeyword.MEMORIZE.equals(expType) ? GamaIcons.create(IGamaIcons.BUTTON_BACK).image()
-				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
-
+		final var type = BATCH.equals(expType) ? "batch" : MEMORIZE.equals(expType) ? "memorize" : "regular";
+		final var image = images.get(type);
 		final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
-		final var type =
-				IKeyword.BATCH.equals(expType) ? "batch" : IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
-
-		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
-		((FlatButton) t.getControl()).addSelectionListener(listener);
+		t.setWidth(t.getWidth() + buttonPadding);
+		final FlatButton b = (FlatButton) t.getControl();
+		b.setRightPadding(buttonPadding);
+		b.setImageHeight(maxImageHeight);
+		b.setToolTipText("Executes the " + type + " experiment " + text);
+		b.addSelectionListener(listener);
 		t.setData("index", index);
-		((FlatButton) t.getControl()).setData("exp", text);
-		toolbar.sep(4, SWT.LEFT);
+		b.setData("exp", text);
+		// toolbar.sep(4, SWT.LEFT);
 	}
 
 	/**
@@ -530,7 +545,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) return;
 				toolbar.wipe(SWT.LEFT, true);
-				if (PlatformHelper.isWindows()) { toolbar.sep(4, SWT.LEFT); }
+				// if (PlatformHelper.isWindows()) { toolbar.sep(4, SWT.LEFT); }
 
 				final var c = state.getColor();
 				var msg = state.getStatus();
@@ -557,19 +572,19 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 					// without the following line, the display of the
 					// text "msg" is not updated
 					// correctly (at least for Windows OS)
-					toolbar.sep(4, SWT.LEFT);
+					// if (PlatformHelper.isWindows()) { toolbar.sep(4, SWT.LEFT); }
 				} else {
 					var i = 0;
 					if (newState.showExperiments) {
 						for (final String e : state.abbreviations) {
-							enableButton(i++, e, listener);
+							enableExperimentButton(i++, e, listener);
 
 						}
 					}
 				}
 				if (newState.showExperiments
 						&& !GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
-					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", GamaIcons.create("small.plus").image(),
+					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", images.get("new"),
 							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
 							SWT.LEFT);
 				}
@@ -583,12 +598,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
-		// final String platformString = getURI().toPlatformString(true);
-		// final IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
-		// final WrappedGamaFile file =
-		// (WrappedGamaFile) NavigatorRoot.getInstance().getManager().findWrappedInstanceOf(myFile);
-		// NavigatorRoot.getInstance().getManager().refreshResource(file);
-		// NavigatorRoot.getInstance().getManager().resourceChanged(null);
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {

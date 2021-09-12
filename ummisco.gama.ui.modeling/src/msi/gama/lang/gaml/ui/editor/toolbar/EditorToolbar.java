@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditorNavigationControls.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * EditorToolbar.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
@@ -43,24 +42,58 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
  */
 public class EditorToolbar {
 
+	/** The previous. */
 	ToolItem next, previous;
+
+	/** The find. */
 	EditorSearchControls find;
+
+	/** The editor. */
 	final GamlEditor editor;
+
+	/** The searching. */
 	volatile boolean searching;
 
+	/**
+	 * Selected.
+	 *
+	 * @param event
+	 *            the event
+	 * @return the selection listener
+	 */
 	static SelectionListener selected(final Consumer<SelectionEvent> event) {
 		return widgetSelectedAdapter(event);
 	}
 
+	/** The global previous. */
 	final SelectionListener globalPrevious = selected(e -> executeCommand(NAVIGATE_BACKWARD_HISTORY));
+
+	/** The global next. */
 	final SelectionListener globalNext = selected(e -> executeCommand(NAVIGATE_FORWARD_HISTORY));
+
+	/** The search previous. */
 	final SelectionListener searchPrevious = selected(e -> find.findPrevious());
+
+	/** The search next. */
 	final SelectionListener searchNext = selected(e -> find.findNext());
 
+	/**
+	 * Instantiates a new editor toolbar.
+	 *
+	 * @param editor
+	 *            the editor
+	 */
 	public EditorToolbar(final GamlEditor editor) {
 		this.editor = editor;
 	}
 
+	/**
+	 * Fill.
+	 *
+	 * @param toolbar
+	 *            the toolbar
+	 * @return the editor search controls
+	 */
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 
 		previous = toolbar.button("editor.lastedit2", null, "Previous edit location", globalPrevious);
@@ -71,7 +104,7 @@ public class EditorToolbar {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				// final GamlEditor editor = getEditor();
-				if (editor == null) { return; }
+				if (editor == null) return;
 				editor.openOutlinePopup();
 			}
 		});
@@ -86,6 +119,14 @@ public class EditorToolbar {
 		return find;
 	}
 
+	/**
+	 * Hook to search.
+	 *
+	 * @param lastEdit
+	 *            the last edit
+	 * @param nextEdit
+	 *            the next edit
+	 */
 	private void hookToSearch(final ToolItem lastEdit, final ToolItem nextEdit) {
 		find.getFindControl().addFocusListener(new FocusListener() {
 
@@ -117,6 +158,14 @@ public class EditorToolbar {
 		});
 	}
 
+	/**
+	 * Hook to commands.
+	 *
+	 * @param lastEdit
+	 *            the last edit
+	 * @param nextEdit
+	 *            the next edit
+	 */
 	private void hookToCommands(final ToolItem lastEdit, final ToolItem nextEdit) {
 		WorkbenchHelper.runInUI("Hooking to commands", 0, m -> {
 			final Command nextCommand = getCommand(NAVIGATE_FORWARD_HISTORY);
@@ -134,54 +183,5 @@ public class EditorToolbar {
 		});
 
 	}
-
-	// GamlEditor getEditor() {
-	// return (GamlEditor) WorkbenchHelper.getActiveEditor();
-	// }
-
-	// minus = toolbar.button("editor.decrease2", "", "Decrease font size", new
-	// SelectionAdapter() {
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final GamlEditor editor = getEditor();
-	// if (editor == null) { return; }
-	// editor.setFontAndCheckButtons(-1);
-	// minus.setEnabled(editor.getFont().getFontData()[0].height > 6);
-	// }
-	// });
-	// toolbar.button("editor.increase2", "", "Increase font size", new
-	// SelectionAdapter() {
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final GamlEditor editor = getEditor();
-	// if (editor == null) { return; }
-	// editor.setFontAndCheckButtons(1);
-	// minus.setEnabled(editor.getFont().getFontData()[0].height > 6);
-	// }
-	// });
-	// toolbar.sep(12);
-	// toolbar.sep(10);
-	// toolbar.button("editor.format2", null, "Format", new SelectionAdapter() {
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final GamlEditor editor = getEditor();
-	// if (editor == null) { return; }
-	// editor.getAction("Format").run();
-	// }
-	// });
-	//
-	// toolbar.button("editor.comment2", null, "Toggle comment", new
-	// SelectionAdapter() {
-	//
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final GamlEditor editor = getEditor();
-	// if (editor == null) { return; }
-	// editor.getAction("ToggleComment").run();
-	// }
-	// });
 
 }
