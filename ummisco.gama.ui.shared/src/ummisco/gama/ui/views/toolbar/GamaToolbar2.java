@@ -154,10 +154,12 @@ public class GamaToolbar2 extends Composite {
 	 * @return the tool item
 	 */
 	public ToolItem sep(final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		final var icon = GamaIcons.createSizer(getBackground(), width, height);
-		final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
-		item.setDisabledImage(icon.image());
-		if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
+		// final var icon = GamaIcons.createSizer(getBackground(), width, height);
+		// final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
+		// item.setDisabledImage(icon.image());
+		// if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
+		ToolItem item = new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR_FILL);
+		item.setWidth(width);
 		return item;
 	}
 
@@ -539,8 +541,9 @@ public class GamaToolbar2 extends Composite {
 		}
 		if (listener != null) { button.addSelectionListener(listener); }
 		if (control != null) {
-			//GamaColors.setBackground(control, getBackground());
-			button.setControl(control); }
+			// GamaColors.setBackground(control, getBackground());
+			button.setControl(control);
+		}
 		normalizeToolbars();
 
 		return button;
