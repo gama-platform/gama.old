@@ -30,8 +30,8 @@
 -XX:+UseG1GC
 -XX:+UseStringDeduplication
 -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false
--Xms14096m
--Xmx14096m
+-Xms4096m
+-Xmx4096m
 -Xss128m
 -Xmn1024m
 -XX:+UseAdaptiveSizePolicy

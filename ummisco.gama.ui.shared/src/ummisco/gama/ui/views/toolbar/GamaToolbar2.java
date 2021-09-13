@@ -158,8 +158,8 @@ public class GamaToolbar2 extends Composite {
 		// final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
 		// item.setDisabledImage(icon.image());
 		// if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
-		ToolItem item = new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR_FILL);
-		item.setWidth(width);
+		ToolItem item = new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR );
+		// item.setWidth(width);
 		return item;
 	}
 
