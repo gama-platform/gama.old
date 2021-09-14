@@ -16,12 +16,6 @@ import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
 import static org.geotools.util.factory.Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM;
 
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferDouble;
-import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,28 +27,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
-import org.geotools.coverage.grid.io.AbstractGridCoverageWriter;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.PrjFileReader;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.geotools.gce.arcgrid.ArcGridWriter;
+import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
+import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -284,7 +276,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	 *            the field
 	 */
 	private void createCoverage(final IScope scope, final GamaField field) {
-		double[] data = field.getMatrix();
+		// temporary fixes #3128 - the code comes from the save statement... maybe we can do better
+		
+		//old code
+		/*double[] data = field.getMatrix();
+		
 		DataBuffer buffer = new DataBufferDouble(data, data.length);
 		SampleModel sample = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, field.numCols, field.numRows,
 				field.getBandsNumber(scope));
@@ -293,7 +289,33 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				scope.getSimulation().getHeight());
 		GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 		GridCoverage2D cov = factory.create(getName(scope), raster, envelope);
-		coverage = cov;
+		coverage = cov;*/
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
+
+		final int cols = field.numCols;
+		final int rows = field.numRows;
+		double x = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
+		double y = nullProjection ? 0
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
+
+		final float[][] imagePixelData = new float[rows][cols];
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				imagePixelData[row][col] = field.get(scope, col, row).floatValue();
+			}
+
+		}
+		final double width = scope.getSimulation().getEnvelope().getWidth();
+		final double height = scope.getSimulation().getEnvelope().getHeight();
+
+		Envelope2D refEnvelope;
+		
+		refEnvelope = new Envelope2D(this.getCRS(scope), x, y, width, height);
+
+		
+		coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+		
 	}
 
 	/**
@@ -321,9 +343,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		try {
 			final File f = getFile(scope);
 			f.setWritable(true);
-			AbstractGridCoverageWriter writer;
+			GridCoverageWriter writer;
+				
 			if (isTiff(scope)) {
-				writer = new GeoTiffWriter(f);
+				final GeoTiffFormat format = new GeoTiffFormat();
+				 writer = format.getWriter(f);
 			} else {
 				writer = new ArcGridWriter(f);
 			}
