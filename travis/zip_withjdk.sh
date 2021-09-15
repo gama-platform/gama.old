@@ -92,9 +92,9 @@ cd ../../../../../../../
 
 
 
-wget http://51.255.46.42/releases/jdk/15.0.1/jdk_linux_15.0.1.tar.gz -nv
-wget http://51.255.46.42/releases/jdk/15.0.1/jdk_win_15.0.1.zip -nv
-wget http://51.255.46.42/releases/jdk/15.0.1/jdk_osx_15.0.1.tar.gz -nv
+wget "https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_linux_hotspot_15.0.2_7.tar.gz" -O "jdk_linux_15.0.1.tar.gz"
+wget "https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_windows_hotspot_15.0.2_7.zip" -O "jdk_win_15.0.1.zip"
+wget "https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_mac_hotspot_15.0.2_7.tar.gz" -O "jdk_osx_15.0.1.tar.gz"
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
@@ -102,13 +102,13 @@ mkdir  jdk_osx
 
 echo "unzip jdk linux"	
 tar -zxf jdk_linux_15.0.1.tar.gz -C jdk_linux/
-mv jdk_linux/jdk-15.0.1 jdk_linux/jdk
+mv jdk_linux/jdk-15* jdk_linux/jdk
 echo "unzip jdk osx"	
 tar -zxf jdk_osx_15.0.1.tar.gz -C jdk_osx/ 
-mv jdk_osx/jdk-15.0.1.jdk jdk_osx/jdk 
+mv jdk_osx/jdk-15* jdk_osx/jdk 
 echo "unzip jdk win"	
 unzip -q jdk_win_15.0.1.zip -d jdk_win
-mv jdk_win/jdk-15.0.1 jdk_win/jdk 
+mv jdk_win/jdk-15* jdk_win/jdk 
 
 
 
