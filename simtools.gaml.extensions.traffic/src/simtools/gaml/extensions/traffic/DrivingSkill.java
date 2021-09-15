@@ -1505,7 +1505,7 @@ public class DrivingSkill extends MovingSkill {
 			final Map<IAgent, Double> roadProba) {
 		IAgent vehicle = getCurrentAgent(scope);
 
-		Set<IAgent> possibleRoads = new HashSet<>();
+		IList<IAgent> possibleRoads = GamaListFactory.create();
 		possibleRoads.addAll(RoadNodeSkill.getRoadsOut(node));
 		if (canIgnoreOneway(vehicle)) {
 			possibleRoads.addAll(RoadNodeSkill.getRoadsIn(node));
@@ -1517,18 +1517,17 @@ public class DrivingSkill extends MovingSkill {
 		if (possibleRoads.isEmpty()) {
 			return null;
 		} else if (possibleRoads.size() == 1) {
-			return possibleRoads.iterator().next();
+			return possibleRoads.get(0);
 		} else {
-			List<IAgent> roadList = GamaListFactory.create(scope, Types.AGENT, possibleRoads);
 			if (roadProba == null || roadProba.isEmpty()) {
-				return roadList.get(scope.getRandom().between(0, roadList.size() - 1));
+				return possibleRoads.anyValue(scope);
 			} else {
 				IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
-				for (IAgent r : roadList) {
+				for (IAgent r : possibleRoads) {
 					Double val = roadProba.get(r);
 					distribution.add(val == null ? 0.0 : val);
 				}
-				return roadList.get(Random.opRndChoice(scope, distribution));
+				return possibleRoads.get(Random.opRndChoice(scope, distribution));
 			}
 		}
 	}
