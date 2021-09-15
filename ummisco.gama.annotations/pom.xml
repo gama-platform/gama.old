@@ -21,7 +21,7 @@
 	</distributionManagement>
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<tycho.version>2.2.0</tycho.version>
+	<tycho.version>2.4.0</tycho.version>
 	<jdk.version>15</jdk.version>
   </properties>
 
