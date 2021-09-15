@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.1.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="branding_icons/icon128.png"/>
