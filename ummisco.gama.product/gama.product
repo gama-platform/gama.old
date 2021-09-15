@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.1.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="branding_icons/icon128.png"/>
       <text>
-         GAMA Platform - V1.8.1 http://gama-platform.org
+         GAMA Platform - V1.8.2 http://gama-platform.org
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
 (c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners
-(c) 2018-2020 UMI 209 UMMISCO IRD/SU &amp; Partners
+(c) 2018-2021 UMI 209 UMMISCO IRD/SU &amp; Partners
       </text>
    </aboutInfo>
 
@@ -70,7 +70,6 @@
    </launcher>
 
    <vm>
-      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
@@ -268,18 +267,19 @@
       <feature id="ummisco.gama.feature.core" version="1.8.1.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.8.1.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.8.1.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.modeling.ui" version="1.8.1.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.modeling.ui" installMode="root"/>
    </features>
 
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="1" />
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="org.eclipse.update.reconcile" value="false" />
-      <property name="version" value="1.8.1" />
+      <property name="version" value="1.8.2" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 
    <repositories>
