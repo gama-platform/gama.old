@@ -113,7 +113,7 @@
 		-->
 		<repository>
 			<id>eclipse-2103</id>
-			<url>http://download.eclipse.org/releases/2021-03</url>
+			<url>http://download.eclipse.org/releases/2021-06</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
