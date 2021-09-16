@@ -157,7 +157,7 @@ public class Application implements IApplication {
 
 		int size = args.size();
 		boolean mustContainInFile = true;
-		boolean mustContainOutFile = true;
+		boolean mustContainOutFolder = true;
 
 		// Parameters flag
 		// ========================
@@ -179,14 +179,14 @@ public class Application implements IApplication {
 		}
 		if (args.contains(TUNNELING_PARAMETER)) {
 			size = size - 1;
-			mustContainOutFile = false;
+			mustContainOutFolder = false;
 
 			// Change value only if function should apply parameter
 			this.tunnelingMode = apply;
 		}
 		if (args.contains(SOCKET_PARAMETER)) {
 			size = size - 2;
-			mustContainOutFile = false;
+			mustContainOutFolder = false;
 
 			// Change value only if function should apply parameter
 			this.socket = apply ? Integer.valueOf(after(args, SOCKET_PARAMETER)) : -1;
@@ -202,25 +202,29 @@ public class Application implements IApplication {
 		// ========================
 		if (args.contains(WRITE_XMI) || args.contains(GAMA_VERSION) || args.contains(HELP_PARAMETER) || args.contains(VALIDATE_LIBRARY_PARAMETER) || args.contains(TEST_LIBRARY_PARAMETER) ) {
 			size = size - 1;
-			mustContainOutFile = mustContainInFile = false;
+			mustContainOutFolder = mustContainInFile = false;
 		}
 		if (args.contains(BATCH_PARAMETER)) {
 			size = size - 3;
-			mustContainOutFile = false;
+			mustContainOutFolder = false;
+		}
+		if (args.contains(BUILD_XML_PARAMETER)) {
+			size = size - 4;
+			mustContainInFile = mustContainOutFolder = false;
 		}
 
 		// Runner verification
 		// ========================
-		if (mustContainInFile && mustContainOutFile && size < 2) {
+		if (mustContainInFile && mustContainOutFolder && size < 2) {
 			return showError(HeadLessErrors.INPUT_NOT_DEFINED, null);
 		}
-		if (!mustContainInFile && mustContainOutFile && size < 1) {
+		if (!mustContainInFile && mustContainOutFolder && size < 1) {
 			return showError(HeadLessErrors.OUTPUT_NOT_DEFINED, null);
 		}
 
 		// In/out files
 		// ========================
-		if (mustContainOutFile) {
+		if (mustContainOutFolder) {
 			// Check and create output folder
 			Globals.OUTPUT_PATH = args.get(args.size() - 1);
 			final File output = new File(Globals.OUTPUT_PATH);
@@ -235,7 +239,7 @@ public class Application implements IApplication {
 			}
 		}
 		if (mustContainInFile) {
-			final int inIndex = args.size() - (mustContainOutFile ? 2 : 1);
+			final int inIndex = args.size() - (mustContainOutFolder ? 2 : 1);
 			final File input = new File(args.get(inIndex));
 			if (!input.exists()) {
 				return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args.get(inIndex));
