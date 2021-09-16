@@ -15,6 +15,7 @@ import core.util.data.GSEnumDataType;
 import espacedev.gaml.extensions.genstar.generator.FileBasedGenerator;
 import espacedev.gaml.extensions.genstar.generator.IGenstarGenerator;
 import espacedev.gaml.extensions.genstar.generator.MatrixBasedGenerator;
+import espacedev.gaml.extensions.genstar.generator.OldGenstarGenerator;
 import espacedev.gaml.extensions.genstar.type.GamaRange;
 import espacedev.gaml.extensions.genstar.type.GamaRangeType;
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant.GenerationAlgorithm;
@@ -192,7 +193,8 @@ public class GenStarGamaUtils {
 		
 		return new IGenstarGenerator[] {
 				FileBasedGenerator.getInstance(),
-				MatrixBasedGenerator.getInstance()
+				MatrixBasedGenerator.getInstance(),
+				OldGenstarGenerator.getInstance()
 				};
 	}
 	

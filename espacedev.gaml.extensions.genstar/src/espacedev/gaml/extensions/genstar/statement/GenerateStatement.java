@@ -82,7 +82,8 @@ import one.util.streamex.StreamEx;
 								+ "<ul>"
 								+ "  <li>list of csv_file: can be aggregated or micro data</li>\n"
 								+ "  <li>matrix: describe the joint distribution of two attributes</li>\n"
-								+ "  <li>bayesian network: describe a conditional distribution of three or more attributes</li>"
+								//+ "  <li>bayesian network (not yet implem): describe a conditional distribution of three or more attributes</li>"
+								+ "  <li>genstar generator: a dedicated gaml type to enclose various genstar options all in one"
 								+ "</ul>")
 						),
 				@facet (
