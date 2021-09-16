@@ -112,7 +112,7 @@
 		</repository> 
 		-->
 		<repository>
-			<id>eclipse-2103</id>
+			<id>eclipse-2106</id>
 			<url>http://download.eclipse.org/releases/2021-06</url>
 			<layout>p2</layout>
 		</repository>
