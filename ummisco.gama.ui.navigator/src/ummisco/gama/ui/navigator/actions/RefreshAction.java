@@ -1,11 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation Andrey Loskutov <loskutov@gmx.de> - generified
- * interface, bug 462760
- *******************************************************************************/
+ * RefreshAction.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import static msi.gama.common.interfaces.IGui.NAVIGATOR_VIEW_ID;
@@ -13,11 +15,7 @@ import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.eclipse.core.resources.IResource.PROJECT;
 import static org.eclipse.core.resources.IResource.ROOT;
 import static org.eclipse.core.runtime.Status.OK_STATUS;
-import static org.eclipse.jface.dialogs.IDialogConstants.NO_LABEL;
-import static org.eclipse.jface.dialogs.IDialogConstants.YES_LABEL;
-import static org.eclipse.jface.dialogs.MessageDialog.QUESTION;
 import static org.eclipse.jface.viewers.StructuredSelection.EMPTY;
-import static org.eclipse.swt.SWT.SHEET;
 import static org.eclipse.ui.PlatformUI.PLUGIN_ID;
 import static org.eclipse.ui.internal.ide.IIDEHelpContextIds.REFRESH_ACTION;
 import static ummisco.gama.ui.navigator.contents.ResourceManager.getInstance;
@@ -37,11 +35,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceAction;
@@ -49,6 +45,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
+import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.GamaNavigator;
@@ -68,14 +65,18 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class RefreshAction extends WorkspaceAction {
 
+	/** The navigator. */
 	GamaNavigator navigator;
 
+	/**
+	 * Gets the navigator.
+	 *
+	 * @return the navigator
+	 */
 	private GamaNavigator getNavigator() {
 		if (navigator == null) {
 			final IWorkbenchPage page = WorkbenchHelper.getPage();
-			if (page != null) {
-				navigator = (GamaNavigator) page.findView(NAVIGATOR_VIEW_ID);
-			}
+			if (page != null) { navigator = (GamaNavigator) page.findView(NAVIGATOR_VIEW_ID); }
 		}
 		return navigator;
 	}
@@ -85,6 +86,7 @@ public class RefreshAction extends WorkspaceAction {
 	 */
 	public static final String ID = PLUGIN_ID + ".RefreshAction";//$NON-NLS-1$
 
+	/** The resources. */
 	public List<? extends IResource> resources;
 
 	/**
@@ -113,43 +115,23 @@ public class RefreshAction extends WorkspaceAction {
 	 * project or not.
 	 */
 	void checkLocationDeleted(final IProject project) throws CoreException {
-		if (!project.exists()) { return; }
+		if (!project.exists()) return;
 		final IFileInfo location = IDEResourceInfoUtils.getFileInfo(project.getLocationURI());
-		if (!location.exists()) {
-			final String message = NLS.bind(IDEWorkbenchMessages.RefreshAction_locationDeletedMessage,
-					project.getName(), location.toString());
-
-			final MessageDialog dialog =
-					new MessageDialog(WorkbenchHelper.getShell(), IDEWorkbenchMessages.RefreshAction_dialogTitle, null,
-							message, QUESTION, new String[] { YES_LABEL, NO_LABEL }, 0) {
-						@Override
-						protected int getShellStyle() {
-							return super.getShellStyle() | SHEET;
-						}
-					};
-			WorkbenchHelper.run(() -> dialog.open());
-
-			// Do the deletion back in the operation thread
-			if (dialog.getReturnCode() == 0) { // yes was chosen
-				project.delete(true, true, null);
-			}
+		if (!location.exists() && Messages.confirm("Project location has been deleted",
+				"The location for project " + project.getName() + " (" + location.toString()
+						+ ") has been deleted. Do you want to remove " + project.getName() + " from the workspace ?")) {
+			project.delete(true, true, null);
 		}
 	}
 
 	@Override
-	protected String getOperationMessage() {
-		return IDEWorkbenchMessages.RefreshAction_progressMessage;
-	}
+	protected String getOperationMessage() { return IDEWorkbenchMessages.RefreshAction_progressMessage; }
 
 	@Override
-	protected String getProblemsMessage() {
-		return IDEWorkbenchMessages.RefreshAction_problemMessage;
-	}
+	protected String getProblemsMessage() { return IDEWorkbenchMessages.RefreshAction_problemMessage; }
 
 	@Override
-	protected String getProblemsTitle() {
-		return IDEWorkbenchMessages.RefreshAction_problemTitle;
-	}
+	protected String getProblemsTitle() { return IDEWorkbenchMessages.RefreshAction_problemTitle; }
 
 	/**
 	 * Returns a list containing the workspace root if the selection would otherwise be empty.
@@ -157,14 +139,8 @@ public class RefreshAction extends WorkspaceAction {
 	@Override
 	protected List<? extends IResource> getSelectedResources() {
 		final List<IResource> resources1 = new ArrayList<>();
-		for (final IResource r : super.getSelectedResources()) {
-			if (r.isAccessible()) {
-				resources1.add(r);
-			}
-		}
-		if (resources1.isEmpty()) {
-			resources1.add(ResourcesPlugin.getWorkspace().getRoot());
-		}
+		for (final IResource r : super.getSelectedResources()) { if (r.isAccessible()) { resources1.add(r); } }
+		if (resources1.isEmpty()) { resources1.add(ResourcesPlugin.getWorkspace().getRoot()); }
 		return resources1;
 	}
 
@@ -201,7 +177,7 @@ public class RefreshAction extends WorkspaceAction {
 							final IResource resource = resourcesEnum.next();
 							refreshResource(resource, null);
 						} catch (final CoreException e) {}
-						if (monitor.isCanceled()) { throw new OperationCanceledException(); }
+						if (monitor.isCanceled()) throw new OperationCanceledException();
 					}
 				} finally {
 					monitor.done();
@@ -229,14 +205,12 @@ public class RefreshAction extends WorkspaceAction {
 			checkLocationDeleted((IProject) resource);
 		} else if (resource.getType() == ROOT) {
 			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-			for (final IProject project : projects) {
-				checkLocationDeleted(project);
-			}
+			for (final IProject project : projects) { checkLocationDeleted(project); }
 		}
 		resource.refreshLocal(DEPTH_INFINITE, monitor);
 		resource.getParent().refreshLocal(DEPTH_INFINITE, monitor);
 
-		runInUI("Refreshing " + resource.getName(), 0, (m) -> {
+		runInUI("Refreshing " + resource.getName(), 0, m -> {
 
 			FileMetaDataProvider.getInstance().storeMetaData(resource, null, true);
 			FileMetaDataProvider.getInstance().getMetaData(resource, false, true);
@@ -253,11 +227,9 @@ public class RefreshAction extends WorkspaceAction {
 				@Override
 				public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 					final IRefreshHandler refresh = WorkbenchHelper.getService(IRefreshHandler.class);
-					if (refresh != null) {
-						refresh.completeRefresh(resources);
-					}
+					if (refresh != null) { refresh.completeRefresh(resources); }
 					return OK_STATUS;
-				};
+				}
 			};
 			job.setUser(true);
 			job.schedule();

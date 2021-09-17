@@ -1,17 +1,38 @@
+/*******************************************************************************************************
+ *
+ * WrappedLink.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import static msi.gama.common.util.FileUtils.SEPARATOR;
 import static msi.gama.common.util.FileUtils.URL_SEPARATOR_REPLACEMENT;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.dialogs.MessageDialog;
 
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.dialogs.Messages;
 
+/**
+ * The Class WrappedLink.
+ */
 public class WrappedLink extends WrappedFile {
 
+	/** The is web. */
 	final boolean isWeb;
 
+	/**
+	 * Instantiates a new wrapped link.
+	 *
+	 * @param root
+	 *            the root
+	 * @param wrapped
+	 *            the wrapped
+	 */
 	public WrappedLink(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
 		isWeb = getResource().getLocation().toString().contains(URL_SEPARATOR_REPLACEMENT);
@@ -30,8 +51,7 @@ public class WrappedLink extends WrappedFile {
 	@Override
 	public boolean handleDoubleClick() {
 		if (!getManager().validateLocation(getResource())) {
-			MessageDialog.openError(WorkbenchHelper.getShell(), "Unknown file",
-					"The file at location '" + getResource().getLocation() + " does not exist");
+			Messages.error("The file at location '" + getResource().getLocation() + " does not exist");
 			return true;
 		}
 		return false;
@@ -58,6 +78,11 @@ public class WrappedLink extends WrappedFile {
 
 	}
 
+	/**
+	 * Reconstruct target name.
+	 *
+	 * @return the string
+	 */
 	String reconstructTargetName() {
 		// if the file points to an internet address
 		String loc = getResource().getLocation().toString();
