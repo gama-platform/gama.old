@@ -35,6 +35,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 public class OldGenstarGenerator implements IGenstarGenerator {
@@ -43,9 +44,14 @@ public class OldGenstarGenerator implements IGenstarGenerator {
 	private static final OldGenstarGenerator INSTANCE = new OldGenstarGenerator();
 	public static OldGenstarGenerator getInstance() {return INSTANCE;}
 	
+	private OldGenstarGenerator() { this.type = null; }
+	
+	@SuppressWarnings("rawtypes")
+	IType type;
+	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public IType sourceType() { return new GamaPopGeneratorType(); }
+	public IType sourceType() { return this.type; }
 
 	@Override
 	public boolean sourceMatch(IScope scope, Object source) { return source instanceof GamaPopGenerator; }
@@ -136,7 +142,7 @@ public class OldGenstarGenerator implements IGenstarGenerator {
         for (final ADemoEntity e : population) {
         	@SuppressWarnings("rawtypes")
 			final Map map = GamaMapFactory.create();
-        	for (final Attribute<? extends IValue> attribute : gen.getInputAttributes().getAttributes()) {  
+        	for (final Attribute<? extends IValue> attribute : population.getPopulationAttributes()) {  
         		IVariable var = gamaPop.getVar(attribute.getAttributeName());
         		map.put(attribute.getAttributeName(), 
         				GenStarGamaUtils.toGAMAValue(scope, e.getValueForAttribute(attribute), true, var.getType()));

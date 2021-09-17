@@ -317,19 +317,22 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 			final IExpression exp = description.getFacetExpr(FROM);
 			if (exp != null) {
 				final IType type = exp.getGamlType();
-				boolean found = false;
-				List<IType> types = StreamEx.of(GenStarGamaUtils.getGamaGenerator())
-						.map(IGenstarGenerator::sourceType).collect(Collectors.toList());
-				for (final IType genType : types) {
-					found = genType.isAssignableFrom(type);
-					if (found) { break; }
-				}
-				if (type==Types.MATRIX) {
-					// TODO verify that x,y matrix match possible attributes values
-				}
-				if (!found) {
-					description.warning("Facet 'from' expects an expression with one of the following types: " + types,
-							WRONG_TYPE, FROM);
+				
+				if (type.id()!=938373948) {
+					boolean found = false;
+					List<IType> types = StreamEx.of(GenStarGamaUtils.getGamaGenerator())
+							.map(IGenstarGenerator::sourceType).collect(Collectors.toList());
+					for (final IType genType : types) {
+						found = genType.isAssignableFrom(type);
+						if (found) { break; }
+					}
+					if (type==Types.MATRIX) {
+						// TODO verify that x,y matrix match possible attributes values
+					}
+					if (!found) {
+						description.warning("Facet 'from' expects an expression with one of the following types: " + types,
+								WRONG_TYPE, FROM);
+					}
 				}
 			}
 			
