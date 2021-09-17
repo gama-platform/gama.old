@@ -12,6 +12,7 @@ package ummisco.gama.ui.utils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 import org.eclipse.core.commands.Command;
@@ -152,6 +153,30 @@ public class WorkbenchHelper {
 		} else {
 			d.syncExec(r);
 		}
+	}
+
+	/**
+	 * Run.
+	 *
+	 * @param r
+	 *            the r
+	 * @return the t
+	 * @throws Exception
+	 */
+	public static <T> T run(final Callable<T> r) {
+		final Display d = getDisplay();
+		if (d == null || d.isDisposed() || d.getThread() == Thread.currentThread()) {
+			try {
+				return r.call();
+			} catch (Exception e1) {}
+		}
+		Object[] result = new Object[1];
+		d.syncExec(() -> {
+			try {
+				result[0] = r.call();
+			} catch (Exception e) {}
+		});
+		return (T) result[0];
 	}
 
 	/**
@@ -429,9 +454,7 @@ public class WorkbenchHelper {
 	 * @return the rectangle
 	 */
 	public static Rectangle displaySizeOf(final Control composite) {
-		final Rectangle[] result = new Rectangle[1];
-		run(() -> result[0] = getDisplay().map(composite, null, composite.getBounds()));
-		return result[0];
+		return run(() -> getDisplay().map(composite, null, composite.getBounds()));
 	}
 
 	/**

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'RefreshHandler.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * RefreshHandler.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
@@ -35,19 +34,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IFileMetaDataProvider;
+import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.GamaNavigator;
@@ -55,16 +50,23 @@ import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class RefreshHandler.
+ */
 public class RefreshHandler implements IRefreshHandler {
 
+	/** The navigator. */
 	GamaNavigator navigator;
 
+	/**
+	 * Gets the navigator.
+	 *
+	 * @return the navigator
+	 */
 	private GamaNavigator getNavigator() {
 		if (navigator == null) {
 			final IWorkbenchPage page = WorkbenchHelper.getPage();
-			if (page != null) {
-				navigator = (GamaNavigator) page.findView(IGui.NAVIGATOR_VIEW_ID);
-			}
+			if (page != null) { navigator = (GamaNavigator) page.findView(IGui.NAVIGATOR_VIEW_ID); }
 		}
 		return navigator;
 	}
@@ -75,14 +77,22 @@ public class RefreshHandler implements IRefreshHandler {
 		WorkbenchHelper.run(() -> getNavigator().getCommonViewer().refresh());
 	}
 
+	/**
+	 * Simple refresh.
+	 *
+	 * @param resource
+	 *            the resource
+	 * @param monitor
+	 *            the monitor
+	 * @throws CoreException
+	 *             the core exception
+	 */
 	protected void simpleRefresh(final IResource resource, final IProgressMonitor monitor) throws CoreException {
 		if (resource.getType() == IResource.PROJECT) {
 			checkLocationDeleted((IProject) resource);
 		} else if (resource.getType() == IResource.ROOT) {
 			final IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-			for (final IProject project : projects) {
-				checkLocationDeleted(project);
-			}
+			for (final IProject project : projects) { checkLocationDeleted(project); }
 		}
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
@@ -108,7 +118,7 @@ public class RefreshHandler implements IRefreshHandler {
 			}
 		}
 
-		runInUI("Refreshing " + resource.getName(), 0, (m) -> {
+		runInUI("Refreshing " + resource.getName(), 0, m -> {
 			FileMetaDataProvider.getInstance().storeMetaData(resource, null, true);
 			FileMetaDataProvider.getInstance().getMetaData(resource, false, true);
 			getNavigator().getCommonViewer().refresh(getInstance().findWrappedInstanceOf(resource), true);
@@ -140,16 +150,12 @@ public class RefreshHandler implements IRefreshHandler {
 						try {
 							final IResource resource = resourcesEnum.next();
 							simpleRefresh(resource, monitor);
-							if (monitor != null) {
-								monitor.worked(1);
-							}
+							if (monitor != null) { monitor.worked(1); }
 						} catch (final CoreException e) {}
-						if (monitor != null && monitor.isCanceled()) { throw new OperationCanceledException(); }
+						if (monitor != null && monitor.isCanceled()) throw new OperationCanceledException();
 					}
 				} finally {
-					if (monitor != null) {
-						monitor.done();
-					}
+					if (monitor != null) { monitor.done(); }
 				}
 			}
 		};
@@ -212,27 +218,21 @@ public class RefreshHandler implements IRefreshHandler {
 		job.schedule();
 	}
 
+	/**
+	 * Check location deleted.
+	 *
+	 * @param project
+	 *            the project
+	 * @throws CoreException
+	 *             the core exception
+	 */
 	void checkLocationDeleted(final IProject project) throws CoreException {
-		if (!project.exists()) { return; }
+		if (!project.exists()) return;
 		final IFileInfo location = IDEResourceInfoUtils.getFileInfo(project.getLocationURI());
-		if (!location.exists()) {
-			final String message = NLS.bind(IDEWorkbenchMessages.RefreshAction_locationDeletedMessage,
-					project.getName(), location.toString());
-
-			final MessageDialog dialog = new MessageDialog(WorkbenchHelper.getShell(),
-					IDEWorkbenchMessages.RefreshAction_dialogTitle, null, message, MessageDialog.QUESTION,
-					new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0) {
-				@Override
-				protected int getShellStyle() {
-					return super.getShellStyle() | SWT.SHEET;
-				}
-			};
-			WorkbenchHelper.run(() -> dialog.open());
-
-			// Do the deletion back in the operation thread
-			if (dialog.getReturnCode() == 0) { // yes was chosen
-				project.delete(true, true, null);
-			}
+		if (!location.exists() && Messages.confirm("Project location has been deleted",
+				"The location for project " + project.getName() + " (" + location.toString()
+						+ ") has been deleted. Do you want to remove " + project.getName() + " from the workspace ?")) {
+			project.delete(true, true, null);
 		}
 	}
 
