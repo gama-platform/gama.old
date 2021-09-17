@@ -1,29 +1,24 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'InteractiveConsoleView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * InteractiveConsoleView.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
@@ -33,7 +28,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IOConsole;
@@ -66,18 +60,40 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
+/**
+ * The Class InteractiveConsoleView.
+ */
 public class InteractiveConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable,
 		IToolbarDecoratedView.LogExportable, IGamaView.Console, IExecutionContext, IVarDescriptionProvider {
 
+	/** The msg console. */
 	private IOConsole msgConsole;
+	
+	/** The viewer. */
 	IOConsoleViewer viewer;
+	
+	/** The error writer. */
 	private OutputStreamWriter resultWriter, errorWriter;
+	
+	/** The reader. */
 	BufferedReader reader;
+	
+	/** The scope. */
 	private IScope scope;
+	
+	/** The temps. */
 	private final Map<String, Object> temps = new LinkedHashMap<>();
+	
+	/** The history. */
 	private final List<String> history = new ArrayList<>();
+	
+	/** The index in history. */
 	private int indexInHistory = 0;
+	
+	/** The control to display in full screen. */
 	private Composite controlToDisplayInFullScreen;
+	
+	/** The parent of control to display full screen. */
 	private Composite parentOfControlToDisplayFullScreen;
 
 	@Override
@@ -103,9 +119,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	@Override
-	public IScope getScope() {
-		return scope;
-	}
+	public IScope getScope() { return scope; }
 
 	@Override
 	public void ownCreatePartControl(final Composite p) {
@@ -161,12 +175,19 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	}
 
-	public Composite getControlToDisplayInFullScreen() {
-		return controlToDisplayInFullScreen;
-	}
+	/**
+	 * Gets the control to display in full screen.
+	 *
+	 * @return the control to display in full screen
+	 */
+	public Composite getControlToDisplayInFullScreen() { return controlToDisplayInFullScreen; }
 
+	/** The Constant PROMPT. */
 	public static final String PROMPT = "gaml> ";
 
+	/**
+	 * Show prompt.
+	 */
 	private void showPrompt() {
 
 		new Thread(() -> {
@@ -186,6 +207,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	}
 
+	/**
+	 * Insert history.
+	 *
+	 * @param back the back
+	 */
 	private void insertHistory(final boolean back) {
 
 		if (history.size() == 0) {
@@ -299,6 +325,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		if (text != null) { append(text, false, true); }
 	}
 
+	/**
+	 * Sets the executor agent.
+	 *
+	 * @param agent the new executor agent
+	 */
 	private void setExecutorAgent(final ITopLevelAgent agent) {
 		if (scope != null) {
 			scope.clear();
@@ -306,9 +337,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		}
 		if (agent == null) {
 
-			WorkbenchHelper.asyncRun(() -> {
-				if (toolbar != null && !toolbar.isDisposed()) { toolbar.wipe(SWT.LEFT, true); }
-			});
+			WorkbenchHelper.asyncRun(
+					() -> { if (toolbar != null && !toolbar.isDisposed()) { toolbar.wipe(SWT.LEFT, true); } });
 		} else {
 			scope = new ExecutionScope(agent, " in console", this);
 			agent.getSpecies().getDescription().attachAlternateVarDescriptionProvider(this);
@@ -318,6 +348,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	}
 
+	/**
+	 * Process input.
+	 *
+	 * @param s the s
+	 */
 	protected void processInput(final String s) {
 		final var agent = getListeningAgent();
 		if (agent == null || agent.dead()) {
@@ -348,14 +383,27 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	}
 
-	public Composite getParentOfControlToDisplayFullScreen() {
-		return parentOfControlToDisplayFullScreen;
-	}
+	/**
+	 * Gets the parent of control to display full screen.
+	 *
+	 * @return the parent of control to display full screen
+	 */
+	public Composite getParentOfControlToDisplayFullScreen() { return parentOfControlToDisplayFullScreen; }
 
+	/**
+	 * Sets the parent of control to display full screen.
+	 *
+	 * @param parentOfControlToDisplayFullScreen the new parent of control to display full screen
+	 */
 	public void setParentOfControlToDisplayFullScreen(final Composite parentOfControlToDisplayFullScreen) {
 		this.parentOfControlToDisplayFullScreen = parentOfControlToDisplayFullScreen;
 	}
 
+	/**
+	 * Gets the listening agent.
+	 *
+	 * @return the listening agent
+	 */
 	private IAgent getListeningAgent() {
 		if (scope == null) { setExecutorAgent(GAMA.getPlatformAgent()); }
 		return scope.getRoot();
@@ -373,9 +421,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	@Override
-	public Map<? extends String, ? extends Object> getLocalVars() {
-		return temps;
-	}
+	public Map<? extends String, ? extends Object> getLocalVars() { return temps; }
 
 	@Override
 	public void clearLocalVars() {
@@ -405,9 +451,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	@Override
-	public IExecutionContext getOuterContext() {
-		return this;
-	}
+	public IExecutionContext getOuterContext() { return this; }
 
 	@Override
 	public IExecutionContext createCopy() {
@@ -434,26 +478,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		return temps.containsKey(name);
 	}
 
-	public String getContents() {
-		return viewer.getDocument().get();
-	}
-
 	@Override
-	public void saveAsLog() {
-		String text = getContents();
-		FileDialog fd = new FileDialog(WorkbenchHelper.getShell(), SWT.SAVE);
-		fd.setText("Choose a destination file");
-		fd.setFilterExtensions(new String[] { "*.log" });
-		if (GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
-			fd.setFilterPath(GAMA.getExperiment().getAgent().getProjectPath());
-		} else {
-			fd.setFilterPath(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
-		}
-		String f = fd.open();
-		if (f == null) return;
-		try {
-			Files.writeString(Path.of(f), text, StandardCharsets.UTF_8);
-		} catch (IOException e) {}
-	}
+	public String getContents() { return viewer.getDocument().get(); }
 
 }
