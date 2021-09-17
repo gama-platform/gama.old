@@ -1,32 +1,41 @@
+/*******************************************************************************************************
+ *
+ * ResetModelingPerspective.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
-
-import static org.eclipse.jface.dialogs.MessageDialog.QUESTION;
-import static org.eclipse.jface.dialogs.MessageDialog.open;
-import static org.eclipse.swt.SWT.SHEET;
-import static ummisco.gama.ui.utils.WorkbenchHelper.getShell;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
 import msi.gama.application.Application;
+import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class ResetModelingPerspective.
+ */
 public class ResetModelingPerspective extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final String message =
-				"Resetting the modeling perspective will lose memory of the current editors, navigator state and restart GAMA in a pristine state. Do you want to proceed ?";
-		final boolean result = open(QUESTION, getShell(), "Reset modeling perspective", message, SHEET);
+		final boolean result = Messages.confirm("Reset modeling perspective",
+				"Resetting the modeling perspective will lose memory of the current editors, navigator state and restart GAMA in a pristine state. Do you want to proceed ?");
 		if (result) {
 			Application.ClearWorkspace(true);
 			// removeWorkbenchXMI();
 			WorkbenchHelper.getWorkbench().restart();
 		}
 		return null;
-
 	}
+
+	// TODO Propose it anyway ? workbench.xmi might play a role in the wrong color of tabs after a change of themes
 	//
 	// public static void removeWorkbenchXMI() {
 	// final File workspace = new File(Platform.getInstanceLocation().getURL().getFile());
