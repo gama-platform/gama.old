@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.menus.GamaMenu;
-import ummisco.gama.ui.utils.ViewsHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public abstract class GamlReferenceMenu extends GamaMenu {
 
@@ -102,7 +102,7 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 	// Helper methods for working with editors and menus
 
 	protected GamlEditor getEditor() {
-		return (GamlEditor) ViewsHelper.getActiveEditor();
+		return (GamlEditor) WorkbenchHelper.getActiveEditor();
 	}
 
 	@Override

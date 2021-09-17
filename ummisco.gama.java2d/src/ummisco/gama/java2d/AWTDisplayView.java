@@ -15,8 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.swing.SwingControl;
+import ummisco.gama.ui.views.WorkaroundForIssue1353;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
-import ummisco.gama.ui.views.displays.WorkaroundForIssue1353;
 
 public class AWTDisplayView extends LayeredDisplayView {
 

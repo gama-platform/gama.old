@@ -62,7 +62,6 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.PlatformHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -73,7 +72,7 @@ import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.DPIHelper;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -264,8 +263,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		final int width = DPIHelper.autoScaleDown(ww);
-		final int height = DPIHelper.autoScaleDown(hh);
+		final int width = PlatformHelper.autoScaleDown(ww);
+		final int height = PlatformHelper.autoScaleDown(hh);
 		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		final Graphics graphics = screenshot.getGraphics();
 

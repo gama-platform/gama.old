@@ -143,7 +143,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions) {
 		if (exceptions == null) {
-			ViewsHelper.hideView(ERROR_VIEW_ID);
+			WorkbenchHelper.hideView(ERROR_VIEW_ID);
 		} else {
 			final IGamaView.Error v = (Error) showView(scope, ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			if (v != null) { v.displayErrors(); }
@@ -232,10 +232,10 @@ public class SwtGui implements IGui {
 	}
 
 	public void hideMonitorView() {
-		final IGamaView m = (IGamaView) ViewsHelper.findView(MONITOR_VIEW_ID, null, false);
+		final IGamaView m = (IGamaView) WorkbenchHelper.findView(MONITOR_VIEW_ID, null, false);
 		if (m != null) {
 			m.reset();
-			ViewsHelper.hideView(MONITOR_VIEW_ID);
+			WorkbenchHelper.hideView(MONITOR_VIEW_ID);
 		}
 	}
 
@@ -343,7 +343,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.run(() -> {
 			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
 			if (userDialogFactory != null) { userDialogFactory.closeUserDialog(); }
-			ViewsHelper.hideView(USER_CONTROL_VIEW_ID);
+			WorkbenchHelper.hideView(USER_CONTROL_VIEW_ID);
 
 		});
 
@@ -449,17 +449,17 @@ public class SwtGui implements IGui {
 			WorkbenchHelper.runInUI("Arranging views", 0, m -> {
 				WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 				if (showConsoles != null && !showConsoles) {
-					ViewsHelper.hideView(IGui.CONSOLE_VIEW_ID);
-					ViewsHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
+					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
+					WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 				} else {
 					getConsole().showConsoleView(exp.getAgent());
 				}
 				if (showParameters != null && !showParameters) {
-					ViewsHelper.hideView(IGui.PARAMETER_VIEW_ID);
+					WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
 				} else {
 					updateParameterView(scope, exp);
 				}
-				if (showNavigator != null && !showNavigator) { ViewsHelper.hideView(IGui.NAVIGATOR_VIEW_ID); }
+				if (showNavigator != null && !showNavigator) { WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID); }
 				if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
 				if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
 
@@ -483,10 +483,10 @@ public class SwtGui implements IGui {
 	 */
 	@Override
 	public void cleanAfterExperiment() {
-		ViewsHelper.hideView(PARAMETER_VIEW_ID);
+		WorkbenchHelper.hideView(PARAMETER_VIEW_ID);
 		hideMonitorView();
 		getConsole().eraseConsole(true);
-		final IGamaView icv = (IGamaView) ViewsHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
+		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null) { icv.reset(); }
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
@@ -600,7 +600,7 @@ public class SwtGui implements IGui {
 	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
 		WorkbenchHelper.run(() -> {
 			final IViewPart part =
-					ViewsHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
+					WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
 			if (part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
 		});
 
@@ -675,7 +675,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean toggleFullScreenMode() {
-		final IViewPart part = ViewsHelper.findFrontmostGamaViewUnderMouse();
+		final IViewPart part = WorkbenchHelper.findFrontmostGamaViewUnderMouse();
 		if (part instanceof IGamaView.Display) {
 			((IGamaView.Display) part).toggleFullScreen();
 			return true;

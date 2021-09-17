@@ -71,11 +71,10 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.PlatformHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.utils.DPIHelper;
+import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 /**
@@ -215,8 +214,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @return the int
 	 */
 	int autoScaleUp(final int c) {
-		if (DPIHelper.getDeviceZoom() > 100) return c;
-		return DPIHelper.autoScaleUp(c);
+		if (PlatformHelper.getDeviceZoom() > 100) return c;
+		return PlatformHelper.autoScaleUp(c);
 	}
 
 	@Override
@@ -851,8 +850,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Font computeFont(final Font f) {
 		if (f == null) return null;
-		if (PlatformHelper.isWindows() && DPIHelper.isHiDPI())
-			return f.deriveFont(DPIHelper.autoScaleUp(f.getSize()));
+		if (PlatformHelper.isWindows() && PlatformHelper.isHiDPI())
+			return f.deriveFont(PlatformHelper.autoScaleUp(f.getSize()));
 		return f;
 
 	}

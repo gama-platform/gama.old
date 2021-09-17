@@ -15,6 +15,7 @@ import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_NONZERO;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_ODD;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_RULE;
 import static java.awt.geom.PathIterator.WIND_EVEN_ODD;
+import static ummisco.gama.ui.utils.PlatformHelper.autoScaleUp;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -40,7 +41,6 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.ITesselator;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.scene.ObjectDrawer;
-import ummisco.gama.ui.utils.DPIHelper;
 
 /**
  *
@@ -94,7 +94,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 			drawBitmap(s.getObject(), attributes);
 		} else {
 			Font font = attributes.getFont();
-			final int fontSize = DPIHelper.autoScaleUp(font.getSize());
+			final int fontSize = autoScaleUp(font.getSize());
 			if (fontSize != font.getSize()) { font = font.deriveFont((float) fontSize); }
 			Shape shape = font.createGlyphVector(context, s.getObject()).getOutline();
 			final Rectangle2D bounds = shape.getBounds2D();

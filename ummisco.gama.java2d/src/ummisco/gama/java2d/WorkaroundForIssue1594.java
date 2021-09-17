@@ -23,7 +23,7 @@ public class WorkaroundForIssue1594 {
 	public static void installOn(final AWTDisplayView view, final Composite parent, final Composite surfaceComposite,
 			final Java2DDisplaySurface displaySurface) {
 		// Install only on Windows
-		if (!msi.gama.runtime.PlatformHelper.isWindows()) { return; }
+		if (!ummisco.gama.ui.utils.PlatformHelper.isWindows()) { return; }
 		final IPartService ps = view.getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 

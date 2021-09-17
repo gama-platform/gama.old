@@ -15,6 +15,7 @@ import static msi.gaml.operators.Displays.HORIZONTAL;
 import static msi.gaml.operators.Displays.VERTICAL;
 import static org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE;
 import static org.eclipse.e4.ui.workbench.modeling.EModelService.IN_ACTIVE_PERSPECTIVE;
+import static ummisco.gama.ui.utils.WorkbenchHelper.findDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,6 @@ import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 @SuppressWarnings ({ "rawtypes" })
@@ -139,7 +139,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void decorateDisplays() {
-		ViewsHelper.getDisplayViews().forEach(v -> {
+		WorkbenchHelper.getDisplayViews().forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) {
 				if (tb) {
@@ -201,11 +201,11 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
-				IN_ACTIVE_PERSPECTIVE, e -> ViewsHelper.isDisplay(e.getElementId()));
+				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
 		/// Issue #2680
 		int currentIndex = 0;
 		for (final MPlaceholder h : holders) {
-			final IGamaView.Display display = ViewsHelper.findDisplay(h.getElementId());
+			final IGamaView.Display display = findDisplay(h.getElementId());
 			if (display != null) {
 				display.setIndex(currentIndex++);
 				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));
