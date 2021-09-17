@@ -24,7 +24,7 @@ import org.eclipse.ui.menus.UIElement;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.views.ErrorView;
 
 public class ShowErrors extends AbstractHandler implements IElementUpdater {
@@ -38,7 +38,7 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 		if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
 			GAMA.getGui().showView(null, ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		} else {
-			WorkbenchHelper.hideView(ErrorView.ID);
+			ViewsHelper.hideView(ErrorView.ID);
 		}
 		return null;
 	}

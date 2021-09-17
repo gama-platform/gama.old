@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.actions.WorkspaceAction;
 
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 
 public class CompareWithEachOtherAction extends WorkspaceAction {
 
@@ -23,7 +23,7 @@ public class CompareWithEachOtherAction extends WorkspaceAction {
 	protected CompareWithEachOtherAction(final IShellProvider provider) {
 		super(provider, "Compare");
 		action = new CompareAction();
-		action.setActivePart(this, WorkbenchHelper.getActivePart());
+		action.setActivePart(this, ViewsHelper.getActivePart());
 	}
 
 	private IStructuredSelection fSelection;

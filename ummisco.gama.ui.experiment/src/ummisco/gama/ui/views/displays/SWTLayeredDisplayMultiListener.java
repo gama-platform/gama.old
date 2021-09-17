@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class SWTLayeredDisplayMultiListener implements MenuDetectListener, MouseListener, MouseMoveListener,
@@ -56,7 +57,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 			if (!control.isFocusControl()) {
 				control.forceFocus();
 			}
-			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
+			if (!Objects.equals(ViewsHelper.getActivePart(), deco.view)) {
 				WorkbenchHelper.getPage().activate(deco.view);
 			}
 			return surfaceOk;

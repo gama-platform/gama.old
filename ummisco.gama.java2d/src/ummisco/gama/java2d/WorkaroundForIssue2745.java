@@ -15,8 +15,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class WorkaroundForIssue2745 {

@@ -18,9 +18,8 @@ import org.eclipse.swt.graphics.Point;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.runtime.GAMA;
-import ummisco.gama.ui.utils.PlatformHelper;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.WorkaroundForIssue1353;
 
 public class LayeredDisplayMultiListener {
 

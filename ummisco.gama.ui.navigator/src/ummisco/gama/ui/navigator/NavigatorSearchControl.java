@@ -34,13 +34,13 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.application.workbench.ThemeHelper;
+import msi.gama.runtime.PlatformHelper;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 /**

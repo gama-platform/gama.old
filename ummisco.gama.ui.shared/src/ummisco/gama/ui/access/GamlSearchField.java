@@ -54,10 +54,11 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -438,7 +439,7 @@ public class GamlSearchField {
 	}
 
 	public void search() {
-		final IWorkbenchPart part = WorkbenchHelper.getActivePart();
+		final IWorkbenchPart part = ViewsHelper.getActivePart();
 		if (part instanceof IEditorPart) {
 			final IEditorPart editor = (IEditorPart) part;
 			final IWorkbenchPartSite site = editor.getSite();

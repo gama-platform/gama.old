@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.JOGLRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * JOGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -48,7 +48,7 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
-import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -65,19 +65,31 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		DEBUG.ON();
 	}
 
+	/** The keystone helper. */
 	// Helpers
 	private final KeystoneHelper keystoneHelper = createKeystoneHelper();
+
+	/** The picking helper. */
 	private final PickingHelper pickingHelper = new PickingHelper(this);
+
+	/** The light helper. */
 	private final LightHelper lightHelper = new LightHelper(this);
+
+	/** The camera helper. */
 	private final CameraHelper cameraHelper = new CameraHelper(this);
+
+	/** The scene helper. */
 	private final SceneHelper sceneHelper = createSceneHelper();
 
+	/** The open GL. */
 	// OpenGL back-end
 	protected OpenGL openGL;
 
+	/** The disposed. */
 	// State
 	protected volatile boolean inited, visible, disposed;
 
+	/** The canvas. */
 	// Canvas
 	protected GLCanvas canvas;
 
@@ -88,10 +100,20 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL = new OpenGL(this);
 	}
 
+	/**
+	 * Creates the scene helper.
+	 *
+	 * @return the scene helper
+	 */
 	protected SceneHelper createSceneHelper() {
 		return new SceneHelper(this);
 	}
 
+	/**
+	 * Creates the keystone helper.
+	 *
+	 * @return the keystone helper
+	 */
 	protected KeystoneHelper createKeystoneHelper() {
 		return new KeystoneHelper(this);
 	}
@@ -120,14 +142,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public SWTOpenGLDisplaySurface getSurface() {
-		return (SWTOpenGLDisplaySurface) surface;
-	}
+	public SWTOpenGLDisplaySurface getSurface() { return (SWTOpenGLDisplaySurface) surface; }
 
 	@Override
-	public final GLCanvas getCanvas() {
-		return canvas;
-	}
+	public final GLCanvas getCanvas() { return canvas; }
 
 	@Override
 	public void initScene() {
@@ -195,11 +213,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	}
 
+	/** The first. */
 	boolean first = true;
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
-		int width = PlatformHelper.autoScaleDown(w), height = PlatformHelper.autoScaleDown(h);
+		int width = DPIHelper.autoScaleDown(w), height = DPIHelper.autoScaleDown(h);
 		// int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
@@ -209,6 +228,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
 		sceneHelper.reshape(width, height);
+		// Do it multi-threaded ?
+		// if (first) {
+		// surface.updateDisplay(true);
+		// first = false;
+		// } else {
+		// new Thread(() -> surface.updateDisplay(true)).start();
+		// }
+
 		surface.updateDisplay(true);
 	}
 
@@ -312,10 +339,24 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		return rect;
 	}
 
+	/**
+	 * Try to highlight.
+	 *
+	 * @param attributes
+	 *            the attributes
+	 */
 	protected void tryToHighlight(final DrawingAttributes attributes) {
 		if (highlight) { attributes.setHighlighted(data.getHighlightColor()); }
 	}
 
+	/**
+	 * Draw grid line.
+	 *
+	 * @param dimensions
+	 *            the dimensions
+	 * @param lineColor
+	 *            the line color
+	 */
 	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) return;
@@ -366,28 +407,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 
 	@Override
-	public final GamaPoint getCameraPos() {
-		return cameraHelper.getPosition();
-	}
+	public final GamaPoint getCameraPos() { return cameraHelper.getPosition(); }
 
 	@Override
-	public final GamaPoint getCameraTarget() {
-		return cameraHelper.getTarget();
-	}
+	public final GamaPoint getCameraTarget() { return cameraHelper.getTarget(); }
 
 	@Override
-	public final GamaPoint getCameraOrientation() {
-		return cameraHelper.getOrientation();
-	}
+	public final GamaPoint getCameraOrientation() { return cameraHelper.getOrientation(); }
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return PlatformHelper.autoScaleDown(openGL.getRatios().x);
+		return DPIHelper.autoScaleDown(openGL.getRatios().x);
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return PlatformHelper.autoScaleDown(openGL.getRatios().y);
+		return DPIHelper.autoScaleDown(openGL.getRatios().y);
 	}
 
 	/*
@@ -433,14 +468,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public final int getDisplayWidth() {
-		return (int) Math.round(getWidth());
-	}
+	public final int getDisplayWidth() { return (int) Math.round(getWidth()); }
 
 	@Override
-	public final int getDisplayHeight() {
-		return (int) Math.round(getHeight());
-	}
+	public final int getDisplayHeight() { return (int) Math.round(getHeight()); }
 
 	/*
 	 * (non-Javadoc)
@@ -449,9 +480,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 
 	@Override
-	public CameraHelper getCameraHelper() {
-		return cameraHelper;
-	}
+	public CameraHelper getCameraHelper() { return cameraHelper; }
 
 	/*
 	 * (non-Javadoc)
@@ -459,9 +488,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getKeystoneHelper()
 	 */
 	@Override
-	public KeystoneHelper getKeystoneHelper() {
-		return keystoneHelper;
-	}
+	public KeystoneHelper getKeystoneHelper() { return keystoneHelper; }
 
 	/*
 	 * (non-Javadoc)
@@ -469,9 +496,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getPickingHelper()
 	 */
 	@Override
-	public PickingHelper getPickingHelper() {
-		return pickingHelper;
-	}
+	public PickingHelper getPickingHelper() { return pickingHelper; }
 
 	/*
 	 * (non-Javadoc)
@@ -479,9 +504,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getOpenGLHelper()
 	 */
 	@Override
-	public OpenGL getOpenGLHelper() {
-		return openGL;
-	}
+	public OpenGL getOpenGLHelper() { return openGL; }
 
 	/*
 	 * (non-Javadoc)
@@ -489,9 +512,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getLightHelper()
 	 */
 	@Override
-	public LightHelper getLightHelper() {
-		return lightHelper;
-	}
+	public LightHelper getLightHelper() { return lightHelper; }
 
 	/*
 	 * (non-Javadoc)
@@ -499,13 +520,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 * @see ummisco.gama.opengl.renderer.IOpenGLRenderer#getSceneHelper()
 	 */
 	@Override
-	public SceneHelper getSceneHelper() {
-		return sceneHelper;
-	}
+	public SceneHelper getSceneHelper() { return sceneHelper; }
 
 	@Override
-	public boolean isDisposed() {
-		return disposed;
-	}
+	public boolean isDisposed() { return disposed; }
 
 }

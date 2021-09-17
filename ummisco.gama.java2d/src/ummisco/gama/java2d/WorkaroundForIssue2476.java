@@ -33,7 +33,7 @@ public class WorkaroundForIssue2476 {
 
 	public static void installOn(final Panel applet, final IDisplaySurface surface) {
 		// Install only on Linux
-		if (!ummisco.gama.ui.utils.PlatformHelper.isLinux()) return;
+		if (!msi.gama.runtime.PlatformHelper.isLinux()) return;
 		applet.addMouseWheelListener(e -> {
 			if (e.getPreciseWheelRotation() > 0) {
 				surface.zoomOut();

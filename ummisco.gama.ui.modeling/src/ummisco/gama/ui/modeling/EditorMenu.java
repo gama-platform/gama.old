@@ -57,6 +57,7 @@ import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class EditorMenu extends ContributionItem implements IWorkbenchContribution {
@@ -474,6 +475,6 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	}
 
 	GamlEditor getEditor() {
-		return (GamlEditor) WorkbenchHelper.getActiveEditor();
+		return (GamlEditor) ViewsHelper.getActiveEditor();
 	}
 }

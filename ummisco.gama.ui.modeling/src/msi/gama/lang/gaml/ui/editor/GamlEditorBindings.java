@@ -21,6 +21,7 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.bindings.GamaKeyBindings.PluggableBinding;
 import ummisco.gama.ui.navigator.GamaNavigator;
 import ummisco.gama.ui.navigator.GamaNavigatorNewMenu;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.IGamlEditor;
 
@@ -45,7 +46,7 @@ public class GamlEditorBindings {
 
 			@Override
 			public void run() {
-				final IGamlEditor editor = WorkbenchHelper.getActiveEditor();
+				final IGamlEditor editor = ViewsHelper.getActiveEditor();
 				if (!(editor instanceof GamlEditor)) return;
 				((GamlEditor) editor).doSearch();
 			}

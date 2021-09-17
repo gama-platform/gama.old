@@ -28,13 +28,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 

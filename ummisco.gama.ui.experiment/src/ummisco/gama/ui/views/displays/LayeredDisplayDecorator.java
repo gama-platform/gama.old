@@ -38,13 +38,14 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -406,7 +407,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public void toggleInteractiveConsole() {
 		if (!sideControlsVisible) { toggleSideControls(); }
 		final InteractiveConsoleView view =
-				(InteractiveConsoleView) WorkbenchHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
+				(InteractiveConsoleView) ViewsHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
 		if (view == null) return;
 		if (interactiveConsoleVisible) {
 			view.getControlToDisplayInFullScreen().setParent(view.getParentOfControlToDisplayFullScreen());

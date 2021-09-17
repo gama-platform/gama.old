@@ -25,6 +25,7 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class ConsoleDisplayerFactory extends AbstractServiceFactory {
@@ -58,7 +59,7 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
 			IGamaView.Console console = null;
 			try {
-				console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+				console = (Console) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
 			} catch (final ConcurrentModificationException e) {
 				// See Issue #2812. With concurrent views opening, the view might be impossible to find
 				// e.printStackTrace();
@@ -72,7 +73,7 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 
 		@Override
 		public void eraseConsole(final boolean setToNull) {
-			final IGamaView console = (IGamaView) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
+			final IGamaView console = (IGamaView) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
 			if (console != null) {
 				WorkbenchHelper.run(() -> console.reset());
 			}

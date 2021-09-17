@@ -47,6 +47,7 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.Tag;
 import ummisco.gama.ui.navigator.contents.TopLevelFolder;
@@ -56,7 +57,6 @@ import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedResource;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;

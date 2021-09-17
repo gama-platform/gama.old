@@ -37,13 +37,13 @@ import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.PlatformHelper;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.PlatformHelper;
 
 public class AgentsMenu extends ContributionItem {
 

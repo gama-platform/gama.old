@@ -9,16 +9,16 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.ui.views;
+package ummisco.gama.ui.views.displays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**

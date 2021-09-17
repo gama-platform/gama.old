@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'OpenGLInitializer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * OpenGLInitializer.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
 import java.io.IOException;
@@ -25,8 +24,12 @@ import com.jogamp.opengl.GLProfile;
 
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class OpenGLInitializer.
+ */
 public class OpenGLInitializer extends AbstractServiceFactory implements ummisco.gama.ui.interfaces.IOpenGLInitializer {
 
+	/** The is initialized. */
 	boolean isInitialized = false;
 
 	@Override
@@ -39,11 +42,8 @@ public class OpenGLInitializer extends AbstractServiceFactory implements ummisco
 			JarUtil.setResolver(url -> {
 				try {
 					final URL urlUnescaped = FileLocator.resolve(url);
-					final URL urlEscaped = new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
-					return urlEscaped;
-				} catch (final IOException ioexception) {
-					return url;
-				} catch (final URISyntaxException urisyntaxexception) {
+					return new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
+				} catch (final IOException | URISyntaxException urisyntaxexception) {
 					return url;
 				}
 			});
@@ -58,20 +58,18 @@ public class OpenGLInitializer extends AbstractServiceFactory implements ummisco
 			DEBUG.ERR("Impossible to initialize OpenGL", e1);
 			return;
 		}
-		while (!GLProfile.isInitialized()) {
-			try {
-				Thread.sleep(100);
-			} catch (final InterruptedException e) {
-				DEBUG.ERR("Impossible to initialize OpenGL", e);
-			}
-		}
+		// while (!GLProfile.isInitialized()) {
+		// try {
+		// Thread.sleep(100);
+		// } catch (final InterruptedException e) {
+		// DEBUG.ERR("Impossible to initialize OpenGL", e);
+		// }
+		// }
 
 	}
 
 	@Override
-	public boolean isDone() {
-		return isInitialized;
-	}
+	public boolean isDone() { return isInitialized; }
 
 	@Override
 	public Object create(final Class serviceInterface, final IServiceLocator parentLocator,
