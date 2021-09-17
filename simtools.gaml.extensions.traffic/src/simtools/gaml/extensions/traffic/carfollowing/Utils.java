@@ -1,23 +1,20 @@
 package simtools.gaml.extensions.traffic.carfollowing;
 
-import static simtools.gaml.extensions.traffic.DrivingSkill.getDistanceToCurrentTarget;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentTarget;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getDistanceToCurrentTarget;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getNextRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
+import static simtools.gaml.extensions.traffic.DrivingSkill.getProbaUseLinkedRoad;
 import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
 import static simtools.gaml.extensions.traffic.DrivingSkill.isViolatingOneway;
 import static simtools.gaml.extensions.traffic.DrivingSkill.readyToCross;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getProbaUseLinkedRoad;
 
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -54,30 +51,28 @@ public class Utils {
 		}
 		return linkedLaneLimit;
 	}
-	
-	// TODO: this and findFollower don't need this many params
+
 	public static Triple<IAgent, Double, Boolean> findLeader(final IScope scope,
-										final IAgent vehicle,
-										final int lowestLane) {
+			final IAgent vehicle,
+			final int lowestLane) {
 		IAgent road = getCurrentRoad(vehicle);
 		IAgent target = getCurrentTarget(vehicle);
-		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);	
+		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);
 		double vL = getVehicleLength(vehicle);
 		double minSafetyDist = getMinSafetyDistance(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
-		
-		// The second condition can be false when moving to a bigger road.
-		// In that case we will skip this and only find leaders on the new road.
+
+		// The second condition can be false when moving to a new road having more lanes than the previous one.
 		if (road != null &&
 				lowestLane <= RoadSkill.getNumLanesTotal(road) - numLanesOccupied) {
 			Triple<IAgent, Double, Boolean> triple = findNeighborOnCurrentRoad(scope,
 					vehicle, lowestLane, true);
 			if (triple != null) {
-				 return triple;
+				return triple;
 			}
 		}
 
-		// No leading vehicle is found on the current road
+		// If no leading vehicle is found on the current road, continue to look at the next road
 		IAgent leader = null;
 		double minGap = Double.MAX_VALUE;
 		boolean sameDirection = false;
@@ -96,7 +91,7 @@ public class Utils {
 			int numLanesNext = RoadSkill.getNumLanes(nextRoad);
 			int linkedLaneLimit = computeLinkedLaneLimit(vehicle, nextRoad);
 			int lowestLaneToCheck = Math.min(lowestLane, numLanesNext + linkedLaneLimit - numLanesOccupied);
-			
+
 			for (int i = 0; i < numLanesOccupied; i += 1) {
 				int lane = lowestLaneToCheck + i;
 				OrderedBidiMap<Double, IAgent> distMap = 
@@ -107,7 +102,7 @@ public class Utils {
 				if (distMap.isEmpty()) {
 					continue;
 				}
-				
+
 				double tmpLeaderDist = !wrongDirection ? distMap.firstKey() : distMap.lastKey();
 				IAgent tmpLeader = distMap.get(tmpLeaderDist);
 				if (tmpLeader == null || tmpLeader.dead()) {
@@ -137,16 +132,13 @@ public class Utils {
 			return ImmutableTriple.of(null, 1e6, false);
 		}
 	}
-	
-	
+
 	public static Triple<IAgent, Double, Boolean> findFollower(final IScope scope,
 										final IAgent vehicle,
 										final int lowestLane) {
 		IAgent road = getCurrentRoad(vehicle);
 		IAgent target = getCurrentTarget(vehicle);
-		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);	
-		if (road == null) {
-		}
+		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);
 		double vL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 
@@ -163,7 +155,7 @@ public class Utils {
 			return ImmutableTriple.of(null, 1e6, false);
 		}
 
-		// Find followers on previous roads
+		// If there's no follower on the current road, look at all previous roads leading to the current one
 		IAgent follower = null;
 		double minGap = Double.MAX_VALUE;
 		boolean sameDirection = false;
@@ -215,7 +207,7 @@ public class Utils {
 			return ImmutableTriple.of(null, 1e6, false);
 		}
 	}
-	
+
 	private static Triple<IAgent, Double, Boolean> findNeighborOnCurrentRoad(
 			final IScope scope,
 			final IAgent vehicle,
@@ -223,7 +215,7 @@ public class Utils {
 			final boolean isLeader) {
 		IAgent road = getCurrentRoad(vehicle);
 		IAgent target = getCurrentTarget(vehicle);
-		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);	
+		double distToCurrentTarget = getDistanceToCurrentTarget(vehicle);
 		double vL = getVehicleLength(vehicle);
 		boolean violatingOneway = isViolatingOneway(vehicle);
 		int numRoadLanes = RoadSkill.getNumLanes(road);
@@ -234,7 +226,7 @@ public class Utils {
 		boolean sameDirection = false;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
 			int lane = lowestLane + i;
-			OrderedBidiMap<Double, IAgent> distMap = 
+			OrderedBidiMap<Double, IAgent> distMap =
 					RoadSkill.getVehicleOrderingMap(scope, road, lane).inverseBidiMap();
 			boolean wrongDirection = lane < numRoadLanes ? false : true;
 			wrongDirection = violatingOneway ? !wrongDirection : wrongDirection;

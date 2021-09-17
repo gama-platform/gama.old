@@ -1337,7 +1337,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		IAgent initNode = null;
-		// initialize vehicle's location
+		// initialize starting location
 		if (getCurrentRoad(vehicle) == null) {
 			IList<IShape> nodes = graph.getVertices();
 			IShape shape = Queries.closest_to(scope, nodes, vehicle);
@@ -1564,13 +1564,11 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	/**
-	 * Updates the `agents_on` list of the corresponding roads if the vehicle has
-	 * switched to new lanes and/or a new segment.
+	 * Updates the `vehicle_ordering` map with the new distance to target
 	 *
 	 * @param scope
-	 * @param newLowestLane the new lane will the lowest index that the vehicle
-	 *                      occupies
-	 * @param newSegment    the new segment index
+	 * @param newLowestLane the new lowest lane of the vehicle
+	 * @param newDistToCurrentTarget the new distance to the vehicle's current target
 	 */
 	private void updateVehicleOrdering(final IScope scope, final int newLowestLane,
 			final double newDistToCurrentTarget) {
@@ -1625,7 +1623,14 @@ public class DrivingSkill extends MovingSkill {
 				return;
 			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				IAgent newRoad = getNextRoad(vehicle);
-				if (newRoad == null) return;
+				if (newRoad == null) {
+					return;
+					// TODO: this error should only be raised if the modeler doesn't do anything about it
+					// String reason = isDrivingRandomly ? "which has no outgoing roads" :
+					// 	"because it has reached the end of the path";
+					// throw GamaRuntimeException.warning(vehicle.getName() + " stopped at " + currentTarget.getName() + ", " + reason,
+					// 		scope);
+				}
 				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
 				// check traffic lights and vehicles coming from other roads
@@ -1779,21 +1784,21 @@ public class DrivingSkill extends MovingSkill {
 			newSpeed = computeSpeed(scope, accel, currentRoad);
 		}
 
+		double remainingDist = distMoved;
 		Coordinate coords[] = currentRoad.getInnerGeometry().getCoordinates();
 		GamaPoint endPt = !violatingOneway ?
 			new GamaPoint(coords[currentSegment + 1]) : new GamaPoint(coords[currentSegment]);
-		while (distMoved >= distToGoal || distToGoal < EPSILON) {
-			updateVehicleOrdering(scope, newLowestLane,
-					getDistanceToCurrentTarget(vehicle) - distToGoal);
+		while (remainingDist >= distToGoal || distToGoal < EPSILON) {
 			if (endPt.equals(currentTarget.getLocation())) {
-				// Move to a new road
+				// Return to the main loop in `drive` to continue moving across the intersection
 				setLocation(vehicle, endPt);
 				setDistanceToGoal(vehicle, 0.0);
-				// Return to the main loop in `drive` to continue moving across the intersection
-				return distToGoal < EPSILON ? time : Math.max(0,(time - (distToGoal / newSpeed)));
+				setDistanceToCurrentTarget(vehicle, 0.0);
+				updateVehicleOrdering(scope, newLowestLane, 0.0);
+				return distToGoal < EPSILON ? time : time - (distToGoal / newSpeed);
 			} else {
 				// Move to a new segment
-				distMoved -= distToGoal;
+				remainingDist -= distToGoal;
 				loc = endPt;
 				currentSegment = !violatingOneway ? currentSegment + 1 : currentSegment - 1;
 				endPt = !violatingOneway ?
@@ -1802,13 +1807,13 @@ public class DrivingSkill extends MovingSkill {
 			}
 		}
 
-		double ratio = distMoved / distToGoal;
+		double ratio = remainingDist / distToGoal;
 		double newX = loc.getX() + ratio * (endPt.getX() - loc.getX());
 		double newY = loc.getY() + ratio * (endPt.getY() - loc.getY());
 		setLocation(vehicle, new GamaPoint(newX, newY));
 		setSpeed(vehicle, newSpeed);
 		setAcceleration(vehicle, accel);
-		setDistanceToGoal(vehicle, distToGoal - distMoved);
+		setDistanceToGoal(vehicle, distToGoal - remainingDist);
 		setSegmentIndex(vehicle, currentSegment);
 
 		updateVehicleOrdering(scope, newLowestLane, getDistanceToCurrentTarget(vehicle) - distMoved);
