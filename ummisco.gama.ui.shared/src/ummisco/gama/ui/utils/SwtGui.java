@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.utils.SwtGui.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -100,9 +99,13 @@ public class SwtGui implements IGui {
 		DEBUG.OFF();
 	}
 
+	/** The all tests running. */
 	public volatile static boolean ALL_TESTS_RUNNING;
 
+	/** The highlighted agent. */
 	private IAgent highlightedAgent;
+
+	/** The mouse location in model. */
 	private GamaPoint mouseLocationInModel;
 
 	static {
@@ -110,6 +113,9 @@ public class SwtGui implements IGui {
 		PreferencesHelper.initialize();
 	}
 
+	/**
+	 * Instantiates a new swt gui.
+	 */
 	public SwtGui() {}
 
 	@Override
@@ -177,6 +183,17 @@ public class SwtGui implements IGui {
 		handler.clearErrors();
 	}
 
+	/**
+	 * Internal show view.
+	 *
+	 * @param viewId
+	 *            the view id
+	 * @param secondaryId
+	 *            the secondary id
+	 * @param code
+	 *            the code
+	 * @return the object
+	 */
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
 		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) return null;
 		final Object[] result = new Object[1];
@@ -231,6 +248,9 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
+	/**
+	 * Hide monitor view.
+	 */
 	public void hideMonitorView() {
 		final IGamaView m = (IGamaView) WorkbenchHelper.findView(MONITOR_VIEW_ID, null, false);
 		if (m != null) {
@@ -254,28 +274,23 @@ public class SwtGui implements IGui {
 		IDisplaySurface surface = null;
 		final String keyword = output.getData().getDisplayType();
 		final DisplayDescription creator = DISPLAYS.get(keyword);
-		if (creator != null) {
-			surface = creator.create(output, args);
-			surface.outputReloaded();
-		} else
+		if (creator == null)
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.", output.getScope());
+		surface = creator.create(output, args);
+		surface.outputReloaded();
 		return surface;
 	}
 
 	@Override
-	public Iterable<IDisplaySurface> getAllDisplaySurfaces() {
-		return allDisplaySurfaces();
-	}
+	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return allDisplaySurfaces(); }
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final List<IParameter> parameters, final GamaFont font) {
 		final IMap<String, Object> result = GamaMapFactory.createUnordered();
-		for (final IParameter p : parameters) {
-			result.put(p.getName(), p.getInitialValue(scope));
-		}
+		for (final IParameter p : parameters) { result.put(p.getName(), p.getInitialValue(scope)); }
 		WorkbenchHelper.run(() -> {
-			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
+			final EditorsDialog dialog = new EditorsDialog(scope, null, parameters, title, font);
 			if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); }
 		});
 		return result;
@@ -315,9 +330,7 @@ public class SwtGui implements IGui {
 	@Override
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message) {
 		final List<Boolean> result = new ArrayList<>();
-		WorkbenchHelper.run(() -> {
-			result.add(MessageDialog.openConfirm(WorkbenchHelper.getShell(), title, message));
-		});
+		WorkbenchHelper.run(() -> { result.add(Messages.confirm(title, message)); });
 		return result.isEmpty() ? false : result.get(0);
 	}
 
@@ -350,18 +363,17 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IAgent getHighlightedAgent() {
-		return highlightedAgent;
-	}
+	public IAgent getHighlightedAgent() { return highlightedAgent; }
 
 	@Override
-	public void setHighlightedAgent(final IAgent a) {
-		highlightedAgent = a;
-	}
+	public void setHighlightedAgent(final IAgent a) { highlightedAgent = a; }
 
-	private IModelRunner getModelRunner() {
-		return WorkbenchHelper.getService(IModelRunner.class);
-	}
+	/**
+	 * Gets the model runner.
+	 *
+	 * @return the model runner
+	 */
+	private IModelRunner getModelRunner() { return WorkbenchHelper.getService(IModelRunner.class); }
 
 	@Override
 	public void editModel(final IScope scope, final Object eObject) {
@@ -492,6 +504,11 @@ public class SwtGui implements IGui {
 		handler.stop();
 	}
 
+	/**
+	 * Gets the runtime exception handler.
+	 *
+	 * @return the runtime exception handler
+	 */
 	private IRuntimeExceptionHandler getRuntimeExceptionHandler() {
 		return WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 	}
@@ -503,11 +520,21 @@ public class SwtGui implements IGui {
 		modelRunner.runModel(object, exp);
 	}
 
+	/**
+	 * All display surfaces.
+	 *
+	 * @return the list
+	 */
 	public static List<IDisplaySurface> allDisplaySurfaces() {
 		return StreamEx.of(allDisplayViews()).map(msi.gama.common.interfaces.IGamaView.Display::getDisplaySurface)
 				.toList();
 	}
 
+	/**
+	 * All display views.
+	 *
+	 * @return the list
+	 */
 	public static List<IGamaView.Display> allDisplayViews() {
 		final List<IGamaView.Display> result = new ArrayList<>();
 		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
@@ -543,9 +570,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IGamlLabelProvider getGamlLabelProvider() {
-		return WorkbenchHelper.getService(IGamlLabelProvider.class);
-	}
+	public IGamlLabelProvider getGamlLabelProvider() { return WorkbenchHelper.getService(IGamlLabelProvider.class); }
 
 	@Override
 	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective,
@@ -576,9 +601,8 @@ public class SwtGui implements IGui {
 	@Override
 	public String getExperimentState(final String uid) {
 		final IExperimentController controller = GAMA.getFrontmostController();
-		if (controller == null)
-			return NONE;
-		else if (controller.getScheduler().paused) return PAUSED;
+		if (controller == null) return NONE;
+		if (controller.getScheduler().paused) return PAUSED;
 		return RUNNING;
 	}
 
@@ -618,9 +642,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole() {
-		return WorkbenchHelper.getService(IConsoleDisplayer.class);
-	}
+	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }
 
 	@Override
 	public void run(final String taskName, final Runnable r, final boolean asynchronous) {
@@ -652,14 +674,10 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public GamaPoint getMouseLocationInModel() {
-		return mouseLocationInModel;
-	}
+	public GamaPoint getMouseLocationInModel() { return mouseLocationInModel; }
 
 	@Override
-	public void setMouseLocationInModel(final GamaPoint location) {
-		mouseLocationInModel = location;
-	}
+	public void setMouseLocationInModel(final GamaPoint location) { mouseLocationInModel = location; }
 
 	@Override
 	public void exit() {
@@ -691,8 +709,6 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public boolean isInDisplayThread() {
-		return EventQueue.isDispatchThread() || Display.getCurrent() != null;
-	}
+	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
 
 }
