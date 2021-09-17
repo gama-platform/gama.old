@@ -48,7 +48,7 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
-import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -199,7 +199,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
-		int width = PlatformHelper.autoScaleDown(w), height = PlatformHelper.autoScaleDown(h);
+		int width = DPIHelper.autoScaleDown(w), height = DPIHelper.autoScaleDown(h);
 		// int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
@@ -382,12 +382,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return PlatformHelper.autoScaleDown(openGL.getRatios().x);
+		return DPIHelper.autoScaleDown(openGL.getRatios().x);
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return PlatformHelper.autoScaleDown(openGL.getRatios().y);
+		return DPIHelper.autoScaleDown(openGL.getRatios().y);
 	}
 
 	/*

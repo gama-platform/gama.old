@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.access.GamlSearchField;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
