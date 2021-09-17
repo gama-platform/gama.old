@@ -30,7 +30,6 @@ import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class GamaToolbarFactory.
@@ -288,7 +287,7 @@ public class GamaToolbarFactory {
 		toolbarComposite.setLayout(layout);
 		// toolbarComposite.setBackground(IGamaColors.WHITE.color());
 		GamaColors.setBackground(toolbarComposite,
-				isDark() ? WorkbenchHelper.getShell().getBackground() : IGamaColors.WHITE.color());
+				isDark() ? composite.getShell().getBackground() : IGamaColors.WHITE.color());
 		return toolbarComposite;
 
 	}

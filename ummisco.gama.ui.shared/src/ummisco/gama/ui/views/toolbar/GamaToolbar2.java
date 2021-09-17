@@ -35,7 +35,6 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.PlatformHelper;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 
 /**
@@ -138,7 +137,7 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.RIGHT;
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
-		setBackgroundColor(isDark() ? WorkbenchHelper.getShell().getBackground() : IGamaColors.WHITE.color());
+		setBackgroundColor(isDark() ? getShell().getBackground() : IGamaColors.WHITE.color());
 	}
 
 	@Override
@@ -154,13 +153,9 @@ public class GamaToolbar2 extends Composite {
 	 * @return the tool item
 	 */
 	public ToolItem sep(final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		// final var icon = GamaIcons.createSizer(getBackground(), width, height);
-		// final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
-		// item.setDisabledImage(icon.image());
-		// if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
-		ToolItem item = new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR );
+
 		// item.setWidth(width);
-		return item;
+		return new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR);
 	}
 
 	/**
