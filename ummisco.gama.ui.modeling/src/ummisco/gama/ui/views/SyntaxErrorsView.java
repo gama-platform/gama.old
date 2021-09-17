@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SyntaxErrorsView.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * SyntaxErrorsView.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,19 +33,30 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
+/**
+ * The Class SyntaxErrorsView.
+ */
 public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecoratedView {
 
+	/** The parent. */
 	protected Composite parent;
+
+	/** The toolbar. */
 	protected GamaToolbar2 toolbar;
 
+	/** The info action. */
 	ToolItem warningAction, infoAction;
+
+	/** The listener. */
 	final BuildPreferenceChangeListener listener;
 
+	/**
+	 * Instantiates a new syntax errors view.
+	 */
 	public SyntaxErrorsView() {
 		super("msi.gama.lang.gaml.ui.error.generator");
 		listener = new BuildPreferenceChangeListener(this);
@@ -67,10 +77,25 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		GamaPreferences.Modeling.INFO_ENABLED.removeChangeListener(listener);
 	}
 
+	/**
+	 * The listener interface for receiving buildPreferenceChange events. The class that is interested in processing a
+	 * buildPreferenceChange event implements this interface, and the object created with that class is registered with
+	 * a component using the component's <code>addBuildPreferenceChangeListener<code> method. When the
+	 * buildPreferenceChange event occurs, that object's appropriate method is invoked.
+	 *
+	 * @see BuildPreferenceChangeEvent
+	 */
 	public static class BuildPreferenceChangeListener implements IPreferenceAfterChangeListener<Boolean> {
 
+		/** The view. */
 		SyntaxErrorsView view;
 
+		/**
+		 * Instantiates a new builds the preference change listener.
+		 *
+		 * @param v
+		 *            the v
+		 */
 		BuildPreferenceChangeListener(final SyntaxErrorsView v) {
 			view = v;
 		}
@@ -85,13 +110,12 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		}
 	}
 
+	/**
+	 * Check actions.
+	 */
 	void checkActions() {
-		if (warningAction != null) {
-			warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
-		}
-		if (infoAction != null) {
-			infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
-		}
+		if (warningAction != null) { warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue()); }
+		if (infoAction != null) { infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue()); }
 	}
 
 	@Override
@@ -116,14 +140,15 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("build.all2", "", "Clean and validate all projects", e -> {
-			build();
-		}, SWT.RIGHT);
+		tb.button("build.all2", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
 
 		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}
 
+	/**
+	 * Open filter dialog.
+	 */
 	void openFilterDialog() {
 		final IEvaluationContext ec = new EvaluationContext(null, this);
 		ec.addVariable(ISources.ACTIVE_PART_NAME, this);
@@ -131,6 +156,12 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		new ConfigureContentsDialogHandler().execute(ev);
 	}
 
+	/**
+	 * Do build.
+	 *
+	 * @param monitor
+	 *            the monitor
+	 */
 	static private void doBuild(final IProgressMonitor monitor) {
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
@@ -149,14 +180,17 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		}
 	}
 
+	/**
+	 * Builds the.
+	 */
 	static void build() {
 
-		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(WorkbenchHelper.getShell());
+		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
 		dialog.setBlockOnOpen(false);
 		dialog.setCancelable(false);
 		dialog.setOpenOnRun(true);
 		try {
-			dialog.run(true, false, monitor -> doBuild(monitor));
+			dialog.run(true, false, SyntaxErrorsView::doBuild);
 		} catch (InvocationTargetException | InterruptedException e1) {
 			e1.printStackTrace();
 		}

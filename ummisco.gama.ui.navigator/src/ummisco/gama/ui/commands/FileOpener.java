@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FileOpener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FileOpener.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import org.eclipse.core.filesystem.EFS;
@@ -34,63 +33,77 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class FileOpener {
 
+	/** The Constant PAGE. */
 	static final IWorkbenchPage PAGE = WorkbenchHelper.getPage();
 
+	/**
+	 * Open file.
+	 *
+	 * @param uri the uri
+	 * @return the i editor part
+	 */
 	public static IEditorPart openFile(final URI uri) {
 		if (uri == null) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found", "Trying to open a null file");
+			MessageDialog.openWarning(null, "No file found", "Trying to open a null file");
 			return null;
 		}
 		try {
-			if (uri.isPlatformResource()) { return FileOpener.openFileInWorkspace(uri); }
-			if (uri.isFile()) { return FileOpener.openFileInFileSystem(uri); }
+			if (uri.isPlatformResource()) return FileOpener.openFileInWorkspace(uri);
+			if (uri.isFile()) return FileOpener.openFileInFileSystem(uri);
 		} catch (final PartInitException e) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
+			MessageDialog.openWarning(null, "No file found",
 					"The file'" + uri.toString() + "' does not exist on disk.");
 		}
-		MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-				"The file'" + uri.toString() + "' cannot be found.");
+		MessageDialog.openWarning(null, "No file found", "The file'" + uri.toString() + "' cannot be found.");
 		return null;
 	}
 
+	/**
+	 * Open file in workspace.
+	 *
+	 * @param uri the uri
+	 * @return the i editor part
+	 * @throws PartInitException the part init exception
+	 */
 	public static IEditorPart openFileInWorkspace(final URI uri) throws PartInitException {
 		final IFile file = FileUtils.getWorkspaceFile(uri);
 		if (file == null) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-					"The file'" + uri.toString() + "' cannot be found.");
+			MessageDialog.openWarning(null, "No file found", "The file'" + uri.toString() + "' cannot be found.");
 			return null;
 		}
-		if (file.isLinked()) {
-			if (!NavigatorRoot.getInstance().getManager().validateLocation(file)) {
-				MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found", "The file'"
-						+ file.getRawLocation() + "' referenced by '" + file.getName() + "' cannot be found.");
-				return null;
-			}
+		if (file.isLinked() && !NavigatorRoot.getInstance().getManager().validateLocation(file)) {
+			MessageDialog.openWarning(null, "No file found",
+					"The file'" + file.getRawLocation() + "' referenced by '" + file.getName() + "' cannot be found.");
+			return null;
 		}
 		return IDE.openEditor(PAGE, file);
 	}
 
+	/**
+	 * Open file in file system.
+	 *
+	 * @param uri the uri
+	 * @return the i editor part
+	 * @throws PartInitException the part init exception
+	 */
 	public static IEditorPart openFileInFileSystem(final URI uri) throws PartInitException {
-		if (uri == null) { return null; }
+		if (uri == null) return null;
 		IFileStore fileStore;
 		try {
 			fileStore = EFS.getLocalFileSystem().getStore(Path.fromOSString(uri.toFileString()));
 		} catch (final Exception e1) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-					"The file'" + uri.toString() + "' cannot be found.");
+			MessageDialog.openWarning(null, "No file found", "The file'" + uri.toString() + "' cannot be found.");
 			return null;
 		}
 		IFileInfo info;
 		try {
 			info = fileStore.fetchInfo();
 		} catch (final Exception e) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-					"The file'" + uri.toString() + "' cannot be found.");
+			MessageDialog.openWarning(null, "No file found", "The file'" + uri.toString() + "' cannot be found.");
 			return null;
 		}
 		if (!info.exists()) {
-			MessageDialog.openWarning(WorkbenchHelper.getShell(), "No file found",
-					"The file'" + uri.toString() + "' cannot be found.");
+			MessageDialog.openWarning(null, "No file found", "The file'" + uri.toString() + "' cannot be found.");
 		}
 		return IDE.openInternalEditorOnFileStore(PAGE, fileStore);
 	}
