@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.TypeExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * TypeExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,6 +25,12 @@ import msi.gaml.types.Types;
  */
 public class TypeExpression extends AbstractExpression {
 
+	/**
+	 * Instantiates a new type expression.
+	 *
+	 * @param type
+	 *            the type
+	 */
 	@SuppressWarnings ("rawtypes")
 	public TypeExpression(final IType type) {
 		this.type = type;
@@ -37,9 +43,7 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String getDefiningPlugin() {
-		return type.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return type.getDefiningPlugin(); }
 
 	@Override
 	public boolean shouldBeParenthesized() {
@@ -47,9 +51,7 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public boolean isConst() {
-		return type.canCastToConst();
-	}
+	public boolean isConst() { return type.canCastToConst(); }
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -57,9 +59,7 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String getTitle() {
-		return type.getTitle();
-	}
+	public String getTitle() { return type.getTitle(); }
 
 	/**
 	 * Method getDocumentation()
@@ -67,19 +67,13 @@ public class TypeExpression extends AbstractExpression {
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() {
-		return "Represents the data type " + type.getTitle();
-	}
+	public String getDocumentation() { return "Represents the data type " + type.getTitle(); }
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.TYPE;
-	}
+	public IType<?> getGamlType() { return Types.TYPE; }
 
 	@Override
-	public IType<?> getDenotedType() {
-		return type;
-	}
+	public IType<?> getDenotedType() { return type; }
 
 	@Override
 	public String literalValue() {
@@ -87,8 +81,6 @@ public class TypeExpression extends AbstractExpression {
 	}
 
 	@Override
-	public boolean isContextIndependant() {
-		return false;
-	}
+	public boolean isContextIndependant() { return isConst(); }
 
 }
