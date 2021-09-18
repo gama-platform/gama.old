@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'NewFileWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * AbstractNewModelWizard.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 import java.io.BufferedReader;
@@ -61,12 +60,22 @@ import ummisco.gama.ui.navigator.contents.ResourceManager;
 
 public abstract class AbstractNewModelWizard extends Wizard implements INewWizard {
 
+	/** The Constant _AUTHOR. */
 	static final String _AUTHOR = "modelAuthor";
+
+	/** The Constant _DESCRIPTION. */
 	static final String _DESCRIPTION = "modelDescription";
+
+	/** The Constant _TITLE. */
 	static final String _TITLE = "modelTitle";
+
+	/** The Constant _FILENAME. */
 	static final String _FILENAME = "modelFilename";
+
+	/** The Constant _DOC. */
 	static final String _DOC = "documentation";
 
+	/** The Constant TEMPLATES. */
 	static final Map<String, String> TEMPLATES = new HashMap<>() {
 		{
 			put(EXPERIMENT, "/templates/experiment.template.resource");
@@ -90,15 +99,28 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		}
 	}
 
+	/** The Constant GUI. */
 	public static final String GUI = "GUI";
+
+	/** The Constant HEADLESS. */
 	public static final String HEADLESS = "Headless";
+
+	/** The Constant EXPERIMENT. */
 	public static final String EXPERIMENT = "experiment";
+
+	/** The Constant TEST_EXP. */
 	public static final String TEST_EXP = "test_experiment";
 
+	/** The selection. */
 	protected AbstractNewModelWizardPage page;
+	
+	/** The selection. */
 	protected ISelection selection;
 	// protected String fileHeader;
 
+	/**
+	 * Instantiates a new abstract new model wizard.
+	 */
 	public AbstractNewModelWizard() {
 		setNeedsProgressMonitor(true);
 	}
@@ -115,11 +137,21 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		addPage(getPage());
 	}
 
+	/**
+	 * Creates the page.
+	 *
+	 * @param selection
+	 *            the selection
+	 * @return the abstract new model wizard page
+	 */
 	public abstract AbstractNewModelWizardPage createPage(ISelection selection);
 
-	public AbstractNewModelWizardPage getPage() {
-		return page;
-	}
+	/**
+	 * Gets the page.
+	 *
+	 * @return the page
+	 */
+	public AbstractNewModelWizardPage getPage() { return page; }
 
 	/**
 	 * This method is called when 'Finish' button is pressed in the wizard. We will create an operation and run it using
@@ -211,6 +243,21 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		monitor.worked(1);
 	}
 
+	/**
+	 * Gets the input stream.
+	 *
+	 * @param folder
+	 *            the folder
+	 * @param template
+	 *            the template
+	 * @param title
+	 *            the title
+	 * @param author
+	 *            the author
+	 * @param desc
+	 *            the desc
+	 * @return the input stream
+	 */
 	@SuppressWarnings ("resource")
 	private InputStream getInputStream(final IContainer folder, final String template, final String title,
 			final String author, final String desc) {
@@ -228,6 +275,19 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		return replacePlaceHolders(folder, result, title, author, desc);
 	}
 
+	/**
+	 * Find container.
+	 *
+	 * @param monitor
+	 *            the monitor
+	 * @param containerName
+	 *            the container name
+	 * @param root
+	 *            the root
+	 * @return the i container
+	 * @throws CoreException
+	 *             the core exception
+	 */
 	public IContainer findContainer(final IProgressMonitor monitor, final String containerName,
 			final IWorkspaceRoot root) throws CoreException {
 		IResource resource = root.findMember(new Path(containerName));
@@ -244,6 +304,17 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		return (IContainer) resource;
 	}
 
+	/**
+	 * Creates the recursively.
+	 *
+	 * @param root
+	 *            the root
+	 * @param fullFolderPath
+	 *            the full folder path
+	 * @return the i container
+	 * @throws CoreException
+	 *             the core exception
+	 */
 	IContainer createRecursively(final IWorkspaceRoot root, final IPath fullFolderPath) throws CoreException {
 		IContainer folder = root.getProject(fullFolderPath.segment(0));
 		if (folder == null) return root;
@@ -255,6 +326,11 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		return folder;
 	}
 
+	/**
+	 * Gets the default folder for models.
+	 *
+	 * @return the default folder for models
+	 */
 	protected abstract String getDefaultFolderForModels();
 
 	/**
@@ -269,9 +345,7 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		final StringWriter writer = new StringWriter();
 		try (final InputStreamReader streamReader = new InputStreamReader(streamModel);
 				final BufferedReader buffer = new BufferedReader(streamReader);) {
-			while ((line = buffer.readLine()) != null) {
-				writer.write(line + "\n");
-			}
+			while ((line = buffer.readLine()) != null) { writer.write(line + "\n"); }
 		} catch (final IOException ioe) {
 			ioe.printStackTrace();
 		}
@@ -281,6 +355,21 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 		return new ByteArrayInputStream(output.getBytes());
 	}
 
+	/**
+	 * Gets the header.
+	 *
+	 * @param folder
+	 *            the folder
+	 * @param str
+	 *            the str
+	 * @param title
+	 *            the title
+	 * @param author
+	 *            the author
+	 * @param desc
+	 *            the desc
+	 * @return the header
+	 */
 	protected String getHeader(final IContainer folder, final String str, final String title, final String author,
 			final String desc) {
 		return /* fileHeader + */str.replaceAll("\\$TITLE\\$", title).replaceAll("\\$AUTHOR\\$", author)

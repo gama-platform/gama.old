@@ -1,7 +1,16 @@
+/*******************************************************************************************************
+ *
+ * NewProjectWizardPage.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others. All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
@@ -30,36 +39,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * Standard main page for a wizard that is creates a project resource.
- * <p>
- * This page may be used by clients as-is; it may be also be subclassed to suit.
- * </p>
- * <p>
- * Example usage:
- *
- * <pre>
- * mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");
- * mainPage.setTitle("Project");
- * mainPage.setDescription("Create a new project resource.");
- * </pre>
- * </p>
+ * The Class NewProjectWizardPage.
  */
 public class NewProjectWizardPage extends WizardPage {
 
+	/** The initial project field value. */
 	// initial value stores
 	String initialProjectFieldValue;
+
+	/** The is test. */
 	boolean isTest;
+
+	/** The create new model. */
 	boolean createNewModel = true;
 
+	/** The project name field. */
 	// widgets
 	Text projectNameField;
 
+	/** The name modify listener. */
 	private final Listener nameModifyListener = e -> {
-		setLocationForSelection();
 		final boolean valid = validatePage();
 		setPageComplete(valid);
 
@@ -67,6 +68,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 	// private ProjectContentsLocationArea locationArea;
 
+	/** The Constant SIZING_TEXT_FIELD_WIDTH. */
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
@@ -85,7 +87,6 @@ public class NewProjectWizardPage extends WizardPage {
 	public void createControl(final Composite parent) {
 		final Composite composite = new Composite(parent, SWT.NULL);
 		initializeDialogUnits(parent);
-		parent.setLayout(new GridLayout());
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createProjectNameGroup(composite);
@@ -95,30 +96,7 @@ public class NewProjectWizardPage extends WizardPage {
 		setMessage(null);
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		// getShell().setSize(composite.computeSize(500, SWT.DEFAULT));
 	}
-
-	/**
-	 * Get an error reporter for the receiver.
-	 *
-	 * @return IErrorMessageReporter
-	 */
-	// private IErrorMessageReporter getErrorReporter() {
-	// return (errorMessage, infoOnly) -> {
-	// if (infoOnly) {
-	// setMessage(errorMessage, IStatus.INFO);
-	// setErrorMessage(null);
-	// } else {
-	// setErrorMessage(errorMessage);
-	// }
-	// boolean valid = errorMessage == null;
-	// if (valid) {
-	// valid = validatePage();
-	// }
-	//
-	// setPageComplete(valid);
-	// };
-	// }
 
 	/**
 	 * Creates the project name specification controls.
@@ -136,7 +114,7 @@ public class NewProjectWizardPage extends WizardPage {
 
 		// new project label
 		final Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setText(IDEWorkbenchMessages.WizardNewProjectCreationPage_nameLabel);
+		projectLabel.setText("&Project name:");
 		// projectLabel.setFont(parent.getFont());
 
 		// new project name entry field
@@ -178,22 +156,18 @@ public class NewProjectWizardPage extends WizardPage {
 		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 
-	// /**
-	// * Returns the current project location path as entered by the user, or its anticipated initial value. Note that
-	// if
-	// * the default has been returned the path in a project description used to create a project should not be set.
-	// *
-	// * @return the project location path or its anticipated initial value.
-	// */
-	// public IPath getLocationPath() {
-	// return new Path(Platform.getLocation().toOSString());
-	// // return new Path(locationArea.getProjectLocation());
-	// }
+	/**
+	 * Checks if is test.
+	 *
+	 * @return true, if is test
+	 */
+	public boolean isTest() { return isTest; }
 
-	public boolean isTest() {
-		return isTest;
-	}
-
+	/**
+	 * Creates the new model.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean createNewModel() {
 		return createNewModel;
 	}
@@ -207,13 +181,6 @@ public class NewProjectWizardPage extends WizardPage {
 	 */
 	public URI getLocationURI() {
 		return Platform.getLocation().addTrailingSeparator().append(getProjectName()).toFile().toURI();
-		// DEBUG.LOG("PATH: " + s);
-		// final URI uri = URI.create(s);
-		// DEBUG.LOG("URI: " + uri);
-		// return uri;
-
-		// return URI.create(Platform.getLocation().append(getProjectName()).toOSString());
-		// return locationArea.getProjectLocationURI();
 	}
 
 	/**
@@ -236,9 +203,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return the project name, its anticipated initial value, or <code>null</code> if no project name is known
 	 */
 	public String getProjectName() {
-		if (projectNameField == null) return initialProjectFieldValue;
-
-		return getProjectNameFieldValue();
+		return projectNameField == null ? initialProjectFieldValue : getProjectNameFieldValue();
 	}
 
 	/**
@@ -247,9 +212,7 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return the project name in the field
 	 */
 	private String getProjectNameFieldValue() {
-		if (projectNameField == null) return ""; //$NON-NLS-1$
-
-		return projectNameField.getText().trim();
+		return projectNameField == null ? "" : projectNameField.getText().trim();
 	}
 
 	/**
@@ -269,17 +232,7 @@ public class NewProjectWizardPage extends WizardPage {
 			initialProjectFieldValue = null;
 		} else {
 			initialProjectFieldValue = name.trim();
-			// if (locationArea != null) {
-			// locationArea.updateProjectName(name.trim());
-			// }
 		}
-	}
-
-	/**
-	 * Set the location to the default location if we are set to useDefaults.
-	 */
-	void setLocationForSelection() {
-		// locationArea.updateProjectName(getProjectNameFieldValue());
 	}
 
 	/**
@@ -288,12 +241,12 @@ public class NewProjectWizardPage extends WizardPage {
 	 * @return <code>true</code> if all controls are valid, and <code>false</code> if at least one is invalid
 	 */
 	protected boolean validatePage() {
-		final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 		final String projectFieldContents = getProjectNameFieldValue();
 		if ("".equals(projectFieldContents)) { //$NON-NLS-1$
 			setErrorMessage(null);
-			setMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty);
+			setMessage("Project name is empty");
 			return false;
 		}
 
@@ -306,18 +259,9 @@ public class NewProjectWizardPage extends WizardPage {
 		final IProject handle = getProjectHandle();
 		if (handle.exists()) {
 			getProjectHandle();
-			setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
+			setErrorMessage("Project already exists");
 			return false;
 		}
-
-		// final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
-		// locationArea.setExistingProject(project);
-
-		// final String validLocationMessage = locationArea.checkValidLocation();
-		// if (validLocationMessage != null) { // there is no destination location given
-		// setErrorMessage(validLocationMessage);
-		// return false;
-		// }
 
 		setErrorMessage(null);
 		setMessage(null);
@@ -332,14 +276,5 @@ public class NewProjectWizardPage extends WizardPage {
 		super.setVisible(visible);
 		if (visible) { projectNameField.setFocus(); }
 	}
-
-	/**
-	 * Returns the useDefaults.
-	 *
-	 * @return boolean
-	 */
-	// public boolean useDefaults() {
-	// return locationArea.isDefault();
-	// }
 
 }
