@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * FIPASkill.java, in msi.gaml.extensions.fipa, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -776,8 +776,8 @@ public class FIPASkill extends MessagingSkill {
 	 *
 	 * @return the messages
 	 */
-	@getter ("messages")
-	public IList<FIPAMessage> getMessages(final IScope scope, final IAgent agent) {
+	// @getter ("messages")
+	private IList<FIPAMessage> getMessages(final IScope scope, final IAgent agent) {
 		final IList<FIPAMessage> result = MessageBroker.getInstance(scope).getMessagesFor(agent);
 		final List<FIPAMessage> received = MessageBroker.getInstance(scope).deliverMessagesFor(scope, agent);
 		result.addAll(received);
