@@ -423,7 +423,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.asyncRun(() -> {
 			if (WorkbenchHelper.getPage() == null || a == null) return;
 			try {
-				final InspectDisplayOutput output = new InspectDisplayOutput(a);
+				final InspectDisplayOutput output = InspectDisplayOutput.inspect(a, null);
 				output.launch(a.getScope());
 			} catch (final GamaRuntimeException g) {
 				g.addContext("In opening the agent inspector");
