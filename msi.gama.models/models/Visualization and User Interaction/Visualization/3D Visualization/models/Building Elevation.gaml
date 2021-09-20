@@ -165,7 +165,6 @@ experiment road_traffic_multi_layer type: gui
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS';
 	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS';
-	parameter 'Number of people agents' var: nb_people category: 'People';
 	parameter 'Earliest hour to start work' var: min_work_start category: 'People';
 	parameter 'Latest hour to start work' var: max_work_start category: 'People';
 	parameter 'Earliest hour to end work' var: min_work_end category: 'People';

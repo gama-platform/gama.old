@@ -59,7 +59,7 @@ experiment "Show Parameters" type: gui {
 	// A color parameter can be modified using a color chooser.
 	parameter "A color" category:"Various types" var: a_color;
 	// For any parameter, if the possible values are described using the among: facet, a ComboBox is used to choose the parameter value.
-	parameter "Choice Box" category:"Various types" var: a_string <- "choice1" among: ["choice1","choice2","choice3"];
+	parameter "Choice Box 1" category:"Various types" var: a_string <- "choice1" among: ["choice1","choice2","choice3"];
 	// For a file variable, a FileChooser is used to choose the file. 
 	parameter "File chooser" category:"Various types" var: a_fil ; 
 	// For both lists and matrices, an list/matrix modifier can be opened to modify the list or matrix.
@@ -80,7 +80,7 @@ experiment "Show Parameters" type: gui {
 	//////////////////////////////////////////////
 	// In the following, when a_boolean_to_enable_parameters is true, it enables the input chooser for multiple_choice.
 	parameter "Activate the following parameter" category:"Activable parameters" var:a_boolean_to_enable_parameters enables: [multiple_choice];
-	parameter "Choice Box" category:"Activable parameters" var: multiple_choice <- "choice1" among: ["choice1","choice2","choice3"];
+	parameter "Choice Box 2" category:"Activable parameters" var: multiple_choice <- "choice1" among: ["choice1","choice2","choice3"];
 	
 	// Category: interaction through button	
 	//////////////////////////////////////////////
