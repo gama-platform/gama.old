@@ -1613,23 +1613,31 @@ public class DrivingSkill extends MovingSkill {
 		IAgent finalTarget = getFinalTarget(vehicle);
 		Pair<Integer, Double> laneAndAccPair;
 		double remainingTime = scope.getSimulation().getClock().getStepInSeconds();
+		int cnt = 0;
 		while (remainingTime > 0) {
+			cnt += 1;
 			GamaPoint loc = vehicle.getLocation();
 			IAgent currentTarget = getCurrentTarget(vehicle);
 			GamaPoint targetLoc = (GamaPoint) currentTarget.getLocation();
 
-			if (!isDrivingRandomly && loc.equals(finalTarget.getLocation())) {  // Final node in path
+			if (!isDrivingRandomly && 
+					getCurrentIndex(vehicle) == getCurrentPath(vehicle).getEdgeList().size() - 1 &&
+					loc.equals(finalTarget.getLocation())) {  // Final node in path
 				clearDrivingStates(scope);
 				return;
 			} else if (loc.equals(targetLoc)) {  // Intermediate node in path
 				IAgent newRoad = getNextRoad(vehicle);
 				if (newRoad == null) {
-					return;
-					// TODO: this error should only be raised if the modeler doesn't do anything about it
-					// String reason = isDrivingRandomly ? "which has no outgoing roads" :
-					// 	"because it has reached the end of the path";
-					// throw GamaRuntimeException.warning(vehicle.getName() + " stopped at " + currentTarget.getName() + ", " + reason,
-					// 		scope);
+					// Only raise the error if the modeler didn't do anything about the deadend 
+					// right when the vehicle reached it
+					if (cnt > 1) {
+						return;
+					} else {
+						String reason = isDrivingRandomly ? "which has no outgoing roads" :
+							"because it has reached the end of the path";
+						throw GamaRuntimeException.warning(vehicle.getName() + " stopped at " + currentTarget.getName() + ", " + reason,
+								scope);
+					}
 				}
 				GamaPoint srcNodeLoc = (GamaPoint) RoadSkill.getSourceNode(newRoad).getLocation();
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
