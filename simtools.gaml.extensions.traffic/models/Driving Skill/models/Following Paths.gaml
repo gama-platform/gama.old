@@ -60,7 +60,7 @@ species vehicle_following_path parent: base_vehicle {
 
 	reflex select_next_path when: current_path = nil {
 		// A path that forms a cycle
-		list<intersection> dst_nodes <- [intersection[245], intersection[100], intersection[137], intersection[245]];
+		list<intersection> dst_nodes <- [intersection[98], intersection[100], intersection[137], intersection[98]];
 		do compute_path graph: road_network nodes: dst_nodes;
 	}
 	
