@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FloatEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FloatEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -21,13 +20,38 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+/**
+ * The Class FloatEditor.
+ */
 public class FloatEditor extends NumberEditor<Double> {
 
+	/**
+	 * Instantiates a new float editor.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param param the param
+	 * @param canBeNull the can be null
+	 * @param l the l
+	 */
 	FloatEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
 			final EditorListener<Double> l) {
 		super(scope, agent, param, l, canBeNull);
 	}
 
+	/**
+	 * Instantiates a new float editor.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param min the min
+	 * @param max the max
+	 * @param step the step
+	 * @param canBeNull the can be null
+	 * @param whenModified the when modified
+	 */
 	FloatEditor(final IScope scope, final EditorsGroup parent, final String title, final Double value, final Double min,
 			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
@@ -66,9 +90,7 @@ public class FloatEditor extends NumberEditor<Double> {
 	}
 
 	@Override
-	public IType<Double> getExpectedType() {
-		return Types.FLOAT;
-	}
+	public IType<Double> getExpectedType() { return Types.FLOAT; }
 
 	@Override
 	protected Double applyPlus() {

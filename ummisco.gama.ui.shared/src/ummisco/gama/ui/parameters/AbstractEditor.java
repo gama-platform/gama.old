@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * AbstractEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform (v.2.0.0).
+ * platform (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -204,7 +204,6 @@ public abstract class AbstractEditor<T>
 	public void setActive(final Boolean active) {
 		if (editorLabel != null) { editorLabel.setActive(active); }
 		editorToolbar.setActive(active);
-		if (active) { updateToolbar(); }
 		editorControl.setActive(active);
 	}
 
@@ -522,7 +521,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	/**
-	 * Update toolbar.
+	 * Update toolbar. Redefined in subclasses
 	 */
 	protected void updateToolbar() {
 		editorToolbar.update();

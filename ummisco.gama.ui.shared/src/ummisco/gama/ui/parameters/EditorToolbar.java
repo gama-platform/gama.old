@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * EditorToolbar.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import static ummisco.gama.ui.interfaces.IParameterEditor.BROWSE;
@@ -32,14 +42,35 @@ import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 
+/**
+ * The Class EditorToolbar.
+ */
 public class EditorToolbar {
 
-	class Item {
+	/**
+	 * The Class Item.
+	 */
+	static class Item {
+
+		/** The label. */
 		final Label label;
-		boolean enabled = false;
+
+		/** The listener. */
 		final MouseListener listener;
+
+		/** The command. */
 		final GamaCommand command;
 
+		/**
+		 * Instantiates a new item.
+		 *
+		 * @param parent
+		 *            the parent
+		 * @param c
+		 *            the c
+		 * @param l
+		 *            the l
+		 */
 		Item(final Composite parent, final GamaCommand c, final MouseListener l) {
 			command = c;
 			listener = l;
@@ -49,26 +80,39 @@ public class EditorToolbar {
 			enable(true);
 		}
 
+		/**
+		 * Enable.
+		 *
+		 * @param enable
+		 *            the enable
+		 */
 		void enable(final boolean enable) {
-			if (enabled == enable) return;
-			enabled = enable;
+
 			if (command.getImage() != null) {
 				label.setImage(enable ? create(command.getImage()).image() : create(command.getImage()).disabled());
 			}
-			if (enable) {
-				label.addMouseListener(listener);
-			} else {
-				label.removeMouseListener(listener);
-			}
+			label.removeMouseListener(listener);
+			if (enable) { label.addMouseListener(listener); }
 		}
 
-		public boolean isDisposed() {
-			return label != null && label.isDisposed();
-		}
+		/**
+		 * Checks if is disposed.
+		 *
+		 * @return true, if is disposed
+		 */
+		public boolean isDisposed() { return label != null && label.isDisposed(); }
 	}
 
+	/** The editor. */
 	final AbstractEditor editor;
+
+	/** The active. */
+	boolean active;
+
+	/** The Constant commands. */
 	protected static final GamaCommand[] commands = new GamaCommand[9];
+
+	/** The items. */
 	protected final Item[] items = new Item[9];
 
 	static {
@@ -83,6 +127,14 @@ public class EditorToolbar {
 		commands[VALUE] = build(null, "", "Value of the parameter", null);
 	}
 
+	/**
+	 * Instantiates a new editor toolbar.
+	 *
+	 * @param editor
+	 *            the editor
+	 * @param composite
+	 *            the composite
+	 */
 	EditorToolbar(final AbstractEditor editor, final Composite composite) {
 		this.editor = editor;
 		final Composite t = new Composite(composite, SWT.NONE);
@@ -107,17 +159,21 @@ public class EditorToolbar {
 			}
 			Color color = editor.parent.getBackground();
 			t.setBackground(color);
-			for (final Control c : t.getChildren()) {
-				c.setBackground(color);
-			}
+			for (final Control c : t.getChildren()) { c.setBackground(color); }
 		}
 		Color color = editor.parent.getBackground();
 		t.setBackground(color);
-		for (final Control c : t.getChildren()) {
-			c.setBackground(color);
-		}
+		for (final Control c : t.getChildren()) { c.setBackground(color); }
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param code
+	 *            the code
+	 * @param detail
+	 *            the detail
+	 */
 	private void execute(final int code, final int detail) {
 		switch (code) {
 			case IParameterEditor.REVERT:
@@ -148,29 +204,62 @@ public class EditorToolbar {
 		}
 	}
 
+	/**
+	 * Enable.
+	 *
+	 * @param i
+	 *            the i
+	 * @param enable
+	 *            the enable
+	 */
 	public void enable(final int i, final boolean enable) {
+		if (!active && enable) return;
 		final var c = items[i];
 		if (c == null) return;
 		c.enable(enable);
 	}
 
+	/**
+	 * Update.
+	 */
 	protected void update() {
 		final var c = items[IParameterEditor.REVERT];
 		if (c != null && !c.isDisposed()) { c.enable(editor.isValueModified()); }
 	}
 
+	/**
+	 * Update value.
+	 *
+	 * @param s
+	 *            the s
+	 */
 	public void updateValue(final String s) {
 		final var c = items[IParameterEditor.VALUE];
 		if (c != null && !c.isDisposed()) { c.label.setText(s); }
 	}
 
+	/**
+	 * Sets the active.
+	 *
+	 * @param active
+	 *            the new active
+	 */
 	public void setActive(final Boolean active) {
+		this.active = active;
 		for (final Item t : items) {
 			if (t == null) { continue; }
 			t.enable(active);
 		}
+		if (active) { update(); }
 	}
 
+	/**
+	 * Gets the item.
+	 *
+	 * @param item
+	 *            the item
+	 * @return the item
+	 */
 	public Label getItem(final int item) {
 		final var c = items[item];
 		if (c == null) return null;
