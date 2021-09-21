@@ -119,12 +119,14 @@ public class PreferencesHelper {
 		final var ini = MemoryUtils.findIniFile();
 		Integer writtenMemory = ini == null ? null : MemoryUtils.readMaxMemoryInMegabytes(ini);
 		final var text = ini == null || writtenMemory == null
-				? "The max. memory allocated. It can be modified in Eclipse (developer version) or in Gama.ini file"
+				? "The max. memory allocated in Megabytes. It can be modified in Eclipse (developer version) or in Gama.ini file"
 				: "Maximum memory allocated in Mb (requires to restart GAMA)";
 		final var maxMemory = writtenMemory == null ? MemoryUtils.maxMemory() : writtenMemory;
 		final var p = GamaPreferences.create("pref_memory_max", text, maxMemory, 1, false)
 				.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.MEMORY);
 		// Force the value to the one contained in the ini file or in the arguments.
+		// Trick to force the pref to be read
+		p.getValue();
 		p.set(maxMemory);
 		if (writtenMemory == null) { p.disabled(); }
 		p.onChange(newValue -> {

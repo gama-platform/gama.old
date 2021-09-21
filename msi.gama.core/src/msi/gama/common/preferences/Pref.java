@@ -24,7 +24,6 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Pref.
@@ -128,14 +127,7 @@ public class Pref<T> implements IParameter {
 	 *
 	 * @return true, if is disabled
 	 */
-	public boolean isDisabled() {
-		if (title != null && title.contains("The max. memory allocated")) {
-
-			DEBUG.OUT("");
-
-		}
-		return disabled;
-	}
+	public boolean isDisabled() { return disabled; }
 
 	/**
 	 * On change.

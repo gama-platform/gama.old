@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaPreferencesView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaPreferencesView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
 import static msi.gama.application.workbench.ThemeHelper.isDark;
@@ -73,29 +72,44 @@ public class GamaPreferencesView {
 		DEBUG.ON();
 	}
 
+	/** The dialog location. */
 	static Pref<GamaPoint> DIALOG_LOCATION = GamaPreferences.create("dialog_location",
 			"Location of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+
+	/** The dialog size. */
 	static Pref<GamaPoint> DIALOG_SIZE = GamaPreferences.create("dialog_size",
 			"Size of the preferences dialog on screen", new GamaPoint(-1, -1), IType.POINT, false).hidden();
+
+	/** The dialog tab. */
 	static Pref<Integer> DIALOG_TAB = GamaPreferences
 			.create("dialog_tab", "Tab selected in the preferences dialog", -1, IType.INT, false).hidden();
 
+	/** The prefs images. */
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
+
+	/** The nb divisions. */
 	public static int NB_DIVISIONS = 2;
 
+	/** The instance. */
 	static GamaPreferencesView instance;
+
+	/** The restart required. */
 	static boolean restartRequired;
 
+	/**
+	 * Show.
+	 */
 	public static void show() {
 		if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
 			instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 		}
-		for (final IParameterEditor ed : instance.editors.values()) {
-			ed.updateWithValueOfParameter();
-		}
+		for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(); }
 		instance.open();
 	}
 
+	/**
+	 * Preload.
+	 */
 	public static void preload() {
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: preferences", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			WorkbenchHelper.run(() -> {
@@ -104,9 +118,7 @@ public class GamaPreferencesView {
 				}
 
 			});
-			for (final IParameterEditor ed : instance.editors.values()) {
-				ed.updateWithValueOfParameter();
-			}
+			for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(); }
 		});
 
 	}
@@ -121,12 +133,24 @@ public class GamaPreferencesView {
 
 	}
 
+	/** The shell. */
 	Shell parentShell, shell;
+
+	/** The tab folder. */
 	CTabFolder tabFolder;
+
+	/** The editors. */
 	final Map<String, IParameterEditor> editors = new LinkedHashMap();
 
+	/** The model values. */
 	final Map<String, Object> modelValues = new LinkedHashMap();
 
+	/**
+	 * Instantiates a new gama preferences view.
+	 *
+	 * @param parent
+	 *            the parent
+	 */
 	private GamaPreferencesView(final Shell parent) {
 		parentShell = parent;
 		shell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.APPLICATION_MODAL);
@@ -148,6 +172,14 @@ public class GamaPreferencesView {
 		shell.layout();
 	}
 
+	/**
+	 * Builds the contents for.
+	 *
+	 * @param tab
+	 *            the tab
+	 * @param entries
+	 *            the entries
+	 */
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
 		viewer.setBackground(!isDark() ? VERY_LIGHT_GRAY.color() : DARK_GRAY.darker());
@@ -167,8 +199,17 @@ public class GamaPreferencesView {
 
 	}
 
+	/** The activations. */
 	final Map<String, Boolean> activations = new HashMap();
 
+	/**
+	 * Check activables.
+	 *
+	 * @param e
+	 *            the e
+	 * @param value
+	 *            the value
+	 */
 	void checkActivables(final Pref e, final Object value) {
 		if (e.getEnablement() != null) {
 			for (final String activable : e.getEnablement()) {
@@ -198,6 +239,14 @@ public class GamaPreferencesView {
 		}
 	}
 
+	/**
+	 * Check refreshables.
+	 *
+	 * @param e
+	 *            the e
+	 * @param value
+	 *            the value
+	 */
 	void checkRefreshables(final Pref e, final Object value) {
 		if (e.getRefreshment() != null) {
 			for (final String activable : e.getRefreshment()) {
@@ -207,12 +256,18 @@ public class GamaPreferencesView {
 		}
 	}
 
+	/**
+	 * Builds the group contents.
+	 *
+	 * @param compo
+	 *            the compo
+	 * @param list
+	 *            the list
+	 */
 	private void buildGroupContents(final Composite compo, final List<Pref> list) {
 		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(5, 0).equalWidth(true).applyTo(compo);
 		final var comps = new EditorsGroup[NB_DIVISIONS];
-		for (var i = 0; i < NB_DIVISIONS; i++) {
-			comps[i] = new EditorsGroup(compo, SWT.BORDER);
-		}
+		for (var i = 0; i < NB_DIVISIONS; i++) { comps[i] = new EditorsGroup(compo, SWT.BORDER); }
 		var i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
@@ -253,6 +308,15 @@ public class GamaPreferencesView {
 		compo.pack(true);
 	}
 
+	/**
+	 * Gets the menu for.
+	 *
+	 * @param e
+	 *            the e
+	 * @param ed
+	 *            the ed
+	 * @return the menu for
+	 */
 	private static Menu getMenuFor(final Pref e, final AbstractEditor ed) {
 		final var m = ed.getLabel().createMenu();
 		final var title = new MenuItem(m, SWT.PUSH);
@@ -285,6 +349,9 @@ public class GamaPreferencesView {
 		DEBUG.LOG("Error in preferences : " + string);
 	}
 
+	/**
+	 * Builds the buttons.
+	 */
 	private void buildButtons() {
 		final var doc = new Label(shell, SWT.NONE);
 		doc.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
@@ -319,9 +386,7 @@ public class GamaPreferencesView {
 				final var path = fd.open();
 				if (path == null) return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
-				for (final IParameterEditor ed : editors.values()) {
-					ed.updateWithValueOfParameter();
-				}
+				for (final IParameterEditor ed : editors.values()) { ed.updateWithValueOfParameter(); }
 			}
 
 		});
@@ -432,52 +497,43 @@ public class GamaPreferencesView {
 
 		});
 
-		shell.addDisposeListener(e -> {
-			saveDialogProperties();
-		});
-
-		// shell.addControlListener(new ControlListener() {
-		//
-		// @Override
-		// public void controlResized(final ControlEvent e) {
-		// for (final IParameterEditor ed : editors.values()) {
-		// ((AbstractEditor) ed).getLabel().resize(shell.getSize().x / (NB_DIVISIONS * 2));
-		// }
-		// for (final ParameterExpandBar bar : contents) {
-		// for (final ParameterExpandItem item : bar.getItems()) {
-		// item.setHeight(item.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		// }
-		//
-		// bar.redraw();
-		// }
-		// shell.layout(true, true);
-		// }
-		//
-		// @Override
-		// public void controlMoved(final ControlEvent e) {}
-		// });
-
+		shell.addDisposeListener(e -> { saveDialogProperties(); });
 	}
 
+	/**
+	 * Close.
+	 */
 	void close() {
 		shell.setVisible(false);
 	}
 
+	/**
+	 * Save location.
+	 */
 	private void saveLocation() {
 		final var p = shell.getLocation();
 		DIALOG_LOCATION.set(new GamaPoint(p.x, p.y)).save();
 	}
 
+	/**
+	 * Save size.
+	 */
 	private void saveSize() {
 		final var s = shell.getSize();
 		DIALOG_SIZE.set(new GamaPoint(s.x, s.y)).save();
 	}
 
+	/**
+	 * Save tab.
+	 */
 	private void saveTab() {
 		final var index = tabFolder.getSelectionIndex();
 		DIALOG_TAB.set(index).save();
 	}
 
+	/**
+	 * Save dialog properties.
+	 */
 	private void saveDialogProperties() {
 		if (shell.isDisposed()) return;
 		saveLocation();
@@ -485,6 +541,9 @@ public class GamaPreferencesView {
 		saveTab();
 	}
 
+	/**
+	 * Open.
+	 */
 	public void open() {
 		final var loc = DIALOG_LOCATION.getValue();
 		final var size = DIALOG_SIZE.getValue();
@@ -515,6 +574,9 @@ public class GamaPreferencesView {
 
 	}
 
+	/**
+	 * Sets the restart required.
+	 */
 	public static void setRestartRequired() {
 		restartRequired = true;
 

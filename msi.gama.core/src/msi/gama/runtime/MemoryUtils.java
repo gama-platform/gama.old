@@ -20,10 +20,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.preferences.GamaPreferences;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * All-purpose static-method container class.
@@ -33,6 +37,10 @@ import msi.gama.common.preferences.GamaPreferences;
  */
 
 public final class MemoryUtils {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/**
 	 * Instantiates a new memory utils.
@@ -63,14 +71,83 @@ public final class MemoryUtils {
 	}
 
 	/**
+	 * Max memory.
+	 *
+	 * @return the int
+	 */
+	public static int maxMemory() {
+		if (DEBUG.IS_ON()) {
+			DEBUG.OUT("Max memory via runtime: " + maxMemoryThroughRuntime());
+			DEBUG.OUT("Max memory via runtime bean: " + maxMemoryThroughRuntimeBean());
+			DEBUG.OUT("Max memory via memory bean: " + maxMemoryThroughMemoryBean());
+		}
+		// This one seems to be the most reliable (if -Xmx is defined, otherwise 0 is returned
+		return maxMemoryThroughRuntimeBean();
+	}
+
+	/**
 	 * Returns the amount of available memory (free memory plus never allocated memory).
 	 *
 	 * @return the amount of available memory, in megabytes.
 	 */
-	public static int maxMemory() {
+	public static int maxMemoryThroughRuntime() {
 		long bytes = RUNTIME.maxMemory();
 		double result = bytes / 10e6;
 		return (int) result;
+	}
+
+	/**
+	 * Max memory through MX bean.
+	 *
+	 * @return the int
+	 */
+	public static int maxMemoryThroughMemoryBean() {
+		MemoryMXBean bean = ManagementFactory.getMemoryMXBean();
+		long bytes = bean.getHeapMemoryUsage().getMax();
+		double result = bytes / 10e6;
+		return (int) result;
+	}
+
+	/**
+	 * Max memory through runtime bean.
+	 *
+	 * @return the int
+	 */
+	public static int maxMemoryThroughRuntimeBean() {
+		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		List<String> aList = bean.getInputArguments();
+		for (String s : aList) {
+			DEBUG.OUT(s);
+			if (s.startsWith("-Xmx")) {
+				final var last = s.charAt(s.length() - 1);
+				var divider = 1000000D;
+				var unit = false;
+				switch (last) {
+					case 'k':
+					case 'K':
+						unit = true;
+						divider = 1000;
+						break;
+					case 'm':
+					case 'M':
+						unit = true;
+						divider = 1;
+						break;
+					case 'g':
+					case 'G':
+						unit = true;
+						divider = 0.001;
+						break;
+				}
+				var trim = s;
+				trim = trim.replace("-Xmx", "");
+				if (unit) { trim = trim.substring(0, trim.length() - 1); }
+				final var result = Integer.parseInt(trim);
+				return (int) (result / divider);
+
+			}
+		}
+		return 0;
 	}
 
 	/**
