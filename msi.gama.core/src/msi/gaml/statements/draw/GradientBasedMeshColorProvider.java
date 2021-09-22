@@ -20,7 +20,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The components. */
@@ -78,7 +78,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		if (result == null) { result = new double[3]; }
 
 		double position = (z - min) / (max - min);
-		DEBUG.OUT("Position " + position + " corresponds to slot ", false);
+		// DEBUG.OUT("Position " + position + " corresponds to slot ", false);
 		for (int s = 0; s < size - 1; s++) {
 			var leftStop = components[s * 4 + 3];
 			var rightStop = components[(s + 1) * 4 + 3];
@@ -91,7 +91,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 			}
 			if (position < rightStop) {
 				double r = (position - leftStop) / (rightStop - leftStop);
-				DEBUG.OUT(s + " with a ratio of " + r);
+				// DEBUG.OUT(s + " with a ratio of " + r);
 				double ir = 1d - r;
 				result[0] = components[s * 4] * ir + components[(s + 1) * 4] * r;
 				result[1] = components[s * 4 + 1] * ir + components[(s + 1) * 4 + 1] * r;
@@ -99,7 +99,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 				return result;
 			}
 		}
-		DEBUG.OUT(size - 1);
+		// DEBUG.OUT(size - 1);
 		result[0] = components[4 * (size - 1)];
 		result[1] = components[4 * (size - 1) + 1];
 		result[2] = components[4 * (size - 1) + 2];
