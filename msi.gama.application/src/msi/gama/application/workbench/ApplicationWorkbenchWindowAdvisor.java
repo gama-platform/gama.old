@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -123,6 +125,17 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
 		window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
+		if (FLAGS.USE_DELAYED_RESIZE) {
+			window.getShell().addControlListener(new ControlAdapter() {
+
+				@Override
+				public void controlResized(final ControlEvent e) {
+					// window.getShell().layout(true, true);
+					window.getShell().requestLayout();
+				}
+
+			});
+		}
 	}
 
 	@Override

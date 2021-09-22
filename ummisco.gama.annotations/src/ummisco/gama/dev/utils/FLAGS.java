@@ -89,4 +89,12 @@ public class FLAGS {
 	 */
 	public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
 
+	/**
+	 * Used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195. If true,
+	 * makes the workbench window resize its views asynchronously. True by default on macOS. Could prove useful also in
+	 * other environments, for instance in the presence of slow graphic cards/computers.
+	 */
+	public static final boolean USE_DELAYED_RESIZE =
+			get("use_delayed_resize", System.getProperty("os.name").contains("Mac"));
+
 }
