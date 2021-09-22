@@ -23,7 +23,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		DEBUG.OFF();
 	}
 
-	/** The components. */
+	/** The RGB+stop components. */
 	final double[] components;
 
 	/** The size. */
@@ -36,10 +36,10 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 	 *            the palette
 	 */
 	public GradientBasedMeshColorProvider(final GamaGradient palette) {
-		// each pair color::float represents an interval
+		// each pair color::float represents a stop from 0 to 1
 		this.size = palette.size();
 
-		components = new double[size * 4]; // last value is the weight
+		components = new double[size * 4]; // last value is the stop position
 
 		int i = 0;
 		for (GamaColor c : palette.keySet()) {
@@ -50,27 +50,6 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 			i++;
 		}
 	}
-
-	/**
-	 * Lerp gradient.
-	 *
-	 * @param colors
-	 *            the colors
-	 * @return the color
-	 */
-	// Color lerpGradient(final List<Color> colors, List<double> stops, double t) {
-	// for (var s = 0; s < stops.length - 1; s++) {
-	// final leftStop = stops[s], rightStop = stops[s + 1];
-	// final leftColor = colors[s], rightColor = colors[s + 1];
-	// if (t <= leftStop) {
-	// return leftColor;
-	// } else if (t < rightStop) {
-	// final sectionT = (t - leftStop) / (rightStop - leftStop);
-	// return Color.lerp(leftColor, rightColor, sectionT);
-	// }
-	// }
-	// return colors.last;
-	// }
 
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
@@ -83,7 +62,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 			var leftStop = components[s * 4 + 3];
 			var rightStop = components[(s + 1) * 4 + 3];
 			if (position <= leftStop) {
-				DEBUG.OUT(s);
+				// DEBUG.OUT(s);
 				result[0] = components[4 * s];
 				result[1] = components[4 * s + 1];
 				result[2] = components[4 * s + 2];
@@ -104,49 +83,6 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		result[1] = components[4 * (size - 1) + 1];
 		result[2] = components[4 * (size - 1) + 2];
 		return result;
-
-		// if (min > max || z == min) {
-		// result[0] = components[0];
-		// result[1] = components[1];
-		// result[2] = components[2];
-		// } else if (z >= max) { // Can happen if multiple threads write and read the field !
-		// result[0] = components[4 * (size - 1)];
-		// result[1] = components[4 * (size - 1) + 1];
-		// result[2] = components[4 * (size - 1) + 2];
-		// } else {
-		// double currentLimit = 0, previousLimit = 0;
-		// for (int i = 0; i < size; i++) {
-		// previousLimit = currentLimit;
-		// currentLimit += components[i * 4 + 3];
-		// if (position < currentLimit) {
-		// double middle = (currentLimit - previousLimit) / 2;
-		// if (position - previousLimit < middle && i > 0) {
-		// previousLimit = previousLimit - components[(i - 1) * 4 + 3] / 2;
-		// currentLimit = middle;
-		// double r = (position - previousLimit) / (currentLimit - previousLimit);
-		// double ir = 1d - r;
-		// result[0] = components[(i - 1) * 4] * r + components[i * 4] * ir;
-		// result[1] = components[(i - 1) * 4 + 1] * r + components[i * 4 + 1] * ir;
-		// result[2] = components[(i - 1) * 4 + 2] * r + components[i * 4 + 2] * ir;
-		// } else if (position - previousLimit > middle && i < size - 1) {
-		// previousLimit = middle;
-		// currentLimit = currentLimit + components[(i + 1) * 4 + 3] / 2;
-		// double r = (position - previousLimit) / (currentLimit - previousLimit);
-		// double ir = 1d - r;
-		// result[0] = components[i * 4] * r + components[(i + 1) * 4] * ir;
-		// result[1] = components[i * 4 + 1] * r + components[(i + 1) * 4 + 1] * ir;
-		// result[2] = components[i * 4 + 2] * r + components[(i + 1) * 4 + 2] * ir;
-		// } else {
-		// // equals or we are in the extreme buckets
-		// result[0] = components[4 * i];
-		// result[1] = components[4 * i + 1];
-		// result[2] = components[4 * i + 2];
-		// }
-		// break;
-		// }
-		// }
-		// }
-		// return result;
 	}
 
 }
