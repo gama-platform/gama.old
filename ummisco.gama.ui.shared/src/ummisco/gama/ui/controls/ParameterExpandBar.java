@@ -695,14 +695,17 @@ public class ParameterExpandBar extends Composite {
 	 * On resize.
 	 */
 	void onResize() {
-		final var rect = getClientArea();
-		final var width = Math.max(0, rect.width - spacing * 2);
-		for (var i = 0; i < itemCount; i++) {
-			final var item = items[i];
-			if (item.getControl() != null) { item.setHeight(item.getControl().computeSize(width, SWT.DEFAULT).y); }
-			item.setBounds(0, 0, width, item.height, false, true);
-		}
-		setScrollbar();
+		WorkbenchHelper.asyncRun(() -> {
+			final var rect = getClientArea();
+			final var width = Math.max(0, rect.width - spacing * 2);
+			for (var i = 0; i < itemCount; i++) {
+				final var item = items[i];
+				if (item.getControl() != null) { item.setHeight(item.getControl().computeSize(width, SWT.DEFAULT).y); }
+				item.setBounds(0, 0, width, item.height, false, true);
+			}
+			setScrollbar();
+		});
+
 	}
 
 	/**
