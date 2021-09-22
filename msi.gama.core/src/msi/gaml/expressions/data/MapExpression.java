@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.MapExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * MapExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.data;
 
@@ -43,6 +43,12 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MapExpression extends AbstractExpression implements IOperator {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param elements the elements
+	 * @return the i expression
+	 */
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
 
 		// if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()
@@ -57,11 +63,19 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		return new MapExpression(elements);
 	}
 
+	/** The keys. */
 	private final IExpression[] keys;
+	
+	/** The vals. */
 	private final IExpression[] vals;
 	// private final GamaMap values;
 	// private boolean isConst, computed;
 
+	/**
+	 * Instantiates a new map expression.
+	 *
+	 * @param pairs the pairs
+	 */
 	MapExpression(final Iterable<? extends IExpression> pairs) {
 		final int size = Iterables.size(pairs);
 		keys = new IExpression[size];
@@ -88,6 +102,11 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		type = Types.MAP.of(keyType, contentsType);
 	}
 
+	/**
+	 * Instantiates a new map expression.
+	 *
+	 * @param pairs the pairs
+	 */
 	MapExpression(final IMap<IExpression, IExpression> pairs) {
 		keys = new IExpression[pairs.size()];
 		vals = new IExpression[pairs.size()];
@@ -134,12 +153,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public boolean isConst() {
-		for (final IExpression expr : keys) {
-			if (!expr.isConst()) return false;
-		}
-		for (final IExpression expr : vals) {
-			if (!expr.isConst()) return false;
-		}
+		for (final IExpression expr : keys) { if (expr != null && !expr.isConst()) return false; }
+		for (final IExpression expr : vals) { if (expr != null && !expr.isConst()) return false; }
 		return true;
 	}
 
@@ -149,26 +164,38 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		sb.append(' ').append('[');
 		for (int i = 0; i < keys.length; i++) {
 			if (i > 0) { sb.append(','); }
-			if (keys[i] == null || vals[i] == null) {
-				continue;
-			} else {
-				sb.append(keys[i].serialize(includingBuiltIn));
-				sb.append("::");
-				sb.append(vals[i].serialize(includingBuiltIn));
-			}
+			if (keys[i] == null || vals[i] == null) { continue; }
+			sb.append(keys[i].serialize(includingBuiltIn));
+			sb.append("::");
+			sb.append(vals[i].serialize(includingBuiltIn));
 		}
 		sb.append(']').append(' ');
 		return sb.toString();
 	}
 
+	/**
+	 * Keys array.
+	 *
+	 * @return the i expression[]
+	 */
 	public IExpression[] keysArray() {
 		return keys;
 	}
 
+	/**
+	 * Values array.
+	 *
+	 * @return the i expression[]
+	 */
 	public IExpression[] valuesArray() {
 		return vals;
 	}
 
+	/**
+	 * Gets the elements.
+	 *
+	 * @return the elements
+	 */
 	public IMap<IExpression, IExpression> getElements() {
 		// TODO Verify the key and content types in that case...
 		final IMap result = GamaMapFactory.create(type.getKeyType(), type.getContentType(), keys.length);
@@ -180,9 +207,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String getTitle() {
-		return "literal map of type " + getGamlType().getTitle();
-	}
+	public String getTitle() { return "literal map of type " + getGamlType().getTitle(); }
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
@@ -215,12 +240,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public boolean isContextIndependant() {
-		for (final IExpression e : keys) {
-			if ((e != null) && !e.isContextIndependant()) return false;
-		}
-		for (final IExpression e : vals) {
-			if ((e != null) && !e.isContextIndependant()) return false;
-		}
+		for (final IExpression e : keys) { if (e != null && !e.isContextIndependant()) return false; }
+		for (final IExpression e : vals) { if (e != null && !e.isContextIndependant()) return false; }
 		return true;
 	}
 
@@ -229,25 +250,17 @@ public class MapExpression extends AbstractExpression implements IOperator {
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
 		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
-		for (final IExpression e : keys) {
-			if (e != null) { e.collectUsedVarsOf(species, alreadyProcessed, result); }
-		}
+		for (final IExpression e : keys) { if (e != null) { e.collectUsedVarsOf(species, alreadyProcessed, result); } }
 
-		for (final IExpression e : vals) {
-			if (e != null) { e.collectUsedVarsOf(species, alreadyProcessed, result); }
-		}
+		for (final IExpression e : vals) { if (e != null) { e.collectUsedVarsOf(species, alreadyProcessed, result); } }
 
 	}
 
 	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {
-		for (final IExpression e : keys) {
-			if (e instanceof IOperator) { visitor.visit((IOperator) e); }
-		}
+		for (final IExpression e : keys) { if (e instanceof IOperator) { visitor.visit((IOperator) e); } }
 
-		for (final IExpression e : vals) {
-			if (e instanceof IOperator) { visitor.visit((IOperator) e); }
-		}
+		for (final IExpression e : vals) { if (e instanceof IOperator) { visitor.visit((IOperator) e); } }
 
 	}
 
@@ -258,27 +271,20 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public OperatorProto getPrototype() {
-		return null;
-	}
+	public OperatorProto getPrototype() { return null; }
 
-	public boolean isEmpty() {
-		return keys.length == 0;
-	}
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty() { return keys.length == 0; }
 
 	@Override
 	public boolean findAny(final Predicate<IExpression> predicate) {
 		if (predicate.test(this)) return true;
-		if (keys != null) {
-			for (final IExpression e : keys) {
-				if (e.findAny(predicate)) return true;
-			}
-		}
-		if (vals != null) {
-			for (final IExpression e : vals) {
-				if (e.findAny(predicate)) return true;
-			}
-		}
+		if (keys != null) { for (final IExpression e : keys) { if (e.findAny(predicate)) return true; } }
+		if (vals != null) { for (final IExpression e : vals) { if (e.findAny(predicate)) return true; } }
 		return false;
 	}
 
