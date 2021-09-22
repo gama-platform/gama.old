@@ -11,7 +11,6 @@
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -29,9 +28,6 @@ import ummisco.gama.ui.resources.GamaIcons;
  *
  */
 public class GamaToolbarSimple extends ToolBar {
-
-	/** The width listener. */
-	ControlListener widthListener;
 
 	/**
 	 * Instantiates a new gama toolbar simple.
