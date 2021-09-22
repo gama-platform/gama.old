@@ -17,10 +17,15 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import simtools.gaml.extensions.traffic.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.RoadSkill;
 
+/**
+ * @author minhduc0711
+ *
+ */
 public class Utils {
 	/**
 	 * Attempts to make lane changing probabilities timestep-agnostic
@@ -50,6 +55,17 @@ public class Utils {
 			linkedLaneLimit = Math.min(linkedLaneLimit, numLinkedLanes);
 		}
 		return linkedLaneLimit;
+	}
+	
+	
+	/**
+	 * @return an integer indicating the position of point p w.r.t. the vector ab
+	 * 	    1 if point p lies on the left side of vector ab
+	 *     -1 if point p lies on the right side of vector ab
+	 *      0 if point p lies on vector ab
+	 */
+	public static int sideOfPoint(final GamaPoint a, final GamaPoint b, final GamaPoint p) {
+		return (int) Math.signum((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x));
 	}
 
 	public static Triple<IAgent, Double, Boolean> findLeader(final IScope scope,

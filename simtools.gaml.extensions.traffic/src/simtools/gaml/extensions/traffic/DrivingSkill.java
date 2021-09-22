@@ -18,8 +18,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.geom.Coordinate;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
@@ -45,7 +48,9 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.descriptions.ConstantExpressionDescription;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
+import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
@@ -1082,13 +1087,14 @@ public class DrivingSkill extends MovingSkill {
 		double vehicleLength = getVehicleLength(vehicle);
 		ISpecies context = vehicle.getSpecies();
 
-		// TODO: refactor this
 		// additional conditions to cross the intersection, defined by the user
-		// IStatement.WithArgs actionTNR = context.getAction("test_next_road");
-		// Arguments argsTNR = new Arguments();
-		// argsTNR.put("new_road", ConstantExpressionDescription.create(newRoad));
-		// actionTNR.setRuntimeArgs(scope, argsTNR);
-		// if (!(Boolean) actionTNR.executeOn(scope)) { return false; }
+		IStatement.WithArgs actionTNR = context.getAction("test_next_road");
+		Arguments argsTNR = new Arguments();
+		argsTNR.put("new_road", ConstantExpressionDescription.create(newRoad));
+		actionTNR.setRuntimeArgs(scope, argsTNR);
+		if (!(Boolean) actionTNR.executeOn(scope)) {
+			return false; 
+		}
 
 		IAgent currentRoad = (IAgent) vehicle.getAttribute(CURRENT_ROAD);
 		// Don't need to do these checks if the vehicle was just initialized
@@ -1130,53 +1136,61 @@ public class DrivingSkill extends MovingSkill {
 				return true;
 			}
 
-			// Check for vehicles coming from the rightside road
 			Boolean rightSide = getRightSideDriving(vehicle);
 			List<IAgent> priorityRoads = (List<IAgent>) node.getAttribute(RoadNodeSkill.PRIORITY_ROADS);
 			boolean onPriorityRoad = priorityRoads != null && priorityRoads.contains(currentRoad);
 
-			// compute angle between the current & next road
-			// double angleRef = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
-			// 		(GamaPoint) currentRoad.getLocation(), (GamaPoint) newRoad.getLocation());
+			// ab is the line representing the direction of the vehicle
+			// when moving from the current road to the next road
+			List<GamaPoint> pts = currentRoad.getGeometry().getPoints();
+			GamaPoint a = pts.get(pts.size() - 2); // starting point of last segment of current road
+			GamaPoint b = newRoad.getGeometry().getPoints().get(1); // end point of first segment of new road
 
-			// TODO: adjust the speed diff condition
-			// TODO: always return false if vehicle decides to make an U-turn
-			// double speed = Math.max(0.5, getSpeed(vehicle) + getMaxAcceleration(vehicle));
-			// double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
-			// 		: getSecurityDistanceCoeff(vehicle);
+			// Why is 0.5 a lower bound??
+			double speed = Math.max(0.5, getSpeed(vehicle));
+			double safetyDistCoeff = vehicle.hasAttribute(SAFETY_DISTANCE_COEFF) ? getSafetyDistanceCoeff(vehicle)
+					: getSecurityDistanceCoeff(vehicle);
+			double distToNode = getDistanceToCurrentTarget(vehicle);
+			List<IAgent> roadsIn = (List) node.getAttribute(RoadNodeSkill.ROADS_IN);
+			for (IAgent otherInRoad : roadsIn) {
+				if (otherInRoad == currentRoad) {
+					continue;
+				}
+				List<GamaPoint> otherPts = otherInRoad.getGeometry().getPoints();
+				// Starting point of last segment of other incoming road
+				GamaPoint p = otherPts.get(otherPts.size() - 2); 
+				// Check if this road is on the right or left side of the current vehicle's moving direction
+				int side = Utils.sideOfPoint(a, b, p);
+				boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
+				boolean hasPriority = onPriorityRoad && !otherRoadIsPriortized;
+				boolean shouldRespectPriority = !onPriorityRoad && otherRoadIsPriortized;
+				// be careful of vehicles coming from the right/left side
+				if (!hasPriority
+						&& (shouldRespectPriority || rightSide && side < 0 || !rightSide && side > 0)) {
+					for (OrderedBidiMap<IAgent, Double> vehicleOrderMap : RoadSkill.getVehicleOrdering(otherInRoad)) {
+						// The vehicle closest to the end of the road
+						OrderedBidiMap<Double, IAgent> distMap = vehicleOrderMap.inverseBidiMap();
+						double otherDistToNode = distMap.lastKey();
+						IAgent otherVehicle = distMap.get(otherDistToNode);
+						if (otherVehicle == null || otherVehicle.dead()) {
+							continue;
+						}
+						double otherVehicleLength = getVehicleLength(otherVehicle);
+						double otherSpeed = getSpeed(otherVehicle);
+						if (getCurrentTarget(otherVehicle) != node) {
+							// Other vehicle is actually going away from the intersection
+							otherSpeed = -otherSpeed;
+						}
+						double gap = distToNode + otherDistToNode - (vehicleLength / 2 + otherVehicleLength / 2);
 
-			// List<IAgent> roadsIn = (List) intersectionNode.getAttribute(RoadNodeSkill.ROADS_IN);
-			// for (IAgent otherInRoad : roadsIn) {
-			// 	if (otherInRoad == currentRoad) {
-			// 		continue;
-			// 	}
-			// 	double angle = Punctal.angleInDegreesBetween(scope, (GamaPoint) intersectionNode.getLocation(),
-			// 			(GamaPoint) currentRoad.getLocation(), (GamaPoint) otherInRoad.getLocation());
-			// 	boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
-			// 	boolean hasPriority = onPriorityRoad && !otherRoadIsPriortized;
-			// 	boolean shouldRespectPriority = !onPriorityRoad && otherRoadIsPriortized;
-			// 	// be careful of vehicles coming from the right/left side
-			// 	if (!hasPriority
-			// 			&& (shouldRespectPriority || rightSide && angle > angleRef || !rightSide && angle < angleRef)) {
-			// 		List<IAgent> otherVehicles = (List) otherInRoad.getAttribute(RoadSkill.ALL_AGENTS);
-			// 		for (IAgent otherVehicle : otherVehicles) {
-			// 			if (otherVehicle == null || otherVehicle.dead()) {
-			// 				continue;
-			// 			}
-			// 			double otherVehicleLength = getVehicleLength(otherVehicle);
-			// 			double otherSpeed = getSpeed(otherVehicle);
-			// 			double dist = otherVehicle.euclidianDistanceTo(vehicle);
-
-			// 			if (Maths.round(getSpeed(otherVehicle), 1) > 0.0 &&
-			// 					0.5 + safetyDistCoeff * Math.max(0, speed - otherSpeed) >
-			// 					dist - (vehicleLength / 2 + otherVehicleLength / 2)) {
-			// 				return false;
-			// 			}
-			// 		}
-			// 	}
-			// }
+						if (getSpeed(otherVehicle) > 0.0 &&
+								0.5 + safetyDistCoeff * Math.max(0, speed - otherSpeed) > gap) {
+							return false;
+						}
+					}
+				}
+			}
 		}
-
 		return true;
 	}
 
