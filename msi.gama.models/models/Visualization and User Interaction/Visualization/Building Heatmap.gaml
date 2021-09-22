@@ -42,8 +42,8 @@ experiment "Show heatmap" type: gui {
 			species people {
 				draw circle(1) color: #white at: {location.x, location.y};
 			}
-			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 4 (meaning three passes of box blur are being done to "spread" the values)
-			mesh heatmap scale:0.01 color: gradient([#black::0.1, #orange:: 0.5, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth:4 ;
+			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 2 (meaning three passes of box blur are being done to "spread" the values). The colors are provided by a gradient with three stops
+			mesh heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.1, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth: 2 ;
 		}
 		
 
