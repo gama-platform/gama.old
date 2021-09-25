@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Maths
 Bundle-SymbolicName: ummisco.gaml.extensions.maths;singleton:=true
-Bundle-Version: 1.8.1.qualifier
+Bundle-Version: 1.8.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ActivationPolicy: lazy

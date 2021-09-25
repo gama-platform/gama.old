@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>msi.gama</groupId>
 	<artifactId>ummisco.gama.annotations</artifactId>
-	<version>1.8.1-SNAPSHOT</version>
+	<version>1.8.2-SNAPSHOT</version>
 
 	<distributionManagement>
 		<repository>

@@ -9,34 +9,34 @@
    <feature url="features/ummisco.gama.feature.stats_0.0.0.jar" id="ummisco.gama.feature.stats" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core.extensions_1.8.1.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.core.extensions_1.8.2.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.experiment.ui_1.8.1.qualifier.jar" id="ummisco.gama.feature.experiment.ui" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.experiment.ui_1.8.2.qualifier.jar" id="ummisco.gama.feature.experiment.ui" version="0.0.0">
       <category name="gama.ui"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.modeling.ui_1.8.1.qualifier.jar" id="ummisco.gama.feature.modeling.ui" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.modeling.ui_1.8.2.qualifier.jar" id="ummisco.gama.feature.modeling.ui" version="0.0.0">
       <category name="gama.ui"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core.ui_1.8.1.qualifier.jar" id="ummisco.gama.feature.core.ui" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.core.ui_1.8.2.qualifier.jar" id="ummisco.gama.feature.core.ui" version="0.0.0">
       <category name="gama.ui"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core_1.8.1.qualifier.jar" id="ummisco.gama.feature.core" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.core_1.8.2.qualifier.jar" id="ummisco.gama.feature.core" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.network_1.8.1.qualifier.jar" id="ummisco.gama.feature.network" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.network_1.8.2.qualifier.jar" id="ummisco.gama.feature.network" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.serialize_1.8.1.qualifier.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.serialize_1.8.2.qualifier.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core.extensions_1.8.1.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="1.8.1.qualifier">
+   <feature url="features/ummisco.gama.feature.core.extensions_1.8.2.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="1.8.2.qualifier">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.models_1.8.1.qualifier.jar" id="ummisco.gama.feature.models" version="1.8.1.qualifier">
+   <feature url="features/ummisco.gama.feature.models_1.8.2.qualifier.jar" id="ummisco.gama.feature.models" version="1.8.2.qualifier">
       <category name="gama.models"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.dependencies_1.8.1.qualifier.jar" id="ummisco.gama.feature.dependencies" version="1.8.1.qualifier">
+   <feature url="features/ummisco.gama.feature.dependencies_1.8.2.qualifier.jar" id="ummisco.gama.feature.dependencies" version="1.8.2.qualifier">
       <category name="gama.core"/>
    </feature>
    <category-def name="gama.ui" label="UI components of GAMA"/>
