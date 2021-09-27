@@ -1887,20 +1887,4 @@ public class DrivingSkill extends MovingSkill {
 		}
 		setCurrentRoad(driver, null);
 	}
-
-	// TODO: this action is not overridden
-	@action(
-		name = "die",
-		doc = @doc(
-			value = "remove the driving agent from its current road and make it die",
-			examples = { @example("do die") }
-		)
-	)
-	public void primDieWrapper(final IScope scope) throws GamaRuntimeException {
-		AbstractAgent vehicle = (AbstractAgent) getCurrentAgent(scope);
-		if (!vehicle.dead() && getCurrentRoad(vehicle) != null) {
-			unregister(scope, vehicle);
-		}
-		vehicle.primDie(scope);
-	}
 }
