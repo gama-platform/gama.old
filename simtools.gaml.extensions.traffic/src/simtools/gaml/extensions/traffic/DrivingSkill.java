@@ -1170,6 +1170,9 @@ public class DrivingSkill extends MovingSkill {
 					for (OrderedBidiMap<IAgent, Double> vehicleOrderMap : RoadSkill.getVehicleOrdering(otherInRoad)) {
 						// The vehicle closest to the end of the road
 						OrderedBidiMap<Double, IAgent> distMap = vehicleOrderMap.inverseBidiMap();
+						if (distMap.isEmpty()) {
+							continue;
+						}
 						double otherDistToNode = distMap.lastKey();
 						IAgent otherVehicle = distMap.get(otherDistToNode);
 						if (otherVehicle == null || otherVehicle.dead()) {
