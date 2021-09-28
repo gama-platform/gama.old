@@ -696,6 +696,7 @@ public class ParameterExpandBar extends Composite {
 	 */
 	void onResize() {
 		WorkbenchHelper.asyncRun(() -> {
+			if (this.isDisposed()) return;
 			final var rect = getClientArea();
 			final var width = Math.max(0, rect.width - spacing * 2);
 			for (var i = 0; i < itemCount; i++) {

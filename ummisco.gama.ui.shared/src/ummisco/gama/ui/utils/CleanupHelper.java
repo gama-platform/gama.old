@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'CleanupHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * CleanupHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
 import java.util.ArrayList;
@@ -53,12 +52,18 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
+/**
+ * The Class CleanupHelper.
+ */
 public class CleanupHelper {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
+	/**
+	 * Run.
+	 */
 	public static void run() {
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
@@ -79,14 +84,28 @@ public class CleanupHelper {
 
 	}
 
+	/**
+	 * The Class RemoveActivities.
+	 */
 	static class RemoveActivities {
+
+		/**
+		 * Run.
+		 */
 		static void run() {
 			final IWorkbenchActivitySupport was = PlatformUI.getWorkbench().getActivitySupport();
 			was.setEnabledActivityIds(new HashSet<>());
 		}
 	}
 
+	/**
+	 * The Class ForceMaximizeRestoration.
+	 */
 	static class ForceMaximizeRestoration {
+
+		/**
+		 * Run.
+		 */
 		public static void run() {
 
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -140,12 +159,21 @@ public class CleanupHelper {
 		}
 	}
 
+	/**
+	 * The Class RemoveUnwantedActionSets.
+	 */
 	static class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements IStartup */ {
 
+		/** The toolbar action sets to remove. */
 		String[] TOOLBAR_ACTION_SETS_TO_REMOVE = { "org.eclipse", "msi.gama.lang.gaml.Gaml",
 				"org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo" };
+
+		/** The menus to remove. */
 		String[] MENUS_TO_REMOVE = { "org.eclipse.ui.run", "window", "navigate", "project" };
 
+		/**
+		 * Run.
+		 */
 		public static void run() {
 			final RemoveUnwantedActionSets remove = new RemoveUnwantedActionSets();
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -174,7 +202,6 @@ public class CleanupHelper {
 					final IContributionItem[] items = cm.getItems();
 					// We remove all contributions to the toolbar that do not relate to gama
 					for (final IContributionItem item : items) {
-
 						for (final String s1 : TOOLBAR_ACTION_SETS_TO_REMOVE) {
 							if (item.getId().contains(s1)) {
 								try {
@@ -191,17 +218,25 @@ public class CleanupHelper {
 						w.getMenuBarManager().remove(s2);
 						w.getMenuManager().remove(s2);
 					}
-					// Update the tool and menu bars
-					w.getCoolBarManager2().update(true);
 					w.getMenuManager().update(true);
 					w.getMenuBarManager().update(true);
-				} catch (final Exception e) {
-					// remove trace of exceptions
-				}
+					cm.updateAll(true);
+					WorkaroundForIssue3210.run(cm);
+				} catch (final Exception e) {}
 			});
 
 		}
 
+		/**
+		 * Perspective changed.
+		 *
+		 * @param p
+		 *            the p
+		 * @param d
+		 *            the d
+		 * @param c
+		 *            the c
+		 */
 		@Override
 		public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
 			if (IWorkbenchPage.CHANGE_RESET_COMPLETE.equals(c)) { perspectiveActivated(p, d); }
@@ -210,17 +245,25 @@ public class CleanupHelper {
 
 	}
 
+	/**
+	 * The Class RemoveUnwantedWizards.
+	 */
 	static class RemoveUnwantedWizards {
 
+		/** The categories to remove. */
 		private static Set<String> CATEGORIES_TO_REMOVE =
 				new HashSet<>(Arrays.asList("org.eclipse.pde.PDE", "org.eclipse.emf.codegen.ecore.ui.wizardCategory"));
 
+		/** The ids to remove. */
 		private static Set<String> IDS_TO_REMOVE = new HashSet<>(
 				Arrays.asList("org.eclipse.ui.wizards.new.project", "org.eclipse.equinox.p2.replication.import",
 						"org.eclipse.equinox.p2.replication.importfrominstallation",
 						"org.eclipse.team.ui.ProjectSetImportWizard", "org.eclipse.equinox.p2.replication.export",
 						"org.eclipse.team.ui.ProjectSetExportWizard"));
 
+		/**
+		 * Run.
+		 */
 		static void run() {
 			final List<IWizardCategory> cats = new ArrayList<>();
 			AbstractExtensionWizardRegistry r =
@@ -243,6 +286,13 @@ public class CleanupHelper {
 
 		}
 
+		/**
+		 * Gets the all wizards.
+		 *
+		 * @param categories
+		 *            the categories
+		 * @return the all wizards
+		 */
 		static private IWizardDescriptor[] getAllWizards(final IWizardCategory[] categories) {
 			final List<IWizardDescriptor> results = new ArrayList<>();
 			for (final IWizardCategory wizardCategory : categories) {
@@ -255,13 +305,19 @@ public class CleanupHelper {
 
 	}
 
+	/**
+	 * The Class RearrangeMenus.
+	 */
 	static class RearrangeMenus {
 
+		/** The Constant MENU_ITEMS_TO_REMOVE. */
 		public final static Set<String> MENU_ITEMS_TO_REMOVE = new HashSet<>(Arrays.asList("openWorkspace",
 				"helpSearch", "org.eclipse.search.OpenFileSearchPage", "textSearchSubMenu", "reopenEditors",
 				"converstLineDelimitersTo", "org.eclipse.equinox.p2.ui.sdk.update",
 				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails",
 				"org.eclipse.e4.ui.importer.openDirectory.menu"));
+
+		/** The Constant MENU_IMAGES. */
 		public final static Map<String, String> MENU_IMAGES = new HashMap<>() {
 			{
 				put("print", "menu.print2");
@@ -286,6 +342,9 @@ public class CleanupHelper {
 			}
 		};
 
+		/**
+		 * Run.
+		 */
 		public static void run() {
 			WorkbenchHelper.runInUI("Rearranging menus", 0, m -> {
 				final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
@@ -295,8 +354,8 @@ public class CleanupHelper {
 						IMenuManager menu = null;
 						if (item instanceof MenuManager) {
 							menu = (MenuManager) item;
-						} else if ((item instanceof ActionSetContributionItem)
-								&& (((ActionSetContributionItem) item).getInnerItem() instanceof MenuManager)) {
+						} else if (item instanceof ActionSetContributionItem
+								&& ((ActionSetContributionItem) item).getInnerItem() instanceof MenuManager) {
 							menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
 						}
 						if (menu != null) { processItems(menu); }
@@ -308,6 +367,12 @@ public class CleanupHelper {
 
 		}
 
+		/**
+		 * Process items.
+		 *
+		 * @param menu
+		 *            the menu
+		 */
 		private static void processItems(final IMenuManager menu) {
 			// final StringBuilder sb = new StringBuilder();
 			// sb.append("Menu ").append(menu.getId()).append(" :: ");
@@ -328,6 +393,16 @@ public class CleanupHelper {
 			// DEBUG.LOG(sb.toString());
 		}
 
+		/**
+		 * Change icon.
+		 *
+		 * @param menu
+		 *            the menu
+		 * @param item
+		 *            the item
+		 * @param image
+		 *            the image
+		 */
 		private static void changeIcon(final IMenuManager menu, final IContributionItem item,
 				final ImageDescriptor image) {
 			if (item instanceof ActionContributionItem) {

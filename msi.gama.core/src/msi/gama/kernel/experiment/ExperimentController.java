@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ExperimentController.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ExperimentController.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -19,23 +19,45 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ExperimentController.
+ */
 public class ExperimentController implements Runnable, IExperimentController {
 
+	/** The experiment. */
 	private final IExperimentPlan experiment;
+	
+	/** The disposing. */
 	private boolean disposing;
+	
+	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
+	
+	/** The command thread. */
 	public volatile Thread commandThread;
+	
+	/** The running. */
 	protected volatile boolean running = true;
+	
+	/** The scheduler. */
 	private final ExperimentScheduler scheduler;
 
+	/**
+	 * Instantiates a new experiment controller.
+	 *
+	 * @param experiment the experiment
+	 */
 	public ExperimentController(final IExperimentPlan experiment) {
 		this.scheduler = new ExperimentScheduler(experiment);
 		commands = new ArrayBlockingQueue<>(10);
 		this.experiment = experiment;
 	}
 
+	/**
+	 * Launch command thread.
+	 */
 	private void launchCommandThread() {
-		if (commandThread != null) { return; }
+		if (commandThread != null) return;
 		if (experiment.isHeadless()) {
 			commandThread = null;
 		} else {
@@ -47,21 +69,17 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	@Override
-	public boolean isDisposing() {
-		return disposing;
-	}
+	public boolean isDisposing() { return disposing; }
 
 	@Override
-	public IExperimentPlan getExperiment() {
-		return experiment;
-	}
+	public IExperimentPlan getExperiment() { return experiment; }
 
 	@Override
 	public void run() {
 		while (running) {
 			try {
 				final Integer i = commands.take();
-				if (i == null) { throw new InterruptedException("Internal error. Please retry"); }
+				if (i == null) throw new InterruptedException("Internal error. Please retry");
 				processUserCommand(i);
 			} catch (final Exception e) {
 				e.printStackTrace();
@@ -70,8 +88,13 @@ public class ExperimentController implements Runnable, IExperimentController {
 		commandThread = null;
 	}
 
+	/**
+	 * Offer.
+	 *
+	 * @param command the command
+	 */
 	public void offer(final int command) {
-		if (isDisposing()) { return; }
+		if (isDisposing()) return;
 		if (commandThread == null || !commandThread.isAlive()) {
 			processUserCommand(command);
 		} else {
@@ -79,6 +102,11 @@ public class ExperimentController implements Runnable, IExperimentController {
 		}
 	}
 
+	/**
+	 * Process user command.
+	 *
+	 * @param command the command
+	 */
 	protected void processUserCommand(final int command) {
 		final IScope scope = experiment.getExperimentScope();
 		switch (command) {
@@ -92,7 +120,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 						experiment.open();
 					} else {
 						new Thread(() -> experiment.open()).start();
-						;
+
 					}
 				} catch (final Exception e) {
 					DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
@@ -109,7 +137,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				}
 				break;
 			case IExperimentController._PAUSE:
-				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.PAUSED);
+				if (!disposing) { experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.PAUSED); }
 				scheduler.pause();
 				break;
 			case IExperimentController._STEP:
@@ -156,20 +184,20 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	@Override
 	public void userStep() {
-		if (experiment == null) { return; }
+		if (experiment == null) return;
 		offer(IExperimentController._STEP);
 	}
 
 	@Override
 	public void stepBack() {
-		if (experiment == null) { return; }
+		if (experiment == null) return;
 		offer(IExperimentController._BACK);
 	}
 
 	@Override
 	public void userReload() {
 		// TODO Should maybe be done directly (so as to reload immediately)
-		if (experiment == null) { return; }
+		if (experiment == null) return;
 		// GAMA.getGui().openSimulationPerspective(null, null);
 		offer(IExperimentController._RELOAD);
 	}
@@ -206,9 +234,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				running = false;
 				scheduler.dispose();
 				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NONE);
-				if (commandThread != null && commandThread.isAlive()) {
-					commands.offer(-1);
-				}
+				if (commandThread != null && commandThread.isAlive()) { commands.offer(-1); }
 				// DEBUG.OUT("Contoller.dipose END");
 			}
 		}
@@ -228,19 +254,20 @@ public class ExperimentController implements Runnable, IExperimentController {
 		closeExperiment(null);
 	}
 
+	/**
+	 * Close experiment.
+	 *
+	 * @param e the e
+	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
 		// DEBUG.LOG("CloseExperiment : disposing = true");
-		if (e != null) {
-			GAMA.getGui().getStatus(getExperiment().getExperimentScope()).errorStatus(e.getMessage());
-		}
+		if (e != null) { GAMA.getGui().getStatus(getExperiment().getExperimentScope()).errorStatus(e.getMessage()); }
 
 		experiment.dispose(); // will call own dispose() later
 	}
 
 	@Override
-	public ExperimentScheduler getScheduler() {
-		return scheduler;
-	}
+	public ExperimentScheduler getScheduler() { return scheduler; }
 
 }
