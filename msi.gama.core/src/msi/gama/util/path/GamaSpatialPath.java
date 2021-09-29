@@ -492,7 +492,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 						if (!pts.contains(p)) { pts.add(p); }
 					}
 				}
-				if (pts.size() > 0) { shape = GamaGeometryType.buildPolyline(pts); }
+				if (pts.size() > 1) { shape = GamaGeometryType.buildPolyline(pts); }
 			}
 
 		}
