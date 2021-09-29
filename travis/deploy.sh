@@ -32,7 +32,7 @@ function mvn_deploy() {
 	cd -
 }
 
-deploy(){	
+deploy(){
 cd msi.gama.p2updatesite &&
 mvn -U clean install -P p2Repo --settings ../travis/settings.xml && 
 cd -
