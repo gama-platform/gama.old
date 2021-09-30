@@ -96,7 +96,7 @@ import ummisco.gama.ui.parameters.GamaWizardPage;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The all tests running. */
@@ -582,7 +582,7 @@ public class SwtGui implements IGui {
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
 				if (part instanceof IGamaView) {
-					DEBUG.OUT("Closing " + view.getId());
+
 					((IGamaView) part).close(scope);
 				}
 			}
@@ -608,7 +608,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		// DEBUG.OUT("STATE: " + forcedState);
+		DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.commands.ArrangeDisplayViews.java, in plugin ummisco.gama.ui.experiment, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ArrangeDisplayViews.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -41,6 +41,9 @@ import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class ArrangeDisplayViews.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
@@ -48,23 +51,31 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		DEBUG.ON();
 	}
 
+	/** The Constant LAYOUT_KEY. */
 	public static final String LAYOUT_KEY = "msi.gama.displays.layout";
 
+	/** The Constant DISPLAY_INDEX_KEY. */
 	static final String DISPLAY_INDEX_KEY = "GamaIndex";
 
 	@Override
 	public Object execute(final ExecutionEvent e) {
 		final String layout = e.getParameter(LAYOUT_KEY);
 		final int orientation = GamaPreferences.Displays.LAYOUTS.indexOf(layout);
-		execute(orientation);
+		executeInteger(orientation);
 		return true;
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param layout
+	 *            the layout
+	 */
 	@SuppressWarnings ("unchecked")
 	public static void execute(final Object layout) {
 		listDisplayViews();
 		if (layout instanceof Integer) {
-			execute(((Integer) layout).intValue());
+			executeInteger((Integer) layout);
 		} else if (layout instanceof GamaTree) {
 			execute((GamaTree<String>) layout);
 		} else if (layout instanceof GamaNode) {
@@ -74,22 +85,43 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 	}
 
-	public static void execute(final int layout) {
+	/**
+	 * Execute.
+	 *
+	 * @param layout
+	 *            the layout
+	 */
+	public static void executeInteger(final int layout) {
 		execute(new LayoutTreeConverter().convert(layout));
 	}
 
-	private static EPartService getPartService() {
-		return WorkbenchHelper.getService(EPartService.class);
-	}
+	/**
+	 * Gets the part service.
+	 *
+	 * @return the part service
+	 */
+	private static EPartService getPartService() { return WorkbenchHelper.getService(EPartService.class); }
 
-	private static MApplication getApplication() {
-		return WorkbenchHelper.getService(MApplication.class);
-	}
+	/**
+	 * Gets the application.
+	 *
+	 * @return the application
+	 */
+	private static MApplication getApplication() { return WorkbenchHelper.getService(MApplication.class); }
 
-	private static EModelService getModelService() {
-		return WorkbenchHelper.getService(EModelService.class);
-	}
+	/**
+	 * Gets the model service.
+	 *
+	 * @return the model service
+	 */
+	private static EModelService getModelService() { return WorkbenchHelper.getService(EModelService.class); }
 
+	/**
+	 * Execute.
+	 *
+	 * @param tree
+	 *            the tree
+	 */
 	public static void execute(final GamaTree<String> tree) {
 		listDisplayViews();
 		// final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
@@ -102,7 +134,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			}
 			final List<MPlaceholder> holders = listDisplayViews();
 			final MPartStack displayStack = getDisplaysPlaceholder();
-			if (displayStack == null) { return; }
+			if (displayStack == null) return;
 			displayStack.setToBeRendered(true);
 			final MElementContainer<?> root = displayStack.getParent();
 			hideDisplays(displayStack, holders);
@@ -114,30 +146,53 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 	}
 
+	/**
+	 * Activate displays.
+	 *
+	 * @param holders
+	 *            the holders
+	 * @param focus
+	 *            the focus
+	 */
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
-		holders.forEach((ph) -> {
+		holders.forEach(ph -> {
 			getPartService().bringToTop((MPart) ph.getRef());
 			getPartService().activate((MPart) ph.getRef(), focus);
-
 		});
 	}
 
+	/**
+	 * Gets the displays placeholder.
+	 *
+	 * @return the displays placeholder
+	 */
 	public static MPartStack getDisplaysPlaceholder() {
 		final Object displayStack = getModelService().find("displays", getApplication());
 		// DEBUG.OUT("Element displays found : " + displayStack);
 		return displayStack instanceof MPartStack ? (MPartStack) displayStack : null;
 	}
 
+	/**
+	 * Show displays.
+	 *
+	 * @param root
+	 *            the root
+	 * @param holders
+	 *            the holders
+	 */
 	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
 		decorateDisplays();
-		holders.forEach((ph) -> {
+		holders.forEach(ph -> {
 			ph.setVisible(true);
 			ph.setToBeRendered(true);
 		});
 		activateDisplays(holders, true);
 	}
 
+	/**
+	 * Decorate displays.
+	 */
 	public static void decorateDisplays() {
 		WorkbenchHelper.getDisplayViews().forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
@@ -157,10 +212,18 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		});
 	}
 
+	/**
+	 * Hide displays.
+	 *
+	 * @param displayStack
+	 *            the display stack
+	 * @param holders
+	 *            the holders
+	 */
 	public static void hideDisplays(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		final MElementContainer<MUIElement> parent = displayStack.getParent();
 		parent.setVisible(false);
-		holders.forEach((ph) -> {
+		holders.forEach(ph -> {
 			ph.setVisible(false);
 			displayStack.getChildren().add(ph);
 		});
@@ -174,31 +237,38 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 	}
 
-	static boolean isPartOfLayout(final MUIElement e) {
-		return e.getTransientData().containsKey(LAYOUT);
-	}
-
+	/**
+	 * Process.
+	 *
+	 * @param uiRoot
+	 *            the ui root
+	 * @param treeRoot
+	 *            the tree root
+	 * @param holders
+	 *            the holders
+	 */
 	public static void process(final MElementContainer uiRoot, final GamaNode<String> treeRoot,
 			final List<MPlaceholder> holders) {
 		final String data = treeRoot.getData();
 		final String weight = String.valueOf(treeRoot.getWeight());
 		// DEBUG.OUT("Processing " + data + " with weight " + weight);
-		final Boolean dir = !data.equals(HORIZONTAL) && !data.equals(VERTICAL) ? null : data.equals(HORIZONTAL);
+		final Boolean dir = !HORIZONTAL.equals(data) && !VERTICAL.equals(data) ? null : HORIZONTAL.equals(data);
 		final MPlaceholder holder = StreamEx.of(holders)
 				.findFirst(h -> h.getTransientData().get(DISPLAY_INDEX_KEY).equals(data)).orElse(null);
 		final MElementContainer container = create(uiRoot, weight, dir);
 		if (holder != null) {
-			if (container.equals(uiRoot)) {
-				holder.setContainerData(weight);
-			}
+			if (container.equals(uiRoot)) { holder.setContainerData(weight); }
 			container.getChildren().add(holder);
 		} else {
-			for (final GamaNode<String> node : treeRoot.getChildren()) {
-				process(container, node, holders);
-			}
+			for (final GamaNode<String> node : treeRoot.getChildren()) { process(container, node, holders); }
 		}
 	}
 
+	/**
+	 * List display views.
+	 *
+	 * @return the list
+	 */
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
 				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
@@ -215,21 +285,26 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		return holders;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param root
+	 *            the root
+	 * @param weight
+	 *            the weight
+	 * @param dir
+	 *            the dir
+	 * @return the m element container
+	 */
 	static MElementContainer create(final MElementContainer root, final String weight, final Boolean dir) {
-		if (dir == null) { // stacks cannot be stacked
-			if (root instanceof MPartStack && isPartOfLayout(root)) { return root; }
-		}
-		if (dir == null && (root instanceof MPartStack || !PerspectiveHelper.keepTabs())) { return root; }
+		if (dir == null && root instanceof MPartStack && root.getTransientData().containsKey(LAYOUT)) return root;
+		if (dir == null && (root instanceof MPartStack || !PerspectiveHelper.keepTabs())) return root;
 		final MElementContainer c = dir != null ? INSTANCE.createPartSashContainer() : INSTANCE.createPartStack();
 		c.getTransientData().put("Dynamic", true);
 		c.getTransientData().put(LAYOUT, true);
 		c.setContainerData(weight);
-		if (dir != null) {
-			((MPartSashContainer) c).setHorizontal(dir);
-		}
-		if (root != null) {
-			root.getChildren().add(c);
-		}
+		if (dir != null) { ((MPartSashContainer) c).setHorizontal(dir); }
+		if (root != null) { root.getChildren().add(c); }
 		return c;
 	}
 

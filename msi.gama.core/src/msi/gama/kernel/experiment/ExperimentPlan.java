@@ -406,13 +406,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			experimentOutputs = null;
 		}
 		parameters.clear();
-
+		GAMA.releaseScope(myScope);
 		// FIXME Should be put somewhere around here, but probably not here
 		// exactly.
 		// ProjectionFactory.reset();
 
 		super.dispose();
 		// DEBUG.LOG("ExperimentPlan.dipose END");
+		// Addition 2021
+
 	}
 
 	/**

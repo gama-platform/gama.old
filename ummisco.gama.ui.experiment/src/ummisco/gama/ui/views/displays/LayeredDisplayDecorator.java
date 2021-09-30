@@ -472,18 +472,33 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		} catch (final Exception e) {
 
 		}
-		if (keyAndMouseListener != null) { keyAndMouseListener.dispose(); }
-		if (overlay != null) { overlay.close(); }
+		if (keyAndMouseListener != null) {
+			keyAndMouseListener.dispose();
+			keyAndMouseListener = null;
+		}
+		if (overlay != null) {
+			overlay.close();
+			overlay = null;
+		}
 
-		if (menuManager != null) { menuManager.disposeMenu(); }
-		menuManager = null;
-		toolbar = null;
+		if (menuManager != null) {
+			menuManager.disposeMenu();
+			menuManager = null;
+		}
+		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.dispose();
+			toolbar = null;
+		}
+
 		fs = null;
 		tp = null;
 		sidePanel = null;
 		normalParentOfFullScreenControl = null;
-		if (fullScreenShell != null && !fullScreenShell.isDisposed()) { fullScreenShell.dispose(); }
-		fullScreenShell = null;
+		if (fullScreenShell != null && !fullScreenShell.isDisposed()) {
+			fullScreenShell.dispose();
+			fullScreenShell = null;
+		}
+
 	}
 
 	@Override

@@ -315,6 +315,7 @@ public class LayeredDisplayData {
 	 */
 	public void dispose() {
 		GamaPreferences.Displays.CORE_HIGHLIGHT.removeChangeListener(highlightListener);
+		listeners.clear();
 	}
 
 	/**

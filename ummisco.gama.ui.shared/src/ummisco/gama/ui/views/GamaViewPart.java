@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -52,24 +52,24 @@ public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The outputs. */
 	public final List<IDisplayOutput> outputs = new ArrayList<>();
-	
+
 	/** The parent. */
 	private Composite parent;
-	
+
 	/** The toolbar. */
 	protected GamaToolbar2 toolbar;
-	
+
 	/** The update job. */
 	private GamaUIJob updateJob;
-	
+
 	/** The toolbar updater. */
 	private StateListener toolbarUpdater;
-	
+
 	/** The root composite. */
 	private Composite rootComposite;
 
@@ -77,15 +77,15 @@ public abstract class GamaViewPart extends ViewPart
 	 * The Enum UpdatePriority.
 	 */
 	public enum UpdatePriority {
-		
+
 		/** The high. */
-		HIGH, 
- /** The low. */
- LOW, 
- /** The highest. */
- HIGHEST, 
- /** The lowest. */
- LOWEST;
+		HIGH,
+		/** The low. */
+		LOW,
+		/** The highest. */
+		HIGHEST,
+		/** The lowest. */
+		LOWEST;
 	}
 
 	/**
@@ -142,7 +142,17 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void updateToolbarState() {
 		if (toolbarUpdater != null) { toolbarUpdater.updateToReflectState(); }
-		toolbar.visuallyUpdate();
+		if (toolbar != null && toolbar.isVisible()) { toolbar.visuallyUpdate(); }
+	}
+
+	@Override
+	public void showToolbar() {
+		if (toolbar != null) { toolbar.show(); }
+	}
+
+	@Override
+	public void hideToolbar() {
+		if (toolbar != null) { toolbar.hide(); }
 	}
 
 	@Override
@@ -211,8 +221,10 @@ public abstract class GamaViewPart extends ViewPart
 	/**
 	 * Contains point.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 * @return true, if successful
 	 */
 	public boolean containsPoint(final int x, final int y) {
@@ -244,7 +256,8 @@ public abstract class GamaViewPart extends ViewPart
 	/**
 	 * Own create part control.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	public abstract void ownCreatePartControl(Composite parent);
 
@@ -333,7 +346,7 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void close(final IScope scope) {
-
+		DEBUG.OUT("Closing " + this.getPartName());
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				WorkbenchHelper.hideView(GamaViewPart.this);
@@ -366,10 +379,14 @@ public abstract class GamaViewPart extends ViewPart
 	/**
 	 * Overlay.
 	 *
-	 * @param str the str
-	 * @param over the over
-	 * @param s the s
-	 * @param e the e
+	 * @param str
+	 *            the str
+	 * @param over
+	 *            the over
+	 * @param s
+	 *            the s
+	 * @param e
+	 *            the e
 	 * @return the string
 	 */
 	// To avoid a dependency towards apache.commons.lang
@@ -409,7 +426,8 @@ public abstract class GamaViewPart extends ViewPart
 	/**
 	 * Sets the parent composite.
 	 *
-	 * @param parent the new parent composite
+	 * @param parent
+	 *            the new parent composite
 	 */
 	public void setParentComposite(final Composite parent) { this.parent = parent; }
 

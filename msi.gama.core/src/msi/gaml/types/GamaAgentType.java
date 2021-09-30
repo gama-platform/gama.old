@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaAgentType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaAgentType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,8 +29,21 @@ import msi.gaml.species.ISpecies;
 @SuppressWarnings ("unchecked")
 public class GamaAgentType extends GamaType<IAgent> {
 
+	/** The species. */
 	SpeciesDescription species;
 
+	/**
+	 * Instantiates a new gama agent type.
+	 *
+	 * @param species
+	 *            the species
+	 * @param name
+	 *            the name
+	 * @param speciesId
+	 *            the species id
+	 * @param base
+	 *            the base
+	 */
 	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId,
 			final Class<IAgent> base) {
 		this.species = species;
@@ -47,19 +60,17 @@ public class GamaAgentType extends GamaType<IAgent> {
 		// Hack to circumvent issue #1999. Should be better handled by
 		// letting type managers of comodels inherit from the type managers
 		// of imported models.
-		if (!assignable && (t.isAgentType() && t.getSpecies() == getSpecies())) return true;
+		if (!assignable && t.isAgentType() && t.getSpecies() == getSpecies()) return true;
 		return assignable;
 	}
 
 	@Override
-	public String getDefiningPlugin() {
-		return species.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return species.getDefiningPlugin(); }
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) return null;
+		if (obj == null || scope == null || scope.getModel() == null) return null;
 		ISpecies species = (ISpecies) param;
 		if (species == null) { species = scope.getModel().getSpecies(this.species.getName()); }
 		if (species == null) return (IAgent) Types.AGENT.cast(scope, obj, param, copy);
@@ -71,24 +82,16 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IAgent getDefault() {
-		return null;
-	}
+	public IAgent getDefault() { return null; }
 
 	@Override
-	public boolean isAgentType() {
-		return true;
-	}
+	public boolean isAgentType() { return true; }
 
 	@Override
-	public String getSpeciesName() {
-		return name;
-	}
+	public String getSpeciesName() { return name; }
 
 	@Override
-	public SpeciesDescription getSpecies() {
-		return species;
-	}
+	public SpeciesDescription getSpecies() { return species; }
 
 	@Override
 	public boolean canCastToConst() {
@@ -107,23 +110,15 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public String getSupportName() {
-		return ", type of agents instances of species " + species.getName();
-	}
+	public String getSupportName() { return ", type of agents instances of species " + species.getName(); }
 
 	@Override
-	public IType<String> getKeyType() {
-		return Types.STRING;
-	}
+	public IType<String> getKeyType() { return Types.STRING; }
 
 	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	public boolean isFixedLength() { return false; }
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 }

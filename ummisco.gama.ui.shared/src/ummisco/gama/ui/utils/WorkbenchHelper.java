@@ -24,7 +24,6 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -33,7 +32,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Monitor;
@@ -561,16 +559,6 @@ public class WorkbenchHelper {
 
 		};
 		job.schedule(scheduleTime);
-	}
-
-	/**
-	 * Gets the main toolbar.
-	 *
-	 * @return the main toolbar
-	 */
-	public static CoolBar getMainToolbar() {
-		CoolBarManager toolbarManager = getWindow().getCoolBarManager();
-		return toolbarManager.getControl();
 	}
 
 }
