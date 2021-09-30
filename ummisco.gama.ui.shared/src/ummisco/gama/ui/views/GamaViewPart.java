@@ -73,6 +73,9 @@ public abstract class GamaViewPart extends ViewPart
 	/** The root composite. */
 	private Composite rootComposite;
 
+	/** The closing. */
+	protected volatile boolean closing;
+
 	/**
 	 * The Enum UpdatePriority.
 	 */
@@ -346,6 +349,8 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void close(final IScope scope) {
+		if (closing) return;
+		closing = true;
 		DEBUG.OUT("Closing " + this.getPartName());
 		WorkbenchHelper.asyncRun(() -> {
 			try {
