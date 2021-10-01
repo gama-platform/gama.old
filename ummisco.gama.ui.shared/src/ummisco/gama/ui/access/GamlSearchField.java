@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlSearchField.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlSearchField.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.access;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -61,37 +60,69 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class GamlSearchField.
+ */
 public class GamlSearchField {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The shell. */
 	Shell shell;
+
+	/** The text. */
 	protected Text text;
+
+	/** The instance. */
 	public static GamlSearchField INSTANCE;
 
+	/** The quick access contents. */
 	GamlAccessContents quickAccessContents;
 
+	/** The dialog height. */
 	int dialogHeight = -1;
+
+	/** The dialog width. */
 	int dialogWidth = -1;
+
+	/** The previous focus control. */
 	Control previousFocusControl;
+
+	/** The composite. */
 	// private GamaToolbarSimple toolbar;
 	private Composite composite;
+
+	/** The table. */
 	Table table;
 
+	/** The selected string. */
 	String selectedString = ""; //$NON-NLS-1$
+
+	/** The accessible listener. */
 	private AccessibleAdapter accessibleListener;
+
+	/** The commands installed. */
 	private boolean commandsInstalled;
 
+	/**
+	 * Instantiates a new gaml search field.
+	 */
 	private GamlSearchField() {}
 
-	public Text getText() {
-		return text;
-	}
+	/**
+	 * Gets the text.
+	 *
+	 * @return the text
+	 */
+	public Text getText() { return text; }
 
+	/**
+	 * Hook up commands.
+	 */
 	void hookUpCommands() {
-		if (commandsInstalled) { return; }
+		if (commandsInstalled) return;
 		commandsInstalled = true;
 		final IFocusService focus = WorkbenchHelper.getService(IFocusService.class);
 		focus.addFocusTracker(text, GamlSearchField.class.getName());
@@ -140,6 +171,13 @@ public class GamlSearchField {
 		}, focusExpr);
 	}
 
+	/**
+	 * Creates the widget.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @return the control
+	 */
 	public Control createWidget(final Composite parent) {
 		composite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).extendedMargins(0, 5, 5, 5).numColumns(2)
@@ -160,7 +198,7 @@ public class GamlSearchField {
 			}
 
 			private void closeDropDown() {
-				if (shell == null || shell.isDisposed() || text.isDisposed() || !shell.isVisible()) { return; }
+				if (shell == null || shell.isDisposed() || text.isDisposed() || !shell.isVisible()) return;
 				quickAccessContents.doClose();
 			}
 		});
@@ -180,12 +218,11 @@ public class GamlSearchField {
 
 			@Override
 			protected void handleElementSelected(final String text, final GamlAccessEntry entry) {
-				if (entry == null) { return; }
+				if (entry == null) return;
 				final IGamlDescription element = entry.element;
 				final String cat = entry.getSearchCategory();
 				final String name = element.getName();
-				final String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
-				// String search = "http://gama-platform.org/search?tag=" + cat + "&title=" + name;
+				final String search = "https://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// DEBUG.OUT("Search phrase: " + search);
 				WebHelper.openPage(search);
 
@@ -206,19 +243,13 @@ public class GamlSearchField {
 			}
 
 			@Override
-			public Shell getControllingShell() {
-				return shell;
-			}
+			public Shell getControllingShell() { return shell; }
 
 			@Override
-			public Point getAbsoluteOrigin() {
-				return shell.toDisplay(0, shell.getSize().y);
-			}
+			public Point getAbsoluteOrigin() { return shell.toDisplay(0, shell.getSize().y); }
 
 			@Override
-			public int getPopupWidth() {
-				return table.getSize().x;
-			}
+			public int getPopupWidth() { return table.getSize().x; }
 
 		};
 		quickAccessContents.hookFilterText(text);
@@ -256,30 +287,32 @@ public class GamlSearchField {
 				layoutShell();
 				addAccessibleListener();
 			}
-			if (wasVisible && !nowVisible) {
-				removeAccessibleListener();
-			}
-			if (nowVisible) {
-				notifyAccessibleTextChanged();
-			}
+			if (wasVisible && !nowVisible) { removeAccessibleListener(); }
+			if (nowVisible) { notifyAccessibleTextChanged(); }
 			shell.setVisible(nowVisible);
 		});
 		text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(final KeyEvent e) {
-				if (e.keyCode == SWT.ESC) {
-					text.setText(""); //$NON-NLS-1$
-					if (previousFocusControl != null && !previousFocusControl.isDisposed()) {
-						previousFocusControl.setFocus();
-					}
-				} else if (e.keyCode == SWT.ARROW_UP) {
-					// Windows moves caret left/right when pressing up/down,
-					// avoid this as the table selection changes for up/down
-					e.doit = false;
-				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					e.doit = false;
+				switch (e.keyCode) {
+					case SWT.ESC:
+						text.setText(""); //$NON-NLS-1$
+						if (previousFocusControl != null && !previousFocusControl.isDisposed()) {
+							previousFocusControl.setFocus();
+						}
+						break;
+					case SWT.ARROW_UP:
+						// Windows moves caret left/right when pressing up/down,
+						// avoid this as the table selection changes for up/down
+						e.doit = false;
+						break;
+					case SWT.ARROW_DOWN:
+						e.doit = false;
+						break;
+					default:
+						break;
 				}
-				if (e.doit == false) {
+				if (!e.doit) {
 					// arrow key pressed
 					notifyAccessibleTextChanged();
 				}
@@ -289,6 +322,13 @@ public class GamlSearchField {
 		return composite;
 	}
 
+	/**
+	 * Creates the text.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @return the text
+	 */
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final String message = "GAML reference (" + GamaKeyBindings.SEARCH_STRING + ")";
@@ -308,7 +348,7 @@ public class GamlSearchField {
 		for (final Monitor current : monitors) {
 			final Rectangle clientArea = current.getClientArea();
 
-			if (clientArea.contains(toFind)) { return current; }
+			if (clientArea.contains(toFind)) return current;
 
 			final int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
 			if (distance < closest) {
@@ -331,13 +371,9 @@ public class GamlSearchField {
 		final Monitor mon = getClosestMonitor(display, topLeft);
 		final Rectangle bounds = mon.getClientArea();
 
-		if (result.height > bounds.height) {
-			result.height = bounds.height;
-		}
+		if (result.height > bounds.height) { result.height = bounds.height; }
 
-		if (result.width > bounds.width) {
-			result.width = bounds.width;
-		}
+		if (result.width > bounds.width) { result.width = bounds.width; }
 
 		result.x = Math.max(bounds.x, Math.min(result.x, bounds.x + bounds.width - result.width));
 		result.y = Math.max(bounds.y, Math.min(result.y, bounds.y + bounds.height - result.height));
@@ -345,6 +381,9 @@ public class GamlSearchField {
 		return result;
 	}
 
+	/**
+	 * Layout shell.
+	 */
 	void layoutShell() {
 		final Display display = text.getDisplay();
 		final Rectangle tempBounds = text.getBounds();
@@ -366,6 +405,12 @@ public class GamlSearchField {
 		shell.layout();
 	}
 
+	/**
+	 * Activate.
+	 *
+	 * @param previousFocusControl
+	 *            the previous focus control
+	 */
 	public void activate(final Control previousFocusControl) {
 		this.previousFocusControl = previousFocusControl;
 		if (!shell.isVisible()) {
@@ -431,12 +476,15 @@ public class GamlSearchField {
 	 * Notifies <code>org.eclipse.swt.accessibility.Accessible<code> object that selected item has been changed.
 	 */
 	void notifyAccessibleTextChanged() {
-		if (table.getSelection().length == 0) { return; }
+		if (table.getSelection().length == 0) return;
 		final TableItem item = table.getSelection()[0];
 		selectedString = NLS.bind("{0}: {1}", item.getText(0), item.getText(1));
 		text.getAccessible().sendEvent(ACC.EVENT_NAME_CHANGED, null);
 	}
 
+	/**
+	 * Search.
+	 */
 	public void search() {
 		final IWorkbenchPart part = WorkbenchHelper.getActivePart();
 		if (part instanceof IEditorPart) {
@@ -459,6 +507,13 @@ public class GamlSearchField {
 
 	}
 
+	/**
+	 * Install on.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @return the control
+	 */
 	public static Control installOn(final Composite parent) {
 		INSTANCE = new GamlSearchField();
 		return INSTANCE.createWidget(parent);
