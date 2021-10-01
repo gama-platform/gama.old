@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.NumberVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * NumberVariable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -93,12 +93,12 @@ import msi.gaml.types.IType;
 						name = IKeyword.MIN,
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
 						optional = true,
-						doc = @doc ("The minimum value this attribute can take")),
+						doc = @doc ("The minimum value this attribute can take. The value will be automatically clamped if it is lower.")),
 				@facet (
 						name = IKeyword.MAX,
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
 						optional = true,
-						doc = @doc ("The maximum value this attribute can take. ")),
+						doc = @doc ("The maximum value this attribute can take. The value will be automatically clampled if it is higher.")),
 				@facet (
 						name = IKeyword.STEP,
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
@@ -116,14 +116,27 @@ import msi.gaml.types.IType;
 		concept = { IConcept.ATTRIBUTE, IConcept.ARITHMETIC })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc ("Allows to declare an attribute of a species or experiment")
+@doc ("Allows to declare an attribute of a species or experiment; this type of attributes accepts "
+		+ "min:, max: and step: facets, automatically clamping the value if it is lower than min or higher than max.")
 public class NumberVariable<T extends Comparable, Step extends Comparable> extends Variable {
 
 	/** The max. */
 	private final IExpression min, max, step;
+
+	/** The max val. */
 	private T minVal, maxVal;
+
+	/** The step val. */
 	private Step stepVal;
 
+	/**
+	 * Instantiates a new number variable.
+	 *
+	 * @param sd
+	 *            the sd
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("unchecked")
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -204,6 +217,19 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 
 	}
 
+	/**
+	 * Check min max.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param f
+	 *            the f
+	 * @return the integer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
 		if (min != null) {
 			final Integer m =
@@ -218,6 +244,19 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		return f;
 	}
 
+	/**
+	 * Check min max.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param f
+	 *            the f
+	 * @return the double
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
 		if (min != null) {
 			final Double fmin =
@@ -232,6 +271,19 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		return f;
 	}
 
+	/**
+	 * Check min max.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param f
+	 *            the f
+	 * @return the gama point
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected GamaPoint checkMinMax(final IAgent agent, final IScope scope, final GamaPoint f)
 			throws GamaRuntimeException {
 		if (f == null) return null;
@@ -248,6 +300,19 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		return f;
 	}
 
+	/**
+	 * Check min max.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param f
+	 *            the f
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected GamaDate checkMinMax(final IAgent agent, final IScope scope, final GamaDate f)
 			throws GamaRuntimeException {
 		if (f == null) return null;
