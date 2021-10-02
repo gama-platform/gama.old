@@ -1,5 +1,8 @@
 package msi.gama.util.file;
 
+import javax.imageio.ImageReader;
+import javax.imageio.event.IIOReadProgressListener;
+
 import org.geotools.util.SimpleInternationalString;
 import org.opengis.util.InternationalString;
 import org.opengis.util.ProgressListener;
@@ -9,20 +12,18 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-class ProgressCounter implements ProgressListener {
+public class ProgressCounter implements ProgressListener, IIOReadProgressListener {
 
 	final IScope scope;
 	final String name;
 	float progress;
 
-	ProgressCounter(final IScope scope, final String name) {
+	public ProgressCounter(final IScope scope, final String name) {
 		this.scope = scope;
 		this.name = name;
 	}
 
-	IStatusDisplayer getDisplayer() {
-		return scope.getGui().getStatus(scope);
-	}
+	IStatusDisplayer getDisplayer() { return scope.getGui().getStatus(scope); }
 
 	@Override
 	public void complete() {
@@ -40,19 +41,13 @@ class ProgressCounter implements ProgressListener {
 	}
 
 	@Override
-	public float getProgress() {
-		return progress;
-	}
+	public float getProgress() { return progress; }
 
 	@Override
-	public InternationalString getTask() {
-		return new SimpleInternationalString(name);
-	}
+	public InternationalString getTask() { return new SimpleInternationalString(name); }
 
 	@Override
-	public boolean isCanceled() {
-		return scope.interrupted();
-	}
+	public boolean isCanceled() { return scope.interrupted(); }
 
 	@Override
 	public void progress(final float p) {
@@ -76,6 +71,42 @@ class ProgressCounter implements ProgressListener {
 	@Override
 	public void warningOccurred(final String source, final String location, final String warning) {
 		GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.warning(warning, scope), false);
+	}
+
+	@Override
+	public void sequenceStarted(final ImageReader source, final int minIndex) {}
+
+	@Override
+	public void sequenceComplete(final ImageReader source) {}
+
+	@Override
+	public void imageStarted(final ImageReader source, final int imageIndex) {
+		getDisplayer().beginSubStatus(name.toString());
+	}
+
+	@Override
+	public void imageProgress(final ImageReader source, final float percentageDone) {
+		progress(percentageDone);
+	}
+
+	@Override
+	public void imageComplete(final ImageReader source) {
+		getDisplayer().setSubStatusCompletion(1d);
+		getDisplayer().endSubStatus(name.toString());
+	}
+
+	@Override
+	public void thumbnailStarted(final ImageReader source, final int imageIndex, final int thumbnailIndex) {}
+
+	@Override
+	public void thumbnailProgress(final ImageReader source, final float percentageDone) {}
+
+	@Override
+	public void thumbnailComplete(final ImageReader source) {}
+
+	@Override
+	public void readAborted(final ImageReader source) {
+		getDisplayer().endSubStatus(name.toString());
 	}
 
 }

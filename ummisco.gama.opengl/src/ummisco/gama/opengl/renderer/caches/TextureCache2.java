@@ -137,7 +137,8 @@ public class TextureCache2 implements ITextureCache {
 		if (file == null) return null;
 		Texture texture = null;
 		if (isAnimated || !useCache) {
-			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true);
+			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true, null
+			/* new ProgressCounter(GAMA.getRuntimeScope(), file.getName()) */);
 			texture = volatileTextures.getUnchecked(image);
 
 		} else {
@@ -153,7 +154,8 @@ public class TextureCache2 implements ITextureCache {
 	private Texture buildTexture(final GL gl, final File file) {
 
 		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file,
-				GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true));
+				GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true, null
+		/* new ProgressCounter(GAMA.getRuntimeScope(), file.getName()) */));
 
 		// try {
 		//
