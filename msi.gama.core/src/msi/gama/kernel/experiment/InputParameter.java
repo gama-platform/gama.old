@@ -199,10 +199,10 @@ public class InputParameter extends ParameterAdapter {
 	 * Clamp value.
 	 */
 	private void clamps() {
-		if (min.compareTo(max) > 0) { min = max; }
-		if (min.compareTo(value) > 0) {
+		if (value == null) return;
+		if (min != null && min.compareTo(value) > 0) {
 			value = min;
-		} else if (max.compareTo(value) < 0) { value = max; }
+		} else if (max != null && max.compareTo(value) < 0) { value = max; }
 	}
 
 }
