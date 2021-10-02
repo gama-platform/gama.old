@@ -26,6 +26,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
+import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -69,9 +70,9 @@ public class TextureCache2 implements ITextureCache {
 					!GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.getGL().isNPOTTextureAvailable();
 			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(newValue -> {
 				isNonPowerOf2TexturesAvailable = !newValue && gl.getGL().isNPOTTextureAvailable();
-				AWTTextureIO.setTexRectEnabled(newValue);
+				TextureIO.setTexRectEnabled(newValue);
 			});
-			AWTTextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
+			TextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
 			// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
 		}
 	}
@@ -84,9 +85,7 @@ public class TextureCache2 implements ITextureCache {
 	@Override
 	public void deleteVolatileTextures() {
 		final Collection<Texture> textures = volatileTextures.asMap().values();
-		for (final Texture t : textures) {
-			t.destroy(gl.getGL());
-		}
+		for (final Texture t : textures) { t.destroy(gl.getGL()); }
 		volatileTextures.invalidateAll();
 	}
 
@@ -98,9 +97,7 @@ public class TextureCache2 implements ITextureCache {
 	@Override
 	public void dispose() {
 		deleteVolatileTextures();
-		staticTextures.asMap().forEach((s, t) -> {
-			t.destroy(gl.getGL());
-		});
+		staticTextures.asMap().forEach((s, t) -> { t.destroy(gl.getGL()); });
 		staticTextures.invalidateAll();
 		staticTextures.cleanUp();
 	}
@@ -112,9 +109,7 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	@Override
 	public void processs(final File file) {
-		if (!texturesToProcess.contains(file.getAbsolutePath())) {
-			texturesToProcess.add(file.getAbsolutePath());
-		}
+		if (!texturesToProcess.contains(file.getAbsolutePath())) { texturesToProcess.add(file.getAbsolutePath()); }
 	}
 
 	/*
@@ -124,9 +119,7 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	@Override
 	public void processUnloaded() {
-		for (final String path : texturesToProcess) {
-			getTexture(new File(path), false, true);
-		}
+		for (final String path : texturesToProcess) { getTexture(new File(path), false, true); }
 	}
 
 	/*
@@ -141,7 +134,7 @@ public class TextureCache2 implements ITextureCache {
 
 	@Override
 	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
-		if (file == null) { return null; }
+		if (file == null) return null;
 		Texture texture = null;
 		if (isAnimated || !useCache) {
 			final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true);
@@ -149,10 +142,7 @@ public class TextureCache2 implements ITextureCache {
 
 		} else {
 			try {
-				texture = staticTextures.get(file.getAbsolutePath(), () -> {
-					// DEBUG.OUT("Loading static texture : " + file.getName());
-					return buildTexture(gl.getGL(), file);
-				});
+				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl.getGL(), file));
 			} catch (final ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -162,13 +152,20 @@ public class TextureCache2 implements ITextureCache {
 
 	private Texture buildTexture(final GL gl, final File file) {
 
-		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file, true, true));
+		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file,
+				GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true));
 
 		// try {
-		// final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), file, true, null);
-		// final Texture texture = new Texture(gl, data);
-		// data.flush();
-		// return texture;
+		//
+		// // final TextureData data = TextureIO.newTextureData(gl.getGLProfile(), file, true, null);
+		// // final Texture texture = new Texture(gl, data);
+		// // texture.setMustFlipVertically(false);
+		// // data.flush();
+		// // return texture;
+		// Texture t = TextureIO.newTexture(file, true);
+		// t.setMustFlipVertically(true);
+		//
+		// return t;
 		// } catch (final GLException | IOException e) {
 		// e.printStackTrace();
 		// return null;
