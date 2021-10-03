@@ -97,4 +97,19 @@ public class FLAGS {
 	public static final boolean USE_DELAYED_RESIZE =
 			get("use_delayed_resize", System.getProperty("os.name").contains("Mac"));
 
+	/**
+	 * Used in JOGL displays, esp. ummisco.gama.opengl.view.SWTOpenGLDisplaySurface to create a NEWT window instead of a
+	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.) but so are
+	 * incompatibilities and issues.
+	 *
+	 * As of Sept. 2021:
+	 *
+	 * - mouse and key listeners do not work
+	 *
+	 * - fullscreen does not work
+	 *
+	 * - changing perspective does not work
+	 */
+	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", false);
+
 }
