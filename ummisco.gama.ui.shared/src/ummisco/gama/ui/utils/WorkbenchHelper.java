@@ -424,23 +424,11 @@ public class WorkbenchHelper {
 	 */
 	public static Shell obtainFullScreenShell(final int id) {
 		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
-		int monitorId = id;
-		if (monitorId < 0) { monitorId = 0; }
-		if (monitorId > monitors.length - 1) { monitorId = monitors.length - 1; }
+		int monitorId = Math.min(monitors.length - 1, Math.max(0, id));
 		final Rectangle bounds = monitors[monitorId].getBounds();
-
 		final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
 		fullScreenShell.setBounds(bounds);
-		final FillLayout fl = new FillLayout();
-		fl.marginHeight = 0;
-		fl.marginWidth = 0;
-		fl.spacing = 0;
-		// final GridLayout gl = new GridLayout(1, true);
-		// gl.horizontalSpacing = 0;
-		// gl.marginHeight = 0;
-		// gl.marginWidth = 0;
-		// gl.verticalSpacing = 0;
-		fullScreenShell.setLayout(fl);
+		fullScreenShell.setLayout(new FillLayout());
 		return fullScreenShell;
 	}
 
