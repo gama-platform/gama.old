@@ -67,8 +67,8 @@ jobs:
           name: gama-zip-builds
           path: ./*zip
           
-      outputs:
-        continue_pipeline: ${{ env.CONTINUE }}
+    outputs:
+      continue_pipeline: ${{ env.CONTINUE }}
 
       
   apple-signing:
