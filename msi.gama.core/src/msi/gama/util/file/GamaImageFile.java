@@ -34,7 +34,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -43,7 +42,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -114,9 +112,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		}
 
 		@Override
-		public String getSuffix() {
-			return "" + width + "x" + height + ", " + getShortLabel(type) + "";
-		}
+		public String getSuffix() { return "" + width + "x" + height + ", " + getShortLabel(type) + ""; }
 
 		@Override
 		public void appendSuffix(final StringBuilder sb) {
@@ -131,9 +127,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 			return sb.toString();
 		}
 
-		public int getType() {
-			return type;
-		}
+		public int getType() { return type; }
 
 		@Override
 		public String toPropertyString() {
@@ -165,9 +159,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		}
 
 		@Override
-		protected boolean isPgmFile() {
-			return true;
-		}
+		protected boolean isPgmFile() { return true; }
 
 		/*
 		 * (non-Javadoc)
@@ -212,9 +204,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	}
 
 	@Override
-	public IContainerType getGamlType() {
-		return Types.FILE.of(Types.POINT, Types.INT);
-	}
+	public IContainerType getGamlType() { return Types.FILE.of(Types.POINT, Types.INT); }
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
@@ -222,13 +212,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		// Temporary workaround for pgm files, which can be read by ImageIO but
 		// produce wrong results. See Issue 880.
 		// TODO change this behavior
-		setBuffer(isPgmFile() || getExtension(scope).equals("pgm") ? matrixValueFromPgm(scope, null)
+		setBuffer(isPgmFile() || "pgm".equals(getExtension(scope)) ? matrixValueFromPgm(scope, null)
 				: matrixValueFromImage(scope, null));
 	}
 
-	protected boolean isPgmFile() {
-		return false;
-	}
+	protected boolean isPgmFile() { return false; }
 
 	/*
 	 * (non-Javadoc)
@@ -260,12 +248,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		// if (image == null) {
 		final BufferedImage image;
 		try {
-			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache);
-			if (image == null) throw GamaRuntimeFileException.error("This image format (." + getExtension(scope)
+			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache, null);
+			if (image == null) throw GamaRuntimeException.error("This image format (." + getExtension(scope)
 					+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
 					scope);
 		} catch (final IOException e) {
-			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeFileException.create(e, scope), true);
+			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), true);
 			return null;
 		}
 		// }
@@ -300,9 +288,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		}
 		final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
 		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				matrix.set(scope, i, j, resultingImage.getRGB(i, j));
-			}
+			for (int j = 0; j < ySize; j++) { matrix.set(scope, i, j, resultingImage.getRGB(i, j)); }
 		}
 		return matrix;
 
@@ -313,9 +299,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		final int ySize = getBuffer().getRows(scope);
 		final BufferedImage resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
 		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) {
-				resultingImage.setRGB(i, j, getBuffer().get(scope, i, j));
-			}
+			for (int j = 0; j < ySize; j++) { resultingImage.setRGB(i, j, getBuffer().get(scope, i, j)); }
 		}
 		return resultingImage;
 
@@ -326,7 +310,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			StringTokenizer tok;
 			String str = in.readLine();
-			if (str != null && !str.equals("P2"))
+			if (str != null && !"P2".equals(str))
 				throw new UnsupportedEncodingException("File is not in PGM ascii format");
 			str = in.readLine();
 			if (str == null) return GamaMatrixType.with(scope, 0, preferredSize, Types.INT);
@@ -362,11 +346,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		final String extension = getExtension(scope);
 		String val = null;
 		String geodataFile = getPath(scope).replaceAll(extension, "");
-		if (extension.equals("jpg")) {
+		if ("jpg".equals(extension)) {
 			geodataFile = geodataFile + "jgw";
-		} else if (extension.equals("png")) {
+		} else if ("png".equals(extension)) {
 			geodataFile = geodataFile + "pgw";
-		} else if (extension.equals("tiff") || extension.equals("tif")) {
+		} else if ("tiff".equals(extension) || "tif".equals(extension)) {
 			geodataFile = geodataFile + "tfw";
 			val = "";
 		} else
@@ -386,14 +370,14 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		boolean xNeg = false;
 		boolean yNeg = false;
 		final String extension = getExtension(scope);
-		if (geodataFile != null && !geodataFile.equals("")) {
+		if (geodataFile != null && !"".equals(geodataFile)) {
 			try (final InputStream ips = new FileInputStream(geodataFile);
 					final InputStreamReader ipsr = new InputStreamReader(ips);
 					final BufferedReader in = new BufferedReader(ipsr);) {
 				String line = in.readLine();
 				if (line != null) {
 					final String[] cellSizeXStr = line.split(" ");
-					cellSizeX = Double.valueOf(cellSizeXStr[cellSizeXStr.length - 1]);
+					cellSizeX = Double.parseDouble(cellSizeXStr[cellSizeXStr.length - 1]);
 				}
 				xNeg = cellSizeX < 0;
 				line = in.readLine();
@@ -401,25 +385,25 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 				line = in.readLine();
 				if (line != null) {
 					final String[] cellSizeYStr = line.split(" ");
-					cellSizeY = Double.valueOf(cellSizeYStr[cellSizeYStr.length - 1]);
+					cellSizeY = Double.parseDouble(cellSizeYStr[cellSizeYStr.length - 1]);
 				}
 				yNeg = cellSizeY < 0;
 				line = in.readLine();
 				if (line != null) {
 					final String[] xllcornerStr = line.split(" ");
-					xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
+					xllcorner = Double.parseDouble(xllcornerStr[xllcornerStr.length - 1]);
 				}
 				line = in.readLine();
 				if (line != null) {
 					final String[] yllcornerStr = line.split(" ");
-					yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+					yllcorner = Double.parseDouble(yllcornerStr[yllcornerStr.length - 1]);
 				}
 				isGeoreferenced = true;
 
 			} catch (final Throwable e) {
 				throw GamaRuntimeException.create(e, scope);
 			}
-		} else if (extension.equals("tiff") || extension.equals("tif")) {
+		} else if ("tiff".equals(extension) || "tif".equals(extension)) {
 			final GamaGridFile file = new GamaGridFile(null, this.getPath(scope));
 
 			final Envelope e = file.computeEnvelope(scope);
@@ -455,17 +439,15 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		GamaPoint maxCorner =
 				new GamaPoint(xNeg ? Math.min(x1, x2) : Math.max(x1, x2), yNeg ? Math.min(y1, y2) : Math.max(y1, y2));
 		if (geodataFile != null) {
-			minCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, minCorner).getLocation();
-			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
+			minCorner = Projections.to_GAMA_CRS(scope, minCorner).getLocation();
+			maxCorner = Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
 		return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 
 	}
 
-	public boolean isGeoreferenced() {
-		return isGeoreferenced;
-	}
+	public boolean isGeoreferenced() { return isGeoreferenced; }
 
 	//
 	// public void setImage(final IScope scope, final BufferedImage image2) {
@@ -474,9 +456,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	// // image = image2;
 	// }
 
-	public boolean isAnimated() {
-		return false;
-	}
+	public boolean isAnimated() { return false; }
 
 	@Override
 	public double getNoData(final IScope scope) {

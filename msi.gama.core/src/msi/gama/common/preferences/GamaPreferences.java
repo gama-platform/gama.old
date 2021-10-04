@@ -418,6 +418,9 @@ public class GamaPreferences {
 		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
 				"Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
 				true).in(NAME, RENDERING);
+		public static final Pref<Boolean> OPENGL_USE_IMAGE_CACHE = create("pref_display_use_cache",
+				"Use GAMA image cache when building textures in OpenGL (potentially faster when running several simulations, but uses more memory)",
+				true, IType.BOOL, true).in(NAME, RENDERING);
 
 	}
 
@@ -550,7 +553,7 @@ public class GamaPreferences {
 			final var os = System.getProperty("os.name");
 			if (os.startsWith("Mac"))
 				return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-			else if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
+			if (os.startsWith("Linux")) return "/usr/local/lib/libjri.so";
 			if (os.startsWith("Windows")) return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 			return "";
 		}
@@ -566,9 +569,7 @@ public class GamaPreferences {
 		return prefs.get(key);
 	}
 
-	public static Map<String, Pref<?>> getAll() {
-		return prefs;
-	}
+	public static Map<String, Pref<?>> getAll() { return prefs; }
 
 	public static <T> Pref<T> create(final String key, final String title, final T value, final int type,
 			final boolean inGaml) {

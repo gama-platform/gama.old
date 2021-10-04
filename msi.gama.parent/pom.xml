@@ -432,7 +432,7 @@
 						<!-- <filter> <type>eclipse-plugin</type><id>org.antlr.runtime</id><removeAll/></filter> -->
 						<filter>
 							<type>eclipse-plugin</type>
-							<id>org.apache.ant</id>
+							<id>org.apache.ant</id> 
 							<removeAll />
 						</filter>
 						<filter>
