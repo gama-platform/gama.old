@@ -55,14 +55,14 @@ jobs:
           echo ${{ env.CONTINUE }}
           
       - name: Make zip file
-        if: ${{ env.CONTINUE }}
+        if: env.CONTINUE
         shell: bash
         run: $GITHUB_WORKSPACE/travis/zip_withjdk.sh
         env:
           MSG: ${ github.event.head_commit.message }
 
       - uses: actions/upload-artifact@v2
-        if: ${{ env.CONTINUE }}
+        if: env.CONTINUE
         env:
           working_directory: $GITHUB_WORKSPACE/ummisco.gama.product/target/products
         with:
@@ -75,7 +75,7 @@ jobs:
       
   apple-signing:
     needs: build
-    if: ${{ needs.build.outputs.continue_pipeline }}
+    if: needs.build.outputs.continue_pipeline
     runs-on: macos-11.0
     steps:
       - name: Get every builds
