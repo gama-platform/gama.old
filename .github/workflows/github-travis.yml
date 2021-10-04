@@ -67,7 +67,7 @@ jobs:
           working_directory: /home/runner/work/gama/gama/ummisco.gama.product/target/products/
         with:
           name: gama-zip-builds
-          path: ./**zip
+          path: *zip
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
