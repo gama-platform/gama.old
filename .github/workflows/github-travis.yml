@@ -64,7 +64,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE
         env:
-          working_directory: $GITHUB_WORKSPACE/ummisco.gama.product/target/products
+          working_directory: /home/runner/work/gama/gama/ummisco.gama.product/target/products/
         with:
           name: gama-zip-builds
           path: ./**zip
