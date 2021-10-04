@@ -61,16 +61,15 @@ jobs:
         env:
           MSG: ${ github.event.head_commit.message }
 
-      - name: Check current files
-        run: ls -lah /home/runner/work/gama/gama/ummisco.gama.product/target/products
+      # cf https://github.com/actions/upload-artifact/issues/246
+      - name: Move artefacts to root tree
+        run: mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
 
       - uses: actions/upload-artifact@v2
-        if: env.CONTINUE
-        env:
-          working_directory: /home/runner/work/gama/gama/ummisco.gama.product/target
+        if: env.CONTINUE == 'true'
         with:
           name: gama-zip-builds
-          path: ./products/*zip
+          path: ./Gama*zip
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
