@@ -55,7 +55,7 @@ jobs:
           echo ${{ env.CONTINUE }}
           
       - name: Make zip file
-        if: env.CONTINUE
+        if: env.CONTINUE == 'true'
         shell: bash
         run: $GITHUB_WORKSPACE/travis/zip_withjdk.sh
         env:
@@ -75,7 +75,7 @@ jobs:
       
   apple-signing:
     needs: build
-    if: needs.build.outputs.continue_pipeline
+    if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
     steps:
       - name: Get every builds
