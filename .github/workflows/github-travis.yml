@@ -61,13 +61,16 @@ jobs:
         env:
           MSG: ${ github.event.head_commit.message }
 
+      - name: Check current files
+        run: ls -lah /home/runner/work/gama/gama/ummisco.gama.product/target/products
+
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE
         env:
-          working_directory: /home/runner/work/gama/gama/ummisco.gama.product/target/products/
+          working_directory: /home/runner/work/gama/gama/ummisco.gama.product/target
         with:
           name: gama-zip-builds
-          path: ./*zip
+          path: ./products/*zip
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}

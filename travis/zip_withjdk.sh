@@ -92,9 +92,9 @@ cd ../../../../../../../
 
 
 
-wget $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_linux_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_15.tar.gz"
-wget $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_windows_openj9_15.*.zip\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_15.zip"
-wget $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_mac_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_15.tar.gz"
+wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_linux_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_15.tar.gz"
+wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_windows_openj9_15.*.zip\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_15.zip"
+wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_mac_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_15.tar.gz"
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
