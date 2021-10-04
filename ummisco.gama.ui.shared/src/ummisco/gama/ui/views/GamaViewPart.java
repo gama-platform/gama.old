@@ -145,7 +145,7 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void updateToolbarState() {
 		if (toolbarUpdater != null) { toolbarUpdater.updateToReflectState(); }
-		if (toolbar != null && toolbar.isVisible()) { toolbar.visuallyUpdate(); }
+		// if (toolbar != null && toolbar.isVisible()) { toolbar.visuallyUpdate(); }
 	}
 
 	@Override

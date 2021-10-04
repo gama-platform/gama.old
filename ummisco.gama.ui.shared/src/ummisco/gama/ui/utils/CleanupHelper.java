@@ -221,7 +221,7 @@ public class CleanupHelper {
 					w.getMenuManager().update(true);
 					w.getMenuBarManager().update(true);
 					cm.updateAll(true);
-					WorkaroundForIssue3210.run(cm);
+					// WorkaroundForIssue3210.run(cm);
 				} catch (final Exception e) {}
 			});
 

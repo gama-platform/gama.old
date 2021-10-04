@@ -470,10 +470,10 @@ public class GamaToolbar2 extends Composite {
 	/**
 	 * Visually update.
 	 */
-	public void visuallyUpdate() {
-		GamaToolbarFactory.visuallyUpdate(left);
-		GamaToolbarFactory.visuallyUpdate(right);
-	}
+	// public void visuallyUpdate() {
+	// GamaToolbarFactory.visuallyUpdate(left);
+	// GamaToolbarFactory.visuallyUpdate(right);
+	// }
 
 	/**
 	 * Wipes the toolbar (left or right), including or not the simple tool items. Retuns the width of the toolbar once

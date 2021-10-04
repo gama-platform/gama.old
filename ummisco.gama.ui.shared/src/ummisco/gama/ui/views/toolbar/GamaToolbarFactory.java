@@ -22,8 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -32,7 +30,6 @@ import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class GamaToolbarFactory.
@@ -444,14 +441,20 @@ public class GamaToolbarFactory {
 	 * @param tb
 	 *            the tb
 	 */
-	public static void visuallyUpdate(final ToolBar tb) {
-		WorkbenchHelper.run(() -> {
-			for (ToolItem o : tb.getItems()) { o.setImage(o.getImage()); }
-			tb.layout(true, true);
-			tb.redraw();
-			tb.update();
-		});
+	// public static void visuallyUpdate(final ToolBar tb) {
+	// Not needed anymore in Eclipse 2021-09. See issue #3210
+	// WorkbenchHelper.runInUI("", 0, m -> {
+	// if (tb.isDisposed()) return;
+	// for (ToolItem o : tb.getItems()) {
+	//
+	// o.setImage(o.getImage());
+	//
+	// }
+	// tb.layout(true, true);
+	// tb.redraw();
+	// tb.update();
+	// });
 
-	}
+	// }
 
 }

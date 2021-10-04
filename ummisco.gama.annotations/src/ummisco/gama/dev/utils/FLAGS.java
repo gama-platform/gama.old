@@ -51,7 +51,8 @@ public class FLAGS {
 	 * For debugging purposes, see #3164. True by default until bugs on Linux regarding the use of multiple threads in
 	 * UI processes are solved.
 	 */
-	public static final boolean USE_OLD_ANIMATOR = get("use_old_animator", true);
+	public static final boolean USE_OLD_ANIMATOR =
+			get("use_old_animator", true /* System.getProperty("os.name").contains("Linux") */);
 
 	/**
 	 * Used in LayeredDisplayView. True to use a combination of wait(), notify() and Thread.sleep() for synchronizing
