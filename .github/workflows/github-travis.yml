@@ -97,7 +97,7 @@ jobs:
           working_directory: ${{ github.workspace }}
         run: |
           wget https://raw.githubusercontent.com/gama-platform/gama/$(echo $GITHUB_REF | cut -d'/' -f 3)/ummisco.gama.product/extraresources/entitlements.plist
-          sudo chmod 777 ./artifacts/*
+          plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           ls -lah ./ ./artifacts
 
       - name: Create Keychain
