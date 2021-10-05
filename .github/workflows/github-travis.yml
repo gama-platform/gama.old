@@ -124,8 +124,8 @@ jobs:
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          wget https://raw.githubusercontent.com/gama-platform/gama/$(echo $GITHUB_REF | cut -d'/' -f 3)/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
-          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
+          codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
@@ -154,8 +154,8 @@ jobs:
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          wget https://raw.githubusercontent.com/gama-platform/gama/$(echo $GITHUB_REF | cut -d'/' -f 3)/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
-          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
+          codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
