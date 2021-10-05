@@ -90,48 +90,22 @@ jobs:
 
       - name: Create Keychain
         env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
         run: |
+          # Prepare the keychain
           security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-
-      - name: Set keychain as default
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
           security default-keychain -s build.keychain
-
-      - name: Unlock the keychain
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-
-      - name: Import certificate file
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
-          echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-
-      - name: Import certificate in the keychain
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
-          security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          # Prepare certificate
+          echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
 
       - name: Set key partition
         env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_APP-CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_APP-CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
         run: |
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
