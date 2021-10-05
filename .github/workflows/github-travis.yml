@@ -66,7 +66,6 @@ jobs:
         if: env.CONTINUE == 'true'
         run: |
           mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
-          mv ${{ github.workspace }}/ummisco.gama.product/extraresources/entitlements.plist ${{ github.workspace }}
           mv ${{ github.workspace }}/travis/mac-sign.sh ${{ github.workspace }}
 
       - uses: actions/upload-artifact@v2
@@ -75,7 +74,6 @@ jobs:
           name: gama-zip-builds
           path: |
             ./Gama*zip
-            ./entitlements.plist
             ./mac-sign.sh
           
     outputs:
@@ -95,9 +93,12 @@ jobs:
           name: gama-zip-builds
           path: ./artifacts/
 
-      - run: |
-          sudo chmod 777 ${{ github.workspace }}/artifacts/*
-          ls -lah ${{ github.workspace }}/artifacts
+      - env:
+          working_directory: ${{ github.workspace }}
+        run: |
+          wget https://raw.githubusercontent.com/gama-platform/gama/$(echo $GITHUB_REF | cut -d'/' -f 3)/ummisco.gama.product/extraresources/entitlements.plist
+          sudo chmod 777 ./artifacts/*
+          ls -lah ./ ./artifacts
 
       - name: Create Keychain
         env: 
@@ -130,7 +131,7 @@ jobs:
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          codesign --entitlements "${{ github.workspace }}/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
@@ -159,7 +160,7 @@ jobs:
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          codesign --entitlements "${{ github.workspace }}/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
