@@ -94,7 +94,9 @@ jobs:
           name: gama-zip-builds
           path: ./artifacts/
 
-      - run: ls -lah ${{ github.workspace }}/artifacts
+      - run: |
+          sudo chmod 777 ${{ github.workspace }}/artifacts/*
+          ls -lah ${{ github.workspace }}/artifacts
 
       - name: Create Keychain
         env: 
