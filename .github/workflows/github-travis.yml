@@ -122,16 +122,16 @@ jobs:
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ../artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d .
+          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d .
           # Sign everything inside app
           bash $GITHUB_WORKSPACE/travis/mac-sign.sh
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
-          hdiutil create -srcFolder ./Gama.app -o ../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
-          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
+          hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
+          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
           # Notarize dmg - Based on : https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
           xcrun notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
-          xcrun notarytool submit ../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg --keychain-profile "AC_PASSWORD" --wait
-          xcrun stapler staple "../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg"
+          xcrun notarytool submit ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg --keychain-profile "AC_PASSWORD" --wait
+          xcrun stapler staple "${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg"
 
       - run: |
           rm -fr ${{ github.workspace }}/work
@@ -152,16 +152,16 @@ jobs:
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ../artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d .
+          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d .
           # Sign everything inside app
           bash $GITHUB_WORKSPACE/travis/mac-sign.sh
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
-          hdiutil create -srcFolder ./Gama.app -o ../artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
-          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ../artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
+          hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
+          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           # Notarize dmg - Based on : https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
           xcrun notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
-          xcrun notarytool submit ../artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg --keychain-profile "AC_PASSWORD" --wait
-          xcrun stapler staple "../artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg"
+          xcrun notarytool submit ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg --keychain-profile "AC_PASSWORD" --wait
+          xcrun stapler staple "${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg"
 
       - uses: actions/upload-artifact@v2
         env:
