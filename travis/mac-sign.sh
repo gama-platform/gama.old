@@ -44,6 +44,3 @@ done < jarlist.txt
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --remove-signature -v {} \;
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
-
-# Sign GAMA compiled file
-codesign --entitlements "$GITHUB_WORKSPACE/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama

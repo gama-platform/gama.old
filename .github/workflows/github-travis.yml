@@ -124,14 +124,13 @@ jobs:
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-          # Scripts
-          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
+          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.dmg
@@ -154,14 +153,13 @@ jobs:
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-          # Scripts
-          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
           unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
+          codesign --entitlements "${{ github.workspace }}/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
           hdiutil create -srcFolder ./Gama.app -o ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
