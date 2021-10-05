@@ -90,6 +90,8 @@ jobs:
           name: gama-zip-builds
           path: ./artifacts/
 
+      - run: ls -lah ${{ github.workspace }}/artifacts
+
       - name: Create Keychain
         env: 
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
@@ -103,13 +105,6 @@ jobs:
           # Prepare certificate
           echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-
-      - name: Set key partition
-        env: 
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
 
       - name: Sign Application w/o JDK
@@ -137,6 +132,10 @@ jobs:
           xcrun notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
           xcrun notarytool submit ../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg --keychain-profile "AC_PASSWORD" --wait
           xcrun stapler staple "../artifacts/Gama1.7-macosx.cocoa.x86_64.dmg"
+
+      - run: |
+          rm -fr ${{ github.workspace }}/work
+          mkdir ${{ github.workspace }}/work
 
       - name: Sign Application w/ JDK
         env: 
