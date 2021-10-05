@@ -52,6 +52,7 @@ COMMIT=$(echo $GITHUB_SHA | cut -c1-8)
 timestamp=$(date '+_%D')
 
 SUFFIX=$timestamp'_'$COMMIT'.zip'
+SUFFIX_MAC=$timestamp'_'$COMMIT'.dmg'
 echo $SUFFIX
 
 
@@ -60,8 +61,8 @@ n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
 NEWFILES[$n]='GAMA_1.8.2_Alpha_Linux'$SUFFIX 
 n=1
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_Mac'$SUFFIX
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
+NEWFILES[$n]='GAMA_1.8.2_Alpha_Mac'$SUFFIX_MAC
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA_1.8.2_Alpha_Win'$SUFFIX
@@ -72,8 +73,8 @@ n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Win'$SUFFIX
 n=5
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Mac'$SUFFIX
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
+NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Mac'$SUFFIX_MAC
  
 
 i=0
@@ -128,7 +129,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$COMMIT')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 11+ . Please test and report issues","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$COMMIT')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 15 . Please test and report issues","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
