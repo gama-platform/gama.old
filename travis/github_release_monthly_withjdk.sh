@@ -28,7 +28,6 @@ COMMIT=$@
 
 REPO="gama-platform/gama"
 RELEASE="monthly"
-thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
 
@@ -49,6 +48,7 @@ COMMIT="${COMMIT:0:7}"
 timestamp=$(date '+_%D')
 
 SUFFIX=$timestamp'_'$COMMIT'.zip'
+SUFFIX_MAC=$timestamp'_'$COMMIT'.dmg'
 echo $SUFFIX
 
 
@@ -57,8 +57,8 @@ n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
 NEWFILES[$n]='GAMA1.8_Monthly_Linux'$SUFFIX 
 n=1
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.8_Monthly_Mac'$SUFFIX
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
+NEWFILES[$n]='GAMA1.8_Monthly_Mac'$SUFFIX_MAC
 n=2
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA1.8_Monthly_Win'$SUFFIX
@@ -69,8 +69,8 @@ n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Win'$SUFFIX
 n=5
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Mac'$SUFFIX
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
+NEWFILES[$n]='GAMA1.8_Monthly_withJDK_Mac'$SUFFIX_MAC
  
 
 i=0
