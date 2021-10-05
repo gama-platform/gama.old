@@ -190,6 +190,16 @@ jobs:
           name: gama-signed
           path: ./artifacts/
 
+      - name: Set Travis env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+             echo "[WARNING] Forcing travis version release"
+             echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
+          else
+             echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
+          fi
+          echo $TRAVIS_MSG
+
       - name: Publish to Github
         shell: bash
         run: $GITHUB_WORKSPACE/travis/publish.sh
