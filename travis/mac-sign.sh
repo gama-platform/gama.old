@@ -1,7 +1,5 @@
 #!/bin/bash
 
-IDENTITY=""
-
 function signInJar(){
     local f
 
@@ -23,7 +21,7 @@ function signInJar(){
             cd ".." && rm -fr "_sub"
         else
             codesign --remove-signature -v "$f"
-            codesign --timestamp --force -s "$IDENTITY" -v "$f"
+            codesign --timestamp --force -s "$MACOS_DEV_ID" -v "$f"
             echo "---"
         fi
 
@@ -45,7 +43,7 @@ done < jarlist.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --remove-signature -v {} \;
-find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$IDENTITY" -v {} \;
+find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
 
 # Sign GAMA compiled file
-codesign --entitlements "$GITHUB_WORKSPACE/ummisco.gama.product/extraresources/entitlements.plist" --timestamp --options=runtime --force -s "$IDENTITY" -v ./Gama.app/Contents/MacOS/Gama
+codesign --entitlements "$GITHUB_WORKSPACE/artifacts/entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama

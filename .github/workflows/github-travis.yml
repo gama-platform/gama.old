@@ -63,7 +63,9 @@ jobs:
 
       # cf https://github.com/actions/upload-artifact/issues/246
       - name: Move artefacts to root tree
-        run: mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
+        run: |
+          mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
+          mv ${{ github.workspace }}/ummisco.gama.product/extraresources/entitlements.plist ${{ github.workspace }}
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -120,6 +122,8 @@ jobs:
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          # Scripts
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
@@ -144,6 +148,8 @@ jobs:
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          # Scripts
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
