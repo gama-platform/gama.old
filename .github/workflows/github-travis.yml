@@ -43,9 +43,9 @@ jobs:
         env:
           MSG: ${ github.event.head_commit.message }
 
-      - name: Set Travis env
+      - name: Check if should release version
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event.head_commit.message }}" == "ci" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event.head_commit.message }}" == *"ci"* ]]; then
              echo "The action will continue and create a release"
              echo "CONTINUE=true" >> $GITHUB_ENV
           else
@@ -63,6 +63,7 @@ jobs:
 
       # cf https://github.com/actions/upload-artifact/issues/246
       - name: Move artefacts to root tree
+        if: env.CONTINUE == 'true'
         run: |
           mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
           mv ${{ github.workspace }}/ummisco.gama.product/extraresources/entitlements.plist ${{ github.workspace }}
