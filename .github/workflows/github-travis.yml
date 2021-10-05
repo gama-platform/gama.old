@@ -126,7 +126,7 @@ jobs:
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d .
+          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
@@ -156,7 +156,7 @@ jobs:
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d .
+          unzip -q ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip -d . && rm ${{ github.workspace }}/artifacts/Gama1.7-macosx.cocoa.x86_64_withJDK.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
