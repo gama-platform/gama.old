@@ -169,10 +169,12 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         env:
-          working_directory: ./artifacts
+          working_directory: ${{ github.workspace }}/artifacts
         with:
-          name: gama-zip-builds
-          path: ./Gama*
+          name: gama-signed
+          path: |
+            ./*zip
+            ./*dmg
 
 
   publish-archives:
@@ -180,15 +182,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Set Travis env
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-             echo "[WARNING] Forcing travis version release"
-             echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
-          else
-             echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
-          fi
-          echo $TRAVIS_MSG
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-signed
+          path: ./artifacts/
 
       - name: Publish to Github
         shell: bash
