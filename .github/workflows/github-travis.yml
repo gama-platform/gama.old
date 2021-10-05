@@ -83,7 +83,7 @@ jobs:
   apple-signing:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: macos-11.0
+    runs-on: macos-latest
     steps:
       - name: Get every builds
         run: mkdir ./artifacts
