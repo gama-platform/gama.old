@@ -95,8 +95,11 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
     steps:
-      - name: Get every builds
-        run: mkdir -p ${{ github.workspace }}/artifacts/work
+      - name: Prepare vm
+        run: |
+          # Change XCode version 
+          sudo xcode-select -s "/Applications/Xcode_13.0.app"
+          mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
         with:
@@ -168,8 +171,11 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
     steps:
-      - name: Get every builds
-        run: mkdir -p ${{ github.workspace }}/artifacts/work
+      - name: Prepare vm
+        run: |
+          # Change XCode version 
+          sudo xcode-select -s "/Applications/Xcode_13.0.app"
+          mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
         with:
@@ -206,7 +212,7 @@ jobs:
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
 
-      - name: Packaging signed Application w/o JDK
+      - name: Packaging signed Application w/ JDK
         env: 
           working_directory: ${{ github.workspace }}/artifacts/work
           # Variables
