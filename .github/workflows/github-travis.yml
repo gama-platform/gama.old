@@ -71,10 +71,20 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
         with:
+          name: gama-mac-unsigned
+          path: |
+            ./Gama1.7-macosx*zip
+            ./mac-sign.sh
+
+      - run: rm ./Gama1.7-macosx*zip
+        if: env.CONTINUE == 'true'
+
+      - uses: actions/upload-artifact@v2
+        if: env.CONTINUE == 'true'
+        with:
           name: gama-zip-builds
           path: |
             ./Gama*zip
-            ./mac-sign.sh
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
@@ -90,7 +100,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: gama-zip-builds
+          name: gama-mac-unsigned
           path: ./artifacts/
 
       - name: Create Keychain
@@ -150,6 +160,7 @@ jobs:
         with:
           name: gama-signed
           path: ./Gama1.7-macosx.cocoa.x86_64.dmg
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
       
   apple-signing-w-JDK:
@@ -162,7 +173,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: gama-zip-builds
+          name: gama-mac-unsigned
           path: ./artifacts/
 
       - name: Create Keychain
@@ -222,6 +233,7 @@ jobs:
         with:
           name: gama-signed-jdk
           path: ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
 
   publish-archives:
@@ -249,8 +261,6 @@ jobs:
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
              echo "[WARNING] Forcing travis version release"
              echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
-             # Clean un-signed macos archives got back from first "download-artifact"
-             rm ./Gama1.7-macosx*zip
              # Debug
              ls -lah .
           else
