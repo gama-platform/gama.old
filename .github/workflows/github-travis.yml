@@ -268,8 +268,7 @@ jobs:
       - name: Get travis scripts ready to use
         run: |
           # Get full travis script folder
-          git clone --depth 1 --filter=blob:none --no-checkout https://github.com/gama-platform/gama -b $(echo $GITHUB_REF | cut -d'/' -f 3) && cd gama && git checkout $(echo $GITHUB_REF | cut -d'/' -f 3) -- travis && chmod +x ./travis/*
-          mv ./gama/travis . && rm -fr ./gama
+          git clone --depth 1 --filter=blob:none --no-checkout https://github.com/gama-platform/gama -b $(echo $GITHUB_REF | cut -d'/' -f 3) && cd gama && git checkout $(echo $GITHUB_REF | cut -d'/' -f 3) -- travis && chmod +x ./travis/* && mv ./travis .. && cd .. && rm -fr ./gama
           # Debug
           ls -lah .
 

@@ -20,7 +20,6 @@ function signInJar(){
             signInJar "../$f"
             cd ".." && rm -fr "_sub"
         else
-            codesign --remove-signature -v "$f"
             codesign --timestamp --force -s "$MACOS_DEV_ID" -v "$f"
             echo "---"
         fi
@@ -42,5 +41,4 @@ do
 done < jarlist.txt
 
 # Sign single lib files
-find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --remove-signature -v {} \;
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
