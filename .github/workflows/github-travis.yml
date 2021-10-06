@@ -208,7 +208,7 @@ jobs:
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
           # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
-          hdiutil create -verbose srcFolder ./Gama.app -o ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
+          hdiutil create -verbose -srcFolder ./Gama.app -o ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           codesign -s "$MACOS_DEV_ID" --timestamp -f -v ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
           # Notarize dmg - Based on : https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
           xcrun -v notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
