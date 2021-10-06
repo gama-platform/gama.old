@@ -292,4 +292,4 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           TRAVIS_COMMIT: ${ GITHUB_SHA }
           TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-          thePath: "${{ github.workspace }}/Gama1.7"
+          thePATH: "${{ github.workspace }}/Gama1.7"
