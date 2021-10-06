@@ -240,6 +240,8 @@ jobs:
     needs: [apple-signing-w-jdk, apple-signing-wo-jdk]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      
       # Get zip archives
       - uses: actions/download-artifact@v2
         with:
@@ -268,7 +270,7 @@ jobs:
       - name: Get travis scripts ready to use
         run: |
           # Get full travis script folder
-          git clone --depth 1 --filter=blob:none --no-checkout https://github.com/gama-platform/gama -b $(echo $GITHUB_REF | cut -d'/' -f 3) && cd gama && git checkout $(echo $GITHUB_REF | cut -d'/' -f 3) -- travis && chmod +x ./travis/* && mv ./travis .. && cd .. && rm -fr ./gama
+          chmod +x ./travis/*
           # Debug
           ls -lah .
 
