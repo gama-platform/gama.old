@@ -143,9 +143,10 @@ jobs:
           xcrun -v notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
           xcrun -v notarytool submit ./Gama1.7-macosx.cocoa.x86_64.dmg --keychain-profile "AC_PASSWORD" --wait
           xcrun -v stapler staple ./Gama1.7-macosx.cocoa.x86_64.dmg
-          mv ./Gama1.7-macosx.cocoa.x86_64.dmg ${{ github.workspace }}/artifacts
 
       - uses: actions/upload-artifact@v2
+        env: 
+          working_directory: ${{ github.workspace }}/artifacts/work
         with:
           name: gama-signed
           path: ./Gama1.7-macosx.cocoa.x86_64.dmg
@@ -214,9 +215,10 @@ jobs:
           xcrun -v notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
           xcrun -v notarytool submit ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg --keychain-profile "AC_PASSWORD" --wait
           xcrun -v stapler staple "./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg"
-          mv ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg ${{ github.workspace }}/artifacts
 
       - uses: actions/upload-artifact@v2
+        env: 
+          working_directory: ${{ github.workspace }}/artifacts/work
         with:
           name: gama-signed-jdk
           path: ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
