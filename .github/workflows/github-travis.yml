@@ -240,6 +240,8 @@ jobs:
     needs: [apple-signing-w-jdk, apple-signing-wo-jdk]
     runs-on: ubuntu-latest
     steps:
+      # Get GAMA (only ./travis really wanted)
+      - uses: actions/checkout@v2
 
       # Get zip archives
       - uses: actions/download-artifact@v2
@@ -259,18 +261,23 @@ jobs:
       - name: Set Travis env
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-             echo "[WARNING] Forcing travis version release"
-             echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
-             # Debug
-             ls -lah .
+            echo "[WARNING] Forcing travis version release"
+            echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
           else
-             echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
+            echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
           fi
           echo $TRAVIS_MSG
 
+      - name: 
+        run: |
+          wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/travis/publish.sh
+          # Debug
+          ls -lah .
+
+
       - name: Publish to Github
         shell: bash
-        run: $GITHUB_WORKSPACE/travis/publish.sh
+        run: ./travis/publish.sh
         env:  
           SSH_USER_PWD: ${{ secrets.USER_PWD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
