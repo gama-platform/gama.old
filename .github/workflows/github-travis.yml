@@ -241,7 +241,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       # Get zip archives
       - uses: actions/download-artifact@v2
         with:
@@ -272,7 +272,7 @@ jobs:
           # Get full travis script folder
           chmod +x ./travis/*
           # Debug
-          ls -lah .
+          ls -lah ${{ github.workspace }}
 
 
       - name: Publish to Github
