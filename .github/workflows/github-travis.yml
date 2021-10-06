@@ -80,7 +80,7 @@ jobs:
       continue_pipeline: ${{ env.CONTINUE }}
 
       
-  apple-signing:
+  apple-signing-wo-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
@@ -145,9 +145,39 @@ jobs:
           xcrun -v stapler staple ./Gama1.7-macosx.cocoa.x86_64.dmg
           mv ./Gama1.7-macosx.cocoa.x86_64.dmg ${{ github.workspace }}/artifacts
 
-      - run: |
-          rm -fr ${{ github.workspace }}/artifacts/work
-          mkdir ${{ github.workspace }}/artifacts/work
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gama-signed
+          path: ./Gama1.7-macosx.cocoa.x86_64.dmg
+
+      
+  apple-signing-w-JDK:
+    needs: build
+    if: needs.build.outputs.continue_pipeline == 'true'
+    runs-on: macos-11.0
+    steps:
+      - name: Get every builds
+        run: mkdir -p ${{ github.workspace }}/artifacts/work
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-zip-builds
+          path: ./artifacts/
+
+      - name: Create Keychain
+        env: 
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+        run: |
+          # Prepare the keychain - Based on https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
+          security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
+          # Prepare certificate
+          echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
+          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
 
       - name: Sign Application w/ JDK
         env: 
@@ -187,30 +217,40 @@ jobs:
           mv ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg ${{ github.workspace }}/artifacts
 
       - uses: actions/upload-artifact@v2
-        env:
-          working_directory: ${{ github.workspace }}/artifacts
         with:
-          name: gama-signed
-          path: |
-            ./*zip
-            ./*dmg
+          name: gama-signed-jdk
+          path: ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
 
 
   publish-archives:
-    needs: apple-signing
+    needs: [apple-signing-w-jdk, apple-signing-wo-jdk]
     runs-on: ubuntu-latest
     steps:
 
+      # Get zip archives
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-zip-builds
+
+
+      # Get 2 Mac dmg signed archives
       - uses: actions/download-artifact@v2
         with:
           name: gama-signed
-          path: ./artifacts/
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-signed-jdk
 
       - name: Set Travis env
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
              echo "[WARNING] Forcing travis version release"
              echo "TRAVIS_MSG=ci release" >> $GITHUB_ENV
+             # Clean un-signed macos archives got back from first "download-artifact"
+             rm ./Gama1.7-macosx*zip
+             # Debug
+             ls -lah .
           else
              echo "TRAVIS_MSG=$(echo $github.event.head_commit.message )" >> $GITHUB_ENV
           fi
@@ -228,4 +268,4 @@ jobs:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           TRAVIS_COMMIT: ${ GITHUB_SHA }
           TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-          thePath: "${{ github.workspace }}/artifacts/Gama1.7"
+          thePath: "${{ github.workspace }}/Gama1.7"
