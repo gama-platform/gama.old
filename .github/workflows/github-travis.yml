@@ -276,7 +276,6 @@ jobs:
 
 
       - name: Publish to Github
-        shell: bash
         run: ./travis/publish.sh
         env:  
           SSH_USER_PWD: ${{ secrets.USER_PWD }}

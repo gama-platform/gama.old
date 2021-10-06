@@ -81,7 +81,7 @@ for (( i=0; i<6; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
-	ls -lh "$FILE"
+	ls -lh -- "$FILE"
 	echo "$NFILE"
 done
 
