@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.OpenGL.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * OpenGL.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -81,83 +81,158 @@ import ummisco.gama.ui.utils.DPIHelper;
 public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 		GamaPreferences.Displays.DRAW_ROTATE_HELPER.onChange(v -> SHOULD_DRAW_ROTATION_SPHERE = v);
 	}
 
+	/** The should draw rotation sphere. */
 	private static boolean SHOULD_DRAW_ROTATION_SPHERE = GamaPreferences.Displays.DRAW_ROTATE_HELPER.getValue();
 
+	/** The Constant NO_TEXTURE. */
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;
+
+	/** The Constant NO_ANISOTROPY. */
 	public static final float NO_ANISOTROPY = -1f;
 
+	/** The geometry drawer. */
 	// Special drawers
 	private final GeometryDrawer geometryDrawer;
+
+	/** The string drawer. */
 	private final TextDrawer stringDrawer;
+
+	/** The field drawer. */
 	private final MeshDrawer fieldDrawer;
+
+	/** The resource drawer. */
 	private final ResourceDrawer resourceDrawer;
 
+	/** The viewport. */
 	// Matrices of the display
 	final int[] viewport = new int[4];
+
+	/** The mvmatrix. */
 	final double mvmatrix[] = new double[16];
+
+	/** The projmatrix. */
 	final double projmatrix[] = new double[16];
 
+	/** The gl. */
 	// The real openGL context
 	private GL2 gl;
+
+	/** The glut. */
 	private final GLUT glut;
+
+	/** The glu. */
 	private final GLU glu;
+
+	/** The view height. */
 	private int viewWidth, viewHeight;
+
+	/** The picking state. */
 	private final PickingHelper pickingState;
 
+	/** The texture cache. */
 	// Textures
 	private final ITextureCache textureCache = new TextureCache2(this);
+
+	/** The texture envelope. */
 	private final Envelope3D textureEnvelope = Envelope3D.create();
+
+	/** The current texture rotation. */
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
+
+	/** The textured. */
 	private boolean textured;
+
+	/** The primary texture. */
 	private int primaryTexture = NO_TEXTURE;
+
+	/** The alternate texture. */
 	private int alternateTexture = NO_TEXTURE;
+
+	/** The anisotropic level. */
 	private float anisotropicLevel = NO_ANISOTROPY;
 
+	/** The current color. */
 	// Colors
 	private Color currentColor;
+
+	/** The current object alpha. */
 	private double currentObjectAlpha = 1d;
+
+	/** The lighted. */
 	private boolean lighted;
 
+	/** The in raster text mode. */
 	// Text
 	private boolean inRasterTextMode;
 	// protected final FontCache fontCache = new FontCache();
 
+	/** The geometry cache. */
 	// Geometries
 	protected final GeometryCache geometryCache;
-	protected boolean displayIsWireframe;
-	protected boolean objectIsWireframe;
+
+	/** The display is wireframe. */
+	protected volatile boolean displayIsWireframe;
+
+	/** The object is wireframe. */
+	protected volatile boolean objectIsWireframe;
+
+	/** The tobj. */
 	final GLUtessellatorImpl tobj = (GLUtessellatorImpl) GLU.gluNewTess();
+
+	/** The gl tesselator drawer. */
 	final VertexVisitor glTesselatorDrawer;
 
+	/** The ratios. */
 	// World
 	final GamaPoint ratios = new GamaPoint();
+
+	/** The roi envelope. */
 	Envelope3D roiEnvelope;
+
+	/** The rotation mode. */
 	private boolean rotationMode;
+
+	/** The is ROI sticky. */
 	private boolean isROISticky;
 
+	/** The current normal. */
 	// Working objects
 	final GamaPoint currentNormal = new GamaPoint();
+
+	/** The texture coords. */
 	// final GamaPoint currentScale = new GamaPoint(1, 1, 1);
 	final GamaPoint textureCoords = new GamaPoint();
+
+	/** The working vertices. */
 	final UnboundedCoordinateSequence workingVertices = new UnboundedCoordinateSequence();
+
+	/** The saved Z translation. */
 	private double currentZIncrement, currentZTranslation, savedZTranslation;
+
+	/** The Z translation suspended. */
 	private volatile boolean ZTranslationSuspended;
+
+	/** The end scene. */
 	// private final boolean useJTSTriangulation = !GamaPreferences.Displays.OPENGL_TRIANGULATOR.getValue();
 	private final Pass endScene = this::endScene;
 
+	/**
+	 * Instantiates a new open GL.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 */
 	public OpenGL(final IOpenGLRenderer renderer) {
 		super(renderer);
 		glut = new GLUT();
 		glu = new GLU();
 		pickingState = renderer.getPickingHelper();
 		geometryCache = new GeometryCache(renderer);
-		glTesselatorDrawer = (final double[] ordinates) -> {
-			tobj.gluTessVertex(ordinates, 0, ordinates);
-		};
+		glTesselatorDrawer = (final double[] ordinates) -> { tobj.gluTessVertex(ordinates, 0, ordinates); };
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, this);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
@@ -168,6 +243,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		resourceDrawer = new ResourceDrawer(this);
 	}
 
+	/**
+	 * Gets the drawer for.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the drawer for
+	 */
 	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final AbstractObject.DrawerType type) {
 		switch (type) {
 			case STRING:
@@ -182,10 +264,16 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return null;
 	}
 
-	public GeometryDrawer getGeometryDrawer() {
-		return geometryDrawer;
-	}
+	/**
+	 * Gets the geometry drawer.
+	 *
+	 * @return the geometry drawer
+	 */
+	public GeometryDrawer getGeometryDrawer() { return geometryDrawer; }
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		stringDrawer.dispose();
 		fieldDrawer.dispose();
@@ -198,10 +286,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	@Override
-	public GL2 getGL() {
-		return gl;
-	}
+	public GL2 getGL() { return gl; }
 
+	/**
+	 * Sets the gl2.
+	 *
+	 * @param gl2
+	 *            the new gl2
+	 */
 	public void setGL2(final GL2 gl2) {
 		this.gl = gl2;
 		textureCache.initialize();
@@ -209,14 +301,17 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			final FloatBuffer aniso = Buffers.newDirectFloatBuffer(1);
 			gl.glGetFloatv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 			anisotropicLevel = aniso.get();
-			DEBUG.OUT("Anisotropic level: " + anisotropicLevel);
+			// DEBUG.OUT("Anisotropic level: " + anisotropicLevel);
 		}
 
 	}
 
-	public GLUT getGlut() {
-		return glut;
-	}
+	/**
+	 * Gets the glut.
+	 *
+	 * @return the glut
+	 */
+	public GLUT getGlut() { return glut; }
 
 	/**
 	 * Reshapes the GL world to comply with a new view size and computes the resulting ratios between pixels and world
@@ -256,6 +351,28 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		ratios.setLocation(xRatio, yRatio, 0d);
 	}
 
+	/**
+	 * Debug sizes.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param initialEnvWidth
+	 *            the initial env width
+	 * @param initialEnvHeight
+	 *            the initial env height
+	 * @param envWidth
+	 *            the env width
+	 * @param envHeight
+	 *            the env height
+	 * @param zoomLevel
+	 *            the zoom level
+	 * @param xRatio
+	 *            the x ratio
+	 * @param yRatio
+	 *            the y ratio
+	 */
 	@SuppressWarnings ("restriction")
 	private void debugSizes(final int width, final int height, final double initialEnvWidth,
 			final double initialEnvHeight, final double envWidth, final double envHeight, final double zoomLevel,
@@ -276,6 +393,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// DEBUG.OUT("Client area of window:" + getRenderer().getCanvas().getClientArea());
 	}
 
+	/**
+	 * Update perspective.
+	 *
+	 * @param gl
+	 *            the gl
+	 */
 	public void updatePerspective(final GL2 gl) {
 		final double height = getViewHeight();
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
@@ -315,12 +438,24 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glGetDoublev(GLMatrixFunc.GL_PROJECTION_MATRIX, projmatrix, 0);
 	}
 
+	/**
+	 * Gets the pixel width and height of world.
+	 *
+	 * @return the pixel width and height of world
+	 */
 	public double[] getPixelWidthAndHeightOfWorld() {
 		final double[] coord = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
 		return coord;
 	}
 
+	/**
+	 * Gets the world position from.
+	 *
+	 * @param mouse
+	 *            the mouse
+	 * @return the world position from
+	 */
 	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
 		final GamaPoint camera = getData().getCameraPos();
 		if (gl == null) return new GamaPoint();
@@ -336,14 +471,26 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
-	public int getViewWidth() {
-		return viewWidth;
-	}
+	/**
+	 * Gets the view width.
+	 *
+	 * @return the view width
+	 */
+	public int getViewWidth() { return viewWidth; }
 
-	public int getViewHeight() {
-		return viewHeight;
-	}
+	/**
+	 * Gets the view height.
+	 *
+	 * @return the view height
+	 */
+	public int getViewHeight() { return viewHeight; }
 
+	/**
+	 * Sets the z increment.
+	 *
+	 * @param z
+	 *            the new z increment
+	 */
 	public void setZIncrement(final double z) {
 		currentZTranslation = 0;
 		currentZIncrement = z;
@@ -357,24 +504,36 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (!ZTranslationSuspended) { currentZTranslation += currentZIncrement; }
 	}
 
+	/**
+	 * Suspend Z translation.
+	 */
 	public void suspendZTranslation() {
 		ZTranslationSuspended = true;
 		savedZTranslation = currentZTranslation;
 		currentZTranslation = 0;
 	}
 
+	/**
+	 * Resume Z translation.
+	 */
 	public void resumeZTranslation() {
 		ZTranslationSuspended = false;
 		currentZTranslation = savedZTranslation;
 	}
 
-	public double getCurrentZTranslation() {
-		return currentZTranslation;
-	}
+	/**
+	 * Gets the current Z translation.
+	 *
+	 * @return the current Z translation
+	 */
+	public double getCurrentZTranslation() { return currentZTranslation; }
 
-	public double getCurrentZIncrement() {
-		return currentZIncrement;
-	}
+	/**
+	 * Gets the current Z increment.
+	 *
+	 * @return the current Z increment
+	 */
+	public double getCurrentZIncrement() { return currentZIncrement; }
 
 	/**
 	 * Returns the previous state
@@ -393,47 +552,98 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return !lighted;
 	}
 
-	public boolean getLighting() {
-		return lighted;
-	}
+	/**
+	 * Gets the lighting.
+	 *
+	 * @return the lighting
+	 */
+	public boolean getLighting() { return lighted; }
 
+	/**
+	 * Matrix mode.
+	 *
+	 * @param mode
+	 *            the mode
+	 */
 	public void matrixMode(final int mode) {
 		gl.glMatrixMode(mode);
 	}
 
+	/**
+	 * Push matrix.
+	 */
 	public void pushMatrix() {
 		gl.glPushMatrix();
 	}
 
+	/**
+	 * Pop matrix.
+	 */
 	public void popMatrix() {
 		gl.glPopMatrix();
 	}
 
+	/**
+	 * Reset matrix.
+	 *
+	 * @param mode
+	 *            the mode
+	 */
 	private void resetMatrix(final int mode) {
 		matrixMode(mode);
 		gl.glLoadIdentity();
 	}
 
+	/**
+	 * Push identity.
+	 *
+	 * @param mode
+	 *            the mode
+	 */
 	public void pushIdentity(final int mode) {
 		matrixMode(mode);
 		pushMatrix();
 		gl.glLoadIdentity();
 	}
 
+	/**
+	 * Pop.
+	 *
+	 * @param mode
+	 *            the mode
+	 */
 	public void pop(final int mode) {
 		matrixMode(mode);
 		popMatrix();
 	}
 
+	/**
+	 * Push.
+	 *
+	 * @param mode
+	 *            the mode
+	 */
 	public void push(final int mode) {
 		matrixMode(mode);
 		pushMatrix();
 	}
 
+	/**
+	 * Enable.
+	 *
+	 * @param state
+	 *            the state
+	 */
 	public void enable(final int state) {
 		if (!gl.glIsEnabled(state)) { gl.glEnableClientState(state); }
 	}
 
+	/**
+	 * Disable.
+	 *
+	 * @param state
+	 *            the state
+	 */
 	public void disable(final int state) {
 		if (gl.glIsEnabled(state)) { gl.glDisableClientState(state); }
 	}
@@ -448,10 +658,26 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glEnd();
 	}
 
+	/**
+	 * Translate by.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
+	 */
 	public void translateBy(final double x, final double y, final double z) {
 		gl.glTranslated(x, y, z);
 	}
 
+	/**
+	 * Translate by.
+	 *
+	 * @param ordinates
+	 *            the ordinates
+	 */
 	public void translateBy(final double... ordinates) {
 		switch (ordinates.length) {
 			case 0:
@@ -467,25 +693,65 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * Translate by.
+	 *
+	 * @param p
+	 *            the p
+	 */
 	public void translateBy(final GamaPoint p) {
 		translateBy(p.x, p.y, p.z);
 	}
 
+	/**
+	 * Rotate by.
+	 *
+	 * @param angle
+	 *            the angle
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
+	 */
 	public void rotateBy(final double angle, final double x, final double y, final double z) {
 		gl.glRotated(angle, x, y, z);
 	}
 
+	/**
+	 * Rotate by.
+	 *
+	 * @param rotation
+	 *            the rotation
+	 */
 	public void rotateBy(final Rotation3D rotation) {
 		final GamaPoint axis = rotation.getAxis();
 		final double angle = rotation.getAngle() * Maths.toDeg;
 		rotateBy(angle, axis.x, axis.y, axis.z);
 	}
 
+	/**
+	 * Scale by.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
+	 */
 	public void scaleBy(final double x, final double y, final double z) {
 		// currentScale.setLocation(x, y, z);
 		gl.glScaled(x, y, z);
 	}
 
+	/**
+	 * Scale by.
+	 *
+	 * @param scaling
+	 *            the scaling
+	 */
 	public void scaleBy(final Scaling3D scaling) {
 		scaleBy(scaling.getX(), scaling.getY(), scaling.getZ());
 	}
@@ -541,10 +807,28 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// }
 	}
 
+	/**
+	 * Draw closed line.
+	 *
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param number
+	 *            the number
+	 */
 	public void drawClosedLine(final ICoordinates yNegatedVertices, final int number) {
 		drawVertices(GL.GL_LINE_LOOP, yNegatedVertices, number, true);
 	}
 
+	/**
+	 * Draw closed line.
+	 *
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param color
+	 *            the color
+	 * @param number
+	 *            the number
+	 */
 	public void drawClosedLine(final ICoordinates yNegatedVertices, final Color color, final int number) {
 		if (color == null) return;
 		final Color previous = swapCurrentColor(color);
@@ -552,6 +836,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		setCurrentColor(previous);
 	}
 
+	/**
+	 * Draw line.
+	 *
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param number
+	 *            the number
+	 */
 	public void drawLine(final ICoordinates yNegatedVertices, final int number) {
 		final boolean previous = this.setLighting(false);
 		drawVertices(GL.GL_LINE_STRIP, yNegatedVertices, number, true);
@@ -569,15 +861,43 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glVertex3d(x, y, z + currentZTranslation);
 	}
 
+	/**
+	 * Output tex coord.
+	 *
+	 * @param u
+	 *            the u
+	 * @param v
+	 *            the v
+	 */
 	public void outputTexCoord(final double u, final double v) {
 		gl.glTexCoord2d(u, v);
 	}
 
+	/**
+	 * Output normal.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
+	 */
 	public void outputNormal(final double x, final double y, final double z) {
 		currentNormal.setLocation(x, y, z);
 		gl.glNormal3d(x, y, z);
 	}
 
+	/**
+	 * Draw vertex.
+	 *
+	 * @param coords
+	 *            the coords
+	 * @param normal
+	 *            the normal
+	 * @param tex
+	 *            the tex
+	 */
 	public void drawVertex(final GamaPoint coords, final GamaPoint normal, final GamaPoint tex) {
 		if (normal != null) { outputNormal(normal.x, normal.y, normal.z); }
 		if (tex != null) { gl.glTexCoord3d(tex.x, tex.y, tex.z); }
@@ -596,6 +916,18 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		outputVertex(x, y, z);
 	}
 
+	/**
+	 * Draw vertices.
+	 *
+	 * @param style
+	 *            the style
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param number
+	 *            the number
+	 * @param clockwise
+	 *            the clockwise
+	 */
 	public void drawVertices(final int style, final ICoordinates yNegatedVertices, final int number,
 			final boolean clockwise) {
 		beginDrawing(style);
@@ -637,6 +969,15 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return old;
 	}
 
+	/**
+	 * Sets the normal.
+	 *
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param clockwise
+	 *            the clockwise
+	 * @return the gama point
+	 */
 	public GamaPoint setNormal(final ICoordinates yNegatedVertices, final boolean clockwise) {
 		yNegatedVertices.getNormal(clockwise, 1, currentNormal);
 		outputNormal(currentNormal.x, currentNormal.y, currentNormal.z);
@@ -644,6 +985,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return currentNormal;
 	}
 
+	/**
+	 * Compute texture coordinates.
+	 *
+	 * @param yNegatedVertices
+	 *            the y negated vertices
+	 * @param clockwise
+	 *            the clockwise
+	 */
 	private void computeTextureCoordinates(final ICoordinates yNegatedVertices, final boolean clockwise) {
 		workingVertices.setTo(yNegatedVertices);
 		currentTextureRotation.rotateToHorizontal(currentNormal, workingVertices.directionBetweenLastPointAndOrigin(),
@@ -652,26 +1001,61 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		workingVertices.getEnvelopeInto(textureEnvelope);
 	}
 
+	/**
+	 * Sets the current color.
+	 *
+	 * @param c
+	 *            the c
+	 * @param alpha
+	 *            the alpha
+	 */
 	public void setCurrentColor(final Color c, final double alpha) {
 		if (c == null) return;
 		setCurrentColor(c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
 	}
 
+	/**
+	 * Sets the current color.
+	 *
+	 * @param c
+	 *            the new current color
+	 */
 	public void setCurrentColor(final Color c) {
 		setCurrentColor(c, currentObjectAlpha);
 	}
 
+	/**
+	 * Sets the current color.
+	 *
+	 * @param red
+	 *            the red
+	 * @param green
+	 *            the green
+	 * @param blue
+	 *            the blue
+	 * @param alpha
+	 *            the alpha
+	 */
 	public void setCurrentColor(final double red, final double green, final double blue, final double alpha) {
 		currentColor = new Color((float) red, (float) green, (float) blue, (float) alpha);
 		gl.glColor4d(red, green, blue, alpha);
 	}
 
-	public Color getCurrentColor() {
-		return currentColor;
-	}
+	/**
+	 * Gets the current color.
+	 *
+	 * @return the current color
+	 */
+	public Color getCurrentColor() { return currentColor; }
 
 	// LINE WIDTH
 
+	/**
+	 * Sets the line width.
+	 *
+	 * @param width
+	 *            the new line width
+	 */
 	public void setLineWidth(final double width) {
 		gl.glLineWidth((float) width);
 	}
@@ -682,13 +1066,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 * @param alpha
 	 */
-	public final void setCurrentObjectAlpha(final double alpha) {
-		currentObjectAlpha = alpha;
-	}
+	public final void setCurrentObjectAlpha(final double alpha) { currentObjectAlpha = alpha; }
 
-	public double getCurrentObjectAlpha() {
-		return currentObjectAlpha;
-	}
+	/**
+	 * Gets the current object alpha.
+	 *
+	 * @return the current object alpha
+	 */
+	public double getCurrentObjectAlpha() { return currentObjectAlpha; }
 
 	// TEXTURES
 
@@ -706,6 +1091,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		enablePrimaryTexture();
 	}
 
+	/**
+	 * Bind texture.
+	 *
+	 * @param texture
+	 *            the texture
+	 */
 	public void bindTexture(final int texture) {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
 		// Apply antialas to the texture based on the current preferences
@@ -717,54 +1108,112 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * Enable primary texture.
+	 */
 	public void enablePrimaryTexture() {
 		if (primaryTexture == NO_TEXTURE) return;
 		bindTexture(primaryTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
 
+	/**
+	 * Enable alternate texture.
+	 */
 	public void enableAlternateTexture() {
 		if (alternateTexture == NO_TEXTURE) return;
 		bindTexture(alternateTexture);
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
 
+	/**
+	 * Disable textures.
+	 */
 	public void disableTextures() {
 		gl.glDisable(GL.GL_TEXTURE_2D);
 		textured = false;
 	}
 
+	/**
+	 * Delete volatile textures.
+	 */
 	public void deleteVolatileTextures() {
 		textureCache.deleteVolatileTextures();
 	}
 
+	/**
+	 * Cache texture.
+	 *
+	 * @param file
+	 *            the file
+	 */
 	public void cacheTexture(final File file) {
 		if (file == null) return;
 		textureCache.processs(file);
 	}
 
+	/**
+	 * Gets the texture id.
+	 *
+	 * @param file
+	 *            the file
+	 * @param useCache
+	 *            the use cache
+	 * @return the texture id
+	 */
 	public int getTextureId(final GamaImageFile file, final boolean useCache) {
 		final Texture r = textureCache.getTexture(file.getFile(null), file.isAnimated(), useCache);
 		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
 
+	/**
+	 * Gets the texture id.
+	 *
+	 * @param img
+	 *            the img
+	 * @return the texture id
+	 */
 	public int getTextureId(final BufferedImage img) {
 		final Texture r = textureCache.getTexture(img);
 		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
 
+	/**
+	 * Gets the texture.
+	 *
+	 * @param file
+	 *            the file
+	 * @param isAnimated
+	 *            the is animated
+	 * @param useCache
+	 *            the use cache
+	 * @return the texture
+	 */
 	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
 		return textureCache.getTexture(file, isAnimated, useCache);
 	}
 
 	// GEOMETRIES
 
+	/**
+	 * Cache geometry.
+	 *
+	 * @param object
+	 *            the object
+	 */
 	public void cacheGeometry(final GamaGeometryFile object) {
 		geometryCache.process(object);
 	}
 
+	/**
+	 * Gets the envelope for.
+	 *
+	 * @param obj
+	 *            the obj
+	 * @return the envelope for
+	 */
 	public Envelope3D getEnvelopeFor(final Object obj) {
 		if (obj instanceof GamaGeometryFile) return geometryCache.getEnvelope((GamaGeometryFile) obj);
 		if (obj instanceof Geometry) return Envelope3D.of((Geometry) obj);
@@ -793,12 +1242,18 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		exitRasterTextMode();
 	}
 
+	/**
+	 * Exit raster text mode.
+	 */
 	public void exitRasterTextMode() {
 		gl.glEnable(GL.GL_BLEND);
 		popMatrix();
 		inRasterTextMode = false;
 	}
 
+	/**
+	 * Begin raster text mode.
+	 */
 	public void beginRasterTextMode() {
 		if (inRasterTextMode) return;
 		pushMatrix();
@@ -806,20 +1261,38 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		inRasterTextMode = true;
 	}
 
-	public double getWorldWidth() {
-		return getData().getEnvWidth();
-	}
+	/**
+	 * Gets the world width.
+	 *
+	 * @return the world width
+	 */
+	public double getWorldWidth() { return getData().getEnvWidth(); }
 
-	public double getWorldHeight() {
-		return getData().getEnvHeight();
-	}
+	/**
+	 * Gets the world height.
+	 *
+	 * @return the world height
+	 */
+	public double getWorldHeight() { return getData().getEnvHeight(); }
 
+	/**
+	 * Sets the display wireframe.
+	 *
+	 * @param wireframe
+	 *            the new display wireframe
+	 */
 	public void setDisplayWireframe(final boolean wireframe) {
 		if (wireframe == displayIsWireframe) return;
 		displayIsWireframe = wireframe;
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
 	}
 
+	/**
+	 * Sets the object wireframe.
+	 *
+	 * @param wireframe
+	 *            the new object wireframe
+	 */
 	public void setObjectWireframe(final boolean wireframe) {
 		if (wireframe == objectIsWireframe) return;
 		objectIsWireframe = wireframe;
@@ -828,12 +1301,21 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
-	public boolean isWireframe() {
-		return displayIsWireframe || objectIsWireframe;
-	}
+	/**
+	 * Checks if is wireframe.
+	 *
+	 * @return true, if is wireframe
+	 */
+	public boolean isWireframe() { return displayIsWireframe || objectIsWireframe; }
 
 	// PICKING
 
+	/**
+	 * Run with names.
+	 *
+	 * @param r
+	 *            the r
+	 */
 	public void runWithNames(final Runnable r) {
 		gl.glInitNames();
 		gl.glPushName(0);
@@ -841,16 +1323,35 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glPopName();
 	}
 
+	/**
+	 * Register for selection.
+	 *
+	 * @param index
+	 *            the index
+	 */
 	public void registerForSelection(final int index) {
 		gl.glLoadName(index);
 	}
 
+	/**
+	 * Mark if selected.
+	 *
+	 * @param attributes
+	 *            the attributes
+	 */
 	public void markIfSelected(final DrawingAttributes attributes) {
 		pickingState.tryPick(attributes);
 	}
 
 	// LISTS
 
+	/**
+	 * Compile as list.
+	 *
+	 * @param r
+	 *            the r
+	 * @return the int
+	 */
 	public int compileAsList(final Runnable r) {
 		final int index = gl.glGenLists(1);
 		gl.glNewList(index, GL2.GL_COMPILE);
@@ -859,14 +1360,34 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return index;
 	}
 
+	/**
+	 * Draw list.
+	 *
+	 * @param i
+	 *            the i
+	 */
 	public void drawList(final int i) {
 		gl.glCallList(i);
 	}
 
+	/**
+	 * Delete list.
+	 *
+	 * @param index
+	 *            the index
+	 */
 	public void deleteList(final Integer index) {
 		gl.glDeleteLists(index, 1);
 	}
 
+	/**
+	 * Draw cached geometry.
+	 *
+	 * @param file
+	 *            the file
+	 * @param border
+	 *            the border
+	 */
 	public void drawCachedGeometry(final GamaGeometryFile file, final Color border) {
 		if (file == null) return;
 		final Integer index = geometryCache.get(file);
@@ -885,48 +1406,76 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * Draw cached geometry.
+	 *
+	 * @param id
+	 *            the id
+	 * @param border
+	 *            the border
+	 */
 	public void drawCachedGeometry(final IShape.Type id, /* final boolean solid, */ final Color border) {
 		if (geometryCache == null || id == null) return;
 		final BuiltInGeometry object = geometryCache.get(id);
 		if (object != null) {
-			if (!isWireframe()) { object.draw(this); }
-			if (isWireframe() || border != null) {
-				final Color old = swapCurrentColor(border != null ? border : getCurrentColor());
-				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+			object.draw(this);
+			if (border != null) {
+				final Color old = swapCurrentColor(border);
+				final boolean wf = isWireframe();
+				setObjectWireframe(true);
 				try {
 					object.draw(this);
 				} finally {
 					setCurrentColor(old);
-					getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+					setObjectWireframe(wf);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Initialize shape cache.
+	 */
 	public void initializeShapeCache() {
 		textured = true;
 		geometryCache.initialize(this);
 		textured = false;
 	}
 
-	public boolean isTextured() {
-		return textured && !isWireframe();
-	}
+	/**
+	 * Checks if is textured.
+	 *
+	 * @return true, if is textured
+	 */
+	public boolean isTextured() { return textured && !isWireframe(); }
 
 	// COMPLEX SHAPES
 
+	/**
+	 * Begin object.
+	 *
+	 * @param object
+	 *            the object
+	 */
 	public void beginObject(final AbstractObject object) {
 		// DEBUG.OUT("Object " + object + " begin and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
-		setObjectWireframe(object.getAttributes().isEmpty());
+		boolean empty = object.getAttributes().isEmpty();
+		setObjectWireframe(empty);
 		setLineWidth(object.getAttributes().getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(object.getAttributes().getColor());
-		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
+		if (!empty && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_DECAL);
 		}
 
 	}
 
+	/**
+	 * End object.
+	 *
+	 * @param object
+	 *            the object
+	 */
 	public void endObject(final AbstractObject object) {
 		disableTextures();
 		translateByZIncrement();
@@ -934,9 +1483,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
 		// DEBUG.OUT("Object " + object + " ends and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
-		// setObjectWireframe(!object.getAttributes().isEmpty());
+		setObjectWireframe(false);
 	}
 
+	/**
+	 * Begin scene.
+	 *
+	 * @return the pass
+	 */
 	public Pass beginScene() {
 		setDisplayWireframe(getData().isWireframe());
 		processUnloadedCacheObjects();
@@ -953,15 +1507,26 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		return endScene;
 	}
 
+	/**
+	 * Process unloaded cache objects.
+	 */
 	public void processUnloadedCacheObjects() {
 		textureCache.processUnloaded();
 		geometryCache.processUnloaded();
 	}
 
+	/**
+	 * Checks if is continuous rotation active.
+	 *
+	 * @return true, if is continuous rotation active
+	 */
 	private boolean isContinuousRotationActive() {
 		return getData().isContinuousRotationOn() && !getData().cameraInteractionDisabled();
 	}
 
+	/**
+	 * Rotate model.
+	 */
 	public void rotateModel() {
 		if (isContinuousRotationActive()) { getData().incrementZRotation(); }
 		if (getData().getCurrentRotationAboutZ() != 0d) {
@@ -973,6 +1538,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * End scene.
+	 */
 	public void endScene() {
 		boolean drawFPS = getData().isShowfps();
 		boolean drawRotation = rotationMode && SHOULD_DRAW_ROTATION_SPHERE;
@@ -988,6 +1556,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glFinish();
 	}
 
+	/**
+	 * Initialize GL states.
+	 *
+	 * @param bg
+	 *            the bg
+	 */
 	public void initializeGLStates(final Color bg) {
 		gl.glClearColor(bg.getRed() / 255.0f, bg.getGreen() / 255.0f, bg.getBlue() / 255.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -1041,9 +1615,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	}
 
-	public GamaPoint getRatios() {
-		return ratios;
-	}
+	/**
+	 * Gets the ratios.
+	 *
+	 * @return the ratios
+	 */
+	public GamaPoint getRatios() { return ratios; }
 
 	/**
 	 *
@@ -1055,10 +1632,19 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		rotationMode = b;
 	}
 
-	public boolean isInRotationMode() {
-		return rotationMode;
-	}
+	/**
+	 * Checks if is in rotation mode.
+	 *
+	 * @return true, if is in rotation mode
+	 */
+	public boolean isInRotationMode() { return rotationMode; }
 
+	/**
+	 * Draw FPS.
+	 *
+	 * @param doIt
+	 *            the do it
+	 */
 	public void drawFPS(final boolean doIt) {
 		if (doIt) {
 			setCurrentColor(Color.black);
@@ -1068,14 +1654,31 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * Draw ROI.
+	 *
+	 * @param doIt
+	 *            the do it
+	 */
 	public void drawROI(final boolean doIt) {
 		if (doIt) { geometryDrawer.drawROIHelper(roiEnvelope); }
 	}
 
+	/**
+	 * Size of rotation elements.
+	 *
+	 * @return the double
+	 */
 	public double sizeOfRotationElements() {
 		return Math.min(getMaxEnvDim() / 4d, getData().getCameraPos().minus(getData().getCameraTarget()).norm() / 6d);
 	}
 
+	/**
+	 * Draw rotation.
+	 *
+	 * @param doIt
+	 *            the do it
+	 */
 	public void drawRotation(final boolean doIt) {
 		if (doIt) {
 			final GamaPoint target = getData().getCameraTarget();
@@ -1084,29 +1687,56 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 	}
 
+	/**
+	 * Toogle ROI.
+	 */
 	public void toogleROI() {
 		isROISticky = !isROISticky;
 	}
 
-	public boolean isStickyROI() {
-		return isROISticky;
-	}
+	/**
+	 * Checks if is sticky ROI.
+	 *
+	 * @return true, if is sticky ROI
+	 */
+	public boolean isStickyROI() { return isROISticky; }
 
-	public Envelope3D getROIEnvelope() {
-		return roiEnvelope;
-	}
+	/**
+	 * Gets the ROI envelope.
+	 *
+	 * @return the ROI envelope
+	 */
+	public Envelope3D getROIEnvelope() { return roiEnvelope; }
 
+	/**
+	 * Cancel ROI.
+	 */
 	public void cancelROI() {
 		if (isROISticky) return;
 		roiEnvelope = null;
 	}
 
+	/**
+	 * Define ROI.
+	 *
+	 * @param mouseStart
+	 *            the mouse start
+	 * @param mouseEnd
+	 *            the mouse end
+	 */
 	public void defineROI(final GamaPoint mouseStart, final GamaPoint mouseEnd) {
 		final GamaPoint start = getWorldPositionFrom(mouseStart);
 		final GamaPoint end = getWorldPositionFrom(mouseEnd);
 		roiEnvelope = Envelope3D.of(start.x, end.x, start.y, end.y, 0, getMaxEnvDim() / 20d);
 	}
 
+	/**
+	 * Mouse in ROI.
+	 *
+	 * @param mousePosition
+	 *            the mouse position
+	 * @return true, if successful
+	 */
 	public boolean mouseInROI(final GamaPoint mousePosition) {
 		final Envelope3D env = getROIEnvelope();
 		if (env == null) return false;
@@ -1115,11 +1745,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	@Override
-	public void initialize() {
-		// TODO Auto-generated method stub
+	public void initialize() {}
 
-	}
-
+	/**
+	 * Checks if is rendering keystone.
+	 *
+	 * @return true, if is rendering keystone
+	 */
 	public boolean isRenderingKeystone() {
 		KeystoneHelper k = getRenderer().getKeystoneHelper();
 		return k.isActive() || getRenderer().getData().isKeystoneDefined();

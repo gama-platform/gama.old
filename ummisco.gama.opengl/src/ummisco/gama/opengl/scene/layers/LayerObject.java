@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
-import com.google.common.collect.ImmutableList;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
@@ -303,9 +302,9 @@ public class LayerObject {
 	 */
 	protected void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
 			final boolean picking) {
-		final ImmutableList<AbstractObject> l = ImmutableList.copyOf(list);
 		gl.setCurrentObjectAlpha(alpha);
-		for (final AbstractObject object : l) { object.draw(gl, gl.getDrawerFor(object.type), picking); }
+		AbstractObject<?, ?>[] objects = list.toArray(new AbstractObject[list.size()]);
+		for (final AbstractObject object : objects) { object.draw(gl, gl.getDrawerFor(object.type), picking); }
 	}
 
 	/**

@@ -67,6 +67,7 @@ public class OverlayLayerObject extends LayerObject {
 			if (size.y <= 1) { size.y *= renderer.getEnvHeight(); }
 		}
 		gl.pushMatrix();
+		gl.setObjectWireframe(false);
 		gl.translateBy(0, -size.y, 0);
 		gl.scaleBy(size.x, size.y, 1);
 		gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope),
