@@ -99,7 +99,7 @@ jobs:
         run: |
           # Change XCode version 
           sudo xcode-select -s "/Applications/Xcode_13.0.app"
-          export JAVA_HOME=$JAVA_HOME_17_X64
+          export JAVA_HOME=$JAVA_HOME_11_X64
           mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
@@ -136,8 +136,6 @@ jobs:
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
-          # Clean app - each .tmp size 55MB
-          find ./Gama.app -name '*tmp' -exec rm -fr {} \;
 
       - name: Packaging signed Application w/o JDK
         env: 
@@ -178,7 +176,7 @@ jobs:
         run: |
           # Change XCode version 
           sudo xcode-select -s "/Applications/Xcode_13.0.app"
-          export JAVA_HOME=$JAVA_HOME_17_X64
+          export JAVA_HOME=$JAVA_HOME_11_X64
           mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
@@ -215,8 +213,6 @@ jobs:
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
-          # Clean app - each .tmp size 55MB
-          find ./Gama.app -name '*tmp' -exec rm -fr {} \;
 
       - name: Packaging signed Application w/ JDK
         env: 

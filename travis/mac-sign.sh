@@ -8,6 +8,8 @@ function signInJar(){
     # TODO : Prevent gathering META-INF folder
     jar tf "$1" | grep '\.so\|\.dylib\|\.jnilib\|\.jar'  > filelist.txt
 
+    sed -e '/META-INF/d' filelist.txt
+
     while read f
     do
         f=$(printf %q "$f")
