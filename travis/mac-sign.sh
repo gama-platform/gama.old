@@ -15,14 +15,10 @@ function signInJar(){
         jar xf "$1" "$f"
 
         if [[ "$f" =~ .*".jar" ]]; then
+            mkdir "_sub" && cd "_sub"
 
-            # Check if .jar contains necessary to sign files
-            # If not, skip that file and save time
-            if [[ -n $(jar tf "$f" | grep '\.so\|\.dylib\|\.jnilib\|\.jar' | sed -e 's/ //g') ]]; then 
-                mkdir "_sub" && cd "_sub"
-                signInJar "../$f"
-                cd ".." && rm -fr "_sub"
-            fi
+            signInJar "../$f"
+            cd ".." && rm -fr "_sub"
         else
             codesign --timestamp --force -s "$MACOS_DEV_ID" -v "$f"
             echo "---"
