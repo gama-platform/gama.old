@@ -135,6 +135,8 @@ jobs:
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          # Clean app - each .tmp size 55MB
+          find ./Gama.app -name '*tmp' -exec rm -fr {} \;
 
       - name: Packaging signed Application w/o JDK
         env: 
@@ -211,6 +213,8 @@ jobs:
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
+          # Clean app - each .tmp size 55MB
+          find ./Gama.app -name '*tmp' -exec rm -fr {} \;
 
       - name: Packaging signed Application w/ JDK
         env: 
