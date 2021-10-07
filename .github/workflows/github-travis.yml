@@ -95,18 +95,11 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
     steps:
-      - name: Set up Adopt OpenJDK 15
-        uses: actions/setup-java@v2 
-        with:
-          distribution: 'adopt-openj9'
-          java-version: '15'
-          java-package: jdk  
-          cache: maven
-
       - name: Prepare vm
         run: |
           # Change XCode version 
           sudo xcode-select -s "/Applications/Xcode_13.0.app"
+          export JAVA_HOME=$JAVA_HOME_17_X64
           mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
@@ -181,18 +174,11 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
     steps:
-      - name: Set up Adopt OpenJDK 15
-        uses: actions/setup-java@v2 
-        with:
-          distribution: 'adopt-openj9'
-          java-version: '15'
-          java-package: jdk  
-          cache: maven
-
       - name: Prepare vm
         run: |
           # Change XCode version 
           sudo xcode-select -s "/Applications/Xcode_13.0.app"
+          export JAVA_HOME=$JAVA_HOME_17_X64
           mkdir -p ${{ github.workspace }}/artifacts/work
 
       - uses: actions/download-artifact@v2
