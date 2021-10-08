@@ -1149,6 +1149,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			for (final IShape ag : agents) {
+				if (ag.getGeometries().size() > 1) {
+					ag.setInnerGeometry(geometryCollectionManagement(ag.getInnerGeometry()));
+				}
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
 				if (!ok) { break; }
