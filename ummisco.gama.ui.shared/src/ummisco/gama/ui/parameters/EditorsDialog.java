@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditorsDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * EditorsDialog.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import java.util.List;
@@ -44,35 +43,49 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class EditorsDialog extends Dialog {
 
+	/** The values. */
 	private final IMap<String, Object> values = GamaMapFactory.createUnordered();
+
+	/** The parameters. */
 	private final List<IParameter> parameters;
+
+	/** The title. */
 	private final String title;
+
+	/** The font. */
 	private final GamaFont font;
+
+	/** The scope. */
 	private final IScope scope;
 
+	/**
+	 * Instantiates a new editors dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param parentShell
+	 *            the parent shell
+	 * @param parameters
+	 *            the parameters
+	 * @param title
+	 *            the title
+	 * @param font
+	 *            the font
+	 */
 	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
 			final String title, final GamaFont font) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
-		setShellStyle(SWT.RESIZE | SWT.BORDER);
+		setShellStyle(SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
-		parameters.forEach(p -> {
-			values.put(p.getName(), p.getInitialValue(scope));
-		});
+		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	}
-
-	@Override
-	protected Control createButtonBar(final Composite parent) {
-
-		// composite.setBackground(IGamaColors.WHITE.color());
-		return super.createButtonBar(parent);
 	}
 
 	/**
@@ -125,12 +138,13 @@ public class EditorsDialog extends Dialog {
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
+	protected boolean isResizable() { return true; }
 
-	public Map<String, Object> getValues() {
-		return values;
-	}
+	/**
+	 * Gets the values.
+	 *
+	 * @return the values
+	 */
+	public Map<String, Object> getValues() { return values; }
 
 }
