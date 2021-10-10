@@ -92,10 +92,8 @@ public class SWTChartEditor implements ChartEditor {
 	 *            the chart to edit.
 	 */
 	public SWTChartEditor(final Display display, final JFreeChart chart2edit, final Point position) {
-		this.shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.NO_TRIM);
+		this.shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.TOOL | SWT.TITLE);
 		this.shell.setSize(400, 500);
-		// this.shell.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		// this.shell.setAlpha(140);
 		this.chart = chart2edit;
 		this.shell.setText("Chart properties");
 		this.shell.setLocation(position);
@@ -776,10 +774,8 @@ public class SWTChartEditor implements ChartEditor {
 
 			if (axis == null) return null;
 			// return the appropriate axis editor
-			if (axis instanceof NumberAxis)
-				return new SWTNumberAxisEditor(parent, style, (NumberAxis) axis);
-			else
-				return new SWTAxisEditor(parent, style, axis);
+			if (axis instanceof NumberAxis) return new SWTNumberAxisEditor(parent, style, (NumberAxis) axis);
+			return new SWTAxisEditor(parent, style, axis);
 		}
 
 		/**
