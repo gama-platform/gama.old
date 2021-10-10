@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -58,6 +60,9 @@ public class EditorsDialog extends Dialog {
 	/** The scope. */
 	private final IScope scope;
 
+	/** The color. */
+	private final Color color;
+
 	/**
 	 * Instantiates a new editors dialog.
 	 *
@@ -74,10 +79,32 @@ public class EditorsDialog extends Dialog {
 	 */
 	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
 			final String title, final GamaFont font) {
+		this(scope, parentShell, parameters, title, font, GamaColors.toGamaColor(IGamaColors.OK.inactive()));
+	}
+
+	/**
+	 * Instantiates a new editors dialog.
+	 *
+	 * @param scope
+	 *            the scope.
+	 * @param parentShell
+	 *            the parent shell
+	 * @param parameters
+	 *            the parameters.
+	 * @param title
+	 *            the title.
+	 * @param font
+	 *            the font.
+	 * @param color
+	 *            the color
+	 */
+	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
+			final String title, final GamaFont font, final GamaColor color) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
+		this.color = GamaColors.toSwtColor(color);
 		setShellStyle(SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
 		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
@@ -108,8 +135,8 @@ public class EditorsDialog extends Dialog {
 		// final var layout = (GridLayout) composite.getLayout();
 		// layout.numColumns = 2;
 		final var text = new Label(composite, SWT.None);
-		text.setBackground(IGamaColors.OK.inactive());
-		text.setForeground(GamaColors.getTextColorForBackground(text.getBackground()).color());
+		text.setBackground(color);
+		text.setForeground(GamaColors.getTextColorForBackground(color).color());
 		if (font != null) {
 			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		}

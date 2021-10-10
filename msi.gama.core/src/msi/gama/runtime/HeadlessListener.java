@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.HeadlessListener.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * HeadlessListener.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -51,6 +51,17 @@ import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The listener interface for receiving headless events.
+ * The class that is interested in processing a headless
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addHeadlessListener<code> method. When
+ * the headless event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see HeadlessEvent
+ */
 public class HeadlessListener implements IGui {
 
 	// See #2996: simplification of the logging done in this class
@@ -71,17 +82,20 @@ public class HeadlessListener implements IGui {
 		GAMA.setHeadlessGui(new HeadlessListener());
 	}
 
+	/**
+	 * Log.
+	 *
+	 * @param s the s
+	 */
 	private static void log(final String s) {
 		DEBUG.LOG(s);
 	}
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final List<IParameter> parameters, final GamaFont font) {
+			final List<IParameter> parameters, final GamaFont font, final GamaColor color) {
 		final Map<String, Object> initialValues = GamaMapFactory.create();
-		parameters.forEach(p -> {
-			initialValues.put(p.getName(), p.getInitialValue(scope));
-		});
+		parameters.forEach(p -> { initialValues.put(p.getName(), p.getInitialValue(scope)); });
 		return initialValues;
 	}
 
@@ -95,11 +109,7 @@ public class HeadlessListener implements IGui {
 
 			initialValues.put(t, initialValuesPage);
 			IList<IParameter> ps = (IList<IParameter>) l.get(IKeyword.PARAMETERS);
-			if (ps != null) {
-				ps.forEach(p -> {
-					initialValuesPage.put(p.getName(), p.getInitialValue(scope));
-				});
-			}
+			if (ps != null) { ps.forEach(p -> { initialValuesPage.put(p.getName(), p.getInitialValue(scope)); }); }
 
 		}
 
@@ -134,9 +144,7 @@ public class HeadlessListener implements IGui {
 	public void closeDialogs(final IScope scope) {}
 
 	@Override
-	public IAgent getHighlightedAgent() {
-		return null;
-	}
+	public IAgent getHighlightedAgent() { return null; }
 
 	@Override
 	public void setHighlightedAgent(final IAgent a) {}
@@ -184,11 +192,9 @@ public class HeadlessListener implements IGui {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = DISPLAYS.get("image");
-		if (creator != null) {
-			surface = creator.create(output);
-			surface.outputReloaded();
-		} else
-			return new NullDisplaySurface();
+		if (creator == null) return new NullDisplaySurface();
+		surface = creator.create(output);
+		surface.outputReloaded();
 		return surface;
 	}
 
@@ -255,27 +261,19 @@ public class HeadlessListener implements IGui {
 					public void setModificationStamp(final long modificationStamp) {}
 
 					@Override
-					public Object getThumbnail() {
-						return "";
-					}
+					public Object getThumbnail() { return ""; }
 
 					@Override
-					public String getSuffix() {
-						return "";
-					}
+					public String getSuffix() { return ""; }
 
 					@Override
 					public void appendSuffix(final StringBuilder sb) {}
 
 					@Override
-					public long getModificationStamp() {
-						return 0;
-					}
+					public long getModificationStamp() { return 0; }
 
 					@Override
-					public String getDocumentation() {
-						return "";
-					}
+					public String getDocumentation() { return ""; }
 				};
 			}
 
@@ -336,6 +334,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public void updateDecorator(final String string) {}
 
+	/** The status. */
 	IStatusDisplayer status = new IStatusDisplayer() {
 
 		@Override
@@ -373,6 +372,7 @@ public class HeadlessListener implements IGui {
 
 	};
 
+	/** The console. */
 	IConsoleDisplayer console = new IConsoleDisplayer() {
 
 		@Override
@@ -418,9 +418,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IConsoleDisplayer getConsole() {
-		return console;
-	}
+	public IConsoleDisplayer getConsole() { return console; }
 
 	@Override
 	public void clearErrors(final IScope scope) {}
@@ -446,9 +444,7 @@ public class HeadlessListener implements IGui {
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
 
 	@Override
-	public GamaPoint getMouseLocationInModel() {
-		return new GamaPoint(0, 0);
-	}
+	public GamaPoint getMouseLocationInModel() { return new GamaPoint(0, 0); }
 
 	@Override
 	public void setMouseLocationInModel(final GamaPoint modelCoordinates) {}
@@ -518,8 +514,6 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public Iterable<IDisplaySurface> getAllDisplaySurfaces() {
-		return Collections.EMPTY_LIST;
-	}
+	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return Collections.EMPTY_LIST; }
 
 }

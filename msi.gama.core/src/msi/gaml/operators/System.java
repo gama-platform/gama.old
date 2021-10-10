@@ -34,6 +34,7 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -186,7 +187,7 @@ public class System {
 			value = "command",
 			category = { IOperatorCategory.SYSTEM },
 			concept = { IConcept.SYSTEM, IConcept.COMMUNICATION })
-	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
+	@doc ("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string. A map<string, string> containing environment variables values can be passed, replacing, only for this command, the values of existing variables.")
 	@no_test
 	public static String console(final IScope scope, final String s, final String directory,
 			final IMap<String, String> environment) {
@@ -373,7 +374,7 @@ public class System {
 			final GamaFont font) {
 		final IList<IParameter> parameters = GamaListFactory.create();
 		map.forEach((k, v) -> { parameters.add(enterValue(scope, k, v)); });
-		return userInputDialog(scope, title, parameters, font);
+		return userInputDialog(scope, title, parameters, font, null);
 	}
 
 	/**
@@ -404,7 +405,8 @@ public class System {
 	public static IMap<String, Object> userInputDeprecated(final IScope scope, final IList parameters,
 			final GamaFont font) {
 		final IAgent agent = scope.getAgent();
-		return userInputDialog(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters, font);
+		return userInputDialog(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters, font,
+				null);
 	}
 
 	/**
@@ -571,7 +573,41 @@ public class System {
 	@Deprecated
 	public static IMap<String, Object> userInputDeprecated(final IScope scope, final String title,
 			final IList parameters, final GamaFont font) {
-		return userInputDialog(scope, title, parameters, font);
+		return userInputDialog(scope, title, parameters, font, null);
+	}
+	
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			deprecated = "Use `user_input_dialog` instead",
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font and the background color of the title can be specified",
+			masterDoc = true,
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	@Deprecated
+	public static IMap<String, Object> userInputDeprecated(final IScope scope, final String title,
+			final IList parameters, final GamaFont font, final GamaColor color) {
+		return userInputDialog(scope, title, parameters, font, color);
 	}
 
 	/**
@@ -601,7 +637,7 @@ public class System {
 	@no_test
 	public static IMap<String, Object> userInputDialog(final IScope scope, final String title, final IList parameters) {
 		parameters.removeIf(p -> !(p instanceof IParameter));
-		return userInputDialog(scope, title, parameters, null);
+		return userInputDialog(scope, title, parameters, null, null);
 	}
 
 	/**
@@ -661,7 +697,41 @@ public class System {
 			final GamaFont font) {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
-				scope.getGui().openUserInputDialog(scope, title, parameters, font));
+				scope.getGui().openUserInputDialog(scope, title, parameters, font, null));
+	}
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT_DIALOG,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified",
+			masterDoc = true,
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInputDialog(final IScope scope, final String title, final IList parameters,
+			final GamaFont font, final GamaColor color) {
+		parameters.removeIf(p -> !(p instanceof IParameter));
+		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
+				scope.getGui().openUserInputDialog(scope, title, parameters, font, color));
 	}
 
 	/**

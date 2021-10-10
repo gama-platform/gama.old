@@ -62,6 +62,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.ISimulationStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -286,11 +287,11 @@ public class SwtGui implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final List<IParameter> parameters, final GamaFont font) {
+			final List<IParameter> parameters, final GamaFont font, final GamaColor color) {
 		final IMap<String, Object> result = GamaMapFactory.createUnordered();
 		for (final IParameter p : parameters) { result.put(p.getName(), p.getInitialValue(scope)); }
 		WorkbenchHelper.run(() -> {
-			final EditorsDialog dialog = new EditorsDialog(scope, null, parameters, title, font);
+			final EditorsDialog dialog = new EditorsDialog(scope, null, parameters, title, font, color);
 			if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); }
 		});
 		return result;
