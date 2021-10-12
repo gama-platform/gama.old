@@ -1150,7 +1150,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			for (final IShape ag : agents) {
 				if (ag.getGeometries().size() > 1) {
-					ag.setInnerGeometry(geometryCollectionManagement(ag.getInnerGeometry()));
+					ag.setInnerGeometry(geometryCollectionToSimpleManagement(ag.getInnerGeometry()));
 				}
 				final SimpleFeature ff = (SimpleFeature) fw.next();
 				final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
@@ -1178,6 +1178,33 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		}
 	}
+	
+	private static Geometry geometryCollectionToSimpleManagement(final Geometry gg) {
+		if (gg instanceof GeometryCollection) {
+			final int nb = ((GeometryCollection) gg).getNumGeometries();
+			List<Geometry> polys = new ArrayList<>();
+			List<Geometry> lines = new ArrayList<>();
+			List<Geometry> points = new ArrayList<>();
+			
+			for (int i = 0; i < nb; i++) {
+				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
+				if ((g instanceof Polygon)) { polys.add(g);}
+				else if ((g instanceof LineString)) {lines.add(g); }
+				else if ((g instanceof Point)) { points.add(g); }
+			}
+			
+			if (!polys.isEmpty()) {
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon((Polygon[]) polys.toArray());
+			}
+			if (!lines.isEmpty()) {
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString((LineString[]) lines.toArray());
+			}
+			if (!points.isEmpty()) {
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint((Point[]) points.toArray());
+			}
+		}
+		return gg;
+	}
 
 	private static Geometry geometryCollectionManagement(final Geometry gg) {
 		if (gg instanceof GeometryCollection) {
@@ -1185,12 +1212,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			boolean isMultiPoint = true;
 			boolean isMultiLine = true;
 			final int nb = ((GeometryCollection) gg).getNumGeometries();
+			
 			for (int i = 0; i < nb; i++) {
 				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
 				if (!(g instanceof Polygon)) { isMultiPolygon = false; }
 				if (!(g instanceof LineString)) { isMultiLine = false; }
 				if (!(g instanceof Point)) { isMultiPoint = false; }
 			}
+			
 			if (isMultiPolygon) {
 				final Polygon[] polygons = new Polygon[nb];
 				for (int i = 0; i < nb; i++) {
