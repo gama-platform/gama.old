@@ -670,7 +670,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		if (getBuffer() == null) { fillBuffer(scope); }
 		Object vals = null;
 		try {
-			vals = coverage.evaluate(new DirectPosition2D(x, y));
+			vals = coverage.evaluate(new DirectPosition2D(x, y));	
 		} catch (final Exception e) {
 			vals = noData.doubleValue();
 		}

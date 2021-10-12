@@ -208,14 +208,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		this.nbBands = gfiles.size();
 		bands = new ArrayList<>();
-
 		String initCRS = new ArrayList<>(gfile.getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0).toString();
 		List<String> crsF = new ArrayList<>();
+		List<Envelope3D> envF = new ArrayList<>();
 
 		for (int j = 1; j < gfiles.size(); j++) {
 			crsF.add(new ArrayList<>(gfiles.get(j).getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0)
 					.toString());
+			envF.add(gfiles.get(j).computeEnvelope(scope));
 		}
+			
 		for (int i = 0; i < matrix.length; i++) {
 			final IList vals = GamaListFactory.create(Types.FLOAT);
 			vals.add(gridValue[i]);
@@ -223,9 +225,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final GamaGridFile gfile2 = gfiles.get(j);
 				String taCRS = crsF.get(j - 1);
 				GamaPoint loc = matrix[i].getLocation();
-				if (initCRS != null && taCRS != null) {
-					IShape s = Projections.transform_CRS(scope, loc, initCRS, taCRS);
-					if (s != null) { loc = s.getLocation(); }
+				
+				if (initCRS != null && taCRS != null ) {
+					loc = Projections.transform_CRS(scope, loc, taCRS).getLocation();
 				}
 				final Double v = gfile2.valueOf(scope, loc);
 				vals.add(v);
