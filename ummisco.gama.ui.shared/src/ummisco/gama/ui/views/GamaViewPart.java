@@ -351,13 +351,10 @@ public abstract class GamaViewPart extends ViewPart
 	public void close(final IScope scope) {
 		if (closing) return;
 		closing = true;
-		DEBUG.OUT("Closing " + this.getPartName());
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				WorkbenchHelper.hideView(GamaViewPart.this);
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
+			} catch (final Exception e) {}
 		});
 
 	}

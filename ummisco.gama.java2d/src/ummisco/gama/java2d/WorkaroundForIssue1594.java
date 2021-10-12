@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'WorkaroundForIssue1594.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * WorkaroundForIssue1594.java, in ummisco.gama.java2d, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.java2d;
 
 import org.eclipse.swt.widgets.Composite;
@@ -18,12 +17,23 @@ import org.eclipse.ui.IWorkbenchPartReference;
 
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class WorkaroundForIssue1594.
+ */
 public class WorkaroundForIssue1594 {
 
+	/**
+	 * Install on.
+	 *
+	 * @param view the view
+	 * @param parent the parent
+	 * @param surfaceComposite the surface composite
+	 * @param displaySurface the display surface
+	 */
 	public static void installOn(final AWTDisplayView view, final Composite parent, final Composite surfaceComposite,
 			final Java2DDisplaySurface displaySurface) {
 		// Install only on Windows
-		if (!msi.gama.runtime.PlatformHelper.isWindows()) { return; }
+		if (!msi.gama.runtime.PlatformHelper.isWindows()) return;
 		final IPartService ps = view.getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 
@@ -36,11 +46,11 @@ public class WorkaroundForIssue1594 {
 					// read the size of the composite inside an SWT
 					// thread and run the sizing inside an AWT thread
 					WorkbenchHelper.asyncRun(() -> {
-						if (parent.isDisposed()) { return; }
+						if (parent.isDisposed()) return;
 
 						final org.eclipse.swt.graphics.Rectangle r = parent.getBounds();
 						java.awt.EventQueue.invokeLater(() -> {
-							if (surfaceComposite == null) { return; }
+							if (surfaceComposite == null) return;
 							displaySurface.setBounds(r.x, r.y, r.width, r.height);
 							WorkbenchHelper.asyncRun(() -> {
 								view.getSash().setMaximizedControl(null);
@@ -54,26 +64,6 @@ public class WorkaroundForIssue1594 {
 
 			}
 
-			@Override
-			public void partClosed(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partDeactivated(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partOpened(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partBroughtToTop(final IWorkbenchPartReference part) {}
-
-			@Override
-			public void partHidden(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partVisible(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partInputChanged(final IWorkbenchPartReference partRef) {}
 		});
 
 	}

@@ -1628,7 +1628,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 */
 
-	public void isInRotationMode(final boolean b) {
+	public void setRotationMode(final boolean b) {
 		rotationMode = b;
 	}
 
@@ -1683,7 +1683,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (doIt) {
 			final GamaPoint target = getData().getCameraTarget();
 			final double distance = getData().getCameraPos().minus(target).norm();
-			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 6d));
+			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 8d));
 		}
 	}
 

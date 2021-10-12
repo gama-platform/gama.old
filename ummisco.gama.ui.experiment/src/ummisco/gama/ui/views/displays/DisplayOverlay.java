@@ -34,10 +34,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -158,8 +154,6 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			final IOverlayProvider<OverlayInfo> provider) {
 		this.createExtraInfo = provider != null;
 		this.view = view;
-		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-		ps.addPartListener(pl2);
 		referenceComposite = c;
 		// parentShell = c.getShell();
 		popup = new Shell(c.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS);
@@ -318,52 +312,6 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	/** The do display. */
 	Runnable doDisplay = this::display;
 
-	/** The pl 2. */
-	private final IPartListener2 pl2 = new IPartListener2() {
-
-		@Override
-		public void partActivated(final IWorkbenchPartReference partRef) {
-
-			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part)) { WorkbenchHelper.run(doDisplay); }
-		}
-
-		@Override
-		public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
-
-		@Override
-		public void partClosed(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part)) { close(); }
-		}
-
-		@Override
-		public void partDeactivated(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part) && !referenceComposite.isDisposed() && !referenceComposite.isVisible()) {
-				WorkbenchHelper.run(doHide);
-			}
-		}
-
-		@Override
-		public void partOpened(final IWorkbenchPartReference partRef) {}
-
-		@Override
-		public void partHidden(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part)) { WorkbenchHelper.run(doHide); }
-		}
-
-		@Override
-		public void partVisible(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
-			if (view.equals(part)) { WorkbenchHelper.run(doDisplay); }
-		}
-
-		@Override
-		public void partInputChanged(final IWorkbenchPartReference partRef) {}
-	};
-
 	/** The listener. */
 	OverlayListener listener = new OverlayListener();
 
@@ -427,7 +375,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final Point p = referenceComposite.toDisplay(r.x, r.y);
 		final int x = p.x;
 		final int y = p.y + r.height - (createExtraInfo ? 56 : 32);
-		// DEBUG.OUT("Location of overlay = " + x + " " + y + " <> client area dans Display : " + r);
+		DEBUG.OUT("Location of overlay = " + x + " " + y + " <> client area dans Display : " + r);
 		return new Point(x, y);
 	}
 
@@ -557,6 +505,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		if (!popup.isDisposed()) {
 			final Point size = getSize();
 			popup.setSize(popup.computeSize(size.x, size.y));
+			DEBUG.OUT("Size of overlay = " + popup.getSize().x + " " + popup.getSize().y);
 		}
 	}
 
@@ -583,8 +532,6 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if (referenceComposite != null && !referenceComposite.isDisposed()) {
 				referenceComposite.removeControlListener(listener);
 			}
-			final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-			if (ps != null) { ps.removePartListener(pl2); }
 			if (!popup.getParent().isDisposed()) {
 				popup.getParent().removeControlListener(listener);
 				popup.getParent().getShell().removeShellListener(listener);

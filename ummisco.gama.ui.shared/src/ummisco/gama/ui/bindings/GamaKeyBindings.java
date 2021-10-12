@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaKeyBindings.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaKeyBindings.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.bindings;
 
 import java.util.LinkedHashMap;
@@ -41,26 +40,50 @@ public class GamaKeyBindings implements Listener {
 		// DEBUG.ON();
 	}
 
+	/** The command. */
 	public static int COMMAND = PlatformHelper.isMac() ? SWT.COMMAND : SWT.CTRL;
+	
+	/** The search string. */
 	public static String SEARCH_STRING = format(COMMAND + SWT.SHIFT, 'H');
+	
+	/** The play string. */
 	public static String PLAY_STRING = format(COMMAND, 'P');
+	
+	/** The step string. */
 	public static String STEP_STRING = format(COMMAND + SWT.SHIFT, 'P');
+	
+	/** The reload string. */
 	public static String RELOAD_STRING = format(COMMAND, 'R');
+	
+	/** The quit string. */
 	public static String QUIT_STRING = format(COMMAND + SWT.SHIFT, 'X');
 
+	/**
+	 * The Class PluggableBinding.
+	 */
 	public static abstract class PluggableBinding implements Runnable {
 
+		/** The key. */
 		final KeyStroke key;
 
+		/**
+		 * Instantiates a new pluggable binding.
+		 *
+		 * @param modifiers the modifiers
+		 * @param keyCode the key code
+		 */
 		public PluggableBinding(final int modifiers, final int keyCode) {
-			super();
 			this.key = KeyStroke.getInstance(modifiers, keyCode);
 		}
 
 	}
 
+	/** The Constant bindings. */
 	private static final Map<KeyStroke, PluggableBinding> bindings = new LinkedHashMap<>();
 
+	/**
+	 * Instantiates a new gama key bindings.
+	 */
 	GamaKeyBindings() {}
 
 	@Override
@@ -126,42 +149,93 @@ public class GamaKeyBindings implements Listener {
 
 	}
 
+	/**
+	 * Consume.
+	 *
+	 * @param event the event
+	 */
 	private void consume(final Event event) {
 		event.doit = false;
 		event.type = SWT.None;
 	}
 
+	/** The Constant BINDINGS. */
 	private final static GamaKeyBindings BINDINGS = new GamaKeyBindings();
 
+	/**
+	 * Install.
+	 */
 	public static void install() {
 		WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().addFilter(SWT.KeyDown, BINDINGS));
 	}
 
+	/**
+	 * Ctrl.
+	 *
+	 * @param e the e
+	 * @return true, if successful
+	 */
 	public static boolean ctrl(final Event e) {
 		return (e.stateMask & COMMAND) != 0;
 	}
 
+	/**
+	 * Ctrl.
+	 *
+	 * @param e the e
+	 * @return true, if successful
+	 */
 	public static boolean ctrl(final KeyEvent e) {
 		return (e.stateMask & COMMAND) != 0;
 	}
 
+	/**
+	 * Ctrl.
+	 *
+	 * @param e the e
+	 * @return true, if successful
+	 */
 	public static boolean ctrl(final MouseEvent e) {
 		return (e.stateMask & COMMAND) != 0;
 	}
 
+	/**
+	 * Shift.
+	 *
+	 * @param e the e
+	 * @return true, if successful
+	 */
 	public static boolean shift(final Event e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
+	/**
+	 * Shift.
+	 *
+	 * @param e the e
+	 * @return true, if successful
+	 */
 	public static boolean shift(final MouseEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
+	/**
+	 * Format.
+	 *
+	 * @param mod the mod
+	 * @param key the key
+	 * @return the string
+	 */
 	public static String format(final int mod, final int key) {
 
 		return SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(mod, key));
 	}
 
+	/**
+	 * Plug.
+	 *
+	 * @param newBinding the new binding
+	 */
 	public static void plug(final PluggableBinding newBinding) {
 		bindings.put(newBinding.key, newBinding);
 		// DEBUG.LOG(

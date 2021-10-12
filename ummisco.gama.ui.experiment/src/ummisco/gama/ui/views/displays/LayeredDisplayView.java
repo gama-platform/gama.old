@@ -27,10 +27,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -61,19 +63,19 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	protected int realIndex = -1;
 
 	/** The form. */
-	protected SashForm form;
+	private SashForm form;
 
 	/** The surface composite. */
 	public Composite surfaceComposite;
 
 	/** The decorator. */
-	public final LayeredDisplayDecorator decorator;
+	public LayeredDisplayDecorator decorator;
 
 	/** The synchronizer. */
 	public final LayeredDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
 
 	/** The disposed. */
-	protected volatile boolean disposed = false;
+	public volatile boolean disposed = false;
 
 	/** The in init phase. */
 	protected volatile boolean inInitPhase = true;
@@ -88,16 +90,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 * Instantiates a new layered display view.
 	 */
 	public LayeredDisplayView() {
-		decorator = new LayeredDisplayDecorator(this);
-	}
 
-	/**
-	 * Control to set full screen.
-	 *
-	 * @return the control
-	 */
-	public Control controlToSetFullScreen() {
-		return form;
 	}
 
 	/**
@@ -118,14 +111,17 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		if (getOutput() != null) { setPartName(getOutput().getName()); }
+		decorator = new LayeredDisplayDecorator(this);
+		if (getOutput() != null) {
+			getOutput().getData().addListener(decorator);
+			setPartName(getOutput().getName());
+		}
 	}
 
 	@Override
 	public void addOutput(final IDisplayOutput out) {
 		super.addOutput(out);
 		if (out instanceof LayeredDisplayOutput) {
-			((LayeredDisplayOutput) out).getData().addListener(decorator);
 			final IScope scope = out.getScope();
 			if (scope != null && scope.getSimulation() != null) {
 				final ITopLevelAgent root = scope.getRoot();
@@ -142,8 +138,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 * @return true, if is open GL
 	 */
 	public boolean isOpenGL() {
-		if (outputs.isEmpty()) return false;
-		return getOutput().getData().isOpenGL();
+		return false;
+		// if (outputs.isEmpty()) return false;
+		// return getOutput().getData().isOpenGL();
 	}
 
 	/**
@@ -175,14 +172,15 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		final Composite centralPanel = new Composite(form, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 
 		centralPanel.setLayout(emptyLayout());
-		setParentComposite(new Composite(centralPanel, SWT.NONE) {
-
-			@Override
-			public boolean setFocus() {
-				return forceFocus();
-			}
-
-		});
+		setParentComposite(centralPanel);
+		// setParentComposite(new Composite(centralPanel, SWT.NONE) {
+		//
+		// @Override
+		// public boolean setFocus() {
+		// return forceFocus();
+		// }
+		//
+		// });
 
 		getParentComposite().setLayoutData(fullData());
 		getParentComposite().setLayout(emptyLayout());
@@ -196,11 +194,21 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	/**
+	 * Gets the multi listener.
+	 *
+	 * @return the multi listener
+	 */
+	public IDisposable getMultiListener() {
+		return new SWTLayeredDisplayMultiListener(decorator, getDisplaySurface());
+	}
+
+	/**
 	 * Empty layout.
 	 *
 	 * @return the grid layout
 	 */
-	GridLayout emptyLayout() {
+	Layout emptyLayout() {
+		// return new FillLayout(SWT.VERTICAL);
 		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
@@ -217,14 +225,14 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	GridData fullData() {
 		return new GridData(SWT.FILL, SWT.FILL, true, true);
 	}
-
-	@Override
-	public void setFocus() {
-		if (getParentComposite() != null && !getParentComposite().isDisposed()
-				&& !getParentComposite().isFocusControl()) {
-			getParentComposite().forceFocus();
-		}
-	}
+	//
+	// @Override
+	// public void setFocus() {
+	// if (getParentComposite() != null && !getParentComposite().isDisposed()
+	// && !getParentComposite().isFocusControl()) {
+	// getParentComposite().forceFocus();
+	// }
+	// }
 
 	/**
 	 * Creates the surface composite.
@@ -403,15 +411,29 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		decorator.overlay.setVisible(false);
 	}
 
-	/**
-	 * A call indicating that fullscreen has been set on the display. Views might decide to do something or not. Default
-	 * is to do nothing.
-	 */
-	public void fullScreenSet() {}
-
 	@Override
 	public void takeSnapshot() {
 		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), WorkbenchHelper.displaySizeOf(surfaceComposite));
+	}
+
+	/**
+	 * Gets the interaction control.
+	 *
+	 * @return the interaction control
+	 */
+	public Control getInteractionControl() { return getZoomableControls()[0]; }
+
+	@Override
+	public void close(final IScope scope) {
+		if (closing) return;
+		closing = true;
+		WorkbenchHelper.asyncRun(() -> {
+			try {
+				if (getDisplaySurface() != null) { getDisplaySurface().dispose(); }
+				WorkbenchHelper.hideView(this);
+			} catch (final Exception e) {}
+		});
+
 	}
 
 }

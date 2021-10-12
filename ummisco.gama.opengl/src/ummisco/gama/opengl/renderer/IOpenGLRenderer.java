@@ -1,7 +1,6 @@
 package ummisco.gama.opengl.renderer;
 
 import com.jogamp.opengl.GLEventListener;
-import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -12,13 +11,14 @@ import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
 import ummisco.gama.opengl.renderer.helpers.LightHelper;
 import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.renderer.helpers.SceneHelper;
+import ummisco.gama.opengl.view.GamaGLCanvas;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 
 public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 
-	void setCanvas(GLCanvas canvas);
+	void setCanvas(GamaGLCanvas canvas);
 
-	GLCanvas getCanvas();
+	GamaGLCanvas getCanvas();
 
 	void initScene();
 
@@ -43,9 +43,7 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 
 	SceneHelper getSceneHelper();
 
-	default LayeredDisplayData getData() {
-		return getSurface().getData();
-	}
+	default LayeredDisplayData getData() { return getSurface().getData(); }
 
 	int getLayerWidth();
 
