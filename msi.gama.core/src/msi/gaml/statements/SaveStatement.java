@@ -738,19 +738,32 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public static String getGeometryType(final List<? extends IShape> agents) {
 		String geomType = "";
+		boolean isLine = false;
 		for (final IShape be : agents) {
 			final IShape geom = be.getGeometry();
 			if (geom != null && geom.getInnerGeometry() != null) {
-				geomType = geom.getInnerGeometry().getClass().getSimpleName();
 				if (geom.getInnerGeometry().getNumGeometries() > 1) {
-					if (geom.getInnerGeometry().getGeometryN(0).getClass() == Point.class) {
-						geomType = MultiPoint.class.getSimpleName();
-					} else if (geom.getInnerGeometry().getGeometryN(0).getClass() == LineString.class) {
-						geomType = MultiLineString.class.getSimpleName();
-					} else if (geom.getInnerGeometry().getGeometryN(0).getClass() == Polygon.class) {
-						geomType = MultiPolygon.class.getSimpleName();
+					Geometry g2 = geometryCollectionToSimpleManagement(geom.getInnerGeometry());
+					if (! isLine && g2.getGeometryN(0).getClass() == Point.class) {
+						geomType = Point.class.getSimpleName();
+					} else if (g2.getGeometryN(0).getClass() == LineString.class) {
+						geomType = LineString.class.getSimpleName();
+					} else if (g2.getGeometryN(0).getClass() == Polygon.class) {
+						return Polygon.class.getSimpleName();
 					}
-					break;
+					
+				} else {
+					String geomType_tmp = geom.getInnerGeometry().getClass().getSimpleName();
+					if (geom.getInnerGeometry() instanceof Polygon) {
+						return geomType_tmp;
+					} else if (! isLine) {
+						if (geom.getInnerGeometry() instanceof LineString) {
+							isLine = true;
+						}
+						geomType = geomType_tmp;
+						
+					}
+					
 				}
 			}
 		}
@@ -789,9 +802,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// }
 			final IProjection proj = defineProjection(scope, f);
 			if (!geoJson) {
-				saveShapeFile(scope, f, agents, specs.toString(), attributes, proj);
+				saveShapeFile(scope, f, agents, specs.toString(),geomType, attributes, proj);
 			} else {
-				saveGeoJSonFile(scope, f, agents, specs.toString(), attributes, proj);
+				saveGeoJSonFile(scope, f, agents, specs.toString(), geomType, attributes, proj);
 			}
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -1054,7 +1067,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final List<Object> values = new ArrayList<>();
 		// geometry is by convention (in specs) at position 0
 		if (ag.getInnerGeometry() == null) return false;
-		// System.out.println("ag.getInnerGeometry(): "+ ag.getInnerGeometry().getClass());
 		Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 
 		g = fixesPolygonCWS(g);
@@ -1100,7 +1112,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveGeoJSonFile(final IScope scope, final File f, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+			/* final String featureTypeName, */final String specs,  final String geomType, final Map<String, IExpression> attributes,
 			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
 		if (agents == null || agents.isEmpty()) return;
@@ -1130,7 +1142,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveShapeFile(final IScope scope, final File f, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+			/* final String featureTypeName, */final String specs,  final String geomType, final Map<String, IExpression> attributes,
 			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
 		if (agents == null || agents.isEmpty()) return;
@@ -1143,18 +1155,28 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				DataUtilities.createType(store.getFeatureSource().getEntry().getTypeName(), specs);
 		store.createSchema(type);
 		// AD: creation of a FeatureWriter on the store.
+		boolean isPolygon = (geomType.equals(MultiPolygon.class.getSimpleName()) || geomType.equals(Polygon.class.getSimpleName()));
+		boolean isLine = (geomType.equals(MultiLineString.class.getSimpleName()) || geomType.equals(LineString.class.getSimpleName()));
+		boolean isPoint = (geomType.equals(MultiPoint.class.getSimpleName()) || geomType.equals(Point.class.getSimpleName()));
 		try (FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT)) {
-
 			// AD Builds once the list of agent attributes to evaluate
 			final Collection<IExpression> attributeValues =
 					attributes == null ? Collections.EMPTY_LIST : attributes.values();
+			
 			for (final IShape ag : agents) {
 				if (ag.getGeometries().size() > 1) {
 					ag.setInnerGeometry(geometryCollectionToSimpleManagement(ag.getInnerGeometry()));
 				}
-				final SimpleFeature ff = (SimpleFeature) fw.next();
-				final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
-				if (!ok) { break; }
+				if ((isPolygon && (ag.getInnerGeometry() instanceof Polygon || ag.getInnerGeometry() instanceof MultiPolygon)) ||
+					(isLine && ag.getGeometry().isLine()) ||
+					(isPoint && ag.getGeometry().isPoint()) 
+				)
+				{
+					final SimpleFeature ff = (SimpleFeature) fw.next();
+					final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
+					if (!ok) { break; }
+				}
+				
 			}
 			fw.close();
 			// Writes the prj file
@@ -1182,25 +1204,36 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private static Geometry geometryCollectionToSimpleManagement(final Geometry gg) {
 		if (gg instanceof GeometryCollection) {
 			final int nb = ((GeometryCollection) gg).getNumGeometries();
-			List<Geometry> polys = new ArrayList<>();
-			List<Geometry> lines = new ArrayList<>();
-			List<Geometry> points = new ArrayList<>();
+			List<Polygon> polys = new ArrayList<>();
+			List<LineString> lines = new ArrayList<>();
+			List<Point> points = new ArrayList<>();
 			
 			for (int i = 0; i < nb; i++) {
 				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
-				if ((g instanceof Polygon)) { polys.add(g);}
-				else if ((g instanceof LineString)) {lines.add(g); }
-				else if ((g instanceof Point)) { points.add(g); }
+				if ((g instanceof Polygon)) { polys.add((Polygon) g);}
+				else if ((g instanceof LineString)) {lines.add((LineString) g); }
+				else if ((g instanceof Point)) { points.add((Point) g); }
 			}
-			
 			if (!polys.isEmpty()) {
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon((Polygon[]) polys.toArray());
+				if (polys.size() == 1) return polys.get(0);
+				Polygon[] ps = new Polygon[polys.size()];
+				for (int i = 0; i < ps.length; i++) ps[i] = polys.get(i);
+					
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(ps);
 			}
 			if (!lines.isEmpty()) {
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString((LineString[]) lines.toArray());
+
+				if (lines.size() == 1) return lines.get(0);
+				LineString[] ps = new LineString[lines.size()];
+				for (int i = 0; i < ps.length; i++) ps[i] = lines.get(i);
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(ps);
 			}
 			if (!points.isEmpty()) {
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint((Point[]) points.toArray());
+				if (points.size() == 1) return points.get(0);
+				
+				Point[] ps = new Point[points.size()];
+				for (int i = 0; i < ps.length; i++) ps[i] = points.get(i);
+				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(ps);
 			}
 		}
 		return gg;
