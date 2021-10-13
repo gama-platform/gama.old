@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.layers.AxesLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * AxesLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -34,31 +34,56 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.text.StringObject;
 
+/**
+ * The Class AxesLayerObject.
+ */
 public class AxesLayerObject extends StaticLayerObject.World {
 
-	public final static String[] LABELS = new String[] { "X", "Y", "Z" };
-	public final static GamaPoint[] ANCHORS = new GamaPoint[] { left_center, top_center, bottom_center };
-	public final static AxisAngle[] ROTATIONS =
-			new AxisAngle[] { new AxisAngle(PLUS_J, 90), new AxisAngle(MINUS_I, 90), null };
-	public final static GamaColor[] COLORS =
-			new GamaColor[] { getNamed("gamared"), getNamed("gamaorange"), getNamed("gamablue") };
+	/** The Constant LABELS. */
+	public final static String[] LABELS = { "X", "Y", "Z" };
+
+	/** The Constant ANCHORS. */
+	public final static GamaPoint[] ANCHORS = { left_center, top_center, bottom_center };
+
+	/** The Constant ROTATIONS. */
+	public final static AxisAngle[] ROTATIONS = { new AxisAngle(PLUS_J, 90), new AxisAngle(MINUS_I, 90), null };
+
+	/** The Constant COLORS. */
+	public final static GamaColor[] COLORS = { getNamed("gamared"), getNamed("gamaorange"), getNamed("gamablue") };
+
+	/** The Constant DEFAULT_SCALE. */
 	protected final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
+
+	/** The Constant ORIGIN. */
 	protected final static GamaPoint ORIGIN = new GamaPoint(0, 0, 0);
+
+	/** The Constant AXES_FONT. */
 	protected final static GamaFont AXES_FONT = new GamaFont("Helvetica", 0, 18);
+
+	/** The arrow. */
 	final GamaShape arrow;
+
+	/** The dirs. */
 	final GamaPoint[] dirs;
+
+	/** The axes. */
 	final GamaShape[] axes = new GamaShape[3];
 
+	/**
+	 * Instantiates a new axes layer object.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 */
 	public AxesLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 		// Addition to fix #2227
 		scale.setLocation(DEFAULT_SCALE);
 		final double max = renderer.getMaxEnvDim();
-		arrow = (GamaShape) buildCone3D(max / 15, max / 6, ORIGIN);
-		dirs = new GamaPoint[] { new GamaPoint(max, 0, 0), new GamaPoint(0, max, 0), new GamaPoint(0, 0, max) };
-		for (int i = 0; i < 3; i++) {
-			axes[i] = (GamaShape) buildLineCylinder(ORIGIN, dirs[i], max / 40);
-		}
+		arrow = (GamaShape) buildCone3D(max / 20, max / 8, ORIGIN);
+		dirs = new GamaPoint[] { new GamaPoint(max / 2, 0, 0), new GamaPoint(0, max / 2, 0),
+				new GamaPoint(0, 0, max / 2) };
+		for (int i = 0; i < 3; i++) { axes[i] = (GamaShape) buildLineCylinder(ORIGIN, dirs[i], max / 60); }
 	}
 
 	@Override
@@ -73,7 +98,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	@Override
 	public void draw(final OpenGL gl) {
 		if (renderer.getOpenGLHelper().isInRotationMode()) {
-			final GamaPoint pivotPoint = (GamaPoint) renderer.getCameraTarget();
+			final GamaPoint pivotPoint = renderer.getCameraTarget();
 			setOffset(pivotPoint.yNegated());
 			final double size = renderer.getOpenGLHelper().sizeOfRotationElements();
 			final double ratio = size / renderer.getMaxEnvDim();

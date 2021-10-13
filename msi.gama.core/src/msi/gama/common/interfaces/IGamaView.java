@@ -239,6 +239,21 @@ public interface IGamaView {
 		 * Take snapshot.
 		 */
 		void takeSnapshot();
+
+		/**
+		 * Hide canvas.
+		 */
+		default void hideCanvas() {}
+
+		/**
+		 * Show canvas.
+		 */
+		default void showCanvas() {}
+
+		/**
+		 * Focus canvas.
+		 */
+		default void focusCanvas() {}
 	}
 
 	/**

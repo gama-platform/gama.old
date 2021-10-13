@@ -1,32 +1,44 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FreeFlyCamera.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FreeFlyCamera.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
-
-import org.eclipse.swt.SWT;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.ui.bindings.GamaKeyBindings;
 
+/**
+ * The Class FreeFlyCamera.
+ */
 public class FreeFlyCamera extends AbstractCamera {
 
+	/** The Constant up. */
 	private static final GamaPoint up = new GamaPoint(0.0f, 0.0f, 1.0f);
+
+	/** The forward. */
 	private final GamaPoint forward = new GamaPoint(0, 0, 0);
+
+	/** The left. */
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
+
+	/** The speed. */
 	private final double speed = getRenderer().getMaxEnvDim() * 0.0001;
 
+	/**
+	 * Instantiates a new free fly camera.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 */
 	public FreeFlyCamera(final IOpenGLRenderer renderer) {
 		super(renderer);
 		initialize();
@@ -36,9 +48,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void updateCartesianCoordinatesFromAngles() {
 		if (phi > 89) {
 			this.phi = 89;
-		} else if (phi < -89) {
-			this.phi = -89;
-		}
+		} else if (phi < -89) { this.phi = -89; }
 		final double factorP = phi * Maths.toRad;
 		final double factorT = theta * Maths.toRad;
 		final double r_temp = Math.cos(factorP);
@@ -49,9 +59,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public double getDistance() {
-		return position.minus(target).norm();
-	}
+	public double getDistance() { return position.minus(target).norm(); }
 
 	@Override
 	public void animate() {
@@ -157,29 +165,36 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		super.internalMouseMove(e);
-		if ((e.stateMask & SWT.BUTTON_MASK) == 0) { return; }
-		if (GamaKeyBindings.shift(e) /** || alt(e)) */
+	public void internalMouseMove(final int x, final int y, final int button, final boolean isCtrl,
+			final boolean isShift) {
+		super.internalMouseMove(x, y, button, isCtrl, isShift);
+		if (button == 0) return;
+		if (isShift /** || alt(e)) */
 				&& isViewInXYPlan()) {
-			getMousePosition().x = e.x;
-			getMousePosition().y = e.y;
+			getMousePosition().x = x;
+			getMousePosition().y = y;
 			getRenderer().getOpenGLHelper().defineROI(
 					new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
 					new GamaPoint(getMousePosition().x, getMousePosition().y));
 		} else {
-			final int horizMovement = e.x - (int) getLastMousePressedPosition().x;
-			final int vertMovement = e.y - (int) getLastMousePressedPosition().y;
-			lastMousePressedPosition.setLocation(e.x, e.y, 0);
+			final int horizMovement = x - (int) getLastMousePressedPosition().x;
+			final int vertMovement = y - (int) getLastMousePressedPosition().y;
+			lastMousePressedPosition.setLocation(x, y, 0);
 			this.theta = theta - horizMovement * getSensivity();
 			this.phi = phi - vertMovement * getSensivity();
 			updateCartesianCoordinatesFromAngles();
 		}
 	}
 
+	/**
+	 * Can select on release.
+	 *
+	 * @param isShift the is shift
+	 * @return true, if successful
+	 */
 	@Override
-	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
-		return GamaKeyBindings.shift(arg0) /* || alt(arg0) */;
+	protected boolean canSelectOnRelease(final boolean isShift) {
+		return isShift /* || alt(arg0) */;
 	}
 
 	@Override

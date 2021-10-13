@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.NullDisplaySurface.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * NullDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,9 +50,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public IScope getScope() {
-		return null;
-	}
+	public IScope getScope() { return null; }
 
 	/**
 	 * Method dispose()
@@ -100,9 +98,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getManager()
 	 */
 	@Override
-	public ILayerManager getManager() {
-		return null;
-	}
+	public ILayerManager getManager() { return null; }
 
 	/**
 	 * Method focusOn()
@@ -118,9 +114,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getWidth()
 	 */
 	@Override
-	public int getWidth() {
-		return 0;
-	}
+	public int getWidth() { return 0; }
 
 	/**
 	 * Method getHeight()
@@ -128,9 +122,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getHeight()
 	 */
 	@Override
-	public int getHeight() {
-		return 0;
-	}
+	public int getHeight() { return 0; }
 
 	/**
 	 * Method initialize()
@@ -162,9 +154,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvWidth()
 	 */
 	@Override
-	public double getEnvWidth() {
-		return 0;
-	}
+	public double getEnvWidth() { return 0; }
 
 	/**
 	 * Method getEnvHeight()
@@ -172,9 +162,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getEnvHeight()
 	 */
 	@Override
-	public double getEnvHeight() {
-		return 0;
-	}
+	public double getEnvHeight() { return 0; }
 
 	/**
 	 * Method getDisplayWidth()
@@ -182,9 +170,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayWidth()
 	 */
 	@Override
-	public double getDisplayWidth() {
-		return 0;
-	}
+	public double getDisplayWidth() { return 0; }
 
 	/**
 	 * Method getDisplayHeight()
@@ -192,9 +178,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayHeight()
 	 */
 	@Override
-	public double getDisplayHeight() {
-		return 0;
-	}
+	public double getDisplayHeight() { return 0; }
 
 	/**
 	 * Method setZoomListener()
@@ -210,9 +194,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
 	 */
 	@Override
-	public GamaPoint getModelCoordinates() {
-		return new GamaPoint();
-	}
+	public GamaPoint getModelCoordinates() { return new GamaPoint(); }
 
 	/**
 	 * Method getModelCoordinatesFrom()
@@ -258,9 +240,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()
 	 */
 	@Override
-	public double getZoomLevel() {
-		return 0;
-	}
+	public double getZoomLevel() { return 0; }
 
 	/**
 	 * Method setSize()
@@ -276,9 +256,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getOutput()
 	 */
 	@Override
-	public LayeredDisplayOutput getOutput() {
-		return null;
-	}
+	public LayeredDisplayOutput getOutput() { return null; }
 
 	/**
 	 * Method waitForUpdateAndRun()
@@ -294,9 +272,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getData()
 	 */
 	@Override
-	public LayeredDisplayData getData() {
-		return null;
-	}
+	public LayeredDisplayData getData() { return null; }
 
 	/**
 	 * Method setSWTMenuManager()
@@ -325,9 +301,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void changed(final Changes property, final Object value) {}
 
 	@Override
-	public Collection<IEventLayerListener> getLayerListeners() {
-		return Collections.EMPTY_LIST;
-	}
+	public Collection<IEventLayerListener> getLayerListeners() { return Collections.EMPTY_LIST; }
 
 	/**
 	 * Method getVisibleRegionForLayer()
@@ -345,9 +319,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
-	public int getFPS() {
-		return 0;
-	}
+	public int getFPS() { return 0; }
 	//
 	// @Override
 	// public boolean isRealized() {
@@ -360,9 +332,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
 	@Override
-	public boolean isRendered() {
-		return true;
-	}
+	public boolean isRendered() { return true; }
 
 	/*
 	 * (non-Javadoc)
@@ -370,9 +340,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isDisposed()
 	 */
 	@Override
-	public boolean isDisposed() {
-		return false;
-	}
+	public boolean isDisposed() { return false; }
 
 	/*
 	 * (non-Javadoc)
@@ -383,39 +351,21 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void getModelCoordinatesInfo(final StringBuilder sb) {}
 
 	@Override
-	public void dispatchKeyEvent(final char character) {
-		// TODO Auto-generated method stub
-
-	}
+	public void dispatchKeyEvent(final char character) {}
 
 	@Override
-	public void dispatchMouseEvent(final int swtEventType) {
-		// TODO Auto-generated method stub
-
-	}
+	public void dispatchMouseEvent(final int swtEventType, final int x, final int y) {}
 
 	@Override
-	public void setMousePosition(final int x, final int y) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setMousePosition(final int x, final int y) {}
 
 	@Override
-	public void selectAgentsAroundMouse() {
-		// TODO Auto-generated method stub
-
-	}
+	public void selectAgentsAroundMouse() {}
 
 	@Override
-	public void draggedTo(final int x, final int y) {
-		// TODO Auto-generated method stub
-
-	}
+	public void draggedTo(final int x, final int y) {}
 
 	@Override
-	public void setMenuManager(final Object displaySurfaceMenu) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setMenuManager(final Object displaySurfaceMenu) {}
 
 }

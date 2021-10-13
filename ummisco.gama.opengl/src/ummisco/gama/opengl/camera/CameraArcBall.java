@@ -1,17 +1,14 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'CameraArcBall.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * CameraArcBall.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
-
-import org.eclipse.swt.SWT;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.preferences.GamaPreferences;
@@ -19,13 +16,21 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.utils.DPIHelper;
 
+/**
+ * The Class CameraArcBall.
+ */
 public class CameraArcBall extends AbstractCamera {
 
+	/** The distance. */
 	private double distance;
 
+	/**
+	 * Instantiates a new camera arc ball.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 */
 	public CameraArcBall(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
@@ -68,6 +73,14 @@ public class CameraArcBall extends AbstractCamera {
 		phi = Maths.toDeg * Math.acos(p.z / getDistance());
 	}
 
+	/**
+	 * Translate camera from screen plan.
+	 *
+	 * @param x_translation_in_screen
+	 *            the x translation in screen
+	 * @param y_translation_in_screen
+	 *            the y translation in screen
+	 */
 	private void translateCameraFromScreenPlan(final double x_translation_in_screen,
 			final double y_translation_in_screen) {
 
@@ -242,14 +255,12 @@ public class CameraArcBall extends AbstractCamera {
 							flipped = false;
 							theta += 180;
 						}
+					} else if (phi + getKeyboardSensivity() * getSensivity() < 180) {
+						phi += getKeyboardSensivity() * getSensivity();
 					} else {
-						if (phi + getKeyboardSensivity() * getSensivity() < 180) {
-							phi += getKeyboardSensivity() * getSensivity();
-						} else {
-							phi = 360 - phi - getKeyboardSensivity() * getSensivity();
-							flipped = true;
-							theta += 180;
-						}
+						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
+						flipped = true;
+						theta += 180;
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
@@ -270,14 +281,12 @@ public class CameraArcBall extends AbstractCamera {
 							flipped = false;
 							theta += 180;
 						}
+					} else if (phi - getKeyboardSensivity() * getSensivity() > 0) {
+						phi -= getKeyboardSensivity() * getSensivity();
 					} else {
-						if (phi - getKeyboardSensivity() * getSensivity() > 0) {
-							phi -= getKeyboardSensivity() * getSensivity();
-						} else {
-							phi = -phi + getKeyboardSensivity() * getSensivity();
-							flipped = true;
-							theta += 180;
-						}
+						phi = -phi + getKeyboardSensivity() * getSensivity();
+						flipped = true;
+						theta += 180;
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
@@ -359,35 +368,30 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		int x = e.x;
-		int y = e.y;
-		// int x = PlatformHelper.autoScaleUp(e.x);
-		// int y = PlatformHelper.autoScaleUp(e.y);
+	public void internalMouseMove(final int x, final int y, final int button, final boolean isCtrl,
+			final boolean isShift) {
 		// Do it before the mouse position is newly set (in super.internalMouseMove)
 		if (keystoneMode) {
 			final int selectedCorner = getRenderer().getKeystoneHelper().getCornerSelected();
 			if (selectedCorner != -1) {
 				final GamaPoint origin = getNormalizedCoordinates(getMousePosition().x, getMousePosition().y);
-				x = DPIHelper.autoScaleUp(e.x);
-				y = DPIHelper.autoScaleUp(e.y);
 				GamaPoint p = getNormalizedCoordinates(x, y);
 				final GamaPoint translation = origin.minus(p).yNegated();
 				p = getRenderer().getKeystoneHelper().getKeystoneCoordinates(selectedCorner).plus(-translation.x,
 						translation.y, 0);
 				getRenderer().getKeystoneHelper().setKeystoneCoordinates(selectedCorner, p);
 			} else {
-				final int cornerSelected = hoverOnKeystone(e);
+				final int cornerSelected = hoverOnKeystone(x, y);
 				getRenderer().getKeystoneHelper().setCornerHovered(cornerSelected);
 			}
-			super.internalMouseMove(e);
+			super.internalMouseMove(x, y, button, isCtrl, isShift);
 			return;
 		}
 
-		super.internalMouseMove(e);
-		if ((e.stateMask & SWT.BUTTON_MASK) == 0) return;
-		final GamaPoint newPoint = new GamaPoint(DPIHelper.autoScaleUp(x), DPIHelper.autoScaleUp(y));
-		if (cameraInteraction && GamaKeyBindings.ctrl(e)) {
+		super.internalMouseMove(x, y, button, isCtrl, isShift);
+		if (button == 0) return;
+		final GamaPoint newPoint = new GamaPoint(x, y);
+		if (cameraInteraction && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
 			final int vertMovement = (int) (newPoint.y - lastMousePressedPosition.y);
 			// if (flipped) {
@@ -411,15 +415,13 @@ public class CameraArcBall extends AbstractCamera {
 						flipped = !flipped;
 						theta += 180;
 					}
+				} else // up drag : phi decrease
+				if (phi - -vertMovement_real * getSensivity() > 0) {
+					phi -= -vertMovement_real * getSensivity();
 				} else {
-					// up drag : phi decrease
-					if (phi - -vertMovement_real * getSensivity() > 0) {
-						phi -= -vertMovement_real * getSensivity();
-					} else {
-						phi = -phi + -vertMovement_real * getSensivity();
-						flipped = !flipped;
-						theta += 180;
-					}
+					phi = -phi + -vertMovement_real * getSensivity();
+					flipped = !flipped;
+					theta += 180;
 				}
 			} else if (vertMovement_real > 0) {
 				// down drag : phi decrease
@@ -430,22 +432,20 @@ public class CameraArcBall extends AbstractCamera {
 					flipped = !flipped;
 					theta += 180;
 				}
+			} else // up drag : phi increase
+			if (phi + -vertMovement_real * getSensivity() < 180) {
+				phi += -vertMovement_real * getSensivity();
 			} else {
-				// up drag : phi increase
-				if (phi + -vertMovement_real * getSensivity() < 180) {
-					phi += -vertMovement_real * getSensivity();
-				} else {
-					phi = +360 + phi - vertMovement_real * getSensivity();
-					flipped = !flipped;
-					theta += 180;
-				}
+				phi = +360 + phi - vertMovement_real * getSensivity();
+				flipped = !flipped;
+				theta += 180;
 			}
 
 			// phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
 		} else if (shiftPressed && isViewInXYPlan()) {
-			getMousePosition().x = DPIHelper.autoScaleUp(x);
-			getMousePosition().y = DPIHelper.autoScaleUp(y);
+			getMousePosition().x = x;
+			getMousePosition().y = y;
 			getRenderer().getOpenGLHelper().defineROI(
 					new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
 					new GamaPoint(getMousePosition().x, getMousePosition().y));
@@ -454,10 +454,9 @@ public class CameraArcBall extends AbstractCamera {
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
 			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
 			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);
-
 		} else if (cameraInteraction) {
-			int horizMovement = (int) (DPIHelper.autoScaleUp(x) - lastMousePressedPosition.x);
-			int vertMovement = (int) (DPIHelper.autoScaleUp(y) - lastMousePressedPosition.y);
+			int horizMovement = (int) (x - lastMousePressedPosition.x);
+			int vertMovement = (int) (y - lastMousePressedPosition.y);
 			if (flipped) {
 				horizMovement = -horizMovement;
 				vertMovement = -vertMovement;
@@ -474,23 +473,19 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	protected boolean canSelectOnRelease(final org.eclipse.swt.events.MouseEvent arg0) {
+	protected boolean canSelectOnRelease(final boolean isShift) {
 		return true;
 	}
 
 	@Override
 	protected void drawRotationHelper() {
-		renderer.getOpenGLHelper().isInRotationMode(ctrlPressed && cameraInteraction);
+		renderer.getOpenGLHelper().setRotationMode(ctrlPressed && cameraInteraction);
 	}
 
 	@Override
-	public double getDistance() {
-		return distance;
-	}
+	public double getDistance() { return distance; }
 
 	@Override
-	public void setDistance(final double distance) {
-		this.distance = distance;
-	}
+	public void setDistance(final double distance) { this.distance = distance; }
 
 }// End of Class CameraArcBall

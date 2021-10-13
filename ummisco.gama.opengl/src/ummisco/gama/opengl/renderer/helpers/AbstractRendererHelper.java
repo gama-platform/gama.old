@@ -1,11 +1,12 @@
 package ummisco.gama.opengl.renderer.helpers;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.outputs.LayeredDisplayData;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
+import ummisco.gama.opengl.view.GamaGLCanvas;
 import ummisco.gama.opengl.view.SWTOpenGLDisplaySurface;
 
 public abstract class AbstractRendererHelper {
@@ -23,41 +24,23 @@ public abstract class AbstractRendererHelper {
 		this.renderer = renderer;
 	}
 
-	public IOpenGLRenderer getRenderer() {
-		return renderer;
-	}
+	public IOpenGLRenderer getRenderer() { return renderer; }
 
-	protected LayeredDisplayData getData() {
-		return renderer.getData();
-	}
+	protected LayeredDisplayData getData() { return renderer.getData(); }
 
-	protected GL2 getGL() {
-		return renderer.getOpenGLHelper().getGL();
-	}
+	protected GL2 getGL() { return renderer.getOpenGLHelper().getGL(); }
 
-	protected OpenGL getOpenGL() {
-		return renderer.getOpenGLHelper();
-	}
+	protected OpenGL getOpenGL() { return renderer.getOpenGLHelper(); }
 
-	protected GLCanvas getCanvas() {
-		return renderer.getCanvas();
-	}
+	protected GamaGLCanvas getCanvas() { return renderer.getCanvas(); }
 
-	protected SWTOpenGLDisplaySurface getSurface() {
-		return renderer.getSurface();
-	}
+	protected SWTOpenGLDisplaySurface getSurface() { return renderer.getSurface(); }
 
-	public double getMaxEnvDim() {
-		return renderer.getMaxEnvDim();
-	}
+	public double getMaxEnvDim() { return renderer.getMaxEnvDim(); }
 
-	public double getZNear() {
-		return renderer.getData().getzNear();
-	}
+	public double getZNear() { return renderer.getData().getzNear(); }
 
-	public double getZFar() {
-		return renderer.getData().getzFar();
-	}
+	public double getZFar() { return renderer.getData().getzFar(); }
 
 	public abstract void initialize();
 

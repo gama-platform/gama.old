@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SwingControl.java, in plugin ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * SwingControl.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
@@ -29,16 +28,32 @@ import ummisco.gama.java2d.Java2DDisplaySurface;
 import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class SwingControl.
+ */
 public abstract class SwingControl extends Composite {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The applet. */
 	JApplet applet;
+
+	/** The frame. */
 	Frame frame;
+
+	/** The populated. */
 	boolean populated = false;
 
+	/**
+	 * Instantiates a new swing control.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @param style
+	 *            the style
+	 */
 	public SwingControl(final Composite parent, final int style) {
 		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
 		setLayout(new FillLayout());
@@ -64,22 +79,28 @@ public abstract class SwingControl extends Composite {
 		return result;
 	}
 
+	/**
+	 * Populate.
+	 */
 	protected void populate() {
-		if (isDisposed()) { return; }
+		if (isDisposed()) return;
 		if (!populated) {
 			populated = true;
-			frame = SWT_AWT.new_Frame(this);
-			EventQueue.invokeLater(() -> {
+			WorkbenchHelper.runInUI("Opening Java2D display", 50, m -> {
+				frame = SWT_AWT.new_Frame(SwingControl.this);
 				applet = new JApplet();
-				if (PlatformHelper.isWindows()) {
-					applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-				}
+				if (PlatformHelper.isWindows()) { applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()); }
 				frame.add(applet);
-				final Java2DDisplaySurface surface = createSwingComponent();
-				applet.getRootPane().getContentPane().add(surface);
-				WorkaroundForIssue2476.installOn(applet, surface);
-				WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));
+				EventQueue.invokeLater(() -> {
+					final Java2DDisplaySurface surface = createSwingComponent();
+					applet.getRootPane().getContentPane().add(surface);
+					WorkaroundForIssue2476.installOn(applet, surface);
+				});
+				// SwingControl.this.getParent().layout(true, true);
 			});
+			// EventQueue.invokeLater(() -> {
+			// WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));
+			// });
 		}
 	}
 
@@ -100,13 +121,9 @@ public abstract class SwingControl extends Composite {
 	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
-		DEBUG.OUT("-- Surface bounds set to " + x + "  " + y + " | " + width + " " + height);
+		// DEBUG.OUT("-- Surface bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		super.setBounds(x, y, width, height);
-	}
-
-	public JApplet getTopLevelContainer() {
-		return applet;
 	}
 
 }

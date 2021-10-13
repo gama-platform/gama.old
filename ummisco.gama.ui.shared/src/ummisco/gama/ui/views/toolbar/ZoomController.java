@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ZoomController.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ZoomController.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
@@ -32,8 +31,11 @@ import ummisco.gama.ui.resources.IGamaIcons;
  */
 public class ZoomController {
 
+	/** The including scrolling. */
 	// Fix for Issue #1291
 	final boolean includingScrolling;
+	
+	/** The view. */
 	final IToolbarDecoratedView.Zoomable view;
 
 	/**
@@ -52,9 +54,7 @@ public class ZoomController {
 			if (ge.detail == SWT.GESTURE_MAGNIFY) {
 				if (ge.magnification > 1.0) {
 					view.zoomIn();
-				} else if (ge.magnification < 1.0) {
-					view.zoomOut();
-				}
+				} else if (ge.magnification < 1.0) { view.zoomOut(); }
 			}
 
 		};
@@ -63,9 +63,7 @@ public class ZoomController {
 
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {
-				if (e.button == 1) {
-					view.zoomFit();
-				}
+				if (e.button == 1) { view.zoomFit(); }
 			}
 		};
 
@@ -86,14 +84,12 @@ public class ZoomController {
 					if (c != null) {
 						c.addGestureListener(gl);
 						c.addMouseListener(ml);
-						if (includingScrolling) {
-							c.addMouseWheelListener(mw);
-						}
+						if (includingScrolling) { c.addMouseWheelListener(mw); }
 						// once installed the listener removes itself from the
 						// toolbar
-						tb.removeControlListener(this);
 					}
 				}
+				tb.removeControlListener(this);
 			}
 
 		});

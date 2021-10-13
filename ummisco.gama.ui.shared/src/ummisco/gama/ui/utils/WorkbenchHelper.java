@@ -24,17 +24,14 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
@@ -413,23 +410,6 @@ public class WorkbenchHelper {
 		for (final IGamaView.Display display : displays) { if (display.isFullScreen()) return (IViewPart) display; }
 		// Strange: n views, none of them fullscreen, claiming to contain the mouse pointer...
 		return (IViewPart) displays.get(0);
-	}
-
-	/**
-	 * Obtain full screen shell.
-	 *
-	 * @param id
-	 *            the id
-	 * @return the shell
-	 */
-	public static Shell obtainFullScreenShell(final int id) {
-		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
-		int monitorId = Math.min(monitors.length - 1, Math.max(0, id));
-		final Rectangle bounds = monitors[monitorId].getBounds();
-		final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
-		fullScreenShell.setBounds(bounds);
-		fullScreenShell.setLayout(new FillLayout());
-		return fullScreenShell;
 	}
 
 	/**
