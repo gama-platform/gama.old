@@ -79,6 +79,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	/** The in init phase. */
 	protected volatile boolean inInitPhase = true;
+	
+	/** The closing. */
+	private volatile boolean closing = false;
 
 	@Override
 	public void setIndex(final int index) { realIndex = index; }

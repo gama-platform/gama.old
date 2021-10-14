@@ -341,8 +341,12 @@ public class WorkbenchHelper {
 		run(() -> {
 			final IWorkbenchPage activePage = getPage();
 			if (activePage == null) return;
-			final IWorkbenchPart part = activePage.findView(id);
-			if (part != null && activePage.isPartVisible(part)) { activePage.hideView((IViewPart) part); }
+			final IViewReference view = activePage.findViewReference(id);
+			if (view != null) {
+				IWorkbenchPart part = view.getPart(false);
+				if (part != null && activePage.isPartVisible(part)) { activePage.hideView((IViewPart) part); }
+			}
+
 		});
 
 	}
