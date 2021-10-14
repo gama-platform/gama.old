@@ -35,7 +35,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 		};
 		surfaceComposite.setEnabled(false);
-		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
+		// WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
 		// WorkaroundForIssue2745.installOn(this);
 		// WorkaroundForIssue1353.install();
 		return surfaceComposite;

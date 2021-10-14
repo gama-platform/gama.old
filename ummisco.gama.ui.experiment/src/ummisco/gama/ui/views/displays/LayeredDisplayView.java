@@ -189,7 +189,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
 		form.setMaximizedControl(centralPanel);
 		decorator.createDecorations(form);
-		c.layout();
+		c.requestLayout();
 
 	}
 
