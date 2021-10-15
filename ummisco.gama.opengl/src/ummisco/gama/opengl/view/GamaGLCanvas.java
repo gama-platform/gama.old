@@ -41,8 +41,10 @@ import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.FLAGS;
+import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.IDelegateEventsToParent;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class GamaGLCanvas.
@@ -347,6 +349,60 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	@Override
 	public boolean setFocus() {
 		return canvas.setFocus();
+	}
+
+	/**
+	 * Adds the camera listeners.
+	 *
+	 * @param camera
+	 *            the camera
+	 */
+	public void addCameraListeners(final ICamera camera) {
+		if (canvas.isDisposed()) return;
+		WorkbenchHelper.asyncRun(() -> {
+			canvas.addKeyListener(camera);
+			canvas.addMouseListener(camera);
+			canvas.addMouseMoveListener(camera);
+			canvas.addMouseWheelListener(camera);
+			canvas.addMouseTrackListener(camera);
+			addKeyListener(camera);
+			addMouseListener(camera);
+			addMouseMoveListener(camera);
+			addMouseWheelListener(camera);
+			addMouseTrackListener(camera);
+			if (drawable instanceof Window) {
+				Window w = (Window) drawable;
+				w.addKeyListener(camera);
+				w.addMouseListener(camera);
+			}
+		});
+	}
+
+	/**
+	 * Removes the camera listeners.
+	 *
+	 * @param camera
+	 *            the camera
+	 */
+	public void removeCameraListeners(final ICamera camera) {
+		if (canvas.isDisposed()) return;
+		WorkbenchHelper.asyncRun(() -> {
+			canvas.removeKeyListener(camera);
+			canvas.removeMouseListener(camera);
+			canvas.removeMouseMoveListener(camera);
+			canvas.removeMouseWheelListener(camera);
+			canvas.removeMouseTrackListener(camera);
+			removeKeyListener(camera);
+			removeMouseListener(camera);
+			removeMouseMoveListener(camera);
+			removeMouseWheelListener(camera);
+			removeMouseTrackListener(camera);
+			if (drawable instanceof Window) {
+				Window w = (Window) drawable;
+				w.removeKeyListener(camera);
+				w.removeMouseListener(camera);
+			}
+		});
 	}
 
 }

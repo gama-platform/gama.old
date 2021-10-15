@@ -368,8 +368,8 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void internalMouseMove(final int x, final int y, final int button, final boolean isCtrl,
-			final boolean isShift) {
+	public void internalMouseMove(final int x, final int y, final int button, final boolean buttonPressed,
+			final boolean isCtrl, final boolean isShift) {
 		// Do it before the mouse position is newly set (in super.internalMouseMove)
 		if (keystoneMode) {
 			final int selectedCorner = getRenderer().getKeystoneHelper().getCornerSelected();
@@ -384,12 +384,12 @@ public class CameraArcBall extends AbstractCamera {
 				final int cornerSelected = hoverOnKeystone(x, y);
 				getRenderer().getKeystoneHelper().setCornerHovered(cornerSelected);
 			}
-			super.internalMouseMove(x, y, button, isCtrl, isShift);
+			super.internalMouseMove(x, y, button, buttonPressed, isCtrl, isShift);
 			return;
 		}
+		super.internalMouseMove(x, y, button, buttonPressed, isCtrl, isShift);
 
-		super.internalMouseMove(x, y, button, isCtrl, isShift);
-		if (button == 0) return;
+		if (!buttonPressed) return;
 		final GamaPoint newPoint = new GamaPoint(x, y);
 		if (cameraInteraction && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);

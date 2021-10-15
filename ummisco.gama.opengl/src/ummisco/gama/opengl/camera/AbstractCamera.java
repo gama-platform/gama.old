@@ -317,8 +317,8 @@ public abstract class AbstractCamera implements ICamera {
 	public final void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
 
 		invokeOnGLThread(drawable -> {
-			internalMouseMove(autoScaleUp(e.x), autoScaleUp(e.y), e.button, GamaKeyBindings.ctrl(e),
-					GamaKeyBindings.shift(e));
+			internalMouseMove(autoScaleUp(e.x), autoScaleUp(e.y), e.button, (e.stateMask & SWT.BUTTON_MASK) != 0,
+					GamaKeyBindings.ctrl(e), GamaKeyBindings.shift(e));
 			return false;
 		});
 
@@ -339,8 +339,8 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseMoved(final com.jogamp.newt.event.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), isControlDown(e),
-					e.isShiftDown());
+			internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
+					isControlDown(e), e.isShiftDown());
 			return false;
 		});
 	}
@@ -353,7 +353,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @return true, if is control down
 	 */
 	private boolean isControlDown(final com.jogamp.newt.event.MouseEvent e) {
-		return PlatformHelper.isMac() ? e.isMetaDown() : e.isControlDown();
+		return e.isControlDown() || PlatformHelper.isMac() && e.isMetaDown();
 	}
 
 	/**
@@ -386,8 +386,8 @@ public abstract class AbstractCamera implements ICamera {
 	 * @param isShift
 	 *            the is shift
 	 */
-	protected void internalMouseMove(final int x, final int y, final int button, final boolean isCtrl,
-			final boolean isShift) {
+	protected void internalMouseMove(final int x, final int y, final int button, final boolean buttonPressed,
+			final boolean isCtrl, final boolean isShift) {
 		mousePosition.x = x;
 		mousePosition.y = y;
 		setCtrlPressed(isCtrl);
@@ -529,7 +529,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @param y
 	 *            the y
 	 */
-	protected void internalMouseDown(final int x, final int y, final int button, final boolean isCtrl,
+	final void internalMouseDown(final int x, final int y, final int button, final boolean isCtrl,
 			final boolean isShift) {
 
 		if (firsttimeMouseDown) {
