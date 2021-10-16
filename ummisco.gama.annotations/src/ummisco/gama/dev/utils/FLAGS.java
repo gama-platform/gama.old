@@ -48,6 +48,12 @@ public class FLAGS {
 	}
 
 	/**
+	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration of DEBUG.ON() on the
+	 * classes). Set to false to suppress all logging. True by default. KEEP IT THE FIRST PROPERTY
+	 */
+	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
+
+	/**
 	 * For debugging purposes, see #3164. True by default until bugs on Linux regarding the use of multiple threads in
 	 * UI processes are solved.
 	 */
@@ -65,12 +71,6 @@ public class FLAGS {
 	 * false to save them in each GAMA instance preference store (like Eclipse, see #3115). True by default.
 	 */
 	public static final boolean USE_GLOBAL_PREFERENCE_STORE = get("use_global_preference_store", true);
-
-	/**
-	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration of DEBUG.ON() on the
-	 * classes). Set to false to suppress all logging. True by default
-	 */
-	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
 
 	/**
 	 * Used in msi.gama.application.Application to transmit the value of "quarter" (if true) to property
@@ -101,15 +101,7 @@ public class FLAGS {
 	/**
 	 * Used in JOGL displays, esp. ummisco.gama.opengl.view.SWTOpenGLDisplaySurface to create a NEWT window instead of a
 	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.) but so are
-	 * incompatibilities and issues.
-	 *
-	 * As of Sept. 2021:
-	 *
-	 * - mouse and key listeners do not work
-	 *
-	 * - fullscreen does not work
-	 *
-	 * - changing perspective does not work
+	 * incompatibilities.
 	 */
 	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", false);
 
