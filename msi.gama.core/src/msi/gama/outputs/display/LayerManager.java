@@ -162,28 +162,26 @@ public class LayerManager implements ILayerManager {
 		// If the experiment is already closed
 		if (scope == null || scope.interrupted()) return;
 		scope.setGraphics(g);
-		try {
-			boolean changed = false;
-			// First we compute all the data and verify if anything is changed
-			for (final ILayer dis : layers) {
-				if (scope.interrupted()) return;
-				changed |= dis.getData().compute(scope, g);
-			}
-			if (changed) {
-				for (final ILayer l : layers) { l.forceRedrawingOnce(); }
-				surface.layersChanged();
-			}
-			if (g.beginDrawingLayers()) {
+		boolean changed = false;
+		// First we compute all the data and verify if anything is changed
+		for (final ILayer dis : layers) {
+			if (scope.interrupted()) return;
+			changed |= dis.getData().compute(scope, g);
+		}
+		if (changed) { forceRedrawingLayers(); }
+
+		if (g.beginDrawingLayers()) {
+			try {
 				// We separate in two phases: updating of the data and then drawing
 				for (final ILayer dis : layers) {
 					if (scope.interrupted()) return;
 					dis.draw(scope, g);
 				}
+			} catch (final Exception e) {
+				GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), false);
+			} finally {
+				g.endDrawingLayers();
 			}
-		} catch (final Exception e) {
-			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), false);
-		} finally {
-			g.endDrawingLayers();
 		}
 	}
 
@@ -257,10 +255,15 @@ public class LayerManager implements ILayerManager {
 			} else {
 				obj.disableOn(surface);
 			}
-			for (final ILayer l : layers) { l.forceRedrawingOnce(); }
-			surface.layersChanged();
+			forceRedrawingLayers();
 		});
 
+	}
+
+	@Override
+	public void forceRedrawingLayers() {
+		for (final ILayer l : layers) { l.forceRedrawingOnce(); }
+		surface.layersChanged();
 	}
 
 	@Override

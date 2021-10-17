@@ -19,6 +19,7 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
@@ -26,6 +27,10 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
  * The Class PickingHelper.
  */
 public class PickingHelper extends AbstractRendererHelper {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The select buffer. */
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.helpers.SceneHelper.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * SceneHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,11 +31,24 @@ import ummisco.gama.opengl.scene.ModelScene;
  */
 public class SceneHelper extends AbstractRendererHelper {
 
+	/** The back scene. */
 	volatile ModelScene backScene;
+
+	/** The static scene. */
 	volatile ModelScene staticScene;
+
+	/** The front scene. */
 	volatile ModelScene frontScene;
+
+	/** The garbage. */
 	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<>();
 
+	/**
+	 * Instantiates a new scene helper.
+	 *
+	 * @param renderer
+	 *            the renderer
+	 */
 	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
@@ -43,16 +56,32 @@ public class SceneHelper extends AbstractRendererHelper {
 	@Override
 	public void initialize() {}
 
+	/**
+	 * Layer offset changed.
+	 */
 	public void layerOffsetChanged() {
 		if (getSceneToRender() == null) return;
 		getSceneToRender().layerOffsetChanged();
 	}
 
+	/**
+	 * Begin drawing layer.
+	 *
+	 * @param layer
+	 *            the layer
+	 * @param currentLayerAlpha
+	 *            the current layer alpha
+	 */
 	public void beginDrawingLayer(final ILayer layer, final Double currentLayerAlpha) {
 		final ModelScene scene = getSceneToUpdate();
 		if (scene != null) { scene.beginDrawingLayer(layer, currentLayerAlpha); }
 	}
 
+	/**
+	 * Begin updating scene.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean beginUpdatingScene() {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
@@ -75,12 +104,20 @@ public class SceneHelper extends AbstractRendererHelper {
 		return true;
 	}
 
+	/**
+	 * Checks if is not ready to update.
+	 *
+	 * @return true, if is not ready to update
+	 */
 	public boolean isNotReadyToUpdate() {
 		if (frontScene == null) return false;
 		if (!frontScene.rendered()) return true;
 		return false;
 	}
 
+	/**
+	 * End updating scene.
+	 */
 	public void endUpdatingScene() {
 		// If there is no scene to update, it means it has been cancelled by
 		// another thread (hiding/showing layers, most probably) so we just skip
@@ -98,13 +135,12 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If there is another frontScene, we discard it (will be disposed of
 		// later)
 		if (frontScene != null) {
-			if (frontScene.rendered()) {
-				garbage.add(frontScene);
-			} else {
+			if (!frontScene.rendered()) {
 				garbage.add(backScene);
 				backScene = null;
 				return;
 			}
+			garbage.add(frontScene);
 
 		}
 		// We switch the scenes
@@ -135,9 +171,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @return
 	 */
 
-	public ModelScene getSceneToRender() {
-		return frontScene;
-	}
+	public ModelScene getSceneToRender() { return frontScene; }
 
 	/**
 	 * Returns the scene to update. Can be null
@@ -145,9 +179,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @return
 	 */
 
-	public ModelScene getSceneToUpdate() {
-		return backScene;
-	}
+	public ModelScene getSceneToUpdate() { return backScene; }
 
 	/**
 	 * Performs the management and disposal of discarded scenes
@@ -155,7 +187,9 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @param gl
 	 */
 	public void garbageCollect(final OpenGL gl) {
-		final ModelScene[] scenes = garbage.toArray(new ModelScene[garbage.size()]);
+		int size = garbage.size();
+		if (size == 0) return;
+		final ModelScene[] scenes = garbage.toArray(new ModelScene[size]);
 		garbage.clear();
 		for (final ModelScene scene : scenes) {
 			scene.wipe(gl);
@@ -191,9 +225,12 @@ public class SceneHelper extends AbstractRendererHelper {
 			garbage.add(backScene);
 			backScene = null;
 		}
-
+		frontScene.unlock();
 	}
 
+	/**
+	 * Draw.
+	 */
 	public void draw() {
 		final OpenGL gl = getOpenGL();
 		// Do some garbage collecting in model scenes
@@ -209,10 +246,21 @@ public class SceneHelper extends AbstractRendererHelper {
 		getSceneToRender().draw(gl);
 	}
 
-	public boolean isReady() {
-		return getSceneToRender() != null;
-	}
+	/**
+	 * Checks if is ready.
+	 *
+	 * @return true, if is ready
+	 */
+	public boolean isReady() { return getSceneToRender() != null; }
 
+	/**
+	 * Reshape.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 */
 	public void reshape(final int width, final int height) {
 		if (getSceneToRender() == null) return;
 		getSceneToRender().recomputeLayoutDimensions(this.getOpenGL());

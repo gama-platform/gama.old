@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.ObjectDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ObjectDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,18 +16,39 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.OpenGL;
 
+/**
+ * The Class ObjectDrawer.
+ *
+ * @param <T>
+ *            the generic type
+ */
 public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
+	/** The gl. */
 	protected final OpenGL gl;
 
+	/**
+	 * Instantiates a new object drawer.
+	 *
+	 * @param gl
+	 *            the gl
+	 */
 	public ObjectDrawer(final OpenGL gl) {
 		this.gl = gl;
 	}
 
-	final void draw(final T object) {
-		gl.beginObject(object);
-		_draw(object);
-		gl.endObject(object);
+	/**
+	 * Draw.
+	 *
+	 * @param object
+	 *            the object
+	 * @param isPicking
+	 *            the is picking
+	 */
+	public final void draw(final AbstractObject object, final boolean isPicking) {
+		gl.beginObject(object, isPicking);
+		_draw((T) object);
+		gl.endObject(object, isPicking);
 	}
 
 	/**
@@ -43,7 +64,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
 		final Scaling3D size = object.getAttributes().getSize();
 		if (size != null) {
-			final Envelope3D env = object.getEnvelope(gl);
+			final Envelope3D env = gl.getEnvelopeFor(object.getObject());
 			if (env != null) {
 				// try {
 				final boolean in2D = isDrawing2D(size, env, object);
@@ -71,6 +92,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 
 	}
 
+	/** The loc. */
 	private final GamaPoint loc = new GamaPoint();
 
 	/**
@@ -86,6 +108,17 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 		return true;
 	}
 
+	/**
+	 * Checks if is drawing 2 D.
+	 *
+	 * @param size
+	 *            the size
+	 * @param env
+	 *            the env
+	 * @param object
+	 *            the object
+	 * @return true, if is drawing 2 D
+	 */
 	protected boolean isDrawing2D(final Scaling3D size, final Envelope3D env, final T object) {
 		return env.isFlat() || size.getZ() == 0d;
 	}
@@ -110,6 +143,12 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 		return true;
 	}
 
+	/**
+	 * Draw.
+	 *
+	 * @param object
+	 *            the object
+	 */
 	protected abstract void _draw(T object);
 
 	/**

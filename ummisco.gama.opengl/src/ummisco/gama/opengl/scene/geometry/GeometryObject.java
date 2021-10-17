@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.GeometryObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GeometryObject.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.geometry;
 
@@ -15,11 +15,20 @@ import org.locationtech.jts.geom.Geometry;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.AbstractObject.DrawerType;
 
+/**
+ * The Class GeometryObject.
+ */
 public class GeometryObject extends AbstractObject<Geometry, DrawingAttributes> {
 
+	/**
+	 * Instantiates a new geometry object.
+	 *
+	 * @param geometry the geometry
+	 * @param attributes the attributes
+	 */
 	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes) {
 		super(geometry, attributes, DrawerType.GEOMETRY);
 	}

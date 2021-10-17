@@ -23,15 +23,20 @@ import static msi.gaml.types.GamaGeometryType.buildLineCylinder;
 import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.geometry.GeometryObject;
 import ummisco.gama.opengl.scene.text.StringObject;
 
 /**
@@ -127,6 +132,30 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
 			addSyntheticObject(list, s, COLORS[i], IShape.Type.CONE, false);
 		}
+	}
+
+	/**
+	 * Adds the synthetic object.
+	 *
+	 * @param list
+	 *            the list
+	 * @param shape
+	 *            the shape
+	 * @param color
+	 *            the color
+	 * @param type
+	 *            the type
+	 * @param empty
+	 *            the empty
+	 */
+	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
+			final IShape.Type type, final boolean empty) {
+		final DrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
+				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue(), null);
+		att.setEmpty(empty);
+		att.setHeight(shape.getDepth());
+		att.setLighting(false);
+		list.add(new GeometryObject(shape.getInnerGeometry(), att));
 	}
 
 }
