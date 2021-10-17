@@ -36,7 +36,7 @@ script:
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - export SSHPASS=$USER_PWD 
-  - bash ./travis/publish.sh
+  - bash ./travis/publish.sh 
 branches:
   only:
     - master 
