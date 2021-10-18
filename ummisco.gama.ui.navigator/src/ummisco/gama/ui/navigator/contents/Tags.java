@@ -1,25 +1,20 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'WrappedFolder.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * Tags.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import java.util.Collection;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.application.workbench.ThemeHelper;
-import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -33,6 +28,7 @@ import ummisco.gama.ui.resources.IGamaColors;
  */
 public class Tags extends VirtualContent<WrappedFile> {
 
+	/** The tags. */
 	final Collection<String> tags;
 
 	/**
@@ -60,9 +56,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	// }
 
 	@Override
-	public WrappedFile getParent() {
-		return super.getParent();
-	}
+	public WrappedFile getParent() { return super.getParent(); }
 
 	/**
 	 * Method getNavigatorChildren()
@@ -81,20 +75,18 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() {
-		return GamaIcons.create("gaml/_attributes").image();
-	}
+	public Image getImage() { return GamaIcons.create("gaml/_attributes").image(); }
 
 	/**
 	 * Method getColor()
 	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
 	 */
-	@Override
-	public Color getColor() {
-		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-
-	}
+	// @Override
+	// public Color getColor() {
+	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
+	//
+	// }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {}
@@ -105,28 +97,18 @@ public class Tags extends VirtualContent<WrappedFile> {
 	}
 
 	@Override
-	public ImageDescriptor getOverlay() {
-		return null;
-	}
+	public ImageDescriptor getOverlay() { return null; }
 
 	@Override
-	public VirtualContentType getType() {
-		return VirtualContentType.CATEGORY;
-	}
+	public VirtualContentType getType() { return VirtualContentType.CATEGORY; }
 
 	@Override
-	public String getStatusMessage() {
-		return "Tags";
-	}
+	public String getStatusMessage() { return "Tags"; }
 
 	@Override
-	public GamaUIColor getStatusColor() {
-		return IGamaColors.GRAY_LABEL;
-	}
+	public GamaUIColor getStatusColor() { return IGamaColors.GRAY_LABEL; }
 
 	@Override
-	public Image getStatusImage() {
-		return getImage();
-	}
+	public Image getStatusImage() { return getImage(); }
 
 }
