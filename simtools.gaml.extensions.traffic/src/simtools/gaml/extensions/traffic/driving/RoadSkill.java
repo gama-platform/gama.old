@@ -8,20 +8,17 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package simtools.gaml.extensions.traffic;
+package simtools.gaml.extensions.traffic.driving;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -38,14 +35,13 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Containers;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
+import simtools.gaml.extensions.traffic.driving.carfollowing.CustomDualTreeBidiMap;
 
 @vars({
 	@variable(
@@ -179,10 +175,11 @@ public class RoadSkill extends Skill {
 
 	@setter(NUM_LANES)
 	public static void setNumLanes(final IAgent agent, final int numLanes) {
-		if (numLanes == 0) {
-			throw GamaRuntimeException.error(agent.getName() + " has zero lanes",
-					GAMA.getRuntimeScope());
-		}
+		// TODO: this check should be put somewhere else
+		// if (numLanes == 0) {
+		// 	throw GamaRuntimeException.error(agent.getName() + " has zero lanes",
+		// 			GAMA.getRuntimeScope());
+		// }
 		agent.setAttribute(NUM_LANES, numLanes);
 	}
 	

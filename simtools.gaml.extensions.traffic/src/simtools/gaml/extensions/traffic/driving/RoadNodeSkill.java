@@ -10,7 +10,7 @@
  * 
  * 
  **********************************************************************************************/
-package simtools.gaml.extensions.traffic;
+package simtools.gaml.extensions.traffic.driving;
 
 import java.util.List;
 import java.util.Map;
