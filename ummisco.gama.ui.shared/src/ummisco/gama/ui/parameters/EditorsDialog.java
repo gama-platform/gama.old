@@ -104,7 +104,7 @@ public class EditorsDialog extends Dialog {
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
-		this.color = GamaColors.toSwtColor(color);
+		this.color = color == null ? IGamaColors.OK.inactive() : GamaColors.toSwtColor(color);
 		setShellStyle(SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
 		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
