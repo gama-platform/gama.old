@@ -135,8 +135,7 @@ public class EditorsDialog extends Dialog {
 		// final var layout = (GridLayout) composite.getLayout();
 		// layout.numColumns = 2;
 		final var text = new Label(composite, SWT.None);
-		text.setBackground(color);
-		text.setForeground(GamaColors.getTextColorForBackground(color).color());
+		GamaColors.setBackAndForeground(text, color, GamaColors.getTextColorForBackground(color).color());
 		if (font != null) {
 			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		}
