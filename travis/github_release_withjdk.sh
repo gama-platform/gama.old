@@ -64,7 +64,7 @@ RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
 NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX_MAC
 n=2
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA_1.8.1_Windows'$SUFFIX
@@ -79,7 +79,7 @@ RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
 NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX_MAC
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned_with_JDK'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX
  
 
 i=0
@@ -175,7 +175,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<6; i++ ))
+for (( i=0; i<8; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
