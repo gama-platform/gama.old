@@ -24,7 +24,7 @@ function update_tag() {
 
 
 set -e
-echo "github_release_continuous_withjdk"		
+echo "github_release_withjdk"		
 COMMIT=$@
 
 REPO="gama-platform/gama"
@@ -58,26 +58,32 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_Linux'$SUFFIX 
+NEWFILES[$n]='GAMA_1.8.1_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_Mac'$SUFFIX_MAC
+NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX_MAC
 n=2
-RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA_1.8.2_Alpha_Win'$SUFFIX
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
+NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned'$SUFFIX
 n=3
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Linux'$SUFFIX
+RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
+NEWFILES[$n]='GAMA_1.8.1_Windows'$SUFFIX
 n=4
-RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Win'$SUFFIX
+RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA_1.8.1_Linux_with_JDK'$SUFFIX
 n=5
+RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
+NEWFILES[$n]='GAMA_1.8.1_Windows_with_JDK'$SUFFIX
+n=6
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
-NEWFILES[$n]='GAMA_1.8.2_Alpha_withJDK_Mac'$SUFFIX_MAC
+NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX_MAC
+n=7
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned_with_JDK'$SUFFIX
  
 
 i=0
-for (( i=0; i<6; i++ ))
+for (( i=0; i<8; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
