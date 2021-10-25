@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * DrawingAttributes.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,35 +24,107 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.file.GamaGifFile;
 import msi.gaml.operators.IUnits;
+import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class DrawingAttributes.
+ */
 public class DrawingAttributes {
 
+	static {
+		DEBUG.ON();
+	}
+
+	/**
+	 * The Enum DrawerType.
+	 */
+	public enum DrawerType {
+
+		/** The geometry. */
+		GEOMETRY,
+		/** The string. */
+		STRING,
+		/** The mesh. */
+		MESH,
+		/** The resource. */
+		RESOURCE
+	}
+
+	/** The index. */
 	private static int INDEX = 0;
+
+	/** The Constant TEXTURED_COLOR. */
 	public static final GamaColor TEXTURED_COLOR = new GamaColor(Color.white);
+
+	/** The Constant SELECTED_COLOR. */
 	public static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
 
+	/** The Constant EMPTY. */
 	public static final int EMPTY = 1;
+
+	/** The Constant SELECTED. */
 	public static final int SELECTED = 2;
+
+	/** The Constant SYNTHETIC. */
 	public static final int SYNTHETIC = 4;
+
+	/** The Constant LIGHTING. */
 	public static final int LIGHTING = 8;
 
+	/** The flags. */
 	int flags = LIGHTING;
 
+	/** The unique index. */
 	private final int uniqueIndex;
+
+	/** The location. */
 	GamaPoint location;
+
+	/** The size. */
 	Scaling3D size;
+
+	/** The rotation. */
 	AxisAngle rotation;
+
+	/** The line width. */
 	Double depth = null, lineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
+
+	/** The type. */
 	public IShape.Type type;
+
+	/** The border. */
 	GamaColor fill, highlight, border;
+
+	/** The textures. */
 	List<?> textures;
+
+	/** The material. */
 	GamaMaterial material;
 
+	/**
+	 * Instantiates a new drawing attributes.
+	 */
 	private DrawingAttributes() {
 		uniqueIndex = INDEX++;
 
 	}
 
+	/**
+	 * Instantiates a new drawing attributes.
+	 *
+	 * @param size
+	 *            the size
+	 * @param rotation
+	 *            the rotation
+	 * @param location
+	 *            the location
+	 * @param color
+	 *            the color
+	 * @param border
+	 *            the border
+	 * @param lighting
+	 *            the lighting
+	 */
 	public DrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border, final Boolean lighting) {
 		this();
@@ -64,23 +136,47 @@ public class DrawingAttributes {
 		setLighting(lighting);
 	}
 
-	public int getIndex() {
-		return uniqueIndex;
-	}
+	/**
+	 * Gets the index.
+	 *
+	 * @return the index
+	 */
+	public int getIndex() { return uniqueIndex; }
 
+	/**
+	 * Sets the synthetic.
+	 *
+	 * @param s
+	 *            the new synthetic
+	 */
 	public void setSynthetic(final boolean s) {
 		setFlag(SYNTHETIC, s);
 	}
 
-	public boolean isSynthetic() {
-		return isSet(SYNTHETIC);
-	}
+	/**
+	 * Checks if is synthetic.
+	 *
+	 * @return true, if is synthetic
+	 */
+	public boolean isSynthetic() { return isSet(SYNTHETIC); }
 
+	/**
+	 * Sets the lighting.
+	 *
+	 * @param lighting
+	 *            the new lighting
+	 */
 	public void setLighting(final Boolean lighting) {
 		if (lighting == null) return;
 		setFlag(LIGHTING, lighting);
 	}
 
+	/**
+	 * Sets the empty.
+	 *
+	 * @param b
+	 *            the new empty
+	 */
 	public void setEmpty(final Boolean b) {
 		if (b == null || !b) {
 			setFilled();
@@ -89,13 +185,19 @@ public class DrawingAttributes {
 		}
 	}
 
-	public IAgent getAgentIdentifier() {
-		return null;
-	}
+	/**
+	 * Gets the agent identifier.
+	 *
+	 * @return the agent identifier
+	 */
+	public IAgent getAgentIdentifier() { return null; }
 
-	public String getSpeciesName() {
-		return null;
-	}
+	/**
+	 * Gets the species name.
+	 *
+	 * @return the species name
+	 */
+	public String getSpeciesName() { return null; }
 
 	/**
 	 * Returns the angle of the rotation in degrees (or null if no rotation is defined)
@@ -107,6 +209,12 @@ public class DrawingAttributes {
 		return getRotation().angle;
 	}
 
+	/**
+	 * Sets the texture.
+	 *
+	 * @param o
+	 *            the new texture
+	 */
 	public void setTexture(final Object o) {
 		if (o == null) {
 			setTextures(null);
@@ -115,26 +223,50 @@ public class DrawingAttributes {
 		}
 	}
 
+	/**
+	 * Mark selected.
+	 *
+	 * @param pickedIndex
+	 *            the picked index
+	 */
 	public void markSelected(final int pickedIndex) {
 		setSelected(pickedIndex == uniqueIndex);
 	}
 
-	public GamaPoint getAnchor() {
-		return IUnits.bottom_left;
-	}
+	/**
+	 * Gets the anchor.
+	 *
+	 * @return the anchor
+	 */
+	public GamaPoint getAnchor() { return IUnits.bottom_left; }
 
-	public GamaPoint getLocation() {
-		return location;
-	}
+	/**
+	 * Gets the location.
+	 *
+	 * @return the location
+	 */
+	public GamaPoint getLocation() { return location; }
 
-	public Scaling3D getSize() {
-		return size;
-	}
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
+	public Scaling3D getSize() { return size; }
 
-	public Double getDepth() {
-		return depth;
-	}
+	/**
+	 * Gets the depth.
+	 *
+	 * @return the depth
+	 */
+	public Double getDepth() { return depth; }
 
+	/**
+	 * Sets the line width.
+	 *
+	 * @param d
+	 *            the new line width
+	 */
 	public void setLineWidth(final Double d) {
 		if (d == null) {
 			lineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
@@ -143,46 +275,90 @@ public class DrawingAttributes {
 		}
 	}
 
-	public Double getLineWidth() {
-		return lineWidth;
-	}
+	/**
+	 * Gets the line width.
+	 *
+	 * @return the line width
+	 */
+	public Double getLineWidth() { return lineWidth; }
 
-	public IShape.Type getType() {
-		return type;
-	}
+	/**
+	 * Gets the type.
+	 *
+	 * @return the type
+	 */
+	public IShape.Type getType() { return type; }
 
+	/**
+	 * Use cache.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean useCache() {
 		return true;
 	}
 
-	public void setType(final IShape.Type type) {
-		this.type = type;
-	}
+	/**
+	 * Sets the type.
+	 *
+	 * @param type
+	 *            the new type
+	 */
+	public void setType(final IShape.Type type) { this.type = type; }
 
-	public AxisAngle getRotation() {
-		return rotation;
-	}
+	/**
+	 * Gets the rotation.
+	 *
+	 * @return the rotation
+	 */
+	public AxisAngle getRotation() { return rotation; }
 
-	public void setLocation(final GamaPoint loc) {
-		location = loc;
-	}
+	/**
+	 * Sets the location.
+	 *
+	 * @param loc
+	 *            the new location
+	 */
+	public void setLocation(final GamaPoint loc) { location = loc; }
 
-	public void setSize(final Scaling3D size) {
-		this.size = size;
-	}
+	/**
+	 * Sets the size.
+	 *
+	 * @param size
+	 *            the new size
+	 */
+	public void setSize(final Scaling3D size) { this.size = size; }
 
+	/**
+	 * Sets the rotation.
+	 *
+	 * @param rotation
+	 *            the new rotation
+	 */
 	public void setRotation(final AxisAngle rotation) {
 		if (rotation == null) return;
 		this.rotation = rotation;
 	}
 
+	/**
+	 * Sets the height.
+	 *
+	 * @param depth
+	 *            the new height
+	 */
 	public void setHeight(final Double depth) {
 		if (depth == null) return;
 		this.depth = depth;
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public GamaColor getColor() {
-		if (isSet(SELECTED)) return SELECTED_COLOR;
+		if (isSelected()) // DEBUG.OUT("Selected agent: " + getAgentIdentifier() + " / index : " + uniqueIndex);
+			return SELECTED_COLOR;
 		if (highlight != null) return highlight;
 		if (isSet(EMPTY)) return null;
 		if (fill == null) {
@@ -196,47 +372,90 @@ public class DrawingAttributes {
 		return fill;
 	}
 
+	/**
+	 * Gets the border.
+	 *
+	 * @return the border
+	 */
 	public GamaColor getBorder() {
 		if (isSet(EMPTY) && border == null) return fill;
 		return border;
 	}
 
+	/**
+	 * Sets the empty.
+	 */
 	public void setEmpty() {
 		setFlag(EMPTY, true);
 	}
 
+	/**
+	 * Sets the filled.
+	 */
 	public void setFilled() {
 		setFlag(EMPTY, false);
 	}
 
-	public void setFill(final GamaColor color) {
-		fill = color;
-	}
+	/**
+	 * Sets the fill.
+	 *
+	 * @param color
+	 *            the new fill
+	 */
+	public void setFill(final GamaColor color) { fill = color; }
 
-	public void setBorder(final GamaColor border) {
-		this.border = border;
-	}
+	/**
+	 * Sets the border.
+	 *
+	 * @param border
+	 *            the new border
+	 */
+	public void setBorder(final GamaColor border) { this.border = border; }
 
+	/**
+	 * Sets the lighting.
+	 *
+	 * @param lighting
+	 *            the new lighting
+	 */
 	void setLighting(final boolean lighting) {
 		setFlag(LIGHTING, lighting);
 	}
 
+	/**
+	 * Sets the no border.
+	 */
 	public void setNoBorder() {
 		border = null;
 	}
 
-	public void setTextures(final List<?> textures) {
-		this.textures = textures;
-	}
+	/**
+	 * Sets the textures.
+	 *
+	 * @param textures
+	 *            the new textures
+	 */
+	public void setTextures(final List<?> textures) { this.textures = textures; }
 
-	public List getTextures() {
-		return textures;
-	}
+	/**
+	 * Gets the textures.
+	 *
+	 * @return the textures
+	 */
+	public List getTextures() { return textures; }
 
-	public boolean isEmpty() {
-		return isSet(EMPTY);
-	}
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
+	public boolean isEmpty() { return isSet(EMPTY); }
 
+	/**
+	 * Checks if is animated.
+	 *
+	 * @return true, if is animated
+	 */
 	public boolean isAnimated() {
 		if (!useCache()) return true;
 		if (textures == null) return false;
@@ -245,6 +464,11 @@ public class DrawingAttributes {
 		return true;
 	}
 
+	/**
+	 * Gets the frame count.
+	 *
+	 * @return the frame count
+	 */
 	public int getFrameCount() {
 		if (textures == null) return 1;
 		final Object o = textures.get(0);
@@ -253,6 +477,11 @@ public class DrawingAttributes {
 
 	}
 
+	/**
+	 * Gets the average delay.
+	 *
+	 * @return the average delay
+	 */
 	public int getAverageDelay() {
 		if (textures == null) return 0;
 		final Object o = textures.get(0);
@@ -261,18 +490,34 @@ public class DrawingAttributes {
 
 	}
 
-	public boolean isLighting() {
-		return isSet(LIGHTING);
-	}
+	/**
+	 * Checks if is lighting.
+	 *
+	 * @return true, if is lighting
+	 */
+	public boolean isLighting() { return isSet(LIGHTING); }
 
-	public void setHighlighted(final GamaColor color) {
-		highlight = color;
-	}
+	/**
+	 * Sets the highlighted.
+	 *
+	 * @param color
+	 *            the new highlighted
+	 */
+	public void setHighlighted(final GamaColor color) { highlight = color; }
 
-	public boolean isSelected() {
-		return isSet(SELECTED);
-	}
+	/**
+	 * Checks if is selected.
+	 *
+	 * @return true, if is selected
+	 */
+	public boolean isSelected() { return isSet(SELECTED); }
 
+	/**
+	 * Sets the selected.
+	 *
+	 * @param b
+	 *            the new selected
+	 */
 	public void setSelected(final boolean b) {
 		setFlag(SELECTED, b);
 	}
@@ -282,19 +527,38 @@ public class DrawingAttributes {
 	 *
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
 	 */
-	public GamaMaterial getMaterial() {
-		return material;
-	}
+	public GamaMaterial getMaterial() { return material; }
 
+	/**
+	 * Sets the material.
+	 *
+	 * @param m
+	 *            the new material
+	 */
 	public void setMaterial(final GamaMaterial m) {
 		material = m;
 
 	}
 
+	/**
+	 * Checks if is sets the.
+	 *
+	 * @param value
+	 *            the value
+	 * @return true, if is sets the
+	 */
 	public boolean isSet(final int value) {
 		return (flags & value) == value;
 	}
 
+	/**
+	 * Sets the flag.
+	 *
+	 * @param value
+	 *            the value
+	 * @param b
+	 *            the b
+	 */
 	public void setFlag(final int value, final boolean b) {
 		flags = b ? flags | value : flags & ~value;
 	}

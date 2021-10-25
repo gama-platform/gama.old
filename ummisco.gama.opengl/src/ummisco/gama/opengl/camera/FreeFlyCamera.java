@@ -165,9 +165,9 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void internalMouseMove(final int x, final int y, final int button, final boolean isCtrl,
-			final boolean isShift) {
-		super.internalMouseMove(x, y, button, isCtrl, isShift);
+	public void internalMouseMove(final int x, final int y, final int button, final boolean buttonPressed,
+			final boolean isCtrl, final boolean isShift) {
+		super.internalMouseMove(x, y, button, buttonPressed, isCtrl, isShift);
 		if (button == 0) return;
 		if (isShift /** || alt(e)) */
 				&& isViewInXYPlan()) {
@@ -189,7 +189,8 @@ public class FreeFlyCamera extends AbstractCamera {
 	/**
 	 * Can select on release.
 	 *
-	 * @param isShift the is shift
+	 * @param isShift
+	 *            the is shift
 	 * @return true, if successful
 	 */
 	@Override

@@ -52,6 +52,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
@@ -250,7 +251,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the type
 	 * @return the drawer for
 	 */
-	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final AbstractObject.DrawerType type) {
+	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final DrawerType type) {
 		switch (type) {
 			case STRING:
 				return stringDrawer;
@@ -1333,16 +1334,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glLoadName(index);
 	}
 
-	/**
-	 * Mark if selected.
-	 *
-	 * @param attributes
-	 *            the attributes
-	 */
-	public void markIfSelected(final DrawingAttributes attributes) {
-		pickingState.tryPick(attributes);
-	}
-
 	// LISTS
 
 	/**
@@ -1457,14 +1448,17 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param object
 	 *            the object
 	 */
-	public void beginObject(final AbstractObject object) {
+	public void beginObject(final AbstractObject object, final boolean isPicking) {
 		// DEBUG.OUT("Object " + object + " begin and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
-		boolean empty = object.getAttributes().isEmpty();
+		DrawingAttributes att = object.getAttributes();
+		if (isPicking) { registerForSelection(att.getIndex()); }
+		setLighting(att.isLighting());
+		boolean empty = att.isEmpty();
 		setObjectWireframe(empty);
-		setLineWidth(object.getAttributes().getLineWidth());
+		setLineWidth(att.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
-		setCurrentColor(object.getAttributes().getColor());
-		if (!empty && !object.getAttributes().isSynthetic()) {
+		setCurrentColor(att.getColor());
+		if (!empty && !att.isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_DECAL);
 		}
 
@@ -1476,14 +1470,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param object
 	 *            the object
 	 */
-	public void endObject(final AbstractObject object) {
+	public void endObject(final AbstractObject object, final boolean isPicking) {
 		disableTextures();
 		translateByZIncrement();
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
-		// DEBUG.OUT("Object " + object + " ends and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
 		setObjectWireframe(false);
+		if (isPicking) { pickingState.tryPick(object.getAttributes()); }
 	}
 
 	/**
@@ -1628,9 +1622,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 */
 
-	public void setRotationMode(final boolean b) {
-		rotationMode = b;
-	}
+	public void setRotationMode(final boolean b) { rotationMode = b; }
 
 	/**
 	 * Checks if is in rotation mode.

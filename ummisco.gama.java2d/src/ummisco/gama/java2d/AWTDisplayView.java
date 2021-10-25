@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.swing.SwingControl;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 /**
@@ -35,10 +36,15 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 		};
 		surfaceComposite.setEnabled(false);
-		WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
+		// WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
 		// WorkaroundForIssue2745.installOn(this);
 		// WorkaroundForIssue1353.install();
 		return surfaceComposite;
+	}
+
+	@Override
+	public void focusCanvas() {
+		WorkbenchHelper.asyncRun(() -> centralPanel.forceFocus());
 	}
 
 }

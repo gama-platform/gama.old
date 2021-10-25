@@ -22,12 +22,8 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.expressions.IExpression;
@@ -35,7 +31,6 @@ import msi.gaml.expressions.units.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.OpenGL;
@@ -172,7 +167,8 @@ public class LayerObject {
 	 * @return the list
 	 */
 	protected List newCurrentList() {
-		return /* Collections.synchronizedList( */new ArrayList()/* ) */;
+		return new ArrayList();
+		// return /* Collections.synchronizedList( */new ArrayList()/* ) */;
 	}
 
 	/**
@@ -190,24 +186,12 @@ public class LayerObject {
 	 */
 	public void draw(final OpenGL gl) {
 		if (isInvalid()) return;
-		drawWithoutShader(gl);
-	}
-
-	/**
-	 * Draw without shader.
-	 *
-	 * @param gl
-	 *            the gl
-	 */
-	private void drawWithoutShader(final OpenGL gl) {
 		prepareDrawing(gl);
 		try {
-			final boolean picking = renderer.getPickingHelper().isPicking();
-			doDrawing(gl, picking);
+			doDrawing(gl);
 		} finally {
 			stopDrawing(gl);
 		}
-
 	}
 
 	/**
@@ -218,18 +202,9 @@ public class LayerObject {
 	 * @param picking
 	 *            the picking
 	 */
-	protected void doDrawing(final OpenGL gl, final boolean picking) {
-
-		if (picking) {
-			if (isPickable()) {
-				gl.runWithNames(() -> drawAllObjects(gl, true));
-				// else if (renderer.getPickingHelper().hasPicked()) {
-				// // A pickable object from another layer has been picked
-				// drawAllObjects(gl, false);
-				// } else {
-				// // We do not draw the layer during the picking process
-				// }
-			}
+	protected void doDrawing(final OpenGL gl) {
+		if (renderer.getPickingHelper().isPicking()) {
+			if (isPickable()) { gl.runWithNames(() -> drawAllObjects(gl, true)); }
 		} else if (isAnimated) {
 			drawAllObjects(gl, false);
 		} else {
@@ -300,11 +275,10 @@ public class LayerObject {
 	 * @param picking
 	 *            the picking
 	 */
-	protected void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
+	protected final void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
 			final boolean picking) {
 		gl.setCurrentObjectAlpha(alpha);
-		AbstractObject<?, ?>[] objects = list.toArray(new AbstractObject[list.size()]);
-		for (final AbstractObject object : objects) { object.draw(gl, gl.getDrawerFor(object.type), picking); }
+		for (final AbstractObject object : list) { gl.getDrawerFor(object.type).draw(object, picking); }
 	}
 
 	/**
@@ -405,7 +379,6 @@ public class LayerObject {
 		// We build a rectangle that will serve as a "support" for the image (which will become its texture)
 		final Geometry geometry =
 				GamaGeometryType.buildRectangle(size.getX(), size.getY(), new GamaPoint()).getInnerGeometry();
-
 		attributes.setLocation(newLoc);
 		attributes.setTexture(o);
 		attributes.setSynthetic(true);
@@ -433,7 +406,7 @@ public class LayerObject {
 	 *            the attributes
 	 */
 	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		isAnimated = attributes.isAnimated();
+		isAnimated = /* isAnimated || ?? */attributes.isAnimated();
 		currentList.add(new GeometryObject(geometry, attributes));
 	}
 
@@ -466,7 +439,6 @@ public class LayerObject {
 	 *            the gl
 	 */
 	public void clear(final OpenGL gl) {
-
 		if (traces != null) {
 			final int sizeLimit = getTrace();
 			isFading = getFading();
@@ -555,30 +527,6 @@ public class LayerObject {
 	}
 
 	/**
-	 * Adds the synthetic object.
-	 *
-	 * @param list
-	 *            the list
-	 * @param shape
-	 *            the shape
-	 * @param color
-	 *            the color
-	 * @param type
-	 *            the type
-	 * @param empty
-	 *            the empty
-	 */
-	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
-			final IShape.Type type, final boolean empty) {
-		final DrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
-				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue(), null);
-		att.setEmpty(empty);
-		att.setHeight(shape.getDepth());
-		att.setLighting(false);
-		list.add(new GeometryObject(shape.getInnerGeometry(), att));
-	}
-
-	/**
 	 * Force redraw.
 	 *
 	 * @param gl
@@ -590,7 +538,6 @@ public class LayerObject {
 			gl.deleteList(openGLListIndex);
 			openGLListIndex = null;
 		}
-		// layer.draw(renderer.getSurface().getScope(), renderer);
 
 	}
 

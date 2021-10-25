@@ -15,19 +15,13 @@ import java.util.Map;
 
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.widgets.Control;
-
-import com.jogamp.newt.Window;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.opengl.view.GamaGLCanvas;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class CameraHelper.
@@ -227,20 +221,7 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	 * Hook.
 	 */
 	public void hook() {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) {
-			Window canvas = getCanvas().getNEWTWindow();
-			canvas.addKeyListener(this);
-			canvas.addMouseListener(this);
-		} else {
-			final Control canvas = getCanvas();
-			WorkbenchHelper.asyncRun(() -> {
-				canvas.addKeyListener(this);
-				canvas.addMouseListener(this);
-				canvas.addMouseMoveListener(this);
-				canvas.addMouseWheelListener(this);
-				canvas.addMouseTrackListener(this);
-			});
-		}
+		getCanvas().addCameraListeners(this);
 	}
 
 	@Override
@@ -296,15 +277,7 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	 * Dispose.
 	 */
 	public void dispose() {
-		final GamaGLCanvas canvas = getCanvas();
-		WorkbenchHelper.asyncRun(() -> {
-			if (canvas == null || canvas.isDisposed()) return;
-			canvas.removeKeyListener(this);
-			canvas.removeMouseListener(this);
-			canvas.removeMouseMoveListener(this);
-			canvas.removeMouseWheelListener(this);
-			canvas.removeMouseTrackListener(this);
-		});
+		getCanvas().removeCameraListeners(this);
 		camera = null;
 	}
 

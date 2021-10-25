@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.views.displays.DisplaySurfaceMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * DisplaySurfaceMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,8 +21,8 @@ import java.util.Set;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -50,8 +50,12 @@ import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class DisplaySurfaceMenu.
+ */
 public class DisplaySurfaceMenu {
 
+	/** The layer images. */
 	public static Map<Class<? extends ILayer>, Image> layer_images = new LinkedHashMap<>();
 
 	static {
@@ -63,15 +67,32 @@ public class DisplaySurfaceMenu {
 		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
 	}
 
+	/** The menu. */
 	Menu menu;
+
+	/** The surface. */
 	private final IDisplaySurface surface;
+
+	/** The swt control. */
 	private final Control swtControl;
+
+	/** The presentation menu. */
 	private final MenuManager presentationMenu;
 
+	/**
+	 * The Class FocusOnSelection.
+	 */
 	private static class FocusOnSelection extends SelectionAdapter {
 
+		/** The surface. */
 		IDisplaySurface surface;
 
+		/**
+		 * Instantiates a new focus on selection.
+		 *
+		 * @param surface
+		 *            the surface
+		 */
 		FocusOnSelection(final IDisplaySurface surface) {
 			this.surface = surface;
 		}
@@ -80,25 +101,39 @@ public class DisplaySurfaceMenu {
 		public void widgetSelected(final SelectionEvent e) {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			if (a != null && !a.dead()) {
-				surface.runAndUpdate(() -> {
-					if (!a.dead()) {
-						surface.focusOn(a);
-					}
-				});
-			}
+			if (a != null && !a.dead()) { surface.runAndUpdate(() -> { if (!a.dead()) { surface.focusOn(a); } }); }
 		}
 	}
 
+	/**
+	 * Instantiates a new display surface menu.
+	 *
+	 * @param s
+	 *            the s
+	 * @param c
+	 *            the c
+	 * @param viewMenu
+	 *            the view menu
+	 */
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final MenuManager viewMenu) {
 		surface = s;
 		swtControl = c;
-		if (s != null) {
-			s.setMenuManager(this);
-		}
+		if (s != null) { s.setMenuManager(this); }
 		this.presentationMenu = viewMenu;
 	}
 
+	/**
+	 * Prepare new menu.
+	 *
+	 * @param c
+	 *            the c
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param withPresentation
+	 *            the with presentation
+	 */
 	public void prepareNewMenu(final Control c, final int x, final int y, final boolean withPresentation) {
 		disposeMenu();
 		menu = new Menu(c);
@@ -109,21 +144,47 @@ public class DisplaySurfaceMenu {
 		}
 	}
 
+	/**
+	 * Builds the menu.
+	 *
+	 * @param mousex
+	 *            the mousex
+	 * @param mousey
+	 *            the mousey
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param displays
+	 *            the displays
+	 */
 	public void buildMenu(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
-		if (displays.isEmpty()) { return; }
+		if (displays.isEmpty()) return;
 		final Set<IAgent> all = new LinkedHashSet<>();
 		for (final ILayer display : displays) {
 			if (display.getData().isSelectable()) {
 				final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
-				if (agents.isEmpty()) {
-					continue;
-				}
+				if (agents.isEmpty()) { continue; }
 				all.addAll(agents);
 			}
 		}
 		buildMenu(true, mousex, mousey, all, null);
 	}
 
+	/**
+	 * Builds the menu.
+	 *
+	 * @param mousex
+	 *            the mousex
+	 * @param mousey
+	 *            the mousey
+	 * @param agent
+	 *            the agent
+	 * @param cleanup
+	 *            the cleanup
+	 * @param actions
+	 *            the actions
+	 */
 	public void buildMenu(final int mousex, final int mousey, final IAgent agent, final Runnable cleanup,
 			final MenuAction... actions) {
 		// cleanup is an optional runnable to do whatever is necessary after the
@@ -132,6 +193,22 @@ public class DisplaySurfaceMenu {
 				actions);
 	}
 
+	/**
+	 * Builds the menu.
+	 *
+	 * @param byLayer
+	 *            the by layer
+	 * @param mousex
+	 *            the mousex
+	 * @param mousey
+	 *            the mousey
+	 * @param agents
+	 *            the agents
+	 * @param cleanup
+	 *            the cleanup
+	 * @param actions
+	 *            the actions
+	 */
 	private void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents,
 			final Runnable cleanup, final MenuAction... actions) {
 		WorkbenchHelper.asyncRun(() -> {
@@ -142,26 +219,26 @@ public class DisplaySurfaceMenu {
 			// http://www.eclipse.org/forums/index.php/t/208284/
 			retryVisible(menu, MAX_RETRIES);
 			if (cleanup != null) {
-				menu.addMenuListener(new MenuListener() {
-
-					@Override
-					public void menuShown(final MenuEvent e) {
-						// DEBUG.LOG("Selection menu has been
-						// shown");
-					}
+				menu.addMenuListener(new MenuAdapter() {
 
 					@Override
 					public void menuHidden(final MenuEvent e) {
-						// DEBUG.LOG("Selection menu has been
-						// hiden");
-						cleanup.run();
 						menu.removeMenuListener(this);
+						cleanup.run();
 					}
 				});
 			}
 		});
 	}
 
+	/**
+	 * Builds the toolbar menu.
+	 *
+	 * @param trigger
+	 *            the trigger
+	 * @param t
+	 *            the t
+	 */
 	public void buildToolbarMenu(final SelectionEvent trigger, final ToolItem t) {
 		prepareNewMenu(t.getParent(), t.getBounds().x + t.getBounds().width, t.getBounds().y + t.getBounds().height,
 				false);
@@ -169,10 +246,19 @@ public class DisplaySurfaceMenu {
 		menu.setVisible(true);
 	}
 
+	/** The max retries. */
 	static int MAX_RETRIES = 10;
 
+	/**
+	 * Retry visible.
+	 *
+	 * @param menu
+	 *            the menu
+	 * @param retriesRemaining
+	 *            the retries remaining
+	 */
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
-		if (!PlatformHelper.isLinux()) { return; }
+		if (!PlatformHelper.isLinux()) return;
 		WorkbenchHelper.asyncRun(() -> {
 			if (!menu.isVisible() && retriesRemaining > 0) {
 				menu.setVisible(false);
@@ -194,31 +280,41 @@ public class DisplaySurfaceMenu {
 		});
 	}
 
+	/**
+	 * Fill.
+	 *
+	 * @param menu
+	 *            the menu
+	 * @param index
+	 *            the index
+	 * @param withWorld
+	 *            the with world
+	 * @param byLayer
+	 *            the by layer
+	 * @param filteredList
+	 *            the filtered list
+	 * @param actions
+	 *            the actions
+	 */
 	private void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
 			final Collection<IAgent> filteredList, final MenuAction... actions) {
 		if (withWorld) {
 			AgentsMenu.cascadingAgentMenuItem(menu, surface.getScope().getSimulation(), "World", actions);
-			if (filteredList != null && !filteredList.isEmpty()) {
-				GamaMenu.separate(menu);
-			} else {
-				return;
-			}
-			if (byLayer) {
-				GamaMenu.separate(menu, "Layers");
-			}
+			if (filteredList == null || filteredList.isEmpty()) return;
+			GamaMenu.separate(menu);
+			if (byLayer) { GamaMenu.separate(menu, "Layers"); }
 		}
 		if (!byLayer) {
 			// If the list is null or empty, no need to display anything more
-			if (filteredList == null || filteredList.isEmpty()) { return; }
 			// If only the world is selected, no need to display anything more
-			if (filteredList.size() == 1 && filteredList.contains(surface.getScope().getSimulation())) { return; }
+			if (filteredList == null || filteredList.isEmpty()
+					|| filteredList.size() == 1 && filteredList.contains(surface.getScope().getSimulation()))
+				return;
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			final MenuAction focus =
 					new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(), "Focus on this display");
 			final MenuAction[] actions2 = new MenuAction[actions.length + 1];
-			for (int i = 0; i < actions.length; i++) {
-				actions2[i + 1] = actions[i];
-			}
+			for (int i = 0; i < actions.length; i++) { actions2[i + 1] = actions[i]; }
 			actions2[0] = focus;
 			AgentsMenu.fillPopulationSubMenu(menu, filteredList, actions2);
 		} else {
@@ -227,26 +323,20 @@ public class DisplaySurfaceMenu {
 				if (layer.getData().isSelectable()) {
 					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
 					pop = new ArrayList<>(pop);
-					if (pop.isEmpty()) {
-						continue;
-					}
+					if (pop.isEmpty()) { continue; }
 					final String layerName = layer.getType() + ": " + layer.getName();
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
 					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
-					final MenuAction[] actions2 = new MenuAction[] { focus };
+					final MenuAction[] actions2 = { focus };
 					// if (layer instanceof GridLayer) {
 					// actions2 = new MenuAction[] { focus };
 					// } else {
 					// actions2 = new MenuAction[] { focus };
 					// }
 
-					if (filteredList != null) {
-						pop.retainAll(filteredList);
-					}
-					if (pop.isEmpty()) {
-						continue;
-					}
+					if (filteredList != null) { pop.retainAll(filteredList); }
+					if (pop.isEmpty()) { continue; }
 					final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
 					layerMenu.setText(layerName);
 					layerMenu.setImage(layer_images.get(layer.getClass()));
@@ -258,6 +348,21 @@ public class DisplaySurfaceMenu {
 		}
 	}
 
+	/**
+	 * Builds the ROI menu.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param agents
+	 *            the agents
+	 * @param actions
+	 *            the actions
+	 * @param images
+	 *            the images
+	 * @return the menu
+	 */
 	@SuppressWarnings ("unused")
 	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
 			final Map<String, Runnable> actions, final Map<String, Image> images) {
@@ -287,10 +392,11 @@ public class DisplaySurfaceMenu {
 		return menu;
 	}
 
+	/**
+	 * Dispose menu.
+	 */
 	public void disposeMenu() {
-		if (menu != null && !menu.isDisposed()) {
-			menu.dispose();
-		}
+		if (menu != null && !menu.isDisposed()) { menu.dispose(); }
 		menu = null;
 	}
 

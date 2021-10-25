@@ -109,10 +109,10 @@ public class OverlayLayerObject extends LayerObject {
 	}
 
 	@Override
-	protected void doDrawing(final OpenGL gl, final boolean picking) {
-		if (!picking) {
+	protected void doDrawing(final OpenGL gl) {
+		if (!renderer.getPickingHelper().isPicking()) {
 			addFrame(gl);
-			drawObjects(gl, currentList, alpha, picking);
+			drawObjects(gl, currentList, alpha, false);
 		}
 	}
 

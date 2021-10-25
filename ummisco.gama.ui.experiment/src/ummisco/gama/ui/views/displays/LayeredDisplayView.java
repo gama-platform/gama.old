@@ -80,6 +80,12 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	/** The in init phase. */
 	protected volatile boolean inInitPhase = true;
 
+	/** The closing. */
+	private volatile boolean closing = false;
+
+	/** The central panel. */
+	protected CentralPanel centralPanel;
+
 	@Override
 	public void setIndex(final int index) { realIndex = index; }
 
@@ -157,6 +163,38 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 */
 	public Composite getSurfaceComposite() { return surfaceComposite; }
 
+	/**
+	 * The Class CentralPanel.
+	 */
+
+	public class CentralPanel extends Composite implements InnerComponent {
+
+		/**
+		 * Instantiates a new central panel.
+		 *
+		 * @param parent
+		 *            the parent
+		 * @param style
+		 *            the style
+		 */
+		public CentralPanel() {
+			super(form, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+			setLayout(emptyLayout());
+			setLayoutData(fullData());
+			setParentComposite(this);
+			form.setMaximizedControl(this);
+		}
+
+		/**
+		 * Gets the view.
+		 *
+		 * @return the view
+		 */
+		@Override
+		public LayeredDisplayView getView() { return LayeredDisplayView.this; }
+
+	}
+
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		if (getOutput() == null) return;
@@ -169,28 +207,12 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		form.setBackground(IGamaColors.WHITE.color());
 		form.setSashWidth(8);
 		decorator.createSidePanel(form);
-		final Composite centralPanel = new Composite(form, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
-
-		centralPanel.setLayout(emptyLayout());
-		setParentComposite(centralPanel);
-		// setParentComposite(new Composite(centralPanel, SWT.NONE) {
-		//
-		// @Override
-		// public boolean setFocus() {
-		// return forceFocus();
-		// }
-		//
-		// });
-
-		getParentComposite().setLayoutData(fullData());
-		getParentComposite().setLayout(emptyLayout());
-		createSurfaceComposite(getParentComposite());
+		centralPanel = new CentralPanel();
+		createSurfaceComposite(centralPanel);
 		surfaceComposite.setLayoutData(fullData());
 		getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
-		form.setMaximizedControl(centralPanel);
 		decorator.createDecorations(form);
-		c.layout();
-
+		c.requestLayout();
 	}
 
 	/**

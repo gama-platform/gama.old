@@ -576,9 +576,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
-	/** The cleanup. */
-	final Runnable cleanup = () -> WorkbenchHelper.asyncRun(() -> renderer.getPickingHelper().setPicking(false));
-
 	/**
 	 * Method selectAgents()
 	 *
@@ -600,6 +597,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				ag = attributes.getAgentIdentifier();
 			}
 		}
+		/** The cleanup. */
+		Runnable cleanup = ag != null ? () -> { renderer.getPickingHelper().setPicking(false); } : () -> {
+			renderer.getPickingHelper().setPicking(false);
+			// Necessary to avoir situations like issue #3232. The result is however a bit of flickering
+			getManager().forceRedrawingLayers();
+			updateDisplay(true);
+		};
 		if (withHighlight) {
 			menuManager.buildMenu((int) renderer.getCameraHelper().getMousePosition().x,
 					(int) renderer.getCameraHelper().getMousePosition().y, ag, cleanup,
@@ -741,7 +745,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void layersChanged() {
 		renderer.getSceneHelper().layersChanged();
-
 	}
 
 	/**
