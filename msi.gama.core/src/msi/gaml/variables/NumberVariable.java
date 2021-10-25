@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
@@ -124,10 +125,10 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 	private final IExpression min, max, step;
 
 	/** The max val. */
-	private T minVal, maxVal;
+	private GAMA.InScope<T> minVal, maxVal;
 
 	/** The step val. */
-	private Step stepVal;
+	private GAMA.InScope<Step> stepVal;
 
 	/**
 	 * Instantiates a new number variable.
@@ -140,24 +141,22 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 	@SuppressWarnings ("unchecked")
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		final IScope scope = null;
-		// IScope scope = GAMA.obtainNewScope();
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		if (min != null && min.isConst()) {
 			switch (type.id()) {
 				case IType.INT:
-					minVal = (T) Cast.asInt(scope, min.value(scope));
+					minVal = scope -> (T) Cast.asInt(scope, min.value(scope));
 					break;
 				case IType.FLOAT:
-					minVal = (T) Cast.asFloat(scope, min.value(scope));
+					minVal = scope -> (T) Cast.asFloat(scope, min.value(scope));
 					break;
 				case IType.POINT:
-					minVal = (T) Cast.asPoint(scope, min.value(scope));
+					minVal = scope -> (T) Cast.asPoint(scope, min.value(scope));
 					break;
 				case IType.DATE:
-					minVal = (T) GamaDateType.staticCast(scope, min.value(scope), null, false);
+					minVal = scope -> (T) GamaDateType.staticCast(scope, min.value(scope), null, false);
 			}
 		} else {
 			minVal = null;
@@ -165,16 +164,16 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		if (max != null && max.isConst()) {
 			switch (type.id()) {
 				case IType.INT:
-					maxVal = (T) Cast.asInt(scope, max.value(scope));
+					maxVal = scope -> (T) Cast.asInt(scope, max.value(scope));
 					break;
 				case IType.FLOAT:
-					maxVal = (T) Cast.asFloat(scope, max.value(scope));
+					maxVal = scope -> (T) Cast.asFloat(scope, max.value(scope));
 					break;
 				case IType.POINT:
-					maxVal = (T) Cast.asPoint(scope, max.value(scope));
+					maxVal = scope -> (T) Cast.asPoint(scope, max.value(scope));
 					break;
 				case IType.DATE:
-					maxVal = (T) GamaDateType.staticCast(scope, max.value(scope), null, false);
+					maxVal = scope -> (T) GamaDateType.staticCast(scope, max.value(scope), null, false);
 			}
 		} else {
 			maxVal = null;
@@ -182,17 +181,17 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		if (step != null && step.isConst()) {
 			switch (type.id()) {
 				case IType.INT:
-					stepVal = (Step) Cast.asInt(scope, step.value(scope));
+					stepVal = scope -> (Step) Cast.asInt(scope, step.value(scope));
 					break;
 				case IType.FLOAT:
-					stepVal = (Step) Cast.asFloat(scope, step.value(scope));
+					stepVal = scope -> (Step) Cast.asFloat(scope, step.value(scope));
 					break;
 				case IType.POINT:
-					stepVal = (Step) Cast.asPoint(scope, step.value(scope));
+					stepVal = scope -> (Step) Cast.asPoint(scope, step.value(scope));
 					break;
 				case IType.DATE:
 					// Step for dates are durations expressed in seconds ?
-					stepVal = (Step) Cast.asFloat(scope, step.value(scope));
+					stepVal = scope -> (Step) Cast.asFloat(scope, step.value(scope));
 			}
 		} else {
 			stepVal = null;
@@ -232,13 +231,13 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 	 */
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
 		if (min != null) {
-			final Integer m =
-					minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent).getValue()) : (Integer) minVal;
+			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent).getValue())
+					: (Integer) minVal.run(scope);
 			if (f < m) return m;
 		}
 		if (max != null) {
-			final Integer m =
-					maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent).getValue()) : (Integer) maxVal;
+			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent).getValue())
+					: (Integer) maxVal.run(scope);
 			if (f > m) return m;
 		}
 		return f;
@@ -260,12 +259,12 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
 		if (min != null) {
 			final Double fmin =
-					minVal == null ? asFloat(scope, scope.evaluate(min, agent).getValue()) : (Double) minVal;
+					minVal == null ? asFloat(scope, scope.evaluate(min, agent).getValue()) : (Double) minVal.run(scope);
 			if (f < fmin) return fmin;
 		}
 		if (max != null) {
-			final Double fmax =
-					maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent).getValue()) : (Double) maxVal;
+			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent).getValue())
+					: (Double) maxVal.run(scope);
 			if (f > fmax) return fmax;
 		}
 		return f;
@@ -288,13 +287,13 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 			throws GamaRuntimeException {
 		if (f == null) return null;
 		if (min != null) {
-			final GamaPoint fmin =
-					(GamaPoint) (minVal == null ? asPoint(scope, scope.evaluate(min, agent).getValue()) : minVal);
+			final GamaPoint fmin = (GamaPoint) (minVal == null ? asPoint(scope, scope.evaluate(min, agent).getValue())
+					: minVal.run(scope));
 			if (f.smallerThan(fmin)) return fmin;
 		}
 		if (max != null) {
-			final GamaPoint fmax =
-					(GamaPoint) (maxVal == null ? asPoint(scope, scope.evaluate(max, agent).getValue()) : maxVal);
+			final GamaPoint fmax = (GamaPoint) (maxVal == null ? asPoint(scope, scope.evaluate(max, agent).getValue())
+					: maxVal.run(scope));
 			if (f.biggerThan(fmax)) return fmax;
 		}
 		return f;
@@ -318,12 +317,14 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 		if (f == null) return null;
 		if (min != null) {
 			final GamaDate fmin = (GamaDate) (minVal == null
-					? GamaDateType.staticCast(scope, scope.evaluate(min, agent).getValue(), null, false) : minVal);
+					? GamaDateType.staticCast(scope, scope.evaluate(min, agent).getValue(), null, false)
+					: minVal.run(scope));
 			if (f.compareTo(fmin) < 0) return fmin;
 		}
 		if (max != null) {
 			final GamaDate fmax = (GamaDate) (maxVal == null
-					? GamaDateType.staticCast(scope, scope.evaluate(max, agent).getValue(), null, false) : maxVal);
+					? GamaDateType.staticCast(scope, scope.evaluate(max, agent).getValue(), null, false)
+					: maxVal.run(scope));
 			if (f.compareTo(fmax) > 0) return fmax;
 		}
 		return f;
@@ -331,17 +332,17 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 
 	@Override
 	public T getMinValue(final IScope scope) {
-		return minVal;
+		return minVal == null ? null : minVal.run(scope);
 	}
 
 	@Override
 	public T getMaxValue(final IScope scope) {
-		return maxVal;
+		return maxVal == null ? null : maxVal.run(scope);
 	}
 
 	@Override
 	public Step getStepValue(final IScope scope) {
-		return stepVal;
+		return stepVal == null ? null : stepVal.run(scope);
 	}
 
 	@Override

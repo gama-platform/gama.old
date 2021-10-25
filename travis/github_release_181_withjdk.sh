@@ -61,21 +61,27 @@ n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
 NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX_MAC
 n=2
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
+NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned'$SUFFIX
+n=3
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA_1.8.1_Windows'$SUFFIX
-n=3
+n=4
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA_1.8.1_Linux_with_JDK'$SUFFIX
-n=4
+n=5
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA_1.8.1_Windows_with_JDK'$SUFFIX
-n=5
+n=6
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
 NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX_MAC
+n=7
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
+NEWFILES[$n]='GAMA_1.8.1_MacOS_unsigned_with_JDK'$SUFFIX
  
 
 i=0
-for (( i=0; i<6; i++ ))
+for (( i=0; i<8; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"

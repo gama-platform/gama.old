@@ -104,7 +104,7 @@ public class EditorsDialog extends Dialog {
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
-		this.color = GamaColors.toSwtColor(color);
+		this.color = color == null ? IGamaColors.OK.inactive() : GamaColors.toSwtColor(color);
 		setShellStyle(SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
 		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
@@ -135,8 +135,7 @@ public class EditorsDialog extends Dialog {
 		// final var layout = (GridLayout) composite.getLayout();
 		// layout.numColumns = 2;
 		final var text = new Label(composite, SWT.None);
-		text.setBackground(color);
-		text.setForeground(GamaColors.getTextColorForBackground(color).color());
+		GamaColors.setBackAndForeground(text, color, GamaColors.getTextColorForBackground(color).color());
 		if (font != null) {
 			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		}

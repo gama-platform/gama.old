@@ -1,28 +1,23 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'WrappedFile.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * LinkedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
-import msi.gama.application.workbench.ThemeHelper;
-import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -34,7 +29,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
+	/** The file. */
 	final WrappedFile file;
+	
+	/** The suffix. */
 	final String suffix;
 
 	/**
@@ -68,9 +66,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
-	public Object[] getNavigatorChildren() {
-		return EMPTY;
-	}
+	public Object[] getNavigatorChildren() { return EMPTY; }
 
 	/**
 	 * Method getImage()
@@ -78,19 +74,17 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() {
-		return DEFAULT_LABEL_PROVIDER.getImage(file.getResource());
-	}
+	public Image getImage() { return DEFAULT_LABEL_PROVIDER.getImage(file.getResource()); }
 
 	/**
 	 * Method getColor()
 	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
 	 */
-	@Override
-	public Color getColor() {
-		return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-	}
+	// @Override
+	// public Color getColor() {
+	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
+	// }
 
 	/**
 	 * Method isParentOf()
@@ -135,16 +129,15 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	}
 
 	@Override
-	public ImageDescriptor getOverlay() {
-		return null;
-	}
+	public ImageDescriptor getOverlay() { return null; }
 
 	@Override
-	public VirtualContentType getType() {
-		return VirtualContentType.FILE_REFERENCE;
-	}
+	public VirtualContentType getType() { return VirtualContentType.FILE_REFERENCE; }
 
-	public WrappedFile getTarget() {
-		return file;
-	}
+	/**
+	 * Gets the target.
+	 *
+	 * @return the target
+	 */
+	public WrappedFile getTarget() { return file; }
 }

@@ -94,8 +94,8 @@ public class ThemeHelper {
 
 	/** The Constant CORE_THEME_FOLLOW. */
 	public static final Pref<Boolean> CORE_THEME_FOLLOW =
-			create("pref_theme_follow", "Follow OS theme", followOSTheme(), IType.BOOL, false).in(NAME, APPEARANCE)
-					.restartRequired().deactivates("pref_theme_light").onChange(yes -> {
+			create("pref_theme_follow", "Follow OS theme", ThemeHelper::followOSTheme, IType.BOOL, false)
+					.in(NAME, APPEARANCE).restartRequired().deactivates("pref_theme_light").onChange(yes -> {
 						followOSTheme(yes);
 						chooseThemeBasedOnPreferences();
 					});
@@ -136,7 +136,7 @@ public class ThemeHelper {
 		} else {
 			result = Boolean.valueOf(System.getProperty(THEME_FOLLOW_PROPERTY, "true"));
 		}
-		DEBUG.OUT("Follow OS Theme: " + result);
+		// DEBUG.OUT("Follow OS Theme: " + result);
 		return result;
 	}
 
@@ -179,8 +179,8 @@ public class ThemeHelper {
 			final var theme = themeEngine.getActiveTheme();
 			id = theme == null ? null : theme.getId();
 		}
-		DEBUG.OUT(" GAMA theme is dark = " + (id != null && id.contains("dark")) + " and OS is dark = "
-				+ isSystemDarkTheme());
+		// DEBUG.OUT(" GAMA theme is " + (id != null && id.contains("dark") ? "dark" : "light") + " and OS is "
+		// + (isSystemDarkTheme() ? "dark" : "light"));
 		return id != null && id.contains("dark");
 	}
 
@@ -188,9 +188,9 @@ public class ThemeHelper {
 	 * Install.
 	 */
 	public static void install() {
-		// if ( !PlatformUI.isWorkbenchRunning() ) { return; }
 		// We transfer the preference to the system property (to be read by Eclipse)
-		System.setProperty(THEME_FOLLOW_PROPERTY, CORE_THEME_FOLLOW.getValue().toString());
+		// DEBUG.OUT("Installing property " + THEME_FOLLOW_PROPERTY + " with value " + CORE_THEME_FOLLOW.getValue());
+		followOSTheme(CORE_THEME_FOLLOW.getValue());
 		final var eventBroker = Workbench.getInstance().getService(IEventBroker.class);
 		if (eventBroker != null) {
 			final var themeChangedHandler = new WorkbenchThemeChangedHandler();
@@ -305,18 +305,11 @@ public class ThemeHelper {
 		getThemeEngine().resetCurrentTheme();
 		CSSEngine engine = Iterables.getFirst(getThemeEngine().getCSSEngines(), null);
 		if (engine == null) return;
-		// sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
 		ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
-		// List<StyleSheet> sheets = new ArrayList<>();
-		// StyleSheetList list = doc.getStyleSheets();
-		// for (int i = 0; i < list.getLength(); i++) { sheets.add(list.item(i)); }
 
 		try {
 			Reader reader = new StringReader(cssText);
 			doc.addStyleSheet(engine.parseStyleSheet(reader));
-			// sheets.add(/* 0, */ engine.parseStyleSheet(reader));
-			// doc.removeAllStyleSheets();
-			// for (StyleSheet sheet : sheets) { doc.addStyleSheet(sheet); }
 			engine.reapply();
 
 		} catch (CSSParseException e) {
@@ -341,9 +334,6 @@ public class ThemeHelper {
 		@Override
 		public void handleEvent(final org.osgi.service.event.Event event) {
 			final var theme = getTheme(event);
-			// System.out.println("PROPERTY " + THEME_FOLLOW_PROPERTY + " = " +
-			// System.getProperty(THEME_FOLLOW_PROPERTY));
-			// System.out.println("THEME = " + theme);
 			if (theme == null) return;
 			final var isDark = theme.getId().startsWith(E4_DARK_THEME_ID);
 			listeners.forEach(l -> l.themeChanged(!isDark));

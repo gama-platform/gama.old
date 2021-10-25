@@ -87,9 +87,6 @@ jobs:
             ./Gama1.7-macosx*zip
             ./mac-sign.sh
 
-      - run: rm ./Gama1.7-macosx*zip
-        if: env.CONTINUE == 'true'
-
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
         with:
