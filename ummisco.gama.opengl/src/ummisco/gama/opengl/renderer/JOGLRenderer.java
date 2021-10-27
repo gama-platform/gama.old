@@ -228,7 +228,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		keystoneHelper.reshape(width, height);
 		openGL.reshape(gl, width, height);
-		sceneHelper.reshape(width, height);
+		// sceneHelper.reshape(width, height);
 		surface.updateDisplay(true);
 	}
 

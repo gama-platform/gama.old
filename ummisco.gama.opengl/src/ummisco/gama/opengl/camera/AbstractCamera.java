@@ -304,7 +304,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @param e
 	 *            the e
 	 */
-	protected void internalMouseScrolled(final int count) {
+	protected final void internalMouseScrolled(final int count) {
 		zoom(count > 0);
 	}
 

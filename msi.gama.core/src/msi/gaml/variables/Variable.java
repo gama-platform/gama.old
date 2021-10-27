@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.Variable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Variable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -155,10 +154,12 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class Variable extends Symbol implements IVariable {
 
+	/**
+	 * The Class VarValidator.
+	 */
 	public static class VarValidator implements IDescriptionValidator {
 
-		// public static List<String> valueFacetsList = Arrays.asList(VALUE,
-		// INIT, FUNCTION, UPDATE, MIN, MAX);
+		/** The assignment facets. */
 		public static List<String> assignmentFacets = Arrays.asList(VALUE, INIT, FUNCTION, UPDATE, MIN, MAX);
 
 		/**
@@ -247,6 +248,12 @@ public class Variable extends Symbol implements IVariable {
 			assertAmongValues(cd);
 		}
 
+		/**
+		 * Assert among values.
+		 *
+		 * @param vd
+		 *            the vd
+		 */
 		public void assertAmongValues(final VariableDescription vd) {
 			// if (vd.isParameter() && vd.getSpeciesContext().isExperiment()
 			// && ((ExperimentDescription) vd.getSpeciesContext()).isBatch())
@@ -272,6 +279,12 @@ public class Variable extends Symbol implements IVariable {
 
 		}
 
+		/**
+		 * Assert assignment facets types.
+		 *
+		 * @param vd
+		 *            the vd
+		 */
 		public void assertAssignmentFacetsTypes(final VariableDescription vd) {
 			for (final String s : assignmentFacets) {
 				Assert.typesAreCompatibleForAssignment(s, vd, vd.getName(), vd.getGamlType(), /* vd.getContentType(), */
@@ -279,6 +292,14 @@ public class Variable extends Symbol implements IVariable {
 			}
 		}
 
+		/**
+		 * Assert value facets types.
+		 *
+		 * @param vd
+		 *            the vd
+		 * @param vType
+		 *            the v type
+		 */
 		public void assertValueFacetsTypes(final VariableDescription vd, final IType<?> vType) {
 
 			// final IType type = null;
@@ -298,6 +319,12 @@ public class Variable extends Symbol implements IVariable {
 			}
 		}
 
+		/**
+		 * Assert can be parameter.
+		 *
+		 * @param cd
+		 *            the cd
+		 */
 		public void assertCanBeParameter(final VariableDescription cd) {
 			if (PARAMETER.equals(cd.getKeyword()) /* facets.equals(KEYWORD, PARAMETER) */) {
 				final String varName = cd.getLitteral(VAR);
@@ -380,18 +407,43 @@ public class Variable extends Symbol implements IVariable {
 
 	}
 
+	/** The init expression. */
 	protected IExpression initExpression;
+
+	/** The on change expression. */
 	protected final IExpression updateExpression, amongExpression, functionExpression, onChangeExpression;
+
+	/** The type. */
 	protected IType type;
+
+	/** The is not modifiable. */
 	protected final boolean isNotModifiable;
+
+	/** The setter. */
 	public IGamaHelper getter, initer, setter;
+
+	/** The listeners. */
 	public Map<GamaHelper, IVarAndActionSupport> listeners;
+
+	/** The s skill. */
 	protected ISkill gSkill, sSkill;
+
+	/** The on changer. */
 	private IExecutable on_changer;
+
+	/** The category. */
 	protected String parameter, category;
+
+	/** The must notify of changes. */
 	protected boolean mustNotifyOfChanges;
 	// private Object speciesWideValue;
 
+	/**
+	 * Instantiates a new variable.
+	 *
+	 * @param sd
+	 *            the sd
+	 */
 	public Variable(final IDescription sd) {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
@@ -413,6 +465,12 @@ public class Variable extends Symbol implements IVariable {
 	// && setter == null && (initExpression == null || initExpression.isConst());
 	// }
 
+	/**
+	 * Builds the helpers.
+	 *
+	 * @param species
+	 *            the species
+	 */
 	private void buildHelpers(final AbstractSpecies species) {
 		getter = getDescription().getGetter();
 		if (getter != null) { gSkill = species.getSkillInstanceFor(getter.getSkillClass()); }
@@ -441,9 +499,7 @@ public class Variable extends Symbol implements IVariable {
 			if (!classes.isEmpty()) {
 				for (Class c : classes) {
 					Set<GamaHelper> set = AbstractGamlAdditions.LISTENERS_BY_CLASS.get(c);
-					for (GamaHelper h : set) {
-						if (h.getName().equals(getName())) { helpers.add(h); }
-					}
+					for (GamaHelper h : set) { if (h.getName().equals(getName())) { helpers.add(h); } }
 				}
 			}
 
@@ -459,6 +515,19 @@ public class Variable extends Symbol implements IVariable {
 
 	}
 
+	/**
+	 * Coerce.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param v
+	 *            the v
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		return type.cast(scope, v, null, false);
 	}
@@ -489,29 +558,19 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public boolean isParameter() {
-		return getDescription().isParameter();
-	}
+	public boolean isParameter() { return getDescription().isParameter(); }
 
 	@Override
-	public VariableDescription getDescription() {
-		return (VariableDescription) description;
-	}
+	public VariableDescription getDescription() { return (VariableDescription) description; }
 
 	@Override
-	public boolean isUpdatable() {
-		return updateExpression != null && !isNotModifiable;
-	}
+	public boolean isUpdatable() { return updateExpression != null && !isNotModifiable; }
 
 	@Override
-	public boolean isFunction() {
-		return functionExpression != null;
-	}
+	public boolean isFunction() { return functionExpression != null; }
 
 	@Override
-	public IType getType() {
-		return type;
-	}
+	public IType getType() { return type; }
 
 	@Override
 	public void initializeWith(final IScope scope, final IAgent a, final Object v) throws GamaRuntimeException {
@@ -534,9 +593,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public String getTitle() {
-		return parameter;
-	}
+	public String getTitle() { return parameter; }
 
 	@Override
 	public String getCategory() {
@@ -567,14 +624,10 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
-	public void setName(final String name) {
-		this.name = name;
-	}
+	public void setName(final String name) { this.name = name; }
 
 	@Override
 	public final void setVal(final IScope scope, final IAgent agent, final Object v) throws GamaRuntimeException {
@@ -586,6 +639,18 @@ public class Variable extends Symbol implements IVariable {
 		}
 	}
 
+	/**
+	 * Internal notify of value change.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param oldValue
+	 *            the old value
+	 * @param newValue
+	 *            the new value
+	 */
 	private void internalNotifyOfValueChange(final IScope scope, final IAgent agent, final Object oldValue,
 			final Object newValue) {
 		if (onChangeExpression != null) {
@@ -596,9 +661,8 @@ public class Variable extends Symbol implements IVariable {
 		}
 
 		if (listeners != null) {
-			listeners.forEach((listener, skill) -> {
-				listener.run(scope, agent, skill == null ? agent : skill, newValue);
-			});
+			listeners.forEach(
+					(listener, skill) -> { listener.run(scope, agent, skill == null ? agent : skill, newValue); });
 		}
 	}
 
@@ -620,6 +684,18 @@ public class Variable extends Symbol implements IVariable {
 		internalNotifyOfValueChange(scope, agent, oldValue, newValue);
 	}
 
+	/**
+	 * Sets the val.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param v
+	 *            the v
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object val;
 		val = coerce(agent, scope, v);
@@ -634,6 +710,19 @@ public class Variable extends Symbol implements IVariable {
 		// }
 	}
 
+	/**
+	 * Check among.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
 		if (amongExpression == null) return val;
 		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent).getValue());
@@ -682,12 +771,8 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public List getAmongValue(final IScope scope) {
 		if (amongExpression == null) return null;
-		// if (!amongExpression.isConst()) {
-		// return null;
-		// }
 		try {
 			return GamaListType.staticCast(scope, amongExpression.value(scope), getType(), false);
-			// return Cast.as(amongExpression, IList.class, false);
 		} catch (final GamaRuntimeException e) {
 			return null;
 		}
@@ -695,7 +780,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object getInitialValue(final IScope scope) {
-		if (initExpression != null /* && initExpression.isConst() */ ) {
+		if (initExpression != null) {
 			try {
 				return initExpression.value(scope);
 			} catch (final GamaRuntimeException e) {
@@ -714,9 +799,7 @@ public class Variable extends Symbol implements IVariable {
 	public void setUnitLabel(final String label) {}
 
 	@Override
-	public boolean isEditable() {
-		return !isNotModifiable;
-	}
+	public boolean isEditable() { return !isNotModifiable; }
 
 	/**
 	 * Method isDefined()
@@ -724,9 +807,7 @@ public class Variable extends Symbol implements IVariable {
 	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
 	 */
 	@Override
-	public boolean isDefined() {
-		return true;
-	}
+	public boolean isDefined() { return true; }
 
 	/**
 	 * Method setDefined()
@@ -764,13 +845,9 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public boolean isNotModifiable() {
-		return isNotModifiable;
-	}
+	public boolean isNotModifiable() { return isNotModifiable; }
 
 	@Override
-	public boolean isDefinedInExperiment() {
-		return getDescription().isDefinedInExperiment();
-	}
+	public boolean isDefinedInExperiment() { return getDescription().isDefinedInExperiment(); }
 
 }

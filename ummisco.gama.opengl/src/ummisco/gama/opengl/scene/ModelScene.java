@@ -63,10 +63,13 @@ public class ModelScene {
 	private volatile int objectNumber;
 
 	/** The z increment. */
-	private double zIncrement;
+	private volatile double zIncrement;
 
 	/** The current layer trace. */
-	private int currentLayerTrace;
+	private volatile int currentLayerTrace;
+
+	/** The max Z. */
+	final double maxZ;
 
 	/**
 	 * Instantiates a new model scene.
@@ -78,6 +81,7 @@ public class ModelScene {
 	 */
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
+		maxZ = renderer.getMaxEnvDim() / 2000d;
 		if (withWorld) { initWorld(); }
 	}
 
@@ -138,7 +142,7 @@ public class ModelScene {
 	private double computeVisualZIncrement() {
 		if (objectNumber <= 1) return 0d;
 		// The maximum visual z allowance between the object at the bottom and the one at the top
-		final double maxZ = renderer.getMaxEnvDim() / 2000d;
+
 		// The increment is simply
 		return maxZ / objectNumber;
 	}
@@ -337,9 +341,9 @@ public class ModelScene {
 	 * @param gl
 	 *            the gl
 	 */
-	public void recomputeLayoutDimensions(final OpenGL gl) {
-		layers.forEach((name, layer) -> { if (layer.isOverlay() || layer.isStatic()) { layer.forceRedraw(gl); } });
-
-	}
+	// public void recomputeLayoutDimensions(final OpenGL gl) {
+	// layers.forEach((name, layer) -> { if (layer.isOverlay() || layer.isStatic()) { layer.forceRedraw(gl); } });
+	//
+	// }
 
 }
