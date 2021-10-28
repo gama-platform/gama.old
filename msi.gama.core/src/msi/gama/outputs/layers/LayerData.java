@@ -34,7 +34,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.units.PixelUnitExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.AttributeHolder;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 16 nov. 2010
@@ -45,7 +44,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class LayerData extends AttributeHolder implements ILayerData {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/** The position in pixels. */
@@ -162,7 +161,10 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	}
 
 	@Override
-	public GamaPoint getPosition() { return position.get(); }
+	public GamaPoint getPosition() {
+		// DEBUG.OUT("Position.z = " + position.get().z);
+		return position.get();
+	}
 
 	@Override
 	public GamaPoint getSize() { return size.get(); }

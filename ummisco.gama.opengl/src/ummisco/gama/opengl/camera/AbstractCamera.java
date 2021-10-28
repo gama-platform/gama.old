@@ -272,8 +272,8 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	protected void invokeOnGLThread(final GLRunnable runnable) {
 		// Fixing issue #2224
-		runnable.run(renderer.getCanvas());
-		// renderer.getDrawable().invoke(false, runnable);
+		// runnable.run(renderer.getCanvas());
+		renderer.getCanvas().invoke(false, runnable);
 	}
 
 	/**
@@ -304,7 +304,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @param e
 	 *            the e
 	 */
-	protected void internalMouseScrolled(final int count) {
+	protected final void internalMouseScrolled(final int count) {
 		zoom(count > 0);
 	}
 
@@ -449,7 +449,10 @@ public abstract class AbstractCamera implements ICamera {
 				final int corner = clickOnKeystone(x, y);
 				if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
 			} else {
-				getRenderer().getSurface().zoomFit();
+				invokeOnGLThread(drawable -> {
+					getRenderer().getSurface().zoomFit();
+					return false;
+				});
 			}
 		}
 	}

@@ -696,16 +696,16 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean toggleFullScreenMode() {
-		Control c = Display.getDefault().getCursorControl();
+		Control c = WorkbenchHelper.run(() -> Display.getDefault().getCursorControl());
 		if (c instanceof InnerComponent) {
-//			DEBUG.OUT("Toggling from inner component ");
-			((InnerComponent) c).getView().toggleFullScreen();
+			// DEBUG.OUT("Toggling from inner component ");
+			WorkbenchHelper.asyncRun(() -> ((InnerComponent) c).getView().toggleFullScreen());
 			return true;
 		}
-		final IViewPart part = WorkbenchHelper.findFrontmostGamaViewUnderMouse();
+		final IViewPart part = WorkbenchHelper.run(WorkbenchHelper::findFrontmostGamaViewUnderMouse);
 		if (part instanceof IGamaView.Display) {
-//			DEBUG.OUT("Toggling from view ");
-			((IGamaView.Display) part).toggleFullScreen();
+			// DEBUG.OUT("Toggling from view ");
+			WorkbenchHelper.asyncRun(() -> ((IGamaView.Display) part).toggleFullScreen());
 			return true;
 		}
 		return false;

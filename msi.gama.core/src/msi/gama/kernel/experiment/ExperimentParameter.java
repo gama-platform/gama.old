@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ExperimentParameter.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ExperimentParameter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
+
+import static java.lang.Double.compare;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -60,6 +62,9 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 import msi.gaml.variables.Variable;
 
+/**
+ * The Class ExperimentParameter.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
@@ -173,23 +178,60 @@ import msi.gaml.variables.Variable;
 @SuppressWarnings ({ "rawtypes" })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
+	/** The undefined. */
 	static Object UNDEFINED = new Object();
+
+	/** The value. */
 	private Object value = UNDEFINED;
+
+	/** The max value. */
 	Object minValue, maxValue;
+
+	/** The step value. */
 	Object stepValue;
+
+	/** The among value. */
 	private List amongValue;
+
+	/** The enables. */
 	final private String[] disables, enables;
+
+	/** The unit label. */
 	String varName, title, category, unitLabel;
+
+	/** The type. */
 	IType type = Types.NO_TYPE;
+
+	/** The is editable. */
 	boolean isEditable;
+
+	/** The can be null. */
 	boolean canBeNull;
+
+	/** The is defined. */
 	boolean isDefined = true;
+
+	/** The is experiment. */
 	// if true, means the target of the parameter is a variable defined in experiment
 	boolean isExperiment = false;
+
+	/** The on change. */
 	final IExpression init, among, min, max, step, slider, onChange;
+
+	/** The listeners. */
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
+
+	/** The action. */
 	ActionStatement action;
 
+	/**
+	 * Instantiates a new experiment parameter.
+	 *
+	 * @param sd
+	 *            the sd
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
@@ -229,6 +271,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 	}
 
+	/**
+	 * Find targeted var.
+	 *
+	 * @param parameterDescription
+	 *            the parameter description
+	 * @return the variable description
+	 */
 	private VariableDescription findTargetedVar(final IDescription parameterDescription) {
 		// We look first in the model to make sure that built-in parameters (like seed) are correctly retrieved
 		final ModelDescription wd = parameterDescription.getModelDescription();
@@ -241,15 +290,57 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return targetedGlobalVar;
 	}
 
+	/**
+	 * Instantiates a new experiment parameter.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 */
 	public ExperimentParameter(final IScope scope, final IParameter p) {
 		this(scope, p, p.getTitle(), p.getCategory(), p.getAmongValue(scope), false);
 	}
 
+	/**
+	 * Instantiates a new experiment parameter.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param title
+	 *            the title
+	 * @param category
+	 *            the category
+	 * @param among
+	 *            the among
+	 * @param canBeNull
+	 *            the can be null
+	 */
 	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 			final List among, final boolean canBeNull) {
 		this(scope, p, title, category, null, among, canBeNull);
 	}
 
+	/**
+	 * Instantiates a new experiment parameter.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param title
+	 *            the title
+	 * @param category
+	 *            the category
+	 * @param unit
+	 *            the unit
+	 * @param among
+	 *            the among
+	 * @param canBeNull
+	 *            the can be null
+	 */
 	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 			final String unit, final List among, final boolean canBeNull) {
 		super(null);
@@ -316,85 +407,89 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		listeners.clear();
 	}
 
-	private void setType(final IType iType) {
-		type = iType;
-	}
+	/**
+	 * Sets the type.
+	 *
+	 * @param iType
+	 *            the new type
+	 */
+	private void setType(final IType iType) { type = iType; }
 
 	@Override
-	public boolean isEditable() {
-		return isEditable;
-	}
+	public boolean isEditable() { return isEditable; }
 
 	@Override
-	public boolean isDefined() {
-		return isDefined;
-	}
+	public boolean isDefined() { return isDefined; }
 
 	@Override
-	public void setDefined(final boolean defined) {
-		isDefined = defined;
-	}
+	public void setDefined(final boolean defined) { isDefined = defined; }
 
 	@Override
-	public void setEditable(final boolean editable) {
-		isEditable = editable;
-	}
+	public void setEditable(final boolean editable) { isEditable = editable; }
 
 	@Override
 	public void addChangedListener(final ParameterChangeListener listener) {
 		if (!listeners.contains(listener)) { listeners.add(listener); }
 	}
 
-	public void setAndVerifyValue(final IScope scope, final Object val) {
-		Object newValue = val;
-		if (newValue instanceof Comparable && minValue instanceof Comparable
-				&& ((Comparable) minValue).compareTo(newValue) > 0) {
-			newValue = minValue;
-		} else
-		// if (minValue != null && newValue instanceof Number
-		// && ((Number) newValue).doubleValue() < minValue.doubleValue()) {
-		// if (type.id() == IType.INT) {
-		// newValue = minValue.intValue();
-		// } else {
-		// newValue = minValue.doubleValue();
-		// }
-		// }
-		if (newValue instanceof Comparable && maxValue instanceof Comparable
-				&& ((Comparable) maxValue).compareTo(newValue) < 0) {
-			newValue = maxValue;
-		}
-		// if (maxValue != null && newValue instanceof Number
-		// && ((Number) newValue).doubleValue() > maxValue.doubleValue()) {
-		// if (type.id() == IType.INT) {
-		// newValue = maxValue.intValue();
-		// } else {
-		// newValue = maxValue.doubleValue();
-		// }
-		// }
+	/**
+	 * Verify min.
+	 *
+	 * @param newValue
+	 *            the new value
+	 * @return the object
+	 */
+	private Object verifyMin(final Object newValue) {
+		if (minValue instanceof Number && newValue instanceof Number
+				&& compare(((Number) minValue).doubleValue(), ((Number) newValue).doubleValue()) > 0
+				|| minValue instanceof Comparable && newValue instanceof Comparable
+						&& ((Comparable) minValue).compareTo(newValue) > 0)
+			return minValue;
+		return newValue;
+	}
 
-		// See #3006
-		// final List among = getAmongValue(scope);
-		// if (among != null && !among.isEmpty()) {
-		// if (!getAmongValue(scope).contains(newValue)) {
-		// newValue = getAmongValue(scope).get(0);
-		// }
-		// }
+	/**
+	 * Verify max.
+	 *
+	 * @param newValue
+	 *            the new value
+	 * @return the object
+	 */
+	private Object verifyMax(final Object newValue) {
+		if (maxValue instanceof Number && newValue instanceof Number
+				&& compare(((Number) maxValue).doubleValue(), ((Number) newValue).doubleValue()) < 0
+				|| maxValue instanceof Comparable && newValue instanceof Comparable
+						&& ((Comparable) maxValue).compareTo(newValue) < 0)
+			return maxValue;
+		return newValue;
+	}
+
+	/**
+	 * Sets the and verify value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 */
+	public void setAndVerifyValue(final IScope scope, final Object val) {
+		Object newValue = verifyMin(verifyMax(val));
 		newValue = filterWithAmong(scope, newValue);
 		if (value != UNDEFINED) {
-			for (final ParameterChangeListener listener : listeners) {
-				listener.changed(scope, newValue);
-			}
-			// Already initialized, we call the on_change behavior
-			// final IExecutable on_changer =
-			// scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
-			// scope.getExperiment().executeAction(on_changer);
-			// scope.execute(on_changer, scope.getAgentScope(), null,
-			// JunkResults);
-
+			for (final ParameterChangeListener listener : listeners) { listener.changed(scope, newValue); }
 		}
 		value = newValue;
 	}
 
+	/**
+	 * Filter with among.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param newValue
+	 *            the new value
+	 * @return the object
+	 */
 	private Object filterWithAmong(final IScope scope, final Object newValue) {
 		getAmongValue(scope);
 		if (amongValue == null || amongValue.isEmpty()) return newValue;
@@ -434,12 +529,25 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setValue(scope, UNDEFINED);
 	}
 
+	/**
+	 * Try to init.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
 	public void tryToInit(final IScope scope) {
 		if (value != UNDEFINED || init == null) return;
 		setValue(scope, init.value(scope));
 
 	}
 
+	/**
+	 * Draw random value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the comparable
+	 */
 	private Comparable drawRandomValue(final IScope scope) {
 		switch (type.id()) {
 			case IType.INT:
@@ -566,24 +674,16 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public String getTitle() {
-		return title;
-	}
+	public String getTitle() { return title; }
 
 	@Override
-	public String getName() {
-		return varName;
-	}
+	public String getName() { return varName; }
 
 	@Override
-	public String getCategory() {
-		return category == null ? IParameter.Batch.super.getCategory() : category;
-	}
+	public String getCategory() { return category == null ? IParameter.Batch.super.getCategory() : category; }
 
 	@Override
-	public void setCategory(final String cat) {
-		category = cat;
-	}
+	public void setCategory(final String cat) { category = cat; }
 
 	@Override
 	public Object value(final IScope scope) {
@@ -626,9 +726,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public IType getType() {
-		return type;
-	}
+	public IType getType() { return type; }
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -639,17 +737,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<IStatement> statements = new ArrayList<>();
-		for (final ISymbol c : commands) {
-			if (c instanceof IStatement) { statements.add((IStatement) c); }
-		}
+		for (final ISymbol c : commands) { if (c instanceof IStatement) { statements.add((IStatement) c); } }
 		if (!statements.isEmpty()) {
 			final IDescription d =
 					DescriptionFactory.create(IKeyword.ACTION, getDescription(), IKeyword.NAME, "inline");
 			action = new ActionStatement(d);
 			action.setChildren(statements);
-			listeners.add((scope, v) -> {
-				scope.getExperiment().executeAction(action);
-			});
+			listeners.add((scope, v) -> { scope.getExperiment().executeAction(action); });
 		}
 	}
 
@@ -658,6 +752,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return "Parameter '" + title + "' targets var " + varName;
 	}
 
+	/**
+	 * Can be null.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean canBeNull() {
 		return canBeNull;
 	}
@@ -673,6 +772,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return unitLabel;
 	}
 
+	/**
+	 * Compute explorable label.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the string
+	 */
 	private String computeExplorableLabel(final IScope scope) {
 		final List l = getAmongValue(scope);
 		if (l != null) return "among " + l;
@@ -680,10 +786,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void setUnitLabel(final String label) {
-		unitLabel = label;
-	}
+	public void setUnitLabel(final String label) { unitLabel = label; }
 
+	/**
+	 * Gets the value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the value
+	 */
 	Object getValue(final IScope scope) {
 		tryToInit(scope);
 		return value;
@@ -696,18 +807,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public String[] getEnablement() {
-		return this.enables;
-	}
+	public String[] getEnablement() { return this.enables; }
 
 	@Override
-	public String[] getDisablement() {
-		return this.disables;
-	}
+	public String[] getDisablement() { return this.disables; }
 
 	@Override
-	public boolean isDefinedInExperiment() {
-		return isExperiment;
-	}
+	public boolean isDefinedInExperiment() { return isExperiment; }
 
 }
