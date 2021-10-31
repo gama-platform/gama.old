@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * LayoutTreeConverter.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import static java.lang.Integer.parseInt;
@@ -15,6 +25,8 @@ import static msi.gaml.operators.IUnits.vertical;
 import static one.util.streamex.StreamEx.of;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.DISPLAY_INDEX_KEY;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.getDisplaysPlaceholder;
+import static ummisco.gama.ui.commands.ArrangeDisplayViews.listDisplayViews;
+import static ummisco.gama.ui.utils.ViewsHelper.getDisplayViews;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,18 +38,28 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 
+import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.IntStreamEx;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class LayoutTreeConverter.
+ */
 public class LayoutTreeConverter {
 
+	/**
+	 * Convert.
+	 *
+	 * @param layout
+	 *            the layout
+	 * @return the gama tree
+	 */
 	public GamaTree<String> convert(final int layout) {
-		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) { return null; }
-		ArrangeDisplayViews.listDisplayViews();
-		final int[] indices = of(WorkbenchHelper.getDisplayViews()).mapToInt((s) -> s.getIndex()).toArray();
+		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) return null;
+		listDisplayViews();
+		final int[] indices = of(getDisplayViews(null)).mapToInt(Display::getIndex).toArray();
 		// Issue #2740 -- proceed anyway with only 1 display
 		// if (indices.length <= 1) { return null; }
 		Arrays.sort(indices);
@@ -56,40 +78,81 @@ public class LayoutTreeConverter {
 		return null;
 	}
 
+	/**
+	 * New layout tree.
+	 *
+	 * @return the gama tree
+	 */
 	static GamaTree<String> newLayoutTree() {
 		return withRoot(LAYOUT);
 	}
 
+	/**
+	 * Builds the stack tree.
+	 *
+	 * @param result
+	 *            the result
+	 * @param indices
+	 *            the indices
+	 * @return the gama tree
+	 */
 	GamaTree<String> buildStackTree(final GamaTree<String> result, final int[] indices) {
 		final GamaNode<String> root = result.getRoot().addChild(STACK);
 		IntStreamEx.of(indices).forEach(i -> root.addChild(valueOf(i), 5000));
 		return result;
 	}
 
+	/**
+	 * Builds the grid tree.
+	 *
+	 * @param result
+	 *            the result
+	 * @param indices
+	 *            the indices
+	 * @return the gama tree
+	 */
 	GamaTree<String> buildGridTree(final GamaTree<String> result, final int[] indices) {
 		final GamaNode<String> initialSash = result.getRoot().addChild(HORIZONTAL);
 		final List<GamaNode<String>> placeholders = new ArrayList<>();
 		buildPlaceholders(initialSash, placeholders, indices.length);
 		int i = 0;
-		for (final GamaNode<String> node : placeholders) {
-			node.setData(valueOf(indices[i++]));
-		}
+		for (final GamaNode<String> node : placeholders) { node.setData(valueOf(indices[i++])); }
 		return result;
 	}
 
+	/**
+	 * Builds the placeholders.
+	 *
+	 * @param root
+	 *            the root
+	 * @param list
+	 *            the list
+	 * @param size
+	 *            the size
+	 */
 	void buildPlaceholders(final GamaNode<String> root, final List<GamaNode<String>> list, final int size) {
-		if (size == 0) {
-			return;
-		} else if (size == 1) {
+		if (size == 0) return;
+		if (size == 1) {
 			list.add(root);
 		} else {
 			final int half = size / 2;
-			final String orientation = root.getData().equals(HORIZONTAL) ? VERTICAL : HORIZONTAL;
+			final String orientation = HORIZONTAL.equals(root.getData()) ? VERTICAL : HORIZONTAL;
 			buildPlaceholders(root.addChild(orientation, 5000), list, half);
 			buildPlaceholders(root.addChild(orientation, 5000), list, size - half);
 		}
 	}
 
+	/**
+	 * Builds the horizontal or vertical tree.
+	 *
+	 * @param result
+	 *            the result
+	 * @param indices
+	 *            the indices
+	 * @param horizon
+	 *            the horizon
+	 * @return the gama tree
+	 */
 	GamaTree<String> buildHorizontalOrVerticalTree(final GamaTree<String> result, final int[] indices,
 			final boolean horizon) {
 		final GamaNode<String> sashNode = result.getRoot().addChild(horizon ? HORIZONTAL : VERTICAL);
@@ -97,23 +160,47 @@ public class LayoutTreeConverter {
 		return result;
 	}
 
+	/**
+	 * Convert current layout.
+	 *
+	 * @param holders
+	 *            the holders
+	 * @return the gama tree
+	 */
 	public GamaTree<String> convertCurrentLayout(final List<MPlaceholder> holders) {
 		final MPartStack displayStack = getDisplaysPlaceholder();
-		if (displayStack == null) { return null; }
+		if (displayStack == null) return null;
 		final GamaTree<String> tree = newLayoutTree();
 		save(displayStack.getParent(), holders, tree.getRoot(), null);
 		return tree;
 	}
 
+	/**
+	 * Gets the weight.
+	 *
+	 * @param element
+	 *            the element
+	 * @return the weight
+	 */
 	String getWeight(final MUIElement element) {
 		String data = element.getContainerData();
 		final MUIElement parent = element.getParent();
-		while (data == null && parent != null) {
-			data = parent.getContainerData();
-		}
+		while (data == null && parent != null) { data = parent.getContainerData(); }
 		return data;
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param element
+	 *            the element
+	 * @param holders
+	 *            the holders
+	 * @param parent
+	 *            the parent
+	 * @param weight
+	 *            the weight
+	 */
 	private void save(final MUIElement element, final List<MPlaceholder> holders, final GamaNode<String> parent,
 			final String weight) {
 		final String data = weight == null ? getWeight(element) : weight;
@@ -122,7 +209,7 @@ public class LayoutTreeConverter {
 		} else if (element instanceof MElementContainer) {
 			final MElementContainer<?> container = (MElementContainer<?>) element;
 			final List<? extends MUIElement> children = getNonEmptyChildren(container, holders);
-			if (children.size() == 0) { return; }
+			if (children.size() == 0) return;
 			if (children.size() == 1) {
 				save(children.get(0), holders, parent, data);
 			} else {
@@ -132,18 +219,42 @@ public class LayoutTreeConverter {
 		}
 	}
 
+	/**
+	 * Prefix.
+	 *
+	 * @param container
+	 *            the container
+	 * @return the string
+	 */
 	String prefix(final MElementContainer<?> container) {
 		return container instanceof MPartStack ? STACK : container instanceof MPartSashContainer
 				? ((MPartSashContainer) container).isHorizontal() ? HORIZONTAL : VERTICAL : "";
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @param element
+	 *            the element
+	 * @param holders
+	 *            the holders
+	 * @return true, if is empty
+	 */
 	private boolean isEmpty(final MUIElement element, final List<MPlaceholder> holders) {
-		if (element instanceof MElementContainer) {
+		if (element instanceof MElementContainer)
 			return of(((MElementContainer<?>) element).getChildren()).allMatch(e -> isEmpty(e, holders));
-		}
 		return !holders.contains(element);
 	}
 
+	/**
+	 * Gets the non empty children.
+	 *
+	 * @param container
+	 *            the container
+	 * @param holders
+	 *            the holders
+	 * @return the non empty children
+	 */
 	List<? extends MUIElement> getNonEmptyChildren(final MElementContainer<? extends MUIElement> container,
 			final List<MPlaceholder> holders) {
 		return of(container.getChildren()).filter(e -> !isEmpty(e, holders)).toList();

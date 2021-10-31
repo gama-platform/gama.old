@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import static ummisco.gama.ui.utils.ViewsHelper.hideView;
+
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +21,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -35,7 +35,6 @@ import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGamaView.Display.InnerComponent;
 import msi.gama.common.interfaces.IGamaView.Error;
 import msi.gama.common.interfaces.IGamaView.Parameters;
 import msi.gama.common.interfaces.IGamaView.Test;
@@ -76,7 +75,6 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
-import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
@@ -152,7 +150,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions) {
 		if (exceptions == null) {
-			WorkbenchHelper.hideView(ERROR_VIEW_ID);
+			hideView(ERROR_VIEW_ID);
 		} else {
 			final IGamaView.Error v = (Error) showView(scope, ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			if (v != null) { v.displayErrors(); }
@@ -251,17 +249,6 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
-	/**
-	 * Hide monitor view.
-	 */
-	public void hideMonitorView() {
-		final IGamaView m = (IGamaView) WorkbenchHelper.findView(MONITOR_VIEW_ID, null, false);
-		if (m != null) {
-			m.reset();
-			WorkbenchHelper.hideView(MONITOR_VIEW_ID);
-		}
-	}
-
 	@Override
 	public final boolean openSimulationPerspective(final IModel model, final String experimentName) {
 		return PerspectiveHelper.openSimulationPerspective(model, experimentName);
@@ -285,7 +272,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return allDisplaySurfaces(); }
+	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return ViewsHelper.allDisplaySurfaces(); }
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
@@ -359,7 +346,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.run(() -> {
 			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
 			if (userDialogFactory != null) { userDialogFactory.closeUserDialog(); }
-			WorkbenchHelper.hideView(USER_CONTROL_VIEW_ID);
+			hideView(USER_CONTROL_VIEW_ID);
 
 		});
 
@@ -464,17 +451,17 @@ public class SwtGui implements IGui {
 			WorkbenchHelper.runInUI("Arranging views", 0, m -> {
 				WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 				if (showConsoles != null && !showConsoles) {
-					WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
-					WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
+					hideView(IGui.CONSOLE_VIEW_ID);
+					hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 				} else {
 					getConsole().showConsoleView(exp.getAgent());
 				}
 				if (showParameters != null && !showParameters) {
-					WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
+					hideView(IGui.PARAMETER_VIEW_ID);
 				} else {
 					updateParameterView(scope, exp);
 				}
-				if (showNavigator != null && !showNavigator) { WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID); }
+				if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
 				if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
 				if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
 
@@ -498,10 +485,14 @@ public class SwtGui implements IGui {
 	 */
 	@Override
 	public void cleanAfterExperiment() {
-		WorkbenchHelper.hideView(PARAMETER_VIEW_ID);
-		hideMonitorView();
+		hideView(PARAMETER_VIEW_ID);
+		final IGamaView m = (IGamaView) ViewsHelper.findView(MONITOR_VIEW_ID, null, false);
+		if (m != null) {
+			m.reset();
+			hideView(MONITOR_VIEW_ID);
+		}
 		getConsole().eraseConsole(true);
-		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
+		final IGamaView icv = (IGamaView) ViewsHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null) { icv.reset(); }
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
@@ -521,31 +512,6 @@ public class SwtGui implements IGui {
 		final IModelRunner modelRunner = getModelRunner();
 		if (modelRunner == null) return;
 		modelRunner.runModel(object, exp);
-	}
-
-	/**
-	 * All display surfaces.
-	 *
-	 * @return the list
-	 */
-	public static List<IDisplaySurface> allDisplaySurfaces() {
-		return StreamEx.of(allDisplayViews()).map(msi.gama.common.interfaces.IGamaView.Display::getDisplaySurface)
-				.toList();
-	}
-
-	/**
-	 * All display views.
-	 *
-	 * @return the list
-	 */
-	public static List<IGamaView.Display> allDisplayViews() {
-		final List<IGamaView.Display> result = new ArrayList<>();
-		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
-		for (final IViewReference ref : viewRefs) {
-			final IWorkbenchPart part = ref.getPart(false);
-			if (part instanceof IGamaView.Display) { result.add((IGamaView.Display) part); }
-		}
-		return result;
 	}
 
 	/**
@@ -626,8 +592,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
 		WorkbenchHelper.run(() -> {
-			final IViewPart part =
-					WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
+			final IViewPart part = ViewsHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
 			if (part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
 		});
 
@@ -649,7 +614,6 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void run(final String taskName, final Runnable r, final boolean asynchronous) {
-
 		if (asynchronous) {
 			WorkbenchHelper.runInUI(taskName, 0, m -> r.run());
 		} else {
@@ -660,7 +624,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void setFocusOn(final IShape shape) {
 		if (shape == null) return;
-		for (final IDisplaySurface surface : allDisplaySurfaces()) {
+		for (final IDisplaySurface surface : ViewsHelper.allDisplaySurfaces()) {
 			if (shape instanceof ITopLevelAgent) {
 				surface.zoomFit();
 			} else {
@@ -684,31 +648,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void exit() {
-		WorkbenchHelper.asyncRun(() -> PlatformUI.getWorkbench().close());
-
-	}
-
-	@Override
-	public void openInteractiveConsole(final IScope scope) {
-		this.showView(scope, INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-
-	}
-
-	@Override
-	public boolean toggleFullScreenMode() {
-		Control c = WorkbenchHelper.run(() -> Display.getDefault().getCursorControl());
-		if (c instanceof InnerComponent) {
-			// DEBUG.OUT("Toggling from inner component ");
-			WorkbenchHelper.asyncRun(() -> ((InnerComponent) c).getView().toggleFullScreen());
-			return true;
-		}
-		final IViewPart part = WorkbenchHelper.run(WorkbenchHelper::findFrontmostGamaViewUnderMouse);
-		if (part instanceof IGamaView.Display) {
-			// DEBUG.OUT("Toggling from view ");
-			WorkbenchHelper.asyncRun(() -> ((IGamaView.Display) part).toggleFullScreen());
-			return true;
-		}
-		return false;
+		WorkbenchHelper.close();
 	}
 
 	@Override

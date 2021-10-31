@@ -167,7 +167,7 @@ public class RefreshHandler implements IRefreshHandler {
 				try {
 					ResourceManager.block();
 					monitor.beginTask("Refreshing GAMA Workspace: updating the library of models", 100);
-					WorkspaceModelsManager.loadModelsLibrary();
+					WorkspaceModelsManager.instance.loadModelsLibrary();
 					monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", 1000);
 					for (final IResource r : resources) {
 						r.accept(proxy -> {

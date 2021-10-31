@@ -44,6 +44,7 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -424,13 +425,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void showOverlay() {
-		decorator.overlay.setVisible(true);
-	}
-
-	@Override
-	public void hideOverlay() {
-		decorator.overlay.setVisible(false);
+	public void showOverlay(final boolean show) {
+		decorator.overlay.setVisible(show);
 	}
 
 	@Override
@@ -452,7 +448,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				if (getDisplaySurface() != null) { getDisplaySurface().dispose(); }
-				WorkbenchHelper.hideView(this);
+				ViewsHelper.hideView(this);
 			} catch (final Exception e) {}
 		});
 

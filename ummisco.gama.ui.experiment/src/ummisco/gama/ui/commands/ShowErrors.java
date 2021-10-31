@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ShowErrors.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ShowErrors.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import java.util.Map;
@@ -24,9 +23,12 @@ import org.eclipse.ui.menus.UIElement;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.views.ErrorView;
 
+/**
+ * The Class ShowErrors.
+ */
 public class ShowErrors extends AbstractHandler implements IElementUpdater {
 
 	@Override
@@ -38,7 +40,7 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 		if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
 			GAMA.getGui().showView(null, ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		} else {
-			WorkbenchHelper.hideView(ErrorView.ID);
+			ViewsHelper.hideView(ErrorView.ID);
 		}
 		return null;
 	}

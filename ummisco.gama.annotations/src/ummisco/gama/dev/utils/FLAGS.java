@@ -20,6 +20,12 @@ package ummisco.gama.dev.utils;
  * properties using the same syntax
  *
  *
+ *
+ * DEFAULTS: -Denable_logging=true -Duse_old_animator=true -Duse_old_sync_strategy=false
+ * -Duse_global_preference_store=true -Duse_precise_autoscale=false -Dread_only=false -Duse_old_tabs=true
+ * -Duse_legacy_drawers=false -Duse_delayed_resize=false -Duse_native_opengl_window=true
+ *
+ *
  * @author A. Drogoul Aug. 2021
  *
  */
@@ -49,7 +55,9 @@ public class FLAGS {
 
 	/**
 	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration of DEBUG.ON() on the
-	 * classes). Set to false to suppress all logging. True by default. KEEP IT THE FIRST PROPERTY
+	 * classes). Set to false to suppress all logging. True by default.
+	 *
+	 * Important to KEEP IT THE FIRST PROPERTY
 	 */
 	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
 
@@ -89,6 +97,12 @@ public class FLAGS {
 	 * tabs (with a visible border) and inject a specific CSS stylesheet. See #3187. True by default.
 	 */
 	public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
+
+	/**
+	 * Used in ummisco.gama.opengl.OpenGL to impose the use of the "legacy" text and mesh drawers (ie without VBO/VBA).
+	 * False by default.
+	 */
+	public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
 
 	/**
 	 * Used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195. If true,

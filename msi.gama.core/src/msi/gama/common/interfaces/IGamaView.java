@@ -103,14 +103,9 @@ public interface IGamaView {
 	void updateToolbarState();
 
 	/**
-	 * Hide toolbar.
-	 */
-	void hideToolbar();
-
-	/**
 	 * Show toolbar.
 	 */
-	void showToolbar();
+	void showToolbar(boolean show);
 
 	/**
 	 * The Interface Test.
@@ -210,12 +205,7 @@ public interface IGamaView {
 		/**
 		 * Show overlay.
 		 */
-		void showOverlay();
-
-		/**
-		 * Hide overlay.
-		 */
-		void hideOverlay();
+		void showOverlay(boolean show);
 
 		/**
 		 * Gets the output.

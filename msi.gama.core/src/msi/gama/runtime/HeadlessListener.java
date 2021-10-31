@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * HeadlessListener.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * HeadlessListener.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -52,13 +52,10 @@ import msi.gaml.statements.test.TestExperimentSummary;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The listener interface for receiving headless events.
- * The class that is interested in processing a headless
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addHeadlessListener<code> method. When
- * the headless event occurs, that object's appropriate
- * method is invoked.
+ * The listener interface for receiving headless events. The class that is interested in processing a headless event
+ * implements this interface, and the object created with that class is registered with a component using the
+ * component's <code>addHeadlessListener<code> method. When the headless event occurs, that object's appropriate method
+ * is invoked.
  *
  * @see HeadlessEvent
  */
@@ -85,7 +82,8 @@ public class HeadlessListener implements IGui {
 	/**
 	 * Log.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 */
 	private static void log(final String s) {
 		DEBUG.LOG(s);
@@ -471,9 +469,6 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void openInteractiveConsole(final IScope scope) {}
-
-	@Override
 	public IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
 		// final String pathToFile = scope.getModel().getFilePath().replace(scope.getModel().getWorkingPath(), "");
 		// log("----------------------------------------------------------------");
@@ -494,12 +489,6 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void endTestDisplay() {}
-
-	@Override
-	public boolean toggleFullScreenMode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public void refreshNavigator() {
