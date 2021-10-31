@@ -175,7 +175,7 @@ public class SwtGui implements IGui {
 	public void endTestDisplay() {
 		final IGamaView.Test v = (Test) WorkbenchHelper.getPage().findView(TEST_VIEW_ID);
 		if (v != null) { v.finishTestSequence(); }
-		WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
+		WorkbenchHelper.refreshNavigator();
 	}
 
 	@Override
