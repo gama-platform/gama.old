@@ -221,7 +221,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			ph.setVisible(false);
 			displayStack.getChildren().add(ph);
 		});
-		// activateDisplays(holders, false);
+		activateDisplays(holders, false);
 		for (final MUIElement element : new ArrayList<>(parent.getChildren())) {
 			if (element.getTransientData().containsKey(LAYOUT)) {
 				element.setVisible(false);
