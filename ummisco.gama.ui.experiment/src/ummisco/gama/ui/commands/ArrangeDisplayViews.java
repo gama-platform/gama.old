@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.ui.IViewPart;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IGamaView;
@@ -180,9 +181,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 * @param holders
 	 *            the holders
 	 */
-	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
+	private static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
 		decorateDisplays();
+		DEBUG.OUT("Holders to show " + DEBUG.TO_STRING(StreamEx.of(holders).map(MPlaceholder::getElementId).toArray()));
 		holders.forEach(ph -> {
 			ph.setVisible(true);
 			ph.setToBeRendered(true);
@@ -194,7 +196,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 * Decorate displays.
 	 */
 	public static void decorateDisplays() {
-		ViewsHelper.getDisplayViews(null).forEach(v -> {
+		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
+		DEBUG.OUT("Displays to decorate "
+				+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }
 			v.showOverlay(PerspectiveHelper.showOverlays());
@@ -216,7 +221,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			ph.setVisible(false);
 			displayStack.getChildren().add(ph);
 		});
-		activateDisplays(holders, false);
+		// activateDisplays(holders, false);
 		for (final MUIElement element : new ArrayList<>(parent.getChildren())) {
 			if (element.getTransientData().containsKey(LAYOUT)) {
 				element.setVisible(false);
