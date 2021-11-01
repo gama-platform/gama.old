@@ -24,7 +24,8 @@ Require-Bundle: org.eclipse.swt,
  org.eclipse.ui.editors,
  org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.core.contexts,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.ui.navigator
 Export-Package: ummisco.gama.ui,
  ummisco.gama.ui.access,
  ummisco.gama.ui.bindings,

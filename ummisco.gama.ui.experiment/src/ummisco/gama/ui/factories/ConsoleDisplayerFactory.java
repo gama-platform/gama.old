@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ConsoleDisplayerFactory.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * ConsoleDisplayerFactory.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
 import java.util.ConcurrentModificationException;
@@ -25,14 +24,23 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * A factory for creating ConsoleDisplayer objects.
+ */
 public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 
+	/** The displayer. */
 	IConsoleDisplayer displayer = new ConsoleDisplayer();
 
-	class ConsoleDisplayer implements IConsoleDisplayer {
+	/**
+	 * The Class ConsoleDisplayer.
+	 */
+	static class ConsoleDisplayer implements IConsoleDisplayer {
 
+		/** The console buffer. */
 		private final StringBuilder consoleBuffer = new StringBuilder(2000);
 
 		@Override
@@ -55,10 +63,20 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 			writeToConsole(msg + Strings.LN, root, color);
 		}
 
+		/**
+		 * Write to console.
+		 *
+		 * @param msg
+		 *            the msg
+		 * @param root
+		 *            the root
+		 * @param color
+		 *            the color
+		 */
 		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
 			IGamaView.Console console = null;
 			try {
-				console = (Console) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+				console = (Console) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
 			} catch (final ConcurrentModificationException e) {
 				// See Issue #2812. With concurrent views opening, the view might be impossible to find
 				// e.printStackTrace();
@@ -72,10 +90,8 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 
 		@Override
 		public void eraseConsole(final boolean setToNull) {
-			final IGamaView console = (IGamaView) WorkbenchHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
-			if (console != null) {
-				WorkbenchHelper.run(() -> console.reset());
-			}
+			final IGamaView console = (IGamaView) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
+			if (console != null) { WorkbenchHelper.run(() -> console.reset()); }
 			consoleBuffer.setLength(0);
 		}
 
@@ -83,9 +99,7 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		public void showConsoleView(final ITopLevelAgent agent) {
 			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
-			if (icv != null) {
-				icv.append(null, agent, null);
-			}
+			if (icv != null) { icv.append(null, agent, null); }
 			final IGamaView.Console console =
 					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if (consoleBuffer.length() > 0 && console != null) {

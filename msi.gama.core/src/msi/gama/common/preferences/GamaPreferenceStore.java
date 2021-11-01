@@ -1,5 +1,16 @@
+/*******************************************************************************************************
+ *
+ * GamaPreferenceStore.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.common.preferences;
 
+import static java.util.function.Function.identity;
 import static java.util.prefs.Preferences.userRoot;
 import static msi.gama.common.util.StringUtils.toJavaString;
 import static msi.gaml.operators.Cast.asInt;
@@ -13,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
@@ -50,10 +62,20 @@ public abstract class GamaPreferenceStore<T> {
 		// DEBUG.ON();
 	}
 
+	/** The store. */
 	private static GamaPreferenceStore STORE;
+
+	/** The Constant NODE_NAME. */
 	private static final String NODE_NAME = "gama";
+
+	/** The Constant DEFAULT_FONT. */
 	private static final String DEFAULT_FONT = "Default";
 
+	/**
+	 * Gets the store.
+	 *
+	 * @return the store
+	 */
 	public static GamaPreferenceStore getStore() {
 		if (STORE == null) {
 			STORE = FLAGS.USE_GLOBAL_PREFERENCE_STORE ? new JRE(userRoot().node(NODE_NAME))
@@ -68,6 +90,12 @@ public abstract class GamaPreferenceStore<T> {
 	 */
 	static class JRE extends GamaPreferenceStore<Preferences> {
 
+		/**
+		 * Instantiates a new jre.
+		 *
+		 * @param store
+		 *            the store
+		 */
 		JRE(final Preferences store) {
 			super(store);
 		}
@@ -152,9 +180,7 @@ public abstract class GamaPreferenceStore<T> {
 		public void saveToProperties(final String path) {
 			try (final var os = new FileOutputStream(path);) {
 				Properties prop = new Properties();
-				for (String key : store.keys()) {
-					prop.setProperty(key, store.get(key, null));
-				}
+				for (String key : store.keys()) { prop.setProperty(key, store.get(key, null)); }
 				prop.store(os, "GAMA Preferences " + LocalDateTime.now());
 			} catch (final IOException | BackingStoreException e) {
 				e.printStackTrace();
@@ -170,6 +196,12 @@ public abstract class GamaPreferenceStore<T> {
 
 	static class Configuration extends GamaPreferenceStore<IEclipsePreferences> {
 
+		/**
+		 * Instantiates a new configuration.
+		 *
+		 * @param store
+		 *            the store
+		 */
 		Configuration(final IEclipsePreferences store) {
 			super(store);
 		}
@@ -254,9 +286,7 @@ public abstract class GamaPreferenceStore<T> {
 		public void saveToProperties(final String path) {
 			try (final var os = new FileOutputStream(path);) {
 				Properties prop = new Properties();
-				for (String key : store.keys()) {
-					prop.setProperty(key, store.get(key, null));
-				}
+				for (String key : store.keys()) { prop.setProperty(key, store.get(key, null)); }
 				prop.store(os, "GAMA Preferences " + LocalDateTime.now());
 			} catch (final IOException | org.osgi.service.prefs.BackingStoreException e) {
 				e.printStackTrace();
@@ -265,27 +295,76 @@ public abstract class GamaPreferenceStore<T> {
 
 	}
 
+	/** The store. */
 	T store;
+
+	/** The keys. */
 	private final List<String> keys;
 
+	/**
+	 * Instantiates a new gama preference store.
+	 *
+	 * @param store
+	 *            the store
+	 */
 	GamaPreferenceStore(final T store) {
 		this.store = store;
 		keys = computeKeys();
 		flush();
 	}
 
-	public List<String> getKeys() {
-		return keys;
-	}
+	/**
+	 * Gets the keys.
+	 *
+	 * @return the keys
+	 */
+	public List<String> getKeys() { return keys; }
 
+	/**
+	 * Compute keys.
+	 *
+	 * @return the list
+	 */
 	protected abstract List<String> computeKeys();
 
+	/**
+	 * Put.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public abstract void put(final String key, final String value);
 
+	/**
+	 * Put int.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public abstract void putInt(final String key, final int value);
 
+	/**
+	 * Put double.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public abstract void putDouble(final String key, final Double value);
 
+	/**
+	 * Put boolean.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public abstract void putBoolean(final String key, final Boolean value);
 
 	/**
@@ -296,11 +375,34 @@ public abstract class GamaPreferenceStore<T> {
 	 * @param def
 	 * @return
 	 */
-	public final String get(final String key, final String def) {
+
+	public final <T> T get(final String key, final Function<String, T> function, final T def) {
 		String result = System.getProperty(key);
-		return result == null ? getStringPreference(key, def) : result;
+		return result == null ? def : function.apply(result);
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param key
+	 *            the key
+	 * @param def
+	 *            the def
+	 * @return the string
+	 */
+	public final String get(final String key, final String def) {
+		return get(key, identity(), getStringPreference(key, def));
+	}
+
+	/**
+	 * Gets the string preference.
+	 *
+	 * @param key
+	 *            the key
+	 * @param def
+	 *            the def
+	 * @return the string preference
+	 */
 	protected abstract String getStringPreference(String key, String def);
 
 	/**
@@ -312,15 +414,18 @@ public abstract class GamaPreferenceStore<T> {
 	 * @return
 	 */
 	public final Integer getInt(final String key, final Integer def) {
-		String result = System.getProperty(key);
-		if (result == null) return getIntPreference(key, def);
-		try {
-			return Integer.valueOf(result);
-		} catch (NumberFormatException e) {
-			return def;
-		}
+		return get(key, Integer::valueOf, getIntPreference(key, def));
 	}
 
+	/**
+	 * Gets the int preference.
+	 *
+	 * @param key
+	 *            the key
+	 * @param def
+	 *            the def
+	 * @return the int preference
+	 */
 	protected abstract Integer getIntPreference(String key, Integer def);
 
 	/**
@@ -332,15 +437,18 @@ public abstract class GamaPreferenceStore<T> {
 	 * @return
 	 */
 	public final Double getDouble(final String key, final Double def) {
-		String result = System.getProperty(key);
-		if (result == null) return getDoublePreference(key, def);
-		try {
-			return Double.valueOf(result);
-		} catch (NumberFormatException e) {
-			return def;
-		}
+		return get(key, Double::valueOf, getDoublePreference(key, def));
 	}
 
+	/**
+	 * Gets the double preference.
+	 *
+	 * @param key
+	 *            the key
+	 * @param def
+	 *            the def
+	 * @return the double preference
+	 */
 	protected abstract Double getDoublePreference(String key, Double def);
 
 	/**
@@ -352,10 +460,18 @@ public abstract class GamaPreferenceStore<T> {
 	 * @return
 	 */
 	public final Boolean getBoolean(final String key, final Boolean def) {
-		String result = System.getProperty(key);
-		return result == null ? getBooleanPreference(key, def) : Boolean.valueOf(result);
+		return get(key, Boolean::valueOf, getBooleanPreference(key, def));
 	}
 
+	/**
+	 * Gets the boolean preference.
+	 *
+	 * @param key
+	 *            the key
+	 * @param def
+	 *            the def
+	 * @return the boolean preference
+	 */
 	protected abstract Boolean getBooleanPreference(String key, Boolean def);
 
 	/**
@@ -384,6 +500,12 @@ public abstract class GamaPreferenceStore<T> {
 	 */
 	public abstract void loadFromProperties(final String path);
 
+	/**
+	 * Write.
+	 *
+	 * @param gp
+	 *            the gp
+	 */
 	public void write(final Pref gp) {
 		final var key = gp.key;
 		final var value = gp.value;
@@ -421,6 +543,12 @@ public abstract class GamaPreferenceStore<T> {
 		flush();
 	}
 
+	/**
+	 * Register.
+	 *
+	 * @param gp
+	 *            the gp
+	 */
 	public void register(final Pref<?> gp) {
 		final IScope scope = null;
 		final var key = gp.key;

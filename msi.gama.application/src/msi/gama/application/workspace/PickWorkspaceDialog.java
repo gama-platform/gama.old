@@ -1,21 +1,26 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'PickWorkspaceDialog.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * PickWorkspaceDialog.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.application.workspace;
 
 // import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,8 +40,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import com.google.common.io.Files;
-
 /**
  * Dialog that lets/forces a user to enter/select a workspace that will be used when saving all configuration files and
  * settings. This dialog is shown at startup of the GUI just after the splash screen has shown. Inspired by
@@ -51,22 +54,36 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	// 240.
 
 	// static Preferences preferences = Preferences.userRoot().node("gama");
+	/** The Constant strMsg. */
 	/* Various dialog messages */
 	private static final String strMsg =
 			"Your workspace is where settings and files of your Gama models will be stored.";
+
+	/** The Constant strInfo. */
 	private static final String strInfo = "Please select a directory that will be the workspace root";
+
+	/** The Constant strError. */
 	private static final String strError = "You must set a directory";
 
+	/** The workspace path combo. */
 	/* Our controls */
 	protected Combo workspacePathCombo;
+
+	/** The last used workspaces. */
 	protected List<String> lastUsedWorkspaces;
+
+	/** The remember workspace button. */
 	protected Button rememberWorkspaceButton;
 
+	/** The Constant splitChar. */
 	/* Used as separator when we save the last used workspace locations */
 	private static final String splitChar = "#";
+
+	/** The Constant maxHistory. */
 	/* Max number of entries in the history box */
 	private static final int maxHistory = 20;
 
+	/** The cloning. */
 	/* Whatever the user picks ends up on this variable */
 	private boolean cloning = false;
 
@@ -130,9 +147,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				final String[] all = lastUsed.split(splitChar);
 				Collections.addAll(lastUsedWorkspaces, all);
 			}
-			for (final String last : lastUsedWorkspaces) {
-				workspacePathCombo.add(last);
-			}
+			for (final String last : lastUsedWorkspaces) { workspacePathCombo.add(last); }
 
 			/* Browse button on the right */
 			final Button browse = new Button(inner, SWT.PUSH);
@@ -163,21 +178,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 *
 	 * @return Path
 	 */
-	public String getSelectedWorkspaceLocation() {
-		return WorkspacePreferences.getSelectedWorkspaceRootLocation();
-	}
-
-	/* Suggests a default path based on the user.home/GAMA directory location */
-	private String getWorkspacePathSuggestion() {
-		final StringBuilder buf = new StringBuilder();
-
-		String uHome = System.getProperty("user.home");
-		if (uHome == null) { uHome = "c:"; }
-
-		buf.append(uHome).append(File.separator).append("gama_workspace");
-
-		return buf.toString();
-	}
+	public String getSelectedWorkspaceLocation() { return WorkspacePreferences.getSelectedWorkspaceRootLocation(); }
 
 	@Override
 	protected void createButtonsForButtonBar(final Composite parent) {
@@ -190,47 +191,48 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	}
 
 	/**
-	 * This function will copy files or directories from one location to another. note that the source and the
-	 * destination must be mutually exclusive. This function can not be used to copy a directory to a sub directory of
-	 * itself. The function will also have problems if the destination files already exist.
+	 * Copy one absolute path over another
 	 *
-	 * @param src
-	 *            -- A File object that represents the source for the copy
-	 * @param dest
-	 *            -- A File object that represents the destination for the copy.
+	 * @param source
+	 *            the source
+	 * @param t
+	 *            the t
+	 * @param override
+	 *            the override
 	 * @throws IOException
-	 *             if unable to copy.
+	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void copyFiles(final File src, final File dest) throws IOException {
+	static void copy(final File src, final File dest) throws IOException {
 		/* Check to ensure that the source is valid... */
-		if (!src.exists()) throw new IOException("Can not find source: " + src.getAbsolutePath());
-		if (!src.canRead())
-			throw new IOException("Cannot read: " + src.getAbsolutePath() + ". Check file permissions.");
-		/* Is this a directory copy? */
-		final List<String> noCopy = Arrays.asList("org.eclipse.core.runtime", "org.eclipse.e4.workbench",
-				"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
-		if (src.isDirectory()) {
-			if (noCopy.contains(src.getName())) return;
-			/* Does the destination already exist? */
-			/* If not we need to make it exist if possible */
-			if (!dest.exists() && !dest.mkdirs())
-				throw new IOException("Could not create direcotry: " + dest.getAbsolutePath());
-			/* Get a listing of files... */
-			final String list[] = src.list();
-			/* Copy all the files in the list. */
-			if (list != null) {
-				for (final String element : list) {
-					final File dest1 = new File(dest, element);
-					final File src1 = new File(src, element);
-					copyFiles(src1, dest1);
-				}
+		Path source = src.toPath();
+		Path target = dest.toPath();
+		if (Files.notExists(source)) throw new IOException("Can not find: " + source);
+		if (!Files.isReadable(source)) throw new IOException("Cannot read: " + source);
+		if (source.startsWith(target) || target.startsWith(source)) throw new IOException(
+				"Source (" + source + ") and destination (" + target + ") must be separate directories");
+		Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs)
+					throws IOException {
+				if (dir.toString().contains("org.eclipse") && !"org.eclipse.core.resources".equals(dir.toString()))
+					return FileVisitResult.SKIP_SUBTREE;
+				Files.createDirectories(target.resolve(source.relativize(dir)));
+				return FileVisitResult.CONTINUE;
 			}
-		} else {
-			/* This was not a directory, so lets just copy the file */
-			Files.copy(src, dest);
-		}
+
+			@Override
+			public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+				Files.copy(file, target.resolve(source.relativize(file)), LinkOption.NOFOLLOW_LINKS,
+						StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+				return FileVisitResult.CONTINUE;
+			}
+
+		});
 	}
 
+	/**
+	 * Clone current workspace.
+	 */
 	protected void cloneCurrentWorkspace() {
 		final String currentLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
 		if (currentLocation == null || currentLocation.isEmpty()) {
@@ -276,9 +278,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Deal with the max history */
 		if (lastUsedWorkspaces.size() > maxHistory) {
 			final List<String> remove = new ArrayList<>();
-			for (int i = maxHistory; i < lastUsedWorkspaces.size(); i++) {
-				remove.add(lastUsedWorkspaces.get(i));
-			}
+			for (int i = maxHistory; i < lastUsedWorkspaces.size(); i++) { remove.add(lastUsedWorkspaces.get(i)); }
 
 			lastUsedWorkspaces.removeAll(remove);
 		}
@@ -323,7 +323,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			if (workspaceDirectory != null) {
 				final File targetDirectory = new File(str);
 				try {
-					copyFiles(workspaceDirectory, targetDirectory);
+					copy(workspaceDirectory, targetDirectory);
 					// WorkspacePreferences.setApplyPrefs(true);
 				} catch (final Exception err) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",

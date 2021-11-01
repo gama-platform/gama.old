@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Listener;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -92,8 +91,8 @@ public class GamaKeyBindings implements Listener {
 	@Override
 	public void handleEvent(final Event event) {
 		if (event.keyCode == SWT.ESC) {
-			if (GAMA.getGui().toggleFullScreenMode()) {
-//				DEBUG.OUT("Toogle full screen");
+			if (WorkbenchHelper.toggleFullScreenMode()) {
+				// DEBUG.OUT("Toogle full screen");
 				consume(event);
 			}
 			return;

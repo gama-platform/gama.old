@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * TextDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * LegacyTextDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -11,33 +11,9 @@
 package ummisco.gama.opengl.scene.text;
 
 import static com.jogamp.common.nio.Buffers.newDirectDoubleBuffer;
-import static com.jogamp.opengl.GL.GL_LINE_LOOP;
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
-import static com.jogamp.opengl.GL2.GL_QUAD_STRIP;
-import static com.jogamp.opengl.GL2GL3.GL_DOUBLE;
-import static com.jogamp.opengl.fixedfunc.GLPointerFunc.GL_NORMAL_ARRAY;
-import static com.jogamp.opengl.fixedfunc.GLPointerFunc.GL_TEXTURE_COORD_ARRAY;
-import static com.jogamp.opengl.fixedfunc.GLPointerFunc.GL_VERTEX_ARRAY;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_BEGIN;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_COMBINE;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_EDGE_FLAG;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_END;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_ERROR;
-import static com.jogamp.opengl.glu.GLU.GLU_TESS_VERTEX;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_NONZERO;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_ODD;
 import static com.jogamp.opengl.glu.GLU.GLU_TESS_WINDING_RULE;
-import static com.jogamp.opengl.glu.GLU.gluTessBeginContour;
-import static com.jogamp.opengl.glu.GLU.gluTessBeginPolygon;
-import static com.jogamp.opengl.glu.GLU.gluTessCallback;
-import static com.jogamp.opengl.glu.GLU.gluTessEndContour;
-import static com.jogamp.opengl.glu.GLU.gluTessEndPolygon;
-import static com.jogamp.opengl.glu.GLU.gluTessNormal;
-import static com.jogamp.opengl.glu.GLU.gluTessProperty;
-import static com.jogamp.opengl.glu.GLU.gluTessVertex;
-import static java.awt.geom.PathIterator.SEG_CLOSE;
-import static java.awt.geom.PathIterator.SEG_LINETO;
-import static java.awt.geom.PathIterator.SEG_MOVETO;
 import static java.awt.geom.PathIterator.WIND_EVEN_ODD;
 
 import java.awt.Color;
@@ -49,6 +25,8 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.nio.DoubleBuffer;
 
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.util.gl2.GLUT;
@@ -71,23 +49,23 @@ import ummisco.gama.ui.utils.DPIHelper;
  *
  */
 
-public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselator {
+public class LegacyTextDrawer extends ObjectDrawer<StringObject> implements ITesselator {
 
 	/** The temp. */
 	// Utilities
-	ICoordinates temp = ICoordinates.ofLength(4);
+	private final ICoordinates temp = ICoordinates.ofLength(4);
 
 	/** The normal. */
-	GamaPoint normal = new GamaPoint();
+	private final GamaPoint normal = new GamaPoint();
 
 	/** The tobj. */
-	final GLUtessellator tobj = GLU.gluNewTess();
+	private final GLUtessellator tobj = GLU.gluNewTess();
 
 	/** The previous Y. */
-	double previousX = Double.MIN_VALUE, previousY = Double.MIN_VALUE;
+	private double previousX = Double.MIN_VALUE, previousY = Double.MIN_VALUE;
 
 	/** The current index. */
-	int currentIndex = -1;
+	private int currentIndex = -1;
 
 	/** The Constant BUFFER_SIZE. */
 	// Constants
@@ -101,13 +79,13 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 
 	/** The face vertex buffer. */
 	// Buffers
-	final DoubleBuffer faceVertexBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
+	private final DoubleBuffer faceVertexBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
 
 	/** The face texture buffer. */
-	final DoubleBuffer faceTextureBuffer = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3);
+	private final DoubleBuffer faceTextureBuffer = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3);
 
 	/** The indices. */
-	int[] indices = new int[1000]; // Indices of the "move_to" or "close"
+	private final int[] indices = new int[1000]; // Indices of the "move_to" or "close"
 
 	/** The side normal buffer. */
 	private final DoubleBuffer sideNormalBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
@@ -117,25 +95,25 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 
 	/** The border. */
 	// Properties
-	Color border;
+	private Color border;
 
 	/** The depth. */
-	double width, height, depth;
+	private double width, height, depth;
 
 	/**
-	 * Instantiates a new text drawer.
+	 * Instantiates a new legacy text drawer.
 	 *
 	 * @param gl
 	 *            the gl
 	 */
-	public TextDrawer(final OpenGL gl) {
+	public LegacyTextDrawer(final OpenGL gl) {
 		super(gl);
-		gluTessCallback(tobj, GLU_TESS_BEGIN, this);
-		gluTessCallback(tobj, GLU_TESS_END, this);
-		gluTessCallback(tobj, GLU_TESS_ERROR, this);
-		gluTessCallback(tobj, GLU_TESS_VERTEX, this);
-		gluTessCallback(tobj, GLU_TESS_COMBINE, this);
-		gluTessCallback(tobj, GLU_TESS_EDGE_FLAG, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, this);
+		GLU.gluTessCallback(tobj, GLU.GLU_TESS_EDGE_FLAG, this);
 	}
 
 	@Override
@@ -206,43 +184,43 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	void process(final PathIterator pi) {
 		boolean wireframe = gl.isWireframe();
 		if (!wireframe) {
-			gluTessProperty(tobj, GLU_TESS_WINDING_RULE,
+			GLU.gluTessProperty(tobj, GLU_TESS_WINDING_RULE,
 					pi.getWindingRule() == WIND_EVEN_ODD ? GLU_TESS_WINDING_ODD : GLU_TESS_WINDING_NONZERO);
-			gluTessNormal(tobj, 0, 0, -1);
-			gluTessBeginPolygon(tobj, (double[]) null);
+			GLU.gluTessNormal(tobj, 0, 0, -1);
+			GLU.gluTessBeginPolygon(tobj, (double[]) null);
 		}
 		double x0 = 0, y0 = 0;
 		while (!pi.isDone()) {
 			final var coords = new double[6];
 			switch (pi.currentSegment(coords)) {
-				case SEG_MOVETO:
+				case PathIterator.SEG_MOVETO:
 					// We begin a new contour within the global polygon
 					// If we are solid, we pass the information to the tesselation algorithm
 					if (!wireframe) {
-						gluTessBeginContour(tobj);
-						gluTessVertex(tobj, coords, 0, coords);
+						GLU.gluTessBeginContour(tobj);
+						GLU.gluTessVertex(tobj, coords, 0, coords);
 					}
 					x0 = coords[0];
 					y0 = coords[1];
 					beginNewContour();
 					addContourVertex0(x0, y0);
 					break;
-				case SEG_LINETO:
+				case PathIterator.SEG_LINETO:
 					// If we are solid, we pass the coordinates to the tesselation algorithm
-					if (!wireframe) { gluTessVertex(tobj, coords, 0, coords); }
+					if (!wireframe) { GLU.gluTessVertex(tobj, coords, 0, coords); }
 					// We also pass the coordinates to the side buffer, which will decide whether to create depth
 					// level coordinates and compute the normal vector associated with this vertex
 					addContourVertex0(coords[0], coords[1]);
 					break;
-				case SEG_CLOSE:
-					if (!wireframe) { gluTessEndContour(tobj); }
+				case PathIterator.SEG_CLOSE:
+					if (!wireframe) { GLU.gluTessEndContour(tobj); }
 					// We close the contour by adding it explicitly to the sideBuffer in order to close the loop
 					addContourVertex0(x0, y0);
 					endContour();
 			}
 			pi.next();
 		}
-		if (!wireframe) { gluTessEndPolygon(tobj); }
+		if (!wireframe) { GLU.gluTessEndPolygon(tobj); }
 		sideQuadsBuffer.flip();
 		sideNormalBuffer.flip();
 		faceVertexBuffer.flip();
@@ -257,7 +235,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	 * @param y
 	 *            the y
 	 */
-	void drawText(final TextDrawingAttributes attributes, final double y) {
+	private void drawText(final TextDrawingAttributes attributes, final double y) {
 		final AxisAngle rotation = attributes.getRotation();
 		final GamaPoint p = attributes.getLocation();
 
@@ -314,14 +292,14 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	/**
 	 * End contour.
 	 */
-	public void endContour() {
+	private void endContour() {
 		indices[++currentIndex] = sideQuadsBuffer.position();
 	}
 
 	/**
 	 * Begin new contour.
 	 */
-	public void beginNewContour() {
+	private void beginNewContour() {
 		indices[++currentIndex] = sideQuadsBuffer.position();
 	}
 
@@ -332,7 +310,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	 *            and y represent the new vertex to be added
 	 *
 	 */
-	public void addContourVertex0(final double x, final double y) {
+	private void addContourVertex0(final double x, final double y) {
 		sideQuadsBuffer.put(x).put(y).put(0);
 		if (depth > 0) {
 			// If depth > 0, then we will build side faces, and we need to calculate their normal
@@ -355,46 +333,39 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	/**
 	 * Draw side.
 	 */
-	public void drawSide() {
+	private void drawSide() {
 		if (sideQuadsBuffer.limit() == 0) return;
-		// AD - See issue #3125
-		if (gl.isRenderingKeystone()) {
-			drawSideFallback(gl);
-			return;
+		var i = -1;
+		while (i < currentIndex) {
+			var begin = indices[++i];
+			var end = indices[++i];
+			gl.beginDrawing(GL2.GL_QUAD_STRIP);
+			for (var index = begin; index < end; index += 3) {
+				gl.outputNormal(sideNormalBuffer.get(index), sideNormalBuffer.get(index + 1),
+						sideNormalBuffer.get(index + 2));
+				gl.outputVertex(sideQuadsBuffer.get(index), sideQuadsBuffer.get(index + 1),
+						sideQuadsBuffer.get(index + 2));
+			}
+			gl.endDrawing();
 		}
-		var ogl = gl.getGL();
-		gl.enable(GL_VERTEX_ARRAY);
-		gl.enable(GL_NORMAL_ARRAY);
-		ogl.glNormalPointer(GL_DOUBLE, 0, sideNormalBuffer);
-		ogl.glVertexPointer(3, GL_DOUBLE, 0, sideQuadsBuffer);
-		for (var i = 0; i < currentIndex; i++) {
-			ogl.getGL().glDrawArrays(GL_QUAD_STRIP, indices[i] / 3, (indices[i + 1] - indices[i]) / 3);
-		}
-		gl.disable(GL_NORMAL_ARRAY);
-		gl.disable(GL_VERTEX_ARRAY);
 	}
 
 	/**
 	 * Draw border.
 	 */
-	public void drawBorder() {
-		if (gl.isRenderingKeystone()) {
-			drawBorderFallback();
-			return;
-		}
-		gl.enable(GL_VERTEX_ARRAY);
-		var olg = gl.getGL();
-		// To draw the border, we provide a stride of 0 (= 3*BYTES_PER_DOUBLE) if depth = 0, as the bottom
-		// coordinates are contiguous, or 6*BYTES_PER_DOUBLE to take the upper coordinates into account
-		olg.glVertexPointer(3, GL_DOUBLE, depth == 0 ? 0 : 6 * Double.SIZE / Byte.SIZE, sideQuadsBuffer);
-		// We use the sides buffer to draw only the top contours. Depending on whether or not there is a
-		// depth, we rely on the indices of the different contours as either every 3 ordinates (if depth ==
-		// 0), or every 6 ordinates to account for the added 'z = depth' coordinates.
+	private void drawBorder() {
 		var stride = depth == 0 ? 3 : 6;
-		for (var i = 0; i < currentIndex; i++) {
-			olg.glDrawArrays(GL_LINE_LOOP, indices[i] / stride, (indices[i + 1] - indices[i]) / stride);
+		var i = -1;
+		while (i < currentIndex) {
+			var begin = indices[++i];
+			var end = indices[++i];
+			gl.beginDrawing(GL.GL_LINE_LOOP);
+			for (var index = begin; index < end; index += stride) {
+				gl.outputVertex(sideQuadsBuffer.get(index), sideQuadsBuffer.get(index + 1),
+						sideQuadsBuffer.get(index + 2));
+			}
+			gl.endDrawing();
 		}
-		gl.disable(GL_VERTEX_ARRAY);
 	}
 
 	/**
@@ -403,22 +374,16 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	 * @param up
 	 *            the up
 	 */
-	void drawFace(final boolean up) {
-		if (faceVertexBuffer.limit() == 0) return;
-		if (gl.isRenderingKeystone()) {
-			drawFaceFallback(up);
-			return;
-		}
-		gl.enable(GL_VERTEX_ARRAY);
+	private void drawFace(final boolean up) {
+		gl.beginDrawing(GL.GL_TRIANGLES);
 		gl.outputNormal(0, 0, up ? 1 : -1);
-		if (gl.isTextured()) {
-			gl.enable(GL_TEXTURE_COORD_ARRAY);
-			gl.getGL().glTexCoordPointer(2, GL_DOUBLE, 0, faceTextureBuffer);
+		for (var i = 0; i < faceVertexBuffer.limit(); i += 3) {
+			if (gl.isTextured()) {
+				gl.outputTexCoord(faceTextureBuffer.get(2 * i / 3), faceTextureBuffer.get(2 * i / 3 + 1));
+			}
+			gl.getGL().glVertex3d(faceVertexBuffer.get(i), faceVertexBuffer.get(i + 1), faceVertexBuffer.get(i + 2));
 		}
-		gl.getGL().glVertexPointer(3, GL_DOUBLE, 0, faceVertexBuffer);
-		gl.getGL().glDrawArrays(GL_TRIANGLES, 0, faceVertexBuffer.limit() / 3);
-		if (gl.isTextured()) { gl.disable(GL_TEXTURE_COORD_ARRAY); }
-		gl.disable(GL_VERTEX_ARRAY);
+		gl.endDrawing();
 	}
 
 	@Override
@@ -430,64 +395,6 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	@Override
 	public void combine(final double[] coords, final Object[] data, final float[] weight, final Object[] outData) {
 		outData[0] = data[0];
-	}
-
-	/**
-	 * Fallback methods: use direct draw to OpenGL.
-	 */
-
-	public void drawFaceFallback(final boolean up) {
-		gl.beginDrawing(GL_TRIANGLES);
-		gl.outputNormal(0, 0, up ? 1 : -1);
-		for (var i = 0; i < faceVertexBuffer.limit(); i += 3) {
-			if (gl.isTextured()) {
-				gl.outputTexCoord(faceTextureBuffer.get(2 * i / 3), faceTextureBuffer.get(2 * i / 3 + 1));
-			}
-			gl.getGL().glVertex3d(faceVertexBuffer.get(i), faceVertexBuffer.get(i + 1), faceVertexBuffer.get(i + 2));
-		}
-		gl.endDrawing();
-	}
-
-	/**
-	 * Draw side fallback.
-	 *
-	 * @param openGL
-	 *            the open GL
-	 */
-	public void drawSideFallback(final OpenGL openGL) {
-		var i = -1;
-		while (i < currentIndex) {
-			var begin = indices[++i];
-			var end = indices[++i];
-			openGL.beginDrawing(GL_QUAD_STRIP);
-			for (var index = begin; index < end; index += 3) {
-				openGL.outputNormal(sideNormalBuffer.get(index), sideNormalBuffer.get(index + 1),
-						sideNormalBuffer.get(index + 2));
-				openGL.outputVertex(sideQuadsBuffer.get(index), sideQuadsBuffer.get(index + 1),
-						sideQuadsBuffer.get(index + 2));
-			}
-			openGL.endDrawing();
-		}
-
-	}
-
-	/**
-	 * Draw border fallback.
-	 */
-	public void drawBorderFallback() {
-		var stride = depth == 0 ? 3 : 6;
-		var i = -1;
-		while (i < currentIndex) {
-			var begin = indices[++i];
-			var end = indices[++i];
-			gl.beginDrawing(GL_LINE_LOOP);
-			for (var index = begin; index < end; index += stride) {
-				gl.outputVertex(sideQuadsBuffer.get(index), sideQuadsBuffer.get(index + 1),
-						sideQuadsBuffer.get(index + 2));
-			}
-			gl.endDrawing();
-		}
-
 	}
 
 }

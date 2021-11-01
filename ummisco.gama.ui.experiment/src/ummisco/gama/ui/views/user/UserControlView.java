@@ -43,7 +43,7 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
@@ -161,7 +161,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 	protected void doContinue() {
 		scope.setOnUserHold(false);
 		deactivate(getParentComposite());
-		WorkbenchHelper.hideView(this);
+		ViewsHelper.hideView(this);
 	}
 
 	@Override

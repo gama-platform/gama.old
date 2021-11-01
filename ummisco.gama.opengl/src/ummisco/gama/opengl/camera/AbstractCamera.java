@@ -28,6 +28,7 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.DPIHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class AbstractCamera.
@@ -794,7 +795,7 @@ public abstract class AbstractCamera implements ICamera {
 					// (like CTRL+SHIFT+H)
 					// First the global keystrokes
 					case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
-						GAMA.getGui().toggleFullScreenMode();
+						WorkbenchHelper.toggleFullScreenMode();
 						break;
 					case 'p':
 					case 'P':
