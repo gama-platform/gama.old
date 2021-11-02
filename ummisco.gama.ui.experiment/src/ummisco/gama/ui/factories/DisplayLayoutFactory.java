@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.factories.DisplayLayoutFactory.java, in plugin ummisco.gama.ui.experiment, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * DisplayLayoutFactory.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -17,6 +17,9 @@ import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * A factory for creating DisplayLayout objects.
+ */
 public class DisplayLayoutFactory extends AbstractServiceFactory implements IDisplayLayoutManager {
 
 	@Override
@@ -27,36 +30,11 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 
 	@Override
 	public void applyLayout(final Object layout) {
-		// WorkbenchHelper.run(() -> {
-		//
-		// });
 
-		WorkbenchHelper.asyncRun( () -> {
-			// WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
-			// if (showConsoles != null && !showConsoles) {
-			// WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
-			// WorkbenchHelper.hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
-			// }
-			// if (showParameters != null && !showParameters) {
-			// WorkbenchHelper.hideView(IGui.PARAMETER_VIEW_ID);
-			// }
-			// if (showNavigator != null && !showNavigator) {
-			// WorkbenchHelper.hideView(IGui.NAVIGATOR_VIEW_ID);
-			// }
-			// if (showControls != null) {
-			// WorkbenchHelper.getWindow().setCoolBarVisible(showControls);
-			// }
-			// if (keepTray != null) {
-			// PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray);
-			// }
-			//
-			// final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
-			// if (sd != null) {
-			// sd.keepTabs(keepTabs);
-			// sd.keepToolbars(keepToolbars);
-			// sd.keepControls(showControls);
-			// sd.keepTray(keepTray);
-			// }
+		// On macOS, the simple use of 'asyncRun' prevents java2D views to be displayed in mixed environments (e.g. "3
+		// simulations" in Ant Foraging).
+		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
+			// WorkbenchHelper.asyncRun( () -> {
 			ArrangeDisplayViews.execute(layout);
 		});
 
