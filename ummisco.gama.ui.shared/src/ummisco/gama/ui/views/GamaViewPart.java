@@ -148,6 +148,7 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void showToolbar(final boolean show) {
+
 		if (toolbar != null) {
 			if (show) {
 				toolbar.show();

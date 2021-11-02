@@ -86,18 +86,20 @@ public abstract class SwingControl extends Composite {
 		if (isDisposed()) return;
 		if (!populated) {
 			populated = true;
-			WorkbenchHelper.runInUI("Opening Java2D display", 50, m -> {
+			// WorkbenchHelper.runInUI("Opening Java2D display", 400, m -> {
+			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
+				// EventQueue.invokeLater(() -> {
 				applet = new JApplet();
 				if (PlatformHelper.isWindows()) { applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()); }
+				final Java2DDisplaySurface surface = createSwingComponent();
+				applet.getRootPane().getContentPane().add(surface);
+				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
-				EventQueue.invokeLater(() -> {
-					final Java2DDisplaySurface surface = createSwingComponent();
-					applet.getRootPane().getContentPane().add(surface);
-					WorkaroundForIssue2476.installOn(applet, surface);
-				});
-				// SwingControl.this.getParent().layout(true, true);
+				// });
 			});
+			// SwingControl.this.getParent().layout(true, true);
+
 			// EventQueue.invokeLater(() -> {
 			// WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));
 			// });

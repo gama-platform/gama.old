@@ -697,6 +697,11 @@ public class GamaPreferences {
 				create("pref_point_tolerance", "Tolerance for the comparison of points", 0.0, IType.FLOAT, true)
 						.in(NAME, OPTIMIZATIONS);
 
+		/** The Constant SHAPEFILE_IN_MEMORY. */
+		public static final Pref<Boolean> SHAPEFILES_IN_MEMORY = create("pref_shapefiles_in_memory",
+				"In-memory shapefile mapping (optimizes access to shapefile data in exchange for increased memory usage)",
+				true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+
 		/**
 		 * Paths to libraries
 		 */
