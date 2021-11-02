@@ -71,9 +71,9 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 			final boolean controlOk = control != null /* && !control.isDisposed() */;
 			if (!controlOk) return false;
 			final boolean surfaceOk = surface != null && !surface.isDisposed();
-			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
-				WorkbenchHelper.getPage().activate(deco.view);
-			}
+//			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
+//				WorkbenchHelper.getPage().activate(deco.view);
+//			}
 			return surfaceOk;
 		};
 

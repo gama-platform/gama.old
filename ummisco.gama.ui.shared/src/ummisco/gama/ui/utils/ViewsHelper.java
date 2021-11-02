@@ -137,6 +137,7 @@ public class ViewsHelper {
 	 *            the id
 	 */
 	public static void hideView(final String id) {
+		// See if asyncRun would not be more appropriate ? 
 		WorkbenchHelper.run(() -> {
 			final IWorkbenchPage activePage = getPage();
 			if (activePage == null) return;

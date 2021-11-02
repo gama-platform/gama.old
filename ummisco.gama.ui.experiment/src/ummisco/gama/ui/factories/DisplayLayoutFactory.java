@@ -31,7 +31,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 		//
 		// });
 
-		WorkbenchHelper.runInUI("Arranging views", 0, (m) -> {
+		WorkbenchHelper.asyncRun( () -> {
 			// WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			// if (showConsoles != null && !showConsoles) {
 			// WorkbenchHelper.hideView(IGui.CONSOLE_VIEW_ID);
