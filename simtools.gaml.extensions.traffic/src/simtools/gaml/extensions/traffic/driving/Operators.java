@@ -11,17 +11,8 @@
  * 
  * 
  **********************************************************************************************/
-package simtools.gaml.extensions.traffic;
+package simtools.gaml.extensions.traffic.driving;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.collections4.OrderedBidiMap;
-
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -32,11 +23,9 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
-import simtools.gaml.extensions.traffic.carfollowing.CustomDualTreeBidiMap;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class DrivingOperators {
-
+public class Operators {
 	@operator(value = "as_driving_graph", content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 2, index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1, concept = {
 			IConcept.GRAPH, IConcept.TRANSPORT })
 	@doc(value = "creates a graph from the list/map of edges given as operand and connect the node to the edge", examples = {

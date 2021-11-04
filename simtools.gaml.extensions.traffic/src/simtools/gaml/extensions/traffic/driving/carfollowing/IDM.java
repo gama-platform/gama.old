@@ -1,18 +1,17 @@
-package simtools.gaml.extensions.traffic.carfollowing;
+package simtools.gaml.extensions.traffic.driving.carfollowing;
 
-import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeedCoeff;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getDeltaIDM;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxAcceleration;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxDeceleration;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSpeed;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeed;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeHeadway;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getDeltaIDM;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMaxAcceleration;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMaxDeceleration;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMaxSpeed;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMinSafetyDistance;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getSpeed;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getSpeedCoeff;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getTimeHeadway;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-
-import simtools.gaml.extensions.traffic.RoadSkill;
+import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
 public class IDM {
 	/**

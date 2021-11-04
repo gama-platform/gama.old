@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package simtools.gaml.extensions.traffic;
+package simtools.gaml.extensions.traffic.driving;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,10 +22,7 @@ import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.lang3.tuple.Pair;
 import org.locationtech.jts.geom.Coordinate;
 
-import com.google.common.collect.Iterables;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -48,9 +45,7 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.descriptions.ConstantExpressionDescription;
-import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
-import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
@@ -58,8 +53,8 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import simtools.gaml.extensions.traffic.carfollowing.MOBIL;
-import simtools.gaml.extensions.traffic.carfollowing.Utils;
+import simtools.gaml.extensions.traffic.driving.carfollowing.MOBIL;
+import simtools.gaml.extensions.traffic.driving.carfollowing.Utils;
 import ummisco.gama.dev.utils.DEBUG;
 
 @vars({
