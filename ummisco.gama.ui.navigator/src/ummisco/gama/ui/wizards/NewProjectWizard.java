@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'NewProjectWizard.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * NewProjectWizard.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
@@ -43,14 +42,24 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class NewProjectWizard.
+ */
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
+	/** The Constant NATURE_ID. */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
+	
+	/** The wizard page. */
 	private NewProjectWizardPage wizardPage;
+	
+	/** The project. */
 	private IProject project;
 
+	/**
+	 * Instantiates a new new project wizard.
+	 */
 	public NewProjectWizard() {
-		super();
 	}
 
 	@Override
@@ -64,7 +73,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {
 
-		if (project != null) { return true; }
+		if (project != null) return true;
 
 		final boolean isTest = wizardPage.isTest();
 		final boolean createNewModel = wizardPage.createNewModel();
@@ -123,10 +132,10 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			final SubMonitor m = SubMonitor.convert(monitor, "", 2000);
 			proj.create(description, m.split(1000));
 
-			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
+			if (monitor.isCanceled()) throw new OperationCanceledException();
 			proj.open(m.split(1000));
 
-			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, isTest, null);
+			WorkspaceModelsManager.instance.setValuesProjectDescription(proj, false, false, isTest, null);
 
 			/*
 			 * We now have the project and we can do more things with it before updating the perspective.

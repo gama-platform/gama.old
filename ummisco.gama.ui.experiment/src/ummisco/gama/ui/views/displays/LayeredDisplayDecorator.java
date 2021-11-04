@@ -29,11 +29,9 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -51,6 +49,7 @@ import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -115,8 +114,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	LayeredDisplayDecorator(final LayeredDisplayView view) {
 		this.view = view;
 		createCommands();
-		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-		ps.addPartListener(overlayListener);
+		// final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+		// ps.addPartListener(overlayListener);
 
 	}
 
@@ -522,7 +521,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public void toggleInteractiveConsole() {
 		if (!sideControlsVisible) { toggleSideControls(); }
 		final InteractiveConsoleView view =
-				(InteractiveConsoleView) WorkbenchHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
+				(InteractiveConsoleView) ViewsHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
 		if (view == null) return;
 		if (interactiveConsoleVisible) {
 			view.getControlToDisplayInFullScreen().setParent(view.getParentOfControlToDisplayFullScreen());
@@ -585,8 +584,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		// FIXME Remove the listeners
 		try {
 			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
-			final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-			if (ps != null) { ps.removePartListener(overlayListener); }
+			// final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			// if (ps != null) { ps.removePartListener(overlayListener); }
 		} catch (final Exception e) {
 
 		}

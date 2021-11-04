@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaShapeFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaShapeFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.io.IOException;
@@ -39,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.GISUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.GamaShape;
@@ -80,14 +80,36 @@ public class GamaShapeFile extends GamaGisFile {
 
 	// FileDataStore store;
 
+	/**
+	 * The Class ShapeInfo.
+	 */
 	public static class ShapeInfo extends GamaFileMetaData {
 
+		/** The item number. */
 		final int itemNumber;
+
+		/** The crs. */
 		final CoordinateReferenceSystem crs;
+
+		/** The width. */
 		final double width;
+
+		/** The height. */
 		final double height;
+
+		/** The attributes. */
 		final Map<String, String> attributes = new LinkedHashMap();
 
+		/**
+		 * Instantiates a new shape info.
+		 *
+		 * @param scope
+		 *            the scope
+		 * @param url
+		 *            the url
+		 * @param modificationStamp
+		 *            the modification stamp
+		 */
 		public ShapeInfo(final IScope scope, final URL url, final long modificationStamp) {
 			super(modificationStamp);
 			FileDataStore store = null;
@@ -96,7 +118,7 @@ public class GamaShapeFile extends GamaGisFile {
 			int number = 0;
 			try {
 				store = getDataStore(url);
-				
+
 				final SimpleFeatureSource source = store.getFeatureSource();
 				final SimpleFeatureCollection features = source.getFeatures();
 				try {
@@ -115,7 +137,7 @@ public class GamaShapeFile extends GamaGisFile {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
 					} catch (final Exception e) {
-						if (store != null) store.dispose();
+						if (store != null) { store.dispose(); }
 						throw e;
 					}
 				}
@@ -123,7 +145,7 @@ public class GamaShapeFile extends GamaGisFile {
 					number = features.size();
 				} catch (final Exception e) {
 
-					if (store != null) store.dispose();
+					if (store != null) { store.dispose(); }
 					DEBUG.ERR("Error in loading shapefile: " + e.getMessage());
 				}
 				final java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
@@ -150,10 +172,19 @@ public class GamaShapeFile extends GamaGisFile {
 
 		}
 
-		public CoordinateReferenceSystem getCRS() {
-			return crs;
-		}
+		/**
+		 * Gets the crs.
+		 *
+		 * @return the crs
+		 */
+		public CoordinateReferenceSystem getCRS() { return crs; }
 
+		/**
+		 * Instantiates a new shape info.
+		 *
+		 * @param propertiesString
+		 *            the properties string
+		 */
 		public ShapeInfo(final String propertiesString) {
 			super(propertiesString);
 			final String[] segments = split(propertiesString);
@@ -175,9 +206,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (segments.length > 5) {
 				final String[] names = splitByWholeSeparatorPreserveAllTokens(segments[5], SUB_DELIMITER);
 				final String[] types = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
-				for (int i = 0; i < names.length; i++) {
-					attributes.put(names[i], types[i]);
-				}
+				for (int i = 0; i < names.length; i++) { attributes.put(names[i], types[i]); }
 			}
 		}
 
@@ -219,9 +248,12 @@ public class GamaShapeFile extends GamaGisFile {
 			return sb.toString();
 		}
 
-		public Map<String, String> getAttributes() {
-			return attributes;
-		}
+		/**
+		 * Gets the attributes.
+		 *
+		 * @return the attributes
+		 */
+		public Map<String, String> getAttributes() { return attributes; }
 
 		@Override
 		public String toPropertyString() {
@@ -237,11 +269,11 @@ public class GamaShapeFile extends GamaGisFile {
 				system = "Unknown projection " + srs;
 
 			}
-			final String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
-			final String types = join(attributes.values(), SUB_DELIMITER);
-			final Object[] toSave =
-					new Object[] { super.toPropertyString(), itemNumber, system, width, height, attributeNames, types };
-			return join(toSave, DELIMITER);
+			final String attributeNames = String.join(SUB_DELIMITER, attributes.keySet());
+			final String types = String.join(SUB_DELIMITER, attributes.values());
+			final String[] toSave = { super.toPropertyString(), String.valueOf(itemNumber), system,
+					String.valueOf(width), String.valueOf(height), attributeNames, types };
+			return String.join(DELIMITER, toSave);
 		}
 	}
 
@@ -259,6 +291,18 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, (Integer) null);
 	}
 
+	/**
+	 * Instantiates a new gama shape file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code)",
 			examples = { @example (
@@ -268,6 +312,18 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, code);
 	}
 
+	/**
+	 * Instantiates a new gama shape file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string",
 			examples = { @example (
@@ -277,6 +333,18 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, code);
 	}
 
+	/**
+	 * Instantiates a new gama shape file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param with3D
+	 *            the with 3 D
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a shapefile (.shp) file and take a potential z value (not taken in account by default)",
 			examples = { @example (
@@ -286,6 +354,20 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, (Integer) null, with3D);
 	}
 
+	/**
+	 * Instantiates a new gama shape file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @param with3D
+	 *            the with 3 D
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code, as an int (epsg code) and take a potential z value (not taken in account by default)",
 			examples = { @example (
@@ -296,6 +378,20 @@ public class GamaShapeFile extends GamaGisFile {
 		super(scope, pathName, code, with3D);
 	}
 
+	/**
+	 * Instantiates a new gama shape file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @param with3D
+	 *            the with 3 D
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a shapefile (.shp) file and specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default)",
 			examples = { @example (
@@ -322,6 +418,13 @@ public class GamaShapeFile extends GamaGisFile {
 		return GamaListFactory.wrap(Types.STRING, s.attributes.keySet());
 	}
 
+	/**
+	 * Gets the data store.
+	 *
+	 * @param url
+	 *            the url
+	 * @return the data store
+	 */
 	static FileDataStore getDataStore(final URL url) {
 		FileDataStore fds;
 		try {
@@ -332,7 +435,7 @@ public class GamaShapeFile extends GamaGisFile {
 		if (fds instanceof ShapefileDataStore) {
 			ShapefileDataStore store = (ShapefileDataStore) fds;
 			store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
-			store.setMemoryMapped(true);
+			store.setMemoryMapped(GamaPreferences.External.SHAPEFILES_IN_MEMORY.getValue());
 			store.setCharset(Charset.forName("UTF8"));
 		}
 		return fds;
@@ -344,19 +447,19 @@ public class GamaShapeFile extends GamaGisFile {
 		ProgressCounter counter = new ProgressCounter(scope, "Reading " + getName(scope));
 		SimpleFeatureCollection collection = getFeatureCollection(scope);
 		computeEnvelope(scope);
-		
-			
+
 		try {
-			
+
 			collection.accepts(feature -> {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-					if (!with3D && g.getNumPoints() > 2)
+					if (!with3D && g.getNumPoints() > 2) {
 						try {
 							if (!g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
-						} catch(Exception e) {
-							g = GeometryUtils.cleanGeometry(g); 
+						} catch (Exception e) {
+							g = GeometryUtils.cleanGeometry(g);
 						}
+					}
 					g = gis.transform(g);
 					if (!with3D) {
 						g.apply(ZERO_Z);
@@ -378,32 +481,32 @@ public class GamaShapeFile extends GamaGisFile {
 				ShpFiles shp = new ShpFiles(getFile(scope).toURI().toURL());
 				ShapefileReader reader = new ShapefileReader(shp, false, false, GeometryUtils.GEOMETRY_FACTORY);
 				reader.setFlatGeometry(true);
-			//System.out.println("count:" + reader.getCount(0));
+				// System.out.println("count:" + reader.getCount(0));
 				while (reader.hasNext()) {
 					Record record = reader.nextRecord();
 					Geometry g = GeometryUtils.cleanGeometry((Geometry) record.shape());
-				
+
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-						
-						if (!with3D && g.getNumPoints() > 2)
+
+						if (!with3D && g.getNumPoints() > 2) {
 							try {
 								if (!g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
-							} catch(Exception e) {
-								g = GeometryUtils.cleanGeometry(g); 
+							} catch (Exception e) {
+								g = GeometryUtils.cleanGeometry(g);
 							}
+						}
 						g = gis.transform(g);
 						if (!with3D) {
 							g.apply(ZERO_Z);
 							g.geometryChanged();
 						}
 						g = multiPolygonManagement(g);
-						
+
 						for (int i = 0; i < g.getNumGeometries(); i++) {
 							GamaShape gt = new GamaGisGeometry(g.getGeometryN(i), null);
-							if (gt.getInnerGeometry() != null) { getBuffer().add(gt);}
+							if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
 						}
-						
-						
+
 					} else if (g == null) {
 						// See Issue 725
 						GAMA.reportError(scope,
@@ -413,9 +516,9 @@ public class GamaShapeFile extends GamaGisFile {
 					}
 				}
 				reader.close();
-			}catch (final IOException e2) {
-			
-			 throw GamaRuntimeException.create(e2, scope);
+			} catch (final IOException e2) {
+
+				throw GamaRuntimeException.create(e2, scope);
 			}
 		}
 		// finally {
@@ -440,10 +543,9 @@ public class GamaShapeFile extends GamaGisFile {
 			query.getHints().put(Hints.JTS_GEOMETRY_FACTORY, GeometryUtils.GEOMETRY_FACTORY);
 			// AD
 			SimpleFeatureCollection collection = source.getFeatures(query);
-			if (source.getDataStore() != null) 
-				source.getDataStore().dispose();
+			if (source.getDataStore() != null) { source.getDataStore().dispose(); }
 			return collection;
-			
+
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

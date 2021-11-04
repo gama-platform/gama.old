@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -32,6 +31,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaDateType;
@@ -80,24 +80,23 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method exhaustive maximize: food_gathered;",
 								isExecutable = false) }) })
-public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
+public class ExhaustiveSearch extends AExplorationAlgorithm {
 
-	public ExhaustiveSearch(final IDescription desc) {
-		super(desc);
-	}
+	public ExhaustiveSearch(final IDescription desc) { super(desc); }
+	
+	@Override
+	public void setChildren(Iterable<? extends ISymbol> children) { }
 
 	@Override
-	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
-		setBestFitness(null);
+	public void explore(final IScope scope) throws GamaRuntimeException {
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty())
 			testSolutionsAll(scope);
 		else
 			testSolutions(scope, new ParametersSet(), 0);
-		return getBestSolution();
 	}
 	
-	
-	List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
+	@Override
+	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
 		List<ParametersSet> sets2 = new ArrayList<>();
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
 		if (variables.isEmpty()) return sets2;
@@ -112,6 +111,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				}
 				
 			} else {
+				
+				
+				
 				switch (var.getType().id()) {
 					case IType.INT:
 						int intValue = Cast.asInt(scope, var.getMinValue(scope));
@@ -181,6 +183,8 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 		}
 		return buildParameterSets(scope,sets2,index+1);
 	}
+	
+	// INNER UTILITY METHODS
 	
 	private void testSolutionsAll(final IScope scope) {
 		List<ParametersSet> sets = new ArrayList<>();
@@ -283,4 +287,5 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 		}
 
 	}
+
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.mesh;
 
@@ -42,48 +42,77 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
 public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	// ARRAYS
+	/** The data. */
 	// The attribute holding the data
 	private double[] data;
+	
+	/** The real indexes. */
 	// The attribute holding the position of the vertex indices (in case of no_data)
 	private int[] realIndexes;
 
 	// BUFFERS
+	/** The line color buffer. */
 	// The buffers for vertices, normals, textures, colors, line colors
 	private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
+	
+	/** The index buffer. */
 	// The buffer holding the indices to the points to draw
 	private IntBuffer indexBuffer;
 
+	/** The rows. */
 	// The number of columns and rows of the data
 	private int cols, rows;
+	
+	/** The max. */
 	// The widht and height of each cell in world coordinates; the minimal and maximal values found in the data
 	private double cx, cy, min, max;
+	
+	/** The no data. */
 	// The value representing the absence of data
 	private double noData;
 
 	// FLAGS
+	/** The with text. */
 	// Flags indicating if the data is to be drawn in wireframe, in grayscale, as triangles and with the value
 	private boolean triangles, withText;
+	
+	/** The outputs lines. */
 	// Flags indicating what to output: textures, colors, lines ?
 	private boolean outputsTextures, outputsColors, outputsLines;
 
 	// COLORS
+	/** The line color. */
 	// An array holding the three components of the line color
 	private double[] lineColor;
+	
+	/** The rgb. */
 	// An array used for the transfer of colors from the color provider
 	double[] rgb = new double[3];
+	
+	/** The fill. */
 	// The provider of color for the vertices
 	private IMeshColorProvider fill;
 	// Alpha
 	// private final double layerAlpha;
 
 	// NORMALS
+	/** The quad normals. */
 	// The normals used for quads drawing
 	final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	
+	/** The surface. */
 	// The temporary coordinate sequence used to hold vertices to compute normals
 	final ICoordinates surface = ICoordinates.ofLength(9);
+	
+	/** The normal. */
 	// The temporary transfer value for the normal
 	final GamaPoint normal = new GamaPoint();
 
+	/**
+	 * Instantiates a new mesh drawer.
+	 *
+	 * @param gl the gl
+	 */
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
 		// layerAlpha = gl.getCurrentObjectAlpha();
@@ -136,6 +165,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		}
 	}
 
+	/**
+	 * Initialize buffers.
+	 */
 	private void initializeBuffers() {
 		final var length = cols * rows;
 		int previous = realIndexes == null ? 0 : realIndexes.length;
@@ -159,6 +191,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	}
 
+	/**
+	 * Fill buffers.
+	 */
 	public void fillBuffers() {
 		if (triangles) {
 			var realIndex = 0;
@@ -210,6 +245,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		}
 	}
 
+	/**
+	 * Colorize.
+	 *
+	 * @param z the z
+	 * @param x the x
+	 * @param y the y
+	 */
 	private void colorize(final double z, final int x, final int y) {
 		// Outputs either a texture coordinate or the color of the vertex
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
@@ -218,6 +260,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		if (outputsLines) { lineColorBuffer.put(lineColor); }
 	}
 
+	/**
+	 * Finalize buffers.
+	 */
 	private void finalizeBuffers() {
 		if (outputsTextures) { texBuffer.flip(); }
 		if (outputsColors) { colorBuffer.flip(); }
@@ -227,6 +272,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		normalBuffer.flip();
 	}
 
+	/**
+	 * Draw field fallback.
+	 */
 	public void drawFieldFallback() {
 		if (vertexBuffer.limit() == 0) return;
 		final var ogl = gl.getGL();
@@ -258,8 +306,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		gl.endDrawing();
 		ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
 		ogl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		if (withText) { drawLabels(gl); }
 	}
 
+	/**
+	 * Draw field.
+	 */
 	public void drawField() {
 		// AD - See issue #3125
 		if (gl.isRenderingKeystone()) {
@@ -312,6 +364,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	}
 
+	/**
+	 * Draw labels.
+	 *
+	 * @param gl the gl
+	 */
 	public void drawLabels(final OpenGL gl) {
 		// Draw gridvalue as text inside each cell
 		gl.setCurrentColor(Color.black);
@@ -339,12 +396,27 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param data the data
+	 * @param x0 the x 0
+	 * @param y0 the y 0
+	 * @return the double
+	 */
 	double get(final double[] data, final int x0, final int y0) {
 		var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
 		var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
 		return data[y * cols + x];
 	}
 
+	/**
+	 * Smooth.
+	 *
+	 * @param data the data
+	 * @param passes the passes
+	 * @return the double[]
+	 */
 	double[] smooth(final double[] data, final int passes) {
 		if (passes == 0) return data;
 		var input = data;

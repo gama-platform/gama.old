@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ApplicationWorkbenchAdvisor.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * ApplicationWorkbenchAdvisor.java, in msi.gama.application, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.application.workbench;
 
 import java.util.Arrays;
@@ -41,12 +40,18 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ApplicationWorkbenchAdvisor.
+ */
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	{
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Instantiates a new application workbench advisor.
+	 */
 	public ApplicationWorkbenchAdvisor() {
 		super(Application.processor);
 	}
@@ -106,6 +111,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		}
 	}
 
+	/**
+	 * Check copy of built in models.
+	 *
+	 * @return true, if successful
+	 */
 	protected boolean checkCopyOfBuiltInModels() {
 
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -177,9 +187,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	}
 
 	@Override
-	public String getInitialWindowPerspectiveId() {
-		return IGui.PERSPECTIVE_MODELING_ID;
-	}
+	public String getInitialWindowPerspectiveId() { return IGui.PERSPECTIVE_MODELING_ID; }
 
 	/**
 	 * A workbench pre-shutdown method calls to prompt a confirmation of the shutdown and perform a saving of the
@@ -216,7 +224,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		Job.getJobManager().suspend();
 		// super.preStartup();
 		/* Linking the stock models with the workspace if they are not already */
-		if (checkCopyOfBuiltInModels()) { WorkspaceModelsManager.linkSampleModelsToWorkspace(); }
+		if (checkCopyOfBuiltInModels()) { WorkspaceModelsManager.instance.linkSampleModelsToWorkspace(); }
 
 	}
 

@@ -261,9 +261,9 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @param height
 	 *            the height
 	 */
-	public void reshape(final int width, final int height) {
-		if (getSceneToRender() == null) return;
-		getSceneToRender().recomputeLayoutDimensions(this.getOpenGL());
-	}
+	// public void reshape(final int width, final int height) {
+	// if (getSceneToRender() == null) return;
+	// getSceneToRender().recomputeLayoutDimensions(this.getOpenGL());
+	// }
 
 }

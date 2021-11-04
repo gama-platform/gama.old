@@ -536,6 +536,10 @@ Export-Package: com.conversantmedia.util.collection,
  org.locationtech.jts.triangulate;uses:="org.locationtech.jts.index.kdtree,org.locationtech.jts.geom,org.locationtech.jts.triangulate.quadedge",
  org.locationtech.jts.triangulate.quadedge;uses:="org.locationtech.jts.geom,org.locationtech.jts.math",
  org.locationtech.jts.util;uses:="org.locationtech.jts.geom",
+ org.moeaframework,
+ org.moeaframework.analysis.sensitivity,
+ org.moeaframework.core,
+ org.moeaframework.util.sequence,
  org.opengis.coverage.grid,
  org.opengis.feature,
  org.opengis.feature.simple,
@@ -746,6 +750,7 @@ Bundle-ClassPath: .,
  jgrapht 1.5.1/jgrapht-opt-1.5.1.jar,
  jgrapht 1.5.1/jheaps-0.13.jar,
  jgrapht 1.5.1/antlr4-runtime-4.8-1.jar,
- svgsalamander1.1.1/svgSalamander-v1.1.1.jar
+ svgsalamander1.1.1/svgSalamander-v1.1.1.jar,
+ moeaframework-2.13.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: msi.gama.ext

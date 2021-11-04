@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -29,11 +28,11 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 @symbol (
 		name = IKeyword.EXPLICIT,
@@ -84,44 +83,39 @@ import msi.gaml.types.Types;
 						examples = { @example (
 								value = "method explicit parameter_sets:[[\"a\"::0.5, \"b\"::10],[\"a\"::0.1, \"b\"::100]]; ",
 								isExecutable = false) }) })
-public class ExplicitExploration extends ParamSpaceExploAlgorithm {
+public class ExplicitExploration extends AExplorationAlgorithm {
 
 	protected static final String PARAMETER_SET = "parameter_sets";
 	protected List<Map<String, Object>> parameterSets;
-	public ExplicitExploration(final IDescription desc) {
-		super(desc); 
-		
-	}
+	public ExplicitExploration(final IDescription desc) { super(desc); }
+	@Override public void setChildren(Iterable<? extends ISymbol> children) { }
 	
 	
 	@Override
-	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
+	public void explore(final IScope scope) throws GamaRuntimeException {
+		List<ParametersSet> solutions = buildParameterSets(scope, new ArrayList<>(), 0);
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+			currentExperiment.launchSimulationsWithSolution(solutions);
+		} else {
+			for (ParametersSet sol : solutions) { currentExperiment.launchSimulationsWithSolution(sol); }
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
 		IExpression psexp = getFacet(PARAMETER_SET);
 		parameterSets = (List<Map<String, Object>>) Cast.asList(scope, psexp.value(scope));
-		setBestFitness(null);
-		List<ParametersSet> solutions = new ArrayList<>();
 		for (Map<String,Object> parameterSet : parameterSets) {
 			ParametersSet p = new ParametersSet();
 			for (String v : parameterSet.keySet()) {
 				Object val = parameterSet.get(v);
 				p.put(v,(val instanceof IExpression) ? ((IExpression) val).value(scope) : val);
 			}
-			solutions.add(p);
+			sets.add(p);
 		}
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			solutions.removeIf(a -> testedSolutions.containsKey(a));
-			Map<ParametersSet,Double> res = currentExperiment.launchSimulationsWithSolution(solutions);
-			for (ParametersSet sol : res.keySet()) {
-				updateBestFitness(sol, res.get(sol));
-			}
-		} else
-			for (ParametersSet sol : solutions) {
-				if (!testedSolutions.containsKey(sol)) {
-					double fitness = currentExperiment.launchSimulationsWithSolution(sol);
-					updateBestFitness(sol, fitness);
-				}
-			}
-		return getBestSolution();
+		return sets;
 	}
 
 }

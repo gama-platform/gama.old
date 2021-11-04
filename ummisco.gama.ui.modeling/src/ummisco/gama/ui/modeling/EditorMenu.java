@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditorMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * EditorMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.modeling;
 
 import java.util.ArrayList;
@@ -53,21 +52,26 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.Collector;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.access.ModelsFinder;
-import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class EditorMenu.
+ */
 public class EditorMenu extends ContributionItem implements IWorkbenchContribution {
 
 	// private static EditorMenu INSTANCE;
 
+	/** The mark pref. */
 	// MenuItem mark;
 	Pref<Boolean> markPref;
 
+	/**
+	 * Instantiates a new editor menu.
+	 */
 	public EditorMenu() {
-		super();
 		// INSTANCE = this;
 	}
 
@@ -83,6 +87,9 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	// mark.setSelection(markPref.getValue());
 	// }
 
+	/**
+	 * Initialize preferences.
+	 */
 	private void initializePreferences() {
 		// if (markPref == null) {
 		// markPref = GamaPreferences.get("pref_editor_mark_occurrences", Boolean.class);
@@ -119,15 +126,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		final MenuItem menuItem = new MenuItem(m, SWT.CASCADE);
 		menuItem.setText("Model");
 		final Menu menu = new Menu(menuItem);
-		if (menuItem.getMenu() != null) {
-			menuItem.getMenu().dispose();
-		}
+		if (menuItem.getMenu() != null) { menuItem.getMenu().dispose(); }
 		menuItem.setMenu(menu);
 		menu.addListener(SWT.Show, e -> {
 			markPref = GamaPreferences.get("pref_editor_mark_occurrences", Boolean.class);
-			for (final MenuItem item : menu.getItems()) {
-				item.dispose();
-			}
+			for (final MenuItem item : menu.getItems()) { item.dispose(); }
 			if (getEditor() != null) {
 				GamaMenu.separate(menu, "Presentation");
 				GamaMenu.separate(menu);
@@ -174,17 +177,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				try {
 					GamlResourceIndexer.eraseIndex();
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
-
-						@Override
-						public void done() {
-							super.done();
-							WorkbenchHelper.getService(IRefreshHandler.class).refreshNavigator();
-
-						}
-
-					});
-
+					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
 				} catch (final CoreException ex) {
 					ex.printStackTrace();
 				}
@@ -215,14 +208,21 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
-			for (final MenuItem item : sub.getItems()) {
-				item.dispose();
-			}
+			for (final MenuItem item : sub.getItems()) { item.dispose(); }
 			createOtherSubMenu(sub, getEditor());
 		});
 
 	}
 
+	/**
+	 * Creates the other sub menu.
+	 *
+	 * @param parentMenu
+	 *            the parent menu
+	 * @param editor
+	 *            the editor
+	 * @return the menu
+	 */
 	public static Menu createOtherSubMenu(final Menu parentMenu, final GamlEditor editor) {
 		final Map<URI, List<String>> map = grabProjectModelsAndExperiments(editor);
 		if (map.isEmpty()) {
@@ -250,6 +250,13 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		return parentMenu;
 	}
 
+	/**
+	 * Grab project models and experiments.
+	 *
+	 * @param editor
+	 *            the editor
+	 * @return the map
+	 */
 	private static Map<URI, List<String>> grabProjectModelsAndExperiments(final GamlEditor editor) {
 		final Map<URI, List<String>> map = new LinkedHashMap<>();
 		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
@@ -270,9 +277,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 						if (el != null) {
 							el.visitExperiments(element -> {
 
-								if (!map.containsKey(uri)) {
-									map.put(uri, new ArrayList<>());
-								}
+								if (!map.containsKey(uri)) { map.put(uri, new ArrayList<>()); }
 								map.get(uri).add(element.getName());
 
 							});
@@ -295,13 +300,12 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
-			for (final MenuItem item : sub.getItems()) {
-				item.dispose();
-			}
+			for (final MenuItem item : sub.getItems()) { item.dispose(); }
 			createImportedSubMenu(sub, getEditor());
 		});
 	}
 
+	/** The Constant UsedInAdapter. */
 	private static final SelectionAdapter UsedInAdapter = new SelectionAdapter() {
 
 		@Override
@@ -312,6 +316,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		}
 	};
 
+	/** The Constant OtherAdapter. */
 	private static final SelectionAdapter OtherAdapter = new SelectionAdapter() {
 
 		@Override
@@ -319,12 +324,19 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 			final MenuItem mi = (MenuItem) e.widget;
 			final URI uri = (URI) mi.getData("uri");
 			final String exp = (String) mi.getData("exp");
-			if (uri != null && exp != null) {
-				GAMA.getGui().runModel(uri, exp);
-			}
+			if (uri != null && exp != null) { GAMA.getGui().runModel(uri, exp); }
 		}
 	};
 
+	/**
+	 * Creates the imported sub menu.
+	 *
+	 * @param parentMenu
+	 *            the parent menu
+	 * @param editor
+	 *            the editor
+	 * @return the menu
+	 */
 	public static Menu createImportedSubMenu(final Menu parentMenu, final GamlEditor editor) {
 		final Set<URI> importers = getImporters(editor);
 		if (importers.isEmpty()) {
@@ -343,6 +355,13 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		return parentMenu;
 	}
 
+	/**
+	 * Gets the importers.
+	 *
+	 * @param editor
+	 *            the editor
+	 * @return the importers
+	 */
 	private static Set<URI> getImporters(final GamlEditor editor) {
 		try (final Collector.AsOrderedSet<URI> map = Collector.getOrderedSet()) {
 			editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
@@ -417,6 +436,12 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 	}
 
+	/**
+	 * Creates the overview toggle.
+	 *
+	 * @param menu
+	 *            the menu
+	 */
 	private void createOverviewToggle(final Menu menu) {
 		final MenuItem overview = new MenuItem(menu, SWT.CHECK);
 		overview.setText(" Show markers overview");
@@ -473,7 +498,10 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 	}
 
-	GamlEditor getEditor() {
-		return (GamlEditor) WorkbenchHelper.getActiveEditor();
-	}
+	/**
+	 * Gets the editor.
+	 *
+	 * @return the editor
+	 */
+	GamlEditor getEditor() { return (GamlEditor) WorkbenchHelper.getActiveEditor(); }
 }

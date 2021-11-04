@@ -115,6 +115,9 @@ public interface IKeyword {
 	/** The batch. */
 	// whisker
 	String BATCH = "batch";
+	
+	/** The batch outputs */
+	String BATCH_OUTPUTS = "outputs";
 
 	/** The behavior. */
 	String BEHAVIOR = "behavior";
@@ -415,6 +418,9 @@ public interface IKeyword {
 
 	/** The exists. */
 	String EXISTS = "exists";
+	
+	/** The explicit. */
+	String EXPLICIT = "explicit";
 
 	/** The experiment. */
 	String EXPERIMENT = "experiment";
@@ -453,6 +459,8 @@ public interface IKeyword {
 
 	/** The field. */
 	String FIELD = "field";
+	
+	String FITNESS = "fitness";
 
 	/** The focus. */
 	String FOCUS = "focus";
@@ -564,12 +572,6 @@ public interface IKeyword {
 
 	/** The hill climbing. */
 	String HILL_CLIMBING = "hill_climbing";
-
-	/** The explicit. */
-	String EXPLICIT = "explicit";
-
-	/** The pso. */
-	String PSO = "pso";
 
 	/** The his. */
 	String HIS = "his";
@@ -939,6 +941,9 @@ public interface IKeyword {
 	/** The proportion. */
 	String PROPORTION = "proportion";
 
+	/** The pso. */
+	String PSO = "pso";
+	
 	/** The put. */
 	String PUT = "put";
 
@@ -1089,6 +1094,9 @@ public interface IKeyword {
 	/** The skills. */
 	String SKILLS = "skills";
 
+	/** The sobol exploration method */
+	String SOBOL = "sobol";
+	
 	/** The source. */
 	String SOURCE = "source";
 
@@ -1362,7 +1370,7 @@ public interface IKeyword {
 	String ZFIGHTING = "z_fighting";
 
 	/** The methods. */
-	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT };
+	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL };
 
 	/** The event type. */
 	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };

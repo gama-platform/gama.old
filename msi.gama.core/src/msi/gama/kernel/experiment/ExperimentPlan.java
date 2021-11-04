@@ -544,7 +544,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// TODO revoir tout ceci. Devrait plut�t �tre une commande
 		if (output == null) return;
 		IExpression data = output.getFacet(IKeyword.DATA);
-		if (data == null) { data = exploration.getFitnessExpression(); }
+		if (data == null) { data = exploration.getOutputs(); }
 		final String dataString = data == null ? "time" : data.serialize(false);
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
