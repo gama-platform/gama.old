@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="moeaframework-2.13.jar" sourcepath="moeaframework-2.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="svgsalamander1.1.1/svgSalamander-v1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/antlr4-runtime-4.8-1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jheaps-0.13.jar"/>

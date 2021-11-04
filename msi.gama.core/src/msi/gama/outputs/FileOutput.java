@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -32,6 +33,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -41,7 +43,9 @@ import msi.gaml.types.IType;
 
 /**
  * The Class AbstractFileOutput.
- *
+ * </p>
+ * A particular output file especially design for the batch experiment output
+ * </p>
  * @author drogoul
  */
 @symbol (
@@ -123,9 +127,12 @@ public class FileOutput extends AbstractOutput {
 	boolean rewrite = false;
 	String header = "";
 	String footer = "";
+	
 	Object lastValue = null;
+	List<Object> lastValues = null;
 	List<String> loggedBatchParam = null;
 	ParametersSet solution = null;
+	
 	private String expressionText = null;
 	private IExpression data;
 	private static final String LOG_FOLDER = "log";
@@ -330,12 +337,12 @@ public class FileOutput extends AbstractOutput {
 		writeToFile(getScope().getClock().getCycle());
 	}
 
-	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
+	public void doRefreshWriteAndClose(final ParametersSet sol, final IMap<String,Object> outputs) throws GamaRuntimeException {
 		setSolution(sol);
-		if (fitness == null) {
+		if (outputs == null || outputs.isEmpty()) {
 			if (!getScope().step(this).passed()) { return; }
 		} else {
-			setLastValue(fitness);
+			this.lastValues = outputs.values().stream().collect(Collectors.toList()); //setLastValue(fitness);
 		}
 		// compute(getOwnScope(), 0l);
 		switch (type) {
@@ -345,6 +352,8 @@ public class FileOutput extends AbstractOutput {
 				try (FileWriter fileWriter = new FileWriter(file, true)) {
 					if (getLastValue() != null) {
 						fileWriter.write(getLastValue().toString());
+					} else if (this.lastValues != null && !this.lastValues.isEmpty()) {
+						fileWriter.write(lastValues.toString());
 					}
 					fileWriter.flush();
 				} catch (final IOException e) {
@@ -359,6 +368,8 @@ public class FileOutput extends AbstractOutput {
 				}
 				if (lastValue != null) {
 					s.append(lastValue);
+				} else if (lastValues != null && !lastValues.isEmpty()) {
+					for (Object val : lastValues) {s.append(',').append(val); }
 				} else {
 					s.setLength(s.length() - 1);
 				}
