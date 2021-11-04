@@ -333,7 +333,8 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		// Reduction by considering the imports written in the header
 		for (final String element : GamaProcessor.IMPORTS) {
 			if (type.startsWith(element)) {
-				type = type.replace(element + ".", "");
+				String tmp=type.replace(element + ".", "");
+				type = tmp.contains(".")?type:tmp;// type.replace(element + ".", "");
 				break;
 			}
 		}
