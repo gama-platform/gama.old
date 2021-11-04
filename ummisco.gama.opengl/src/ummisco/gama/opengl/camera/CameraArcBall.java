@@ -39,7 +39,6 @@ public class CameraArcBall extends AbstractCamera {
 	public void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
-
 		if (phi <= 0) {
 			phi = 0.001;
 		} else if (phi >= 180) { phi = 179.999; }
@@ -351,6 +350,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double step =
 				getDistance() != 0d ? getDistance() / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
 		setDistance(getDistance() + (in ? -step : step));
+		// zoom(zoomLevel());
 		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
 

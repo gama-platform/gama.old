@@ -54,6 +54,7 @@ import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
@@ -65,8 +66,12 @@ import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
+import ummisco.gama.opengl.scene.mesh.LegacyMeshDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
+import ummisco.gama.opengl.scene.mesh.MeshObject;
 import ummisco.gama.opengl.scene.resources.ResourceDrawer;
+import ummisco.gama.opengl.scene.text.LegacyTextDrawer;
+import ummisco.gama.opengl.scene.text.StringObject;
 import ummisco.gama.opengl.scene.text.TextDrawer;
 import ummisco.gama.ui.utils.DPIHelper;
 
@@ -100,10 +105,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	private final GeometryDrawer geometryDrawer;
 
 	/** The string drawer. */
-	private final TextDrawer stringDrawer;
+	private final ObjectDrawer<StringObject> stringDrawer;
 
 	/** The field drawer. */
-	private final MeshDrawer fieldDrawer;
+	private final ObjectDrawer<MeshObject> fieldDrawer;
 
 	/** The resource drawer. */
 	private final ResourceDrawer resourceDrawer;
@@ -239,8 +244,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
 		geometryDrawer = new GeometryDrawer(this);
-		fieldDrawer = new MeshDrawer(this);
-		stringDrawer = new TextDrawer(this);
+		fieldDrawer = FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : new MeshDrawer(this);
+		stringDrawer = FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : new TextDrawer(this);
 		resourceDrawer = new ResourceDrawer(this);
 	}
 

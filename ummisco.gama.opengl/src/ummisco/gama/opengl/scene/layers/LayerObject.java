@@ -58,13 +58,13 @@ public class LayerObject {
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 
 	/** The offset. */
-	GamaPoint offset = new GamaPoint(NULL_OFFSET);
+	volatile GamaPoint offset = new GamaPoint(NULL_OFFSET);
 
 	/** The scale. */
-	GamaPoint scale = new GamaPoint(NULL_SCALE);
+	volatile GamaPoint scale = new GamaPoint(NULL_SCALE);
 
 	/** The alpha. */
-	protected Double alpha = 1d;
+	protected volatile Double alpha = 1d;
 
 	/** The layer. */
 	public final ILayer layer;
@@ -76,7 +76,7 @@ public class LayerObject {
 	volatile boolean locked;
 
 	/** The is animated. */
-	boolean isAnimated;
+	volatile boolean isAnimated;
 
 	/** The renderer. */
 	protected final IOpenGLRenderer renderer;
@@ -88,10 +88,10 @@ public class LayerObject {
 	protected List<AbstractObject<?, ?>> currentList;
 
 	/** The open GL list index. */
-	protected Integer openGLListIndex;
+	protected volatile Integer openGLListIndex;
 
 	/** The is fading. */
-	protected boolean isFading;
+	protected volatile boolean isFading;
 
 	/**
 	 * Instantiates a new layer object.
@@ -534,10 +534,10 @@ public class LayerObject {
 	 */
 	public void forceRedraw(final OpenGL gl) {
 		if (layer == null) return;
-		if (openGLListIndex != null) {
-			gl.deleteList(openGLListIndex);
-			openGLListIndex = null;
-		}
+//		if (openGLListIndex != null) {
+//			gl.deleteList(openGLListIndex);
+//			openGLListIndex = null;
+//		}
 
 	}
 

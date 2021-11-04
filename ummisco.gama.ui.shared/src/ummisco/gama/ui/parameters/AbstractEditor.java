@@ -311,6 +311,7 @@ public abstract class AbstractEditor<T>
 		composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(parent.getBackground());
 		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.minimumWidth = 100;
 		composite.setLayoutData(data);
 		// Important to keep two columns as AbstractStatementEditor relies on it
 		final var layout = new GridLayout(2, false);
@@ -420,7 +421,7 @@ public abstract class AbstractEditor<T>
 	 */
 	protected GridData getParameterGridData() {
 		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		d.minimumWidth = 100;
+		d.minimumWidth = 50;
 		return d;
 	}
 

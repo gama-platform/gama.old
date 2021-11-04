@@ -1,27 +1,27 @@
-package simtools.gaml.extensions.traffic.carfollowing;
+package simtools.gaml.extensions.traffic.driving.carfollowing;
 
-import static simtools.gaml.extensions.traffic.DrivingSkill.getAccBias;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getAccGainThreshold;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getAllowedLanes;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLCCooldown;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLaneChangeLimit;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLeadingDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMaxSafeDeceleration;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getPolitenessFactor;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getProbaUseLinkedRoad;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getRightSideDriving;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getSpeed;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getTimeSinceLC;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setFollower;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingSpeed;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setLeadingVehicle;
-import static simtools.gaml.extensions.traffic.DrivingSkill.setTimeSinceLC;
-import static simtools.gaml.extensions.traffic.carfollowing.Utils.findFollower;
-import static simtools.gaml.extensions.traffic.carfollowing.Utils.findLeader;
-import static simtools.gaml.extensions.traffic.carfollowing.Utils.rescaleProba;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getAccBias;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getAccGainThreshold;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getAllowedLanes;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getLCCooldown;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getLaneChangeLimit;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getLeadingDistance;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMaxSafeDeceleration;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getNumLanesOccupied;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getPolitenessFactor;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getProbaUseLinkedRoad;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getRightSideDriving;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getSpeed;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getTimeSinceLC;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getVehicleLength;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.setFollower;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.setLeadingDistance;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.setLeadingSpeed;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.setLeadingVehicle;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.setTimeSinceLC;
+import static simtools.gaml.extensions.traffic.driving.carfollowing.Utils.findFollower;
+import static simtools.gaml.extensions.traffic.driving.carfollowing.Utils.findLeader;
+import static simtools.gaml.extensions.traffic.driving.carfollowing.Utils.rescaleProba;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,8 +33,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import simtools.gaml.extensions.traffic.RoadNodeSkill;
-import simtools.gaml.extensions.traffic.RoadSkill;
+import simtools.gaml.extensions.traffic.driving.RoadNodeSkill;
+import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
 public class MOBIL {
 	/**

@@ -40,6 +40,7 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -146,13 +147,15 @@ public abstract class GamaViewPart extends ViewPart
 	}
 
 	@Override
-	public void showToolbar() {
-		if (toolbar != null) { toolbar.show(); }
-	}
+	public void showToolbar(final boolean show) {
 
-	@Override
-	public void hideToolbar() {
-		if (toolbar != null) { toolbar.hide(); }
+		if (toolbar != null) {
+			if (show) {
+				toolbar.show();
+			} else {
+				toolbar.hide();
+			}
+		}
 	}
 
 	@Override
@@ -348,7 +351,7 @@ public abstract class GamaViewPart extends ViewPart
 	public void close(final IScope scope) {
 		WorkbenchHelper.asyncRun(() -> {
 			try {
-				WorkbenchHelper.hideView(GamaViewPart.this);
+				ViewsHelper.hideView(GamaViewPart.this);
 			} catch (final Exception e) {}
 		});
 

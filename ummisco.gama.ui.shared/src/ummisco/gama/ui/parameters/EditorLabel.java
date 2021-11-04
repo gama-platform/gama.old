@@ -91,7 +91,7 @@ public class EditorLabel {
 			final boolean isSubParameter) {
 		label = new Label(parent, SWT.WRAP | SWT.RIGHT);
 		final var d = new GridData(SWT.END, SWT.CENTER, true, false);
-		d.minimumWidth = 70;
+		d.minimumWidth = 40;
 		d.horizontalIndent = isSubParameter ? 30 : 0;
 		label.setLayoutData(d);
 		label.setText(title == null ? " " : title);

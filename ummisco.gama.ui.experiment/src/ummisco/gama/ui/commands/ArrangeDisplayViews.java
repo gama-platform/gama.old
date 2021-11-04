@@ -15,7 +15,6 @@ import static msi.gaml.operators.Displays.HORIZONTAL;
 import static msi.gaml.operators.Displays.VERTICAL;
 import static org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory.INSTANCE;
 import static org.eclipse.e4.ui.workbench.modeling.EModelService.IN_ACTIVE_PERSPECTIVE;
-import static ummisco.gama.ui.utils.WorkbenchHelper.findDisplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.ui.IViewPart;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IGamaView;
@@ -39,6 +39,7 @@ import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -180,9 +181,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 * @param holders
 	 *            the holders
 	 */
-	public static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
+	private static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
 		decorateDisplays();
+		DEBUG.OUT("Holders to show " + DEBUG.TO_STRING(StreamEx.of(holders).map(MPlaceholder::getElementId).toArray()));
 		holders.forEach(ph -> {
 			ph.setVisible(true);
 			ph.setToBeRendered(true);
@@ -194,21 +196,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 * Decorate displays.
 	 */
 	public static void decorateDisplays() {
-		WorkbenchHelper.getDisplayViews().forEach(v -> {
+		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
+		DEBUG.OUT("Displays to decorate "
+				+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
-			if (tb != null) {
-				if (tb) {
-					v.showToolbar();
-				} else {
-					v.hideToolbar();
-				}
-			}
-			if (PerspectiveHelper.showOverlays()) {
-				v.showOverlay();
-			} else {
-				v.hideOverlay();
-			}
-
+			if (tb != null) { v.showToolbar(tb); }
+			v.showOverlay(PerspectiveHelper.showOverlays());
 		});
 	}
 
@@ -271,11 +265,11 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	static final List<MPlaceholder> listDisplayViews() {
 		final List<MPlaceholder> holders = getModelService().findElements(getApplication(), MPlaceholder.class,
-				IN_ACTIVE_PERSPECTIVE, e -> WorkbenchHelper.isDisplay(e.getElementId()));
+				IN_ACTIVE_PERSPECTIVE, e -> ViewsHelper.isDisplay(e.getElementId()));
 		/// Issue #2680
 		int currentIndex = 0;
 		for (final MPlaceholder h : holders) {
-			final IGamaView.Display display = findDisplay(h.getElementId());
+			final IGamaView.Display display = ViewsHelper.findDisplay(h.getElementId());
 			if (display != null) {
 				display.setIndex(currentIndex++);
 				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));

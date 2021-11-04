@@ -1,16 +1,16 @@
-package simtools.gaml.extensions.traffic.carfollowing;
+package simtools.gaml.extensions.traffic.driving.carfollowing;
 
-import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentRoad;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getCurrentTarget;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getDistanceToCurrentTarget;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getLinkedLaneLimit;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getMinSafetyDistance;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getNextRoad;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getNumLanesOccupied;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getProbaUseLinkedRoad;
-import static simtools.gaml.extensions.traffic.DrivingSkill.getVehicleLength;
-import static simtools.gaml.extensions.traffic.DrivingSkill.isViolatingOneway;
-import static simtools.gaml.extensions.traffic.DrivingSkill.readyToCross;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getCurrentRoad;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getCurrentTarget;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getDistanceToCurrentTarget;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getLinkedLaneLimit;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getMinSafetyDistance;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getNextRoad;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getNumLanesOccupied;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getProbaUseLinkedRoad;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getVehicleLength;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.isViolatingOneway;
+import static simtools.gaml.extensions.traffic.driving.DrivingSkill.readyToCross;
 
 import org.apache.commons.collections4.OrderedBidiMap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -19,8 +19,8 @@ import org.apache.commons.lang3.tuple.Triple;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import simtools.gaml.extensions.traffic.RoadNodeSkill;
-import simtools.gaml.extensions.traffic.RoadSkill;
+import simtools.gaml.extensions.traffic.driving.RoadNodeSkill;
+import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
 /**
  * @author minhduc0711

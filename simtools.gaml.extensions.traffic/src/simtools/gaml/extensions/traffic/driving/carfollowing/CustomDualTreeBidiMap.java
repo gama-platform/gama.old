@@ -1,4 +1,4 @@
-package simtools.gaml.extensions.traffic.carfollowing;
+package simtools.gaml.extensions.traffic.driving.carfollowing;
 
 import java.util.Comparator;
 import java.util.Map;

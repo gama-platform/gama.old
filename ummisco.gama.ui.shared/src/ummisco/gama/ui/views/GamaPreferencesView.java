@@ -88,7 +88,7 @@ public class GamaPreferencesView {
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
 
 	/** The nb divisions. */
-	public static int NB_DIVISIONS = 2;
+	public static final int NB_DIVISIONS = 2;
 
 	/** The instance. */
 	static GamaPreferencesView instance;
@@ -267,7 +267,7 @@ public class GamaPreferencesView {
 	private void buildGroupContents(final Composite compo, final List<Pref> list) {
 		GridLayoutFactory.fillDefaults().numColumns(NB_DIVISIONS).spacing(5, 0).equalWidth(true).applyTo(compo);
 		final var comps = new EditorsGroup[NB_DIVISIONS];
-		for (var i = 0; i < NB_DIVISIONS; i++) { comps[i] = new EditorsGroup(compo, SWT.BORDER); }
+		for (var i = 0; i < NB_DIVISIONS; i++) { comps[i] = new EditorsGroup(compo, SWT.NONE); }
 		var i = 0;
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());

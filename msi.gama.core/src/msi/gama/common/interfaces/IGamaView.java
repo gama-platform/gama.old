@@ -103,14 +103,9 @@ public interface IGamaView {
 	void updateToolbarState();
 
 	/**
-	 * Hide toolbar.
-	 */
-	void hideToolbar();
-
-	/**
 	 * Show toolbar.
 	 */
-	void showToolbar();
+	void showToolbar(boolean show);
 
 	/**
 	 * The Interface Test.
@@ -156,6 +151,18 @@ public interface IGamaView {
 	public interface Display extends IGamaView {
 
 		/**
+		 * The Interface InnerComponent.
+		 */
+		public interface InnerComponent {
+			/**
+			 * Gets the view.
+			 *
+			 * @return the view
+			 */
+			Display getView();
+		}
+
+		/**
 		 * Contains point.
 		 *
 		 * @param x
@@ -198,12 +205,7 @@ public interface IGamaView {
 		/**
 		 * Show overlay.
 		 */
-		void showOverlay();
-
-		/**
-		 * Hide overlay.
-		 */
-		void hideOverlay();
+		void showOverlay(boolean show);
 
 		/**
 		 * Gets the output.
