@@ -1,9 +1,10 @@
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.calibration;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;

@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.calibration.genetic;
 
 import static java.lang.Double.compare;
 import static one.util.streamex.StreamEx.of;

@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.calibration.genetic;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class InitializationUniform implements Initialization {
 			algo.computePopFitness(scope, populationInit);
 		final List<Chromosome> populationInitOrd = new ArrayList<>(populationInit);
 		Collections.sort(populationInitOrd);
-		if (algo.isMaximize) {
+		if (algo.isMaximize()) {
 			Collections.reverse(populationInitOrd);
 		}
 		return populationInitOrd.subList(0, populationDim - 1);

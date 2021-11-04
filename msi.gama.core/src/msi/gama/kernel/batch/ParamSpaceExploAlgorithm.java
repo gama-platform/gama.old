@@ -15,6 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.calibration.HillClimbing;
+import msi.gama.kernel.batch.calibration.SimulatedAnnealing;
+import msi.gama.kernel.batch.calibration.Swarm;
+import msi.gama.kernel.batch.calibration.TabuSearch;
+import msi.gama.kernel.batch.calibration.TabuSearchReactive;
+import msi.gama.kernel.batch.calibration.genetic.GeneticAlgorithm;
+import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
+import msi.gama.kernel.batch.exploration.ExplicitExploration;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;

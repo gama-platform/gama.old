@@ -8,13 +8,14 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.exploration;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.ParamSpaceExploAlgorithm;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
