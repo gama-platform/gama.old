@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.StoppingCriterion;
+import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -120,7 +122,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method reactive_tabu iter_max: 50 tabu_list_size_init: 5 tabu_list_size_min: 2 tabu_list_size_max: 10 nb_tests_wthout_col_max: 20 cycle_size_min: 2 cycle_size_max: 20 maximize: food_gathered;",
 								isExecutable = false) }) })
-public class TabuSearchReactive extends LocalSearchAlgorithm {
+public class TabuSearchReactive extends ALocalSearchAlgorithm {
 
 	int tabuListSizeInit = 5;
 	int tabuListSizeMax = 2;
@@ -200,7 +202,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		int tabuListSize = tabuListSizeInit;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 
 		
@@ -259,7 +261,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
 					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) {
@@ -297,7 +299,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 						}
 						tabuList.add(bestSolutionAlgo);
 					}
-					currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+					currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS);
 					testedSolutions.put(bestSolutionAlgo, currentFitness);
 					if (nbIt > iterMax) {
 						break;

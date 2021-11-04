@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization.genetic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.Neighborhood;
+import msi.gama.kernel.batch.Neighborhood1Var;
+import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -119,7 +122,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20; ",
 								isExecutable = false) }) })
-public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
+public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 	int populationDim = 3;
 	double crossoverProb = 0.7;
@@ -262,7 +265,11 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			sets.add(sol );
 			paramToCh.put( chromosome, sol);
 		}
-		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(sets);
+		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(sets).entrySet().stream()
+				.collect(Collectors.toMap(
+						e -> e.getKey(), 
+						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)
+						));
 		testedSolutions.putAll(fitnessRes);
 		for (final Chromosome chromosome : population) {
 			ParametersSet ps = paramToCh.get(chromosome);
@@ -281,7 +288,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
 		if (fitness == null) {
-			fitness = currentExperiment.launchSimulationsWithSolution(sol);
+			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol).get(IKeyword.FITNESS);
 		}
 		testedSolutions.put(sol, fitness);
 		chromosome.setFitness(fitness);
@@ -351,7 +358,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 				}
 				final double neighborFitness;
 				if (!testedSolutions.containsKey(neighborSol)) {
-					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
 					testedSolutions.put(neighborSol, neighborFitness);
 				} else {
 					neighborFitness = testedSolutions.get(neighborSol);

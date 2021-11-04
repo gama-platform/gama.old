@@ -8,13 +8,14 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -34,21 +35,16 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
- * The Class ParamSpaceExploAlgorithm.
+ * The Class AOptimizationAlgorithm.
  */
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
-public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExploration {
+public abstract class AOptimizationAlgorithm extends Symbol implements IExploration {
 
+	public final static short C_MAX = 0, C_MIN = 1, C_MEAN = 2;
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
-	@SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
-			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
-					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class, ExplicitExploration.class};
-
-	static {
-		AbstractGamlAdditions._constants(COMBINATIONS);
-	}
-
+	static { AbstractGamlAdditions._constants(COMBINATIONS); }
+	
 	// private ContinuousUniformGenerator randUniform;
 	protected HashMap<ParametersSet, Double> testedSolutions;
 	protected IExpression fitnessExpression;
@@ -90,7 +86,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 	protected void initParams(final IScope scope) {}
 
-	public ParamSpaceExploAlgorithm(final IDescription desc) {
+	public AOptimizationAlgorithm(final IDescription desc) {
 		super(desc);
 		initializeTestedSolutions();
 		fitnessExpression = getFacet(IKeyword.MAXIMIZE, IKeyword.MINIMIZE);
@@ -98,11 +94,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		final String ag = getLiteral(IKeyword.AGGREGATION);
 		combination = IKeyword.MAX.equals(ag) ? C_MAX : IKeyword.MIN.equals(ag) ? C_MIN : C_MEAN;
 		bestFitness = isMaximize ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
-	}
-
-	@Override
-	public String getCombinationName() {
-		return COMBINATIONS[combination];
 	}
 
 	@Override
@@ -122,18 +113,14 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
-	public boolean isMaximize() {
-		return isMaximize;
-	}
-
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
-		params.add(new ParameterAdapter("Exploration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+		params.add(new ParameterAdapter("Calibration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
 			public Object value() {
 				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
-				final String methodName = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
+				final String methodName = IKeyword.METHODS[classes.indexOf(AOptimizationAlgorithm.this.getClass())];
 				final String fit = fitnessExpression == null ? "" : "fitness = "
 						+ (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serialize(false);
 				final String sim = fitnessExpression == null ? ""
@@ -144,28 +131,50 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 		});
 	}
-
 	
 	@Override
-	public Double getBestFitness() {
-		return bestFitness;
-	}
-
+	public boolean isFitnessBased() { return true; }
+	
 	@Override
-	public IExpression getFitnessExpression() {
-		return fitnessExpression;
-	}
+	public IExpression getOutputs() { return getFitnessExpression(); }
 
-	@Override
-	public ParametersSet getBestSolution() {
-		return bestSolution;
-	}
+	// ------------
+	// OPTIMIZATION
+	
+	/**
+	 * Return the best fitness of the experiment
+	 * @return Double
+	 */
+	public Double getBestFitness() { return bestFitness; }
 
-	@Override
-	public short getCombination() {
-		return combination;
-	}
+	/**
+	 * Return the expression that characterizes the fitness computation
+	 * @return IExpression
+	 */
+	public IExpression getFitnessExpression() { return fitnessExpression; }
 
+	/**
+	 * Return the set of parameter @ParametersSet attached to the best fitness
+	 * @return ParametersSet
+	 */
+	public ParametersSet getBestSolution() { return bestSolution; }
+
+	/**
+	 * If the fitness should maximize (or minimize) the corresponding value
+	 * @return boolean
+	 */
+	public boolean getIsMaximize() { return this.isMaximize; }
+	
+	/**
+	 * Returns the way to combine replication fitness (either min, max or mean)
+	 * @return short
+	 */
+	public short getCombination() { return combination; }
+
+	public boolean isMaximize() { return isMaximize; }
+	
+	public String getCombinationName() { return COMBINATIONS[combination]; }
+	
 	protected void setBestSolution(final ParametersSet bestSolution) {
 		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestSolution : " +
 		// bestSolution);
@@ -178,7 +187,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		this.bestFitness = bestFitness;
 	}
 
-	@Override
 	public void updateBestFitness(final ParametersSet solution, final Double fitness) {
 		if (fitness == null)
 			return;

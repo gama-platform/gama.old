@@ -11,7 +11,18 @@
 package msi.gama.kernel.batch;
 
 import java.util.List;
-import msi.gama.kernel.experiment.*;
+
+import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
+import msi.gama.kernel.batch.exploration.ExplicitExploration;
+import msi.gama.kernel.batch.exploration.SobolExploration;
+import msi.gama.kernel.batch.optimization.HillClimbing;
+import msi.gama.kernel.batch.optimization.SimulatedAnnealing;
+import msi.gama.kernel.batch.optimization.Swarm;
+import msi.gama.kernel.batch.optimization.TabuSearch;
+import msi.gama.kernel.batch.optimization.TabuSearchReactive;
+import msi.gama.kernel.batch.optimization.genetic.GeneticAlgorithm;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -26,28 +37,47 @@ import msi.gaml.expressions.IExpression;
  */
 public interface IExploration extends ISymbol {// , Runnable {
 
-	public final static short C_MAX = 0, C_MIN = 1, C_MEAN = 2;
-
-	public abstract void initializeFor(IScope scope, final BatchAgent agent) throws GamaRuntimeException;
-
-	public abstract String getCombinationName();
-
-	public abstract void addParametersTo(final List<IParameter.Batch> exp, BatchAgent agent);
-
-	public abstract Double getBestFitness();
-
-	public abstract IExpression getFitnessExpression();
-
-	public abstract ParametersSet getBestSolution();
-
-	public abstract short getCombination();
-	
-	public abstract void updateBestFitness(ParametersSet solution, Double fitness);
-		
+	@SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
+			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
+					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class, ExplicitExploration.class,
+					SobolExploration.class};
 
 	/**
+	 * TODO
+	 * 
+	 * @param scope
+	 * @param agent
+	 * @throws GamaRuntimeException
+	 */
+	public abstract void initializeFor(IScope scope, final BatchAgent agent) throws GamaRuntimeException;
+
+	/**
+	 * TODO
+	 * 
+	 * @param exp
+	 * @param agent
+	 */
+	public abstract void addParametersTo(final List<IParameter.Batch> exp, BatchAgent agent);
+
+	/**
+	 * TODO
+	 * 
 	 * @param scope
 	 */
 	public abstract void run(IScope scope);
+	
+	/**
+	 * If the exploration is based on the optimization of a fitness or not
+	 * 
+	 * @return {@link Boolean}, true if based on fitness, false otherwise
+	 */
+	public boolean isFitnessBased();
+	
+	/**
+	 * The expression that represents the requested outputs
+	 * 
+	 * @return
+	 */
+	public IExpression getOutputs();
 
 }

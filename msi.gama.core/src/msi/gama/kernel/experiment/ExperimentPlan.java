@@ -25,8 +25,8 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
-import msi.gama.kernel.batch.ExhaustiveSearch;
 import msi.gama.kernel.batch.IExploration;
+import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -544,7 +544,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// TODO revoir tout ceci. Devrait plut�t �tre une commande
 		if (output == null) return;
 		IExpression data = output.getFacet(IKeyword.DATA);
-		if (data == null) { data = exploration.getFitnessExpression(); }
+		if (data == null) { data = exploration.getOutputs(); }
 		final String dataString = data == null ? "time" : data.serialize(false);
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}

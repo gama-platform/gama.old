@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.Collections;
 import java.util.List;
@@ -103,7 +103,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method annealing temp_init: 100  temp_end: 1 temp_decrease: 0.5 nb_iter_cst_temp: 5 maximize: food_gathered;",
 								isExecutable = false) }) })
-public class SimulatedAnnealing extends LocalSearchAlgorithm {
+public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 
 	double temperatureEnd = 1;
 	double tempDimCoeff = 0.5;
@@ -151,7 +151,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
 		setBestSolution(new ParametersSet(this.solutionInit));
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
+		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution()).get(IKeyword.FITNESS);
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		testedSolutions.put(getBestSolution(), getBestFitness());
 		setBestFitness(currentFitness);
@@ -174,7 +174,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-					neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
 					testedSolutions.put(neighborSol, neighborFitness);
 				}
 

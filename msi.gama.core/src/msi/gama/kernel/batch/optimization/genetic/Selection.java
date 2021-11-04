@@ -8,9 +8,10 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization.genetic;
 
 import java.util.List;
+
 import msi.gama.runtime.IScope;
 
 public interface Selection {

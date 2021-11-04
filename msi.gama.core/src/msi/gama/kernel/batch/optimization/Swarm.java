@@ -1,12 +1,16 @@
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.StoppingCriterion;
+import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -94,7 +98,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method pso iter_max: 50 num_particles: 10 weight_inertia:0.7 weight_cognitive: 1.5 weight_social: 1.5 maximize: food_gathered ; ",
 								isExecutable = false) }) })
-public class Swarm extends ParamSpaceExploAlgorithm {
+public class Swarm extends AOptimizationAlgorithm {
 
     public static final double DEFAULT_INERTIA = 0.729844;
     public static final double DEFAULT_COGNITIVE = 1.496180; // Cognitive component.
@@ -204,7 +208,11 @@ public class Swarm extends ParamSpaceExploAlgorithm {
 				solTotest.add(sol);
 			}
 		}
-		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest);
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
+				.collect(Collectors.toMap(
+						e -> e.getKey(), 
+						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)
+						));
 		testedSolutions.putAll(res);
 		results.putAll(res);
 		

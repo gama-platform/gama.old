@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.StoppingCriterion;
+import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -98,7 +100,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method tabu iter_max: 50 tabu_list_size: 5 maximize: food_gathered;",
 								isExecutable = false) }) })
-public class TabuSearch extends LocalSearchAlgorithm {
+public class TabuSearch extends ALocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
 	protected static final String LIST_SIZE = "tabu_list_size";
@@ -128,7 +130,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		final List<ParametersSet> tabuList = new ArrayList<>();
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
-		final double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+		final double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
@@ -172,7 +174,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
 					} else {
 						continue;
 					}

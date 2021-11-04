@@ -8,12 +8,16 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import msi.gama.kernel.batch.Neighborhood;
+import msi.gama.kernel.batch.Neighborhood1Var;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -24,7 +28,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
+public abstract class ALocalSearchAlgorithm extends AOptimizationAlgorithm {
 
 	protected static final String INIT_SOL = "init_solution";
 	
@@ -32,7 +36,7 @@ public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 	protected ParametersSet solutionInit;
 
 	protected IExpression initSolExpression;
-	public LocalSearchAlgorithm(final IDescription species) {
+	public ALocalSearchAlgorithm(final IDescription species) {
 		super(species);
 	}
 	
@@ -47,7 +51,11 @@ public abstract class LocalSearchAlgorithm extends ParamSpaceExploAlgorithm {
 				solTotest.add(sol);
 			}
 		}
-		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest);
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest)
+				.entrySet().stream().collect(Collectors.toMap(
+						e -> e.getKey(), 
+						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0))
+						);
 		testedSolutions.putAll(res);
 		results.putAll(res);
 		

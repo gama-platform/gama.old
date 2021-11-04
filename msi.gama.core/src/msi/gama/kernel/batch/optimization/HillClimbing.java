@@ -8,13 +8,15 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.StoppingCriterion;
+import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -90,7 +92,7 @@ import msi.gaml.types.IType;
 						examples = { @example (
 								value = "method hill_climbing iter_max: 50 maximize : food_gathered; ",
 								isExecutable = false) }) })
-public class HillClimbing extends LocalSearchAlgorithm {
+public class HillClimbing extends ALocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
 	StoppingCriterion stoppingCriterion = null;
@@ -113,7 +115,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestSolution(this.solutionInit);
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
+		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution()).get(IKeyword.FITNESS);
 		initializeTestedSolutions();
 		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
@@ -142,7 +144,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = currentExperiment.launchSimulationsWithSolution(neighborSol);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
 

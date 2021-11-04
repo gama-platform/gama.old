@@ -1,9 +1,10 @@
-package msi.gama.kernel.batch;
+package msi.gama.kernel.batch.optimization;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -26,7 +27,7 @@ class Particle {
 	BatchAgent currentExperiment;
 	final Map<String, GamaPoint> parameters;
 	 
-	ParamSpaceExploAlgorithm algo;
+	AOptimizationAlgorithm algo;
 	
 	double currentVal;
     /**
@@ -34,7 +35,7 @@ class Particle {
      * @param beginRange    the minimum xyz values of the position (inclusive)
      * @param endRange      the maximum xyz values of the position (exclusive)
      */
-    Particle (IScope scope, BatchAgent agent, ParamSpaceExploAlgorithm algorithm, HashMap<ParametersSet, Double> testedSolutionsMap) {
+    Particle (IScope scope, BatchAgent agent, AOptimizationAlgorithm algorithm, HashMap<ParametersSet, Double> testedSolutionsMap) {
         currentExperiment = agent;
         algo = algorithm;
         this.testedSolutions = testedSolutionsMap;
@@ -64,7 +65,7 @@ class Particle {
     public double eval () {
     	Double fitness = testedSolutions.get(position);
 		if (fitness == null) {
-			fitness = currentExperiment.launchSimulationsWithSolution(position);
+			fitness = (Double) currentExperiment.launchSimulationsWithSolution(position).get(IKeyword.FITNESS);
 			testedSolutions.put(position, fitness);
 		}
 		return fitness.doubleValue();
