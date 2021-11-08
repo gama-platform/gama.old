@@ -140,7 +140,7 @@ public class FIPASkill extends MessagingSkill {
 	@skill (
 			name = "communicating",
 			concept = { IConcept.FIPA, IConcept.SKILL, IConcept.COMMUNICATION })
-	public static class Deprecated extends FIPASkill {}
+	public static class DeprecatedCommunicatingSkill extends FIPASkill {}
 
 	// /** The protocol indexes. */
 	// private static Map<String, Integer> protocolIndexes = new HashMap();
