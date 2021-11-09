@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
- * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * GamaProcessor.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.io.IOException;
@@ -27,36 +28,34 @@ import javax.tools.FileObject;
 import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.tests.TestProcessor;
 
+/**
+ * The Class GamaProcessor.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 @SupportedAnnotationTypes ({ "*" })
 @SupportedSourceVersion (SourceVersion.RELEASE_11)
 public class GamaProcessor extends AbstractProcessor implements Constants {
 
-	public final static String[] IMPORTS = new String[] { "msi.gaml.extensions.multi_criteria",
-			"msi.gama.outputs.layers.charts", "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
-			"msi.gama.kernel.root", "msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
-			"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
-			"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
-			"msi.gaml.statements.test", "msi.gama.metamodel.population", "msi.gama.kernel.simulation",
-			"msi.gama.kernel.model", "java.util", "msi.gaml.statements.draw", " msi.gama.metamodel.shape",
-			"msi.gama.common.interfaces", "msi.gama.runtime", "java.lang", "msi.gama.metamodel.agent", "msi.gaml.types",
-			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.tree",
-			"msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
-			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gama.common.interfaces",
-			"msi.gama.extensions.messaging", "msi.gama.metamodel.population" };
-
+	/** The context. */
 	private ProcessorContext context;
-	public static final String JAVA_HEADER;
+
+	/** The Constant JAVA_HEADER. */
+	// public static final String JAVA_HEADER;
+
+	/** The count. */
 	int count;
+
+	/** The begin. */
 	long begin = 0;
+
+	/** The complete. */
 	long complete = 0;
 
-	static {
-		final StringBuilder sb = new StringBuilder();
-		writeImmutableHeader(sb);
-		JAVA_HEADER = sb.toString();
-	}
+	// static {
+	// final StringBuilder sb = new StringBuilder();
+	// writeImmutableHeader(sb);
+	// JAVA_HEADER = sb.toString();
+	// }
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment pe) {
@@ -94,6 +93,9 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		return true;
 	}
 
+	/**
+	 * Generate tests.
+	 */
 	public void generateTests() {
 		final TestProcessor tp = (TestProcessor) processors.get(tests.class);
 		if (tp.hasElements()) {
@@ -108,6 +110,12 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		// ExamplesToTests.createTests(context, dp.document);
 	}
 
+	/**
+	 * Generate java source.
+	 *
+	 * @param file
+	 *            the file
+	 */
 	public void generateJavaSource(final FileObject file) {
 		try (Writer source = context.createSourceWriter(file)) {
 			if (source != null) { source.append(writeJavaBody()); }
@@ -119,13 +127,15 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		}
 	}
 
-	protected static void writeImmutableHeader(final StringBuilder sb) {
-		for (final String element : IMPORTS) {
-			sb.append(ln).append("import ").append(element).append(".*;");
-		}
-		for (final String element : EXPLICIT_IMPORTS) {
-			sb.append(ln).append("import ").append(element).append(";");
-		}
+	/**
+	 * Write immutable header.
+	 *
+	 * @param sb
+	 *            the sb
+	 */
+	protected void writeImmutableHeader(final StringBuilder sb) {
+		for (final String element : context.imports) { sb.append(ln).append("import ").append(element).append("*;"); }
+		for (final String element : EXPLICIT_IMPORTS) { sb.append(ln).append("import ").append(element).append(";"); }
 		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
 		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
@@ -136,6 +146,12 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
 	}
 
+	/**
+	 * Write mutable header.
+	 *
+	 * @param sb
+	 *            the sb
+	 */
 	protected void writeMutableHeader(final StringBuilder sb) {
 		processors.values().forEach(p -> {
 			if (p.outputToJava() && p.hasElements()) {
@@ -147,14 +163,19 @@ public class GamaProcessor extends AbstractProcessor implements Constants {
 		sb.append(ln).append('}');
 	}
 
+	/**
+	 * Write java body.
+	 *
+	 * @return the string builder
+	 */
 	public StringBuilder writeJavaBody() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("package ").append(PACKAGE_NAME).append(".").append(context.shortcut).append(';');
-		sb.append(ln).append(JAVA_HEADER);
+		sb.append(ln);
+		writeImmutableHeader(sb);
 		writeMutableHeader(sb);
-		processors.values().forEach(p -> {
-			if (p.outputToJava() && p.hasElements()) { p.writeJavaBody(sb, context); }
-		});
+		processors.values()
+				.forEach(p -> { if (p.outputToJava() && p.hasElements()) { p.writeJavaBody(sb, context); } });
 
 		sb.append(ln).append('}');
 		return sb;
