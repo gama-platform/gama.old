@@ -61,6 +61,12 @@ import msi.gaml.types.IType;
 				optional = false,
 				doc = @doc ("The size of the sample")
 			),
+			@facet (
+					name = SobolExploration.RESAMPLE,
+					type = IType.ID,
+					optional = true,
+					doc = @doc ("How many time an explored point in space should be resampled")
+			),
 			@facet(
 				name = IKeyword.BATCH_OUTPUTS,
 				type = IType.LIST,
@@ -72,7 +78,7 @@ import msi.gaml.types.IType;
 		omissible = IKeyword.NAME
 		)
 @doc (
-		value = "This algorithm runs a Sobol exploration",
+		value = "This algorithm runs a Sobol exploration - it has been built upon the moea framework at https://github.com/MOEAFramework/MOEAFramework",
 		usages = { 
 			@usage (
 				value = "For example: ",
@@ -87,7 +93,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 	protected static final String SAMPLE_SIZE = "sample";
 	protected int sample_size;
 	
+	protected static final String RESAMPLE = "resample";
+	protected int resample = 1000;
+	
 	protected List<ParametersSet> currentParametersSet;
+	
+	private String sobolReport;
 	
 	public SobolExploration(IDescription desc) { super(desc); }
 
@@ -99,7 +110,11 @@ public class SobolExploration extends AExplorationAlgorithm {
 		sets.add(new ParametersSet());
 		final List<ParametersSet> solutions = buildParameterSets(scope,sets, 0);
 		currentExperiment.launchSimulationsWithSolution(solutions);
+		buildSobolReport();
 	}
+
+	@Override
+	public String getReport() {return sobolReport;}
 	
 	@Override
 	public void setChildren(Iterable<? extends ISymbol> children) { }
@@ -185,6 +200,86 @@ public class SobolExploration extends AExplorationAlgorithm {
 				return set;
 		}
 	}
+	
+	/**
+	 * Construct the Sobol report as made in moeaframework
+	 */
+	private void buildSobolReport() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("Parameter Sensitivity [Confidence]");
+
+		sb.append("\nFirst-Order Effects");
+		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
+			double[] a0 = new double[sample_size];
+			double[] a1 = new double[sample_size];
+			double[] a2 = new double[sample_size];
+
+			for (int i = 0; i < sample_size; i++) {
+				a0[i] = A[i];
+				a1[i] = C_A[i][j];
+				a2[i] = B[i];
+			}
+
+			sb.append("  ");
+			sb.append(currentExperiment.getParametersToExplore().get(j).getName());
+			sb.append(' ');
+			sb.append(computeFirstOrder(a0, a1, a2, sample_size));
+			sb.append(" [");
+			sb.append(computeFirstOrderConfidence(a0, a1, a2, sample_size, resample));
+			sb.append("]\n");
+		}
+
+		sb.append("\nTotal-Order Effects");
+		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
+			double[] a0 = new double[sample_size];
+			double[] a1 = new double[sample_size];
+			double[] a2 = new double[sample_size];
+
+			for (int i = 0; i < sample_size; i++) {
+				a0[i] = A[i];
+				a1[i] = C_A[i][j];
+				a2[i] = B[i];
+			}
+
+			sb.append("  ");
+			sb.append(currentExperiment.getParametersToExplore().get(j).getName());
+			sb.append(' ');
+			sb.append(computeTotalOrder(a0, a1, a2, sample_size));
+			sb.append(" [");
+			sb.append(computeTotalOrderConfidence(a0, a1, a2, sample_size, resample));
+			sb.append("]\n");
+		}
+
+		sb.append("\nSecond-Order Effects");
+		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
+			for (int k = j + 1; k < currentExperiment.getParametersToExplore().size(); k++) {
+				double[] a0 = new double[sample_size];
+				double[] a1 = new double[sample_size];
+				double[] a2 = new double[sample_size];
+				double[] a3 = new double[sample_size];
+				double[] a4 = new double[sample_size];
+
+				for (int i = 0; i < sample_size; i++) {
+					a0[i] = A[i];
+					a1[i] = C_B[i][j];
+					a2[i] = C_A[i][k];
+					a3[i] = C_A[i][j];
+					a4[i] = B[i];
+				}
+
+				sb.append("  ");
+				sb.append(currentExperiment.getParametersToExplore().get(j).getName());
+				sb.append(" * ");
+				sb.append(currentExperiment.getParametersToExplore().get(k).getName());
+				sb.append(' ');
+				sb.append(computeSecondOrder(a0, a1, a2, a3, a4, sample_size));
+				sb.append(" [");
+				sb.append(computeSecondOrderConfidence(a0, a1, a2, a3, a4, sample_size, resample));
+				sb.append("]\n");
+			}
+		}
+		
+	}
 
 	// ------------------------------------------------------------------- //
 	// 					COPY PAST FROM MOEAFRAMEWORK					   //
@@ -210,8 +305,6 @@ public class SobolExploration extends AExplorationAlgorithm {
 	 * the corresponding original parameter.
 	 */
 	private double[][] C_B;
-	
-	
 	
 	/**
 	 * Returns the first-order confidence interval of the i-th parameter.  The

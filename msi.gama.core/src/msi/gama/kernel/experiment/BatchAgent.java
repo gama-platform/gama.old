@@ -20,14 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import org.jfree.data.statistics.Statistics;
-import org.moeaframework.core.FitnessEvaluator;
-
-import com.google.common.base.Functions;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -178,18 +173,24 @@ public class BatchAgent extends ExperimentAgent {
 				if (memorize) {fitnessValues.add(lastFitnessValue);}
 			}
 			out.put(IKeyword.FITNESS,lastFitnessValue);
+			final FileOutput output = getSpecies().getLog();
+			if (output != null) { getSpecies().getLog().doRefreshWriteAndClose(sol, out); }
 		} else {
-			final IExpression outputs = ((AExplorationAlgorithm) getSpecies().getExplorationAlgorithm()).getOutputs();
+			AExplorationAlgorithm exp = (AExplorationAlgorithm) getSpecies().getExplorationAlgorithm();
+			final IExpression outputs = exp.getOutputs();
 			final List<String> outputVals = 
 					GamaListFactory.create(sim.getScope(), Types.STRING, Cast.asList(sim.getScope(), outputs.value(sim.getScope())));
 			for (String s : outputVals) {
 				Object v = sim.hasAttribute(s) ? sim.getDirectVarValue(getScope(), s) : null;
 				trackedValues.put(s, v); out.put(s, v);
 			}
-			
+			final FileOutput output = getSpecies().getLog();
+			if (output != null) { 
+				getSpecies().getLog().doRefreshWriteAndClose(sol, out);
+				if (!exp.getReport().equals("")) { getSpecies().getLog().doWriteReportAndClose(exp.getReport()); }
+			}
 		}
-		final FileOutput output = getSpecies().getLog();
-		if (output != null) { getSpecies().getLog().doRefreshWriteAndClose(sol, out); }
+		
 		sim.dispose();
 		return out;
 	}

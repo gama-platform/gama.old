@@ -53,23 +53,8 @@ import msi.gaml.types.IType;
 						type = IType.LIST,
 						of = IType.MAP,
 						optional = false,
-						doc = @doc ("the list of parameter sets to explore; a parameter set is defined by a map: key: name of the variable, value: expression for the value of the variable")),
-				@facet (
-						name = IKeyword.MAXIMIZE,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc ("the value the algorithm tries to maximize")),
-				@facet (
-						name = IKeyword.MINIMIZE,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc ("the value the algorithm tries to minimize")),
-				@facet (
-						name = IKeyword.AGGREGATION,
-						type = IType.LABEL,
-						optional = true,
-						values = { IKeyword.MIN, IKeyword.MAX },
-						doc = @doc ("the agregation method")) },
+						doc = @doc ("the list of parameter sets to explore; a parameter set is defined by a map: key: name of the variable, value: expression for the value of the variable"))
+				},
 		omissible = IKeyword.NAME)
 @doc (
 		value = "This algorithm run simulations with the given parameter sets",

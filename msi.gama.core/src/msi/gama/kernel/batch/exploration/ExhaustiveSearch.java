@@ -50,23 +50,8 @@ import msi.gaml.types.IType;
 				type = IType.ID,
 				optional = false,
 				internal = true,
-				doc = @doc ("The name of the method. For internal use only")),
-				@facet (
-						name = IKeyword.MAXIMIZE,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc ("the value the algorithm tries to maximize")),
-				@facet (
-						name = IKeyword.MINIMIZE,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc ("the value the algorithm tries to minimize")),
-				@facet (
-						name = IKeyword.AGGREGATION,
-						type = IType.LABEL,
-						optional = true,
-						values = { IKeyword.MIN, IKeyword.MAX },
-						doc = @doc ("The aggregation method to use (either min or max)")) },
+				doc = @doc ("The name of the method. For internal use only")) 
+		},
 		omissible = IKeyword.NAME)
 @doc (
 		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. See [batch161 the batch dedicated page].",

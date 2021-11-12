@@ -87,6 +87,11 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 	public IExpression getOutputs() {return outputsExpression;}
 	
 	/**
+	 * 
+	 */
+	public String getReport() { return "";}
+	
+	/**
 	 * Main method to build the set of points to visit during the exploration of the model
 	 * 
 	 * @param scope

@@ -405,7 +405,30 @@ public class FileOutput extends AbstractOutput {
 	public void update() throws GamaRuntimeException {
 		writeToFile(getScope().getClock().getCycle());
 	}
-
+	
+	public void doWriteReportAndClose(final String report) {
+		switch (type) {
+			case XML:
+				break;
+			case TEXT:
+				try (FileWriter fileWriter = new FileWriter(file, true)) {
+					fileWriter.write(report);
+					fileWriter.flush();
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			case CSV:
+				break;
+		}
+	}
+ 
+	/**
+	 * Main method to write down a set of given values for a single a point in the parameter space
+	 * @param sol
+	 * @param outputs
+	 * @throws GamaRuntimeException
+	 */
 	public void doRefreshWriteAndClose(final ParametersSet sol, final IMap<String,Object> outputs) throws GamaRuntimeException {
 		setSolution(sol);
 		if (outputs == null || outputs.isEmpty()) {
