@@ -1153,7 +1153,7 @@ public class DrivingSkill extends MovingSkill {
 				}
 				List<GamaPoint> otherPts = otherInRoad.getGeometry().getPoints();
 				// Starting point of last segment of other incoming road
-				GamaPoint p = otherPts.get(otherPts.size() - 2); 
+				GamaPoint p = otherPts.get(otherPts.size() - 2);
 				// Check if this road is on the right or left side of the current vehicle's moving direction
 				int side = Utils.sideOfPoint(a, b, p);
 				boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
@@ -1655,6 +1655,7 @@ public class DrivingSkill extends MovingSkill {
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
 				// check traffic lights and vehicles coming from other roads
 				if (!readyToCross(scope, vehicle, currentTarget, newRoad)) {
+					setSpeed(vehicle, 0.0);
 					return;
 				}
 				
