@@ -38,6 +38,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
@@ -1153,7 +1154,7 @@ public class DrivingSkill extends MovingSkill {
 				}
 				List<GamaPoint> otherPts = otherInRoad.getGeometry().getPoints();
 				// Starting point of last segment of other incoming road
-				GamaPoint p = otherPts.get(otherPts.size() - 2); 
+				GamaPoint p = otherPts.get(otherPts.size() - 2);
 				// Check if this road is on the right or left side of the current vehicle's moving direction
 				int side = Utils.sideOfPoint(a, b, p);
 				boolean otherRoadIsPriortized = priorityRoads != null && priorityRoads.contains(otherInRoad);
@@ -1616,6 +1617,13 @@ public class DrivingSkill extends MovingSkill {
 			final boolean isDrivingRandomly,
 			final GamaSpatialGraph graph,
 			final Map<IAgent, Double> roadProba) {
+		if (GamaExecutorService.CONCURRENCY_SPECIES.getValue()) {
+			throw GamaRuntimeException.error(
+					"Driving agents cannot be scheduled in parallel. " +
+					"Please disable \"Make species schedule theirs agents in parallel\" " +
+					"in Preferences > Execution > Parallelism.", scope);
+		}
+
 		IAgent vehicle = getCurrentAgent(scope);
 		ISpecies context = vehicle.getSpecies();
 
@@ -1655,6 +1663,7 @@ public class DrivingSkill extends MovingSkill {
 				boolean violatingOneway = !loc.equals(srcNodeLoc);
 				// check traffic lights and vehicles coming from other roads
 				if (!readyToCross(scope, vehicle, currentTarget, newRoad)) {
+					setSpeed(vehicle, 0.0);
 					return;
 				}
 				
