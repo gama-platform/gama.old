@@ -82,9 +82,25 @@ public class GamaColorType extends GamaType<GamaColor> {
 				try {
 					c = new GamaColor(Color.decode(s));
 				} catch (final NumberFormatException e) {
-					final GamaRuntimeException ex =
-							GamaRuntimeException.error("'" + s + "' is not a valid color name", scope);
-					throw ex;
+					c = null;
+					if (s != null  && s.contains("rgb")) {
+						String sClean = s.replace(" ", "").replace("rgb","").replace("(", "").replace(")", "");
+						String[] sval = sClean.split(",");
+						if (sval.length >= 3) {
+							Integer r = Integer.valueOf(sval[0]);
+							Integer g = Integer.valueOf(sval[1]);
+							Integer b = Integer.valueOf(sval[2]);
+							Integer alpha =sval.length == 4 ?  Integer.valueOf(sval[3]) : null;
+							if (r != null && b != null && g != null) {
+								c = new GamaColor(r,g, b, alpha == null ? 255 :alpha);
+							}
+						}
+					}
+					if (c == null) {
+						final GamaRuntimeException ex =
+								GamaRuntimeException.error("'" + s + "' is not a valid color name", scope);
+						throw ex;
+					}
 				}
 				GamaColor.colors.put(s, c);
 			}
