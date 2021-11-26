@@ -1266,7 +1266,7 @@ public class DrivingSkill extends MovingSkill {
 			}
 			path = PathFactory.newInstance(graph, source, target, edges);
 		} else {
-			throw GamaRuntimeException.error("either `nodes` or `target` must be specified", scope);
+			throw GamaRuntimeException.error("one of `nodes` or `target` must be non nil", scope);
 		}
 
 		// restore graph direction
