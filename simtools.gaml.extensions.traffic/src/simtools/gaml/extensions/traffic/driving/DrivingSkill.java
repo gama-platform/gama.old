@@ -1372,14 +1372,16 @@ public class DrivingSkill extends MovingSkill {
 	)
 	public void primDrive(final IScope scope) throws GamaRuntimeException {
 		IAgent vehicle = getCurrentAgent(scope);
-		if (getFinalTarget(vehicle) == null) {
-			String msg = String.format("%s is not driving because it has no final target", 
+		IPath path = getCurrentPath(vehicle);
+		if (path == null) {
+			String msg = String.format(
+					"%s is not driving because it has not been assigned a valid path. " +
+					"The action `compute_path` might have been used with the same source and target node.",
 					vehicle.getName());
 			throw GamaRuntimeException.warning(msg, scope);
 		}
 		// Initialize the first road
 		if (getCurrentIndex(vehicle) == -1) {
-			IPath path = getCurrentPath(vehicle);
 			setNextRoad(vehicle, (IAgent) path.getEdgeList().get(0));
 		}
 		moveAcrossRoads(scope, false, null, null);
