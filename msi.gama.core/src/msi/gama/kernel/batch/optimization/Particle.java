@@ -65,7 +65,7 @@ class Particle {
     public double eval () {
     	Double fitness = testedSolutions.get(position);
 		if (fitness == null) {
-			fitness = (Double) currentExperiment.launchSimulationsWithSolution(position).get(IKeyword.FITNESS);
+			fitness = (Double) currentExperiment.launchSimulationsWithSolution(position).get(IKeyword.FITNESS).get(0);
 			testedSolutions.put(position, fitness);
 		}
 		return fitness.doubleValue();

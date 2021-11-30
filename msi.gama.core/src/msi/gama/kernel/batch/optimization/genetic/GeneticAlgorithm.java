@@ -289,7 +289,8 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
 		if (fitness == null) {
-			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol).get(IKeyword.FITNESS);
+			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol)
+					.get(IKeyword.FITNESS).get(0);
 		}
 		testedSolutions.put(sol, fitness);
 		chromosome.setFitness(fitness);
@@ -359,7 +360,8 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				}
 				final double neighborFitness;
 				if (!testedSolutions.containsKey(neighborSol)) {
-					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
+					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
+							.get(IKeyword.FITNESS).get(0);
 					testedSolutions.put(neighborSol, neighborFitness);
 				} else {
 					neighborFitness = testedSolutions.get(neighborSol);

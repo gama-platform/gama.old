@@ -113,10 +113,11 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 		}
 		return false;
 	}
+	
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestSolution(this.solutionInit);
-		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution()).get(IKeyword.FITNESS);
+		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution()).get(IKeyword.FITNESS).get(0);
 		initializeTestedSolutions();
 		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
@@ -145,7 +146,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
 

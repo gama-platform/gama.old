@@ -22,6 +22,7 @@ global {
 
 	int num_dead <- 0;
 	init {
+		float t <- machine_time;
 		create people number: number_people ;
         ask (number_I among people) {
         	is_infected <- true;
@@ -105,10 +106,10 @@ experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( ti
 // This experiment explores two parameters with an exhaustive strategy,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 // in order to find the best combination of parameters to minimize the number of infected people
-experiment 'Exhaustive optimization' type: batch repeat: 3 keep_seed: true until: ( time > 5000 ) {
+experiment Exhaustive type: batch repeat: 3 keep_seed: true until: ( time > 5000 ) {
 	parameter 'Infection rate' var: infection_rate among: [ 0.1 , 0.5 , 1.0 ];
 	parameter 'Probability of dying:' var: dying_proba min: 0.1 max: 0.2 step:0.05;
-	method exhaustive minimize: num_dead;
+	method exhaustive;
 	
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
@@ -127,7 +128,18 @@ experiment 'Exhaustive optimization' type: batch repeat: 3 keep_seed: true until
 // This experiment tests two explicit parameters sets,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 experiment Explicit type: batch repeat: 3 keep_seed: true until: ( time > 5000 ) {
-	method explicit parameter_sets: list([map(["infection_rate"::0.1, "dying_proba":: 0.01]),map(["infection_rate"::0.5, "dying_proba":: 0.2])]) minimize: num_dead;
+	method explicit parameter_sets: [
+		["infection_rate"::0.1, "dying_proba":: 0.01],
+		["infection_rate"::0.5, "dying_proba":: 0.2],
+		["infection_rate"::1.0, "dying_proba":: 0.05],
+		["infection_rate"::0.5, "dying_proba":: 0.1]
+	];
+}
+
+experiment Sobol type: batch repeat: 10 keep_seed:true until:( time > 5000 ) {
+	parameter 'Infection rate' var: infection_rate min:0.0 max:1.0 step:0.01;
+	parameter 'Probability of dying' var:dying_proba min:0.01 max:0.25 step:0.001;
+	method sobol outputs:["num_dead"] sample:10;
 }
 
 // This experiment explores two parameters with a PSO strategy,

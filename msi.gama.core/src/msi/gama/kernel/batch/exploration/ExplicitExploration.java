@@ -86,7 +86,6 @@ public class ExplicitExploration extends AExplorationAlgorithm {
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {

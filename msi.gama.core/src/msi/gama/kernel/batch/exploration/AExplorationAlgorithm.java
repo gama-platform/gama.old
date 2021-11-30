@@ -45,13 +45,13 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 
 	@Override
 	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
-		exp.add(new ParameterAdapter("Calibration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+		exp.add(new ParameterAdapter("Exploration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
 			public Object value() {
 				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
 				final String methodName = IKeyword.METHODS[classes.indexOf(AExplorationAlgorithm.this.getClass())];
-				return "Method " + methodName + " | " + " outputs " + getOutputs().literalValue() ;
+				return "Method " + methodName + " | " + (getOutputs()==null ? "No specified outputs" : (" outputs " + getOutputs().literalValue())) ;
 			}
 
 		});

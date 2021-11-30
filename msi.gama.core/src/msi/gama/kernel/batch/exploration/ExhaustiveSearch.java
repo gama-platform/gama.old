@@ -174,6 +174,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	private void testSolutionsAll(final IScope scope) {
 		List<ParametersSet> sets = new ArrayList<>();
 		sets.add(new ParametersSet());
+		System.out.println("Xp launch = testSolutionAll "+this);
 		final List<ParametersSet> solutions = buildParameterSets(scope,sets, 0);
 		currentExperiment.launchSimulationsWithSolution(solutions);
 	}

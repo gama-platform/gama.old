@@ -46,7 +46,9 @@ import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaContainerType;
 import msi.gaml.types.IType;
+import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
@@ -122,7 +124,6 @@ public class BatchAgent extends ExperimentAgent {
 		return false;
 	}
 
-	@SuppressWarnings ("null")
 	@Override
 	public void reset() {
 		// We first save the results of the various simulations
@@ -178,16 +179,18 @@ public class BatchAgent extends ExperimentAgent {
 		} else {
 			AExplorationAlgorithm exp = (AExplorationAlgorithm) getSpecies().getExplorationAlgorithm();
 			final IExpression outputs = exp.getOutputs();
-			final List<String> outputVals = 
-					GamaListFactory.create(sim.getScope(), Types.STRING, Cast.asList(sim.getScope(), outputs.value(sim.getScope())));
-			for (String s : outputVals) {
-				Object v = sim.hasAttribute(s) ? sim.getDirectVarValue(getScope(), s) : null;
-				trackedValues.put(s, v); out.put(s, v);
-			}
-			final FileOutput output = getSpecies().getLog();
-			if (output != null) { 
-				getSpecies().getLog().doRefreshWriteAndClose(sol, out);
-				if (!exp.getReport().equals("")) { getSpecies().getLog().doWriteReportAndClose(exp.getReport()); }
+			if (outputs!=null) {
+				final List<String> outputVals = 
+						GamaListFactory.create(sim.getScope(), Types.STRING, Cast.asList(sim.getScope(), outputs.value(sim.getScope())));
+				for (String s : outputVals) {
+					Object v = sim.hasAttribute(s) ? sim.getDirectVarValue(getScope(), s) : null;
+					trackedValues.put(s, v); out.put(s, v);
+				}
+				final FileOutput output = getSpecies().getLog();
+				if (output != null) { 
+					getSpecies().getLog().doRefreshWriteAndClose(sol, out);
+					if (!exp.getReport().equals("")) { getSpecies().getLog().doWriteReportAndClose(exp.getReport()); }
+				}
 			}
 		}
 		
@@ -239,10 +242,14 @@ public class BatchAgent extends ExperimentAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public Map<ParametersSet, Map<String, List<Object>>> launchSimulationsWithSolution(final List<ParametersSet> sols) throws GamaRuntimeException {
+	public IMap<ParametersSet, Map<String, List<Object>>> launchSimulationsWithSolution(final List<ParametersSet> sols) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
-		Map<ParametersSet,Map<String,List<Object>>> res = GamaMapFactory.create();
+		/* Results gives for each "parameter set" (a point in the parameter space) a mapping between the key
+		 * outputs of interest (as stated in facet 'outputs' or fitness if calibration process) and any
+		 * results per repetition
+		 */
+		IMap<ParametersSet,Map<String,List<Object>>> res = GamaMapFactory.create();
 		if (pop == null) return res;
 		
 		final List<Map<String, Object>> sims = new ArrayList<>();
@@ -292,7 +299,11 @@ public class BatchAgent extends ExperimentAgent {
 							
 					IMap<String,Object> localRes = manageOutputAndCloseSimulation(agent, ps, false);
 							
-					if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
+					// Manage replications, but sometime we can have several time the same parameter set without replications
+					// See Saltelli sampling in the Sobol analysis for instance
+					if (seeds.length == 1 && res.containsKey(ps)) { res.put((ParametersSet)ps.clone(), GamaMapFactory.create()); }
+					else if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
+					
 					for (String output : localRes.keySet()) { 
 						if (!res.get(ps).containsKey(output)) { res.get(ps).put(output, GamaListFactory.create()); }
 						res.get(ps).get(output).add(localRes.get(output));
@@ -365,10 +376,10 @@ public class BatchAgent extends ExperimentAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public Map<String, Object> launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
+	public Map<String, List<Object>> launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
-		Map<String, Object> outputs = GamaMapFactory.create();
+		Map<String, List<Object>> outputs = GamaMapFactory.create();
 		
 		if (pop == null) return outputs;
 		currentSolution = new ParametersSet(sol);
@@ -412,7 +423,13 @@ public class BatchAgent extends ExperimentAgent {
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
-						if (!getSpecies().keepsSimulations()) { outputs = manageOutputAndCloseSimulation(agent,currentSolution,true); }
+						if (!getSpecies().keepsSimulations()) { 
+							Map<String, Object> out = manageOutputAndCloseSimulation(agent,currentSolution,true);
+							for (String out_vars : out.keySet()) {
+								if (!outputs.containsKey(out_vars)) { outputs.put(out_vars, GamaListFactory.create()); }
+								outputs.get(out_vars).add(out.get(out_vars));
+							}
+						}
 					}
 				}
 				// We inform the status line
@@ -461,7 +478,7 @@ public class BatchAgent extends ExperimentAgent {
 			lastFitness = fitnessCombination == AOptimizationAlgorithm.C_MAX ? Collections.max(fitnessValues)
 					: fitnessCombination == AOptimizationAlgorithm.C_MIN ? Collections.min(fitnessValues)
 							: Statistics.calculateMean(fitnessValues);
-	
+			outputs.put(IKeyword.FITNESS, GamaListFactory.createWithoutCasting(Types.FLOAT, lastFitness));
 			// we update the best solution found so far
 			oAlgo.updateBestFitness(lastSolution, lastFitness);
 		}
@@ -494,7 +511,11 @@ public class BatchAgent extends ExperimentAgent {
 		addSpecificParameters(params);
 		return params;
 	}
-
+	
+	/**
+	 * Defines the output to display in the Gama GUI (I suppose @chapuisk)
+	 * @param params
+	 */
 	public void addSpecificParameters(final List<IParameter.Batch> params) {
 		
 		final IExploration algo = getSpecies().getExplorationAlgorithm();
@@ -534,6 +555,16 @@ public class BatchAgent extends ExperimentAgent {
 				}
 	
 			});
+			
+			params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+
+				@Override
+				public String value() {
+					if (lastFitness == null) return "-";
+					return lastFitness.toString();
+				}
+
+			});
 		}
 	
 		params.add(new ParameterAdapter("Last parameeter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
@@ -543,16 +574,6 @@ public class BatchAgent extends ExperimentAgent {
 			public String value() {
 				if (lastSolution == null) return "-";
 				return lastSolution.toString();
-			}
-
-		});
-		
-		params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
-			@Override
-			public String value() {
-				if (lastFitness == null) return "-";
-				return lastFitness.toString();
 			}
 
 		});

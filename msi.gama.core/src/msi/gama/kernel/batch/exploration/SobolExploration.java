@@ -3,9 +3,12 @@ package msi.gama.kernel.batch.exploration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import org.moeaframework.core.PRNG;
+import javax.measure.spi.SystemOfUnits;
+
 import org.moeaframework.util.sequence.Saltelli;
 import org.moeaframework.util.sequence.Sequence;
 
@@ -24,14 +27,18 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 
 /**
@@ -59,13 +66,7 @@ import msi.gaml.types.IType;
 				name = SobolExploration.SAMPLE_SIZE,
 				type = IType.ID,
 				optional = false,
-				doc = @doc ("The size of the sample")
-			),
-			@facet (
-					name = SobolExploration.RESAMPLE,
-					type = IType.ID,
-					optional = true,
-					doc = @doc ("How many time an explored point in space should be resampled")
+				doc = @doc ("The size of the sample for the sobol sequence")
 			),
 			@facet(
 				name = IKeyword.BATCH_OUTPUTS,
@@ -83,7 +84,7 @@ import msi.gaml.types.IType;
 			@usage (
 				value = "For example: ",
 				examples = { @example (
-						value = "method sobol facet_1:fv; ",
+						value = "method sobol sample_size:100; ",
 						isExecutable = false) }
 			) 
 		}
@@ -91,30 +92,39 @@ import msi.gaml.types.IType;
 public class SobolExploration extends AExplorationAlgorithm {
 
 	protected static final String SAMPLE_SIZE = "sample";
-	protected int sample_size;
+	protected int sample;
+	protected int _sample;
+	protected int _resample = 1000; // Bootstraping for confidence interval
 	
-	protected static final String RESAMPLE = "resample";
-	protected int resample = 1000;
-	
-	protected List<ParametersSet> currentParametersSet;
-	
-	private String sobolReport;
+	/* The parameter space defined by the Sobol sequence (Satteli sampling method) */
+	protected List<ParametersSet> currentParametersSpace;
+	/* All the outputs for each simulation */
+	protected IMap<ParametersSet,Map<String,List<Object>>> res_outputs;
+	/* Sobol indexes for every output of interest */
+	private Map<String,Map<Batch,List<Double>>> sobolNumReport;
 	
 	public SobolExploration(IDescription desc) { super(desc); }
 
 	// ----------------------------------------------------------------- //
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
-		List<ParametersSet> sets = new ArrayList<>();
-		sets.add(new ParametersSet());
-		final List<ParametersSet> solutions = buildParameterSets(scope,sets, 0);
-		currentExperiment.launchSimulationsWithSolution(solutions);
-		buildSobolReport();
+		List<ParametersSet> solutions = currentParametersSpace == null ? buildParameterSets(scope, new ArrayList<>(), 0) : currentParametersSpace;
+		if (solutions.size()!=_sample) {GamaRuntimeException.error("Saltelli sample should be "+_sample+" but is "+solutions.size(), scope);}
+		/* Disable repetitions / repeat argument */
+		currentExperiment.setSeeds(new Double[1]);
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
+		} else {
+			res_outputs = GamaMapFactory.create();
+			for (ParametersSet sol : solutions) { res_outputs.put(sol,currentExperiment.launchSimulationsWithSolution(sol)); }
+		}
+		computeSobolIndexes(scope);
 	}
 
 	@Override
-	public String getReport() {return sobolReport;}
+	public String getReport() {return buildSobolReport();}
 	
 	@Override
 	public void setChildren(Iterable<? extends ISymbol> children) { }
@@ -122,22 +132,20 @@ public class SobolExploration extends AExplorationAlgorithm {
 	// ----------------------------------------------------------------- //
 	
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
-		this.sample_size = Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+		this.sample = Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		
 		final List<IParameter.Batch> parameters = currentExperiment.getParametersToExplore();
-		this.sample_size *= (2 * parameters.size() + 2);
+		/* times 2 the number of parameters for the bootstraping (Saltelli 2002) and +2 because of sample A & B */
+		this._sample = this.sample * (2 * parameters.size() + 2); 
 		
 		Sequence seq = new Saltelli();
-		PRNG.setRandom(scope.getRandom().getGenerator());
+		double[][] samples = seq.generate(_sample, parameters.size());
 		
-		double[][] samples = seq.generate(sample_size, parameters.size());
-		
-		for (int i = 0; i < sample_size; i++) {
+		for (int i = 0; i < _sample; i++) {
 			
-			ParametersSet origi = new ParametersSet();
-			origi = addParameterValue(scope,origi,parameters.get(0),samples[i][0]); 
+			ParametersSet origi = new ParametersSet(); 
 
-			for (int j = 1; j < parameters.size(); j++) {
+			for (int j = 0; j < parameters.size(); j++) {
 				origi = addParameterValue(scope,origi,parameters.get(j),samples[i][j]);
 			}
 
@@ -145,7 +153,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		
 		}
 		
-		currentParametersSet = sets;
+		currentParametersSpace = sets;
 		
 		return sets;
 	}
@@ -201,84 +209,116 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void computeSobolIndexes(IScope scope) {
+		
+		/* Retrieve the output variable names */
+		final List<String> outputVals = GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, getOutputs().value(scope)));
+		
+		/* Retrieve the parameters */
+		List<Batch> params = currentExperiment.getParametersToExplore();
+		
+		/* Build Sobol outputs */
+		sobolNumReport = GamaMapFactory.create();
+		
+		// TODO : i don't know why it is not raised ????
+		if (this.res_outputs.length(scope) != this._sample || sample * (2 + params.size() * 2) != _sample) {
+			GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
+		}
+		
+				
+		for (String v : outputVals) {
+			
+			/* INIT MOEA FRAMEWORK SOBOL SEQUENCE */
+			A = new double[sample];
+			B = new double[sample];
+			C_A = new double[sample][params.size()];
+			C_B = new double[sample][params.size()];
+
+			System.out.println("Number of simulation is "+res_outputs.length(scope)+" [should be "+_sample+"]");
+			
+			Iterator<Map<String,List<Object>>> outIter = res_outputs.iterable(scope).iterator();
+			
+			for (int i = 0; i < sample; i++) {
+				// TODO : does it has to be continuous output variables ? How to check for int for example ?
+				A[i] = Double.valueOf(outIter.next().get(v).get(0).toString());
+
+				for (int j = 0; j < params.size(); j++) {
+					C_A[i][j] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+				}
+
+				for (int j = 0; j < params.size(); j++) {
+					C_B[i][j] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+				}
+
+				B[i] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+			}
+			
+			/* Create one Sobol report entry for output variable 'v' */
+			sobolNumReport.put(v,GamaMapFactory.create());
+			List<Double> sobolIndexes = GamaListFactory.create();
+			
+			for (int j = 0; j < params.size(); j++) {
+				double[] a0 = new double[sample];
+				double[] a1 = new double[sample];
+				double[] a2 = new double[sample];
+
+				for (int i = 0; i < sample; i++) {
+					a0[i] = A[i];
+					a1[i] = C_A[i][j];
+					a2[i] = B[i];
+				}
+				
+				// First order
+				sobolIndexes.add(computeFirstOrder(a0, a1, a2, sample));
+				sobolIndexes.add(computeFirstOrderConfidence(scope, a0, a1, a2, sample, _resample));
+				// Total order
+				sobolIndexes.add(computeTotalOrder(a0, a1, a2, sample));
+				sobolIndexes.add(computeTotalOrderConfidence(scope, a0, a1, a2, sample, _resample));
+				
+				sobolNumReport.get(v).put(params.get(j), sobolIndexes);
+			}	
+			
+			// TODO : add second ordered Sobol index, and may be look for other decomposition of variance (like all A, only A+B)
+			
+		}
+	}
+	
 	/**
 	 * Construct the Sobol report as made in moeaframework
 	 */
-	private void buildSobolReport() {
+	private String buildSobolReport() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Parameter Sensitivity [Confidence]");
+		final String ret = "\n";
+		final String tab = "\t";
+		final String eq = " = ";
+		sb.append("Parameter Sensitivity (Confidence)");
+		sb.append(ret).append("-----");
 
-		sb.append("\nFirst-Order Effects");
-		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
-			double[] a0 = new double[sample_size];
-			double[] a1 = new double[sample_size];
-			double[] a2 = new double[sample_size];
-
-			for (int i = 0; i < sample_size; i++) {
-				a0[i] = A[i];
-				a1[i] = C_A[i][j];
-				a2[i] = B[i];
+		for (String var : sobolNumReport.keySet()) {
+			sb.append(ret).append("Variable: "+var);
+			Map<Batch,List<Double>> sobRes = sobolNumReport.get(var);
+			
+			sb.append(ret).append("1. First-Order Effects");
+			for (Batch para : sobRes.keySet()) {
+				sb.append(ret).append(tab);
+				sb.append(para.toString());
+				sb.append(eq)
+					.append(sobRes.get(para).get(0))
+					.append(" (").append(sobRes.get(para).get(1)).append(")");
 			}
-
-			sb.append("  ");
-			sb.append(currentExperiment.getParametersToExplore().get(j).getName());
-			sb.append(' ');
-			sb.append(computeFirstOrder(a0, a1, a2, sample_size));
-			sb.append(" [");
-			sb.append(computeFirstOrderConfidence(a0, a1, a2, sample_size, resample));
-			sb.append("]\n");
-		}
-
-		sb.append("\nTotal-Order Effects");
-		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
-			double[] a0 = new double[sample_size];
-			double[] a1 = new double[sample_size];
-			double[] a2 = new double[sample_size];
-
-			for (int i = 0; i < sample_size; i++) {
-				a0[i] = A[i];
-				a1[i] = C_A[i][j];
-				a2[i] = B[i];
-			}
-
-			sb.append("  ");
-			sb.append(currentExperiment.getParametersToExplore().get(j).getName());
-			sb.append(' ');
-			sb.append(computeTotalOrder(a0, a1, a2, sample_size));
-			sb.append(" [");
-			sb.append(computeTotalOrderConfidence(a0, a1, a2, sample_size, resample));
-			sb.append("]\n");
-		}
-
-		sb.append("\nSecond-Order Effects");
-		for (int j = 0; j < currentExperiment.getParametersToExplore().size(); j++) {
-			for (int k = j + 1; k < currentExperiment.getParametersToExplore().size(); k++) {
-				double[] a0 = new double[sample_size];
-				double[] a1 = new double[sample_size];
-				double[] a2 = new double[sample_size];
-				double[] a3 = new double[sample_size];
-				double[] a4 = new double[sample_size];
-
-				for (int i = 0; i < sample_size; i++) {
-					a0[i] = A[i];
-					a1[i] = C_B[i][j];
-					a2[i] = C_A[i][k];
-					a3[i] = C_A[i][j];
-					a4[i] = B[i];
-				}
-
-				sb.append("  ");
-				sb.append(currentExperiment.getParametersToExplore().get(j).getName());
-				sb.append(" * ");
-				sb.append(currentExperiment.getParametersToExplore().get(k).getName());
-				sb.append(' ');
-				sb.append(computeSecondOrder(a0, a1, a2, a3, a4, sample_size));
-				sb.append(" [");
-				sb.append(computeSecondOrderConfidence(a0, a1, a2, a3, a4, sample_size, resample));
-				sb.append("]\n");
+			
+			sb.append(ret).append("2. Total-Order Effects");
+			for (Batch para : sobolNumReport.get(var).keySet()) {
+				sb.append(ret).append(tab);
+				sb.append(para.toString());
+				sb.append(eq)
+					.append(sobRes.get(para).get(2))
+					.append(" (").append(sobRes.get(para).get(3)).append(")");
 			}
 		}
-		
+				
+		return sb.toString();
 	}
 
 	// ------------------------------------------------------------------- //
@@ -321,7 +361,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	 *        confidence interval
 	 * @return the first-order confidence interval of the i-th parameter
 	 */
-	private double computeFirstOrderConfidence(double[] a0, double[] a1,
+	private double computeFirstOrderConfidence(IScope scope, double[] a0, double[] a1,
 			double[] a2, int nsample, int nresample) {
 		double[] b0 = new double[nsample];
 		double[] b1 = new double[nsample];
@@ -330,7 +370,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		for (int i = 0; i < nresample; i++) {
 			for (int j = 0; j < nsample; j++) {
-				int index = PRNG.nextInt(nsample);
+				int index = scope.getRandom().getGenerator().nextInt(nsample);
 
 				b0[j] = a0[index];
 				b1[j] = a1[index];
@@ -446,7 +486,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	 *        confidence interval
 	 * @return the total-order confidence interval of the i-th parameter
 	 */
-	private double computeTotalOrderConfidence(double[] a0, double[] a1,
+	private double computeTotalOrderConfidence(IScope scope, double[] a0, double[] a1,
 			double[] a2, int nsample, int nresample) {
 		double[] b0 = new double[nsample];
 		double[] b1 = new double[nsample];
@@ -455,7 +495,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		for (int i = 0; i < nresample; i++) {
 			for (int j = 0; j < nsample; j++) {
-				int index = PRNG.nextInt(nsample);
+				int index = scope.getRandom().getGenerator().nextInt(nsample);
 
 				b0[j] = a0[index];
 				b1[j] = a1[index];
@@ -555,7 +595,8 @@ public class SobolExploration extends AExplorationAlgorithm {
 	 * @return the second-order confidence interval of the i-th and j-th
 	 *         parameters
 	 */
-	private double computeSecondOrderConfidence(double[] a0,
+	@SuppressWarnings("unused")
+	private double computeSecondOrderConfidence(IScope scope, double[] a0,
 			double[] a1, double[] a2, double[] a3, double[] a4, int nsample,
 			int nresample) {
 		double[] b0 = new double[nsample];
@@ -567,7 +608,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		for (int i = 0; i < nresample; i++) {
 			for (int j = 0; j < nsample; j++) {
-				int index = PRNG.nextInt(nsample);
+				int index = scope.getRandom().getGenerator().nextInt(nsample);
 
 				b0[j] = a0[index];
 				b1[j] = a1[index];
