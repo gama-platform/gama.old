@@ -58,28 +58,28 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.1_Linux'$SUFFIX 
+NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX 
 n=1
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
-NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX_MAC
+NEWFILES[$n]='GAMA_1.8.2_MacOS'$SUFFIX_MAC
 n=2
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.1_MacOS'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.2_MacOS'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA_1.8.1_Windows'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.2_Windows'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.1_Linux_with_JDK'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$SUFFIX
 n=5
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA_1.8.1_Windows_with_JDK'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.2_Windows_with_JDK'$SUFFIX
 n=6
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
-NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX_MAC
+NEWFILES[$n]='GAMA_1.8.2_MacOS_with_JDK'$SUFFIX_MAC
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.1_MacOS_with_JDK'$SUFFIX
+NEWFILES[$n]='GAMA_1.8.2_MacOS_with_JDK'$SUFFIX
  
 
 i=0
