@@ -299,11 +299,8 @@ public class BatchAgent extends ExperimentAgent {
 							
 					IMap<String,Object> localRes = manageOutputAndCloseSimulation(agent, ps, false);
 							
-					// Manage replications, but sometime we can have several time the same parameter set without replications
-					// See Saltelli sampling in the Sobol analysis for instance
-					if (seeds.length == 1 && res.containsKey(ps)) { res.put((ParametersSet)ps.clone(), GamaMapFactory.create()); }
-					else if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
 					
+					if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
 					for (String output : localRes.keySet()) { 
 						if (!res.get(ps).containsKey(output)) { res.get(ps).put(output, GamaListFactory.create()); }
 						res.get(ps).get(output).add(localRes.get(output));
@@ -529,6 +526,17 @@ public class BatchAgent extends ExperimentAgent {
 
 		});
 
+		params.add(new ParameterAdapter("Last parameeter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+
+			
+			@Override
+			public String value() {
+				if (lastSolution == null) return "-";
+				return lastSolution.toString();
+			}
+
+		});
+		
 		if (algo != null && algo.isFitnessBased()) {
 			
 			params.add(new ParameterAdapter("Best parameter set found", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
@@ -566,17 +574,6 @@ public class BatchAgent extends ExperimentAgent {
 
 			});
 		}
-	
-		params.add(new ParameterAdapter("Last parameeter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
-	
-			@Override
-			public String value() {
-				if (lastSolution == null) return "-";
-				return lastSolution.toString();
-			}
-
-		});
 
 		params.add(new ParameterAdapter("Parameter space", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 

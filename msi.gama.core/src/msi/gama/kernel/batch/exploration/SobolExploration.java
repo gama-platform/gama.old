@@ -3,11 +3,10 @@ package msi.gama.kernel.batch.exploration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.measure.spi.SystemOfUnits;
 
 import org.moeaframework.util.sequence.Saltelli;
 import org.moeaframework.util.sequence.Sequence;
@@ -210,6 +209,11 @@ public class SobolExploration extends AExplorationAlgorithm {
 	}
 	
 	@SuppressWarnings("unchecked")
+	/**
+	 * Manage simulation outputs from BatchAgent and compute (First & Total order) Sobol indices on requested outputs <\br>
+	 * TODO : implement second order and refined indices with grouped outputs
+	 * @param scope
+	 */
 	private void computeSobolIndexes(IScope scope) {
 		
 		/* Retrieve the output variable names */
@@ -221,11 +225,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 		/* Build Sobol outputs */
 		sobolNumReport = GamaMapFactory.create();
 		
+		List<Map<String,Object>> res_rebuilt = rebuildSimulationResults(scope, res_outputs);
 		// TODO : i don't know why it is not raised ????
-		if (this.res_outputs.length(scope) != this._sample || sample * (2 + params.size() * 2) != _sample) {
+		if (res_rebuilt.size() != this._sample || sample * (2 + params.size() * 2) != _sample) {
+			System.out.println("Number of simulation is "+res_rebuilt.size()+" [should be "+_sample+"]");
 			GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
 		}
-		
 				
 		for (String v : outputVals) {
 			
@@ -234,24 +239,22 @@ public class SobolExploration extends AExplorationAlgorithm {
 			B = new double[sample];
 			C_A = new double[sample][params.size()];
 			C_B = new double[sample][params.size()];
-
-			System.out.println("Number of simulation is "+res_outputs.length(scope)+" [should be "+_sample+"]");
 			
-			Iterator<Map<String,List<Object>>> outIter = res_outputs.iterable(scope).iterator();
+			Iterator<Map<String,Object>> outIter = res_rebuilt.iterator();
 			
 			for (int i = 0; i < sample; i++) {
 				// TODO : does it has to be continuous output variables ? How to check for int for example ?
-				A[i] = Double.valueOf(outIter.next().get(v).get(0).toString());
+				A[i] = Double.valueOf(outIter.next().get(v).toString());
 
 				for (int j = 0; j < params.size(); j++) {
-					C_A[i][j] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+					C_A[i][j] = Double.valueOf(outIter.next().get(v).toString()); 
 				}
 
 				for (int j = 0; j < params.size(); j++) {
-					C_B[i][j] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+					C_B[i][j] = Double.valueOf(outIter.next().get(v).toString()); 
 				}
 
-				B[i] = Double.valueOf(outIter.next().get(v).get(0).toString()); 
+				B[i] = Double.valueOf(outIter.next().get(v).toString()); 
 			}
 			
 			/* Create one Sobol report entry for output variable 'v' */
@@ -284,6 +287,43 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 	}
 	
+	/**
+	 * Turn the replication style simulation result given by BatchAgent 
+	 * to fit table style simulation results of MoaeFramework Sobol index computation
+	 */
+	private List<Map<String, Object>> rebuildSimulationResults(IScope scope,
+			IMap<ParametersSet, Map<String, List<Object>>> gama_res) {
+		
+		int expected_final_size = gama_res.stream(scope).mapToInt(e -> e.values().stream().findAny().get().size()).sum();
+		if (expected_final_size != _sample) {
+			System.out.println("WTF: "+expected_final_size+" | "+_sample);
+			GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
+					+" and requested Saltelli samples "+_sample, scope);
+		}
+		List<Map<String, Object>> res = GamaListFactory.create();
+		
+		for (Map<String, List<Object>> e : gama_res.values()) {
+			
+			Collection<List<Object>> res_values = e.values(); 
+			int expected_size = res_values.iterator().next().size();
+			if(res_values.stream().skip(1).anyMatch(v -> v.size()!=expected_size)) {
+				GamaRuntimeException.error("There is strange simulation output in batch experiment "+currentExperiment, scope);
+			}
+			
+			for (int i = 0; i < expected_size; i++){
+				@SuppressWarnings("unchecked")
+				Map<String,Object> res_updated = GamaMapFactory.create();
+				for (String variable : e.keySet()) {
+					res_updated.put(variable, e.get(variable).get(i));
+				}
+				res.add(res_updated);
+			}
+			
+		}
+		
+		return res;
+	}
+
 	/**
 	 * Construct the Sobol report as made in moeaframework
 	 */
