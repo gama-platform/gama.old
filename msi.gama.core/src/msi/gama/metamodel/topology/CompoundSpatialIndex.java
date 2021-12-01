@@ -205,7 +205,11 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	private ISpatialIndex add(final IScope scope, final IAgentFilter filter) {
 		if (filter == null) return null;
 		IPopulation<? extends IAgent> pop = filter.getPopulation(scope);
-		if (pop == null) return null;
+		if (pop == null ||
+				// spatial indices only work for species with no subspecies
+				!filter.getSpecies().getSubSpecies(scope).isEmpty()) {  
+			return null;
+		}
 		return add(pop, true);
 	}
 
