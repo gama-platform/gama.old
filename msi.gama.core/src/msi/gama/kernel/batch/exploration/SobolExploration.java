@@ -364,7 +364,10 @@ public class SobolExploration extends AExplorationAlgorithm {
 	private List<Map<String, Object>> rebuildSimulationResults(IScope scope,
 			IMap<ParametersSet, Map<String, List<Object>>> gama_res) {
 		
-		int expected_final_size = gama_res.stream(scope).mapToInt(e -> e.values().stream().findAny().get().size()).sum();
+		int expected_final_size = gama_res.stream(scope)
+				.mapToInt(e -> e.values().stream()
+					.findAny().orElse(new ArrayList<>()).size())
+				.sum();
 		if (expected_final_size != _sample) {
 			GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
 					+" and requested Saltelli samples "+_sample, scope);
