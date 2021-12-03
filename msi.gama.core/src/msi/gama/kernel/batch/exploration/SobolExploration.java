@@ -137,21 +137,21 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 		
 		computeSobolIndexes(scope);
+	
 		
 		if (hasFacet(IKeyword.BATCH_REPORT)) {
 			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-			FileWriter fw;
-			try {
-				final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-				final File parent = f.getParentFile();
-				if (!parent.exists()) { parent.mkdirs(); }
-				if (f.exists()) f.delete();
-				f.createNewFile();
-				fw = new FileWriter(f, false);
+			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) f.delete();
+				
+			try (FileWriter fw = new FileWriter(f, false)) {
 				fw.write(buildSobolReport());
+				
 			} catch (IOException e) {
 				GamaRuntimeFileException.create(e, scope);
-			}
+			} 
 		}
 		
 	}
