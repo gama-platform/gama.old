@@ -136,10 +136,14 @@ experiment Explicit type: batch repeat: 3 keep_seed: true until: ( time > 5000 )
 	];
 }
 
-experiment Sobol type: batch repeat: 10 keep_seed:true until:( time > 5000 ) {
-	parameter 'Infection rate' var: infection_rate min:0.0 max:1.0 step:0.01;
-	parameter 'Probability of dying' var:dying_proba min:0.01 max:0.25 step:0.001;
-	method sobol outputs:["num_dead"] sample:10;
+// This experiment samples from the parameter space (Saltelli methods) to establish
+// Sobol index, i.e. a contribution value of each parameters to 
+// observed variance for outcomes of interest, 
+// more on this see https://www.jasss.org/19/1/5.html and http://moeaframework.org for the API
+experiment Sobol type: batch keep_seed:true until:( time > 5000 ) {
+	parameter 'Infection rate' var: infection_rate min:0.0 max:1.0;
+	parameter 'Probability of dying' var:dying_proba min:0.01 max:0.25;
+	method sobol outputs:["num_dead"] sample:10 report:"Results/sobol.txt";
 }
 
 // This experiment explores two parameters with a PSO strategy,

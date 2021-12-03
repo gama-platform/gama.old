@@ -115,6 +115,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
+		
 		params.add(new ParameterAdapter("Calibration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
@@ -130,6 +131,30 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 			}
 
 		});
+		
+		params.add(new ParameterAdapter("Best parameter set found", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+			
+			
+			@Override
+			public String value() {
+				final ParametersSet solutions = bestSolution;
+				if (solutions == null) return "";
+				return solutions.toString();
+			}
+
+		});
+		
+		params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+
+			@Override
+			public String value() {
+				final Double best = bestFitness;
+				if (best == null) return "-";
+				return best.toString();
+			}
+
+		});
+		
 	}
 	
 	@Override

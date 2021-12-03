@@ -26,7 +26,6 @@ import org.jfree.data.statistics.Statistics;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -46,9 +45,7 @@ import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.GamaContainerType;
 import msi.gaml.types.IType;
-import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
@@ -515,8 +512,6 @@ public class BatchAgent extends ExperimentAgent {
 	 */
 	public void addSpecificParameters(final List<IParameter.Batch> params) {
 		
-		final IExploration algo = getSpecies().getExplorationAlgorithm();
-		
 		params.add(new ParameterAdapter("Stop condition", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
@@ -525,55 +520,6 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 		});
-
-		params.add(new ParameterAdapter("Last parameeter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
-			
-			@Override
-			public String value() {
-				if (lastSolution == null) return "-";
-				return lastSolution.toString();
-			}
-
-		});
-		
-		if (algo != null && algo.isFitnessBased()) {
-			
-			params.add(new ParameterAdapter("Best parameter set found", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-	
-	
-				@Override
-				public String value() {
-					final AOptimizationAlgorithm oAlgo = (AOptimizationAlgorithm) algo;
-					final ParametersSet solutions = oAlgo.getBestSolution();
-					if (solutions == null) return "";
-					return solutions.toString();
-				}
-	
-			});
-			
-			params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-	
-				@Override
-				public String value() {
-					final AOptimizationAlgorithm oAlgo = (AOptimizationAlgorithm) algo;
-					final Double best = oAlgo.getBestFitness();
-					if (best == null) return "-";
-					return best.toString();
-				}
-	
-			});
-			
-			params.add(new ParameterAdapter("Last fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
-				@Override
-				public String value() {
-					if (lastFitness == null) return "-";
-					return lastFitness.toString();
-				}
-
-			});
-		}
 
 		params.add(new ParameterAdapter("Parameter space", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
 
@@ -602,6 +548,17 @@ public class BatchAgent extends ExperimentAgent {
 				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
 				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
 						/ asFloat(scope, p.getStepValue(scope))) + 1;
+			}
+
+		});
+
+		params.add(new ParameterAdapter("Last parameter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+
+			
+			@Override
+			public String value() {
+				if (lastSolution == null) return "-";
+				return lastSolution.toString();
 			}
 
 		});

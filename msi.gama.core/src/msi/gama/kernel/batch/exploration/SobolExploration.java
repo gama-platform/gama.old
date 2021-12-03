@@ -1,5 +1,8 @@
 package msi.gama.kernel.batch.exploration;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,13 +10,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.moeaframework.util.sequence.Saltelli;
 import org.moeaframework.util.sequence.Sequence;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IParameter;
+import msi.gama.common.util.FileUtils;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -28,6 +35,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -35,6 +43,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -72,6 +81,12 @@ import msi.gaml.types.Types;
 				type = IType.LIST,
 				of = IType.STRING,
 				optional = false,
+				doc = @doc ("The path to the file where the Sobol report will be written")
+			),
+			@facet(
+				name = IKeyword.BATCH_REPORT,
+				type = IType.STRING,
+				optional = true,
 				doc = @doc ("The list of output variables to analyse through sobol indexes")
 			)
 		},
@@ -94,6 +109,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	protected int sample;
 	protected int _sample;
 	protected int _resample = 1000; // Bootstraping for confidence interval
+	protected List<Batch> parameters;
 	
 	/* The parameter space defined by the Sobol sequence (Satteli sampling method) */
 	protected List<ParametersSet> currentParametersSpace;
@@ -119,7 +135,25 @@ public class SobolExploration extends AExplorationAlgorithm {
 			res_outputs = GamaMapFactory.create();
 			for (ParametersSet sol : solutions) { res_outputs.put(sol,currentExperiment.launchSimulationsWithSolution(sol)); }
 		}
+		
 		computeSobolIndexes(scope);
+		
+		if (hasFacet(IKeyword.BATCH_REPORT)) {
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+			FileWriter fw;
+			try {
+				final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+				final File parent = f.getParentFile();
+				if (!parent.exists()) { parent.mkdirs(); }
+				if (f.exists()) f.delete();
+				f.createNewFile();
+				fw = new FileWriter(f, false);
+				fw.write(buildSobolReport());
+			} catch (IOException e) {
+				GamaRuntimeFileException.create(e, scope);
+			}
+		}
+		
 	}
 
 	@Override
@@ -128,12 +162,46 @@ public class SobolExploration extends AExplorationAlgorithm {
 	@Override
 	public void setChildren(Iterable<? extends ISymbol> children) { }
 	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+		
+		exp.add(new ParameterAdapter("Sample of parameter space:", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+				@Override public Object value() { return _sample; }
+		});
+		
+		@SuppressWarnings("unchecked")
+		final List<String> outputVals = GamaListFactory.create(agent.getScope(), Types.STRING, 
+				Cast.asList(agent.getScope(), getOutputs().value(agent.getScope())));
+		for (String var : outputVals) {
+			exp.add(new ParameterAdapter("Sobol index for var:", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+				@Override public Object value() { return var; }
+			});
+			exp.add(new ParameterAdapter("First order SI: ", IExperimentPlan.BATCH_CATEGORY_NAME, IType.MAP) {
+				@Override public Object value() { return sobolNumReport==null?GamaMapFactory.create():
+					sobolNumReport.get(var).entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().get(0))); }
+			});
+			exp.add(new ParameterAdapter("Total order SI: ", IExperimentPlan.BATCH_CATEGORY_NAME, IType.MAP) {
+				@Override public Object value() { return sobolNumReport==null?GamaMapFactory.create():
+					sobolNumReport.get(var).entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().get(1))); }
+			});
+		
+		}
+
+	}
+	
 	// ----------------------------------------------------------------- //
 	
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
 		this.sample = Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		
-		final List<IParameter.Batch> parameters = currentExperiment.getParametersToExplore();
+		// Do not trust getExplorableParameter of the BatchAgent
+		// Needs a step to explore a parameter, also for any sampling methods only min/max is required
+		List<Batch> params = currentExperiment.getSpecies().getParameters().values().stream()
+				.filter(p -> p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
+				.map(p -> (Batch) p)
+				.collect(Collectors.toList());
+		parameters = parameters==null?params:parameters;
 		/* times 2 the number of parameters for the bootstraping (Saltelli 2002) and +2 because of sample A & B */
 		this._sample = this.sample * (2 * parameters.size() + 2); 
 		
@@ -219,16 +287,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 		/* Retrieve the output variable names */
 		final List<String> outputVals = GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, getOutputs().value(scope)));
 		
-		/* Retrieve the parameters */
-		List<Batch> params = currentExperiment.getParametersToExplore();
-		
 		/* Build Sobol outputs */
-		sobolNumReport = GamaMapFactory.create();
+		this.sobolNumReport = GamaMapFactory.create();
 		
 		List<Map<String,Object>> res_rebuilt = rebuildSimulationResults(scope, res_outputs);
 		// TODO : i don't know why it is not raised ????
-		if (res_rebuilt.size() != this._sample || sample * (2 + params.size() * 2) != _sample) {
-			System.out.println("Number of simulation is "+res_rebuilt.size()+" [should be "+_sample+"]");
+		if (res_rebuilt.size() != this._sample || sample * (2 + this.parameters.size() * 2) != _sample) {
 			GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
 		}
 				
@@ -237,8 +301,8 @@ public class SobolExploration extends AExplorationAlgorithm {
 			/* INIT MOEA FRAMEWORK SOBOL SEQUENCE */
 			A = new double[sample];
 			B = new double[sample];
-			C_A = new double[sample][params.size()];
-			C_B = new double[sample][params.size()];
+			C_A = new double[sample][this.parameters.size()];
+			C_B = new double[sample][this.parameters.size()];
 			
 			Iterator<Map<String,Object>> outIter = res_rebuilt.iterator();
 			
@@ -246,11 +310,11 @@ public class SobolExploration extends AExplorationAlgorithm {
 				// TODO : does it has to be continuous output variables ? How to check for int for example ?
 				A[i] = Double.valueOf(outIter.next().get(v).toString());
 
-				for (int j = 0; j < params.size(); j++) {
+				for (int j = 0; j < this.parameters.size(); j++) {
 					C_A[i][j] = Double.valueOf(outIter.next().get(v).toString()); 
 				}
 
-				for (int j = 0; j < params.size(); j++) {
+				for (int j = 0; j < this.parameters.size(); j++) {
 					C_B[i][j] = Double.valueOf(outIter.next().get(v).toString()); 
 				}
 
@@ -259,9 +323,10 @@ public class SobolExploration extends AExplorationAlgorithm {
 			
 			/* Create one Sobol report entry for output variable 'v' */
 			sobolNumReport.put(v,GamaMapFactory.create());
-			List<Double> sobolIndexes = GamaListFactory.create();
 			
-			for (int j = 0; j < params.size(); j++) {
+			for (int j = 0; j < this.parameters.size(); j++) {
+				
+				List<Double> sobolIndexes = GamaListFactory.create();
 				double[] a0 = new double[sample];
 				double[] a1 = new double[sample];
 				double[] a2 = new double[sample];
@@ -279,12 +344,17 @@ public class SobolExploration extends AExplorationAlgorithm {
 				sobolIndexes.add(computeTotalOrder(a0, a1, a2, sample));
 				sobolIndexes.add(computeTotalOrderConfidence(scope, a0, a1, a2, sample, _resample));
 				
-				sobolNumReport.get(v).put(params.get(j), sobolIndexes);
+				sobolNumReport.get(v).put(this.parameters.get(j), sobolIndexes);
 			}	
 			
 			// TODO : add second ordered Sobol index, and may be look for other decomposition of variance (like all A, only A+B)
 			
 		}
+		
+		// TODO : copy past from batch, but should be called within IExploration
+		// At last, we update the parameters (last fitness and best fitness)
+		scope.getGui().showParameterView(scope, currentExperiment.getSpecies());
+		
 	}
 	
 	/**
@@ -296,7 +366,6 @@ public class SobolExploration extends AExplorationAlgorithm {
 		
 		int expected_final_size = gama_res.stream(scope).mapToInt(e -> e.values().stream().findAny().get().size()).sum();
 		if (expected_final_size != _sample) {
-			System.out.println("WTF: "+expected_final_size+" | "+_sample);
 			GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
 					+" and requested Saltelli samples "+_sample, scope);
 		}
@@ -329,35 +398,34 @@ public class SobolExploration extends AExplorationAlgorithm {
 	 */
 	private String buildSobolReport() {
 		StringBuffer sb = new StringBuffer();
-		final String ret = "\n";
-		final String tab = "\t";
+		
 		final String eq = " = ";
+		final String sep = "----------";
 		sb.append("Parameter Sensitivity (Confidence)");
-		sb.append(ret).append("-----");
+		sb.append(Strings.LN).append(sep);
 
 		for (String var : sobolNumReport.keySet()) {
-			sb.append(ret).append("Variable: "+var);
+			sb.append(Strings.LN).append("Oucome of interest: ")
+				.append(var).append(Strings.LN);
 			Map<Batch,List<Double>> sobRes = sobolNumReport.get(var);
 			
-			sb.append(ret).append("1. First-Order Effects");
+			sb.append(Strings.LN).append("1. First-Order Effects");
 			for (Batch para : sobRes.keySet()) {
-				sb.append(ret).append(tab);
+				sb.append(Strings.LN).append(Strings.TAB);
 				sb.append(para.toString());
-				sb.append(eq)
-					.append(sobRes.get(para).get(0))
-					.append(" (").append(sobRes.get(para).get(1)).append(")");
+				sb.append(eq).append(sobRes.get(para).get(0))
+					.append(" ("+sobRes.get(para).get(1)+")");
 			}
 			
-			sb.append(ret).append("2. Total-Order Effects");
+			sb.append(Strings.LN).append("2. Total-Order Effects");
 			for (Batch para : sobolNumReport.get(var).keySet()) {
-				sb.append(ret).append(tab);
+				sb.append(Strings.LN).append(Strings.TAB);
 				sb.append(para.toString());
-				sb.append(eq)
-					.append(sobRes.get(para).get(2))
-					.append(" (").append(sobRes.get(para).get(3)).append(")");
+				sb.append(eq).append(sobRes.get(para).get(2))
+					.append(" ("+sobRes.get(para).get(3)+")");
 			}
+			sb.append(Strings.LN).append(sep);
 		}
-				
 		return sb.toString();
 	}
 

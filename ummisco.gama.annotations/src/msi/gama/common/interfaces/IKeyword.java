@@ -118,6 +118,9 @@ public interface IKeyword {
 	
 	/** The batch outputs */
 	String BATCH_OUTPUTS = "outputs";
+	
+	/** The batch outputs */
+	String BATCH_REPORT = "report";
 
 	/** The behavior. */
 	String BEHAVIOR = "behavior";
