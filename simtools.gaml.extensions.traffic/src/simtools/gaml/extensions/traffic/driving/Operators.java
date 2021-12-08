@@ -44,6 +44,6 @@ public class Operators {
 	)
 	@no_test
 	public static IGraph spatialDrivingFromEdges(final IScope scope, final IContainer edges, final IContainer nodes) {
-		return new GamaSpatialGraph(edges, nodes, scope);
+		return new DrivingGraph(edges, nodes, scope);
 	}
 }

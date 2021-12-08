@@ -291,16 +291,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final IShape v2 = nodes.get(ptT);
 		if (v2 == null) return false;
 
-		if (e instanceof IAgent && ((IAgent) e).getSpecies().implementsSkill("skill_road")) {
-			final IShape ag = e.getAgent();
-			final List v1ro = (List) v1.getAttribute("roads_out");
-			v1ro.add(ag);
-			final List v2ri = (List) v2.getAttribute("roads_in");
-			v2ri.add(ag);
-			ag.setAttribute("source_node", v1);
-			ag.setAttribute("target_node", v2);
-		}
-
 		addVertex(v1);
 		addVertex(v2);
 		_Edge<IShape, IShape> edge;
