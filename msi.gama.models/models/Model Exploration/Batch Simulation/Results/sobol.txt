@@ -1,0 +1,11 @@
+Parameter Sensitivity (Confidence)
+----------
+Oucome of interest: num_dead
+
+1. First-Order Effects
+	Parameter 'Infection rate' targets var infection_rate = 0.47899720448375316 (0.7942510640468589)
+	Parameter 'Probability of dying' targets var dying_proba = 0.39379184656271177 (0.9972620464933198)
+2. Total-Order Effects
+	Parameter 'Infection rate' targets var infection_rate = -0.06336915297092283 (0.7827201542354244)
+	Parameter 'Probability of dying' targets var dying_proba = 0.22266118836915294 (0.9877452924916216)
+----------
