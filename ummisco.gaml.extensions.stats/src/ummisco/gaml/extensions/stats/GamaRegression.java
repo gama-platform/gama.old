@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gaml.extensions.stats;
 
-import org.apache.commons.math3.stat.regression.AbstractMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.commons.math3.stat.regression.RegressionResults;
 
@@ -29,22 +28,35 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars ({ @variable (
-		name = "parameters",
-		type = IType.LIST,
-		of = IType.FLOAT,
-		doc = { @doc ("List of regression coefficients (float) - same order as the variable in the input matrix ") }),
+			name = "parameters",
+			type = IType.LIST,
+			of = IType.FLOAT,
+			doc = { @doc ("List of regression coefficients (float) - same order as the variable in the input matrix ") }),
 		@variable (
-				name = "nb_features",
-				type = IType.INT,
-				doc = { @doc ("number of variables") }) })
+			name = "nb_features",
+			type = IType.INT,
+			doc = { @doc ("number of variables") }),
+		@variable (
+			name = "RSquare",
+			type = IType.FLOAT,
+			doc = { @doc ("Estimated pearson's R-squared statistic") }),
+		@variable (
+			name = "residuals",
+			type = IType.LIST,
+			of = IType.FLOAT,
+			doc = { @doc ("error terms associated to each observation of the sample") })	
+	})
 public class GamaRegression implements IValue {
 
 	RegressionResults regressionResults;
 	int nbFeatures;
+	
 	double param[];
+	double error[];
+	double rsquare;
 
 	public GamaRegression(final IScope scope, final GamaMatrix<?> data) throws Exception {
-		final AbstractMultipleLinearRegression regressionMethod = new OLSMultipleLinearRegression();
+		final OLSMultipleLinearRegression regressionMethod = new OLSMultipleLinearRegression();
 		final int nbFeatures = data.numCols - 1;
 		final int nbInstances = data.numRows;
 
@@ -55,6 +67,7 @@ public class GamaRegression implements IValue {
 		}
 		regressionMethod.newSampleData(instances, nbInstances, nbFeatures);
 		param = regressionMethod.estimateRegressionParameters();
+		rsquare = regressionMethod.calculateAdjustedRSquared();
 	}
 
 	public GamaRegression(final double[] param, final int nbFeatures, final RegressionResults regressionResults) {
@@ -81,6 +94,18 @@ public class GamaRegression implements IValue {
 			vals.add(element);
 		}
 		return vals;
+	}
+	
+	@getter ("residuals")
+	public IList<Double> getResiduals() {
+		IList<Double> res = GamaListFactory.create(Types.FLOAT);
+		if (error != null) {for (double e : error) {res.add(e);} }
+		return res;
+	}
+	
+	@getter ("RSquare")
+	public double getRSquare() {
+		return rsquare;
 	}
 
 	@getter ("nb_features")
