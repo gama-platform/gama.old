@@ -11,6 +11,7 @@ Export-Package: org.apache.commons.math3.ml.clustering,
  org.apache.commons.math3.random,
  org.apache.commons.math3.stat.descriptive,
  org.apache.commons.math3.stat.descriptive.moment,
+ org.apache.commons.math3.stat.inference,
  org.apache.commons.math3.stat.regression,
  org.apache.commons.math3.util,
  ummisco.gaml.extensions.maths.ode.statements
