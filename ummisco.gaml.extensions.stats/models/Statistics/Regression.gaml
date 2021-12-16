@@ -27,9 +27,9 @@ global {
 		matrix<float> instances <- 0.0 as_matrix {3,length(dummy)};
 		loop i from: 0 to: length(dummy) -1 {
 			dummy ag <- dummy[i];
-			instances[1,i] <- ag.location.x;
-			instances[2,i] <- ag.location.y;
-			instances[0,i] <- ag.location.z;
+			instances[0,i] <- ag.location.x;
+			instances[1,i] <- ag.location.y;
+			instances[2,i] <- ag.location.z;
 		}
 		//Compute the function of regression
 		location_fct  <- build(instances);
@@ -38,6 +38,13 @@ global {
 		//Predict the value using the function resulting before
 		val <-  predict(location_fct, [x_val, y_val]);
 		write "value : " + val;
+		
+		//T test
+		list<float> actuals <- dummy collect (each.location.z);
+		list<float> predictions;
+		ask dummy { predictions <+ predict(location_fct, [location.x,location.y]); }
+		float p_value <- tTest(actuals,predictions);
+		write "p value : " + p_value;
 	}
 }
 

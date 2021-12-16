@@ -164,7 +164,7 @@ public class RoadSkill extends Skill {
 	}
 
 	@setter(TARGET_NODE)
-	public void setTargetNode(final IAgent agent, final IAgent nd) {
+	public static void setTargetNode(final IAgent agent, final IAgent nd) {
 		agent.setAttribute(TARGET_NODE, nd);
 	}
 

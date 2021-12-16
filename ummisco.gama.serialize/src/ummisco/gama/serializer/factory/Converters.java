@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.converters.Converter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
+import ummisco.gama.serializer.gamaType.converters.GamaBDIPlanConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaGraphConverter;
@@ -36,7 +37,7 @@ public abstract class Converters {
 
 	private static Converter[] loadConverter(ConverterScope cs)
 	{
-		Converter[] converters= new Converter[14];
+		Converter[] converters= new Converter[15];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverter(cs);		
 		converters[2]=new GamaListConverter(cs);
@@ -52,7 +53,9 @@ public abstract class Converters {
 		converters[10]= new GamaPopulationConverter(cs);
 		converters[11]= new GamaSpeciesConverter(cs);	
 		converters[12]= new ReferenceAgentConverter(cs);		
-		converters[13]= new GamaPathConverter(cs);		
+		converters[13]= new GamaPathConverter(cs);	
+		
+		converters[14]= new GamaBDIPlanConverter(cs);
 		
 		//converters[12]= new ComplexMessageConverter(cs);		
 		
@@ -70,7 +73,7 @@ public abstract class Converters {
 	// TODO Remove when possible
 	private static Converter[] loadConverterNetwork(ConverterScope cs)
 	{
-		Converter[] converters= new Converter[12];
+		Converter[] converters= new Converter[14];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
 		converters[2]=new GamaListConverterNetwork(cs);
@@ -84,7 +87,12 @@ public abstract class Converters {
 		converters[9]=new SavedAgentConverter(cs);
 		
 		converters[10]= new GamaPopulationConverter(cs);
-		converters[11]= new GamaSpeciesConverter(cs);		
+		converters[11]= new GamaSpeciesConverter(cs);
+		converters[12]= new GamaPathConverter(cs);	
+		
+		converters[13]= new GamaBDIPlanConverter(cs);
+		
+		
 		//converters[12]= new ComplexMessageConverter(cs);		
 		
 		return converters;

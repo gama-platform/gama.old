@@ -25,6 +25,7 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
+import org.apache.commons.math3.stat.inference.TTest;
 
 import com.google.common.collect.Ordering;
 
@@ -1079,6 +1080,30 @@ public class Stats {
 			}
 			return results.items();
 		}
+	}
+	
+	@operator (
+			value = "tTest",
+			can_be_const = false,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC })
+	@doc (
+			value = "Returns the observed significance level, or p-value, associated with a two-sample, "
+					+ "two-tailed t-test comparing the means of the two input lists."
+					+ "The number returned is the smallest significance level at which one can reject the null hypothesis",
+			examples = { @example (
+					value = "tTest([10.0,5.0,1.0, 3.0],[1.0,10.0,5.0,1.0])",
+					equals = "0.01") })
+	public static Double tTestPValue(final IScope scope, final IList seq1, final IList seq2) {
+		TTest t = new TTest();
+		
+		double[] s1 = new double[seq1.length(scope)];
+		for (int i = 0; i < seq1.length(scope); i++) { s1[i] = Cast.asFloat(scope, seq1.get(i)); }
+		
+		double[] s2 = new double[seq2.length(scope)];
+		for (int i = 0; i < seq2.length(scope); i++) { s2[i] = Cast.asFloat(scope, seq2.get(i)); }
+		
+		return t.tTest(s1,s2);
 	}
 
 	@operator (
