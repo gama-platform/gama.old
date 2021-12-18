@@ -43,7 +43,7 @@ global {
 		list<float> actuals <- dummy collect (each.location.z);
 		list<float> predictions;
 		ask dummy { predictions <+ predict(location_fct, [location.x,location.y]); }
-		float p_value <- tTest(actuals,predictions);
+		float p_value <- t_test(actuals,predictions);
 		write "p value : " + p_value;
 	}
 }
