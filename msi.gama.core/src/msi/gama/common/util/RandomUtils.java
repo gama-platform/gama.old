@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.RandomUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * RandomUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,53 +27,108 @@ import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class RandomUtils.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {
 
 	/** The seed. */
 	protected Double seed;
+
+	/** The Constant SEED_SOURCE. */
 	private static final SecureRandom SEED_SOURCE = new SecureRandom();
 	/** The generator name. */
 	private String generatorName;
 	/** The generator. */
 	private GamaRNG generator;
 
+	/**
+	 * The Class State.
+	 */
 	public static class State {
 
+		/**
+		 * Instantiates a new state.
+		 *
+		 * @param seed
+		 *            the seed
+		 * @param generatorName
+		 *            the generator name
+		 * @param usage
+		 *            the usage
+		 */
 		public State(final Double seed, final String generatorName, final int usage) {
 			this.seed = seed;
 			this.generatorName = generatorName;
 			this.usage = usage;
 		}
 
+		/** The seed. */
 		Double seed;
+
+		/** The generator name. */
 		String generatorName;
+
+		/** The usage. */
 		int usage;
 
 	}
 
+	/**
+	 * Instantiates a new random utils.
+	 *
+	 * @param state
+	 *            the state
+	 */
 	public RandomUtils(final State state) {
 		setState(state);
 	}
 
+	/**
+	 * Instantiates a new random utils.
+	 *
+	 * @param seed
+	 *            the seed.
+	 * @param rng
+	 *            the rng
+	 */
 	public RandomUtils(final Double seed, final String rng) {
 		setSeed(seed, false);
 		setGenerator(rng, true);
 	}
 
+	/**
+	 * Instantiates a new random utils.
+	 *
+	 * @param rng
+	 *            the rng
+	 */
 	public RandomUtils(final String rng) {
 		this(GamaPreferences.External.CORE_SEED_DEFINED.getValue() ? GamaPreferences.External.CORE_SEED.getValue()
 				: null, rng);
 	}
 
+	/**
+	 * Instantiates a new random utils.
+	 */
 	public RandomUtils() {
 		this(GamaPreferences.External.CORE_RNG.getValue());
 	}
 
-	public State getState() {
-		return new State(seed, generatorName, generator.getUsage());
-	}
+	/**
+	 * Gets the state.
+	 *
+	 * @return the state
+	 */
+	public State getState() { return new State(seed, generatorName, generator.getUsage()); }
 
+	/**
+	 * Sets the state.
+	 *
+	 * @param state
+	 *            the new state
+	 */
 	public void setState(final State state) {
 		setSeed(state.seed, false);
 		setGenerator(state.generatorName, true);
@@ -94,13 +149,22 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Sets the usage.
+	 *
+	 * @param usage
+	 *            the new usage
+	 */
 	public void setUsage(final Integer usage) {
 		generator.setUsage(usage);
 	}
 
-	public Integer getUsage() {
-		return generator.getUsage();
-	}
+	/**
+	 * Gets the usage.
+	 *
+	 * @return the usage
+	 */
+	public Integer getUsage() { return generator.getUsage(); }
 
 	/**
 	 * Creates a new Gaussian Generator object.
@@ -177,6 +241,15 @@ public class RandomUtils {
 
 	}
 
+	/**
+	 * Creates the seed.
+	 *
+	 * @param s
+	 *            the s
+	 * @param length
+	 *            the length
+	 * @return the byte[]
+	 */
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
 		Double realSeed = seed;
@@ -206,10 +279,25 @@ public class RandomUtils {
 		return result;
 	}
 
+	/**
+	 * Generate seed.
+	 *
+	 * @param length
+	 *            the length
+	 * @return the byte[]
+	 */
 	public byte[] generateSeed(final int length) {
 		return createSeed(seed, length);
 	}
 
+	/**
+	 * Sets the seed.
+	 *
+	 * @param newSeed
+	 *            the new seed
+	 * @param init
+	 *            the init
+	 */
 	public void setSeed(final Double newSeed, final boolean init) {
 		seed = newSeed;
 		if (seed == null) { seed = SEED_SOURCE.nextDouble(); }
@@ -227,20 +315,12 @@ public class RandomUtils {
 		if (init) { initGenerator(); }
 	}
 
-	// public void shuffleInPlace(final Collection list) {
-	// final int size = list.size();
-	// if (size < 2) { return; }
-	// final Object[] a = list.toArray(new Object[size]);
-	// list.clear();
-	// for (int i = 0; i < size; i++) {
-	// final int change = between(i, size - 1);
-	// final Object helper = a[i];
-	// a[i] = a[change];
-	// a[change] = helper;
-	// list.add(a[i]);
-	// }
-	// }
-
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param list
+	 *            the list
+	 */
 	public void shuffleInPlace(final Collection list) {
 		if (list == null) return;
 		final int size = list.size();
@@ -251,6 +331,14 @@ public class RandomUtils {
 		list.addAll(Arrays.asList(a));
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param a
+	 *            the a
+	 */
 	public <T> void shuffleInPlace(final T[] a) {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
@@ -260,6 +348,12 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param a
+	 *            the a
+	 */
 	public void shuffleInPlace(final double[] a) {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
@@ -269,6 +363,12 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param a
+	 *            the a
+	 */
 	public void shuffleInPlace(final int[] a) {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
@@ -278,6 +378,12 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param a
+	 *            the a
+	 */
 	public void shuffleInPlace(final short[] a) {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
@@ -287,6 +393,12 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param a
+	 *            the a
+	 */
 	public void shuffleInPlace(final char[] a) {
 		for (int i = 0; i < a.length; i++) {
 			final int change = between(i, a.length - 1);
@@ -296,6 +408,12 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle in place.
+	 *
+	 * @param list
+	 *            the list
+	 */
 	public void shuffleInPlace(final List list) {
 		for (int i = list.size(); i > 1; i--) {
 			final int i1 = i - 1;
@@ -306,6 +424,13 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Shuffle.
+	 *
+	 * @param string
+	 *            the string
+	 * @return the string
+	 */
 	public String shuffle(final String string) {
 		final char[] c = string.toCharArray();
 		shuffleInPlace(c);
@@ -319,6 +444,15 @@ public class RandomUtils {
 		return (int) (min + (long) ((1L + max - min) * next()));
 	}
 
+	/**
+	 * Between.
+	 *
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @return the double
+	 */
 	public double between(final double min, final double max) {
 		// uniformly distributed double random number in [min, max]
 		return min + (max + Double.MIN_VALUE - min) * next();
@@ -332,6 +466,17 @@ public class RandomUtils {
 		return min + between(0, nbSteps) * step;
 	}
 
+	/**
+	 * Between.
+	 *
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
+	 * @return the double
+	 */
 	public double between(final double min, final double max, final double step) {
 		// uniformly distributed double random number in [min, max] respecting
 		// the step
@@ -346,6 +491,11 @@ public class RandomUtils {
 		return val - low < high - val ? low : high;
 	}
 
+	/**
+	 * Next.
+	 *
+	 * @return the double
+	 */
 	public double next() {
 		return generator.nextDouble();
 	}
@@ -353,17 +503,23 @@ public class RandomUtils {
 	/**
 	 * @return
 	 */
-	public Double getSeed() {
-		return seed;
-	}
+	public Double getSeed() { return seed; }
 
 	/**
 	 * @return
 	 */
-	public String getRngName() {
-		return generatorName;
-	}
+	public String getRngName() { return generatorName; }
 
+	/**
+	 * Test draw random values.
+	 *
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
+	 */
 	public static void testDrawRandomValues(final double min, final double max, final double step) {
 		DEBUG.LOG("Drawing 100 double between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
@@ -377,6 +533,16 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * Test draw random values.
+	 *
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
+	 */
 	public static void testDrawRandomValues(final int min, final int max, final int step) {
 		DEBUG.LOG("Drawing 100 int between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
@@ -387,10 +553,15 @@ public class RandomUtils {
 		}
 	}
 
+	/**
+	 * The Class BitString.
+	 */
 	private static class BitString {
 
+		/** The Constant WORD_LENGTH. */
 		private static final int WORD_LENGTH = 32;
 
+		/** The length. */
 		private final int length;
 
 		/**
@@ -426,9 +597,7 @@ public class RandomUtils {
 			// We can set bits 32 at a time rather than calling
 			// rng.nextBoolean()
 			// and setting each one individually.
-			for (int i = 0; i < data.length; i++) {
-				data[i] = rng.nextInt();
-			}
+			for (int i = 0; i < data.length; i++) { data[i] = rng.nextInt(); }
 			// If the last word is not fully utilised, zero any out-of-bounds
 			// bits.
 			// This is necessary because the countSetBits() methods will count
@@ -460,9 +629,7 @@ public class RandomUtils {
 		/**
 		 * @return The length of this bit string.
 		 */
-		public int getLength() {
-			return length;
-		}
+		public int getLength() { return length; }
 
 		/**
 		 * Returns the bit at the specified index.
@@ -532,63 +699,108 @@ public class RandomUtils {
 
 	}
 
-	public GamaRNG getGenerator() {
-		return generator;
-	}
+	/**
+	 * Gets the generator.
+	 *
+	 * @return the generator
+	 */
+	public GamaRNG getGenerator() { return generator; }
 
+	/**
+	 * One of.
+	 *
+	 * @param <K>
+	 *            the key type
+	 * @param c
+	 *            the c
+	 * @return the k
+	 */
 	public <K> K oneOf(final Collection<K> c) {
 		if (c == null || c.isEmpty()) return null;
 		return (K) oneOf(c.toArray());
 	}
 
+	/**
+	 * One of.
+	 *
+	 * @param <K>
+	 *            the key type
+	 * @param c
+	 *            the c
+	 * @return the k
+	 */
 	public <K> K oneOf(final List<K> c) {
 		if (c == null || c.isEmpty()) return null;
 		return c.get(between(0, c.size() - 1));
 	}
 
+	/**
+	 * One of.
+	 *
+	 * @param <K>
+	 *            the key type
+	 * @param c
+	 *            the c
+	 * @return the k
+	 */
 	public <K> K oneOf(final K[] c) {
 		if (c == null || c.length == 0) return null;
 		return c[between(0, c.length - 1)];
 
 	}
 
+	/**
+	 * One of.
+	 *
+	 * @param c
+	 *            the c
+	 * @return the int
+	 */
 	public int oneOf(final int[] c) {
 		if (c == null || c.length == 0) return -1;
 		return c[between(0, c.length - 1)];
 	}
 
+	/**
+	 * One of.
+	 *
+	 * @param c
+	 *            the c
+	 * @return the double
+	 */
 	public double oneOf(final double[] c) {
 		if (c == null || c.length == 0) return -1;
 		return c[between(0, c.length - 1)];
 	}
 
+	/**
+	 * One of.
+	 *
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 */
 	public boolean oneOf(final boolean[] c) {
 		if (c == null || c.length == 0) return false;
 		return c[between(0, c.length - 1)];
 	}
 
+	/**
+	 * Between.
+	 *
+	 * @param pMin
+	 *            the min
+	 * @param pMax
+	 *            the max
+	 * @param pStep
+	 *            the step
+	 * @return the gama point
+	 */
 	public GamaPoint between(final GamaPoint pMin, final GamaPoint pMax, final GamaPoint pStep) {
 		double x = between(pMin.x, pMax.x, pStep.x);
 		double y = between(pMin.y, pMax.y, pStep.y);
 		double z = between(pMin.z, pMax.z, pStep.z);
 		return new GamaPoint(x, y, z);
 	}
-
-	// public static void main(final String[] args) {
-	// USE_BITWISE = false;
-	// RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
-	// RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-	// RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-	// for (int i = 0; i < 3; i++) {
-	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-	// }
-	// USE_BITWISE = true;
-	// r1 = new RandomUtils(1.0, "mersenne1");
-	// r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
-	// r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
-	// for (int i = 0; i < 3; i++) {
-	// DEBUG.LOG("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
-	// }
-	// }
 
 }

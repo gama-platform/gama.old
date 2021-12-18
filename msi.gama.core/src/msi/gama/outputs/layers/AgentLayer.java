@@ -20,6 +20,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
@@ -71,7 +72,7 @@ public class AgentLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void privateDraw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
 		if (scope == null || scope.interrupted()) return;
 		fillShapes(scope);
 		final String aspectName = ((AgentLayerStatement) definition).getAspectName();

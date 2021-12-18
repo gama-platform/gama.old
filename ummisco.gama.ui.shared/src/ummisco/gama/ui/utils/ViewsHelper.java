@@ -137,7 +137,7 @@ public class ViewsHelper {
 	 *            the id
 	 */
 	public static void hideView(final String id) {
-		// See if asyncRun would not be more appropriate ? 
+		// See if asyncRun would not be more appropriate ?
 		WorkbenchHelper.run(() -> {
 			final IWorkbenchPage activePage = getPage();
 			if (activePage == null) return;
@@ -158,6 +158,19 @@ public class ViewsHelper {
 	 */
 	public static List<IDisplaySurface> allDisplaySurfaces() {
 		return StreamEx.of(getDisplayViews(null)).map(IGamaView.Display::getDisplaySurface).toList();
+	}
+
+	/**
+	 * Frontmost display surface.
+	 *
+	 * @return the i display surface
+	 */
+	public static IDisplaySurface frontmostDisplaySurface() {
+		IViewPart view = findFrontmostGamaViewUnderMouse();
+		if (view instanceof IGamaView.Display) return ((IGamaView.Display) view).getDisplaySurface();
+		List<IDisplaySurface> surfaces = allDisplaySurfaces();
+		if (surfaces.size() == 0) return null;
+		return surfaces.get(0);
 	}
 
 	/**

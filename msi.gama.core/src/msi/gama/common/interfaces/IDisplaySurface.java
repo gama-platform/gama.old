@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IDisplaySurface.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -26,6 +26,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.IEventLayerListener;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gaml.statements.draw.DrawingAttributes;
 
 /**
@@ -41,13 +42,13 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 
 	/** The snapshot folder name. */
 	String SNAPSHOT_FOLDER_NAME = "snapshots";
-	
+
 	/** The min zoom factor. */
 	double MIN_ZOOM_FACTOR = 0.1;
-	
+
 	/** The max zoom factor. */
 	int MAX_ZOOM_FACTOR = 10;
-	
+
 	/** The selection size. */
 	double SELECTION_SIZE = 5; // pixels
 
@@ -69,21 +70,24 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 		/**
 		 * Sets the paused.
 		 *
-		 * @param flag the new paused
+		 * @param flag
+		 *            the new paused
 		 */
 		void setPaused(boolean flag);
 
 		/**
 		 * Select agent.
 		 *
-		 * @param attributes the attributes
+		 * @param attributes
+		 *            the attributes
 		 */
 		void selectAgent(final DrawingAttributes attributes);
 
 		/**
 		 * Selection in.
 		 *
-		 * @param env the env
+		 * @param env
+		 *            the env
 		 */
 		void selectionIn(Envelope3D env);
 
@@ -138,7 +142,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Focus on.
 	 *
-	 * @param geometry the geometry
+	 * @param geometry
+	 *            the geometry
 	 */
 	void focusOn(IShape geometry);
 
@@ -204,10 +209,14 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Gets the model coordinates from.
 	 *
-	 * @param xOnScreen the x on screen
-	 * @param yOnScreen the y on screen
-	 * @param sizeInPixels the size in pixels
-	 * @param positionInPixels the position in pixels
+	 * @param xOnScreen
+	 *            the x on screen
+	 * @param yOnScreen
+	 *            the y on screen
+	 * @param sizeInPixels
+	 *            the size in pixels
+	 * @param positionInPixels
+	 *            the position in pixels
 	 * @return the model coordinates from
 	 */
 	GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
@@ -216,8 +225,10 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Select agent.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 * @return the collection
 	 */
 	Collection<IAgent> selectAgent(final int x, final int y);
@@ -225,7 +236,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Follow agent.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 */
 	void followAgent(IAgent a);
 
@@ -237,8 +249,10 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Sets the size.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	void setSize(int x, int y);
 
@@ -264,14 +278,16 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Adds the listener.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 */
 	void addListener(IEventLayerListener e);
 
 	/**
 	 * Removes the listener.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 */
 	void removeListener(IEventLayerListener e);
 
@@ -285,7 +301,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Gets the visible region for layer.
 	 *
-	 * @param currentLayer the current layer
+	 * @param currentLayer
+	 *            the current layer
 	 * @return the visible region for layer
 	 */
 	Envelope getVisibleRegionForLayer(ILayer currentLayer);
@@ -320,32 +337,40 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Dispatch key event.
 	 *
-	 * @param character the character
+	 * @param character
+	 *            the character
 	 */
 	void dispatchKeyEvent(char character);
 
 	/**
 	 * Dispatch mouse event.
 	 *
-	 * @param swtEventType the swt event type
-	 * @param x the x
-	 * @param y the y
+	 * @param swtEventType
+	 *            the swt event type
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	void dispatchMouseEvent(int swtEventType, int x, int y);
 
 	/**
 	 * Sets the mouse position.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	void setMousePosition(int x, int y);
 
 	/**
 	 * Dragged to.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	void draggedTo(int x, int y);
 
@@ -357,7 +382,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Compute font.
 	 *
-	 * @param f the f
+	 * @param f
+	 *            the f
 	 * @return the font
 	 */
 	default Font computeFont(final Font f) {
@@ -376,8 +402,17 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * Sets the display synchronizer.
 	 *
-	 * @param layeredDisplaySynchronizer the new display synchronizer
+	 * @param layeredDisplaySynchronizer
+	 *            the new display synchronizer
 	 */
 	default void setDisplaySynchronizer(final IDisplaySynchronizer layeredDisplaySynchronizer) {}
+
+	/**
+	 * Gets the scope.
+	 *
+	 * @return the scope
+	 */
+	@Override
+	IGraphicsScope getScope();
 
 }

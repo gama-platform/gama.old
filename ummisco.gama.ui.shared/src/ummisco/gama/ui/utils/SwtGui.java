@@ -274,6 +274,13 @@ public class SwtGui implements IGui {
 	@Override
 	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return ViewsHelper.allDisplaySurfaces(); }
 
+	/**
+	 * Gets the frontmost display surface.
+	 *
+	 * @return the frontmost display surface
+	 */
+	public IDisplaySurface getFrontmostDisplaySurface() { return ViewsHelper.frontmostDisplaySurface(); }
+
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final List<IParameter> parameters, final GamaFont font, final GamaColor color) {

@@ -1,44 +1,53 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.CameraPositionUnitExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * CameraPositionUnitExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.expressions.units;
 
-import com.google.common.collect.Iterables;
-
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
-
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gaml.types.Types;
 
+/**
+ * The Class CameraPositionUnitExpression.
+ */
 public class CameraPositionUnitExpression extends UnitConstantExpression {
 
+	/**
+	 * Instantiates a new camera position unit expression.
+	 *
+	 * @param doc
+	 *            the doc
+	 */
 	public CameraPositionUnitExpression(final String doc) {
 		super(new GamaPoint(), Types.POINT, "camera_location", doc, null);
 	}
 
 	@Override
-	public GamaPoint _value(final IScope scope) {
+	public GamaPoint _value(final IScope sc) {
+		if (sc == null || !sc.isGraphics()) {
+			IDisplaySurface surface = GAMA.getGui().getFrontmostDisplaySurface();
+			if (surface != null) return surface.getData().getCameraPos().clone();
+			return null;
+		}
+		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IGraphics g = scope.getGraphics();
-		if (g == null) {
-			Iterable<IDisplaySurface> surfaces = scope.getGui().getAllDisplaySurfaces();
-			// Returns a clone to avoid any side effect
-			if (Iterables.size(surfaces) == 1) return Iterables.get(surfaces, 0).getData().getCameraPos().clone();
-		} else if (!g.is2D()) return ((IGraphics.ThreeD) g).getCameraPos().copy(scope);
-		return null;
+		if (g.is2D()) return null;
+		return ((IGraphics.ThreeD) g).getCameraPos().clone();
+
 	}
 
 	@Override
-	public boolean isConst() {
-		return false;
-	}
+	public boolean isConst() { return false; }
 
 }

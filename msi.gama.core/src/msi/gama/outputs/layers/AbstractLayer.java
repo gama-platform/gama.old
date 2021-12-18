@@ -12,7 +12,7 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -67,8 +67,18 @@ public abstract class AbstractLayer implements ILayer {
 		hasBeenDrawnOnce = false;
 	}
 
+	/**
+	 * Draw.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@Override
-	public void draw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
 		if (shouldNotDraw(g)) return;
 		g.setAlpha(1 - getData().getTransparency(scope));
 		g.beginDrawingLayer(this);
@@ -100,7 +110,7 @@ public abstract class AbstractLayer implements ILayer {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	protected abstract void privateDraw(IScope scope, final IGraphics g) throws GamaRuntimeException;
+	protected abstract void privateDraw(IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException;
 
 	@Override
 	public final String getName() { return name; }

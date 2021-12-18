@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GridLayer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
@@ -29,8 +30,16 @@ import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
+/**
+ * The Class GridLayer.
+ */
 public class GridLayer extends AbstractLayer {
 
+	/**
+	 * Instantiates a new grid layer.
+	 *
+	 * @param layer the layer
+	 */
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
 	}
@@ -41,9 +50,7 @@ public class GridLayer extends AbstractLayer {
 	}
 
 	@Override
-	public GridLayerData getData() {
-		return (GridLayerData) super.getData();
-	}
+	public GridLayerData getData() { return (GridLayerData) super.getData(); }
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
@@ -59,7 +66,7 @@ public class GridLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDraw(final IScope scope, final IGraphics dg) {
+	public void privateDraw(final IGraphicsScope scope, final IGraphics dg) {
 		GamaColor lineColor = null;
 		final GridLayerData data = getData();
 		if (data.drawLines()) { lineColor = data.getLineColor(); }
@@ -101,9 +108,7 @@ public class GridLayer extends AbstractLayer {
 	}
 
 	@Override
-	public String getType() {
-		return "Grid layer";
-	}
+	public String getType() { return "Grid layer"; }
 
 	@Override
 	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
