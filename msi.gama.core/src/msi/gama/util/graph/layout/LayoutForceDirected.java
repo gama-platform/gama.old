@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * LayoutForceDirected.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.util.graph.layout;
 
 import java.util.IdentityHashMap;
@@ -14,24 +24,51 @@ import msi.gaml.operators.Points;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.Types;
 
+/**
+ * The Class LayoutForceDirected.
+ */
 public class LayoutForceDirected {
 
+	/** The graph. */
 	private final Graph<IShape, IShape> graph;
+
+	/** The equi. */
 	private final boolean equi;
+
+	/** The criterion. */
 	private final double criterion;
+
+	/** The cooling rate. */
 	private final double coolingRate;
+
+	/** The maxit. */
 	private final int maxit;
+
+	/** The coeff force. */
 	private final double coeffForce;
+
+	/** The bounds. */
 	IShape bounds;
 
+	/** The iteration. */
 	private int iteration = 0;
 
+	/** The area. */
 	private double area;
+
+	/** The k. */
 	private double k;
+
+	/** The t. */
 	private double t;
 
+	/** The equilibrium reached. */
 	private boolean equilibriumReached = false;
+
+	/** The disp. */
 	private final Map<IShape, GamaPoint> disp;
+
+	/** The loc. */
 	private final Map<IShape, GamaPoint> loc;
 
 	/**
@@ -76,18 +113,12 @@ public class LayoutForceDirected {
 
 		if (equi) {
 			// simulate until mechanical equilibrium
-			while (!equilibriumReached && iteration < maxit) {
-				simulateStep(scope);
-			}
+			while (!equilibriumReached && iteration < maxit) { simulateStep(scope); }
 		} else {
 			// simulate maxit-steps
-			for (int i = 0; i < maxit; i++) {
-				simulateStep(scope);
-			}
+			for (int i = 0; i < maxit; i++) { simulateStep(scope); }
 		}
-		for (final IShape v : graph.vertexSet()) {
-			v.setLocation(loc.get(v));
-		}
+		for (final IShape v : graph.vertexSet()) { v.setLocation(loc.get(v)); }
 		return iteration;
 	}
 
@@ -108,9 +139,7 @@ public class LayoutForceDirected {
 					GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u));
 					final double length = Points.norm(scope, deltaPos);
 
-					if (length != 0) {
-						deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) / length);
-					}
+					if (length != 0) { deltaPos = Points.multiply(deltaPos, forceRepulsive(length, k) / length); }
 
 					vDisp.add(deltaPos);
 
@@ -126,9 +155,7 @@ public class LayoutForceDirected {
 			GamaPoint deltaPos = Points.subtract(loc.get(v), loc.get(u));
 			final double length = Points.norm(scope, deltaPos);
 
-			if (length != 0) {
-				deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) / length);
-			}
+			if (length != 0) { deltaPos = Points.multiply(deltaPos, forceAttractive(length, k) / length); }
 
 			disp.get(v).minus(deltaPos);
 			disp.get(u).add(deltaPos);
@@ -144,30 +171,22 @@ public class LayoutForceDirected {
 			final double length = Points.norm(scope, d);
 
 			// no equilibrium if one vertex has too high net force
-			if (length > criterion) {
-				equilibriumReached = false;
-			}
+			if (length > criterion) { equilibriumReached = false; }
 			// limit maximum displacement by temperature t
-			if (length != 0) {
-				d = Points.multiply(d, Math.min(length, t) / length);
-			}
+			if (length != 0) { d = Points.multiply(d, Math.min(length, t) / length); }
 			final GamaPoint l = loc.get(v);
 			l.add(d);
-			if (!bounds.intersects(l)) {
-				loc.put(v, Punctal._closest_point_to(l, bounds));
-			}
+			if (!bounds.intersects(l)) { loc.put(v, Punctal._closest_point_to(l, bounds)); }
 
 		}
-		final GamaPoint center = (GamaPoint) Containers.mean(scope, GamaListFactory.wrap(Types.POINT, loc.values()));
+		final GamaPoint center = (GamaPoint) Containers.opMean(scope, GamaListFactory.wrap(Types.POINT, loc.values()));
 		if (center.distance3D(bounds.getCentroid()) > toleranceCenter) {
 			final GamaPoint d = Points.subtract(bounds.getCentroid(), center);
 			d.multiplyBy(0.5);
 			for (final IShape v : graph.vertexSet()) {
 				final GamaPoint l = loc.get(v);
 				l.add(d);
-				if (!bounds.intersects(l)) {
-					loc.put(v, Punctal._closest_point_to(l, bounds));
-				}
+				if (!bounds.intersects(l)) { loc.put(v, Punctal._closest_point_to(l, bounds)); }
 			}
 		}
 		double maxDist = graph.vertexSet().stream().mapToDouble(v -> v.euclidianDistanceTo(center)).max().getAsDouble();
@@ -177,13 +196,9 @@ public class LayoutForceDirected {
 				final GamaPoint l = loc.get(v);
 				final GamaPoint d = Points.subtract(l, center);
 				final double len = d.norm();
-				if (len > 0) {
-					d.multiplyBy(maxDist / d.norm());
-				}
+				if (len > 0) { d.multiplyBy(maxDist / d.norm()); }
 				l.add(d);
-				if (!bounds.intersects(l)) {
-					loc.put(v, Punctal._closest_point_to(l, bounds));
-				}
+				if (!bounds.intersects(l)) { loc.put(v, Punctal._closest_point_to(l, bounds)); }
 			}
 		}
 

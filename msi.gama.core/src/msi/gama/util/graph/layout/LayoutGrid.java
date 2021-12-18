@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * LayoutGrid.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.util.graph.layout;
 
 import java.util.ArrayList;
@@ -15,28 +24,51 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.graph.IGraph;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Graphs;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Queries;
-import msi.gaml.types.Types; 
+import msi.gaml.types.Types;
 
+/**
+ * The Class LayoutGrid.
+ */
 public class LayoutGrid {
 
+	/** The graph. */
 	private final IGraph<IShape, IShape> graph;
 
+	/** The coeff sq. */
 	private final double coeffSq;
 
+	/** The envelope geometry. */
 	private final IShape envelopeGeometry;
 
+	/**
+	 * Instantiates a new layout grid.
+	 *
+	 * @param graph
+	 *            the graph
+	 * @param envelopeGeometry
+	 *            the envelope geometry
+	 * @param coeffSq
+	 *            the coeff sq
+	 */
 	public LayoutGrid(final IGraph<IShape, IShape> graph, final IShape envelopeGeometry, final double coeffSq) {
 		this.graph = graph;
 		this.envelopeGeometry = envelopeGeometry;
 		this.coeffSq = coeffSq;
 	}
 
-	@SuppressWarnings("null")
+	/**
+	 * Apply layout.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
+	@SuppressWarnings ("null")
 	public void applyLayout(final IScope scope) {
 
 		IList<IShape> places = null;
@@ -84,9 +116,7 @@ public class LayoutGrid {
 					remaining.remove(n);
 				}
 			}
-			if (remaining.isEmpty()) {
-				break;
-			}
+			if (remaining.isEmpty()) { break; }
 			dmax = -1;
 			java.util.Collections.shuffle(open, scope.getRandom().getGenerator());
 			for (final IShape v : open) {
@@ -119,10 +149,8 @@ public class LayoutGrid {
 				neigh2.removeAll(open);
 				if (!neigh2.isEmpty()) {
 					final IList<GamaPoint> pts = GamaListFactory.create(Types.POINT);
-					for (final IShape n : neigh2) {
-						pts.add(locs.get(n));
-					}
-					final GamaPoint targetLoc = (GamaPoint) msi.gaml.operators.Containers.mean(scope, pts);
+					for (final IShape n : neigh2) { pts.add(locs.get(n)); }
+					final GamaPoint targetLoc = (GamaPoint) Containers.opMean(scope, pts);
 					center = places.size() > 0 ? Queries.closest_to(scope, places, targetLoc.getLocation())
 							: locs.get(nV);
 				} else {
