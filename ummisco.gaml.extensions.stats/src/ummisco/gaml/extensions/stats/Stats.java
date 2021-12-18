@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Stats.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Stats.java, in ummisco.gaml.extensions.stats, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gaml.extensions.stats;
 
@@ -29,13 +29,9 @@ import org.apache.commons.math3.stat.inference.TTest;
 
 import com.google.common.collect.Ordering;
 
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -57,10 +53,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import rcaller.RCaller;
-import rcaller.RCode;
-import rcaller.exception.ExecutionException;
-import rcaller.exception.ParseException;
 
 /**
  * Written by drogoul Modified on 15 janv. 2011
@@ -71,41 +63,76 @@ import rcaller.exception.ParseException;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Stats {
 
+	/**
+	 * The Class Instance.
+	 */
 	public static class Instance extends DoublePoint {
 
 		/**
 		 *
 		 */
 		private static final long serialVersionUID = 1L;
+		
+		/** The id. */
 		int id;
 
+		/**
+		 * Instantiates a new instance.
+		 *
+		 * @param id the id
+		 * @param point the point
+		 */
 		public Instance(final int id, final double[] point) {
 			super(point);
 			this.id = id;
 		}
 
-		public int getId() {
-			return id;
-		}
+		/**
+		 * Gets the id.
+		 *
+		 * @return the id
+		 */
+		public int getId() { return id; }
 
-		public void setId(final int id) {
-			this.id = id;
-		}
+		/**
+		 * Sets the id.
+		 *
+		 * @param id the new id
+		 */
+		public void setId(final int id) { this.id = id; }
 
 	}
 
+	/**
+	 * The Class DataSet.
+	 */
 	private static class DataSet {
 
+		/** The Constant DEFAULT_CAPACITY. */
 		private static final int DEFAULT_CAPACITY = 50;
+		
+		/** The Constant GROWTH_RATE. */
 		private static final double GROWTH_RATE = 1.5d;
 
+		/** The data set. */
 		double[] dataSet;
+		
+		/** The data set size. */
 		int dataSetSize = 0;
 
+		/** The total. */
 		private double total = 0;
+		
+		/** The product. */
 		private double product = 1;
+		
+		/** The reciprocal sum. */
 		private double reciprocalSum = 0;
+		
+		/** The minimum. */
 		private double minimum = Double.MAX_VALUE;
+		
+		/** The maximum. */
 		private double maximum = Double.MIN_VALUE;
 
 		/**
@@ -146,6 +173,11 @@ public class Stats {
 			++dataSetSize;
 		}
 
+		/**
+		 * Update stats with new value.
+		 *
+		 * @param value the value
+		 */
 		private void updateStatsWithNewValue(final double value) {
 			total += value;
 			product *= value;
@@ -159,9 +191,7 @@ public class Stats {
 		 *
 		 * @return The size of the data set.
 		 */
-		public final int getSize() {
-			return dataSetSize;
-		}
+		public final int getSize() { return dataSetSize; }
 
 		/**
 		 * Determines the median value of the data set.
@@ -187,9 +217,7 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getProduct() {
-			return product;
-		}
+		public final double getProduct() { return product; }
 
 		/**
 		 * The arithemthic mean of an n-element set is the sum of all the elements divided by n. The arithmetic mean is
@@ -200,9 +228,7 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getArithmeticMean() {
-			return total / dataSetSize;
-		}
+		public final double getArithmeticMean() { return total / dataSetSize; }
 
 		/**
 		 * The geometric mean of an n-element set is the nth-root of the product of all the elements. The geometric mean
@@ -214,9 +240,7 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getGeometricMean() {
-			return Math.pow(product, 1.0d / dataSetSize);
-		}
+		public final double getGeometricMean() { return Math.pow(product, 1.0d / dataSetSize); }
 
 		/**
 		 * The harmonic mean of an n-element set is {@literal n} divided by the sum of the reciprocals of the values
@@ -230,9 +254,7 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getHarmonicMean() {
-			return dataSetSize / reciprocalSum;
-		}
+		public final double getHarmonicMean() { return dataSetSize / reciprocalSum; }
 
 		/**
 		 * Calculates the mean absolute deviation of the data set. This is the average (absolute) amount that a single
@@ -248,9 +270,7 @@ public class Stats {
 		public final double getMeanDeviation() {
 			final double mean = getArithmeticMean();
 			double diffs = 0;
-			for (int i = 0; i < dataSetSize; i++) {
-				diffs += Math.abs(mean - dataSet[i]);
-			}
+			for (int i = 0; i < dataSetSize; i++) { diffs += Math.abs(mean - dataSet[i]); }
 			return diffs / dataSetSize;
 		}
 
@@ -266,9 +286,7 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getVariance() {
-			return sumSquaredDiffs() / getSize();
-		}
+		public final double getVariance() { return sumSquaredDiffs() / getSize(); }
 
 		/**
 		 * Helper method for variance calculations.
@@ -298,16 +316,18 @@ public class Stats {
 		 * @throws EmptyDataSetException
 		 *             If the data set is empty.
 		 */
-		public final double getStandardDeviation() {
-			return Math.sqrt(getVariance());
-		}
+		public final double getStandardDeviation() { return Math.sqrt(getVariance()); }
 
+		/**
+		 * Gets the stops.
+		 *
+		 * @param nb the nb
+		 * @return the stops
+		 */
 		public double[] getStops(final int nb) {
 			final double interval = (maximum - minimum) / nb;
 			final double[] result = new double[nb - 1];
-			for (int i = 1; i < nb; i++) {
-				result[i - 1] = minimum + i * interval;
-			}
+			for (int i = 1; i < nb; i++) { result[i - 1] = minimum + i * interval; }
 			return result;
 		}
 
@@ -343,6 +363,13 @@ public class Stats {
 		// }
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the data set
+	 */
 	private static DataSet from(final IScope scope, final IContainer values) {
 		final DataSet d = new DataSet(values.length(scope));
 		for (final Object o : values.iterable(scope)) {
@@ -351,6 +378,14 @@ public class Stats {
 		return d;
 	}
 
+	/**
+	 * Split.
+	 *
+	 * @param <T> the generic type
+	 * @param scope the scope
+	 * @param list the list
+	 * @return the i list
+	 */
 	@operator (
 			value = "split",
 			can_be_const = true,
@@ -373,6 +408,15 @@ public class Stats {
 		return split_in(scope, list, nb);
 	}
 
+	/**
+	 * Split in.
+	 *
+	 * @param <T> the generic type
+	 * @param scope the scope
+	 * @param list the list
+	 * @param nb the nb
+	 * @return the i list
+	 */
 	@operator (
 			value = "split_in",
 			can_be_const = true,
@@ -393,6 +437,16 @@ public class Stats {
 		return split_in(scope, list, nb, true);
 	}
 
+	/**
+	 * Split in.
+	 *
+	 * @param <T> the generic type
+	 * @param scope the scope
+	 * @param list the list
+	 * @param nb the nb
+	 * @param strict the strict
+	 * @return the i list
+	 */
 	@operator (
 			value = "split_in",
 			can_be_const = true,
@@ -421,6 +475,15 @@ public class Stats {
 		return split_using(scope, list, stops);
 	}
 
+	/**
+	 * Split using.
+	 *
+	 * @param <T> the generic type
+	 * @param scope the scope
+	 * @param list the list
+	 * @param stops the stops
+	 * @return the i list
+	 */
 	@operator (
 			value = "split_using",
 			can_be_const = true,
@@ -442,6 +505,16 @@ public class Stats {
 		return split_using(scope, list, stops, true);
 	}
 
+	/**
+	 * Split using.
+	 *
+	 * @param <T> the generic type
+	 * @param scope the scope
+	 * @param list the list
+	 * @param stops the stops
+	 * @param strict the strict
+	 * @return the i list
+	 */
 	@operator (
 			value = "split_using",
 			can_be_const = true,
@@ -470,9 +543,7 @@ public class Stats {
 		d.addValue(Double.MAX_VALUE);
 		final IType numberType = list.getGamlType().getContentType();
 		final IList<IList<T>> result = GamaListFactory.createWithoutCasting(Types.LIST.of(numberType));
-		for (int i = 0; i < d.dataSetSize; i++) {
-			result.add(GamaListFactory.createWithoutCasting(numberType));
-		}
+		for (int i = 0; i < d.dataSetSize; i++) { result.add(GamaListFactory.createWithoutCasting(numberType)); }
 		for (final T o : list) {
 			for (int i = 0; i < d.dataSetSize; i++) {
 				if (strict ? o.doubleValue() < d.dataSet[i] : o.doubleValue() <= d.dataSet[i]) {
@@ -484,6 +555,13 @@ public class Stats {
 		return result;
 	}
 
+	/**
+	 * Max.
+	 *
+	 * @param scope the scope
+	 * @param l the l
+	 * @return the object
+	 */
 	@operator (
 			value = "max",
 			can_be_const = true,
@@ -542,6 +620,13 @@ public class Stats {
 		return maxNum == null ? maxPoint : maxNum;
 	}
 
+	/**
+	 * Min.
+	 *
+	 * @param scope the scope
+	 * @param l the l
+	 * @return the object
+	 */
 	@operator (
 			value = "min",
 			can_be_const = true,
@@ -601,6 +686,13 @@ public class Stats {
 		return minNum == null ? minPoint : minNum;
 	}
 
+	/**
+	 * Product.
+	 *
+	 * @param scope the scope
+	 * @param l the l
+	 * @return the object
+	 */
 	@SuppressWarnings ("null")
 	@operator (
 			value = { "mul", "product" },
@@ -669,6 +761,13 @@ public class Stats {
 	// TODO Penser a faire ces calculs sur les points, egalement (et les entiers
 	// ?)
 
+	/**
+	 * Op median.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the object
+	 */
 	@operator (
 			value = "median",
 			can_be_const = true,
@@ -693,9 +792,7 @@ public class Stats {
 			case IType.INT:
 			case IType.FLOAT:
 				final DataSet d2 = new DataSet();
-				for (final Object o : values.iterable(scope)) {
-					d2.addValue(Cast.asFloat(scope, o));
-				}
+				for (final Object o : values.iterable(scope)) { d2.addValue(Cast.asFloat(scope, o)); }
 				final Number result = d2.getSize() == 0 ? 0.0 : d2.getMedian();
 				return contentType.cast(scope, result, null, false);
 			case IType.POINT:
@@ -724,15 +821,20 @@ public class Stats {
 				return new GamaColor((int) r.getMedian(), (int) g.getMedian(), (int) b.getMedian(), 0);
 			default:
 				final DataSet d = new DataSet();
-				for (final Object o : values.iterable(scope)) {
-					d.addValue(Cast.asFloat(scope, o));
-				}
+				for (final Object o : values.iterable(scope)) { d.addValue(Cast.asFloat(scope, o)); }
 				final Number n = d.getSize() == 0 ? 0.0 : d.getMedian();
 				return Cast.asFloat(scope, n);
 
 		}
 	}
 
+	/**
+	 * Op st dev.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double
+	 */
 	@operator (
 			value = "standard_deviation",
 			can_be_const = true,
@@ -755,6 +857,13 @@ public class Stats {
 		return d.getStandardDeviation();
 	}
 
+	/**
+	 * Op geom mean.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double
+	 */
 	@operator (
 			value = "geometric_mean",
 			can_be_const = true,
@@ -776,6 +885,13 @@ public class Stats {
 		return d.getGeometricMean();
 	}
 
+	/**
+	 * Op harmonic mean.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double
+	 */
 	@operator (
 			value = "harmonic_mean",
 			can_be_const = true,
@@ -797,6 +913,13 @@ public class Stats {
 		return d.getHarmonicMean();
 	}
 
+	/**
+	 * Op variance.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double
+	 */
 	@operator (
 			value = "variance",
 			can_be_const = true,
@@ -817,6 +940,13 @@ public class Stats {
 		return d.getVariance();
 	}
 
+	/**
+	 * Op mean deviation.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double
+	 */
 	@operator (
 			value = "mean_deviation",
 			can_be_const = true,
@@ -837,6 +967,15 @@ public class Stats {
 		return d.getMeanDeviation();
 	}
 
+	/**
+	 * Frequency of.
+	 *
+	 * @param scope the scope
+	 * @param original the original
+	 * @param filter the filter
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "frequency_of" },
 			can_be_const = true,
@@ -869,124 +1008,134 @@ public class Stats {
 		return result;
 	}
 
-	@operator (
-			value = { "corR", "R_correlation" },
-			can_be_const = false,
-			type = IType.FLOAT,
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
-	@doc (
-			value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands)"
-					+ " in given variable  (left-hand operand).",
-			special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
-			examples = { @example (
-					value = "list X <- [1, 2, 3];",
-					isExecutable = false),
-					@example (
-							value = "list Y <- [1, 2, 4];",
-							isExecutable = false),
-					@example (
-							value = "corR(X, Y)",
-							equals = "0.981980506061966",
-							isExecutable = false) })
-	@no_test // because require R to be installed.
+	// @operator (
+	// value = { "corR", "R_correlation" },
+	// can_be_const = false,
+	// type = IType.FLOAT,
+	// category = { IOperatorCategory.STATISTICAL },
+	// concept = { IConcept.STATISTIC })
+	// @doc (
+	// value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands)"
+	// + " in given variable (left-hand operand).",
+	// special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",
+	// examples = { @example (
+	// value = "list X <- [1, 2, 3];",
+	// isExecutable = false),
+	// @example (
+	// value = "list Y <- [1, 2, 4];",
+	// isExecutable = false),
+	// @example (
+	// value = "corR(X, Y)",
+	// equals = "0.981980506061966",
+	// isExecutable = false) })
+	// @no_test // because require R to be installed.
+	//
+	// public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
+	// throws GamaRuntimeException, ParseException, ExecutionException {
+	// if (l1.length(scope) == 0 || l2.length(scope) == 0) return Double.valueOf(0d);
+	//
+	// if (l1.length(scope) != l2.length(scope)) return Double.valueOf(0d);
+	//
+	// final RCaller caller = new RCaller();
+	// final RCode code = new RCode();
+	//
+	// final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
+	// caller.setRscriptExecutable(RPath);
+	// // caller.setRscriptExecutable("\"" + RPath + "\"");
+	// // if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+	// // caller.setRscriptExecutable(RPath);
+	// // }
+	//
+	// final double[] vectorX = new double[l1.length(scope)];
+	// final double[] vectorY = new double[l2.length(scope)];
+	//
+	// int i = 0;
+	// for (final Object o : l1.iterable(scope)) {
+	// vectorX[i++] = Double.parseDouble(o.toString());
+	// }
+	//
+	// i = 0;
+	// for (final Object o : l2.iterable(scope)) {
+	// vectorY[i++] = Double.parseDouble(o.toString());
+	// }
+	//
+	// code.addDoubleArray("vectorX", vectorX);
+	// code.addDoubleArray("vectorY", vectorY);
+	//
+	// code.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
+	// caller.setRCode(code);
+	// caller.runAndReturnResult("corCoef");
+	//
+	// double[] results;
+	// try {
+	// results = caller.getParser().getAsDoubleArray("corCoef");
+	// } catch (final Exception ex) {
+	// return 0.0;
+	// }
+	//
+	// return results[0];
+	// }
 
-	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
-			throws GamaRuntimeException, ParseException, ExecutionException {
-		if (l1.length(scope) == 0 || l2.length(scope) == 0) return Double.valueOf(0d);
+	// @operator (
+	// value = { "meanR", "R_mean" },
+	// can_be_const = false,
+	// type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+	// category = { IOperatorCategory.STATISTICAL },
+	// concept = { IConcept.STATISTIC })
+	// @doc (
+	// value = "returns the mean value of given vector (right-hand operand) in given variable (left-hand operand).",
+	// examples = { @example (
+	// value = "list<int> X <- [2, 3, 1];",
+	// isExecutable = false),
+	// @example (
+	// value = "meanR(X)",
+	// equals = "2",
+	// returnType = IKeyword.INT,
+	// isExecutable = false),
+	// @example (
+	// value = "meanR([2, 3, 1])",
+	// equals = "2",
+	// isExecutable = false) })
+	// @no_test
+	// public static Object getMeanR(final IScope scope, final IContainer l)
+	// throws GamaRuntimeException, ParseException, ExecutionException {
+	// if (l.length(scope) == 0) return Double.valueOf(0d);
+	//
+	// double[] results;
+	// final RCaller caller = new RCaller();
+	// final RCode code = new RCode();
+	//
+	// final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
+	// caller.setRscriptExecutable(RPath);
+	// // caller.setRscriptExecutable("\"" + RPath + "\"");
+	// // if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+	// // caller.setRscriptExecutable(RPath);
+	// // }
+	//
+	// final double[] data = new double[l.length(scope)];
+	// int i = 0;
+	// for (final Object o : l.iterable(scope)) {
+	// data[i++] = Double.parseDouble(o.toString());
+	// }
+	//
+	// code.addDoubleArray("data", data);
+	// code.addRCode("mean<-mean(data)");
+	// caller.setRCode(code);
+	// caller.runAndReturnResult("mean");
+	// results = caller.getParser().getAsDoubleArray("mean");
+	// return results[0];
+	// }
 
-		if (l1.length(scope) != l2.length(scope)) return Double.valueOf(0d);
-
-		final RCaller caller = new RCaller();
-		final RCode code = new RCode();
-
-		final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
-		caller.setRscriptExecutable(RPath);
-		// caller.setRscriptExecutable("\"" + RPath + "\"");
-		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-		// caller.setRscriptExecutable(RPath);
-		// }
-
-		final double[] vectorX = new double[l1.length(scope)];
-		final double[] vectorY = new double[l2.length(scope)];
-
-		int i = 0;
-		for (final Object o : l1.iterable(scope)) {
-			vectorX[i++] = Double.parseDouble(o.toString());
-		}
-
-		i = 0;
-		for (final Object o : l2.iterable(scope)) {
-			vectorY[i++] = Double.parseDouble(o.toString());
-		}
-
-		code.addDoubleArray("vectorX", vectorX);
-		code.addDoubleArray("vectorY", vectorY);
-
-		code.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
-		caller.setRCode(code);
-		caller.runAndReturnResult("corCoef");
-
-		double[] results;
-		try {
-			results = caller.getParser().getAsDoubleArray("corCoef");
-		} catch (final Exception ex) {
-			return 0.0;
-		}
-
-		return results[0];
-	}
-
-	@operator (
-			value = { "meanR", "R_mean" },
-			can_be_const = false,
-			type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
-	@doc (
-			value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).",
-			examples = { @example (
-					value = "list<int> X <- [2, 3, 1];",
-					isExecutable = false),
-					@example (
-							value = "meanR(X)",
-							equals = "2",
-							returnType = IKeyword.INT,
-							isExecutable = false),
-					@example (
-							value = "meanR([2, 3, 1])",
-							equals = "2",
-							isExecutable = false) })
-	@no_test
-	public static Object getMeanR(final IScope scope, final IContainer l)
-			throws GamaRuntimeException, ParseException, ExecutionException {
-		if (l.length(scope) == 0) return Double.valueOf(0d);
-
-		double[] results;
-		final RCaller caller = new RCaller();
-		final RCode code = new RCode();
-
-		final String RPath = GamaPreferences.External.LIB_R.value(scope).getPath(scope);
-		caller.setRscriptExecutable(RPath);
-		// caller.setRscriptExecutable("\"" + RPath + "\"");
-		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-		// caller.setRscriptExecutable(RPath);
-		// }
-
-		final double[] data = new double[l.length(scope)];
-		int i = 0;
-		for (final Object o : l.iterable(scope)) {
-			data[i++] = Double.parseDouble(o.toString());
-		}
-
-		code.addDoubleArray("data", data);
-		code.addRCode("mean<-mean(data)");
-		caller.setRCode(code);
-		caller.runAndReturnResult("mean");
-		results = caller.getParser().getAsDoubleArray("mean");
-		return results[0];
-	}
-
+	/**
+	 * D bscan apache.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @param eps the eps
+	 * @param minPts the min pts
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "dbscan",
 			can_be_const = false,
@@ -1010,9 +1159,7 @@ public class Stats {
 		for (int i = 0; i < data.size(); i++) {
 			final IList d = (IList) data.get(i);
 			final double point[] = new double[d.size()];
-			for (int j = 0; j < d.size(); j++) {
-				point[j] = Cast.asFloat(scope, d.get(j));
-			}
+			for (int j = 0; j < d.size(); j++) { point[j] = Cast.asFloat(scope, d.get(j)); }
 			remainingData.add(i);
 			instances.add(new Instance(i, point));
 		}
@@ -1037,6 +1184,16 @@ public class Stats {
 		}
 	}
 
+	/**
+	 * K means plusplus apache.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @param k the k
+	 * @param maxIt the max it
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "kmeans",
 			can_be_const = false,
@@ -1062,9 +1219,7 @@ public class Stats {
 		for (int i = 0; i < data.size(); i++) {
 			final IList d = (IList) data.get(i);
 			final double point[] = new double[d.size()];
-			for (int j = 0; j < d.size(); j++) {
-				point[j] = Cast.asFloat(scope, d.get(j));
-			}
+			for (int j = 0; j < d.size(); j++) { point[j] = Cast.asFloat(scope, d.get(j)); }
 			instances.add(new Instance(i, point));
 		}
 		final KMeansPlusPlusClusterer<DoublePoint> kmeans =
@@ -1073,15 +1228,21 @@ public class Stats {
 		try (final Collector.AsList results = Collector.getList()) {
 			for (final Cluster<DoublePoint> cl : clusters) {
 				final IList clG = GamaListFactory.create();
-				for (final DoublePoint pt : cl.getPoints()) {
-					clG.addValue(scope, ((Instance) pt).getId());
-				}
+				for (final DoublePoint pt : cl.getPoints()) { clG.addValue(scope, ((Instance) pt).getId()); }
 				results.add(clG);
 			}
 			return results.items();
 		}
 	}
-	
+
+	/**
+	 * T test P value.
+	 *
+	 * @param scope the scope
+	 * @param seq1 the seq 1
+	 * @param seq2 the seq 2
+	 * @return the double
+	 */
 	@operator (
 			value = "tTest",
 			can_be_const = false,
@@ -1096,16 +1257,26 @@ public class Stats {
 					equals = "0.01") })
 	public static Double tTestPValue(final IScope scope, final IList seq1, final IList seq2) {
 		TTest t = new TTest();
-		
+
 		double[] s1 = new double[seq1.length(scope)];
 		for (int i = 0; i < seq1.length(scope); i++) { s1[i] = Cast.asFloat(scope, seq1.get(i)); }
-		
+
 		double[] s2 = new double[seq2.length(scope)];
 		for (int i = 0; i < seq2.length(scope); i++) { s2[i] = Cast.asFloat(scope, seq2.get(i)); }
-		
-		return t.tTest(s1,s2);
+
+		return t.tTest(s1, s2);
 	}
 
+	/**
+	 * Op dynamic time warping.
+	 *
+	 * @param scope the scope
+	 * @param vals1 the vals 1
+	 * @param vals2 the vals 2
+	 * @param radius the radius
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "dtw",
 			can_be_const = false,
@@ -1126,9 +1297,7 @@ public class Stats {
 
 		table[0][0] = 0;
 
-		for (int i = 1; i <= n2; i++) {
-			table[0][i] = Double.POSITIVE_INFINITY;
-		}
+		for (int i = 1; i <= n2; i++) { table[0][i] = Double.POSITIVE_INFINITY; }
 
 		for (int i = 1; i <= n1; i++) {
 			final int start = Math.max(1, i - radius);
@@ -1159,6 +1328,15 @@ public class Stats {
 
 	}
 
+	/**
+	 * Op dynamic time warping.
+	 *
+	 * @param scope the scope
+	 * @param vals1 the vals 1
+	 * @param vals2 the vals 2
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "dtw",
 			can_be_const = false,
@@ -1178,9 +1356,7 @@ public class Stats {
 
 		table[0][0] = 0;
 
-		for (int i = 1; i <= n2; i++) {
-			table[0][i] = Double.POSITIVE_INFINITY;
-		}
+		for (int i = 1; i <= n2; i++) { table[0][i] = Double.POSITIVE_INFINITY; }
 
 		for (int i = 1; i <= n1; i++) {
 			table[1][0] = Double.POSITIVE_INFINITY;
@@ -1206,6 +1382,14 @@ public class Stats {
 		return table[0][n2];
 	}
 
+	/**
+	 * Skewness.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "skewness",
 			can_be_const = false,
@@ -1221,12 +1405,18 @@ public class Stats {
 	public static Double skewness(final IScope scope, final IList data) throws GamaRuntimeException {
 		final Skewness sk = new Skewness();
 		final double[] values = new double[data.length(scope)];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = Cast.asFloat(scope, data.get(i));
-		}
+		for (int i = 0; i < values.length; i++) { values[i] = Cast.asFloat(scope, data.get(i)); }
 		return sk.evaluate(values);
 	}
 
+	/**
+	 * Kurtosis.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "kurtosis",
 			can_be_const = false,
@@ -1243,13 +1433,20 @@ public class Stats {
 	public static Double kurtosis(final IScope scope, final IList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = Cast.asFloat(scope, data.get(i));
-		}
+		for (int i = 0; i < values.length; i++) { values[i] = Cast.asFloat(scope, data.get(i)); }
 		// java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
+	/**
+	 * K means plusplus apache.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @param k the k
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "kmeans",
 			can_be_const = false,
@@ -1271,6 +1468,14 @@ public class Stats {
 		return KMeansPlusplusApache(scope, data, k, -1);
 	}
 
+	/**
+	 * Builds the regression.
+	 *
+	 * @param scope the scope
+	 * @param data the data
+	 * @return the gama regression
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "build",
 			can_be_const = false,
@@ -1294,6 +1499,14 @@ public class Stats {
 		}
 	}
 
+	/**
+	 * Predict from regression.
+	 *
+	 * @param scope the scope
+	 * @param regression the regression
+	 * @param instance the instance
+	 * @return the double
+	 */
 	@operator (
 			value = "predict",
 			can_be_const = false,
@@ -1312,6 +1525,13 @@ public class Stats {
 		return regression.predict(scope, instance);
 	}
 
+	/**
+	 * Gini index.
+	 *
+	 * @param scope the scope
+	 * @param vals the vals
+	 * @return the double
+	 */
 	@operator (
 			value = "gini",
 			category = { IOperatorCategory.SPATIAL, IOperatorCategory.STATISTICAL },
@@ -1328,7 +1548,7 @@ public class Stats {
 
 	public static double giniIndex(final IScope scope, final IList<Double> vals) {
 		final int N = vals.size();
-		Double G = 0.0;
+		double G = 0.0;
 		double sumXi = 0.0;
 		for (int i = 0; i < N; i++) {
 			final double xi = vals.get(i);
@@ -1342,6 +1562,14 @@ public class Stats {
 		return G;
 	}
 
+	/**
+	 * Product of.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @param filter the filter
+	 * @return the object
+	 */
 	@operator (
 			value = { "product_of" },
 			type = ITypeProvider.TYPE_AT_INDEX + 2,
@@ -1365,6 +1593,14 @@ public class Stats {
 		return product(scope, collect(scope, container, filter));
 	}
 
+	/**
+	 * Variance of.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @param filter the filter
+	 * @return the object
+	 */
 	@operator (
 			value = { "variance_of" },
 			type = ITypeProvider.TYPE_AT_INDEX + 2,

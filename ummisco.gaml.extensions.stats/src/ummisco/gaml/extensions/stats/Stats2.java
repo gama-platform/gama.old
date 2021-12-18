@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Stats2.java, in plugin ummisco.gaml.extensions.stats, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * Stats2.java, in ummisco.gaml.extensions.stats, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.stats;
 
 import cern.colt.list.DoubleArrayList;
@@ -27,9 +26,19 @@ import msi.gama.util.IContainer;
 import msi.gaml.operators.Containers;
 import msi.gaml.types.IType;
 
+/**
+ * The Class Stats2.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class Stats2 {
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the double array list
+	 */
 	static DoubleArrayList from(final IScope scope, final IContainer values) {
 		final DoubleArrayList d = new DoubleArrayList(values.length(scope));
 		for (final Object o : values.iterable(scope)) {
@@ -39,11 +48,10 @@ public class Stats2 {
 		return d;
 	}
 
+	/**
+	 * The Class DescriptiveStatistics.
+	 */
 	public static abstract class DescriptiveStatistics {
-
-		// A list of agents among the left-operand list that are located at a
-		// distance <= the right operand from the
-		// caller agent (in its topology)
 
 		/**
 		 * Returns the auto-correlation of a data sequence.
@@ -441,6 +449,13 @@ public class Stats2 {
 			return Descriptive.skew(moment3, standardDeviation);
 		}
 
+		/**
+		 * Op variance.
+		 *
+		 * @param scope the scope
+		 * @param standardDeviation the standard deviation
+		 * @return the double
+		 */
 		@operator (
 				value = "variance",
 				can_be_const = true,
@@ -537,9 +552,7 @@ public class Stats2 {
 			final double x = dfd / (dfd + dfn * fstat);
 			try {
 				return Gamma.incompleteBeta(dfd / 2.0, dfn / 2.0, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .incompleteBeta reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .incompleteBeta reports: " + ex, scope);
 			}
 		}
@@ -576,9 +589,7 @@ public class Stats2 {
 			try {
 				final double p = Probability.studentT(df, -x);
 				return 2.0 * p;
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .studentT reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .studentT reports: " + ex, scope);
 			}
 		}
@@ -610,9 +621,7 @@ public class Stats2 {
 			// with the given degrees of freedom.
 			try {
 				return Probability.studentT(df, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .studentT reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .studentT reports: " + ex, scope);
 			}
 		}
@@ -645,9 +654,7 @@ public class Stats2 {
 			// with the given mean and standard deviation.
 			try {
 				return Probability.normal(mean, sd, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .normal reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .normal reports: " + ex, scope);
 			}
 		}
@@ -684,9 +691,7 @@ public class Stats2 {
 			final double a = 2.0 * (1.0 - x);
 			try {
 				return Probability.studentTInverse(a, df);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .studentTInverse reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .studentTInverse reports: " + ex, scope);
 			}
 		}
@@ -723,9 +728,7 @@ public class Stats2 {
 			try {
 				final double x = Probability.normalInverse(area);
 				return (x + mean) * sd;
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .normalInverse reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .normalInverse reports: " + ex, scope);
 			}
 		}
@@ -789,9 +792,7 @@ public class Stats2 {
 			// the double return value.
 			try {
 				return Math.rint(Arithmetic.binomial(n, k));
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .Arithmetic.binomial reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .Arithmetic.binomial reports: " + ex, scope);
 			}
 		}
@@ -865,9 +866,7 @@ public class Stats2 {
 			// density function.
 			try {
 				return Probability.gamma(a, b, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
 			}
 		}
@@ -903,9 +902,7 @@ public class Stats2 {
 			// density function.
 			try {
 				return Probability.gammaComplemented(a, b, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
 			}
 		}
@@ -941,9 +938,7 @@ public class Stats2 {
 			// the probability of success in the range 0 to 1.
 			try {
 				return Probability.binomialComplemented(k, n, p);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .binomialComplement reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .binomialComplement reports: " + ex, scope);
 			}
 		}
@@ -978,9 +973,7 @@ public class Stats2 {
 			// freedom.
 			try {
 				return Probability.chiSquare(df, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .chiSquare reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .chiSquare reports: " + ex, scope);
 			}
 		}
@@ -1017,14 +1010,15 @@ public class Stats2 {
 			// of freedom.
 			try {
 				return Probability.chiSquareComplemented(df, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .chiSquareComplemented reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .chiSquareComplemented reports: " + ex, scope);
 			}
 		}
 	}
 
+	/**
+	 * The Class GammaFunction.
+	 */
 	public static abstract class GammaFunction {
 
 		/**
@@ -1053,9 +1047,7 @@ public class Stats2 {
 			// Returns the value of the Gamma function at x.
 			try {
 				return Gamma.gamma(x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .gamma reports: " + ex, scope);
 			}
 		}
@@ -1085,9 +1077,7 @@ public class Stats2 {
 			// Returns the log of the value of the Gamma function at x.
 			try {
 				return Gamma.logGamma(x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .logGamma reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .logGamma reports: " + ex, scope);
 			}
 		}
@@ -1122,9 +1112,7 @@ public class Stats2 {
 			// a to the integration end point x.
 			try {
 				return Gamma.incompleteGamma(a, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .incompleteGamma reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .incompleteGamma reports: " + ex, scope);
 			}
 		}
@@ -1158,9 +1146,7 @@ public class Stats2 {
 			// argument a and integration start point x.
 			try {
 				return Gamma.incompleteGammaComplement(a, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .incompleteGammaComplement reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .incompleteGammaComplement reports: " + ex, scope);
 			}
 		}
@@ -1191,9 +1177,7 @@ public class Stats2 {
 			// Returns the beta function with arguments a, b.
 			try {
 				return Gamma.beta(a, b);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .beta reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .beta reports: " + ex, scope);
 			}
 		}
@@ -1227,9 +1211,7 @@ public class Stats2 {
 			// a and b, from zero to x.
 			try {
 				return Gamma.incompleteBeta(a, b, x);
-			} catch (final IllegalArgumentException ex) {
-				throw GamaRuntimeException.error("colt .incompleteBeta reports: " + ex, scope);
-			} catch (final ArithmeticException ex) {
+			} catch (final IllegalArgumentException | ArithmeticException ex) {
 				throw GamaRuntimeException.error("colt .incompleteBeta reports: " + ex, scope);
 			}
 		}
