@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.IMacroAgent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * IMacroAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -24,9 +24,13 @@ import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
+/**
+ * The Interface IMacroAgent.
+ */
 @vars ({ @variable (
 		name = IKeyword.MEMBERS,
-		type = IType.LIST,
+		// Changed from IType.LIST; see issue #3264
+		type = IType.CONTAINER,
 		of = IType.AGENT,
 		doc = { @doc ("Returns the list of agents for the population(s) of which the receiver agent is a direct host") }),
 		@variable (
@@ -46,9 +50,22 @@ public interface IMacroAgent extends IAgent {
 	 * @param other
 	 * @return true if this agent can capture other agent false otherwise
 	 */
-	public abstract boolean canCapture(IAgent other, ISpecies newSpecies);
+	boolean canCapture(IAgent other, ISpecies newSpecies);
 
-	public abstract IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies, final IAgent microAgent)
+	/**
+	 * Capture micro agent.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param microSpecies
+	 *            the micro species
+	 * @param microAgent
+	 *            the micro agent
+	 * @return the i agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies, final IAgent microAgent)
 			throws GamaRuntimeException;
 
 	/**
@@ -61,8 +78,8 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
-			final IList<IAgent> microAgents) throws GamaRuntimeException;
+	IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies, final IList<IAgent> microAgents)
+			throws GamaRuntimeException;
 
 	/**
 	 * Returns all the agents which consider this agent as direct host.
@@ -70,7 +87,7 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	@getter (IKeyword.MEMBERS)
-	public abstract IContainer<?, IAgent> getMembers(IScope scope);
+	IContainer<?, IAgent> getMembers(IScope scope);
 
 	/**
 	 * Returns the population of the specified (direct) micro-species.
@@ -78,7 +95,7 @@ public interface IMacroAgent extends IAgent {
 	 * @param microSpecies
 	 * @return
 	 */
-	public abstract IPopulation<? extends IAgent> getMicroPopulation(ISpecies microSpecies);
+	IPopulation<? extends IAgent> getMicroPopulation(ISpecies microSpecies);
 
 	/**
 	 * Returns the population of the specified (direct) micro-species.
@@ -86,25 +103,40 @@ public interface IMacroAgent extends IAgent {
 	 * @param microSpeciesName
 	 * @return
 	 */
-	public abstract IPopulation<? extends IAgent> getMicroPopulation(String microSpeciesName);
+	IPopulation<? extends IAgent> getMicroPopulation(String microSpeciesName);
 
 	/**
 	 * Returns a list of populations of (direct) micro-species.
 	 *
 	 * @return
 	 */
-	public abstract IPopulation<? extends IAgent>[] getMicroPopulations();
+	IPopulation<? extends IAgent>[] getMicroPopulations();
 
 	/**
 	 * Verifies if this agent contains micro-agents or not.
 	 *
 	 * @return true if this agent contains micro-agent(s) false otherwise
 	 */
-	public abstract boolean hasMembers();
+	boolean hasMembers();
 
-	public int getMembersSize(final IScope scope);
+	/**
+	 * Gets the members size.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the members size
+	 */
+	int getMembersSize(final IScope scope);
 
-	public abstract void initializeMicroPopulation(IScope scope, String name);
+	/**
+	 * Initialize micro population.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 */
+	void initializeMicroPopulation(IScope scope, String name);
 
 	/**
 	 * Initialize Populations to manage micro-agents.
@@ -118,8 +150,7 @@ public interface IMacroAgent extends IAgent {
 	 * @param newMicroSpecies
 	 * @return
 	 */
-	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final IList<IAgent> microAgents,
-			final ISpecies newMicroSpecies);
+	IList<IAgent> migrateMicroAgents(IScope scope, final IList<IAgent> microAgents, final ISpecies newMicroSpecies);
 
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
@@ -128,8 +159,7 @@ public interface IMacroAgent extends IAgent {
 	 * @param newMicroSpecies
 	 * @return
 	 */
-	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies,
-			final ISpecies newMicroSpecies);
+	IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies, final ISpecies newMicroSpecies);
 
 	/**
 	 * Releases some micro-agents of this agent.
@@ -138,14 +168,25 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
-			throws GamaRuntimeException;
+	IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents) throws GamaRuntimeException;
 
+	/**
+	 * Sets the members.
+	 *
+	 * @param members
+	 *            the new members
+	 */
 	@setter (IKeyword.MEMBERS)
-	public abstract void setMembers(IList<IAgent> members);
+	void setMembers(IList<IAgent> members);
 
+	/**
+	 * Sets the agents.
+	 *
+	 * @param agents
+	 *            the new agents
+	 */
 	@setter (IKeyword.AGENTS)
-	public abstract void setAgents(IList<IAgent> agents);
+	void setAgents(IList<IAgent> agents);
 
 	/**
 	 * Returns all the agents which consider this agent as direct or in-direct host.
@@ -153,10 +194,25 @@ public interface IMacroAgent extends IAgent {
 	 * @return
 	 */
 	@getter (IKeyword.AGENTS)
-	public abstract IList<IAgent> getAgents(IScope scope);
+	IList<IAgent> getAgents(IScope scope);
 
-	public abstract void addExternMicroPopulation(final String expName, final IPopulation<? extends IAgent> pop);
+	/**
+	 * Adds the extern micro population.
+	 *
+	 * @param expName
+	 *            the exp name
+	 * @param pop
+	 *            the pop
+	 */
+	void addExternMicroPopulation(final String expName, final IPopulation<? extends IAgent> pop);
 
-	public abstract IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName);
+	/**
+	 * Gets the extern micro population for.
+	 *
+	 * @param expName
+	 *            the exp name
+	 * @return the extern micro population for
+	 */
+	IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName);
 
 }
