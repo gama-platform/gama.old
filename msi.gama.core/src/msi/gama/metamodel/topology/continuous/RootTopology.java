@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.continuous.RootTopology.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * RootTopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,8 +19,23 @@ import msi.gama.metamodel.topology.CompoundSpatialIndex;
 import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class RootTopology.
+ */
 public class RootTopology extends ContinuousTopology {
 
+	/**
+	 * Instantiates a new root topology.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param geom
+	 *            the geom
+	 * @param isTorus
+	 *            the is torus
+	 * @param hasParallelism
+	 *            the has parallelism
+	 */
 	public RootTopology(final IScope scope, final IShape geom, final boolean isTorus, final boolean hasParallelism) {
 		super(scope, geom);
 		final Envelope bounds = geom.getEnvelope();
@@ -29,26 +44,41 @@ public class RootTopology extends ContinuousTopology {
 		root = this;
 	}
 
+	/** The spatial index. */
 	private final ISpatialIndex.Compound spatialIndex;
+
+	/** The is torus. */
 	private final boolean isTorus;
 
 	@Override
-	public ISpatialIndex getSpatialIndex() {
-		return spatialIndex;
-	}
+	public ISpatialIndex getSpatialIndex() { return spatialIndex; }
 
-	public void updateEnvironment(final IShape newEnv, final boolean hasParallelism) {
-		spatialIndex.update(newEnv.getEnvelope(), hasParallelism);
+	/**
+	 * Update environment.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param newEnv
+	 *            the new env
+	 * @param hasParallelism
+	 *            the has parallelism
+	 */
+	public void updateEnvironment(final IScope scope, final IShape newEnv, final boolean hasParallelism) {
+		spatialIndex.update(scope, newEnv.getEnvelope(), hasParallelism);
 	}
 
 	@Override
-	public boolean isTorus() {
-		return isTorus;
-	}
+	public boolean isTorus() { return isTorus; }
 
 	@Override
 	public void setRoot(final IScope scope, final RootTopology root) {}
 
+	/**
+	 * Merge with.
+	 *
+	 * @param other
+	 *            the other
+	 */
 	public void mergeWith(final RootTopology other) {
 		spatialIndex.mergeWith(other.spatialIndex);
 	}
@@ -59,8 +89,14 @@ public class RootTopology extends ContinuousTopology {
 		if (spatialIndex != null) { spatialIndex.dispose(); }
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param pop
+	 *            the pop
+	 */
 	public void remove(final IPopulation<? extends IAgent> pop) {
-		if (spatialIndex != null) { spatialIndex.remove(pop); }
+		if (spatialIndex != null) { spatialIndex.remove(pop.getSpecies()); }
 
 	}
 
