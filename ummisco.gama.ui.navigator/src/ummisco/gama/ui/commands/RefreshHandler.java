@@ -185,7 +185,7 @@ public class RefreshHandler implements IRefreshHandler {
 					return Status.CANCEL_STATUS;
 				} finally {
 					ResourceManager.unblock(monitor);
-					// refreshNavigator();
+					WorkbenchHelper.refreshNavigator();
 					monitor.done();
 				}
 				return errorStatus[0];
