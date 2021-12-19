@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.ImageUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * ImageUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,6 +11,7 @@ package msi.gama.common.util;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -40,40 +40,83 @@ import com.sun.media.jai.codec.FileSeekableStream;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ImageUtils.
+ */
 public class ImageUtils {
 
+	static {
+		DEBUG.OFF();
+	}
+
+	/** The no image. */
 	private static BufferedImage NO_IMAGE;
+
+	/** The cache. */
 	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
 			.removalListener(notification -> ((BufferedImage) notification.getValue()).flush()).build();
+
+	/** The open GL cache. */
 	private final Cache<String, BufferedImage> openGLCache =
 			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
 					.removalListener(notification -> ((BufferedImage) notification.getValue()).flush()).build();
+
+	/** The gif cache. */
 	private final Cache<String, GifDecoder> gifCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES)
 			.removalListener(notification -> ((GifDecoder) notification.getValue()).dispose()).build();
 
+	/** The cached GC. */
 	private static GraphicsConfiguration cachedGC;
 
+	/**
+	 * Gets the cached GC.
+	 *
+	 * @return the cached GC
+	 */
 	public static GraphicsConfiguration getCachedGC() {
 		if (cachedGC == null) {
-			cachedGC = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-					.getDefaultConfiguration();
+			DEBUG.OUT("Creating cached Graphics Configuration");
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			DEBUG.OUT("Local Graphics Environment selected");
+			GraphicsDevice gd = ge.getDefaultScreenDevice();
+			DEBUG.OUT("Default Graphics Device selected");
+			cachedGC = gd.getDefaultConfiguration();
+			DEBUG.OUT("Default Graphics Configuration selected");
 		}
 		return cachedGC;
 	}
 
+	/**
+	 * Gets the no image.
+	 *
+	 * @return the no image
+	 */
 	public static BufferedImage getNoImage() {
 		if (NO_IMAGE == null) { NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB); }
 		return NO_IMAGE;
 	}
 
+	/** The Constant tiffExt. */
 	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
+
+	/** The Constant gifExt. */
 	private static final List<String> gifExt = Arrays.asList(".gif", ".GIF");
 
+	/** The instance. */
 	private static ImageUtils instance = new ImageUtils();
 
+	/**
+	 * Gets the single instance of ImageUtils.
+	 *
+	 * @return single instance of ImageUtils
+	 */
 	public static ImageUtils getInstance() { return instance; }
 
+	/**
+	 * Instantiates a new image utils.
+	 */
 	private ImageUtils() {}
 
 	/**
@@ -99,18 +142,45 @@ public class ImageUtils {
 		return result == getNoImage() ? null : result;
 	}
 
+	/**
+	 * Gets the frame count.
+	 *
+	 * @param path
+	 *            the path
+	 * @return the frame count
+	 */
 	public int getFrameCount(final String path) {
 		final GifDecoder gif = gifCache.getIfPresent(path);
 		if (gif == null) return 1;
 		return gif.getFrameCount();
 	}
 
+	/**
+	 * Gets the duration.
+	 *
+	 * @param path
+	 *            the path
+	 * @return the duration
+	 */
 	public int getDuration(final String path) {
 		final GifDecoder gif = gifCache.getIfPresent(path);
 		if (gif == null) return 0;
 		return gif.getDuration();
 	}
 
+	/**
+	 * Private read from file.
+	 *
+	 * @param file
+	 *            the file
+	 * @param forOpenGL
+	 *            the for open GL
+	 * @param listener
+	 *            the listener
+	 * @return the buffered image
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private BufferedImage privateReadFromFile(final File file, final boolean forOpenGL,
 			final IIOReadProgressListener listener) throws IOException {
 		// DEBUG.OUT("READING " + file.getName());
@@ -146,6 +216,17 @@ public class ImageUtils {
 		return result;
 	}
 
+	/**
+	 * Io read.
+	 *
+	 * @param file
+	 *            the file
+	 * @param listener
+	 *            the listener
+	 * @return the buffered image
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private BufferedImage ioRead(final File file, final IIOReadProgressListener listener) throws IOException {
 		ImageReader imageReader = null;
 		ImageInputStream imageInputStream = null;
@@ -153,24 +234,46 @@ public class ImageUtils {
 			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(Files.getFileExtension(file.getName()));
 			imageReader = readers.next();
 			imageInputStream = ImageIO.createImageInputStream(file);
-			
+
 		} catch (final Exception e) {
 			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix("jpg");
 			imageReader = readers.next();
 			imageInputStream = ImageIO.createImageInputStream(file);
 		}
-		
+
 		imageReader.setInput(imageInputStream, false);
 		if (listener != null) { imageReader.addIIOReadProgressListener(listener); }
 		return imageReader.read(0);
 	}
 
+	/**
+	 * Private read gif from file.
+	 *
+	 * @param file
+	 *            the file
+	 * @return the gif decoder
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private GifDecoder privateReadGifFromFile(final File file) throws IOException {
 		final GifDecoder d = new GifDecoder();
 		d.read(new FileInputStream(file.getAbsolutePath()));
 		return d;
 	}
 
+	/**
+	 * Gets the image from file.
+	 *
+	 * @param file
+	 *            the file
+	 * @param useCache
+	 *            the use cache
+	 * @param forOpenGL
+	 *            the for open GL
+	 * @param listener
+	 *            the listener
+	 * @return the image from file
+	 */
 	public BufferedImage getImageFromFile(final File file, final boolean useCache, final boolean forOpenGL,
 			final IIOReadProgressListener listener) {
 		final BufferedImage image;
@@ -200,13 +303,34 @@ public class ImageUtils {
 		return null;
 	}
 
+	/** The no graphics environment. */
 	static boolean NO_GRAPHICS_ENVIRONMENT = false;
 
+	/**
+	 * Creates the premultiplied blank image.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the buffered image
+	 */
 	public static BufferedImage createPremultipliedBlankImage(final int width, final int height) {
 		return new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024,
 				BufferedImage.TYPE_INT_ARGB_PRE);
 	}
 
+	/**
+	 * Creates the compatible image.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param forOpenGL
+	 *            the for open GL
+	 * @return the buffered image
+	 */
 	public static BufferedImage createCompatibleImage(final int width, final int height, final boolean forOpenGL) {
 		if (forOpenGL) return createPremultipliedBlankImage(width, height);
 		BufferedImage new_image = null;
@@ -219,6 +343,13 @@ public class ImageUtils {
 		return new_image;
 	}
 
+	/**
+	 * To compatible image.
+	 *
+	 * @param image
+	 *            the image
+	 * @return the buffered image
+	 */
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return it
@@ -307,11 +438,28 @@ public class ImageUtils {
 		return ret;
 	}
 
+	/**
+	 * Resize.
+	 *
+	 * @param snapshot
+	 *            the snapshot
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the buffered image
+	 */
 	public static BufferedImage resize(final BufferedImage snapshot, final int width, final int height) {
 		if (width == snapshot.getWidth() && height == snapshot.getHeight()) return snapshot;
 		return resize(snapshot, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 	}
 
+	/**
+	 * Clear cache.
+	 *
+	 * @param pathName
+	 *            the path name
+	 */
 	public void clearCache(final String pathName) {
 		cache.invalidate(pathName);
 		openGLCache.invalidate(pathName);
