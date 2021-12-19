@@ -123,9 +123,6 @@ public abstract class AbstractCamera implements ICamera {
 	/** The use num keys. */
 	private final boolean useNumKeys = GamaPreferences.Displays.OPENGL_NUM_KEYS_CAM.getValue();
 
-	/** The Constant UP_Z. */
-	private static final GamaPoint UP_Z = new GamaPoint(0, 0, 1);
-
 	/**
 	 * Instantiates a new abstract camera.
 	 *
@@ -136,7 +133,7 @@ public abstract class AbstractCamera implements ICamera {
 		this.renderer = renderer2;
 		// LayeredDisplayData data = renderer.getData();
 		// if (!data.isCameraUpVectorDefined() && !data.getCameraOrientation().equals(UP_Z)) {
-		setUpVector(0.0, 1.0, 0.0);
+		setUpVector(0.0, 0.0, 1.0);
 		// }
 		glu = new GLU();
 	}
@@ -235,6 +232,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void animate() {
+		// TODO : Y and Z seem to be exchanged... Probably something to look at (see #3221)
 		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
 				upVector.z);
 	}

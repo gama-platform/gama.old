@@ -692,7 +692,6 @@ public class LayeredDisplayData {
 		final GamaPoint c = point;
 		if (cameraOrientation != null) {
 			if (c.equals(cameraOrientation)) return;
-			DEBUG.OUT("UpVectors different: x " + point.x + " != " + cameraOrientation.x);
 			cameraOrientation.setLocation(c);
 		} else {
 			cameraOrientation = new GamaPoint(c);
