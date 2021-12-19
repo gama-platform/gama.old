@@ -679,7 +679,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
-		synchronizer.signalRenderingIsFinished();
+		if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
 	}
 
 	@Override

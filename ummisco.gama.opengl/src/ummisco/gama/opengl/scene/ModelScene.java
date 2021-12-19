@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -130,7 +131,8 @@ public class ModelScene {
 		});
 		gl.setZIncrement(0);
 		rendered = true;
-		gl.getRenderer().getSurface().synchronizer.signalRenderingIsFinished();
+		IDisplaySynchronizer sync = gl.getRenderer().getSurface().synchronizer;
+		if (sync != null) { sync.signalRenderingIsFinished(); }
 		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 
