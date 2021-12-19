@@ -1459,35 +1459,35 @@ public class Stats {
 		return Descriptive.kurtosis(moment4, standardDeviation);
 	}
 
-	/**
-	 *
-	 *
-	 * @param scope
-	 * @param data
-	 * @return
-	 */
-	@operator (
-			value = "kurtosis",
-			can_be_const = true,
-			type = IType.FLOAT,
-			expected_content_type = { IType.INT, IType.FLOAT },
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
-	@doc (
-			value = "Returns the kurtosis (aka excess) of a data sequence",
-			comment = "",
-			examples = { @example (
-					value = "kurtosis([13,2,1,4,1,2]) with_precision(4)",
-					equals = "4.8083") })
-	public static Double opKurtosis(final IScope scope, final IContainer data) {
-
-		// TODO input parameters validation
-
-		final double mean = (Double) Containers.opMean(scope, data);
-		final double standardDeviation = Stats.opStandardDeviation(scope, data);
-
-		return Descriptive.kurtosis(toDoubleArrayList(scope, data), mean, standardDeviation);
-	}
+	// /**
+	// *
+	// *
+	// * @param scope
+	// * @param data
+	// * @return
+	// */
+	// @operator (
+	// value = "kurtosis",
+	// can_be_const = true,
+	// type = IType.FLOAT,
+	// expected_content_type = { IType.INT, IType.FLOAT },
+	// category = { IOperatorCategory.STATISTICAL },
+	// concept = { IConcept.STATISTIC })
+	// @doc (
+	// value = "Returns the kurtosis (aka excess) of a data sequence",
+	// comment = "",
+	// examples = { @example (
+	// value = "kurtosis([13,2,1,4,1,2]) with_precision(4)",
+	// equals = "4.8083") })
+	// public static Double opKurtosis(final IScope scope, final IContainer data) {
+	//
+	// // TODO input parameters validation
+	//
+	// final double mean = (Double) Containers.opMean(scope, data);
+	// final double standardDeviation = Stats.opStandardDeviation(scope, data);
+	//
+	// return Descriptive.kurtosis(toDoubleArrayList(scope, data), mean, standardDeviation);
+	// }
 
 	/**
 	 * Kurtosis.
@@ -1502,22 +1502,24 @@ public class Stats {
 	 */
 	@operator (
 			value = "kurtosis",
-			can_be_const = false,
-			// type = IType.LIST,
+			can_be_const = true,
+			expected_content_type = { IType.INT, IType.FLOAT },
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc (
-			value = "returns kurtosis value computed from the operand list of values "
+			value = "Returns the kurtosis (aka excess) of a list of values "
 					+ "(kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)])",
 			special_cases = "if the length of the list is lower than 3, returns NaN",
 			examples = { @example (
 					value = "kurtosis ([1,2,3,4,5])",
-					equals = "-1.200000000000002") })
+					equals = "-1.200000000000002"),
+					@example (
+							value = "kurtosis([13,2,1,4,1,2]) with_precision(4)",
+							equals = "4.8083") })
 	public static Double opKurtosis(final IScope scope, final IList data) throws GamaRuntimeException {
 		final Kurtosis k = new Kurtosis();
 		final double[] values = new double[data.length(scope)];
 		for (int i = 0; i < values.length; i++) { values[i] = Cast.asFloat(scope, data.get(i)); }
-		// java.lang.System.out.println("KURT: " + k.evaluate(values, 0, values.length));
 		return k.evaluate(values);
 	}
 
@@ -2271,69 +2273,70 @@ public class Stats {
 		return Descriptive.rms(size, sumOfSquares);
 	}
 
-	/**
-	 *
-	 *
-	 * @param scope
-	 * @param moment3
-	 * @param standardDeviation
-	 * @return
-	 */
-	@operator (
-			value = "skew",
-			can_be_const = true,
-			type = IType.FLOAT,
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
-	@doc (
-			value = "Returns the skew of a data sequence when the 3rd moment has already been computed.",
-			comment = "In R moment(c(1, 3, 5, 6, 9, 11, 12, 13), order=3,center=TRUE) is -10.125 and sd(c(1,3,5,6,9,11,12,13)) = 4.407785"
-					+ "The value of the skewness tested here is different because there are different types of estimator"
-					+ "Joanes and Gill (1998) discuss three methods for estimating skewness:"
-					+ "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks."
-					+ "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS."
-					+ "Type 3: b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2). Used in MINITAB and BMDP."
-					+ "In R skewness(c(1, 3, 5, 6, 9, 11, 12, 13),type=3) is -0.1182316",
-			examples = { @example (
-					value = "skew(-10.125,4.407785) with_precision(2)",
-					equals = "-0.12") })
-	public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
+	// /**
+	// *
+	// *
+	// * @param scope
+	// * @param moment3
+	// * @param standardDeviation
+	// * @return
+	// */
+	// @operator (
+	// value = { "skew", "skewness" },
+	// can_be_const = true,
+	// type = IType.FLOAT,
+	// category = { IOperatorCategory.STATISTICAL },
+	// concept = { IConcept.STATISTIC })
+	// @doc (
+	// value = "Returns the skew of a data sequence when the 3rd moment has already been computed.",
+	// comment = "In R moment(c(1, 3, 5, 6, 9, 11, 12, 13), order=3,center=TRUE) is -10.125 and
+	// sd(c(1,3,5,6,9,11,12,13)) = 4.407785"
+	// + "The value of the skewness tested here is different because there are different types of estimator"
+	// + "Joanes and Gill (1998) discuss three methods for estimating skewness:"
+	// + "Type 1: g_1 = m_3 / m_2^(3/2). This is the typical definition used in many older textbooks."
+	// + "Type 2: G_1 = g_1 * sqrt(n(n-1)) / (n-2). Used in SAS and SPSS."
+	// + "Type 3: b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2). Used in MINITAB and BMDP."
+	// + "In R skewness(c(1, 3, 5, 6, 9, 11, 12, 13),type=3) is -0.1182316",
+	// examples = { @example (
+	// value = "skew(-10.125,4.407785) with_precision(2)",
+	// equals = "-0.12") })
+	// public static Double opSkew(final IScope scope, final Double moment3, final Double standardDeviation) {
+	//
+	// // TODO input parameters validation
+	//
+	// return Descriptive.skew(moment3, standardDeviation);
+	// }
 
-		// TODO input parameters validation
-
-		return Descriptive.skew(moment3, standardDeviation);
-	}
-
-	/**
-	 *
-	 *
-	 * @param scope
-	 * @param data
-	 * @param mean
-	 * @param standardDeviation
-	 * @return
-	 */
-	@operator (
-			value = "skew",
-			can_be_const = true,
-			type = IType.FLOAT,
-			category = { IOperatorCategory.STATISTICAL },
-			concept = { IConcept.STATISTIC })
-	@doc (
-			value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
-			comment = "",
-			examples = { @example (
-					value = "skew([1,3,5,6,9,11,12,13]) with_precision(2)",
-					equals = "-0.14") })
-	public static Double opSkew(final IScope scope, final IContainer data) {
-
-		// TODO input parameters validation
-
-		final double mean = (Double) Containers.opMean(scope, data);
-		final double standardDeviation = Stats.opStandardDeviation(scope, data);
-
-		return Descriptive.skew(toDoubleArrayList(scope, data), mean, standardDeviation);
-	}
+	// /**
+	// *
+	// *
+	// * @param scope
+	// * @param data
+	// * @param mean
+	// * @param standardDeviation
+	// * @return
+	// */
+	// @operator (
+	// value = "skew",
+	// can_be_const = true,
+	// type = IType.FLOAT,
+	// category = { IOperatorCategory.STATISTICAL },
+	// concept = { IConcept.STATISTIC })
+	// @doc (
+	// value = "Returns the skew of a data sequence, which is moment(data,3,mean) / standardDeviation3",
+	// comment = "",
+	// examples = { @example (
+	// value = "skew([1,3,5,6,9,11,12,13]) with_precision(2)",
+	// equals = "-0.14") })
+	// public static Double opSkew(final IScope scope, final IContainer data) {
+	//
+	// // TODO input parameters validation
+	//
+	// final double mean = (Double) Containers.opMean(scope, data);
+	// final double standardDeviation = Stats.opStandardDeviation(scope, data);
+	//
+	// return Descriptive.skew(toDoubleArrayList(scope, data), mean, standardDeviation);
+	// }
 
 	/**
 	 * Skewness.
@@ -2347,7 +2350,7 @@ public class Stats {
 	 *             the gama runtime exception
 	 */
 	@operator (
-			value = "skewness",
+			value = { "skewness", "skew" },
 			can_be_const = false,
 			// type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
