@@ -287,6 +287,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 				s.dispose();
 				output.setSurface(null);
 			}
+			output.releaseView();
+			output.setSurface(null);
 		}
 
 		disposed = true;
@@ -299,7 +301,11 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		}
 		synchronizer.authorizeViewUpdate();
 		// }
-		if (updateThread != null) { updateThread.interrupt(); }
+		if (updateThread != null) {
+			updateThread.interrupt();
+			DEBUG.OUT("Update thread disposed for " + getTitle());
+			updateThread = null;
+		}
 		if (decorator != null) { decorator.dispose(); }
 		super.widgetDisposed(e);
 	}
@@ -358,24 +364,32 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	/** The update thread. */
-	final Thread updateThread = new Thread(() -> {
-		final IDisplaySurface surface = getDisplaySurface();
-		synchronizer.waitForSurfaceToBeRealized();
-		while (!disposed && !surface.isDisposed()) {
-			try {
-				synchronizer.waitForViewUpdateAuthorisation();
-				surface.updateDisplay(false);
-				if (surface.getData().isAutosave()) { takeSnapshot(); }
-				inInitPhase = false;
-			} catch (Exception e) {
-				DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
+	Thread updateThread;
+
+	/**
+	 * Inits the update thread.
+	 */
+	private void initUpdateThread() {
+		updateThread = new Thread(() -> {
+			final IDisplaySurface surface = getDisplaySurface();
+			synchronizer.waitForSurfaceToBeRealized();
+			while (!disposed && !surface.isDisposed()) {
+				try {
+					synchronizer.waitForViewUpdateAuthorisation();
+					surface.updateDisplay(false);
+					if (surface.getData().isAutosave()) { takeSnapshot(); }
+					inInitPhase = false;
+				} catch (Exception e) {
+					DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
+				}
 			}
-		}
-	});
+		});
+	}
 
 	@Override
 	public void update(final IDisplayOutput out) {
-		if (!updateThread.isAlive()) {
+		if (updateThread == null || !updateThread.isAlive()) {
+			initUpdateThread();
 			synchronizer.setSurface(getDisplaySurface());
 			updateThread.start();
 		}
