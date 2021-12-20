@@ -251,6 +251,7 @@ public class Graphs {
 		 */
 		@Override
 		public boolean related(final IScope scope, final IShape g1, final IShape g2) {
+			if (g1 == null || g2 == null) return false;
 			return Spatial.Relations.distance_to(scope, g1.getGeometry(), g2.getGeometry()) <= distance;
 		}
 
@@ -261,7 +262,8 @@ public class Graphs {
 		 */
 		@Override
 		public boolean equivalent(final IScope scope, final IShape p1, final IShape p2) {
-			return p1 == null ? p2 == null : p1.getGeometry().equals(p2.getGeometry());
+			if (p1 == null) return p2 == null;
+			return p1 == p2 || p1.getGeometry().equals(p2.getGeometry());
 		}
 
 	}
