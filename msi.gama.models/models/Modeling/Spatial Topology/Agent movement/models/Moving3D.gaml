@@ -68,7 +68,7 @@ global {
 			  speed <-0.1;
 			  color<-#orange;		
 			}
-		    mazeGraph <- as_distance_graph(cell, ["distance"::10.0,"species"::edge_agent]);
+		    mazeGraph <- as_distance_graph(cell, 10.0,edge_agent);
 	
 		}
 	 }

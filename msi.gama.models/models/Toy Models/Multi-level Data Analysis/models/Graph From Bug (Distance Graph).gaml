@@ -26,7 +26,7 @@ global {
 			do die;
 		}
 		//Create a new graph using the distance to compute the edges
-		myGraph <- as_distance_graph(node_agent, ["distance"::distance, "species"::edge_agent]);
+		myGraph <- as_distance_graph(node_agent, distance, edge_agent);
 	}
 }
 //Species node_agent mirroring the bug species

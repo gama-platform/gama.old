@@ -1780,10 +1780,138 @@ public class Graphs {
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null,
 				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
-		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
+		// TODO
+		if (vertices.getGamlType().getContentType().isAgentType()) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
 		return createdGraph;
+	}
+
+	/**
+	 * Spatial distance graph.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param vertices
+	 *            the vertices
+	 * @param distance
+	 *            the distance
+	 * @param edgeSpecies
+	 *            the edge species
+	 * @return the i graph
+	 */
+	@operator (
+			value = "as_distance_graph",
+			content_type = IType.GEOMETRY,
+			index_type = IType.GEOMETRY,
+			category = { IOperatorCategory.GRAPH },
+			concept = {})
+	@doc (
+			value = "creates an undirected graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
+			see = { "as_intersection_graph", "as_edge_graph" })
+	@no_test
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
+			final ISpecies edgeSpecies) {
+		final IType edgeType = scope.getType(edgeSpecies.getName());
+		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
+				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
+
+		GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
+
+		return createdGraph;
+	}
+	//
+	// /**
+	// * Spatial distance graph.
+	// *
+	// * @param scope
+	// * the scope
+	// * @param vertices
+	// * the vertices
+	// * @param params
+	// * the params
+	// * @return the i graph
+	// */
+	// @operator (
+	// value = "as_distance_graph",
+	// category = { IOperatorCategory.GRAPH },
+	// concept = {})
+	// @doc (
+	// value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of
+	// vertices close enough (less than a distance, right-hand operand).",
+	// see = { "as_intersection_graph", "as_edge_graph" })
+	// @no_test
+	// public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final IMap params) {
+	// final Double distance = (Double) params.get("distance");
+	// final ISpecies edgeSpecies = (ISpecies) params.get("species");
+	// final IType edgeType = edgeSpecies == null ? Types.GEOMETRY : scope.getType(edgeSpecies.getName());
+	// final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
+	// edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
+	//
+	// if (vertices.getGamlType().getContentType().isAgentType()) {
+	// GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
+	// }
+	// return createdGraph;
+	// }
+
+	/**
+	 * Spatial graph.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param vertices
+	 *            the vertices
+	 * @return the i graph
+	 */
+	@operator (
+			value = "spatial_graph",
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
+	@doc (
+			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. "
+					+ "The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
+			see = { "graph" })
+	@no_test
+	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
+		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getGamlType().getContentType(),
+				Types.GEOMETRY);
+	}
+
+	/**
+	 * As spatial graph.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param graph
+	 *            the graph
+	 * @return the i spatial graph
+	 */
+	@operator (
+			value = "as_spatial_graph",
+			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
+	@doc ("Creates a spatial graph out of an arbitrary graph. If the argument is already a spatial graph, returns it unchanged. If it contains geometrical nodes or edges, they are kept unchanged")
+	public static ISpatialGraph as_spatial_graph(final IScope scope, final IGraph graph) {
+		if (graph instanceof ISpatialGraph) return (ISpatialGraph) graph;
+		ISpatialGraph result = new GamaSpatialGraph(scope, Types.GEOMETRY, Types.GEOMETRY);
+		Map<Object, IShape> map = GamaMapFactory.create(Types.NO_TYPE, Types.GEOMETRY);
+		IShape world = scope.getSimulation().getGeometry();
+		graph.vertexSet().forEach(v -> {
+			IShape newV = v instanceof IShape ? (IShape) v : Spatial.Punctal.any_location_in(scope, world);
+			newV.setAttribute(IKeyword.VALUE, v);
+			map.put(v, newV);
+			result.addVertex(newV);
+		});
+		graph.edgeSet().forEach(e -> {
+			Object source = graph.getEdgeSource(e);
+			Object target = graph.getEdgeTarget(e);
+			IShape begin = map.get(source);
+			IShape end = map.get(target);
+			result.addEdge(e instanceof IShape ? edge(begin, end, e) : edge(begin, end));
+		});
+		return result;
 	}
 
 	/**
@@ -1846,132 +1974,6 @@ public class Graphs {
 		for (final Object e : createdGraph.edgeSet()) { createdGraph.setEdgeWeight(e, ((IShape) e).getPerimeter()); }
 
 		return createdGraph;
-	}
-
-	/**
-	 * Spatial distance graph.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param vertices
-	 *            the vertices
-	 * @param distance
-	 *            the distance
-	 * @param edgeSpecies
-	 *            the edge species
-	 * @return the i graph
-	 */
-	@operator (
-			value = "as_distance_graph",
-			content_type = IType.GEOMETRY,
-			index_type = IType.GEOMETRY,
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
-			see = { "as_intersection_graph", "as_edge_graph" })
-	@no_test
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
-			final ISpecies edgeSpecies) {
-		final IType edgeType = scope.getType(edgeSpecies.getName());
-		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
-
-		GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
-
-		return createdGraph;
-	}
-
-	/**
-	 * Spatial distance graph.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param vertices
-	 *            the vertices
-	 * @param params
-	 *            the params
-	 * @return the i graph
-	 */
-	@operator (
-			value = "as_distance_graph",
-			category = { IOperatorCategory.GRAPH },
-			concept = {})
-	@doc (
-			value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).",
-			see = { "as_intersection_graph", "as_edge_graph" })
-	@no_test
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final IMap params) {
-		final Double distance = (Double) params.get("distance");
-		final ISpecies edgeSpecies = (ISpecies) params.get("species");
-		final IType edgeType = edgeSpecies == null ? Types.GEOMETRY : scope.getType(edgeSpecies.getName());
-		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
-
-		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
-			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
-		}
-		return createdGraph;
-	}
-
-	/**
-	 * Spatial graph.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param vertices
-	 *            the vertices
-	 * @return the i graph
-	 */
-	@operator (
-			value = "spatial_graph",
-			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
-	@doc (
-			value = "allows to create a spatial graph from a container of vertices, without trying to wire them. "
-					+ "The container can be empty. Emits an error if the contents of the container are not geometries, points or agents",
-			see = { "graph" })
-	@no_test
-	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, null, null, scope, vertices.getGamlType().getContentType(),
-				Types.GEOMETRY);
-	}
-
-	/**
-	 * As spatial graph.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param graph
-	 *            the graph
-	 * @return the i spatial graph
-	 */
-	@operator (
-			value = "as_spatial_graph",
-			index_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
-			category = { IOperatorCategory.GRAPH },
-			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
-	@doc ("Creates a spatial graph out of an arbitrary graph. If the argument is already a spatial graph, returns it unchanged. If it contains geometrical nodes or edges, they are kept unchanged")
-	public static ISpatialGraph as_spatial_graph(final IScope scope, final IGraph graph) {
-		if (graph instanceof ISpatialGraph) return (ISpatialGraph) graph;
-		ISpatialGraph result = new GamaSpatialGraph(scope, Types.GEOMETRY, Types.GEOMETRY);
-		Map<Object, IShape> map = GamaMapFactory.create(Types.NO_TYPE, Types.GEOMETRY);
-		IShape world = scope.getSimulation().getGeometry();
-		graph.vertexSet().forEach(v -> {
-			IShape newV = v instanceof IShape ? (IShape) v : Spatial.Punctal.any_location_in(scope, world);
-			newV.setAttribute(IKeyword.VALUE, v);
-			map.put(v, newV);
-			result.addVertex(newV);
-		});
-		graph.edgeSet().forEach(e -> {
-			Object source = graph.getEdgeSource(e);
-			Object target = graph.getEdgeTarget(e);
-			IShape begin = map.get(source);
-			IShape end = map.get(target);
-			result.addEdge(e instanceof IShape ? edge(begin, end, e) : edge(begin, end));
-		});
-		return result;
 	}
 
 	/**
