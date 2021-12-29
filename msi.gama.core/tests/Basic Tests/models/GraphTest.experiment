@@ -37,9 +37,10 @@ species edge_agent {
 species node_agent {
 	aspect default {	
 		draw circle(1) color: #red;
-		loop neigh over: the_graph neighbors_of self {
+draw string(self as int) color: #black font: font("Helvetica", 14 , #bold) at: my location - {1, 1, -0.5};			loop neigh over: the_graph neighbors_of self {
 			draw line([self.location, agent(neigh).location]) color: #black;
 		}
+
 	}
 }
 

@@ -84,6 +84,7 @@ import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Graphs.EdgeToAdd;
+import msi.gaml.operators.Graphs.GraphObjectToAdd;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.operators.Strings;
@@ -542,8 +543,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (edges != null) {
 			for (final Object p : edges.iterable(scope)) {
 				addEdge(p);
-				final Object p2 = p instanceof msi.gaml.operators.Graphs.GraphObjectToAdd
-						? ((msi.gaml.operators.Graphs.GraphObjectToAdd) p).getObject() : p;
+				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
 				if (p2 instanceof IShape) {
 					final _Edge ed = getEdge(p2);
 					if (ed != null) { ed.setWeight(((IShape) p2).getPerimeter()); }
@@ -566,8 +566,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (vertices != null) {
 			for (final Object p : vertices.iterable(scope)) {
 				addEdge(p);
-				final Object p2 = p instanceof msi.gaml.operators.Graphs.GraphObjectToAdd
-						? ((msi.gaml.operators.Graphs.GraphObjectToAdd) p).getObject() : p;
+				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
 				if (p2 instanceof IShape) {
 					final _Edge ed = getEdge(p2);
 					if (ed != null) { ed.setWeight(((IShape) p2).getPerimeter()); }
@@ -618,9 +617,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			final GamaPair p = (GamaPair) e;
 			return addEdge(p.first(), p.last());
 		}
-		if (e instanceof msi.gaml.operators.Graphs.GraphObjectToAdd) {
-			addValue(graphScope, (msi.gaml.operators.Graphs.GraphObjectToAdd) e);
-			return ((msi.gaml.operators.Graphs.GraphObjectToAdd) e).getObject();
+		if (e instanceof GraphObjectToAdd) {
+			addValue(graphScope, (GraphObjectToAdd) e);
+			return ((GraphObjectToAdd) e).getObject();
 		}
 		return addEdge(null, null, e) ? e : null;
 
