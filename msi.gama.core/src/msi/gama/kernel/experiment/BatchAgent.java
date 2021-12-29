@@ -190,7 +190,7 @@ public class BatchAgent extends ExperimentAgent {
 		double lastFitnessValue = 0;
 		if (fitness != null) { lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope())); }
 		if (output != null) { getSpecies().getLog().doRefreshWriteAndClose(sol, lastFitnessValue); }
-		sim.dispose();
+		if (dispose) { sim.dispose(); }
 		return lastFitnessValue;
 	}
 
