@@ -33,8 +33,8 @@ import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ValidationContext;
 
@@ -57,7 +57,7 @@ public class ErrorToDiagnoticTranslator {
 
 	public Diagnostic translate(final GamlCompilationError e, final GamlResource r, final CheckMode mode) {
 		final URI errorURI = e.getURI();
-		if (!GamlResourceIndexer.equals(errorURI, r.getURI())) {
+		if (!GamlResourceServices.equals(errorURI, r.getURI())) {
 			//			final String uri = URI.decode(errorURI.toFileString());
 			final String s = URI.decode(errorURI.lastSegment());
 			final EObject m = r.getContents().get(0);

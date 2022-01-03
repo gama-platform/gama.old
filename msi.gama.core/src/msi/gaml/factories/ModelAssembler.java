@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelAssembler.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ModelAssembler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.factories;
 
@@ -53,6 +53,7 @@ import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class ModelAssembler.
@@ -64,20 +65,32 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelAssembler {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/**
 	 * Assemble.
 	 *
-	 * @param projectPath the project path
-	 * @param modelPath the model path
-	 * @param allModels the all models
-	 * @param collector the collector
-	 * @param document the document
-	 * @param mm the mm
+	 * @param projectPath
+	 *            the project path
+	 * @param modelPath
+	 *            the model path
+	 * @param allModels
+	 *            the all models
+	 * @param collector
+	 *            the collector
+	 * @param document
+	 *            the document
+	 * @param mm
+	 *            the mm
 	 * @return the model description
 	 */
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
+		// DEBUG.OUT("All models passed to ModelAssembler: "
+		// + Iterables.transform(allModels, @Nullable ISyntacticElement::getName));
 		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
 		final IMap<String, ISyntacticElement> speciesNodes = GamaMapFactory.create();
 		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
@@ -248,7 +261,8 @@ public class ModelAssembler {
 	/**
 	 * Gets the species in hierarchical order.
 	 *
-	 * @param model the model
+	 * @param model
+	 *            the model
 	 * @return the species in hierarchical order
 	 */
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
@@ -277,7 +291,8 @@ public class ModelAssembler {
 	/**
 	 * Creates the scheduler species.
 	 *
-	 * @param model the model
+	 * @param model
+	 *            the model
 	 */
 	private void createSchedulerSpecies(final ModelDescription model) {
 		final SpeciesDescription sd =
@@ -304,10 +319,14 @@ public class ModelAssembler {
 	/**
 	 * Adds the experiment.
 	 *
-	 * @param origin the origin
-	 * @param model the model
-	 * @param experiment the experiment
-	 * @param cache the cache
+	 * @param origin
+	 *            the origin
+	 * @param model
+	 *            the model
+	 * @param experiment
+	 *            the experiment
+	 * @param cache
+	 *            the cache
 	 */
 	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment,
 			final Map<String, SpeciesDescription> cache) {
@@ -323,10 +342,14 @@ public class ModelAssembler {
 	/**
 	 * Adds the experiment node.
 	 *
-	 * @param element the element
-	 * @param modelName the model name
-	 * @param experimentNodes the experiment nodes
-	 * @param collector the collector
+	 * @param element
+	 *            the element
+	 * @param modelName
+	 *            the model name
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param collector
+	 *            the collector
 	 */
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
 			final Map<String, IMap<String, ISyntacticElement>> experimentNodes, final ValidationContext collector) {
@@ -357,9 +380,12 @@ public class ModelAssembler {
 	/**
 	 * Adds the micro species.
 	 *
-	 * @param macro the macro
-	 * @param micro the micro
-	 * @param cache the cache
+	 * @param macro
+	 *            the macro
+	 * @param micro
+	 *            the micro
+	 * @param cache
+	 *            the cache
 	 */
 	void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro,
 			final Map<String, SpeciesDescription> cache) {
@@ -380,9 +406,12 @@ public class ModelAssembler {
 	/**
 	 * Adds the species node.
 	 *
-	 * @param element the element
-	 * @param speciesNodes the species nodes
-	 * @param collector the collector
+	 * @param element
+	 *            the element
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param collector
+	 *            the collector
 	 */
 	void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
 			final ValidationContext collector) {
@@ -423,8 +452,10 @@ public class ModelAssembler {
 	/**
 	 * Parent experiment.
 	 *
-	 * @param model the model
-	 * @param micro the micro
+	 * @param model
+	 *            the model
+	 * @param micro
+	 *            the micro
 	 */
 	void parentExperiment(final ModelDescription model, final ISyntacticElement micro) {
 		// Gather the previously created species
@@ -441,10 +472,14 @@ public class ModelAssembler {
 	/**
 	 * Parent species.
 	 *
-	 * @param macro the macro
-	 * @param micro the micro
-	 * @param model the model
-	 * @param cache the cache
+	 * @param macro
+	 *            the macro
+	 * @param micro
+	 *            the micro
+	 * @param model
+	 *            the model
+	 * @param cache
+	 *            the cache
 	 */
 	void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, final ModelDescription model,
 			final Map<String, SpeciesDescription> cache) {
@@ -483,7 +518,8 @@ public class ModelAssembler {
 	/**
 	 * Builds the model name.
 	 *
-	 * @param source the source
+	 * @param source
+	 *            the source
 	 * @return the string
 	 */
 	protected String buildModelName(final String source) {

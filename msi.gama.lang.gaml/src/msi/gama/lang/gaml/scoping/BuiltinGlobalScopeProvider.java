@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * BuiltinGlobalScopeProvider.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform (v.2.0.0).
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,8 +16,6 @@ import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.allImportsOf;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +23,6 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -44,7 +41,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
@@ -75,6 +71,10 @@ import ummisco.gama.dev.utils.DEBUG;
  * </ul>
  *
  * @author Vincent Simonet, adapted for GAML by Alexis Drogoul, 2012
+ */
+
+/**
+ * The Class BuiltinGlobalScopeProvider.
  */
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -407,8 +407,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	public static GamlDefinition addWithDoc(final String t, final IGamlDescription o, final String keyword,
 			final EClass... classes) {
 
-//		DEBUG.OUT("Adding stub for " + keyword + " " + t);
-
+		// DEBUG.OUT("Adding stub for " + keyword + " " + t);
 
 		GamlDefinition stub = null;
 		QualifiedName qName = QualifiedName.create(t);
@@ -558,37 +557,19 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		}
 	}
 
-	/**
-	 * Gets the all imported URIs.
-	 *
-	 * @param resource
-	 *            the resource
-	 * @param set
-	 *            the set
-	 * @return the all imported UR is
-	 */
-	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
-		return GamlResourceIndexer.allLabeledImportsOf((GamlResource) resource);
-	}
-
-	@Override
-	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
-		LinkedHashSet<URI> result = new LinkedHashSet<>();
-		Iterator<URI> uris = allImportsOf(resource.getURI());
-		while (uris.hasNext()) { result.add(uris.next()); }
-		return result;
-	}
 
 	@Override
 	protected IScope getScope(final Resource resource, final boolean ignoreCase, final EClass type,
 			final Predicate<IEObjectDescription> filter) {
 		IScope scope = getGlobalScope(type);
-		final Collection<URI> uniqueImportURIs = getAllImportedURIs(resource, resource.getResourceSet()).keySet();
-		if (uniqueImportURIs.size() == 1) return scope;
-		final List<URI> urisAsList = Lists.newArrayList(uniqueImportURIs);
-		urisAsList.remove(resource.getURI());
-		Collections.reverse(urisAsList);
-		final IResourceDescriptions descriptions = getResourceDescriptions(resource, urisAsList);
+		Collection<URI> imports = allImportsOf((GamlResource) resource).keySet();
+		int size = imports.size();
+		if (size == 0) return scope;
+		if (size > 1) {
+			imports = Lists.newArrayList(imports);
+			Collections.reverse((List<URI>) imports);
+		}
+		final IResourceDescriptions descriptions = getResourceDescriptions(resource, imports);
 		return SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
 	}
 
@@ -604,12 +585,17 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		return descriptions.get(eVar).get(QualifiedName.create(name));
 	}
 
-	
-	public static XtextResourceSet getResourceSet() {
-		return rs;
-	}
+	/**
+	 * Gets the resource set.
+	 *
+	 * @return the resource set
+	 */
+	public static XtextResourceSet getResourceSet() { return rs; }
 
-	public static IMap<EClass, Resource> getResources() {
-		return resources;
-	}
+	/**
+	 * Gets the resources.
+	 *
+	 * @return the resources
+	 */
+	public static IMap<EClass, Resource> getResources() { return resources; }
 }
