@@ -187,7 +187,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public GamaSpatialGraph(final IScope scope, final IType nodeType, final IType edgeType) {
 		super(scope, nodeType, edgeType);
 		verticesBuilt = new HashMap();
-	}
+	} 
 
 	@Override
 	public GamaSpatialGraph copy(final IScope scope) {
@@ -196,6 +196,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
+		for(Object obj : getVertices()) {
+			g.setVertexWeight(obj, getWeightOf(obj));
+		}
+		for(Object obj : getEdges()) {
+			g.setEdgeWeight(obj, getWeightOf(obj));
+		}
 		return g;
 	}
 

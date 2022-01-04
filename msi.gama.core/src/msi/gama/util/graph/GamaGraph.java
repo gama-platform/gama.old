@@ -1481,6 +1481,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
+		for(Object obj : getVertices()) {
+			g.setVertexWeight(obj, getWeightOf(obj));
+		}
+		for(Object obj : getEdges()) {
+			g.setEdgeWeight(obj, getWeightOf(obj));
+		}
 		return g;
 	}
 
