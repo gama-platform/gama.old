@@ -372,7 +372,9 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		if (keepSource && keepTarget) {
 			double d = 0d;
 			for (final IShape g : segments) {
-				d += g.getInnerGeometry().getLength();
+				IShape edge = this.getRealObject(g);
+				double w = this.getGraph().getEdgeWeight(edge);
+				d += edge.getPerimeter() == 0 ? 0.0 : (g.getInnerGeometry().getLength() * w / edge.getPerimeter());
 			}
 			return d;
 		}
@@ -443,7 +445,11 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		for (int i = index; i < nb; i++) {
 			final IShape line = segments.get(i);
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
-
+			IShape edge = this.getRealObject(line);
+			double w = this.getGraph().getEdgeWeight(edge);
+			
+			double coeff = (line.getPerimeter() * w / edge.getPerimeter());
+		
 			for (int j = indexSegment; j < coords.length; j++) {
 				GamaPoint pt = null;
 				if (i == nb - 1 && j == endIndexSegment) {
@@ -451,7 +457,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				final double dist = currentLocation.euclidianDistanceTo(pt);
+				final double dist = currentLocation.euclidianDistanceTo(pt) * coeff;
 				currentLocation = pt;
 				distance = distance + dist;
 				if (i == nb - 1 && j == endIndexSegment) { break; }

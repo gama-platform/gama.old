@@ -27,7 +27,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.ITopology.SpatialRelation;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.IScope;
