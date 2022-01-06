@@ -348,7 +348,7 @@ public class GamlResourceServices {
 		imports.put(uri, null);
 		if (r != null) {
 			imports.put(r.getURI(), null);
-			final Map<URI, String> uris = GamlResourceIndexer.allLabeledImportsOf(r);
+			final Map<URI, String> uris = GamlResourceIndexer.allImportsOf(r);
 			imports.putAll(uris);
 		}
 		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
@@ -402,6 +402,21 @@ public class GamlResourceServices {
 			};
 		}
 		return poolSet;
+	}
+
+	/**
+	 * Equals.
+	 *
+	 * @param uri1
+	 *            the uri 1
+	 * @param uri2
+	 *            the uri 2
+	 * @return true, if successful
+	 */
+	public static boolean equals(final URI uri1, final URI uri2) {
+		if (uri1 == null) return uri2 == null;
+		if (uri2 == null) return false;
+		return properlyEncodedURI(uri1).equals(properlyEncodedURI(uri2));
 	}
 
 }

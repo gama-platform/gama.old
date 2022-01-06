@@ -237,6 +237,13 @@ public interface IGui {
 	Iterable<IDisplaySurface> getAllDisplaySurfaces();
 
 	/**
+	 * Gets the frontmost display surface.
+	 *
+	 * @return the frontmost display surface
+	 */
+	IDisplaySurface getFrontmostDisplaySurface();
+
+	/**
 	 * Creates the display surface for.
 	 *
 	 * @param output

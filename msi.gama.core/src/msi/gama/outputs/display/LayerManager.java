@@ -36,7 +36,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -158,7 +158,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void drawLayersOn(final IGraphics g) {
 		if (g == null || g.cannotDraw()) return;
-		final IScope scope = surface.getScope();
+		final IGraphicsScope scope = surface.getScope();
 		// If the experiment is already closed
 		if (scope == null || scope.interrupted()) return;
 		scope.setGraphics(g);

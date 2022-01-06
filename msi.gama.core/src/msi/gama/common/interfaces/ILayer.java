@@ -24,6 +24,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.ILayerData;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -67,7 +68,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 * @throws GamaRuntimeException
 	 */
 
-	void draw(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
+	void draw(IGraphicsScope scope, IGraphics simGraphics) throws GamaRuntimeException;
 
 	/**
 	 * Asks this layer to dispose of the resources it may use (in addition to the ILayerData instance, which is

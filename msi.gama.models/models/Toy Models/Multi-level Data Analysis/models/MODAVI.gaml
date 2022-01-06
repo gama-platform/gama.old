@@ -75,7 +75,7 @@ global {
 		//If we want a spatial graph in that case we create a graph according to their distance, else we create a barabasi albert graph
 		if(spatialGraph){
 			create node_agent number:nbAgent;
-			my_graph <- graph<node_agent, edge_agent>(as_distance_graph(node_agent, (["distance"::distance, "species"::edge_agent])));
+			my_graph <- graph<node_agent, edge_agent>(as_distance_graph(node_agent, distance, edge_agent)); 
 			
 		}
         else{

@@ -27,7 +27,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.IEventLayerListener;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.util.IList;
 
 /**
@@ -50,7 +50,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public IScope getScope() { return null; }
+	public IGraphicsScope getScope() { return null; }
 
 	/**
 	 * Method dispose()

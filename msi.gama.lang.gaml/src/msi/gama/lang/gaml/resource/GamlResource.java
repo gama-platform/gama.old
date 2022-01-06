@@ -136,7 +136,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	public void invalidate(final GamlResource r, final String s) {
 		GamlCompilationError error = null;
-		if (GamlResourceIndexer.equals(r.getURI(), getURI())) {
+		if (GamlResourceServices.equals(r.getURI(), getURI())) {
 			error = new GamlCompilationError(s, IGamlIssue.GENERAL, r.getContents().get(0), false, false);
 		} else {
 			error = new GamlCompilationError(s, IGamlIssue.GENERAL, r.getURI(), false, false);

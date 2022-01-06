@@ -73,9 +73,9 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	public static IGraph from(final IScope scope, final IMap<?, ?> obj, final boolean spatial) {
 		final IGraph result = spatial
-				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, null, null, scope,
+				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, false,null, null, scope,
 						obj.getGamlType().getKeyType(), Types.NO_TYPE)
-				: new GamaGraph(scope, GamaListFactory.create(Types.NO_TYPE), false, false, null, null,
+				: new GamaGraph(scope, GamaListFactory.create(Types.NO_TYPE), false, false,false, null, null,
 						obj.getGamlType().getKeyType(), Types.NO_TYPE);
 		final GamaPair p = new GamaPair(null, null, Types.NO_TYPE, Types.NO_TYPE);
 		for (final Map.Entry<?, ?> k : obj.entrySet()) {
@@ -88,8 +88,8 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
 		final IType nodeType = obj.getGamlType().getContentType();
-		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope, nodeType, Types.NO_TYPE)
-				: new GamaGraph(scope, obj, false, false, null, null, nodeType, Types.NO_TYPE);
+		return spatial ? new GamaSpatialGraph(obj, false, false,false, null, null, scope, nodeType, Types.NO_TYPE)
+				: new GamaGraph(scope, obj, false, false, false,null, null, nodeType, Types.NO_TYPE);
 	}
 
 	// GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
@@ -102,8 +102,8 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	public static IGraph from(final IScope scope, final IList edgesOrVertices, final boolean byEdge,
 			final boolean directed, final boolean spatial, final IType nodeType, final IType edgeType) {
-		return spatial ? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, null, null, scope, nodeType, edgeType)
-				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, null, null, nodeType, edgeType);
+		return spatial ? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, false,null, null, scope, nodeType, edgeType)
+				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, false,null, null, nodeType, edgeType);
 	}
 
 	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {

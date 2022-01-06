@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.ModelAssembler.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * ModelAssembler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -42,6 +42,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
@@ -52,6 +53,7 @@ import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class ModelAssembler.
@@ -63,9 +65,32 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelAssembler {
 
+	static {
+		DEBUG.ON();
+	}
+
+	/**
+	 * Assemble.
+	 *
+	 * @param projectPath
+	 *            the project path
+	 * @param modelPath
+	 *            the model path
+	 * @param allModels
+	 *            the all models
+	 * @param collector
+	 *            the collector
+	 * @param document
+	 *            the document
+	 * @param mm
+	 *            the mm
+	 * @return the model description
+	 */
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
+		// DEBUG.OUT("All models passed to ModelAssembler: "
+		// + Iterables.transform(allModels, @Nullable ISyntacticElement::getName));
 		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
 		final IMap<String, ISyntacticElement> speciesNodes = GamaMapFactory.create();
 		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
@@ -95,7 +120,10 @@ public class ModelAssembler {
 						globalFacets.putAll(currentModel.copyFacets(null));
 					}
 				}
-				currentModel.visitChildren(element -> globalNodes.addChild(element));
+				currentModel.visitChildren(element -> {
+					element.setFacet(IKeyword.ORIGIN, ConstantExpressionDescription.create(currentModel.getName()));
+					globalNodes.addChild(element);
+				});
 				SyntacticVisitor visitor = element -> addSpeciesNode(element, speciesNodes, collector);
 				currentModel.visitSpecies(visitor);
 
@@ -230,6 +258,13 @@ public class ModelAssembler {
 
 	}
 
+	/**
+	 * Gets the species in hierarchical order.
+	 *
+	 * @param model
+	 *            the model
+	 * @return the species in hierarchical order
+	 */
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
 		final DirectedAcyclicGraph<SpeciesDescription, Object> hierarchy = new DirectedAcyclicGraph<>(Object.class);
 		final DescriptionVisitor<SpeciesDescription> visitor = desc -> {
@@ -253,6 +288,12 @@ public class ModelAssembler {
 		return () -> hierarchy.iterator();
 	}
 
+	/**
+	 * Creates the scheduler species.
+	 *
+	 * @param model
+	 *            the model
+	 */
 	private void createSchedulerSpecies(final ModelDescription model) {
 		final SpeciesDescription sd =
 				(SpeciesDescription) DescriptionFactory.create(SPECIES, model, NAME, "_internal_global_scheduler");
@@ -275,6 +316,18 @@ public class ModelAssembler {
 		model.addChild(sd);
 	}
 
+	/**
+	 * Adds the experiment.
+	 *
+	 * @param origin
+	 *            the origin
+	 * @param model
+	 *            the model
+	 * @param experiment
+	 *            the experiment
+	 * @param cache
+	 *            the cache
+	 */
 	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment,
 			final Map<String, SpeciesDescription> cache) {
 		// Create the experiment description
@@ -286,6 +339,18 @@ public class ModelAssembler {
 		model.addChild(desc);
 	}
 
+	/**
+	 * Adds the experiment node.
+	 *
+	 * @param element
+	 *            the element
+	 * @param modelName
+	 *            the model name
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param collector
+	 *            the collector
+	 */
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
 			final Map<String, IMap<String, ISyntacticElement>> experimentNodes, final ValidationContext collector) {
 		// First we verify that this experiment has not been declared previously
@@ -312,6 +377,16 @@ public class ModelAssembler {
 		nodes.put(experimentName, element);
 	}
 
+	/**
+	 * Adds the micro species.
+	 *
+	 * @param macro
+	 *            the macro
+	 * @param micro
+	 *            the micro
+	 * @param cache
+	 *            the cache
+	 */
 	void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro,
 			final Map<String, SpeciesDescription> cache) {
 		// Create the species description without any children. Passing
@@ -328,6 +403,16 @@ public class ModelAssembler {
 		micro.visitExperiments(visitor);
 	}
 
+	/**
+	 * Adds the species node.
+	 *
+	 * @param element
+	 *            the element
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param collector
+	 *            the collector
+	 */
 	void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
 			final ValidationContext collector) {
 		final String name = element.getName();
@@ -364,6 +449,14 @@ public class ModelAssembler {
 
 	}
 
+	/**
+	 * Parent experiment.
+	 *
+	 * @param model
+	 *            the model
+	 * @param micro
+	 *            the micro
+	 */
 	void parentExperiment(final ModelDescription model, final ISyntacticElement micro) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = model.getExperiment(micro.getName());
@@ -376,6 +469,18 @@ public class ModelAssembler {
 		mDesc.setParent(parent);
 	}
 
+	/**
+	 * Parent species.
+	 *
+	 * @param macro
+	 *            the macro
+	 * @param micro
+	 *            the micro
+	 * @param model
+	 *            the model
+	 * @param cache
+	 *            the cache
+	 */
 	void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, final ModelDescription model,
 			final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
@@ -410,6 +515,13 @@ public class ModelAssembler {
 		return result;
 	}
 
+	/**
+	 * Builds the model name.
+	 *
+	 * @param source
+	 *            the source
+	 * @return the string
+	 */
 	protected String buildModelName(final String source) {
 		return source.replace(' ', '_') + ModelDescription.MODEL_SUFFIX;
 	}

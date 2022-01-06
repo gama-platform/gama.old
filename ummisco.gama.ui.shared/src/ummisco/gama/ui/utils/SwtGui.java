@@ -45,6 +45,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -112,6 +113,7 @@ public class SwtGui implements IGui {
 	static {
 		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
 		PreferencesHelper.initialize();
+		ImageUtils.getCachedGC();
 	}
 
 	/**
@@ -273,6 +275,14 @@ public class SwtGui implements IGui {
 
 	@Override
 	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return ViewsHelper.allDisplaySurfaces(); }
+
+	/**
+	 * Gets the frontmost display surface.
+	 *
+	 * @return the frontmost display surface
+	 */
+	@Override
+	public IDisplaySurface getFrontmostDisplaySurface() { return ViewsHelper.frontmostDisplaySurface(); }
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,

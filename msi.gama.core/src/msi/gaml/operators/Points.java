@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Points.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * Points.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -14,7 +13,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -24,6 +22,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
@@ -37,6 +36,10 @@ import msi.gaml.expressions.IExpression;
  *
  */
 public class Points {
+
+	/**
+	 * The Class PointValidator.
+	 */
 	public static class PointValidator implements IOperatorValidator {
 
 		@Override
@@ -51,6 +54,17 @@ public class Points {
 		}
 	}
 
+	/**
+	 * To point.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param xExp
+	 *            the x exp
+	 * @param yExp
+	 *            the y exp
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.POINT,
 			can_be_const = true,
@@ -59,17 +73,27 @@ public class Points {
 	@validator (PointValidator.class)
 	@no_test
 	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
-		if (scope != null) {
-			scope.setHorizontalPixelContext();
-		}
+		boolean isGraphics = scope instanceof IGraphicsScope;
+		if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
 		final double x = Cast.asFloat(scope, xExp.value(scope));
-		if (scope != null) {
-			scope.setVerticalPixelContext();
-		}
+		if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
 		final double y = Cast.asFloat(scope, yExp.value(scope));
 		return new GamaPoint(x, y);
 	}
 
+	/**
+	 * To point.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param xExp
+	 *            the x exp
+	 * @param yExp
+	 *            the y exp
+	 * @param zExp
+	 *            the z exp
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.POINT,
 			can_be_const = true,
@@ -79,18 +103,38 @@ public class Points {
 	@no_test
 	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
-		if (scope != null) {
-			scope.setHorizontalPixelContext();
-		}
+		boolean isGraphics = scope instanceof IGraphicsScope;
+		if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
 		final double x = Cast.asFloat(scope, xExp.value(scope));
-		if (scope != null) {
-			scope.setVerticalPixelContext();
-		}
+		if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
 		final double y = Cast.asFloat(scope, yExp.value(scope));
 		final double z = Cast.asFloat(scope, zExp.value(scope));
 		return new GamaPoint(x, y, z);
 	}
 
+	/**
+	 * Divide.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
+
+	/**
+	 * Divide.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -108,10 +152,33 @@ public class Points {
 									equals = "{0.5,1.25}") }))
 	@test ("{5, 7.5} / 2.5 = {2,3}")
 	public static GamaPoint divide(final IScope scope, final GamaPoint p, final Double d) {
-		if (d == 0d) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (d == 0d) throw GamaRuntimeException.error("Division by zero", scope);
 		return new GamaPoint(p.x / d, p.y / d, p.z / d);
 	}
 
+	/**
+	 * Divide.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
+
+	/**
+	 * Divide.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -122,10 +189,29 @@ public class Points {
 	@test ("{2,5} / 4 = {0.5,1.25}")
 	@test ("is_error({2,5} / 0)")
 	public static GamaPoint divide(final IScope scope, final GamaPoint p, final Integer d) {
-		if (d == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (d == 0) throw GamaRuntimeException.error("Division by zero", scope);
 		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z / d.doubleValue());
 	}
 
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
+
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -136,10 +222,29 @@ public class Points {
 	@test ("{2,5} * 4.0 = {8.0,20.0}")
 	@test ("{2,5} * 0.0 = {0.0,0.0}")
 	public static GamaPoint multiply(final GamaPoint p1, final Double d) {
-		if (p1 == null) { return new GamaPoint(); }
+		if (p1 == null) return new GamaPoint();
 		return new GamaPoint(p1.x * d, p1.y * d, p1.z * d);
 	}
 
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
+
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param d
+	 *            the d
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -159,11 +264,30 @@ public class Points {
 	@test ("{2,5} * 4 = {8,20}")
 	@test ("{2,5} * 0 = {0,0}")
 	public static GamaPoint multiply(final GamaPoint p1, final Integer d) {
-		if (p1 == null) { return new GamaPoint(); }
+		if (p1 == null) return new GamaPoint();
 		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z * d.doubleValue());
 	}
 
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the double
+	 */
 	// ATTENTION: produit scalaire.
+
+	/**
+	 * Multiply.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -178,10 +302,33 @@ public class Points {
 							equals = "34.0")))
 	@test ("{2,5} * {4.5, 5} = 34.0")
 	public static Double multiply(final GamaPoint p1, final GamaPoint p) {
-		if (p1 == null || p == null) { return 0d; }
+		if (p1 == null || p == null) return 0d;
 		return p1.x * p.x + p1.y * p.y + p1.z * p.z;
 	}
 
+	/**
+	 * Norm.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @return the double
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+
+	/**
+	 * Norm.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
+	 * @return the double
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "norm",
 			can_be_const = true,
@@ -201,10 +348,29 @@ public class Points {
 	@test ("norm({0,0}) = 0.0")
 	@test ("norm({1,0}) = norm({0,1})")
 	public static Double norm(final IScope scope, final GamaPoint p) throws GamaRuntimeException {
-		if (p == null) { return 0d; }
+		if (p == null) return 0d;
 		return Maths.sqrt(scope, p.x * p.x + p.y * p.y + p.z * p.z);
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -222,11 +388,30 @@ public class Points {
 			value = "point p <- {1, 2}; p + {0, 0} = p",
 			warning = true)
 	public static GamaPoint add(final GamaPoint p1, final GamaPoint p) {
-		if (p1 == null) { return p; }
-		if (p == null) { return p1; }
+		if (p1 == null) return p;
+		if (p == null) return p1;
 		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z);
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -236,14 +421,33 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			usages = @usage (
 					value = "if the left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.",
-					examples = {@example (
-									value = "{1, 2} + 4.5",
-									equals = "{5.5, 6.5,4.5}") }))
+					examples = { @example (
+							value = "{1, 2} + 4.5",
+							equals = "{5.5, 6.5,4.5}") }))
 	public static GamaPoint add(final GamaPoint p1, final Double p) {
-		if (p1 == null) { return new GamaPoint(p, p, p); }
+		if (p1 == null) return new GamaPoint(p, p, p);
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Adds the.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -253,12 +457,31 @@ public class Points {
 			value = "Returns a point with coordinate summing of the two operands.",
 			examples = { @example (
 					value = "{1, 2} + 4",
-					equals = "{5.0, 6.0,4.0}")})
+					equals = "{5.0, 6.0,4.0}") })
 	public static GamaPoint add(final GamaPoint p1, final Integer p) {
-		if (p1 == null) { return new GamaPoint(p, p, p); }
+		if (p1 == null) return new GamaPoint(p, p, p);
 		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -275,10 +498,25 @@ public class Points {
 									value = "{1, 2} - 4",
 									equals = "{-3.0,-2.0,-4.0}") }))
 	public static GamaPoint subtract(final GamaPoint p1, final Double p) {
-		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
+		if (p1 == null) return new GamaPoint(-p, -p, -p);
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
+	/**
+	 * Subtract.
+	 *
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Subtract.
+	 *
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -298,6 +536,25 @@ public class Points {
 		return new GamaPoint(-p.x, -p.y, -p.z);
 	}
 
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -311,11 +568,30 @@ public class Points {
 							value = "{1, 2} - {4, 5}",
 							equals = "{-3.0, -3.0}")))
 	public static GamaPoint subtract(final GamaPoint p1, final GamaPoint p) {
-		if (p == null) { return p1; }
-		if (p1 == null) { return p.negated(); }
+		if (p == null) return p1;
+		if (p1 == null) return p.negated();
 		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z);
 	}
 
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
+
+	/**
+	 * Subtract.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p
+	 *            the p
+	 * @return the gama point
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -323,15 +599,34 @@ public class Points {
 			concept = {})
 	@doc (
 			value = "Returns a point with coordinate resulting from the first operand minus the second operand.",
-			examples = {
-					@example(value="{2.0,3.0,4.0} - 1", equals="{1.0,2.0,3.0}")
-			})
+			examples = { @example (
+					value = "{2.0,3.0,4.0} - 1",
+					equals = "{1.0,2.0,3.0}") })
 	@test ("{2.0,3.0,4.0} - 1 = {1.0,2.0,3.0}")
 	public static GamaPoint subtract(final GamaPoint p1, final Integer p) {
-		if (p1 == null) { return new GamaPoint(-p, -p, -p); }
+		if (p1 == null) return new GamaPoint(-p, -p, -p);
 		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
+	/**
+	 * Round.
+	 *
+	 * @param v
+	 *            the v
+	 * @param precision
+	 *            the precision
+	 * @return the gama point
+	 */
+
+	/**
+	 * Round.
+	 *
+	 * @param v
+	 *            the v
+	 * @param precision
+	 *            the precision
+	 * @return the gama point
+	 */
 	@operator (
 			value = "with_precision",
 			can_be_const = true,
@@ -343,11 +638,26 @@ public class Points {
 					equals = "{12345.79, 12345.79, 12345.79}") },
 			see = "round")
 	public static GamaPoint round(final GamaPoint v, final Integer precision) {
-		if (v == null) { return null; }
+		if (v == null) return null;
 		return new GamaPoint(Maths.round(v.getX(), precision), Maths.round(v.getY(), precision),
 				Maths.round(v.getZ(), precision));
 	}
 
+	/**
+	 * Round.
+	 *
+	 * @param v
+	 *            the v
+	 * @return the gama point
+	 */
+
+	/**
+	 * Round.
+	 *
+	 * @param v
+	 *            the v
+	 * @return the gama point
+	 */
 	@operator (
 			value = "round",
 			can_be_const = true,
@@ -358,9 +668,9 @@ public class Points {
 					value = "{12345.78943,  12345.78943, 12345.78943} with_precision 2",
 					equals = "{12345.79,12345.79,12345.79}") },
 			see = "round")
-	@test("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
+	@test ("{12345.78943,  12345.78943, 12345.78943} with_precision 2 = {12345.79,12345.79,12345.79}")
 	public static GamaPoint round(final GamaPoint v) {
-		if (v == null) { return null; }
+		if (v == null) return null;
 		return new GamaPoint(Maths.round(v.getX()), Maths.round(v.getY()), Maths.round(v.getZ()));
 	}
 

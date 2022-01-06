@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.population.MetaPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * MetaPopulation.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -49,20 +49,31 @@ import one.util.streamex.StreamEx;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, IPopulationSet {
 
+	/** The population sets. */
 	protected final List<IPopulationSet<? extends IAgent>> populationSets;
+	
+	/** The set of populations. */
 	// We cache the value in case.
 	protected IMap<String, IPopulation> setOfPopulations;
+	
+	/** The type. */
 	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
+	/**
+	 * Instantiates a new meta population.
+	 */
 	public MetaPopulation() {
 		populationSets = new ArrayList();
 	}
 
+	/**
+	 * Instantiates a new meta population.
+	 *
+	 * @param pops the pops
+	 */
 	public MetaPopulation(final IPopulation<? extends IAgent>[] pops) {
 		this();
-		for (final IPopulation<? extends IAgent> pop : pops) {
-			addPopulation(pop);
-		}
+		for (final IPopulation<? extends IAgent> pop : pops) { addPopulation(pop); }
 	}
 
 	@Override
@@ -84,14 +95,17 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 		populationSets.add(pop);
 	}
 
+	/**
+	 * Adds the population set.
+	 *
+	 * @param pop the pop
+	 */
 	public void addPopulationSet(final IPopulationSet pop) {
 		populationSets.add(pop);
 	}
 
 	@Override
-	public IContainerType getGamlType() {
-		return type;
-	}
+	public IContainerType getGamlType() { return type; }
 
 	@Override
 	public boolean hasAgentList() {
@@ -106,9 +120,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
-			for (final IPopulationSet p : populationSets) {
-				result.add(p.iterable(scope));
-			}
+			for (final IPopulationSet p : populationSets) { result.add(p.iterable(scope)); }
 			return GamaListFactory.create(scope, Types.AGENT, Iterables.concat(result.items()));
 		}
 	}
@@ -157,9 +169,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
 		final MetaPopulation mp = new MetaPopulation();
-		for (final IPopulationSet ps : populationSets) {
-			mp.populationSets.add(ps);
-		}
+		mp.populationSets.addAll(populationSets);
 		return mp;
 	}
 
@@ -209,9 +219,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
 		if (!(o instanceof IAgent)) return false;
-		for (final IPopulationSet pop : populationSets) {
-			if (pop.contains(scope, o)) return true;
-		}
+		for (final IPopulationSet pop : populationSets) { if (pop.contains(scope, o)) return true; }
 		return false;
 	}
 
@@ -254,9 +262,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public int length(final IScope scope) {
 		int result = 0;
-		for (final IPopulationSet p : populationSets) {
-			result += p.length(scope);
-		}
+		for (final IPopulationSet p : populationSets) { result += p.length(scope); }
 		return result;
 	}
 
@@ -267,9 +273,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public boolean isEmpty(final IScope scope) {
-		for (final IPopulationSet p : populationSets) {
-			if (!p.isEmpty(scope)) return false;
-		}
+		for (final IPopulationSet p : populationSets) { if (!p.isEmpty(scope)) return false; }
 		return true;
 	}
 
@@ -349,9 +353,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
 		try (final Collector.AsList<java.lang.Iterable<? extends IAgent>> result = Collector.getList()) {
-			for (final IPopulationSet p : populationSets) {
-				result.add(p.iterable(scope));
-			}
+			for (final IPopulationSet p : populationSets) { result.add(p.iterable(scope)); }
 			return Iterables.concat(result.items());
 		}
 	}
@@ -366,6 +368,12 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 		return null; // We dont know what to return here.
 	}
 
+	/**
+	 * Gets the map of populations.
+	 *
+	 * @param scope the scope
+	 * @return the map of populations
+	 */
 	private Map<String, IPopulation> getMapOfPopulations(final IScope scope) {
 		if (setOfPopulations == null) {
 			setOfPopulations = GamaMapFactory.create();
@@ -374,9 +382,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 					setOfPopulations.putAll(((MetaPopulation) pop).getMapOfPopulations(scope));
 				} else {
 					final Collection<? extends IPopulation> pops = pop.getPopulations(scope);
-					for (final IPopulation p : pops) {
-						setOfPopulations.put(p.getName(), p);
-					}
+					for (final IPopulation p : pops) { setOfPopulations.put(p.getName(), p); }
 				}
 			}
 		}

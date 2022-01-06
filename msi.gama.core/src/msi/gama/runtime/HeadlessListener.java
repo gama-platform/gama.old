@@ -491,18 +491,15 @@ public class HeadlessListener implements IGui {
 	public void endTestDisplay() {}
 
 	@Override
-	public void refreshNavigator() {
-		// TODO Auto-generated method stub
-
-	}
+	public void refreshNavigator() {}
 
 	@Override
-	public boolean isInDisplayThread() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public boolean isInDisplayThread() { return false; }
 
 	@Override
 	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return Collections.EMPTY_LIST; }
+
+	@Override
+	public IDisplaySurface getFrontmostDisplaySurface() { return null; }
 
 }

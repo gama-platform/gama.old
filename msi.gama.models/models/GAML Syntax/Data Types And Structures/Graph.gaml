@@ -57,16 +57,16 @@ global {
 	action random {
 		write "- random graph : Erdős-Rényi = generate_random_graph(nb_nodes,nb_edges,directed,node_species,edge_species)";
 		do clean;
-		if no_species { g_graph <- generate_random_graph(nb_nodes,nb_nodes*av_degree,directed_graph);}
-		else if node_species_only { g_graph <- generate_random_graph(nb_nodes,nb_nodes*av_degree,directed_graph,regular_agent_node);}
+		if no_species { g_graph <- as_spatial_graph(generate_random_graph(nb_nodes,nb_nodes*av_degree,directed_graph));}
+		else if node_species_only { g_graph <- as_spatial_graph(generate_random_graph(nb_nodes,nb_nodes*av_degree,directed_graph,regular_agent_node));}
 		else {
-			g_graph <- generate_random_graph(
+			g_graph <- as_spatial_graph(generate_random_graph(
 				nb_nodes, // The number of nodes
 				nb_nodes*av_degree, // The number of edges
 				directed_graph, // directed graph
 				regular_agent_node, // The species of nodes
 				regular_agent_edge // The species of edges
-			);
+			));
 		}
 		
 		
@@ -77,21 +77,21 @@ global {
 	 * https://en.wikipedia.org/wiki/Barabási–Albert_model
 	 * 
 	 */
-	action scall_free {
+	action scale_free {
 		write "- Scale-free : Barabási–Albert = generate_barabasi_albert(node_species, edge_species, nb_nodes, new_edges, synchronize)";
 		do clean;
 		int new_edges_addition_per_node_introduction <- 4 > init_nb_nodes ? init_nb_nodes : 4;
-		if no_species {g_graph <- generate_barabasi_albert(init_nb_nodes,new_edges_addition_per_node_introduction,nb_nodes,directed_graph);}
-		else if node_species_only {g_graph <- generate_barabasi_albert(init_nb_nodes,new_edges_addition_per_node_introduction,nb_nodes,directed_graph,regular_agent_node);}
+		if no_species {g_graph <- as_spatial_graph(generate_barabasi_albert(init_nb_nodes,new_edges_addition_per_node_introduction,nb_nodes,directed_graph));}
+		else if node_species_only {g_graph <- as_spatial_graph(generate_barabasi_albert(init_nb_nodes,new_edges_addition_per_node_introduction,nb_nodes,directed_graph,regular_agent_node));}
 		else {
-			g_graph <- generate_barabasi_albert(
+			g_graph <- as_spatial_graph(generate_barabasi_albert(
 				init_nb_nodes, // The number of nodes in the graph
 				new_edges_addition_per_node_introduction, // the number of edges created when a new node enter the graph
 				nb_nodes, // The number of nodes in the graph
 				directed_graph, //directed grah
 				regular_agent_node, // The species of nodes
 				regular_agent_edge // The species of edges
-			);
+			));
 		}
 	}
 
@@ -105,17 +105,17 @@ global {
 		do clean;
 		float rewirering_probability <- 0.1;
 		int fake_lattice_start_degree <- 4; // Even and more than 2
-		if no_species {g_graph <- generate_watts_strogatz(nb_nodes,rewirering_probability,fake_lattice_start_degree,directed_graph);}
-		else if node_species_only {g_graph <- generate_watts_strogatz(nb_nodes,rewirering_probability,fake_lattice_start_degree,directed_graph,regular_agent_node);}
+		if no_species {g_graph <- as_spatial_graph(generate_watts_strogatz(nb_nodes,rewirering_probability,fake_lattice_start_degree,directed_graph));}
+		else if node_species_only {g_graph <- as_spatial_graph(generate_watts_strogatz(nb_nodes,rewirering_probability,fake_lattice_start_degree,directed_graph,regular_agent_node));}
 		else {
-			g_graph <- generate_watts_strogatz(
+			g_graph <- as_spatial_graph(generate_watts_strogatz(
 				nb_nodes, // The number of nodes
 				rewirering_probability, // The probability to rewire a node in the generation process
 				fake_lattice_start_degree, // The degree of node at start, before the rewirering process
 				directed_graph, //is directed
 				regular_agent_node, // The species of nodes
 				regular_agent_edge // The species of edges
-			);
+			));
 		}
 	}
 
@@ -125,15 +125,15 @@ global {
 	action complete {
 		write "- Complete = generate_complete_graph(node_species, edge_species, nb_node)";
 		do clean;
-		if no_species {g_graph <- generate_complete_graph(nb_nodes,directed_graph);}
-		else if node_species_only {g_graph <- generate_complete_graph(nb_nodes,directed_graph,regular_agent_node);}
+		if no_species {g_graph <- as_spatial_graph(generate_complete_graph(nb_nodes,directed_graph));}
+		else if node_species_only {g_graph <- as_spatial_graph(generate_complete_graph(nb_nodes,directed_graph,regular_agent_node));}
 		else {
-			g_graph <- generate_complete_graph(
+			g_graph <- as_spatial_graph(generate_complete_graph(
 				nb_nodes,// The number of nodes in the graph
 				directed_graph, //is directed
 				regular_agent_node, // The species of nodes
 				regular_agent_edge // The species of edges 
-			);
+			));
 		}
 	}
 
@@ -385,7 +385,7 @@ experiment Graph type: gui {
 	user_command "Create graphs" {
 		switch graph_generator {
 			match "Random" { ask world {do random();} }
-			match "Scall-free" { ask world { do scall_free(); } }
+			match "Scall-free" { ask world { do scale_free(); } }
 			match "Small-world" { ask world { do small_world(); } }
 			match "Complete" { ask world { do complete(); } }
 			match "Distance" { ask world { do from_nodes(); } }

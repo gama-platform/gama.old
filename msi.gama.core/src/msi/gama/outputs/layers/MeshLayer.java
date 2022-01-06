@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * MeshLayer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -14,14 +14,22 @@ import java.util.Arrays;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
+/**
+ * The Class MeshLayer.
+ */
 public class MeshLayer extends AbstractLayer {
 
+	/**
+	 * Instantiates a new mesh layer.
+	 *
+	 * @param layer the layer
+	 */
 	public MeshLayer(final ILayerStatement layer) {
 		super(layer);
 	}
@@ -32,12 +40,10 @@ public class MeshLayer extends AbstractLayer {
 	}
 
 	@Override
-	public MeshLayerData getData() {
-		return (MeshLayerData) super.getData();
-	}
+	public MeshLayerData getData() { return (MeshLayerData) super.getData(); }
 
 	@Override
-	public void privateDraw(final IScope scope, final IGraphics dg) {
+	public void privateDraw(final IGraphicsScope scope, final IGraphics dg) {
 		GamaColor lineColor = null;
 		final MeshLayerData data = getData();
 		if (data.drawLines()) { lineColor = data.getLineColor(); }
@@ -63,8 +69,6 @@ public class MeshLayer extends AbstractLayer {
 	}
 
 	@Override
-	public String getType() {
-		return "Field layer";
-	}
+	public String getType() { return "Field layer"; }
 
 }

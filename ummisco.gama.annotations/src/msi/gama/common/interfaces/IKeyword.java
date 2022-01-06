@@ -19,6 +19,9 @@ package msi.gama.common.interfaces;
  */
 public interface IKeyword {
 
+	/** The origin. */
+	String ORIGIN = "**origin**";
+
 	/** The dot. */
 	String _DOT = ".";
 

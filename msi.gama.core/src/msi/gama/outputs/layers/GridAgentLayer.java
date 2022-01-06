@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GridAgentLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GridAgentLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -17,7 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
@@ -25,8 +25,17 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 
+/**
+ * The Class GridAgentLayer.
+ */
 public class GridAgentLayer extends AgentLayer {
 
+	/**
+	 * Instantiates a new grid agent layer.
+	 *
+	 * @param layer
+	 *            the layer
+	 */
 	public GridAgentLayer(final ILayerStatement layer) {
 		super(layer);
 	}
@@ -37,20 +46,17 @@ public class GridAgentLayer extends AgentLayer {
 	}
 
 	@Override
-	public GridLayerData getData() {
-		return (GridLayerData) super.getData();
-	}
+	public GridLayerData getData() { return (GridLayerData) super.getData(); }
 
 	@Override
-	public void privateDraw(final IScope s, final IGraphics gr) throws GamaRuntimeException {
+	public void privateDraw(final IGraphicsScope s, final IGraphics gr) throws GamaRuntimeException {
 		final GamaColor borderColor = getData().drawLines() ? getData().getLineColor() : null;
-		final IExecutable aspect = sc -> {
+		final IExecutable aspect = scope -> {
+			IGraphicsScope sc = (IGraphicsScope) scope;
 			final IAgent agent = sc.getAgent();
 			final IGraphics g = sc.getGraphics();
 			try {
-				if (agent == sc.getGui().getHighlightedAgent()) {
-					g.beginHighlight();
-				}
+				if (agent == sc.getGui().getHighlightedAgent()) { g.beginHighlight(); }
 				final GamaColor color = Cast.asColor(sc, agent.getDirectVarValue(sc, IKeyword.COLOR));
 				final IShape ag = agent.getGeometry();
 				final IShape ag2 = ag.copy(sc);
@@ -69,9 +75,7 @@ public class GridAgentLayer extends AgentLayer {
 			if (a != null) {
 				final ExecutionResult result = s.execute(aspect, a, null);
 				final Object r = result.getValue();
-				if (r instanceof Rectangle2D) {
-					shapes.put(a, (Rectangle2D) r);
-				}
+				if (r instanceof Rectangle2D) { shapes.put(a, (Rectangle2D) r); }
 			}
 		}
 

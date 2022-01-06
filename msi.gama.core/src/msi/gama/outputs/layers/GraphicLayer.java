@@ -1,37 +1,43 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.GraphicLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GraphicLayer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class GraphicLayer.
+ */
 public class GraphicLayer extends AbstractLayer {
 
+	/**
+	 * Instantiates a new graphic layer.
+	 *
+	 * @param layer the layer
+	 */
 	public GraphicLayer(final ILayerStatement layer) {
 		super(layer);
 	}
 
 	@Override
-	protected void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	protected void privateDraw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgent();
 		scope.execute(((GraphicLayerStatement) definition).getAspect(), agent, null);
 	}
 
 	@Override
-	public String getType() {
-		return IKeyword.GRAPHICS;
-	}
+	public String getType() { return IKeyword.GRAPHICS; }
 
 	// Just a trial to make sure that graphics + chart produce not proportional results.
 	@Override

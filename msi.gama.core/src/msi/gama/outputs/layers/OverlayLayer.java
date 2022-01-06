@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.OverlayLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * OverlayLayer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -17,7 +17,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -29,14 +29,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class OverlayLayer extends GraphicLayer {
 
+	/**
+	 * Instantiates a new overlay layer.
+	 *
+	 * @param layer the layer
+	 */
 	public OverlayLayer(final ILayerStatement layer) {
 		super(layer);
 	}
 
 	@Override
-	public boolean isOverlay() {
-		return true;
-	}
+	public boolean isOverlay() { return true; }
 
 	@Override
 	protected OverlayLayerData createData() {
@@ -44,9 +47,7 @@ public class OverlayLayer extends GraphicLayer {
 	}
 
 	@Override
-	public OverlayLayerData getData() {
-		return (OverlayLayerData) super.getData();
-	}
+	public OverlayLayerData getData() { return (OverlayLayerData) super.getData(); }
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
@@ -54,12 +55,10 @@ public class OverlayLayer extends GraphicLayer {
 	}
 
 	@Override
-	public String getType() {
-		return IKeyword.OVERLAY;
-	}
+	public String getType() { return IKeyword.OVERLAY; }
 
 	@Override
-	protected void privateDraw(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	protected void privateDraw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
 		g.beginOverlay(this);
 		final IAgent agent = scope.getAgent();
 		scope.execute(((OverlayStatement) definition).getAspect(), agent, null);

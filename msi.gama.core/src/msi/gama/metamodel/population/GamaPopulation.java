@@ -626,7 +626,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final IType<?> edgeType = scope.getType(edgeName);
 			final IType<?> nodeType = getGamlType().getContentType();
 			// TODO Specifier directed quelque part dans l'espece
-			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
+			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
 			g.postRefreshManagementAction(scope);

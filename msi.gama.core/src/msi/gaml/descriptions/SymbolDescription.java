@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SymbolDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.8.2).
  *
  * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -98,7 +98,10 @@ public abstract class SymbolDescription implements IDescription {
 		this.keyword = keyword;
 		this.facets = facets;
 		element = source;
-		if (superDesc != null) { originName = superDesc.getName(); }
+		if (facets != null && facets.containsKey(ORIGIN)) {
+			originName = facets.getLabel(ORIGIN);
+			facets.remove(ORIGIN);
+		} else if (superDesc != null) { originName = superDesc.getName(); }
 		setEnclosingDescription(superDesc);
 		proto = DescriptionFactory.getProto(getKeyword(), getSpeciesContext());
 	}

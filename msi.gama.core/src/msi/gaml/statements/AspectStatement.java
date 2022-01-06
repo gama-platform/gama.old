@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AspectStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * AspectStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -30,8 +30,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
@@ -41,6 +41,9 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
+/**
+ * The Class AspectStatement.
+ */
 @symbol (
 		name = { IKeyword.ASPECT },
 		kind = ISymbolKind.BEHAVIOR,
@@ -86,8 +89,10 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class AspectStatement extends AbstractStatementSequence {
 
+	/** The is highlight aspect. */
 	boolean isHighlightAspect;
 
+	/** The Constant SHAPES. */
 	static final Map<String, Integer> SHAPES = new HashMap<>() {
 
 		{
@@ -100,8 +105,13 @@ public class AspectStatement extends AbstractStatementSequence {
 		}
 	};
 
+	/** The border color. */
 	public static GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
-	public static IExecutable DEFAULT_ASPECT = scope -> {
+
+	/** The default aspect. */
+	public static IExecutable DEFAULT_ASPECT = sc -> {
+		if (!sc.isGraphics()) return null;
+		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IAgent agent = scope.getAgent();
 		if (agent != null && !agent.dead()) {
 			final IGraphics g = scope.getGraphics();
@@ -163,6 +173,12 @@ public class AspectStatement extends AbstractStatementSequence {
 		return null;
 	};
 
+	/**
+	 * Instantiates a new aspect statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 */
 	public AspectStatement(final IDescription desc) {
 		super(desc);
 		setName(getLiteral(IKeyword.NAME, IKeyword.DEFAULT));
@@ -170,13 +186,17 @@ public class AspectStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Rectangle2D executeOn(final IScope scope) {
+	public Rectangle2D executeOn(final IScope sc) {
+		if (!sc.isGraphics()) return null;
+		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IAgent agent = scope.getAgent();
 		final boolean shouldHighlight = agent == scope.getGui().getHighlightedAgent() && !isHighlightAspect;
 		if (agent != null && !agent.dead()) {
 			IGraphics g = scope.getGraphics();
 			// hqnghi: try to find scope from experiment
-			if (g == null) { g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics(); }
+			// AD: removed as it should not be necessary... Or else we create a ISimulationAgent.getGraphicsScope()
+			// method ??
+			// if (g == null) { g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics(); }
 			// end-hqnghi
 			if (g == null) return null;
 			try {
@@ -197,9 +217,10 @@ public class AspectStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	public Rectangle2D privateExecuteIn(final IScope sc) throws GamaRuntimeException {
+		if (!sc.isGraphics()) return null;
+		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IGraphics g = scope.getGraphics();
-		if (g == null) return null;
 		super.privateExecuteIn(scope);
 		return g.getAndWipeTemporaryEnvelope();
 	}

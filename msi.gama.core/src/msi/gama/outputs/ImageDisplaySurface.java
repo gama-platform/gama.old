@@ -39,7 +39,7 @@ import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
@@ -74,7 +74,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 
 	/** The scope. */
-	protected IScope scope;
+	protected IGraphicsScope scope;
 
 	/** The data. */
 	private final LayeredDisplayData data;
@@ -96,7 +96,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void outputReloaded() {
-		this.scope = output.getScope().copy("in image surface of " + output.getName());
+		this.scope = output.getScope().copyForGraphics("in image surface of " + output.getName());
 		if (!GamaPreferences.Runtime.ERRORS_IN_DISPLAYS.getValue()) { scope.disableErrorReporting(); }
 		if (manager == null) {
 			manager = new LayerManager(this, output);
@@ -107,7 +107,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public IScope getScope() { return scope; }
+	public IGraphicsScope getScope() { return scope; }
 
 	/**
 	 * Save this surface into an image passed as a parameter

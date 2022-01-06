@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlResourceInfoProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlResourceInfoProvider.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import static java.util.Arrays.asList;
@@ -29,7 +28,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -47,22 +46,33 @@ import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class GamlResourceInfoProvider.
+ */
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
+	/** The instance. */
 	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();
 
+	/** The resource set. */
 	private XtextResourceSet resourceSet;
 
+	/**
+	 * Gets the info.
+	 *
+	 * @param originalURI the original URI
+	 * @param r the r
+	 * @param stamp the stamp
+	 * @return the info
+	 */
 	public GamlFileInfo getInfo(final URI originalURI, final GamlResource r, final long stamp) {
 
 		Set<String> imports = null;
 		final Set<URI> uris = GamlResourceIndexer.directImportsOf(originalURI);
 		for (final URI u : uris) {
-			if (imports == null) {
-				imports = new LinkedHashSet();
-			}
+			if (imports == null) { imports = new LinkedHashSet(); }
 			imports.add(u.deresolve(originalURI).toString());
 		}
 
@@ -71,9 +81,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		try (InputStream is = resourceSet.getURIConverter().createInputStream(originalURI);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 			boolean tagsFound = false;
-			while (!tagsFound && (str = reader.readLine()) != null) {
-				tagsFound = str.contains("Tags: ");
-			}
+			while (!tagsFound && (str = reader.readLine()) != null) { tagsFound = str.contains("Tags: "); }
 			if (tagsFound) {
 				tags = new HashSet<>(asList(split(uncapitalize(deleteWhitespace(substringAfter(str, "Tags: "))), ',')));
 			}
@@ -84,15 +92,13 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		Set<String> uses = null;
 		Set<String> exps = null;
 
-		final TreeIterator<EObject> tree = EcoreUtil2.getAllContents(r, true);
+		final TreeIterator<EObject> tree = EcoreUtil.getAllContents(r, true);
 		boolean processExperiments = true;
 		while (tree.hasNext()) {
 			final EObject e = tree.next();
 			if (e instanceof Pragma) {
 				final String s = ((Pragma) e).getName();
-				if (IKeyword.NO_EXPERIMENT.equals(s)) {
-					processExperiments = false;
-				}
+				if (IKeyword.NO_EXPERIMENT.equals(s)) { processExperiments = false; }
 			} else if (e instanceof StringLiteral) {
 				final String s = ((StringLiteral) e).getOp();
 				if (s.length() > 4) {
@@ -100,36 +106,24 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 					final String ext = u.fileExtension();
 					if (ext != null && !ext.isEmpty()) {
 						// if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(ext)) {
-						if (uses == null) {
-							uses = new LinkedHashSet();
-						}
+						if (uses == null) { uses = new LinkedHashSet(); }
 						uses.add(s);
 						// }
 					}
 				}
 			} else if (processExperiments && e instanceof S_Experiment) {
 				String s = ((S_Experiment) e).getName();
-				if (s == null) {
-					DEBUG.ERR("EXPERIMENT NULL");
-				}
-				if (EGaml.getInstance().isBatch(e)) {
-					s = GamlFileInfo.BATCH_PREFIX + s;
-				}
+				if (s == null) { DEBUG.ERR("EXPERIMENT NULL"); }
+				if (EGaml.getInstance().isBatch(e)) { s = GamlFileInfo.BATCH_PREFIX + s; }
 
-				if (exps == null) {
-					exps = new LinkedHashSet();
-				}
+				if (exps == null) { exps = new LinkedHashSet(); }
 				exps.add(s);
 			} else if (processExperiments && e instanceof HeadlessExperiment) {
 				String s = ((HeadlessExperiment) e).getName();
 
-				if (EGaml.getInstance().isBatch(e)) {
-					s = GamlFileInfo.BATCH_PREFIX + s;
-				}
+				if (EGaml.getInstance().isBatch(e)) { s = GamlFileInfo.BATCH_PREFIX + s; }
 
-				if (exps == null) {
-					exps = new LinkedHashSet();
-				}
+				if (exps == null) { exps = new LinkedHashSet(); }
 				exps.add(s);
 			}
 		}
@@ -159,6 +153,11 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		}
 	}
 
+	/**
+	 * Clear resource set.
+	 *
+	 * @param resourceSet the resource set
+	 */
 	protected void clearResourceSet(final ResourceSet resourceSet) {
 		final boolean wasDeliver = resourceSet.eDeliver();
 		try {
@@ -171,10 +170,13 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		}
 	}
 
+	/**
+	 * Gets the resource set.
+	 *
+	 * @return the resource set
+	 */
 	private XtextResourceSet getResourceSet() {
-		if (resourceSet == null) {
-			resourceSet = new SynchronizedXtextResourceSet();
-		}
+		if (resourceSet == null) { resourceSet = new SynchronizedXtextResourceSet(); }
 		return resourceSet;
 	}
 

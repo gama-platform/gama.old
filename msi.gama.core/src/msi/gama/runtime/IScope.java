@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.IScope.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8.1)
+ * IScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -42,6 +41,61 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "rawtypes" })
 public interface IScope extends Closeable, IBenchmarkable {
+
+	/**
+	 * The Interface IGraphicsScope.
+	 */
+	public interface IGraphicsScope extends IScope {
+		/**
+		 * Copy.
+		 *
+		 * @param additionalName
+		 *            the additional name
+		 * @return the i scope
+		 */
+		@Override
+		IGraphicsScope copy(String additionalName);
+
+		/**
+		 * Sets the horizontal pixel context.
+		 */
+		void setHorizontalPixelContext();
+
+		/**
+		 * Sets the vertical pixel context.
+		 */
+		void setVerticalPixelContext();
+
+		/**
+		 * Checks if is horizontal pixel context.
+		 *
+		 * @return true, if is horizontal pixel context
+		 */
+		boolean isHorizontalPixelContext();
+
+		/**
+		 * Sets the graphics.
+		 *
+		 * @param val
+		 *            the new graphics
+		 */
+		void setGraphics(IGraphics val);
+
+		/**
+		 * Gets the graphics.
+		 *
+		 * @return the graphics
+		 */
+		IGraphics getGraphics();
+
+		/**
+		 * Checks if is graphics.
+		 *
+		 * @return true, if is graphics
+		 */
+		@Override
+		default boolean isGraphics() { return true; }
+	}
 
 	// /**
 	// * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be
@@ -224,6 +278,9 @@ public interface IScope extends Closeable, IBenchmarkable {
 
 	void clear();
 
+	/**
+	 * Close.
+	 */
 	@Override
 	default void close() {
 		clear();
@@ -283,10 +340,13 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 */
 	String getName();
 
+	/**
+	 * Gets the name for benchmarks.
+	 *
+	 * @return the name for benchmarks
+	 */
 	@Override
-	default String getNameForBenchmarks() {
-		return getName();
-	}
+	default String getNameForBenchmarks() { return getName(); }
 
 	/**
 	 * Copy.
@@ -296,6 +356,15 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the i scope
 	 */
 	IScope copy(String additionalName);
+
+	/**
+	 * Copy for graphics.
+	 *
+	 * @param additionalName
+	 *            the additional name
+	 * @return the i graphics scope
+	 */
+	IGraphicsScope copyForGraphics(String additionalName);
 
 	/**
 	 * Interrupted.
@@ -488,24 +557,25 @@ public interface IScope extends Closeable, IBenchmarkable {
 	ITopology setTopology(ITopology topology);
 
 	/**
-	 * Sets the graphics.
+	 * Execute.
 	 *
-	 * @param val
-	 *            the new graphics
+	 * @param executable
+	 *            the executable
+	 * @return the execution result
 	 */
-	void setGraphics(IGraphics val);
-
-	/**
-	 * Gets the graphics.
-	 *
-	 * @return the graphics
-	 */
-	IGraphics getGraphics();
-
 	default ExecutionResult execute(final IExecutable executable) {
 		return execute(executable, getAgent(), null);
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param executable
+	 *            the executable
+	 * @param args
+	 *            the args
+	 * @return the execution result
+	 */
 	default ExecutionResult execute(final IExecutable executable, final Arguments args) {
 		return execute(executable, getAgent(), args);
 	}
@@ -822,12 +892,28 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 */
 	ExecutionResult update(IAgent agent);
 
+	/**
+	 * Gets the execution context.
+	 *
+	 * @return the execution context
+	 */
 	IExecutionContext getExecutionContext();
 
+	/**
+	 * Checks if is in try mode.
+	 *
+	 * @return true, if is in try mode
+	 */
 	boolean isInTryMode();
 
+	/**
+	 * Enable try mode.
+	 */
 	void enableTryMode();
 
+	/**
+	 * Disable try mode.
+	 */
 	void disableTryMode();
 
 	/**
@@ -836,12 +922,18 @@ public interface IScope extends Closeable, IBenchmarkable {
 
 	void setCurrentError(GamaRuntimeException g);
 
+	/**
+	 * Gets the current error.
+	 *
+	 * @return the current error
+	 */
 	GamaRuntimeException getCurrentError();
 
-	void setHorizontalPixelContext();
-
-	void setVerticalPixelContext();
-
-	boolean isHorizontalPixelContext();
+	/**
+	 * Checks if is graphics.
+	 *
+	 * @return true, if is graphics
+	 */
+	default boolean isGraphics() { return false; }
 
 }

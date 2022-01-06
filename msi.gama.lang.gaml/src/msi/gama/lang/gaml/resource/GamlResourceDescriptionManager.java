@@ -1,18 +1,19 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlResourceDescriptionManager.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * GamlResourceDescriptionManager.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
+
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -26,8 +27,6 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
-import msi.gama.util.Collector;
-import msi.gama.util.ICollector;
 
 /**
  * The class GamlResourceDescriptionManager.
@@ -39,8 +38,7 @@ import msi.gama.util.ICollector;
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager
 		implements IResourceDescription.Manager.AllChangeAware {
 
-	// @Inject private DescriptionUtils descriptionUtils;
-
+	/** The provider. */
 	@Inject BuiltinGlobalScopeProvider provider;
 
 	@Override
@@ -52,19 +50,20 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
-		// final boolean result = false;
-		final URI newUri = candidate.getURI();
-		try (ICollector<URI> deltaUris = Collector.getSet()) {
-			for (final Delta d : deltas) {
-				deltaUris.add(GamlResourceServices.properlyEncodedURI(d.getUri()));
-			}
-			final Iterator<URI> it = GamlResourceIndexer.allImportsOf(newUri);
-			while (it.hasNext()) {
-				final URI next = it.next();
-				if (deltaUris.contains(next)) { return true; }
-			}
-			return super.isAffected(deltas, candidate, context);
+		Map<URI, String> imports;
+		if (!(candidate instanceof GamlResourceDescription)) {
+			// Seems to happen, although it shouldnt !
+			imports = GamlResourceIndexer.allImportsOf(candidate.getURI());
+		} else {
+			imports = GamlResourceIndexer
+					.allImportsOf((GamlResource) ((GamlResourceDescription) candidate).getResource());
 		}
+		if (imports.isEmpty()) return false;
+		for (Delta d : deltas) {
+			if (d.haveEObjectDescriptionsChanged() && imports.containsKey(properlyEncodedURI(d.getUri()))) return true;
+		}
+		return false;
+		// return super.isAffected(deltas, candidate, context);
 	}
 
 	@Override
