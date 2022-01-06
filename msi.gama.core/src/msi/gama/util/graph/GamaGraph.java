@@ -275,7 +275,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param edgeType
 	 *            the edge type
 	 */
-	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed, final boolean uniqueEdge,
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
 		vertexMap = GamaMapFactory.create();
 		edgeMap = GamaMapFactory.create();
@@ -288,7 +288,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		// : Types.NO_TYPE;
 		//
 		type = Types.GRAPH.of(nodeType, edgeType);
-		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+		init(scope, edgesOrVertices, byEdge, directed, uniqueEdge, rel, edgesSpecies);
 	}
 
 	/**
@@ -437,7 +437,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *            the edges species
 	 */
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
-			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies) {
+			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
@@ -447,7 +447,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (byEdge) {
 			buildByEdge(scope, edgesOrVertices);
 		} else {
-			buildByVertices(scope, edgesOrVertices);
+			buildByVertices(scope, edgesOrVertices, uniqueEdge);
 		}
 		version = 1;
 	}
@@ -471,7 +471,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *            the tolerance
 	 */
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
-			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies, final Double tolerance) {
+			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies, final Double tolerance) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
@@ -481,7 +481,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (byEdge) {
 			buildByEdge(scope, edgesOrVertices, tolerance);
 		} else {
-			buildByVertices(scope, edgesOrVertices);
+			buildByVertices(scope, edgesOrVertices, uniqueEdge);
 		}
 		version = 1;
 	}
@@ -527,7 +527,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param vertices
 	 *            the vertices
 	 */
-	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices) {
+	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices, boolean uniqueEdge) {
 		for (final E p : vertices.iterable(scope)) { addVertex(p); }
 	}
 
@@ -1424,7 +1424,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IContainer reverse(final IScope scope) {
-		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(type.getKeyType()), false, directed,
+		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(type.getKeyType()), false, directed, false,
 				vertexRelation, edgeSpecies, type.getKeyType(), type.getContentType());
 		Graphs.addGraphReversed(g, this);
 		return g;
@@ -1476,7 +1476,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IGraph copy(final IScope scope) {
-		final GamaGraph g = new GamaGraph(scope, GamaListFactory.EMPTY_LIST, true, directed, vertexRelation,
+		final GamaGraph g = new GamaGraph(scope, GamaListFactory.EMPTY_LIST, true, directed, false, vertexRelation,
 				edgeSpecies, type.getKeyType(), type.getContentType());
 
 		Graphs.addAllVertices(g, this.getVertices());

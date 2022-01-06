@@ -122,11 +122,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * @param edgeType
 	 *            the edge type
 	 */
-	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed, final boolean uniqueEdge,
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
 			final IType edgeType) {
 		this(scope, nodeType, edgeType);
-		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+		init(scope, edgesOrVertices, byEdge, directed,uniqueEdge, rel, edgesSpecies);
 	}
 
 	/**
@@ -151,12 +151,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * @param tolerance
 	 *            the tolerance
 	 */
-	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed, final boolean uniqueEdge,
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
 			final IType edgeType, final Double tolerance) {
 		this(scope, nodeType, edgeType);
 		this.tolerance = tolerance;
-		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies, tolerance);
+		init(scope, edgesOrVertices, byEdge, directed, uniqueEdge, rel, edgesSpecies, tolerance);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	public GamaSpatialGraph copy(final IScope scope) {
-		final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, vertexRelation,
+		final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, true, directed, false,vertexRelation,
 				edgeSpecies, scope, type.getKeyType(), type.getContentType());
 
 		Graphs.addAllVertices(g, this.getVertices());
@@ -214,16 +214,17 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	protected void buildByVertices(final IScope scope, final IContainer<?, IShape> list) {
+	protected void buildByVertices(final IScope scope, final IContainer<?, IShape> list, boolean uniqueEdge) {
 		Iterable<? extends IShape> shapes = list.iterable(scope);
 		for (final IShape p : shapes) { super.addVertex(p); }
+		System.out.println("uniqueEdge: " + uniqueEdge);
 		for (final IShape o1 : shapes) { // Try to create automatic edges
 			if (o1.getAgent() != null) { o1.getAgent().setAttribute("attached_graph", this); }
 			for (final IShape o2 : shapes) {
 				if (vertexRelation.equivalent(scope, o1, o2)) { continue; }
 				// See issue #2945 -- do not add an edge if it already exists
 				// Reverted for the moment
-				if (vertexRelation.related(scope, o1, o2) /* && !containsEdge(o1, o2) */) { addEdge(o1, o2); }
+				if (vertexRelation.related(scope, o1, o2) && (!uniqueEdge || !containsEdge(o2, o1))) { addEdge(o1, o2); }
 			}
 		}
 	}
