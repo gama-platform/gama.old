@@ -81,24 +81,24 @@ import msi.gaml.types.Types;
 				type = IType.LIST,
 				of = IType.STRING,
 				optional = false,
-				doc = @doc ("The path to the file where the Sobol report will be written")
+				doc = @doc ("The list of output variables to analyse through sobol indexes")
 			),
 			@facet(
 				name = IKeyword.BATCH_REPORT,
 				type = IType.STRING,
 				optional = true,
-				doc = @doc ("The list of output variables to analyse through sobol indexes")
+				doc = @doc ("The path to the file where the Sobol report will be written")
 			)
 		},
 		omissible = IKeyword.NAME
 		)
 @doc (
-		value = "This algorithm runs a Sobol exploration - it has been built upon the moea framework at https://github.com/MOEAFramework/MOEAFramework",
+		value = "This algorithm runs a Sobol exploration - it has been built upon the moea framework at https://github.com/MOEAFramework/MOEAFramework - disabled the repeat facet of the experiment",
 		usages = { 
 			@usage (
 				value = "For example: ",
 				examples = { @example (
-						value = "method sobol sample_size:100; ",
+						value = "method sobol sample_size:100 outputs:['my_var'] report:'../path/to/report/file.txt'; ",
 						isExecutable = false) }
 			) 
 		}
