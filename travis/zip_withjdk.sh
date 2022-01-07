@@ -53,21 +53,21 @@ RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
 
 
 rem111(){
-sudo rm "${RELEASEFILES[0]}"
-sudo rm "${RELEASEFILES[1]}"
-sudo rm "${RELEASEFILES[2]}"
+rm "${RELEASEFILES[0]}"
+rm "${RELEASEFILES[1]}"
+rm "${RELEASEFILES[2]}"
 
 
 	
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-sudo zip -9 -qyr "${RELEASEFILES[0]}" . && echo "compressed ${RELEASEFILES[0]}" || echo "compress fail ${RELEASEFILES[0]}"
+zip -9 -qyr "${RELEASEFILES[0]}" . && echo "compressed ${RELEASEFILES[0]}" || echo "compress fail ${RELEASEFILES[0]}"
 cd ../../../../../../../
 
 
 
 
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-sudo zip -9 -qr "${RELEASEFILES[2]}" . && echo "compressed ${RELEASEFILES[2]}" || echo "compress fail ${RELEASEFILES[2]}"
+zip -9 -qr "${RELEASEFILES[2]}" . && echo "compressed ${RELEASEFILES[2]}" || echo "compress fail ${RELEASEFILES[2]}"
 cd ../../../../../../../
 
 
@@ -75,7 +75,7 @@ cd ../../../../../../../
 
 
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
-sudo zip -9 -qyr "${RELEASEFILES[1]}" . && echo "compressed ${RELEASEFILES[1]}" || echo "compress fail ${RELEASEFILES[1]}"
+zip -9 -qyr "${RELEASEFILES[1]}" . && echo "compressed ${RELEASEFILES[1]}" || echo "compress fail ${RELEASEFILES[1]}"
 cd ../../../../../../../
 
 }
@@ -92,9 +92,9 @@ cd ../../../../../../../
 
 
 
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_linux_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_15.tar.gz"
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_windows_openj9_15.*.zip\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_15.zip"
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_mac_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_15.tar.gz"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz" -O "jdk_linux_15.tar.gz"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_windows_hotspot_17_35.zip" -O "jdk_win_15.zip"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_mac_hotspot_17_35.tar.gz" -O "jdk_osx_15.tar.gz"
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
@@ -102,13 +102,13 @@ mkdir  jdk_osx
 
 echo "unzip jdk linux"	
 tar -zxf jdk_linux_15.tar.gz -C jdk_linux/
-mv jdk_linux/jdk-15* jdk_linux/jdk
+mv jdk_linux/jdk-17* jdk_linux/jdk
 echo "unzip jdk osx"	
 tar -zxf jdk_osx_15.tar.gz -C jdk_osx/ 
-mv jdk_osx/jdk-15* jdk_osx/jdk 
+mv jdk_osx/jdk-17* jdk_osx/jdk 
 echo "unzip jdk win"	
 unzip -q jdk_win_15.zip -d jdk_win
-mv jdk_win/jdk-15* jdk_win/jdk 
+mv jdk_win/jdk-17* jdk_win/jdk 
 
 
 
@@ -120,27 +120,27 @@ mv jdk_win/jdk-15* jdk_win/jdk
 
 
 
-sudo cp -R jdk_linux/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+cp -R jdk_linux/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+#cp $GITHUB_WORKSPACE/travis/jdk/linux/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 echo "-vm" > Gama.ini
 echo "./jdk/bin/java" >> Gama.ini
 cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini >> Gama.ini
 rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
 mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
-sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
+cp $GITHUB_WORKSPACE/travis/jdk/linux/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
 
 
 
 
-sudo cp -R jdk_win/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/win/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+cp -R jdk_win/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
+#cp $GITHUB_WORKSPACE/travis/jdk/win/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 echo "-vm" > Gama.ini
 echo "./jdk/bin/" >> Gama.ini
 cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini >> Gama.ini
 rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
 mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
 
-sudo cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/headless
+cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/headless
 
 
 
@@ -148,15 +148,15 @@ sudo cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/umm
 
 
 
-sudo cp -R jdk_osx/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
+cp -R jdk_osx/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
+#cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
 echo "-vm" > Gama.ini
 echo "../jdk/Contents/Home/bin/java" >> Gama.ini
 cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini >> Gama.ini
 rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
 mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
 
-sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless
+cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless
 
 
 
@@ -164,7 +164,7 @@ sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummi
 	
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
 
-sudo zip -9 -qyr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
+zip -9 -qyr "${RELEASEFILES[3]}" . && echo "compressed ${RELEASEFILES[3]}" || echo "compress fail ${RELEASEFILES[3]}"
 
 cd ../../../../../../../
  
@@ -173,7 +173,7 @@ cd ../../../../../../../
 
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
 
-sudo zip -9 -qr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
+zip -9 -qr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
 
 cd ../../../../../../../
 
@@ -183,7 +183,7 @@ cd ../../../../../../../
 
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
 
-sudo zip -9 -qyr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
+zip -9 -qyr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
 
 cd ../../../../../../../
 
