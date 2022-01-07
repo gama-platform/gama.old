@@ -92,9 +92,9 @@ cd ../../../../../../../
 
 
 
-wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_linux_hotspot_17_35.tar.gz" -O "jdk_linux_15.tar.gz"
-wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_windows_hotspot_17_35.zip" -O "jdk_win_15.zip"
-wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17%2B35/OpenJDK17-jdk_x64_mac_hotspot_17_35.tar.gz" -O "jdk_osx_15.tar.gz"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17-jdk_x64_linux_hotspot_17.0.1_12.tar.gz" -O "jdk_linux_15.tar.gz"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17-jdk_x64_windows_hotspot_17.0.1_12.zip" -O "jdk_win_15.zip"
+wget -q "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17-jdk_x64_mac_hotspot_17.0.1_12.tar.gz" -O "jdk_osx_15.tar.gz"
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
