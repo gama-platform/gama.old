@@ -4,7 +4,7 @@ Bundle-Name: Pedestrian
 Bundle-SymbolicName: miat.gaml.extension.pedestrian;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: escape.gaml.additions
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: msi.gama.core;bundle-version="1.7.0",
  msi.gama.ext;bundle-version="1.7.0"
 Export-Package: miat.gaml.extensions.operator,

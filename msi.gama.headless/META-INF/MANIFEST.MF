@@ -30,5 +30,5 @@ Export-Package:
  msi.gama.headless.script;uses:="msi.gama.kernel.model,org.w3c.dom",
  msi.gama.headless.xml;uses:="msi.gama.headless.job"
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.headless

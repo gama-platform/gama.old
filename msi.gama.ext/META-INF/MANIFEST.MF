@@ -752,5 +752,5 @@ Bundle-ClassPath: .,
  jgrapht 1.5.1/antlr4-runtime-4.8-1.jar,
  svgsalamander1.1.1/svgSalamander-v1.1.1.jar,
  moeaframework-2.13.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext

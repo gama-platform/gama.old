@@ -15,7 +15,7 @@ Export-Package: org.apache.commons.math3.ml.clustering,
  org.apache.commons.math3.stat.regression,
  org.apache.commons.math3.util,
  ummisco.gaml.extensions.maths.ode.statements
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gaml.extensions.maths
 Bundle-ClassPath: lib/commons-math3-3.6.1.jar,
  .

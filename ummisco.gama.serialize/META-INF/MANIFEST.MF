@@ -37,5 +37,5 @@ Export-Package: com.thoughtworks.xstream,
  ummisco.gama.serializer.gaml
 Import-Package: org.apache.commons.lang
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.serialize

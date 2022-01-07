@@ -10,7 +10,7 @@ Bundle-ClassPath: .,
  lib/native/,
  lib/Libbulletjme-11.0.0.jar
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: simtools.gaml.extensions.physics
 Eclipse-BundleShape: dir
 Bundle-Activator: gama.extensions.physics.PhysicsActivator

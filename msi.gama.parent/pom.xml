@@ -370,6 +370,7 @@
 					<useProjectSettings>false</useProjectSettings>
 					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
 					<optimize>true</optimize>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -395,6 +396,7 @@
 					<annotationProcessors>
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
 					</annotationProcessors>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 				<dependencies>
 					<!-- dependency containing the annotation processor specified in the 
@@ -579,6 +581,7 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 			</plugin>
 
