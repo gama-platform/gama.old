@@ -35,6 +35,12 @@
 	      <id>tycho-snapshots</id>
 	      <url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
 	    </pluginRepository>
+
+		<pluginRepository>
+			<id>jzy3d-releases</id>
+			<name>Jzy3d Releases</name>
+			<url>https://maven.jzy3d.org/releases/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	
 	
