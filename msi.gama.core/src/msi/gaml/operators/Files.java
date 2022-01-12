@@ -10,8 +10,23 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.eclipse.core.internal.utils.FileUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -29,6 +44,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaFolderFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.types.IType;
@@ -118,7 +134,214 @@ public class Files {
 			return f.exists() && !f.isDirectory();
 		}
 	}
+	
+	@operator (
+			value = "folder_exists",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "Test whether the parameter is the path to an existing folder. False if it doesnt exist or if it is a file",
+			examples = { @example (
+					value = "string file_name <-\"../includes/\";",
+					isExecutable = false),
+					@example (
+							value = "		if folder_exists(file_name){",
+							isExecutable = false),
+					@example (
+							value = "			write \"Folder exists in the computer\";",
+							isExecutable = false),
+					@example (
+							value = "	}",
+							isExecutable = false) })
+	@no_test
+	public static boolean zip_files(final IScope scope, final String zipfile, final IList<String> s) {
+		if (s == null || s.isEmpty())  return false;
+		if (scope == null)
+			return false;
+		
+		return true;
+	}
+	
+	
+	private static void extractFolder(IScope scope, String zipFile,String extractFolder) 
+	{
+	    try
+	    {
+	        int BUFFER = 2048;
+	        File file = new File(zipFile);
 
+	        ZipFile zip = new ZipFile(file);
+	        String newPath = extractFolder;
+
+	        new File(newPath).mkdir();
+	        Enumeration zipFileEntries = zip.entries();
+
+	        // Process each entry
+	        while (zipFileEntries.hasMoreElements())
+	        {
+	            // grab a zip file entry
+	            ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+	            String currentEntry = entry.getName();
+
+	            File destFile = new File(newPath, currentEntry);
+	            //destFile = new File(newPath, destFile.getName());
+	            File destinationParent = destFile.getParentFile();
+
+	            // create the parent directory structure if needed
+	            destinationParent.mkdirs();
+
+	            if (!entry.isDirectory())
+	            {
+	                BufferedInputStream is = new BufferedInputStream(zip
+	                .getInputStream(entry));
+	                int currentByte;
+	                // establish buffer for writing file
+	                byte data[] = new byte[BUFFER];
+
+	                // write the current file to disk
+	                FileOutputStream fos = new FileOutputStream(destFile);
+	                BufferedOutputStream dest = new BufferedOutputStream(fos,
+	                BUFFER);
+
+	                // read and write until last byte is encountered
+	                while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
+	                    dest.write(data, 0, currentByte);
+	                }
+	                dest.flush();
+	                dest.close();
+	                is.close();
+	            }
+
+
+	        }
+	        zip.close();
+	    }
+	    catch (Exception e) 
+	    {
+	        GamaRuntimeException.error("ERROR: "+e.getMessage(), scope);
+	    }
+
+	}
+	private static void addFolderToZip(File folderOrFile, ZipOutputStream zip, String baseName) throws IOException {
+		File[] files;
+		if (folderOrFile.isDirectory()) {
+	    	 files = folderOrFile.listFiles();
+	    } else {
+	    	files = new File[1];
+	    	files[0] = folderOrFile;
+	    }
+		 for (File file : files) {
+	        if (file.isDirectory()) {
+	            addFolderToZip(file, zip,baseName);
+	        } else {
+	            String name = file.getAbsolutePath().substring(baseName.length());;
+	            ZipEntry zipEntry = new ZipEntry(name);
+	            zip.putNextEntry(zipEntry);
+	            IOUtils.copy(new FileInputStream(file), zip);
+	            zip.closeEntry();
+	        }
+	    }
+	}
+	
+	@operator (
+			value = "delete_file",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "delete a file or a folder",
+			examples = { @example (
+					value = "bool delete_file_ok <- delete_file([\"../includes/my_folder\"];",
+					isExecutable = false)})
+	@no_test
+	public static boolean delete(final IScope scope, final String source) {
+		if (source == null ) return false;
+		if (scope == null)
+			return false;
+		else {
+			final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+			File file = new File(pathSource);
+			if (file.isDirectory() ) {
+				deleteDir(file);	
+			}else {
+				return file.delete();
+			}
+			return !exist_folder(scope, source);
+		}
+	}
+	
+	static void  deleteDir(File file) {
+		if (file.isDirectory()) {
+			File[] contents = file.listFiles();
+		    if (contents != null) {
+		        for (File f : contents) {
+		        	if (! java.nio.file.Files.isSymbolicLink(f.toPath())) {
+		                deleteDir(f);
+		            }
+		        }
+		    }
+		}
+		file.delete();
+	}
+	
+	@operator (
+			value = "unzip",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "Unzip a given zip file into a given folder. Returns true if the file is well unzipped",
+			examples = { @example (
+					value = "bool unzip_ok <- unzip([\"../includes/my_folder\"], \"folder.zip\";",
+					isExecutable = false)})
+	@no_test
+	public static boolean unzip(final IScope scope, final String source, final String destination) {
+		if (source == null || !exist_file(scope, source) || destination == null ) return false;
+		if (scope == null)
+			return false;
+		else {
+			final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+			final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+			
+			extractFolder(scope,pathSource,pathDestination);
+			return true;
+		}
+	}
+	@operator (
+			value = "zip",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "Zip a given list of files or folders. Returns true if the files are well zipped",
+			examples = { @example (
+					value = "bool zip_ok <- zip([\"../includes/my_folder\"], \"folder.zip\";",
+					isExecutable = false)})
+	@no_test
+	public static boolean zip(final IScope scope, final IList<String> sources, final String destination) {
+		if (sources == null ||sources.isEmpty() || destination == null) return false;
+		if (scope == null)
+			return false;
+		else {
+			final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+			try (FileOutputStream fos = new FileOutputStream(pathDestination)){
+				ZipOutputStream zip = new ZipOutputStream( new BufferedOutputStream(fos));
+				for (String source : sources) {
+					final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+					File f = new File(pathSource);
+					addFolderToZip(f,zip, f.getParentFile().getAbsolutePath());	
+				}
+				
+				zip.close();
+			} catch (IOException e) {
+				GamaRuntimeException.error(e.getMessage(), scope);
+			} 
+			return true;
+		}
+	}
+	
+	
 	@operator (
 			value = "folder_exists",
 			can_be_const = false,
