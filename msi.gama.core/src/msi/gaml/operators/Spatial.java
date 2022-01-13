@@ -6040,8 +6040,8 @@ public abstract class Spatial {
 				final IContainer<?, ? extends IShape> list, final Double distance) {
 			if (GamaPreferences.External.AT_DISTANCE_OPTIMIZATION.getValue() && scope.getAgent().isPoint()) {
 				final ITopology topo = scope.getTopology();
-				if ((topo.isContinuous() && !topo.isTorus())
-						&& ((double) list.length(scope) / (double) scope.getSimulation().getMembersSize(scope) < 0.1)) {
+				if (topo.isContinuous() && !topo.isTorus()
+						&& (double) list.length(scope) / (double) scope.getSimulation().getMembersSize(scope) < 0.1) {
 					try (final Collector.AsList<IAgent> results = Collector.getList()) {
 						final IAgent ag = scope.getAgent();
 						for (final IShape sp : list.iterable(scope)) {
@@ -6420,7 +6420,7 @@ public abstract class Spatial {
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) return (IList) _closest(scope, In.list(scope, list), source, number);
 			if (list.getGamlType().getContentType().isTranslatableInto(Types.GEOMETRY))
-				return (IList<IShape>) geomClostestTo(scope, list, source, number);
+				return geomClostestTo(scope, list, source, number);
 			return GamaListFactory.create(contentType);
 		}
 
@@ -6502,7 +6502,7 @@ public abstract class Spatial {
 		 *            the number
 		 * @return the collection
 		 */
-		public static Collection<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
+		public static IList<IShape> geomClostestTo(final IScope scope, final IContainer<?, ? extends IShape> list,
 				final IShape source, final int number) {
 			final IList<?> objects = list.listValue(scope, Types.GEOMETRY, true);
 			objects.removeIf(a -> !(a instanceof IShape));
@@ -6838,10 +6838,12 @@ public abstract class Spatial {
 		 *            the number
 		 * @return the collection
 		 */
-		private static Collection<IAgent> _closest(final IScope scope, final IAgentFilter filter, final Object source,
+		private static IList<IAgent> _closest(final IScope scope, final IAgentFilter filter, final Object source,
 				final int number) {
 			if (filter == null || source == null) return null;
-			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter, number);
+			final IType type = filter.getSpecies() == null ? Types.AGENT : scope.getType(filter.getSpecies().getName());
+			return GamaListFactory.wrap(type, scope.getTopology().getAgentClosestTo(scope,
+					Cast.asGeometry(scope, source, false), filter, number));
 		}
 
 		/**
