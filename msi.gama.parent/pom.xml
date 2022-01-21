@@ -31,11 +31,6 @@
 			<layout>default</layout>
 		</pluginRepository>
 
-	    <pluginRepository>
-	      <id>tycho-snapshots</id>
-	      <url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
-	    </pluginRepository>
-
 		<pluginRepository>
 			<id>jzy3d-releases</id>
 			<name>Jzy3d Releases</name>
@@ -261,7 +256,7 @@
 		<batik.version>1.7</batik.version>
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
-		<tycho.version>2.6.0-SNAPSHOT</tycho.version>
+		<tycho.version>2.6.0</tycho.version>
 		<jdk.version>17</jdk.version>
 		<project.version>1.8.2-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
