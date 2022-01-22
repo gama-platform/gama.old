@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlAnnotations.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.lang.annotation.ElementType;
@@ -52,6 +51,9 @@ public final class GamlAnnotations {
 		String value();
 	}
 
+	/**
+	 * The Interface experiment.
+	 */
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target (ElementType.TYPE)
 	@Inherited
@@ -345,8 +347,18 @@ public final class GamlAnnotations {
 	@Inherited
 	public static @interface inside {
 
+		/**
+		 * Symbols.
+		 *
+		 * @return the string[]
+		 */
 		String[] symbols() default {};
 
+		/**
+		 * Kinds.
+		 *
+		 * @return the int[]
+		 */
 		int[] kinds() default {};
 	}
 
@@ -687,12 +699,12 @@ public final class GamlAnnotations {
 		 * Kind.
 		 *
 		 * @return the kind of the annotated symbol.
-		 * @see ISymbolKind
+		 * @see #ISymbolKind
 		 */
 		int kind();
 
 		/**
-		 * NoScope.
+		 * WithScope.
 		 *
 		 * @return Indicates if the statement (usually a sequence) defines its own scope. Otherwise, all the temporary
 		 *         variables defined in it are actually defined in the super-scope
@@ -930,7 +942,7 @@ public final class GamlAnnotations {
 	/**
 	 *
 	 * The class factory. Denotes that a class (that must implement ISymbolFactory) can be used to parse and compile
-	 * specific kinds of symbols
+	 * specific kinds of symbols. Deprecated as it is now directly built-in into SymbolFactory
 	 *
 	 * @see ISymbolFactory
 	 * @see ISymbolKind
@@ -941,6 +953,7 @@ public final class GamlAnnotations {
 
 	@Retention (RetentionPolicy.SOURCE)
 	@Target (ElementType.TYPE)
+	@Deprecated
 	public static @interface factory {
 
 		/**
@@ -1086,14 +1099,31 @@ public final class GamlAnnotations {
 	// @Inherited
 	public static @interface usage {
 
+		/** The Constant GENERAL. */
 		static final String GENERAL = "General";
+
+		/** The Constant STATEMENT. */
 		static final String STATEMENT = "Statement";
+
+		/** The Constant OPERATOR. */
 		static final String OPERATOR = "Operator";
+
+		/** The Constant MODEL. */
 		static final String MODEL = "Model";
+
+		/** The Constant SPECIES. */
 		static final String SPECIES = "Species";
+
+		/** The Constant EXPERIMENT. */
 		static final String EXPERIMENT = "Experiment";
+
+		/** The Constant DEFINITION. */
 		static final String DEFINITION = "Attribute";
+
+		/** The Constant CUSTOM. */
 		static final String CUSTOM = "Custom";
+
+		/** The Constant NULL. */
 		static final String NULL = "";
 
 		/**
@@ -1163,6 +1193,10 @@ public final class GamlAnnotations {
 
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target ({})
+
+	/**
+	 * The Interface example.
+	 */
 	// @Inherited
 	public static @interface example {
 
@@ -1255,8 +1289,16 @@ public final class GamlAnnotations {
 		boolean isPattern() default false;
 	}
 
+	/**
+	 * The Interface tests.
+	 */
 	@Retention (RetentionPolicy.RUNTIME)
 	public static @interface tests {
+		/**
+		 * Value.
+		 *
+		 * @return the test[]
+		 */
 		test[] value() default {};
 	}
 
@@ -1270,6 +1312,11 @@ public final class GamlAnnotations {
 	@Retention (RetentionPolicy.SOURCE)
 	public static @interface no_test {
 
+		/**
+		 * Value.
+		 *
+		 * @return the reason
+		 */
 		Reason value() default Reason.NONE;
 	}
 
@@ -1377,6 +1424,9 @@ public final class GamlAnnotations {
 
 	}
 
+	/**
+	 * The Interface file.
+	 */
 	@Retention (RetentionPolicy.RUNTIME)
 	@Target ({ ElementType.TYPE })
 	@Inherited
@@ -1448,6 +1498,11 @@ public final class GamlAnnotations {
 
 		String[] category() default {};
 
+		/**
+		 * Doc.
+		 *
+		 * @return the doc[]
+		 */
 		doc[] doc() default {};
 	}
 

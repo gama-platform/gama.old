@@ -38,7 +38,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.IGamaHelper;
@@ -493,12 +493,12 @@ public class Variable extends Symbol implements IVariable {
 		if (base == null) return;
 		List<GamaHelper> helpers = new ArrayList<>();
 		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), IDescription.TO_CLASS);
-		if (AbstractGamlAdditions.LISTENERS_BY_NAME.containsKey(getName())) {
-			List<Class> classes = JavaUtils.collectImplementationClasses(base, skillClasses,
-					AbstractGamlAdditions.LISTENERS_BY_NAME.get(getName()));
+		if (GAML.LISTENERS_BY_NAME.containsKey(getName())) {
+			List<Class> classes =
+					JavaUtils.collectImplementationClasses(base, skillClasses, GAML.LISTENERS_BY_NAME.get(getName()));
 			if (!classes.isEmpty()) {
 				for (Class c : classes) {
-					Set<GamaHelper> set = AbstractGamlAdditions.LISTENERS_BY_CLASS.get(c);
+					Set<GamaHelper> set = GAML.LISTENERS_BY_CLASS.get(c);
 					for (GamaHelper h : set) { if (h.getName().equals(getName())) { helpers.add(h); } }
 				}
 			}

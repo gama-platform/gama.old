@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'DiffusionStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * DiffusionStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 
 import java.util.Arrays;
@@ -44,6 +43,9 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement.DiffusionValidator;
 
+/**
+ * The Class DiffusionStatement.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.VAR,
@@ -143,6 +145,9 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 								isExecutable = false) }) })
 public class DiffusionStatement extends AbstractStatement {
 
+	/**
+	 * The Class DiffusionValidator.
+	 */
 	public static class DiffusionValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -192,13 +197,31 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
+	/**
+	 * The Class DiffusionData.
+	 */
 	private class DiffusionData {
+		
+		/** The terrain. */
 		IDiffusionTarget terrain;
+		
+		/** The variable name. */
 		String variableName;
+		
+		/** The min value. */
 		double minValue;
+		
+		/** The avoid mask. */
 		boolean initialized, useConvolution, isGradient, avoidMask;
+		
+		/** The nb neighbors. */
 		int cycleLength, nbNeighbors;
 
+		/**
+		 * Instantiates a new diffusion data.
+		 *
+		 * @param scope the scope
+		 */
 		private DiffusionData(final IScope scope) {
 			if (initialized) return;
 			initialized = true;
@@ -224,8 +247,14 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 	}
 
+	/** The data supplier. */
 	SimulationLocal<DiffusionData> dataSupplier = SimulationLocal.withInitial(DiffusionData::new);
 
+	/**
+	 * Instantiates a new diffusion statement.
+	 *
+	 * @param desc the desc
+	 */
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
 	}
@@ -258,28 +287,39 @@ public class DiffusionStatement extends AbstractStatement {
 		return null;
 	}
 
+	/**
+	 * Translate matrix.
+	 *
+	 * @param scope the scope
+	 * @param mm the mm
+	 * @return the double[][]
+	 */
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
 		if (mm == null) return null;
 		final int rows = mm.getRows(scope);
 		final int cols = mm.getCols(scope);
 		final double[][] res = new double[cols][rows];
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				res[j][i] = Cast.asFloat(scope, mm.get(scope, j, i));
-			}
+			for (int j = 0; j < cols; j++) { res[j][i] = Cast.asFloat(scope, mm.get(scope, j, i)); }
 		}
 		return res;
 	}
 
+	/**
+	 * Compute matrix.
+	 *
+	 * @param basicMatrix the basic matrix
+	 * @param numberOfIteration the number of iteration
+	 * @param is_gradient the is gradient
+	 * @return the double[][]
+	 */
 	private double[][] computeMatrix(final double[][] basicMatrix, final int numberOfIteration,
 			final boolean is_gradient) {
 		double[][] input_mat_diffu = basicMatrix;
 		for (int nb = 2; nb <= numberOfIteration; nb++) {
 			final double[][] output_mat_diffu =
 					new double[(basicMatrix.length - 1) * nb + 1][(basicMatrix[0].length - 1) * nb + 1];
-			for (final double[] element : output_mat_diffu) {
-				Arrays.fill(element, 0);
-			}
+			for (final double[] element : output_mat_diffu) { Arrays.fill(element, 0); }
 			for (int i = 0; i < input_mat_diffu.length; i++) {
 				for (int j = 0; j < input_mat_diffu[0].length; j++) {
 					for (int ii = 0; ii < basicMatrix.length; ii++) {
@@ -300,6 +340,13 @@ public class DiffusionStatement extends AbstractStatement {
 		return input_mat_diffu;
 	}
 
+	/**
+	 * Compute mask.
+	 *
+	 * @param scope the scope
+	 * @param mm the mm
+	 * @return the double[][]
+	 */
 	private double[][] computeMask(final IScope scope, final IMatrix<?> mm) {
 		double[][] mask = null;
 
@@ -327,21 +374,26 @@ public class DiffusionStatement extends AbstractStatement {
 				final IList<IAgent> ags = Cast.asList(scope, obj);
 				if (!ags.isEmpty()) {
 					final ISpecies sp = ags.get(0).getSpecies();
-					if (sp.isGrid()) {
-						mask = new double[data.terrain.getCols(scope)][data.terrain.getRows(scope)];
-						for (final IAgent ag : ags) {
-							int i = ag.getIndex();
-							int cols = data.terrain.getCols(scope);
-							mask[i - i / cols * cols][i / cols] = 1;
-						}
-					} else
+					if (!sp.isGrid())
 						throw GamaRuntimeException.error("Diffusion statement works only on grid agents", scope);
+					mask = new double[data.terrain.getCols(scope)][data.terrain.getRows(scope)];
+					for (final IAgent ag : ags) {
+						int i = ag.getIndex();
+						int cols = data.terrain.getCols(scope);
+						mask[i - i / cols * cols][i / cols] = 1;
+					}
 				}
 			}
 		}
 		return mask;
 	}
 
+	/**
+	 * Compute diffusion matrix.
+	 *
+	 * @param scope the scope
+	 * @return the double[][]
+	 */
 	public double[][] computeDiffusionMatrix(final IScope scope) {
 		double[][] mat_diffu;
 		double proportion = Cast.asFloat(scope, getFacetValue(scope, IKeyword.PROPORTION));

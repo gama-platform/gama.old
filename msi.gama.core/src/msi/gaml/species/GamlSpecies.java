@@ -30,7 +30,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -246,7 +246,7 @@ public class GamlSpecies extends AbstractSpecies {
 			final SpeciesDescription sd = (SpeciesDescription) desc;
 			final IExpression cellWidth = desc.getFacetExpr(CELL_WIDTH);
 			final IExpression cellHeight = desc.getFacetExpr(CELL_HEIGHT);
-			if (cellWidth != null && cellHeight == null || cellWidth == null && cellHeight != null) {
+			if (cellWidth != null == (cellHeight == null)) {
 				sd.error("'cell_width' and 'cell_height' must be defined together", IGamlIssue.CONFLICTING_FACETS,
 						cellWidth == null ? CELL_HEIGHT : CELL_WIDTH);
 				return;
@@ -277,7 +277,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 			if (cellHeight != null || cellWidth != null || width != null || height != null || neighbors != null
 					|| neighbours != null) {
-				if (!desc.getKeyword().equals(IKeyword.GRID)) {
+				if (!IKeyword.GRID.equals(desc.getKeyword())) {
 					sd.warning("Facets related to dimensions and neighboring can only be defined in 'grids' definition",
 							IGamlIssue.CONFLICTING_FACETS);
 				}
@@ -317,14 +317,13 @@ public class GamlSpecies extends AbstractSpecies {
 			// If torus is declared on a species other than "global", emit a
 			// warning
 			final IExpression torus = desc.getFacetExpr(TORUS);
-			if (torus != null) {
-				if (desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID)) {
-					desc.warning("The 'torus' facet can only be specified for the model topology (i.e. in 'global')",
-							IGamlIssue.WRONG_CONTEXT, TORUS);
-				}
+			if (torus != null
+					&& (IKeyword.SPECIES.equals(desc.getKeyword()) || IKeyword.GRID.equals(desc.getKeyword()))) {
+				desc.warning("The 'torus' facet can only be specified for the model topology (i.e. in 'global')",
+						IGamlIssue.WRONG_CONTEXT, TORUS);
 			}
 			final String name = desc.getName();
-			if (AbstractGamlAdditions.isUnaryOperator(name)) {
+			if (GAML.isUnaryOperator(name)) {
 				desc.error("The name '" + name + "' cannot be used for naming this " + desc.getKeyword()
 						+ ", as the derived casting operator (" + name
 						+ "(...)) would conflict with an existing unary operator");
@@ -348,9 +347,7 @@ public class GamlSpecies extends AbstractSpecies {
 					final Object obj = agent.getDirectVarValue(scope, IKeyword.TARGET);
 					if (obj instanceof IAgent) {
 						final IAgent target = (IAgent) obj;
-						if (!target.dead()) {
-							agents.add(agent);
-						}
+						if (!target.dead()) { agents.add(agent); }
 					}
 
 				}
@@ -363,24 +360,16 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public String getArchitectureName() {
-		return getLiteral(IKeyword.CONTROL);
-	}
+	public String getArchitectureName() { return getLiteral(IKeyword.CONTROL); }
 
 	@Override
-	public IExpression getFrequency() {
-		return frequency;
-	}
+	public IExpression getFrequency() { return frequency; }
 
 	@Override
-	public IExpression getSchedule() {
-		return schedule;
-	}
+	public IExpression getSchedule() { return schedule; }
 
 	@Override
-	public IExpression getConcurrency() {
-		return concurrency;
-	}
+	public IExpression getConcurrency() { return concurrency; }
 
 	/**
 	 * Method getSpecies()
@@ -388,9 +377,7 @@ public class GamlSpecies extends AbstractSpecies {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSpecies()
 	 */
 	@Override
-	public ISpecies getSpecies() {
-		return this;
-	}
+	public ISpecies getSpecies() { return this; }
 
 	/**
 	 * Method getAgents()
@@ -440,9 +427,7 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IPopulation<? extends IAgent> pop = getPopulation(scope);
-		if (pop != null) {
-			pop.filter(scope, source, results);
-		}
+		if (pop != null) { pop.filter(scope, source, results); }
 	}
 
 	/**

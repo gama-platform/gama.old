@@ -3,7 +3,7 @@
  * ProcessorContext.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -80,7 +80,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	private RoundEnvironment round;
 
 	/** The string. */
-	private TypeMirror iSkill, iAgent, iVarAndActionSupport, iScope, string;
+	private TypeMirror iSkill, iAgent, iVarAndActionSupport, iScope, string, iExpression, iType;
 
 	/** The current plugin. */
 	public volatile String currentPlugin;
@@ -220,6 +220,26 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	public TypeMirror getString() {
 		if (string == null) { string = getType("java.lang.String"); }
 		return string;
+	}
+
+	/**
+	 * Gets the i expression.
+	 *
+	 * @return the i expression
+	 */
+	public TypeMirror getIExpression() {
+		if (iExpression == null) { iExpression = getType("msi.gaml.expressions.IExpression"); }
+		return iExpression;
+	}
+
+	/**
+	 * Gets the string.
+	 *
+	 * @return the string
+	 */
+	public TypeMirror getIType() {
+		if (iType == null) { iType = getType("msi.gaml.types.IType"); }
+		return iType;
 	}
 
 	/**
@@ -653,6 +673,17 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 */
 	public boolean containsImport(final String path) {
 		return imports.contains(path);
+	}
+
+	/**
+	 * Checks if is i type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return true, if is i type
+	 */
+	public boolean isIType(final TypeMirror type) {
+		return delegate.getTypeUtils().isSubtype(type, getIType());
 	}
 
 }

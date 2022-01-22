@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.Activator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * msi.gama.common.Activator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common;
 
@@ -22,18 +22,13 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		/* Early build of the contributions made by plugins to GAMA */
-//		new Thread(() -> {
-			GamaBundleLoader.preBuildContributions();
-			GamaExecutorService.reset();
-			Dates.initialize();
-//		}).start();
+		GamaBundleLoader.preBuildContributions();
+		GamaExecutorService.reset();
+		Dates.initialize();
 
 	}
 
 	@Override
-	public void stop(final BundleContext context) throws Exception {
-		// TODO Auto-generated method stub
-
-	}
+	public void stop(final BundleContext context) throws Exception {}
 
 }

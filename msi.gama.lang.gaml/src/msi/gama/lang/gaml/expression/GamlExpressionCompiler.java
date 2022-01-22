@@ -3,7 +3,7 @@
  * GamlExpressionCompiler.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -115,7 +115,6 @@ import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.expressions.variables.EachExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Dates;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -159,7 +158,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IDescription currentContext;
 
 	static {
-		IExpressionCompiler.OPERATORS.put(MY, GamaMapFactory.createUnordered());
+		GAML.OPERATORS.put(MY, GamaMapFactory.createUnordered());
 	}
 
 	@Override
@@ -434,7 +433,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// It is not an action, it must be an operator. We emit an error and
 		// stop compiling if not
-		if (!OPERATORS.containsKey(op)) {
+		if (!GAML.OPERATORS.containsKey(op)) {
 			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, rightMember.eContainer(),
 					op);
 			return null;
@@ -442,7 +441,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		// if the operator is an iterator, we must initialize the context
 		// sensitive "each" variable
-		final boolean isIterator = ITERATORS.contains(op);
+		final boolean isIterator = GAML.ITERATORS.contains(op);
 		if (isIterator) {
 			final IType t = left.getGamlType().getContentType();
 			final String argName = findIteratorArgName(rightMember);
@@ -928,7 +927,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseUnitName(final UnitName object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
-		if (IUnits.UNITS_EXPR.containsKey(s)) {
+		if (GAML.UNITS.containsKey(s)) {
 			final UnitConstantExpression exp = getFactory().getUnitExpr(s);
 			if (exp.isDeprecated()) {
 				getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);

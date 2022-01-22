@@ -26,7 +26,7 @@ import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.AbstractProto;
 import msi.gaml.descriptions.IDescription;
@@ -47,13 +47,9 @@ import msi.gaml.types.Types;
 @SuppressWarnings ("deprecation")
 public class GamlTemplateFactory {
 
-	public static String getContextName() {
-		return "Model";
-	}
+	public static String getContextName() { return "Model"; }
 
-	public static String getContextId() {
-		return "msi.gama.lang.gaml.Gaml.Model";
-	}
+	public static String getContextId() { return "msi.gama.lang.gaml.Gaml.Model"; }
 
 	public static TemplatePersistenceData from(final usage u, final AbstractProto sp) {
 		boolean isExample = false;
@@ -66,47 +62,34 @@ public class GamlTemplateFactory {
 					name = e.value();
 					emptyName = false;
 				}
-				if (!e.isPattern()) {
-					isExample = true;
-				}
+				if (!e.isPattern()) { isExample = true; }
 				// if ( e.isPattern() ) {
 				pattern += Strings.LN + e.value();
 				// }
 			}
 		}
-		if (pattern.isEmpty()) { return null; }
+		if (pattern.isEmpty()) return null;
 		pattern += Strings.LN;
 		String[] path = u.path();
-		if (path.length == 0) {
-			path = new String[] { StringUtils.capitalize(sp.getName()) };
-		}
+		if (path.length == 0) { path = new String[] { StringUtils.capitalize(sp.getName()) }; }
 		String menuPath = "";
-		for (final String p : path) {
-			menuPath += p + ".";
-		}
+		for (final String p : path) { menuPath += p + "."; }
 		String menu = u.menu();
-		if (menu.equals(usage.NULL)) {
-			menu = ISymbolKind.TEMPLATE_MENU[sp.getKind()];
-		}
+		if (usage.NULL.equals(menu)) { menu = ISymbolKind.TEMPLATE_MENU[sp.getKind()]; }
 		String desc = u.value();
-		if (desc.equals(usage.NULL)) {
+		if (usage.NULL.equals(desc)) {
 			// Trying to build something that makes sense..
 			desc = menu + " " + name;
 			desc += Strings.LN;
 			final String doc = sp.getDocumentation();
 			int index = doc.indexOf(". ");
-			if (index == -1) {
-				index = doc.length();
-			}
+			if (index == -1) { index = doc.length(); }
 			desc += doc.substring(0, Math.min(index, 150)) + " [...]";
 		}
 		menuPath = menu + "." + menuPath.substring(0, menuPath.length() - 1);
-		if (isExample) {
-			menuPath = "Examples." + menuPath;
-		}
+		if (isExample) { menuPath = "Examples." + menuPath; }
 		final Template template = new Template(name, desc, getContextId(), pattern, true);
-		final TemplatePersistenceData data = new TemplatePersistenceData(template, true, menuPath);
-		return data;
+		return new TemplatePersistenceData(template, true, menuPath);
 
 	}
 
@@ -131,9 +114,7 @@ public class GamlTemplateFactory {
 			final List<INamed> named = Lists.newArrayList(descs);
 			Collections.sort(named, INamed.COMPARATOR);
 			sb.append(title);
-			for (final INamed sd : named) {
-				sb.append(commentLine).append(sd.serialize(true));
-			}
+			for (final INamed sd : named) { sb.append(commentLine).append(sd.serialize(true)); }
 			sb.append(Strings.LN);
 		}
 	}
@@ -161,7 +142,7 @@ public class GamlTemplateFactory {
 		comment.append(beginComment);
 		dump(inheritedAttributes, GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill), comment);
 		dump(inheritedActions, GamaSkillRegistry.INSTANCE.getActionsForSkill(skill), comment);
-		dump(availableBehaviors, AbstractGamlAdditions.getStatementsForSkill(skill), comment);
+		dump(availableBehaviors, GAML.getStatementsForSkill(skill), comment);
 		comment.append(endComment);
 		return new Template("A species with the control " + skill,
 				"Defines a species that implements the control named " + skill, getContextId(),
@@ -189,14 +170,10 @@ public class GamlTemplateFactory {
 			sb.append(arg.getName()).append(": ").append("${the_").append(arg.getName()).append("}, ");
 		}
 		final int length = sb.length();
-		if (length > 0) {
-			sb.setLength(length - 2);
-		}
+		if (length > 0) { sb.setLength(length - 2); }
 		sb.append(")");
-		final Template t =
-				new Template("A call to action " + name, "A call to action " + name + " will all its arguments",
-						getContextId(), "do " + name + sb.toString() + ";" + Strings.LN, true);
-		return t;
+		return new Template("A call to action " + name, "A call to action " + name + " will all its arguments",
+				getContextId(), "do " + name + sb.toString() + ";" + Strings.LN, true);
 	}
 
 	/**
@@ -205,9 +182,7 @@ public class GamlTemplateFactory {
 	 */
 	public static Template from(final OperatorProto proto) {
 		String description = proto.getMainDoc();
-		if (description == null) {
-			description = "Template for using operator " + proto.getName();
-		}
+		if (description == null) { description = "Template for using operator " + proto.getName(); }
 		return new Template("Operator " + proto.getName(), description, getContextId(), proto.getPattern(true), true);
 	}
 

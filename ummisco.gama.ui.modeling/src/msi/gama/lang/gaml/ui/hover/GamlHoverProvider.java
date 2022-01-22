@@ -50,11 +50,11 @@ import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -247,7 +247,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		final Statement s = EGaml.getInstance().getStatement(o);
 		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o)
 			return getFirstLine(s);
-		// Case of do xxx; 
+		// Case of do xxx;
 		// if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
 		// final VarDefinition vd = ((VariableRef) o).getRef();
 		// final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
@@ -276,7 +276,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		} else if (o instanceof UnitName) {
 			final UnitFakeDefinition fake = ((UnitName) o).getRef();
 			if (fake == null) return "<b> Unknown unit or constant </b>";
-			final UnitConstantExpression unit = IUnits.UNITS_EXPR.get(fake.getName());
+			final UnitConstantExpression unit = GAML.UNITS.get(fake.getName());
 			if (unit == null) return "<b> Unknown unit or constant </b>";
 			return "<b>" + unit.getTitle() + "</b>";
 		}

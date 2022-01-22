@@ -29,6 +29,8 @@ import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
 import msi.gaml.compilation.IValidator;
+import msi.gaml.compilation.annotations.serializer;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
 import msi.gaml.statements.Facets;
@@ -43,8 +45,10 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SymbolProto extends AbstractProto {
 
+	static IValidator NULL_VALIDATOR = (d, e, i) -> true;
+
 	private final ISymbolConstructor constructor;
-	private final IValidator validator;
+	private IValidator validator;
 	private SymbolSerializer serializer;
 	private final SymbolFactory factory;
 
@@ -64,11 +68,9 @@ public class SymbolProto extends AbstractProto {
 			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
 			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
 			final boolean isUniqueInContext, final boolean nameUniqueInContext, final ISymbolConstructor constr,
-			final IValidator validator, final SymbolSerializer serializer, final String name, final String plugin) {
+			final String name, final String plugin) {
 		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
-		this.validator = validator;
-		this.serializer = serializer;
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
@@ -85,9 +87,8 @@ public class SymbolProto extends AbstractProto {
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
 				f.setOwner(getTitle());
-				if (!f.optional) {
-					builder.add(f.name);
-				}
+				f.setClass(clazz);
+				if (!f.optional) { builder.add(f.name); }
 			}
 			mandatoryFacets = builder.build();
 		} else {
@@ -96,28 +97,22 @@ public class SymbolProto extends AbstractProto {
 		}
 		this.contextKeywords = ImmutableSet.copyOf(contextKeywords);
 		Arrays.fill(this.contextKinds, false);
-		for (final int i : parentKinds) {
-			contextKinds[i] = true;
-		}
+		for (final int i : parentKinds) { contextKinds[i] = true; }
 	}
 
-	public SymbolFactory getFactory() {
-		return factory;
-	}
+	public SymbolFactory getFactory() { return factory; }
 
-	public boolean isRemoteContext() {
-		return isRemoteContext;
-	}
+	public boolean isRemoteContext() { return isRemoteContext; }
 
 	public boolean isLabel(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
-		if (f == null) { return false; }
+		if (f == null) return false;
 		return f.isLabel();
 	}
 
 	public boolean isId(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
-		if (f == null) { return false; }
+		if (f == null) return false;
 		return f.isId();
 	}
 
@@ -125,9 +120,7 @@ public class SymbolProto extends AbstractProto {
 		return hasSequence;
 	}
 
-	public boolean isPrimitive() {
-		return isPrimitive;
-	}
+	public boolean isPrimitive() { return isPrimitive; }
 
 	public boolean hasArgs() {
 		return hasArgs;
@@ -141,25 +134,17 @@ public class SymbolProto extends AbstractProto {
 		return possibleFacets == null ? Collections.emptyMap() : possibleFacets;
 	}
 
-	public boolean isTopLevel() {
-		return kind == ISymbolKind.BEHAVIOR;
-	}
+	public boolean isTopLevel() { return kind == ISymbolKind.BEHAVIOR; }
 
 	@Override
-	public int getKind() {
-		return kind;
-	}
+	public int getKind() { return kind; }
 
-	public ISymbolConstructor getConstructor() {
-		return constructor;
-	}
+	public ISymbolConstructor getConstructor() { return constructor; }
 
 	/**
 	 * @return
 	 */
-	public String getOmissible() {
-		return omissibleFacet;
-	}
+	public String getOmissible() { return omissibleFacet; }
 
 	@Override
 	public String getTitle() {
@@ -168,19 +153,15 @@ public class SymbolProto extends AbstractProto {
 
 	@Override
 	public doc getDocAnnotation() {
-		if (support == null) { return null; }
+		if (support == null) return null;
 		doc d = super.getDocAnnotation();
 		if (d == null) {
 			if (support.isAnnotationPresent(action.class)) {
 				final doc[] docs = support.getAnnotation(action.class).doc();
-				if (docs.length > 0) {
-					d = docs[0];
-				}
+				if (docs.length > 0) { d = docs[0]; }
 			} else if (support.isAnnotationPresent(symbol.class)) {
 				final doc[] docs = support.getAnnotation(symbol.class).doc();
-				if (docs.length > 0) {
-					d = docs[0];
-				}
+				if (docs.length > 0) { d = docs[0]; }
 			}
 		}
 
@@ -204,9 +185,7 @@ public class SymbolProto extends AbstractProto {
 		final List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
 		Collections.sort(protos);
 		for (final FacetProto f : protos) {
-			if (!f.internal) {
-				sb.append("<li>").append(f.getDocumentation());
-			}
+			if (!f.internal) { sb.append("<li>").append(f.getDocumentation()); }
 			sb.append("</li>");
 		}
 		return sb.toString();
@@ -222,16 +201,28 @@ public class SymbolProto extends AbstractProto {
 	}
 
 	IValidator getValidator() {
+		if (validator == null) {
+			final validator v = support.getAnnotation(validator.class);
+			try {
+				validator = v != null ? v.value().getConstructor().newInstance() : NULL_VALIDATOR;
+			} catch (Exception e) {}
+		}
+
 		return validator;
 	}
 
 	public SymbolSerializer getSerializer() {
+		if (serializer == null) {
+			final serializer s = support.getAnnotation(serializer.class);
+			try {
+				if (s != null) { serializer = s.value().getConstructor().newInstance(); }
+			} catch (Exception e) {}
+		}
+
 		return serializer;
 	}
 
-	public void setSerializer(final SymbolSerializer serializer) {
-		this.serializer = serializer;
-	}
+	public void setSerializer(final SymbolSerializer serializer) { this.serializer = serializer; }
 
 	/**
 	 * @param symbolDescription
@@ -253,9 +244,7 @@ public class SymbolProto extends AbstractProto {
 		return contextKeywords.contains(context);
 	}
 
-	public boolean isUniqueInContext() {
-		return isUniqueInContext;
-	}
+	public boolean isUniqueInContext() { return isUniqueInContext; }
 
 	/**
 	 * @param facet
@@ -271,7 +260,7 @@ public class SymbolProto extends AbstractProto {
 	 */
 	public Iterable<String> getMissingMandatoryFacets(final Facets facets) {
 		if (facets == null || facets.isEmpty()) {
-			if (mandatoryFacets == null || mandatoryFacets.isEmpty()) { return null; }
+			if (mandatoryFacets == null || mandatoryFacets.isEmpty()) return null;
 			return mandatoryFacets;
 		}
 		return Iterables.filter(mandatoryFacets, each -> !facets.containsKey(each));
@@ -287,9 +276,7 @@ public class SymbolProto extends AbstractProto {
 		final StringBuilder sb = new StringBuilder();
 		for (final FacetProto f : possibleFacets.values()) {
 			final String s = f.serialize(includingBuiltIn);
-			if (!s.isEmpty()) {
-				sb.append(s).append(" ");
-			}
+			if (!s.isEmpty()) { sb.append(s).append(" "); }
 		}
 		return getName() + " " + sb.toString();
 	}

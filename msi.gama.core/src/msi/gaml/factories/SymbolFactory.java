@@ -1,17 +1,14 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.SymbolFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * SymbolFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.factories;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -27,19 +24,17 @@ import msi.gaml.statements.Facets;
  */
 public abstract class SymbolFactory {
 
-	protected final Set<Integer> kindsHandled;
-
-	public SymbolFactory(final int... handles) {
-		kindsHandled = new HashSet<>(handles.length);
-		for (final int i : handles) {
-			kindsHandled.add(i);
-		}
-	}
-
-	Set<Integer> getHandles() {
-		return kindsHandled;
-	}
-
+	/**
+	 * Builds the description.
+	 *
+	 * @param keyword the keyword
+	 * @param facets the facets
+	 * @param element the element
+	 * @param children the children
+	 * @param enclosing the enclosing
+	 * @param proto the proto
+	 * @return the i description
+	 */
 	protected abstract IDescription buildDescription(String keyword, Facets facets, EObject element,
 			Iterable<IDescription> children, IDescription enclosing, SymbolProto proto);
 

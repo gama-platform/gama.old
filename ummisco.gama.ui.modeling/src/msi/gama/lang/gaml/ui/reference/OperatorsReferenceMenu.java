@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'OperatorsReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * OperatorsReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
@@ -27,8 +26,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gama.util.IMap;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Signature;
 import ummisco.gama.ui.resources.GamaIcons;
 
@@ -42,13 +41,12 @@ import ummisco.gama.ui.resources.GamaIcons;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class OperatorsReferenceMenu extends GamlReferenceMenu {
 
+	/** The by name. */
 	public static Boolean byName = null;
 
 	@Override
 	protected void fillMenu() {
-		if (byName == null) {
-			byName = GamaPreferences.Modeling.OPERATORS_MENU_SORT.getValue().equals("Name");
-		}
+		if (byName == null) { byName = "Name".equals(GamaPreferences.Modeling.OPERATORS_MENU_SORT.getValue()); }
 		// final Menu sub = sub("Sort by...");
 		// sep();
 		// check(sub, "Name", byName, new SelectionAdapter() {
@@ -74,21 +72,20 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 		}
 	}
 
+	/**
+	 * Fill menu by name.
+	 */
 	protected void fillMenuByName() {
-		final IMap<String, IMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final IMap<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for (final String name : nn) {
 			final List<OperatorProto> protos = new ArrayList<>();
 			for (final Signature sig : operators.get(name).keySet()) {
 				final OperatorProto proto = operators.get(name).get(sig);
-				if (proto.getDeprecated() == null) {
-					protos.add(proto);
-				}
+				if (proto.getDeprecated() == null) { protos.add(proto); }
 			}
-			if (protos.isEmpty()) {
-				continue;
-			}
+			if (protos.isEmpty()) { continue; }
 			final Menu name_menu = sub(name);
 			for (final OperatorProto proto : protos) {
 				final Template t = GamlTemplateFactory.from(proto);
@@ -106,8 +103,11 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 		}
 	}
 
+	/**
+	 * Fill menu by category.
+	 */
 	protected void fillMenuByCategory() {
-		final IMap<String, IMap<Signature, OperatorProto>> operators = IExpressionCompiler.OPERATORS;
+		final IMap<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
 		final Map<String, Map<String, Map<OperatorProto, Template>>> categories = new LinkedHashMap();
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
@@ -115,9 +115,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 			final Map<Signature, OperatorProto> ops = operators.get(name);
 			for (final Signature sig : ops.keySet()) {
 				final OperatorProto proto = ops.get(sig);
-				if (proto.getDeprecated() != null) {
-					continue;
-				}
+				if (proto.getDeprecated() != null) { continue; }
 				final String category = proto.getCategory().replace("-related", "");
 				Map<String, Map<OperatorProto, Template>> names = categories.get(category);
 				if (names == null) {
@@ -168,16 +166,12 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() {
-		return GamaIcons.create("reference.operators").image();
-	}
+	protected Image getImage() { return GamaIcons.create("reference.operators").image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
 	 */
 	@Override
-	protected String getTitle() {
-		return "Operators";
-	}
+	protected String getTitle() { return "Operators"; }
 
 }

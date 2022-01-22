@@ -12,6 +12,7 @@ package msi.gaml.descriptions;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,11 +21,12 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IGamaHelper;
@@ -50,6 +52,8 @@ public class VariableDescription extends SymbolDescription {
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX).build();
 	public final static Set<String> FUNCTION_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(FUNCTION).build();
+	public static final Map<VariableDescription, Class<?>> CLASS_DEFINITIONS = new HashMap<>();
+	public static final Map<String, String> PREF_DEFINITIONS = new HashMap<>();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -76,25 +80,17 @@ public class VariableDescription extends SymbolDescription {
 
 	}
 
-	public boolean isExperimentParameter() {
-		return PARAMETER.equals(keyword);
-	}
+	public boolean isExperimentParameter() { return PARAMETER.equals(keyword); }
 
 	public void setSyntheticSpeciesContainer() {
 		_isSyntheticSpeciesContainer = true;
 	}
 
-	public boolean isSyntheticSpeciesContainer() {
-		return _isSyntheticSpeciesContainer;
-	}
+	public boolean isSyntheticSpeciesContainer() { return _isSyntheticSpeciesContainer; }
 
-	public boolean isFunction() {
-		return hasFacet(FUNCTION);
-	}
+	public boolean isFunction() { return hasFacet(FUNCTION); }
 
-	public boolean isDefinedInExperiment() {
-		return getEnclosingDescription() instanceof ExperimentDescription;
-	}
+	public boolean isDefinedInExperiment() { return getEnclosingDescription() instanceof ExperimentDescription; }
 
 	@Override
 	public void dispose() {
@@ -191,11 +187,10 @@ public class VariableDescription extends SymbolDescription {
 									MIRRORS);
 						}
 						return t;
-					} else {
-						getEnclosingDescription().info(
-								"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
-								IGamlIssue.WRONG_TYPE, MIRRORS);
 					}
+					getEnclosingDescription().info(
+							"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
+							IGamlIssue.WRONG_TYPE, MIRRORS);
 			}
 		}
 		return result;
@@ -231,17 +226,11 @@ public class VariableDescription extends SymbolDescription {
 		}
 	}
 
-	public boolean isUpdatable() {
-		return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE));
-	}
+	public boolean isUpdatable() { return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE)); }
 
-	public boolean isNotModifiable() {
-		return _isNotModifiable;
-	}
+	public boolean isNotModifiable() { return _isNotModifiable; }
 
-	public boolean isParameter() {
-		return isExperimentParameter() || hasFacet(PARAMETER);
-	}
+	public boolean isParameter() { return isExperimentParameter() || hasFacet(PARAMETER); }
 
 	// If asField is true, should not try to build a GlobalVarExpr
 	public IExpression getVarExpr(final boolean asField) {
@@ -289,7 +278,18 @@ public class VariableDescription extends SymbolDescription {
 	public String getBuiltInDoc() {
 		final VariableDescription builtIn = getBuiltInAncestor();
 		if (builtIn == null) return null;
-		return AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(builtIn.getName());
+		Class<?> clazz = CLASS_DEFINITIONS.get(builtIn);
+		if (clazz == null) return PREF_DEFINITIONS.get(getName());
+		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
+		for (final msi.gama.precompiler.GamlAnnotations.variable v : vars.value()) {
+			if (v.name().equals(name)) {
+				final doc[] docs = v.doc();
+				if (docs.length > 0) // documentation of fields is not used
+					return docs[0].value();
+			}
+		}
+		return "";
+
 	}
 
 	private VariableDescription getBuiltInAncestor() {
@@ -323,35 +323,23 @@ public class VariableDescription extends SymbolDescription {
 	// return listeners;
 	// }
 
-	public IGamaHelper<?> getGetter() {
-		return get;
-	}
+	public IGamaHelper<?> getGetter() { return get; }
 
-	public IGamaHelper<?> getIniter() {
-		return init;
-	}
+	public IGamaHelper<?> getIniter() { return init; }
 
-	public IGamaHelper<?> getSetter() {
-		return set;
-	}
+	public IGamaHelper<?> getSetter() { return set; }
 
-	public boolean isGlobal() {
-		return _isGlobal;
-	}
+	public boolean isGlobal() { return _isGlobal; }
 
 	@Override
-	public String getDefiningPlugin() {
-		return plugin;
-	}
+	public String getDefiningPlugin() { return plugin; }
 
 	/**
 	 * @param plugin
 	 *            name
 	 */
 	@Override
-	public void setDefiningPlugin(final String plugin) {
-		this.plugin = plugin;
-	}
+	public void setDefiningPlugin(final String plugin) { this.plugin = plugin; }
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
@@ -364,8 +352,6 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	@Override
-	public Iterable<IDescription> getOwnChildren() {
-		return Collections.EMPTY_LIST;
-	}
+	public Iterable<IDescription> getOwnChildren() { return Collections.EMPTY_LIST; }
 
 }

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.VariableFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * VariableFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,8 +18,6 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
@@ -33,14 +31,10 @@ import msi.gaml.statements.Facets;
  *
  * @todo Description
  */
-@factory (
-		handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
-				ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
+// @factory (
+// handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
+// ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
-
-	public VariableFactory(final int... handles) {
-		super(handles);
-	}
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,

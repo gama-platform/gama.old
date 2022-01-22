@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * GamlDocumentationProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform (v.2.0.0).
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
-import org.eclipse.xtext.resource.IEObjectDescription;
 
 import com.google.inject.Inject;
 
@@ -32,18 +31,16 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitName;
-import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
 
 /**
@@ -120,31 +117,9 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				final String temp = getDocumentation(ref.getRef());
 				if (!temp.contains("No documentation")) return temp;
 			}
-		}
-		// else if (o instanceof VariableRef) {
-		// // Case of do xxx;
-		// // if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-		// // VarDefinition vd = ((VariableRef) o).getRef();
-		// // final IGamlDescription description =
-		// // GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-		// // if (description != null) {
-		// // String result = description.getDocumentation();
-		// // if (result == null) { return ""; }
-		// // return result;
-		// // }
-		// // }
-		// final VarDefinition vd = ((VariableRef) o).getRef();
-		// if (vd != null && vd.eContainer() == null) {
-		// final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
-		// if (desc != null) {
-		// String userData = desc.getUserData("doc");
-		// if (userData != null && !userData.isEmpty()) return userData;
-		// }
-		// }
-		// }
-		else if (o instanceof UnitName) {
+		} else if (o instanceof UnitName) {
 			final String name = ((UnitName) o).getRef().getName();
-			final UnitConstantExpression exp = IUnits.UNITS_EXPR.get(name);
+			final UnitConstantExpression exp = GAML.UNITS.get(name);
 			if (exp != null) return exp.getDocumentation();
 		}
 
@@ -153,27 +128,28 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		// TODO Add a swtich for constants
 
 		if (description == null) {
-			if (o instanceof VariableRef) {
-				// Case of do xxx;
-				// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-				// VarDefinition vd = ((VariableRef) o).getRef();
-				// final IGamlDescription description =
-				// GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-				// if (description != null) {
-				// String result = description.getDocumentation();
-				// if (result == null) { return ""; }
-				// return result;
-				// }
-				// }
-				final VarDefinition vd = ((VariableRef) o).getRef();
-				if (vd != null && vd.eContainer() == null) {
-					final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
-					if (desc != null) {
-						String userData = desc.getUserData("doc");
-						if (userData != null && !userData.isEmpty()) return userData;
-					}
-				}
-			} else if (o instanceof Facet) {
+			// if (o instanceof VariableRef) {
+			// Case of do xxx;
+			// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+			// VarDefinition vd = ((VariableRef) o).getRef();
+			// final IGamlDescription description =
+			// GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+			// if (description != null) {
+			// String result = description.getDocumentation();
+			// if (result == null) { return ""; }
+			// return result;
+			// }
+			// }
+			// final VarDefinition vd = ((VariableRef) o).getRef();
+			// if (vd != null && vd.eContainer() == null) {
+			// final IEObjectDescription desc = scopeProvider.getVar(vd.getName());
+			// if (desc != null) {
+			// String userData = desc.getUserData("doc");
+			// if (userData != null && !userData.isEmpty()) return userData;
+			// }
+			// }
+			// } else
+			if (o instanceof Facet) {
 				String facetName = ((Facet) o).getKey();
 				facetName = facetName.substring(0, facetName.length() - 1);
 				final EObject cont = o.eContainer();

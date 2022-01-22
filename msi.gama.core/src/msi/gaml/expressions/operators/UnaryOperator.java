@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.UnaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * UnaryOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -26,7 +26,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
@@ -47,27 +46,40 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
+	/** The child. */
 	final protected IExpression child;
+	
+	/** The prototype. */
 	protected final OperatorProto prototype;
 
+	/**
+	 * Creates the.
+	 *
+	 * @param proto the proto
+	 * @param context the context
+	 * @param child the child
+	 * @return the i expression
+	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
+		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
 			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
-		}
 		return u;
 	}
 
 	@Override
-	public boolean isConst() {
-		return prototype.canBeConst && child.isConst();
-	}
+	public boolean isConst() { return prototype.canBeConst && child.isConst(); }
 
 	@Override
-	public String getDefiningPlugin() {
-		return prototype.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return prototype.getDefiningPlugin(); }
 
+	/**
+	 * Instantiates a new unary operator.
+	 *
+	 * @param proto the proto
+	 * @param context the context
+	 * @param child the child
+	 */
 	public UnaryOperator(final OperatorProto proto, final IDescription context, final IExpression... child) {
 		// setName(proto.getName());
 		this.child = child[0];
@@ -81,9 +93,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public Object _value(final IScope scope) throws GamaRuntimeException {
-		final Object childValue = prototype.lazy[0] ? child : child.value(scope);
+		final Object childValue = prototype.getLazyness()[0] ? child : child.value(scope);
 		try {
-			return ((GamaGetter.Unary) prototype.helper).get(scope, childValue);
+			return prototype.getHelper().get(scope, childValue);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;
@@ -128,54 +140,67 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String getDocumentation() {
-		return prototype.getDocumentation();
-	}
+	public String getDocumentation() { return prototype.getDocumentation(); }
 
+	/**
+	 * Compute type.
+	 *
+	 * @param theType the the type
+	 * @param def the def
+	 * @return the i type
+	 */
 	private IType computeType(final int theType, final IType def) {
 		int t = theType;
 		final boolean returnFloatsInsteadOfInts = t < FLOAT_IN_CASE_OF_INT;
 		if (returnFloatsInsteadOfInts) { t = t - FLOAT_IN_CASE_OF_INT; }
 		IType result = def;
-		if (t == WRAPPED) {
-			result = child.getGamlType().getWrappedType();
-		} else if (t == FIRST_ELEMENT_CONTENT_TYPE) {
-			if (child instanceof ListExpression) {
-				final IExpression[] array = ((ListExpression) child).getElements();
-				if (array.length == 0) {
-					result = Types.NO_TYPE;
+		switch (t) {
+			case WRAPPED:
+				result = child.getGamlType().getWrappedType();
+				break;
+			case FIRST_ELEMENT_CONTENT_TYPE:
+				if (child instanceof ListExpression) {
+					final IExpression[] array = ((ListExpression) child).getElements();
+					if (array.length == 0) {
+						result = Types.NO_TYPE;
+					} else {
+						result = array[0].getGamlType().getContentType();
+					}
+				} else if (child instanceof MapExpression) {
+					final IExpression[] array = ((MapExpression) child).valuesArray();
+					if (array.length == 0) {
+						result = Types.NO_TYPE;
+					} else {
+						result = array[0].getGamlType().getContentType();
+					}
 				} else {
-					result = array[0].getGamlType().getContentType();
+					final IType tt = child.getGamlType().getContentType().getContentType();
+					if (tt != Types.NO_TYPE) { result = tt; }
 				}
-			} else if (child instanceof MapExpression) {
-				final IExpression[] array = ((MapExpression) child).valuesArray();
-				if (array.length == 0) {
-					result = Types.NO_TYPE;
+				break;
+			case FIRST_CONTENT_TYPE_OR_TYPE:
+				final IType firstType = child.getGamlType();
+				final IType t2 = firstType.getContentType();
+				if (t2 == Types.NO_TYPE) {
+					result = firstType;
 				} else {
-					result = array[0].getGamlType().getContentType();
+					result = t2;
 				}
-			} else {
-				final IType tt = child.getGamlType().getContentType().getContentType();
-				if (tt != Types.NO_TYPE) { result = tt; }
-			}
-		} else if (t == FIRST_CONTENT_TYPE_OR_TYPE) {
-			final IType firstType = child.getGamlType();
-			final IType t2 = firstType.getContentType();
-			if (t2 == Types.NO_TYPE) {
-				result = firstType;
-			} else {
-				result = t2;
-			}
-		} else {
-			result = t == TYPE_AT_INDEX + 1 ? child.getGamlType()
-					: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType() : t == KEY_TYPE_AT_INDEX + 1
-							? child.getGamlType().getKeyType()
-							: t >= 0 ? Types.get(t) : t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType() : def;
+				break;
+			default:
+				result = t == TYPE_AT_INDEX + 1 ? child.getGamlType()
+						: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType()
+						: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t)
+						: t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType() : def;
+				break;
 		}
 		if (returnFloatsInsteadOfInts && result == Types.INT) return Types.FLOAT;
 		return result;
 	}
 
+	/**
+	 * Compute type.
+	 */
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, type);
 		if (type.isContainer()) {
@@ -205,9 +230,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String getName() {
-		return prototype.getName();
-	}
+	public String getName() { return prototype.getName(); }
 
 	@Override
 	public IExpression arg(final int i) {
@@ -230,14 +253,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public boolean isContextIndependant() {
-		return child.isContextIndependant();
-	}
+	public boolean isContextIndependant() { return child.isContextIndependant(); }
 
 	@Override
-	public OperatorProto getPrototype() {
-		return prototype;
-	}
+	public OperatorProto getPrototype() { return prototype; }
 
 	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {

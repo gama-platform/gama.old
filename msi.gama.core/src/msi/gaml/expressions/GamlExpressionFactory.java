@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * GamlExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * GamlExpressionFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.filter;
-import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +26,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.util.IMap;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -48,7 +48,6 @@ import msi.gaml.expressions.variables.SelfExpression;
 import msi.gaml.expressions.variables.SuperExpression;
 import msi.gaml.expressions.variables.TempVariableExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
@@ -142,7 +141,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public UnitConstantExpression getUnitExpr(final String unit) {
-		return IUnits.UNITS_EXPR.get(unit);
+		return GAML.UNITS.get(unit);
 	}
 
 	@Override
@@ -223,8 +222,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if (args == null || args.length == 0) return false;
 		for (final IExpression exp : args) { if (exp == null) return false; }
 		// If the operator is not known, we have no match
-		if (!OPERATORS.containsKey(op)) return false;
-		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		if (!GAML.OPERATORS.containsKey(op)) return false;
+		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		final Signature sig = new Signature(args).simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
 		boolean matches = any(ops.keySet(), s -> sig.matchesDesiredSignature(s));
@@ -239,7 +238,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
 		if (!hasOperator(op, context, eObject, args)) {
-			final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+			final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
 			StringBuilder msg = new StringBuilder("No operator found for applying '").append(op).append("' to ")
 					.append(userSignature);
@@ -250,7 +249,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			return null;
 		}
 		// We get the possible sets of types registered in OPERATORS
-		final IMap<Signature, OperatorProto> ops = OPERATORS.get(op);
+		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
 		// 19/02/14 Only the simplified signature is used now
 		Signature userSignature = new Signature(args).simplified();

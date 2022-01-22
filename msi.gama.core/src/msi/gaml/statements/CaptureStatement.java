@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.CaptureStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * CaptureStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -45,8 +45,11 @@ import msi.gaml.statements.CaptureStatement.CaptureValidator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class CaptureStatement.
+ */
 @symbol (
-		name = { IKeyword.CAPTURE },
+		name = IKeyword.CAPTURE,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
 		concept = { IConcept.MULTI_LEVEL },
@@ -121,6 +124,9 @@ import msi.gaml.types.Types;
 @validator (CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
 
+	/**
+	 * The Class CaptureValidator.
+	 */
 	public static class CaptureValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
@@ -143,27 +149,34 @@ public class CaptureStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/** The target. */
 	private IExpression target;
+	
+	/** The return string. */
 	private final String returnString;
+	
+	/** The micro species name. */
 	private String microSpeciesName = null;
 
+	/** The sequence. */
 	private RemoteSequence sequence = null;
 
+	/**
+	 * Instantiates a new capture statement.
+	 *
+	 * @param desc the desc
+	 */
 	public CaptureStatement(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
 		microSpeciesName = getLiteral(IKeyword.AS);
 		returnString = getLiteral(IKeyword.RETURNS);
-		if (hasFacet(IKeyword.TARGET)) {
-			setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).serialize(false));
-		}
+		if (hasFacet(IKeyword.TARGET)) { setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).serialize(false)); }
 	}
 
 	@Override
 	public void enterScope(final IScope stack) {
-		if (returnString != null) {
-			stack.addVarWithValue(returnString, null);
-		}
+		if (returnString != null) { stack.addVarWithValue(returnString, null); }
 		super.enterScope(stack);
 	}
 
@@ -182,19 +195,13 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 		final Object t = target.value(scope);
 
-		if (t == null) { return null; }
+		if (t == null) return null;
 
 		if (t instanceof IContainer) {
 			for (final Object o : ((IContainer<?, ?>) t).iterable(scope)) {
-				if (o instanceof IAgent) {
-					microAgents.add((IAgent) o);
-				}
+				if (o instanceof IAgent) { microAgents.add((IAgent) o); }
 			}
-		} else {
-			if (t instanceof IAgent) {
-				microAgents.add((IAgent) t);
-			}
-		}
+		} else if (t instanceof IAgent) { microAgents.add((IAgent) t); }
 
 		final List<IAgent> removedComponents = GamaListFactory.create(Types.AGENT);
 		List<IAgent> capturedAgents = GamaListFactory.create();
@@ -204,41 +211,29 @@ public class CaptureStatement extends AbstractStatementSequence {
 											// in the "as" facet.
 				final ISpecies microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 
-				if (microSpecies == null) {
-					throw GamaRuntimeException.error(this.name + " can't capture other agents as members of "
-							+ microSpeciesName + " population because the " + microSpeciesName
-							+ " population is not visible or doesn't exist.", scope);
-				}
+				if (microSpecies == null) throw GamaRuntimeException.error(this.name
+						+ " can't capture other agents as members of " + microSpeciesName + " population because the "
+						+ microSpeciesName + " population is not visible or doesn't exist.", scope);
 
 				final IPopulation<? extends IAgent> microPopulation = macroAgent.getPopulationFor(microSpecies);
-				if (microPopulation == null) {
-					throw GamaRuntimeException.error(this.name + " can't capture other agents as members of "
-							+ microSpeciesName + " population because the " + microSpeciesName
-							+ " population is not visible or doesn't exist.", scope);
-				}
+				if (microPopulation == null) throw GamaRuntimeException.error(this.name
+						+ " can't capture other agents as members of " + microSpeciesName + " population because the "
+						+ microSpeciesName + " population is not visible or doesn't exist.", scope);
 
 				for (final IAgent c : microAgents) {
-					if (!macroAgent.canCapture(c, microSpecies)) {
-						removedComponents.add(c);
-					}
+					if (!macroAgent.canCapture(c, microSpecies)) { removedComponents.add(c); }
 				}
 
-				if (!removedComponents.isEmpty()) {
-					microAgents.removeAll(removedComponents);
-				}
+				if (!removedComponents.isEmpty()) { microAgents.removeAll(removedComponents); }
 
 				if (!microAgents.isEmpty()) {
 					capturedAgents = macroAgent.captureMicroAgents(scope, microSpecies, microAgents);
 					microAgents.clear();
 
-					if (!capturedAgents.isEmpty()) {
-						// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
-						if (sequence != null && !sequence.isEmpty()) {
-							for (final IAgent capturedA : capturedAgents) {
-								if (!scope.execute(sequence, capturedA, null).passed()) {
-									break;
-								}
-							}
+					// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+					if (!capturedAgents.isEmpty() && (sequence != null && !sequence.isEmpty())) {
+						for (final IAgent capturedA : capturedAgents) {
+							if (!scope.execute(sequence, capturedA, null).passed()) { break; }
 						}
 					}
 				}
@@ -252,9 +247,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 					if (microSpecies != null) {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 
-						if (sequence != null && !sequence.isEmpty()) {
-							scope.execute(sequence, capturedAgent, null);
-						}
+						if (sequence != null && !sequence.isEmpty()) { scope.execute(sequence, capturedAgent, null); }
 
 						capturedAgents.add(capturedAgent);
 					} else {
@@ -264,9 +257,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 			}
 		}
 
-		if (returnString != null) {
-			scope.setVarValue(returnString, capturedAgents);
-		}
+		if (returnString != null) { scope.setVarValue(returnString, capturedAgents); }
 
 		// throw GamaRuntimeException if necessary
 		if (!removedComponents.isEmpty()) {
@@ -278,14 +269,11 @@ public class CaptureStatement extends AbstractStatementSequence {
 			raStr.remove(raStr.size() - 1);
 
 			final StringBuilder raB = new StringBuilder();
-			for (final String s : raStr) {
-				raB.append(s);
-			}
+			for (final String s : raStr) { raB.append(s); }
 
-			if (microSpeciesName != null) {
-				throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " + raStr.toString() + " as "
-						+ microSpeciesName + " agent", scope);
-			}
+			if (microSpeciesName != null) throw GamaRuntimeException.error(
+					macroAgent.getName() + " can't capture " + raStr.toString() + " as " + microSpeciesName + " agent",
+					scope);
 			throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " + raStr.toString()
 					+ " as micro-agents because no appropriate micro-population is found to welcome these agents.",
 					scope);

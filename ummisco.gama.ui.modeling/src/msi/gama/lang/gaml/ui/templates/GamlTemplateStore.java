@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlTemplateStore.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlTemplateStore.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
 import java.io.IOException;
@@ -31,9 +30,9 @@ import com.google.inject.name.Named;
 
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore.GamlTemplateStoreProvider;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SymbolProto;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.Signature;
@@ -49,16 +48,24 @@ import msi.gaml.types.Signature;
 @ProvidedBy (GamlTemplateStoreProvider.class)
 public class GamlTemplateStore extends XtextTemplateStore {
 
+	/**
+	 * The Class GamlTemplateStoreProvider.
+	 */
 	public static class GamlTemplateStoreProvider implements Provider<GamlTemplateStore> {
 
+		/** The instance. */
 		static GamlTemplateStore instance;
 
+		/** The context type registry. */
 		@Inject private ContextTypeRegistry contextTypeRegistry;
 
+		/** The language name. */
 		@Inject @Named (Constants.LANGUAGE_NAME) private String languageName;
 
+		/** The store. */
 		@Inject private IPreferenceStore store;
 
+		/** The plugin. */
 		@Inject private AbstractUIPlugin plugin;
 
 		/**
@@ -72,12 +79,16 @@ public class GamlTemplateStore extends XtextTemplateStore {
 			return getInstance();
 		}
 
-		public static GamlTemplateStore getInstance() {
-			return instance;
-		}
+		/**
+		 * Gets the single instance of GamlTemplateStoreProvider.
+		 *
+		 * @return single instance of GamlTemplateStoreProvider
+		 */
+		public static GamlTemplateStore getInstance() { return instance; }
 
 	}
 
+	/** The indexes. */
 	static Map<String, Integer> indexes = new HashMap<>();
 
 	/**
@@ -92,6 +103,12 @@ public class GamlTemplateStore extends XtextTemplateStore {
 		super(registry, store, key, plugin);
 	}
 
+	/**
+	 * Gets the new id from id.
+	 *
+	 * @param id the id
+	 * @return the new id from id
+	 */
 	public String getNewIdFromId(final String id) {
 		String newId = "";
 		String[] strings = id.split("\\.");
@@ -100,24 +117,19 @@ public class GamlTemplateStore extends XtextTemplateStore {
 		if (Strings.isGamaNumber(last)) {
 			index = Integer.decode(last);
 			strings = Arrays.copyOf(strings, strings.length - 1);
-			for (final String s : strings) {
-				newId += s + ".";
-			}
+			for (final String s : strings) { newId += s + "."; }
 			newId = newId.substring(0, newId.length() - 1);
-			if (indexes.containsKey(newId)) {
-				index = indexes.get(newId);
-			}
+			if (indexes.containsKey(newId)) { index = indexes.get(newId); }
 			indexes.put(newId, index + 1);
 		} else {
 			newId = id;
 			index = indexes.get(id);
 			if (index == null) {
 				index = 1;
-				indexes.put(id, index);
 			} else {
 				index++;
-				indexes.put(id, index);
 			}
+			indexes.put(id, index);
 		}
 		return newId + "." + index;
 
@@ -139,6 +151,12 @@ public class GamlTemplateStore extends XtextTemplateStore {
 		}
 	}
 
+	/**
+	 * Direct add.
+	 *
+	 * @param data the data
+	 * @param isEdited the is edited
+	 */
 	public void directAdd(final TemplatePersistenceData data, final boolean isEdited) {
 		if (isEdited) {
 			add(data);
@@ -149,9 +167,7 @@ public class GamlTemplateStore extends XtextTemplateStore {
 			final TemplatePersistenceData d2 = new TemplatePersistenceData(data.getTemplate(), true) {
 
 				@Override
-				public String getId() {
-					return id;
-				}
+				public String getId() { return id; }
 
 			};
 			add(d2);
@@ -160,12 +176,10 @@ public class GamlTemplateStore extends XtextTemplateStore {
 
 	@Override
 	public org.eclipse.jface.text.templates.persistence.TemplatePersistenceData getTemplateData(final String id) {
-		if (id == null) { return null; }
+		if (id == null) return null;
 		for (final org.eclipse.text.templates.TemplatePersistenceData data : internalGetTemplates()) {
 			if (id.equals(data.getId())) {
-				final org.eclipse.jface.text.templates.persistence.TemplatePersistenceData wrap =
-						new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(data);
-				return wrap;
+				return new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(data);
 			}
 
 		}
@@ -181,20 +195,16 @@ public class GamlTemplateStore extends XtextTemplateStore {
 			// List<template> templates = sp.getTemplates();
 			for (final usage u : sp.getUsages()) {
 				final TemplatePersistenceData data = GamlTemplateFactory.from(u, sp);
-				if (data != null) {
-					internalAdd(data);
-				}
+				if (data != null) { internalAdd(data); }
 			}
 		}
-		protos = IExpressionCompiler.OPERATORS.keySet();
+		protos = GAML.OPERATORS.keySet();
 		for (final String keyword : protos) {
-			final Map<Signature, OperatorProto> map = IExpressionCompiler.OPERATORS.get(keyword);
+			final Map<Signature, OperatorProto> map = GAML.OPERATORS.get(keyword);
 			for (final OperatorProto p : map.values()) {
 				for (final usage u : p.getUsages()) {
 					final TemplatePersistenceData data = GamlTemplateFactory.from(u, p);
-					if (data != null) {
-						internalAdd(data);
-					}
+					if (data != null) { internalAdd(data); }
 				}
 			}
 		}

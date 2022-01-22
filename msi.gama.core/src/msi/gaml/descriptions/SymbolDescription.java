@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SymbolDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * SymbolDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -683,11 +683,7 @@ public abstract class SymbolDescription implements IDescription {
 		}
 
 		// If a custom validator has been defined, run it
-		if (proto.getValidator() != null) {
-			final boolean semantic = proto.getValidator().validate(this, element);
-			if (!semantic) return null;
-		}
-
+		if (!proto.getValidator().validate(this, element)) return null;
 		return this;
 	}
 
@@ -718,11 +714,6 @@ public abstract class SymbolDescription implements IDescription {
 			return false;
 		}
 
-		if (isDo) {
-
-			DEBUG.OUT("DO");
-
-		}
 		return visitFacets((facet, expr) -> {
 			final FacetProto fp = proto.getFacet(facet);
 
@@ -740,8 +731,8 @@ public abstract class SymbolDescription implements IDescription {
 				}
 				return true;
 			}
-			if (fp.deprecated != null) {
-				warning("Facet '" + facet + "' is deprecated: " + fp.deprecated, IGamlIssue.DEPRECATED, facet);
+			if (fp.getDeprecated() != null) {
+				warning("Facet '" + facet + "' is deprecated: " + fp.getDeprecated(), IGamlIssue.DEPRECATED, facet);
 			}
 			if (fp.values != null) {
 				final String val = expr.getExpression().literalValue();

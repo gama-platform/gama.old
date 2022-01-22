@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.AssertStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * AssertStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -31,8 +31,11 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class AssertStatement.
+ */
 @symbol (
-		name = { "assert" },
+		name = "assert",
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		with_sequence = false,
 		concept = { IConcept.TEST })
@@ -64,9 +67,17 @@ import msi.gaml.types.IType;
 		see = { "test", "setup", "is_error", "is_warning" })
 public class AssertStatement extends AbstractStatement implements WithTestSummary<AssertionSummary> {
 
+	/** The warn. */
 	final IExpression value, warn;
+	
+	/** The summary. */
 	final AssertionSummary summary;
 
+	/**
+	 * Instantiates a new assert statement.
+	 *
+	 * @param desc the desc
+	 */
 	public AssertStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
@@ -85,33 +96,32 @@ public class AssertStatement extends AbstractStatement implements WithTestSummar
 			summary.setState(TestState.ABORTED);
 			throw e;
 		}
-		if (result) {
-			summary.setState(TestState.PASSED);
-		} else {
+		if (!result) {
 			final TestState s = isWarning(scope) ? TestState.WARNING : TestState.FAILED;
 			summary.setState(s);
 			throw new GamaAssertException(scope, "Assert failed: " + getTitleForSummary(), isWarning(scope));
 		}
+		summary.setState(TestState.PASSED);
 		return result;
 	}
 
+	/**
+	 * Checks if is warning.
+	 *
+	 * @param scope the scope
+	 * @return true, if is warning
+	 */
 	public boolean isWarning(final IScope scope) {
 		return warn != null && Cast.asBool(scope, warn.value(scope));
 	}
 
 	@Override
-	public AssertionSummary getSummary() {
-		return summary;
-	}
+	public AssertionSummary getSummary() { return summary; }
 
 	@Override
-	public String getTitleForSummary() {
-		return value.serialize(true);
-	}
+	public String getTitleForSummary() { return value.serialize(true); }
 
 	@Override
-	public Collection<? extends WithTestSummary<?>> getSubElements() {
-		return null;
-	}
+	public Collection<? extends WithTestSummary<?>> getSubElements() { return null; }
 
 }

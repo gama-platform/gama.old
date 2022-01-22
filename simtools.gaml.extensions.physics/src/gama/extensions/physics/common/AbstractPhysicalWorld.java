@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AbstractPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.common;
 
 import java.util.Map;
@@ -15,19 +25,45 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 
+/**
+ * The Class AbstractPhysicalWorld.
+ *
+ * @param <WorldType> the generic type
+ * @param <ShapeType> the generic type
+ * @param <VectorType> the generic type
+ */
 public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		implements IPhysicalWorld<WorldType, ShapeType, VectorType> {
 
+	/** The simulation. */
 	protected final PhysicalSimulationAgent simulation;
+	
+	/** The world. */
 	protected WorldType world;
+	
+	/** The shape converter. */
 	private final IShapeConverter<ShapeType, VectorType> shapeConverter;
+	
+	/** The contact listener. */
 	protected final UniversalContactAddedListener contactListener;
+	
+	/** The updatable agents. */
 	protected final AsOrderedSet<IAgent> updatableAgents = Collector.getOrderedSet();
+	
+	/** The previous contacts. */
 	SetMultimap<IBody, IBody> previousContacts = MultimapBuilder.linkedHashKeys().hashSetValues().build();
+	
+	/** The new contacts. */
 	protected SetMultimap<IBody, IBody> newContacts = MultimapBuilder.linkedHashKeys().hashSetValues().build();
 
+	/** The emit notifications. */
 	protected final boolean emitNotifications;
 
+	/**
+	 * Instantiates a new abstract physical world.
+	 *
+	 * @param physicalSimulationAgent the physical simulation agent
+	 */
 	protected AbstractPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		simulation = physicalSimulationAgent;
 		emitNotifications = emitsNotifications(simulation);
@@ -35,8 +71,18 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		contactListener = new UniversalContactAddedListener();
 	}
 
+	/**
+	 * Creates the world.
+	 *
+	 * @return the world type
+	 */
 	protected abstract WorldType createWorld();
 
+	/**
+	 * Creates the shape converter.
+	 *
+	 * @return the i shape converter
+	 */
 	protected abstract IShapeConverter<ShapeType, VectorType> createShapeConverter();
 
 	@Override
@@ -47,8 +93,14 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		updatePositionsAndRotations();
 	}
 
+	/**
+	 * Update agents shape.
+	 */
 	protected abstract void updateAgentsShape();
 
+	/**
+	 * Update contacts.
+	 */
 	protected final void updateContacts() {
 		// Map<IBody, IBody> newContacts = new HashMap<>();
 		collectContacts(newContacts);
@@ -85,8 +137,20 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		contactListener.clear();
 	}
 
+	/**
+	 * Update engine.
+	 *
+	 * @param timeStep the time step
+	 * @param maxSubSteps the max sub steps
+	 */
 	protected abstract void updateEngine(Double timeStep, int maxSubSteps);
 
+	/**
+	 * Emits notifications.
+	 *
+	 * @param simulation the simulation
+	 * @return true, if successful
+	 */
 	protected boolean emitsNotifications(final IAgent simulation) {
 		ModelDescription desc = (ModelDescription) simulation.getSpecies().getDescription();
 		return desc.visitMicroSpecies(d -> {
@@ -98,6 +162,13 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		});
 	}
 
+	/**
+	 * Contact update.
+	 *
+	 * @param b0 the b 0
+	 * @param b1 the b 1
+	 * @param added the added
+	 */
 	protected void contactUpdate(final IBody b0, final IBody b1, final boolean added) {
 		String action = added ? CONTACT_ADDED : CONTACT_REMOVED;
 		IAgent a0 = b0.getAgent();
@@ -114,14 +185,10 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	}
 
 	@Override
-	public IShapeConverter<ShapeType, VectorType> getShapeConverter() {
-		return shapeConverter;
-	}
+	public IShapeConverter<ShapeType, VectorType> getShapeConverter() { return shapeConverter; }
 
 	@Override
-	public PhysicalSimulationAgent getSimulation() {
-		return simulation;
-	}
+	public PhysicalSimulationAgent getSimulation() { return simulation; }
 
 	@Override
 	public void updateAgentShape(final IAgent agent) {

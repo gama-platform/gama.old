@@ -11,7 +11,6 @@
 package msi.gaml.descriptions;
 
 import static com.google.common.collect.Iterables.transform;
-import static msi.gaml.compilation.AbstractGamlAdditions.getAllChildrenOf;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -162,9 +161,7 @@ public class SpeciesDescription extends TypeDescription {
 		 * We add the skills that are defined in Java, either using @species(value='a', skills= {s1,s2}),
 		 * or @skill(value="s1", attach_to="a")
 		 */
-		for (final String s : builtInSkills) {
-			addSkill(GamaSkillRegistry.INSTANCE.get(s));
-		}
+		for (final String s : builtInSkills) { addSkill(GamaSkillRegistry.INSTANCE.get(s)); }
 
 	}
 
@@ -172,9 +169,7 @@ public class SpeciesDescription extends TypeDescription {
 	public boolean redefinesAttribute(final String theName) {
 		if (super.redefinesAttribute(theName)) return true;
 		if (skills != null) {
-			for (final SkillDescription skill : skills) {
-				if (skill.hasAttribute(theName)) return true;
-			}
+			for (final SkillDescription skill : skills) { if (skill.hasAttribute(theName)) return true; }
 		}
 		return false;
 	}
@@ -183,9 +178,7 @@ public class SpeciesDescription extends TypeDescription {
 	public boolean redefinesAction(final String theName) {
 		if (super.redefinesAction(theName)) return true;
 		if (skills != null) {
-			for (final SkillDescription skill : skills) {
-				if (skill.hasAction(theName, false)) return true;
-			}
+			for (final SkillDescription skill : skills) { if (skill.hasAction(theName, false)) return true; }
 		}
 		return false;
 	}
@@ -204,9 +197,7 @@ public class SpeciesDescription extends TypeDescription {
 		return controlName;
 	}
 
-	public String getParentName() {
-		return getLitteral(PARENT);
-	}
+	public String getParentName() { return getLitteral(PARENT); }
 
 	@Override
 	public IExpression getVarExpr(final String n, final boolean asField) {
@@ -228,7 +219,7 @@ public class SpeciesDescription extends TypeDescription {
 		}
 		Class<? extends IAgent> javaBase = getJavaBase();
 		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
-		Iterable<IDescription> javaChildren = getAllChildrenOf(javaBase, skillClasses);
+		Iterable<IDescription> javaChildren = GAML.getAllChildrenOf(javaBase, skillClasses);
 		for (final IDescription v : javaChildren) {
 			if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
 			if (v instanceof VariableDescription) {
@@ -355,9 +346,7 @@ public class SpeciesDescription extends TypeDescription {
 		return Iterables.transform(getAspectNames(), this::getAspect);
 	}
 
-	public SkillDescription getControl() {
-		return control;
-	}
+	public SkillDescription getControl() { return control; }
 
 	public boolean hasAspect(final String a) {
 		return aspects != null && aspects.containsKey(a)
@@ -365,9 +354,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public SpeciesDescription getSpeciesContext() {
-		return this;
-	}
+	public SpeciesDescription getSpeciesContext() { return this; }
 
 	public SpeciesDescription getMicroSpecies(final String name) {
 		if (hasMicroSpecies()) {
@@ -406,9 +393,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public SpeciesDescription getParent() {
-		return (SpeciesDescription) super.getParent();
-	}
+	public SpeciesDescription getParent() { return (SpeciesDescription) super.getParent(); }
 
 	@Override
 	public void inheritFromParent() {
@@ -452,14 +437,10 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
-	public boolean isGrid() {
-		return GRID.equals(getKeyword());
-	}
+	public boolean isGrid() { return GRID.equals(getKeyword()); }
 
 	@Override
-	public String getTitle() {
-		return getKeyword() + " " + getName();
-	}
+	public String getTitle() { return getKeyword() + " " + getName(); }
 
 	@Override
 	public String getDocumentation() {
@@ -695,13 +676,9 @@ public class SpeciesDescription extends TypeDescription {
 		return super.validateChildren();
 	}
 
-	public boolean isExperiment() {
-		return false;
-	}
+	public boolean isExperiment() { return false; }
 
-	public boolean isModel() {
-		return false;
-	}
+	public boolean isModel() { return false; }
 
 	public boolean hasMicroSpecies() {
 		return microSpecies != null;
@@ -712,9 +689,7 @@ public class SpeciesDescription extends TypeDescription {
 		return microSpecies;
 	}
 
-	public boolean isMirror() {
-		return hasFacet(MIRRORS);
-	}
+	public boolean isMirror() { return hasFacet(MIRRORS); }
 
 	/**
 	 * Returns whether or not a species implements (directly or indirectly through its parents) a skill named after the
@@ -727,9 +702,7 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public Boolean implementsSkill(final String skill) {
 		if (skills != null) {
-			for (final SkillDescription sk : skills) {
-				if (sk.getName().equals(skill)) return true;
-			}
+			for (final SkillDescription sk : skills) { if (sk.getName().equals(skill)) return true; }
 		}
 		if (parent != null && parent != this) return getParent().implementsSkill(skill);
 		return false;
@@ -749,9 +722,7 @@ public class SpeciesDescription extends TypeDescription {
 		return javaBase;
 	}
 
-	protected void setJavaBase(final Class javaBase) {
-		this.javaBase = javaBase;
-	}
+	protected void setJavaBase(final Class javaBase) { this.javaBase = javaBase; }
 
 	/**
 	 * @param found_sd

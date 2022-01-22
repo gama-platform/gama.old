@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.factories.ExperimentFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ExperimentFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,8 +14,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
@@ -28,13 +26,9 @@ import msi.gaml.statements.Facets;
  *
  * @author drogoul
  */
-@factory (
-		handles = { ISymbolKind.EXPERIMENT })
+// @factory (
+// handles = { ISymbolKind.EXPERIMENT })
 public class ExperimentFactory extends SpeciesFactory {
-
-	public ExperimentFactory(final int... handles) {
-		super(handles);
-	}
 
 	@Override
 	public ExperimentDescription createBuiltInSpeciesDescription(final String name, final Class clazz,

@@ -58,7 +58,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	public static void staticInitialize() {
 		if (!initialized) {
-			GamlExpressionFactory.registerParserProvider(() -> new GamlExpressionCompiler());
+			GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
 			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 			GAML.registerGamlEcoreUtils(EGaml.getInstance());
 			initialized = true;
@@ -80,7 +80,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		// binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
 		binder.bind(ErrorToDiagnoticTranslator.class);
-
+		// binder.bind(org.eclipse.xtext.scoping.IGlobalScopeProvider.class)
+		// .toInstance(new msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider());
 	}
 
 	@Override
@@ -96,6 +97,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	@SingletonBinding ()
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
+		// return null;
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
 

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaBundleLoader.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaBundleLoader.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -36,6 +36,7 @@ import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.IGamlAdditions;
+import msi.gaml.operators.IUnits;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
@@ -53,46 +54,114 @@ public class GamaBundleLoader {
 		DEBUG.ON();
 	}
 
+	/**
+	 * Error.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	public static void ERROR(final Exception e) {
 		ERRORED = true;
 		LAST_EXCEPTION = e;
 		e.printStackTrace();
 	}
 
+	/** The Constant LINE. */
 	public static final String LINE =
 			"\n\n****************************************************************************************************\n\n";
+
+	/** The Constant ERROR_MESSAGE. */
 	public static final String ERROR_MESSAGE = LINE
 			+ "The initialization of GAML artefacts went wrong. If you use the developer version, please clean and recompile all plugins. \nOtherwise post an issue at https://github.com/gama-platform/gama/issues"
 			+ LINE;
-	public volatile static boolean LOADED = false;
-	public volatile static boolean ERRORED = false;
-	public volatile static Exception LAST_EXCEPTION = null;
-	public static Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
-	public static Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
-	public static String CORE_TESTS = "tests";
-	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN.getSymbolicName();
-	public static String ADDITIONS = "gaml.additions.GamlAdditions";
-	public static final String ADDITIONS_PACKAGE_BASE = "gaml.additions";
-	public static final String ADDITIONS_CLASS_NAME = "GamlAdditions";
-	public static String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
-	public static String GRAMMAR_EXTENSION = "gaml.extension";
-	public static String CREATE_EXTENSION = "gama.create";
-	public static String EVENT_LAYER_EXTENSION = "gama.event_layer";
-	public static String MODELS_EXTENSION = "gama.models";
-	public static String REGULAR_MODELS_LAYOUT = "models";
-	public static String REGULAR_TESTS_LAYOUT = "tests";
-	public static String GENERATED_TESTS_LAYOUT = "gaml/tests";
-	public static String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
-	private static Set<Bundle> GAMA_PLUGINS = new HashSet<>();
-	private static Multimap<Bundle, String> MODEL_PLUGINS = ArrayListMultimap.create();
-	private static Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
-	public static Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
 
+	/** The loaded. */
+	public volatile static boolean LOADED = false;
+
+	/** The errored. */
+	public volatile static boolean ERRORED = false;
+
+	/** The last exception. */
+	public volatile static Exception LAST_EXCEPTION = null;
+
+	/** The core plugin. */
+	public static final Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
+
+	/** The core models. */
+	public static final Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
+
+	/** The core tests. */
+	public static final String CORE_TESTS = "tests";
+
+	/** The current plugin name. */
+	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN.getSymbolicName();
+
+	/** The additions. */
+	public static final String ADDITIONS = "gaml.additions.GamlAdditions";
+
+	/** The Constant ADDITIONS_PACKAGE_BASE. */
+	public static final String ADDITIONS_PACKAGE_BASE = "gaml.additions";
+
+	/** The Constant ADDITIONS_CLASS_NAME. */
+	public static final String ADDITIONS_CLASS_NAME = "GamlAdditions";
+
+	/** The grammar extension deprecated. */
+	public static final String GRAMMAR_EXTENSION_DEPRECATED = "gaml.grammar.addition";
+
+	/** The grammar extension. */
+	public static final String GRAMMAR_EXTENSION = "gaml.extension";
+
+	/** The create extension. */
+	public static final String CREATE_EXTENSION = "gama.create";
+
+	/** The event layer extension. */
+	public static final String EVENT_LAYER_EXTENSION = "gama.event_layer";
+
+	/** The models extension. */
+	public static final String MODELS_EXTENSION = "gama.models";
+
+	/** The regular models layout. */
+	public static final String REGULAR_MODELS_LAYOUT = "models";
+
+	/** The regular tests layout. */
+	public static final String REGULAR_TESTS_LAYOUT = "tests";
+
+	/** The generated tests layout. */
+	public static final String GENERATED_TESTS_LAYOUT = "gaml/tests";
+
+	/** The content extension. */
+	public static final String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
+
+	/** The gama plugins. */
+	private static final Set<Bundle> GAMA_PLUGINS = new HashSet<>();
+
+	/** The model plugins. */
+	private static final Multimap<Bundle, String> MODEL_PLUGINS = ArrayListMultimap.create();
+
+	/** The test plugins. */
+	private static final Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
+
+	/** The handled file extensions. */
+	public static final Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
+
+	/** The Constant SYS_ARCH. */
 	public static final String SYS_ARCH = Platform.getOSArch(); // System.getProperty("os.arch");
+
+	/** The Constant SYS_NAME. */
 	public static final String SYS_NAME = Platform.getOS();// System.getProperty("os.name");
+
+	/** The Constant SYS_VERS. */
 	public static final String SYS_VERS = System.getProperty("os.version");
+
+	/** The Constant SYS_JAVA. */
 	public static final String SYS_JAVA = System.getProperty("java.version");
 
+	/**
+	 * Pre build contributions.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
 	public static void preBuildContributions() throws Exception {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 45, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
@@ -176,7 +245,7 @@ public class GamaBundleLoader {
 				}
 			}
 
-			// We gather all the extensions to the `create` statement and add them
+			// We gather all the extensions to the `event` statement and add them
 			// as delegates to EventLayerStatement
 			for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
 				try {
@@ -200,7 +269,7 @@ public class GamaBundleLoader {
 			// CRUCIAL INITIALIZATIONS
 			LOADED = true;
 			GamaMetaModel.INSTANCE.build();
-			Types.init();
+			// Types.init();
 
 			// We gather all the content types extensions defined in GAMA plugins
 			// (not in the other ones)
@@ -217,9 +286,19 @@ public class GamaBundleLoader {
 
 			// We reinit the type hierarchy to gather additional types
 			Types.init();
+			IUnits.init();
+			GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
 		});
 	}
 
+	/**
+	 * Pre build.
+	 *
+	 * @param bundle
+	 *            the bundle
+	 * @throws Exception
+	 *             the exception
+	 */
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
 		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: " + bundle.getSymbolicName(), 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
@@ -227,13 +306,10 @@ public class GamaBundleLoader {
 					String shortcut = bundle.getSymbolicName();
 					shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 					GamaClassLoader.getInstance().addBundle(bundle);
-					Class<IGamlAdditions> gamlAdditions = null;
+					Class<IGamlAdditions> clazz = null;
 					try {
-						// gamlAdditions = (Class<IGamlAdditions>) bundle.loadClass(ADDITIONS);
-
-						gamlAdditions = (Class<IGamlAdditions>) bundle
+						clazz = (Class<IGamlAdditions>) bundle
 								.loadClass(ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME);
-
 					} catch (final ClassNotFoundException e1) {
 						ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
 						throw e1;
@@ -242,12 +318,9 @@ public class GamaBundleLoader {
 
 					IGamlAdditions add = null;
 					try {
-						add = gamlAdditions.newInstance();
-					} catch (final InstantiationException e) {
+						add = clazz.getConstructor().newInstance();
+					} catch (final Exception e) {
 						ERR(">> Impossible to instantiate additions from " + bundle);
-						throw e;
-					} catch (final IllegalAccessException e) {
-						ERR(">> Impossible to access additions from " + bundle);
 						throw e;
 					}
 					try {
@@ -265,12 +338,13 @@ public class GamaBundleLoader {
 	 *
 	 * @return
 	 */
-	public static Multimap<Bundle, String> getPluginsWithModels() {
-		return MODEL_PLUGINS;
-	}
+	public static Multimap<Bundle, String> getPluginsWithModels() { return MODEL_PLUGINS; }
 
-	public static Multimap<Bundle, String> getPluginsWithTests() {
-		return TEST_PLUGINS;
-	}
+	/**
+	 * Gets the plugins with tests.
+	 *
+	 * @return the plugins with tests
+	 */
+	public static Multimap<Bundle, String> getPluginsWithTests() { return TEST_PLUGINS; }
 
 }

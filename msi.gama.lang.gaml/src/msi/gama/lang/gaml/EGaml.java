@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EGaml.getInstance().java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * EGaml.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml;
 
 import java.util.Collections;
@@ -81,11 +80,15 @@ import msi.gaml.compilation.ast.SyntacticFactory;
  */
 public class EGaml implements IGamlEcoreUtils {
 
+	/** The Constant instance. */
 	private static final EGaml instance = new EGaml();
 
-	public static EGaml getInstance() {
-		return instance;
-	}
+	/**
+	 * Gets the single instance of EGaml.
+	 *
+	 * @return single instance of EGaml
+	 */
+	public static EGaml getInstance() { return instance; }
 
 	@Override
 	public String getNameOf(final EObject o) {
@@ -159,9 +162,7 @@ public class EGaml implements IGamlEcoreUtils {
 		final List<? extends EObject> list = getFacetsOf(s);
 		if (list.isEmpty()) return Collections.EMPTY_MAP;
 		final Map<String, Facet> map = GamaMapFactory.create();
-		for (final EObject f : list) {
-			if (f instanceof Facet) { map.put(getKeyOf(f), (Facet) f); }
-		}
+		for (final EObject f : list) { if (f instanceof Facet) { map.put(getKeyOf(f), (Facet) f); } }
 		return map;
 	}
 
@@ -402,9 +403,8 @@ public class EGaml implements IGamlEcoreUtils {
 	public String getNameOfRef(final EObject o) {
 		final ICompositeNode n = NodeModelUtils.getNode(o);
 		if (n != null) return NodeModelUtils.getTokenText(n);
-		if (o instanceof VariableRef)
-			return ((VariableRef) o).getRef().getName();
-		else if (o instanceof UnitName)
+		if (o instanceof VariableRef) return ((VariableRef) o).getRef().getName();
+		if (o instanceof UnitName)
 			return ((UnitName) o).getRef().getName();
 		else if (o instanceof ActionRef)
 			return ((ActionRef) o).getRef().getName();
@@ -423,9 +423,7 @@ public class EGaml implements IGamlEcoreUtils {
 	 *
 	 * @return the factory
 	 */
-	public GamlFactory getFactory() {
-		return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance();
-	}
+	public GamlFactory getFactory() { return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance(); }
 
 	/**
 	 * Save an eObject into a string
@@ -438,9 +436,8 @@ public class EGaml implements IGamlEcoreUtils {
 	@Override
 	public String toString(final EObject expr) {
 		if (expr == null) return null;
-		if (expr instanceof Statement)
-			return getNameOf(expr);
-		else if (expr instanceof Facet) return ((Facet) expr).getName();
+		if (expr instanceof Statement) return getNameOf(expr);
+		if (expr instanceof Facet) return ((Facet) expr).getName();
 
 		if (!(expr instanceof Expression)) return expr.toString();
 		final StringBuilder serializer = new StringBuilder(100);
@@ -607,6 +604,19 @@ public class EGaml implements IGamlEcoreUtils {
 		}
 		return false;
 
+	}
+
+	/**
+	 * Creates the gaml definition.
+	 *
+	 * @param t the t
+	 * @param eClass the e class
+	 * @return the gaml definition
+	 */
+	public GamlDefinition createGamlDefinition(final String t, final EClass eClass) {
+		GamlDefinition stub = (GamlDefinition) getFactory().create(eClass);
+		stub.setName(t);
+		return stub;
 	}
 
 }

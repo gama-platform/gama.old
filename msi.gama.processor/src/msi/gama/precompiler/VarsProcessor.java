@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * VarsProcessor.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -19,10 +29,18 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
+/**
+ * The Class VarsProcessor.
+ */
 public class VarsProcessor extends ElementProcessor<vars> {
 
+	/** The setters. */
 	Map<Element, Map<String, ExecutableElement>> setters = new HashMap<>();
+
+	/** The getters. */
 	Map<Element, Map<String, ExecutableElement>> getters = new HashMap<>();
+
+	/** The temp. */
 	Set<String> temp = new HashSet<>();
 
 	@Override
@@ -31,6 +49,12 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		super.process(context);
 	}
 
+	/**
+	 * Builds the setters and getters.
+	 *
+	 * @param context
+	 *            the context
+	 */
 	private void buildSettersAndGetters(final ProcessorContext context) {
 		setters =
 				context.getElementsAnnotatedWith(setter.class).stream().collect(groupingBy(Element::getEnclosingElement,
@@ -60,10 +84,10 @@ public class VarsProcessor extends ElementProcessor<vars> {
 
 			sb.append(in).append(isField ? "_field(" : "_var(").append(clazzObject).append(",");
 			if (isField) {
-				sb.append("_proto(").append(toJavaString(node.name())).append(',');
+				sb.append(toJavaString(node.name())).append(',');
 				writeHelpers(sb, context, node, clazz, e, isField, true);
 				sb.append(',').append(node.type()).append(',').append(clazzObject).append(',').append(node.type())
-						.append(',').append(node.of()).append(',').append(node.index()).append(')');
+						.append(',').append(node.of()).append(',').append(node.index());
 			} else {
 				sb.append("desc(").append(node.type()).append(',');
 				writeFacets(sb, node);
@@ -76,6 +100,24 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		temp.clear();
 	}
 
+	/**
+	 * Write helpers.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param context
+	 *            the context
+	 * @param var
+	 *            the var
+	 * @param clazz
+	 *            the clazz
+	 * @param e
+	 *            the e
+	 * @param isField
+	 *            the is field
+	 * @param onlyGetter
+	 *            the only getter
+	 */
 	private void writeHelpers(final StringBuilder sb, final ProcessorContext context, final variable var,
 			final String clazz, final Element e, final boolean isField, final boolean onlyGetter) {
 		String getterHelper = null;
@@ -96,13 +138,11 @@ public class VarsProcessor extends ElementProcessor<vars> {
 						return;
 					}
 					final String[] args = new String[n];
-					for (int i = 0; i < args.length; i++) {
-						args[i] = rawNameOf(context, argParams.get(i).asType());
-					}
+					for (int i = 0; i < args.length; i++) { args[i] = rawNameOf(context, argParams.get(i).asType()); }
 
 					final boolean scope = n > 0 && args[0].contains("IScope");
 					final String method = ex.getSimpleName().toString();
-					final boolean isDynamic = (scope ? n == 3 : n == 2);
+					final boolean isDynamic = scope ? n == 3 : n == 2;
 					final String param_class = checkPrim(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]);
 
 					setterHelper = concat("(s,a,t,v)->{if (t != null) ((", clazz, ") t).", method, "(",
@@ -117,20 +157,18 @@ public class VarsProcessor extends ElementProcessor<vars> {
 			if (ex != null) {
 				final List<? extends VariableElement> argParams = ex.getParameters();
 				final String[] args = new String[argParams.size()];
-				for (int i = 0; i < args.length; i++) {
-					args[i] = rawNameOf(context, argParams.get(i).asType());
-				}
+				for (int i = 0; i < args.length; i++) { args[i] = rawNameOf(context, argParams.get(i).asType()); }
 				final int n = args.length;
 				final boolean scope = n > 0 && args[0].contains("IScope");
 				final String method = ex.getSimpleName().toString();
 				final String returns = rawNameOf(context, ex.getReturnType());
-				final boolean dynamic = (scope ? n > 1 : n > 0);
+				final boolean dynamic = scope ? n > 1 : n > 0;
 
 				if (isField) {
 					// AD: REMOVE THE DEFAULT BEHAVIOR WHEN NULL IS PASSED (which was wrong, see #2713)
 					// getterHelper = concat("(s, v)->(v==null||v.length==0)?", returnWhenNull(checkPrim(returns)),
 					// ":((", clazz, ")v[0]).", method, scope ? "(s)" : "()");
-					getterHelper = concat("(s, v)->((", clazz, ")v).", method, scope ? "(s)" : "()");
+					getterHelper = concat("(s, o)->((", clazz, ")o[0]).", method, scope ? "(s)" : "()");
 				} else {
 					getterHelper = concat("(s,a,t,v)->t==null?", returnWhenNull(checkPrim(returns)), ":((", clazz,
 							")t).", method, "(", scope ? "s" : "", dynamic ? (scope ? "," : "") + "a)" : ")");
@@ -146,6 +184,14 @@ public class VarsProcessor extends ElementProcessor<vars> {
 		}
 	}
 
+	/**
+	 * Write facets.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param s
+	 *            the s
+	 */
 	private void writeFacets(final StringBuilder sb, final variable s) {
 		sb.append("S(\"type\"").append(',').append(toJavaString(String.valueOf(s.type()))).append(',')
 				.append("\"name\"").append(',').append(toJavaString(s.name()));
@@ -171,8 +217,6 @@ public class VarsProcessor extends ElementProcessor<vars> {
 	}
 
 	@Override
-	protected Class<vars> getAnnotationClass() {
-		return vars.class;
-	}
+	protected Class<vars> getAnnotationClass() { return vars.class; }
 
 }

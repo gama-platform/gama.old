@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.AbstractNAryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractNAryOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -29,7 +29,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -49,9 +48,18 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
+	/** The exprs. */
 	public final IExpression[] exprs;
+	
+	/** The prototype. */
 	protected OperatorProto prototype;
 
+	/**
+	 * Instantiates a new abstract N ary operator.
+	 *
+	 * @param proto the proto
+	 * @param expressions the expressions
+	 */
 	public AbstractNAryOperator(final OperatorProto proto, final IExpression... expressions) {
 		// Copy introduced in order to circumvent issue 1060
 		if (expressions.length == 0 || expressions[0] == null) {
@@ -64,10 +72,13 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public OperatorProto getPrototype() {
-		return prototype;
-	}
+	public OperatorProto getPrototype() { return prototype; }
 
+	/**
+	 * Compute type.
+	 *
+	 * @return the i type
+	 */
 	protected IType computeType() {
 		if (prototype == null) return Types.NO_TYPE;
 		IType result = computeType(prototype.typeProvider, 0, prototype.returnType, GamaType.TYPE);
@@ -80,6 +91,15 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
+	/**
+	 * Compute type.
+	 *
+	 * @param tp the tp
+	 * @param contentTypeProvider the content type provider
+	 * @param defaultType the default type
+	 * @param kind the kind
+	 * @return the i type
+	 */
 	protected IType computeType(final int tp, final int contentTypeProvider, final IType defaultType, final int kind) {
 		IType result = defaultType;
 		int typeProvider = tp;
@@ -163,15 +183,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
+	/**
+	 * Copy.
+	 *
+	 * @return the abstract N ary operator
+	 */
 	protected abstract AbstractNAryOperator copy();
 
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
 		final AbstractNAryOperator copy = copy();
 		if (exprs != null) {
-			for (int i = 0; i < exprs.length; i++) {
-				copy.exprs[i] = exprs[i].resolveAgainst(scope);
-			}
+			for (int i = 0; i < exprs.length; i++) { copy.exprs[i] = exprs[i].resolveAgainst(scope); }
 		}
 		return copy;
 	}
@@ -179,18 +202,12 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public boolean isConst() {
 		if (!prototype.canBeConst) return false;
-		if (exprs != null) {
-			for (final IExpression expr : exprs) {
-				if (!expr.isConst()) return false;
-			}
-		}
+		if (exprs != null) { for (final IExpression expr : exprs) { if (!expr.isConst()) return false; } }
 		return true;
 	}
 
 	@Override
-	public String getName() {
-		return prototype.getName();
-	}
+	public String getName() { return prototype.getName(); }
 
 	@Override
 	public String toString() {
@@ -212,13 +229,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return sb.toString();
 	}
 
+	/**
+	 * Num arg.
+	 *
+	 * @return the int
+	 */
 	public int numArg() {
 		return exprs == null ? 0 : exprs.length;
 	}
 
 	@Override
 	public IExpression arg(final int i) {
-		if ((exprs == null) || (i >= exprs.length)) return null;
+		if (exprs == null || i >= exprs.length) return null;
 		return exprs[i];
 	}
 
@@ -239,14 +261,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public String getDocumentation() {
-		return prototype.getDocumentation();
-	}
+	public String getDocumentation() { return prototype.getDocumentation(); }
 
 	@Override
-	public String getDefiningPlugin() {
-		return prototype.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return prototype.getDefiningPlugin(); }
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,
@@ -264,9 +282,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public boolean isContextIndependant() {
 		if (exprs != null) {
-			for (final IExpression e : exprs) {
-				if ((e != null) && !e.isContextIndependant()) return false;
-			}
+			for (final IExpression e : exprs) { if (e != null && !e.isContextIndependant()) return false; }
 		}
 		return true;
 	}
@@ -274,9 +290,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {
 		if (exprs != null) {
-			for (final IExpression e : exprs) {
-				if (e instanceof IOperator) { visitor.visit((IOperator) e); }
-			}
+			for (final IExpression e : exprs) { if (e instanceof IOperator) { visitor.visit((IOperator) e); } }
 		}
 
 	}
@@ -286,9 +300,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		final Object[] values = new Object[exprs == null ? 0 : exprs.length];
 		try {
 			for (int i = 0; i < values.length; i++) {
-				values[i] = prototype.lazy[i] ? exprs[i] : exprs[i].value(scope);
+				values[i] = prototype.getLazyness()[i] ? exprs[i] : exprs[i].value(scope);
 			}
-			return ((GamaGetter.NAry) prototype.helper).get(scope, values);
+			return prototype.getHelper().get(scope, values);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw e1;
@@ -302,11 +316,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public boolean findAny(final Predicate<IExpression> predicate) {
 		if (predicate.test(this)) return true;
-		if (exprs != null) {
-			for (final IExpression e : exprs) {
-				if (e.findAny(predicate)) return true;
-			}
-		}
+		if (exprs != null) { for (final IExpression e : exprs) { if (e.findAny(predicate)) return true; } }
 		return false;
 	}
 }

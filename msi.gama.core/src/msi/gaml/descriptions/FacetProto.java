@@ -35,10 +35,12 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	private final boolean isId;
 	final boolean isRemote;
 	final boolean isNewTemp;
+	boolean docBuilt;
 	public final boolean isType;
 	public final Set<String> values;
 	public String doc = "No documentation yet";
 	public String owner;
+	public Class<?> support;
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
 			final boolean optional, final boolean internal, final boolean isRemote) {
@@ -46,9 +48,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		this.typesDescribers = types;
 		isNewTemp = typesDescribers[0] == IType.NEW_TEMP_ID;
 		this.types = new IType[types.length];
-		for (int i = 0; i < types.length; i++) {
-			this.types[i] = Types.get(types[i]);
-		}
+		for (int i = 0; i < types.length; i++) { this.types[i] = Types.get(types[i]); }
 		this.contentType = Types.get(ct);
 		this.keyType = Types.get(kt);
 		this.optional = optional;
@@ -70,13 +70,9 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		// }
 	}
 
-	boolean isLabel() {
-		return isLabel;
-	}
+	boolean isLabel() { return isLabel; }
 
-	public void setOwner(final String s) {
-		owner = s;
-	}
+	public void setOwner(final String s) { owner = s; }
 
 	@Override
 	public String getDefiningPlugin() {
@@ -85,9 +81,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		return null;
 	}
 
-	public boolean isId() {
-		return isId;
-	}
+	public boolean isId() { return isId; }
 
 	/**
 	 * Method getTitle()
@@ -126,13 +120,9 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 					// include of and index
 					s.append(types[i].toString());
 			}
-			if (i != types.length - 1) {
-				s.append(", ");
-			}
+			if (i != types.length - 1) { s.append(", "); }
 		}
-		if (types.length >= 2) {
-			s.append("]");
-		}
+		if (types.length >= 2) { s.append("]"); }
 		return s.toString();
 	}
 
@@ -145,17 +135,13 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public String getDocumentation() {
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append("<b>").append(name).append("</b>, ")
-				.append(deprecated != null ? "deprecated" : optional ? "optional" : "required").append("")
+				.append(getDeprecated() != null ? "deprecated" : optional ? "optional" : "required").append("")
 				.append(", expects ").append(typesToString());
-		if (values != null && values.size() > 0) {
-			sb.append(", takes values in ").append(values).append(". ");
-		}
-		if (doc != null && doc.length() > 0) {
-			sb.append(" - ").append(doc);
-		}
-		if (deprecated != null) {
+		if (values != null && values.size() > 0) { sb.append(", takes values in ").append(values).append(". "); }
+		if (getDoc() != null && getDoc().length() > 0) { sb.append(" - ").append(getDoc()); }
+		if (getDeprecated() != null) {
 			sb.append(" <b>[");
-			sb.append(deprecated);
+			sb.append(getDeprecated());
 			sb.append("]</b>");
 		}
 		return sb.toString();
@@ -167,9 +153,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
 	 */
 	@Override
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
 	public void setName(final String name) {
@@ -193,8 +177,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if (deprecated != null) { return ""; }
-		if (SymbolSerializer.uselessFacets.contains(name)) { return ""; }
+		if (getDeprecated() != null || SymbolSerializer.uselessFacets.contains(name)) return "";
 		return name + (optional ? ": optional" : ": required") + " ("
 				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
@@ -207,8 +190,10 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	// @Override
 	// public void collectMetaInformation(final GamlProperties meta) {}
 
-	public void buildDoc(final Class<?> c) {
-		final facets facets = c.getAnnotation(facets.class);
+	public void buildDoc() {
+		if (docBuilt) return;
+		docBuilt = true;
+		final facets facets = support.getAnnotation(facets.class);
 		if (facets != null) {
 			final facet[] array = facets.value();
 			for (final facet f : array) {
@@ -218,14 +203,25 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 						final doc d = docs[0];
 						doc = d.value();
 						deprecated = d.deprecated();
-						if (deprecated.length() == 0) {
-							deprecated = null;
-						}
+						if (getDeprecated().length() == 0) { deprecated = null; }
 					}
 				}
 			}
 		}
+		if (doc == null) { doc = "Not documented"; }
 
+	}
+
+	public void setClass(final Class c) { support = c; }
+
+	public String getDoc() {
+		buildDoc();
+		return doc;
+	}
+
+	public String getDeprecated() {
+		buildDoc();
+		return deprecated;
 	}
 
 	/**

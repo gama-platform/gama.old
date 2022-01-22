@@ -3,7 +3,7 @@
  * InteractiveConsoleView.java, in ummisco.gama.ui.shared, is part of the source code of the
  * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -44,6 +44,7 @@ import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamlIdiomsProvider;
 import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -68,31 +69,31 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	/** The msg console. */
 	private IOConsole msgConsole;
-	
+
 	/** The viewer. */
 	IOConsoleViewer viewer;
-	
+
 	/** The error writer. */
 	private OutputStreamWriter resultWriter, errorWriter;
-	
+
 	/** The reader. */
 	BufferedReader reader;
-	
+
 	/** The scope. */
 	private IScope scope;
-	
+
 	/** The temps. */
 	private final Map<String, Object> temps = new LinkedHashMap<>();
-	
+
 	/** The history. */
 	private final List<String> history = new ArrayList<>();
-	
+
 	/** The index in history. */
 	private int indexInHistory = 0;
-	
+
 	/** The control to display in full screen. */
 	private Composite controlToDisplayInFullScreen;
-	
+
 	/** The parent of control to display full screen. */
 	private Composite parentOfControlToDisplayFullScreen;
 
@@ -210,7 +211,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	/**
 	 * Insert history.
 	 *
-	 * @param back the back
+	 * @param back
+	 *            the back
 	 */
 	private void insertHistory(final boolean back) {
 
@@ -328,7 +330,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	/**
 	 * Sets the executor agent.
 	 *
-	 * @param agent the new executor agent
+	 * @param agent
+	 *            the new executor agent
 	 */
 	private void setExecutorAgent(final ITopLevelAgent agent) {
 		if (scope != null) {
@@ -351,7 +354,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	/**
 	 * Process input.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 */
 	protected void processInput(final String s) {
 		final var agent = getListeningAgent();
@@ -364,7 +368,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			String result = null;
 			var error = false;
 			if (entered.startsWith("?")) {
-				result = GAML.getDocumentationOn(entered.substring(1));
+				result = GamlIdiomsProvider.getDocumentationOn(entered.substring(1));
 			} else {
 				try {
 					final var expr = GAML.compileExpression(s, agent, this, false);
@@ -393,7 +397,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	/**
 	 * Sets the parent of control to display full screen.
 	 *
-	 * @param parentOfControlToDisplayFullScreen the new parent of control to display full screen
+	 * @param parentOfControlToDisplayFullScreen
+	 *            the new parent of control to display full screen
 	 */
 	public void setParentOfControlToDisplayFullScreen(final Composite parentOfControlToDisplayFullScreen) {
 		this.parentOfControlToDisplayFullScreen = parentOfControlToDisplayFullScreen;

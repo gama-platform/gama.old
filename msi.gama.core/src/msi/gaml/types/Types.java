@@ -1,30 +1,33 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.Types.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8.1)
+ * Types.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
+import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IMap;
-import msi.gama.util.tree.GamaNode;
-import msi.gama.util.tree.GamaTree;
-import msi.gama.util.tree.GamaTree.Order;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -32,6 +35,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.factories.DescriptionFactory;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -39,27 +43,71 @@ import msi.gaml.factories.DescriptionFactory;
  * @todo Description
  *
  */
+
+/**
+ * The Class Types.
+ */
+
+/**
+ * The Class Types.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Types {
 
+	static {
+		DEBUG.ON();
+	}
+
+	/** The Constant builtInTypes. */
 	public final static ITypesManager builtInTypes = new TypesManager(null);
 
+	/** The Constant NO_TYPE. */
 	public final static IType NO_TYPE = new GamaNoType();
 
+	/** The type. */
 	public static IType AGENT, PATH, FONT, SKILL, DATE, MATERIAL, ACTION, TYPE;
+
+	/** The int. */
 	public static GamaIntegerType INT;
+
+	/** The float. */
 	public static GamaFloatType FLOAT;
+
+	/** The color. */
 	public static GamaColorType COLOR;
+
+	/** The bool. */
 	public static GamaBoolType BOOL;
+
+	/** The string. */
 	public static GamaStringType STRING;
+
+	/** The point. */
 	public static GamaPointType POINT;
+
+	/** The geometry. */
 	public static GamaGeometryType GEOMETRY;
+
+	/** The topology. */
 	public static GamaTopologyType TOPOLOGY;
+
+	/** The field. */
 	public static GamaFieldType FIELD;
+
+	/** The species. */
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
+	/** The Constant CLASSES_TYPES_CORRESPONDANCE. */
 	public static final IMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = GamaMapFactory.createUnordered();
 
+	/**
+	 * Cache.
+	 *
+	 * @param id
+	 *            the id
+	 * @param instance
+	 *            the instance
+	 */
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
 			case IType.INT:
@@ -136,10 +184,18 @@ public class Types {
 				break;
 			case IType.FIELD:
 				FIELD = (GamaFieldType) instance;
+				break;
 			default:
 		}
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the i type
+	 */
 	public static IType get(final int type) {
 		// use cache first
 		switch (type) {
@@ -193,101 +249,113 @@ public class Types {
 		return builtInTypes.get(String.valueOf(type));
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the i type
+	 */
 	public static IType get(final String type) {
 		return builtInTypes.get(type);
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param type
+	 *            the type
+	 * @return the i type
+	 */
 	public static <T> IType<T> get(final Class<T> type) {
 		final IType<T> t = internalGet(type);
 		return t == null ? Types.NO_TYPE : t;
 	}
 
+	/**
+	 * Internal get.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param type
+	 *            the type
+	 * @return the i type
+	 */
 	private static <T> IType<T> internalGet(final Class<T> type) {
 		final IType<T>[] t = new IType[] { builtInTypes.get(Types.CLASSES_TYPES_CORRESPONDANCE.get(type)) };
 		boolean newEntry = false;
-		if (t[0] == Types.NO_TYPE) {
-			if (!type.isInterface()) {
-				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachPair((support, id) -> {
-					if (support != Object.class && support.isAssignableFrom(type)) {
-						t[0] = (IType<T>) builtInTypes.get(id);
-						return false;
-					}
-					return true;
-				});
+		if (t[0] == Types.NO_TYPE && !type.isInterface()) {
+			newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachPair((support, id) -> {
+				if (support != Object.class && support.isAssignableFrom(type)) {
+					t[0] = (IType<T>) builtInTypes.get(id);
+					return false;
+				}
+				return true;
+			});
 
-			}
 		}
 		if (newEntry) { Types.CLASSES_TYPES_CORRESPONDANCE.put(type, t[0].toString()); }
 		return t[0];
 	}
 
+	/**
+	 * Gets the type names.
+	 *
+	 * @return the type names
+	 */
 	public static Iterable<String> getTypeNames() {
-		return Iterables.transform(builtInTypes.getAllTypes(), each -> each.getName());
+		return Iterables.transform(builtInTypes.getAllTypes(), IType::getName);
 	}
 
+	/**
+	 * Inits the types hierarchy of built-in types
+	 */
 	public static void init() {
-		final GamaTree<IType> hierarchy = buildHierarchy();
-		for (final GamaNode<IType> node : hierarchy.list(Order.PRE_ORDER)) {
-			final IType type = node.getData();
-			DescriptionFactory.addNewTypeName(type.toString(), type.getVarKind());
-			final Map<String, OperatorProto> vars = AbstractGamlAdditions.getAllFields(type.toClass());
-			type.setFieldGetters(vars);
-			type.setParent(node.getParent() == null ? null : node.getParent().getData());
+		// We build a graph-type multimap structure
+		Map<IType<?>, ICollector<IType<?>>> outgoing = new HashMap(), incoming = new HashMap();
+		Set<IType<?>> types = builtInTypes.getAllTypes();
+		for (IType t : types) {
+			outgoing.put(t, Collector.getSet());
+			incoming.put(t, Collector.getSet());
 		}
-		// DEBUG.LOG("Hierarchy" + hierarchy.toStringWithDepth());
-	}
-
-	private static GamaTree<IType> buildHierarchy() {
-		final GamaNode<IType> root = new GamaNode(NO_TYPE);
-		final GamaTree<IType> hierarchy = new GamaTree();
-		hierarchy.setRoot(root);
-		final List<IType>[] depths = typesWithDepths();
-		for (int i = 1; i < 10; i++) {
-			final List<IType> types = depths[i];
-			for (final IType t : types) {
-				place(t, hierarchy);
-			}
-		}
-		return hierarchy;
-	}
-
-	private static List<IType>[] typesWithDepths() {
-		final List<IType>[] depths = new ArrayList[10];
-		for (int i = 0; i < 10; i++) {
-			depths[i] = new ArrayList<>();
-		}
-		final Set<IType> list = Sets.newLinkedHashSet(builtInTypes.getAllTypes());
-		for (final IType t : list) {
-			// DEBUG.LOG("Type computing depth: " + t);
-
-			int depth = 0;
-			for (final IType other : list) {
-				// DEBUG.LOG("\tComparing with: " + other);
-				if (other != t && other.isAssignableFrom(t)) {
-
-					depth++;
+		for (IType t1 : types) {
+			for (IType t2 : types) {
+				if (t1 != t2 && t1.isAssignableFrom(t2)) {
+					outgoing.get(t1).add(t2);
+					incoming.get(t2).add(t1);
 				}
 			}
-			depths[depth].add(t);
 		}
-		return depths;
-	}
 
-	private static void place(final IType t, final GamaTree<IType> hierarchy) {
-		final Map<GamaNode<IType>, Integer> map = hierarchy.mapByDepth(Order.PRE_ORDER);
-		int max = 0;
-		GamaNode<IType> parent = hierarchy.getRoot();
-		for (final GamaNode<IType> current : map.keySet()) {
-			if (current.getData().isAssignableFrom(t) && map.get(current) > max) {
-				max = map.get(current);
-				parent = current;
+		// We traverse the hierarchy beginning with NO_TYPE and browsing through its children to determine which ones
+		// are only its children and which ones are sub-subtypes. The only children of a type are parented and
+		// processed, the others left for further iterations
+		Deque<IType<?>> toProcess = new ArrayDeque<>();
+		toProcess.push(NO_TYPE);
+		while (!toProcess.isEmpty()) {
+			IType parent = toProcess.pop();
+			for (IType t : outgoing.get(parent)) {
+				incoming.get(t).remove(parent);
+				if (incoming.get(t).isEmpty()) {
+					toProcess.push(t);
+					t.setParent(parent);
+					DescriptionFactory.addNewTypeName(t.toString(), t.getVarKind());
+					t.setFieldGetters(GAML.getAllFields(t.toClass()));
+				}
 			}
 		}
-		parent.addChild(t);
 	}
 
+	/** The built in species. */
 	private static List<SpeciesDescription> builtInSpecies;
 
+	/**
+	 * Gets the built in species.
+	 *
+	 * @return the built in species
+	 */
 	public static Collection<? extends SpeciesDescription> getBuiltInSpecies() {
 		if (builtInSpecies != null) return builtInSpecies;
 		final ModelDescription root = ModelDescription.ROOT;
@@ -332,6 +400,13 @@ public class Types {
 
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @param expr2
+	 *            the expr 2
+	 * @return true, if is empty
+	 */
 	public static boolean isEmpty(final IExpression expr2) {
 		switch (expr2.getGamlType().getGamlType().id()) {
 			case IType.LIST:
@@ -347,9 +422,13 @@ public class Types {
 		return false;
 	}
 
+	/**
+	 * Gets the all fields.
+	 *
+	 * @return the all fields
+	 */
 	public static Iterable<OperatorProto> getAllFields() {
-		return Iterables
-				.concat(Iterables.transform(builtInTypes.getAllTypes(), (each) -> each.getFieldGetters().values()));
+		return concat(transform(builtInTypes.getAllTypes(), each -> each.getFieldGetters().values()));
 	}
 
 }

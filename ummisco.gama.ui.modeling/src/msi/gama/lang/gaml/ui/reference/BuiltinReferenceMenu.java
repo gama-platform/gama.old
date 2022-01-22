@@ -6,7 +6,7 @@
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -59,33 +59,21 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		final List<String> skills = new ArrayList<>(GamaSkillRegistry.INSTANCE.getSkillNames());
 		Collections.sort(skills, IGNORE_CASE);
 		m = sub("Skills");
-		for (final String skill : skills) {
-			fillSkillSubmenu(sub(m, skill), skill, false);
-		}
+		for (final String skill : skills) { fillSkillSubmenu(sub(m, skill), skill, false); }
 		final List<String> controls = new ArrayList<>(GamaSkillRegistry.INSTANCE.getArchitectureNames());
 		Collections.sort(controls, IGNORE_CASE);
 		m = sub("Control architectures");
-		for (final String skill : controls) {
-			fillSkillSubmenu(sub(m, skill), skill, true);
-		}
+		for (final String skill : controls) { fillSkillSubmenu(sub(m, skill), skill, true); }
 		final List<String> types = Lists.newArrayList(Types.getTypeNames());
 		types.removeAll(speciesList);
 		Collections.sort(types, IGNORE_CASE);
 		m = sub("Types");
 		final List<String> fileTypes = new ArrayList<>();
-		for (final String type : types) {
-			if (type.contains("_file")) {
-				fileTypes.add(type);
-			}
-		}
+		for (final String type : types) { if (type.contains("_file")) { fileTypes.add(type); } }
 		types.removeAll(fileTypes);
-		for (final String type : types) {
-			fillTypeSubmenu(sub(m, type), type);
-		}
+		for (final String type : types) { fillTypeSubmenu(sub(m, type), type); }
 		m = sub("File types");
-		for (final String type : fileTypes) {
-			fillTypeSubmenu(sub(m, type), type);
-		}
+		for (final String type : fileTypes) { fillTypeSubmenu(sub(m, type), type); }
 	}
 
 	/**
@@ -106,9 +94,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		if (!names.isEmpty()) {
 			Collections.sort(names);
 			title(submenu, "Attributes");
-			for (final String getter : names) {
-				fillProtoSubMenu(sub(submenu, getter), getters.get(getter));
-			}
+			for (final String getter : names) { fillProtoSubMenu(sub(submenu, getter), getters.get(getter)); }
 		}
 	}
 
@@ -138,7 +124,8 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
 			for (final IDescription variable : vars) {
-				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getGamlType() + ")"), variable);
+				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getGamlType() + ")"),
+						variable);
 			}
 		}
 		final List<IDescription> actions = Lists.newArrayList(GamaSkillRegistry.INSTANCE.getActionsForSkill(skill));
@@ -150,7 +137,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 			}
 		}
 		if (isControl) {
-			final List<SymbolProto> controls = new ArrayList<>(AbstractGamlAdditions.getStatementsForSkill(skill));
+			final List<SymbolProto> controls = new ArrayList<>(GAML.getStatementsForSkill(skill));
 			Collections.sort(controls, INamed.COMPARATOR);
 			if (!controls.isEmpty()) {
 				title(submenu, "Control statements");
@@ -182,7 +169,6 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 			}
 
 		});
-		;
 
 	}
 
@@ -265,16 +251,12 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() {
-		return GamaIcons.create("reference.builtin").image();
-	}
+	protected Image getImage() { return GamaIcons.create("reference.builtin").image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
 	 */
 	@Override
-	protected String getTitle() {
-		return "Built-In structures";
-	}
+	protected String getTitle() { return "Built-In structures"; }
 
 }

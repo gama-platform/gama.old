@@ -1,13 +1,12 @@
 /*********************************************************************************************
  *
- * 'ExpressionDescriptionBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * 'ExpressionDescriptionBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (v. 1.8.1)
  *
  * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
@@ -27,10 +26,10 @@ import msi.gama.lang.gaml.gaml.Unary;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.operators.IUnits;
 
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
 
@@ -89,7 +88,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 
 	@Override
 	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
-		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
+		final IExpressionDescription ed = ConstantExpressionDescription.create(IKeyword.TRUE.equals(object.getOp()));
 		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
@@ -99,18 +98,14 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	@Override
 	public IExpressionDescription caseUnitName(final UnitName object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
-		if (IUnits.UNITS_EXPR.containsKey(s)) {
-			return IUnits.UNITS_EXPR.get(s);
-		}
+		if (GAML.UNITS.containsKey(s)) return GAML.UNITS.get(s);
 		return null;
 	}
 
 	@Override
 	public IExpressionDescription caseUnary(final Unary object) {
 		final String op = EGaml.getInstance().getKeyOf(object);
-		if (op.equals("°") || op.equals("#")) {
-			return doSwitch(object.getRight());
-		}
+		if ("°".equals(op) || "#".equals(op)) return doSwitch(object.getRight());
 		return null;
 	}
 
@@ -120,12 +115,10 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	}
 
 	public static IExpressionDescription create(final ISyntacticElement e, final Set<Diagnostic> errors) {
-		final IExpressionDescription ed = new BlockExpressionDescription(e);
-		return ed;
+		return new BlockExpressionDescription(e);
 	}
 
-	public IExpressionDescription create(
-			final EObject expr/* , final Set<Diagnostic> errors */) {
+	public IExpressionDescription create(final EObject expr/* , final Set<Diagnostic> errors */) {
 		try {
 			// setErrors(errors);
 			final IExpressionDescription result = doSwitch(expr);

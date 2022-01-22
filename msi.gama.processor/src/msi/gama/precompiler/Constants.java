@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * Constants.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
@@ -12,7 +22,6 @@ import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
-import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlAnnotations.listener;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -25,17 +34,32 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.doc.DocProcessor;
 import msi.gama.precompiler.tests.TestProcessor;
 
+/**
+ * The Interface Constants.
+ */
 public interface Constants {
 
+	/**
+	 * Capitalize first letter.
+	 *
+	 * @param original the original
+	 * @return the string
+	 */
 	static String capitalizeFirstLetter(final String original) {
 		if (original == null || original.length() == 0) return original;
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
+	/**
+	 * Capitalize all words.
+	 *
+	 * @param str the str
+	 * @return the string
+	 */
 	static String capitalizeAllWords(final String str) {
 		if (str == null || str.length() == 0) return str;
 		final int strLen = str.length();
-		final StringBuffer buffer = new StringBuffer(strLen);
+		final StringBuilder buffer = new StringBuilder(strLen);
 		boolean capitalizeNext = true;
 		for (int i = 0; i < strLen; i++) {
 			final char ch = str.charAt(i);
@@ -53,6 +77,12 @@ public interface Constants {
 
 	}
 
+	/**
+	 * Gets the alphabet order.
+	 *
+	 * @param name the name
+	 * @return the alphabet order
+	 */
 	static String getAlphabetOrder(final String name) {
 		String order = "";
 		final String lastChar = "z";
@@ -64,7 +94,7 @@ public interface Constants {
 			if (i == 0 && name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0
 					|| name.toLowerCase().compareTo(previousChar.toString().toLowerCase()) >= 0
 							&& name.toLowerCase().compareTo(c.toString().toLowerCase()) < 0) {
-				order = previousChar.toString() + ((Character) Character.toChars(c - 1)[0]).toString();
+				order = previousChar.toString() + Character.toString(Character.toChars(c - 1)[0]);
 			}
 		}
 		if ("".equals(order)) {
@@ -74,24 +104,40 @@ public interface Constants {
 		return order;
 	}
 
+	/** The basic skill. */
 	String BASIC_SKILL = "msi.gaml.skills.Skill";
 
+	/** The cutting letters operator doc. */
 	Character[] cuttingLettersOperatorDoc = { 'b', 'd', 'i', 'n', 's' };
 
+	/** The doc sep. */
 	String DOC_SEP = "~";
 
+	/** The ln. */
 	String ln = "\n";
+	
+	/** The tab. */
 	String tab = "\t";
+	
+	/** The in. */
 	String in = ln;
+	
+	/** The boolean. */
 	String IAGENT = "IAgent", IPOPULATION = "IPopulation", ISIMULATION = "ISimulation", ISKILL = "ISkill",
 			ISYMBOL = "ISymbol", IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
 			IEXPRESSION = "IExpression", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
 
-	String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
-			"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
+	/** The explicit imports. */
+	String[] EXPLICIT_IMPORTS = { "msi.gaml.operators.Random", "msi.gaml.operators.Maths", "msi.gaml.operators.Points",
+			"msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
+	/** The ss 1. */
 	List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
+	
+	/** The ss 2. */
 	List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
+	
+	/** The class names. */
 	Map<String, String> CLASS_NAMES = new HashMap<>() {
 		{
 			put("IAgent", "IA");
@@ -132,6 +178,8 @@ public interface Constants {
 
 		}
 	};
+	
+	/** The return when null. */
 	Map<String, String> RETURN_WHEN_NULL = new HashMap<>() {
 		{
 			put(DOUBLE, " 0d");
@@ -140,6 +188,7 @@ public interface Constants {
 		}
 	};
 
+	/** The check prim. */
 	Map<String, String> CHECK_PRIM = new HashMap<>() {
 		{
 			put("int", INTEGER);
@@ -151,32 +200,33 @@ public interface Constants {
 		}
 	};
 
+	/** The package name. */
 	String PACKAGE_NAME = "gaml.additions";
 
-	Map<Class<? extends Annotation>, IProcessor<?>> processors =
-			new LinkedHashMap<>() {
-				{
-					// Order is important
-					put(type.class, new TypeProcessor());
-					// Doc built first, so that test generation can happen subsequently
-					put(doc.class, new DocProcessor());
-					// Then all the processors for specific annotations
+	/** The processors. */
+	Map<Class<? extends Annotation>, IProcessor<?>> processors = new LinkedHashMap<>() {
+		{
+			// Order is important
+			put(type.class, new TypeProcessor());
+			// Doc built first, so that test generation can happen subsequently
+			put(doc.class, new DocProcessor());
+			// Then all the processors for specific annotations
 
-					put(factory.class, new FactoryProcessor());
-					put(species.class, new SpeciesProcessor());
-					put(symbol.class, new SymbolProcessor());
-					put(vars.class, new VarsProcessor());
-					put(listener.class, new ListenerProcessor());
-					put(operator.class, new OperatorProcessor());
-					put(file.class, new FileProcessor());
-					put(action.class, new ActionProcessor());
-					put(skill.class, new SkillProcessor());
-					put(display.class, new DisplayProcessor());
-					put(experiment.class, new ExperimentProcessor());
-					put(constant.class, new ConstantProcessor());
-					// TestProcessor actually processes both @tests and @test annotations
-					put(tests.class, new TestProcessor());
-				}
-			};
+			// put(factory.class, new FactoryProcessor());
+			put(species.class, new SpeciesProcessor());
+			put(symbol.class, new SymbolProcessor());
+			put(vars.class, new VarsProcessor());
+			put(listener.class, new ListenerProcessor());
+			put(operator.class, new OperatorProcessor());
+			put(file.class, new FileProcessor());
+			put(action.class, new ActionProcessor());
+			put(skill.class, new SkillProcessor());
+			put(display.class, new DisplayProcessor());
+			put(experiment.class, new ExperimentProcessor());
+			put(constant.class, new ConstantProcessor());
+			// TestProcessor actually processes both @tests and @test annotations
+			put(tests.class, new TestProcessor());
+		}
+	};
 
 }

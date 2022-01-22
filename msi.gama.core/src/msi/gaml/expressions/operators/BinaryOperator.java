@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.BinaryOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * BinaryOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -16,12 +16,10 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamaGetter;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.expressions.IVarExpression.Agent;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.operators.Cast;
 
@@ -30,15 +28,29 @@ import msi.gaml.operators.Cast;
  */
 public class BinaryOperator extends AbstractNAryOperator {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param proto the proto
+	 * @param context the context
+	 * @param child the child
+	 * @return the i expression
+	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
+		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
 			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
-		}
 		return u;
 	}
 
+	/**
+	 * Instantiates a new binary operator.
+	 *
+	 * @param proto the proto
+	 * @param context the context
+	 * @param args the args
+	 */
 	public BinaryOperator(final OperatorProto proto, final IDescription context, final IExpression... args) {
 		super(proto, args);
 		prototype.verifyExpectedTypes(context, exprs[1].getGamlType());
@@ -48,14 +60,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		final String name = getName();
-		if (name.equals("internal_at")) {
+		if ("internal_at".equals(name)) {
 			// '[' and ']' included
 			sb.append(exprs[0].serialize(includingBuiltIn)).append(exprs[1].serialize(includingBuiltIn));
 		} else if (OperatorProto.binaries.contains(name)) {
 			parenthesize(sb, exprs[0]);
 			sb.append(' ').append(name).append(' ');
 			parenthesize(sb, exprs[1]);
-		} else if (name.equals(IKeyword.AS)) {
+		} else if (IKeyword.AS.equals(name)) {
 			// Special case for the "as" operator
 			sb.append(exprs[1].serialize(false)).append("(").append(exprs[0].serialize(includingBuiltIn)).append(")");
 		} else {
@@ -68,7 +80,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 	@Override
 	public boolean shouldBeParenthesized() {
 		final String s = getName();
-		if (s.equals(".") || s.equals(":")) { return false; }
+		if (".".equals(s) || ":".equals(s)) return false;
 		return OperatorProto.binaries.contains(getName());
 	}
 
@@ -76,9 +88,9 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public Object _value(final IScope scope) throws GamaRuntimeException {
 		Object leftVal = null, rightVal = null;
 		try {
-			leftVal = prototype.lazy[0] ? exprs[0] : exprs[0].value(scope);
-			rightVal = prototype.lazy[1] ? exprs[1] : exprs[1].value(scope);
-			return ((GamaGetter.Binary) prototype.helper).get(scope, leftVal, rightVal);
+			leftVal = prototype.getLazyness()[0] ? exprs[0] : exprs[0].value(scope);
+			rightVal = prototype.getLazyness()[1] ? exprs[1] : exprs[1].value(scope);
+			return prototype.getHelper().get(scope, leftVal, rightVal);
 		} catch (final GamaRuntimeException ge) {
 			throw ge;
 		} catch (final Throwable ex) {
@@ -94,10 +106,22 @@ public class BinaryOperator extends AbstractNAryOperator {
 		return new BinaryOperator(prototype, null, exprs);
 	}
 
+	/**
+	 * The Class BinaryVarOperator.
+	 */
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression.Agent {
 
+		/** The definition description. */
 		IDescription definitionDescription;
 
+		/**
+		 * Instantiates a new binary var operator.
+		 *
+		 * @param proto the proto
+		 * @param context the context
+		 * @param target the target
+		 * @param var the var
+		 */
 		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression target,
 				final IVarExpression var) {
 			super(proto, context, target, var);
@@ -107,29 +131,21 @@ public class BinaryOperator extends AbstractNAryOperator {
 		@Override
 		public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 			final IAgent agent = Cast.asAgent(scope, exprs[0].value(scope));
-			if (agent == null || agent.dead()) { return; }
+			if (agent == null || agent.dead()) return;
 			scope.setAgentVarValue(agent, exprs[1].literalValue(), v);
 		}
 
 		@Override
-		public IExpression getOwner() {
-			return exprs[0];
-		}
+		public IExpression getOwner() { return exprs[0]; }
 
 		@Override
-		public VariableExpression getVar() {
-			return (VariableExpression) exprs[1];
-		}
+		public VariableExpression getVar() { return (VariableExpression) exprs[1]; }
 
 		@Override
-		public IDescription getDefinitionDescription() {
-			return definitionDescription;
-		}
+		public IDescription getDefinitionDescription() { return definitionDescription; }
 
 		@Override
-		public boolean isNotModifiable() {
-			return ((IVarExpression) exprs[1]).isNotModifiable();
-		}
+		public boolean isNotModifiable() { return ((IVarExpression) exprs[1]).isNotModifiable(); }
 
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
@@ -141,9 +157,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		}
 
 		@Override
-		public boolean isContextIndependant() {
-			return false;
-		}
+		public boolean isContextIndependant() { return false; }
 
 		@Override
 		public BinaryVarOperator copy() {

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Popup.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * Popup2.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
-import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -44,11 +43,16 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class Popup2 extends PopupDialog {
 
+	/** The contents. */
 	Composite parent, contents;
 
+	/** The hide. */
 	final Listener hide = event -> hide();
-	final Runnable display = () -> WorkbenchHelper.asyncRun(() -> display());
+	
+	/** The display. */
+	final Runnable display = () -> WorkbenchHelper.asyncRun(this::display);
 
+	/** The mtl. */
 	private final MouseTrackListener mtl = new MouseTrackListener() {
 
 		@Override
@@ -69,8 +73,15 @@ public class Popup2 extends PopupDialog {
 
 	};
 
+	/** The provider. */
 	private final IPopupProvider provider;
 
+	/**
+	 * Instantiates a new popup 2.
+	 *
+	 * @param provider the provider
+	 * @param controls the controls
+	 */
 	/*
 	 *
 	 */
@@ -85,9 +96,7 @@ public class Popup2 extends PopupDialog {
 		parent.addListener(SWT.Hide, hide);
 		parent.addListener(SWT.Dispose, event -> close());
 		for (final Widget c : controls) {
-			if (c == null) {
-				continue;
-			}
+			if (c == null) { continue; }
 			final TypedListener typedListener = new TypedListener(mtl);
 			c.addListener(SWT.MouseEnter, typedListener);
 			c.addListener(SWT.MouseExit, typedListener);
@@ -98,9 +107,7 @@ public class Popup2 extends PopupDialog {
 	@Override
 	protected Control createContents(final Composite parent) {
 		this.parent = parent;
-		if (contents == null) {
-			this.contents = (Composite) super.createDialogArea(parent);
-		}
+		if (contents == null) { this.contents = (Composite) super.createDialogArea(parent); }
 		// We then grab the text and hide if it is null or empty
 		final PopupText s = provider.getPopupText();
 		if (s == null || s.isEmpty()) {
@@ -113,9 +120,7 @@ public class Popup2 extends PopupDialog {
 
 		final int controlsSize = array.length;
 		if (controlsSize > labelsSize) {
-			for (int i = labelsSize; i < controlsSize; i++) {
-				labels.get(i).dispose();
-			}
+			for (int i = labelsSize; i < controlsSize; i++) { labels.get(i).dispose(); }
 		} else if (labelsSize > controlsSize) {
 			for (int i = 0; i < labelsSize - controlsSize; i++) {
 				final Label label = new Label(contents, SWT.NONE);
@@ -129,11 +134,14 @@ public class Popup2 extends PopupDialog {
 			final Label label = (Label) it.next();
 			label.setBackground(color.color());
 			label.setForeground(GamaColors.getTextColorForBackground(color.color()).color());
-			label.setText(GAML.toText(text));
+			label.setText(GamlIdiomsProvider.toText(text));
 		});
 		return contents;
 	}
 
+	/**
+	 * Update contents.
+	 */
 	public void updateContents() {
 		createContents(parent);
 	}
@@ -158,14 +166,10 @@ public class Popup2 extends PopupDialog {
 	protected void setTitleText(final String text) {}
 
 	@Override
-	protected boolean getPersistLocation() {
-		return false;
-	}
+	protected boolean getPersistLocation() { return false; }
 
 	@Override
-	protected boolean getPersistSize() {
-		return false;
-	}
+	protected boolean getPersistSize() { return false; }
 
 	@Override
 	protected void saveDialogBounds(final Shell shell) {}
@@ -173,9 +177,7 @@ public class Popup2 extends PopupDialog {
 	@Override
 	protected Point getDefaultSize() {
 		int width = provider.getPopupWidth();
-		if (width <= 0) {
-			width = SWT.DEFAULT;
-		}
+		if (width <= 0) { width = SWT.DEFAULT; }
 		return getShell().computeSize(width, SWT.DEFAULT, true);
 
 	}
@@ -185,10 +187,16 @@ public class Popup2 extends PopupDialog {
 		return provider.getAbsoluteOrigin();
 	}
 
-	public boolean isVisible() {
-		return getShell() != null && getShell().isVisible();
-	}
+	/**
+	 * Checks if is visible.
+	 *
+	 * @return true, if is visible
+	 */
+	public boolean isVisible() { return getShell() != null && getShell().isVisible(); }
 
+	/**
+	 * Adjust size.
+	 */
 	protected void adjustSize() {
 		final Shell shell = getShell();
 		shell.layout();
@@ -197,6 +205,9 @@ public class Popup2 extends PopupDialog {
 		shell.setSize(getDefaultSize());
 	}
 
+	/**
+	 * Display.
+	 */
 	public void display() {
 		if (getShell() != null && !getShell().isDisposed()) {
 			updateContents();
@@ -207,9 +218,10 @@ public class Popup2 extends PopupDialog {
 		}
 	}
 
+	/**
+	 * Hide.
+	 */
 	public void hide() {
-		if (getShell() != null && !getShell().isDisposed()) {
-			getShell().setVisible(false);
-		}
+		if (getShell() != null && !getShell().isDisposed()) { getShell().setVisible(false); }
 	}
 }
