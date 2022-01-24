@@ -7,9 +7,8 @@ Require-Bundle: msi.gama.core,
  msi.gama.ext,
  msi.gaml.architecture.simplebdi;bundle-version="1.8.2"
 Bundle-ClassPath: .,
- ext/xstream-1.4.8.jar,
- ext/kxml2-2.3.0.jar,
- ext/xmlpull-1.1.3.1.jar
+ ext/mxparser-1.2.2.jar,
+ ext/xstream-1.4.18.jar
 Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.annotations,
  com.thoughtworks.xstream.converters,
