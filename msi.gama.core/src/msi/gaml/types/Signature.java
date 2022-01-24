@@ -9,6 +9,7 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -60,7 +61,9 @@ public class Signature {
 		} else {
 			List<IType<?>> types = new ArrayList();
 			Class[] classes = method.getParameterTypes();
-			if (!Modifier.isStatic(method.getModifiers())) { types.add(Types.get(method.getDeclaringClass())); }
+			boolean isStatic = Modifier.isStatic(method.getModifiers());
+			boolean isConstructor = method instanceof Constructor;
+			if (!isStatic && !isConstructor) { types.add(Types.get(method.getDeclaringClass())); }
 			for (Class c : classes) { if (c != IScope.class) { types.add(Types.get(c)); } }
 			list = types.toArray(new IType[types.size()]);
 		}
