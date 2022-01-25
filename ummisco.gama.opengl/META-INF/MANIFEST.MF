@@ -175,5 +175,5 @@ Bundle-ClassPath: .,
  lib/jogl-all-natives-windows-amd64.jar,
  lib/jogl-all-natives-linux-amd64.jar
 Bundle-Vendor: UMMISCO
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.opengl

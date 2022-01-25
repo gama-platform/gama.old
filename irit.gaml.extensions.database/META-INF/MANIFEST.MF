@@ -12,7 +12,7 @@ Export-Package: irit.gaml.extensions.database.skills,
  msi.gama.database.mdx,
  msi.gama.database.sql
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: msi.gama.database.Activator
 Automatic-Module-Name: irit.gaml.extensions.database
 Bundle-ClassPath: ., lib/olap4j 1.2.0/jars/olap4j-1.2.0.jar,

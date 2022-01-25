@@ -30,6 +30,12 @@
 			<url>http://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
+
+		<pluginRepository>
+			<id>jzy3d-releases</id>
+			<name>Jzy3d Releases</name>
+			<url>https://maven.jzy3d.org/releases/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	
 	
@@ -112,8 +118,8 @@
 		</repository> 
 		-->
 		<repository>
-			<id>eclipse-2103</id>
-			<url>http://download.eclipse.org/releases/2021-03</url>
+			<id>eclipse-2112</id>
+			<url>http://download.eclipse.org/releases/2021-12</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -250,8 +256,8 @@
 		<batik.version>1.7</batik.version>
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
-		<tycho.version>2.4.0</tycho.version>
-		<jdk.version>15</jdk.version>
+		<tycho.version>2.6.0</tycho.version>
+		<jdk.version>17</jdk.version>
 		<project.version>1.8.2-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>14.5</geotools.version>
@@ -365,6 +371,7 @@
 					<useProjectSettings>false</useProjectSettings>
 					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
 					<optimize>true</optimize>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -390,6 +397,7 @@
 					<annotationProcessors>
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
 					</annotationProcessors>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 				<dependencies>
 					<!-- dependency containing the annotation processor specified in the 
@@ -574,6 +582,7 @@
 							<arch>x86_64</arch>
 						</environment>
 					</environments>
+					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 				</configuration>
 			</plugin>
 

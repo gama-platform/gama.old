@@ -8,5 +8,5 @@ Require-Bundle: msi.gama.core,
 Export-Package: msi.gaml.architecture.simplebdi
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gaml.architecture.simplebdi

@@ -19,10 +19,11 @@
 			<url>scp://51.255.46.42/./var/www/gama_updates/1.8.2</url>
 		</snapshotRepository>
 	</distributionManagement>
+
  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<tycho.version>2.4.0</tycho.version>
-	<jdk.version>15</jdk.version>
+	<tycho.version>2.6.0</tycho.version>
+	<jdk.version>17</jdk.version>
   </properties>
 
 	<profiles>

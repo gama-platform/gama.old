@@ -10,5 +10,5 @@ Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gaml.extensions.stats
 Bundle-ClassPath: .,
  lib/colt.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gaml.extensions.stats

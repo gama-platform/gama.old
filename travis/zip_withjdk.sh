@@ -92,23 +92,23 @@ cd ../../../../../../../
 
 
 
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_linux_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_15.tar.gz"
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_windows_openj9_15.*.zip\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_15.zip"
-wget -q $(curl -s https://api.github.com/repos/AdoptOpenJDK/openjdk15-binaries/releases/latest | grep "/OpenJDK15U-jdk_x64_mac_openj9_15.*.gz\"" |  cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_15.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_17.zip"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_17.tar.gz"
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
 
 
 echo "unzip jdk linux"	
-tar -zxf jdk_linux_15.tar.gz -C jdk_linux/
-mv jdk_linux/jdk-15* jdk_linux/jdk
+tar -zxf jdk_linux_17.tar.gz -C jdk_linux/
+mv jdk_linux/jdk-17* jdk_linux/jdk
 echo "unzip jdk osx"	
-tar -zxf jdk_osx_15.tar.gz -C jdk_osx/ 
-mv jdk_osx/jdk-15* jdk_osx/jdk 
+tar -zxf jdk_osx_17.tar.gz -C jdk_osx/ 
+mv jdk_osx/jdk-17* jdk_osx/jdk 
 echo "unzip jdk win"	
-unzip -q jdk_win_15.zip -d jdk_win
-mv jdk_win/jdk-15* jdk_win/jdk 
+unzip -q jdk_win_17.zip -d jdk_win
+mv jdk_win/jdk-17* jdk_win/jdk 
 
 
 
