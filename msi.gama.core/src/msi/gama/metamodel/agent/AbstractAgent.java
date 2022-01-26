@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.AbstractAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * AbstractAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -70,39 +70,41 @@ import msi.gaml.variables.IVariable;
  */
 public abstract class AbstractAgent implements IAgent {
 
+	/** The index. */
 	private final int index;
+	
+	/** The dead. */
 	protected volatile boolean dead = false;
+	
+	/** The dying. */
 	protected volatile boolean dying = false;
 
+	/**
+	 * Instantiates a new abstract agent.
+	 *
+	 * @param index the index
+	 */
 	public AbstractAgent(final int index) {
 		this.index = index;
 	}
 
 	@Override
-	public IAgent getAgent() {
-		return this;
-	}
+	public IAgent getAgent() { return this; }
 
 	@Override
 	public void setAgent(final IAgent agent) {}
 
 	@Override
-	public boolean isPoint() {
-		return getGeometry().isPoint();
-	}
+	public boolean isPoint() { return getGeometry().isPoint(); }
 
 	@Override
-	public boolean isLine() {
-		return getGeometry().isLine();
-	}
+	public boolean isLine() { return getGeometry().isLine(); }
 
 	/**
 	 * @see msi.gama.interfaces.IShape#getInnerGeometry()
 	 */
 	@Override
-	public Geometry getInnerGeometry() {
-		return getGeometry().getInnerGeometry();
-	}
+	public Geometry getInnerGeometry() { return getGeometry().getInnerGeometry(); }
 
 	/**
 	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
@@ -143,12 +145,12 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean intersects(final IShape g) {
 		return getGeometry().intersects(g);
 	}
-	
+
 	@Override
 	public boolean partiallyOverlaps(final IShape g) {
 		return getGeometry().partiallyOverlaps(g);
 	}
-	
+
 	@Override
 	public boolean touches(final IShape g) {
 		return getGeometry().touches(g);
@@ -202,11 +204,6 @@ public abstract class AbstractAgent implements IAgent {
 		return getName();
 	}
 
-	@Override
-	public void setExtraAttributes(final Map<String, Object> map) {
-		if (map == null) return;
-		getOrCreateAttributes().putAll(map);
-	}
 	//
 	// @Override
 	// public GamaMap<String, Object> getAttributes() {
@@ -214,9 +211,7 @@ public abstract class AbstractAgent implements IAgent {
 	// }
 
 	@Override
-	public IMap<String, Object> getOrCreateAttributes() {
-		return getGeometry().getOrCreateAttributes();
-	}
+	public IMap<String, Object> getOrCreateAttributes() { return getGeometry().getOrCreateAttributes(); }
 
 	@Override
 	public boolean hasAttribute(final String key) {
@@ -287,10 +282,22 @@ public abstract class AbstractAgent implements IAgent {
 		return scope.execute(getSpecies().getArchitecture(), this, null).passed() ? stepSubPopulations(scope) : false;
 	}
 
+	/**
+	 * Inits the sub populations.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	protected boolean initSubPopulations(final IScope scope) {
 		return true;
 	}
 
+	/**
+	 * Step sub populations.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	protected boolean stepSubPopulations(final IScope scope) {
 		return true;
 	}
@@ -304,9 +311,7 @@ public abstract class AbstractAgent implements IAgent {
 	protected void postStep(final IScope scope) {}
 
 	@Override
-	public ITopology getTopology() {
-		return getPopulation().getTopology();
-	}
+	public ITopology getTopology() { return getPopulation().getTopology(); }
 
 	@Override
 	public void setPeers(final IList<IAgent> peers) {
@@ -329,17 +334,13 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public String getName() {
-		return getSpeciesName() + getIndex() + (dead() ? " (dead)" : "");
-	}
+	public String getName() { return getSpeciesName() + getIndex() + (dead() ? " (dead)" : ""); }
 
 	@Override
 	public void setName(final String name) {}
 
 	@Override
-	public GamaPoint getLocation() {
-		return getGeometry().getLocation();
-	}
+	public GamaPoint getLocation() { return getGeometry().getLocation(); }
 
 	@Override
 	public GamaPoint setLocation(final GamaPoint l) {
@@ -357,9 +358,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public IMacroAgent getHost() {
-		return getPopulation().getHost();
-	}
+	public IMacroAgent getHost() { return getPopulation().getHost(); }
 
 	@Override
 	public void setHost(final IMacroAgent macroAgent) {}
@@ -370,9 +369,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public final int getIndex() {
-		return index;
-	}
+	public final int getIndex() { return index; }
 
 	// @Override
 	// public final void setIndex(final int index) {
@@ -380,14 +377,10 @@ public abstract class AbstractAgent implements IAgent {
 	// }
 
 	@Override
-	public String getSpeciesName() {
-		return getSpecies().getName();
-	}
+	public String getSpeciesName() { return getSpecies().getName(); }
 
 	@Override
-	public ISpecies getSpecies() {
-		return getPopulation().getSpecies();
-	}
+	public ISpecies getSpecies() { return getPopulation().getSpecies(); }
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
@@ -507,6 +500,13 @@ public abstract class AbstractAgent implements IAgent {
 		return m;
 	}
 
+	/**
+	 * Prim write.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "write",
 			args = { @arg (
@@ -523,6 +523,13 @@ public abstract class AbstractAgent implements IAgent {
 		return s;
 	}
 
+	/**
+	 * Prim error.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = IKeyword.ERROR,
 			args = { @arg (
@@ -535,6 +542,13 @@ public abstract class AbstractAgent implements IAgent {
 		return error;
 	}
 
+	/**
+	 * Prim tell.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "tell",
 			args = { @arg (
@@ -547,6 +561,13 @@ public abstract class AbstractAgent implements IAgent {
 		return s;
 	}
 
+	/**
+	 * Prim die.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "die",
 			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
@@ -560,14 +581,10 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public Type getGeometricalType() {
-		return getGeometry().getGeometricalType();
-	}
+	public Type getGeometricalType() { return getGeometry().getGeometricalType(); }
 
 	@Override
-	public IType<?> getGamlType() {
-		return getScope().getType(getSpeciesName());
-	}
+	public IType<?> getGamlType() { return getScope().getType(getSpeciesName()); }
 
 	/**
 	 * Method get()
@@ -591,6 +608,11 @@ public abstract class AbstractAgent implements IAgent {
 		return get(scope, indices.firstValue(scope));
 	}
 
+	/**
+	 * Sets the defining plugin.
+	 *
+	 * @param plugin the new defining plugin
+	 */
 	public void setDefiningPlugin(final String plugin) {}
 
 	/**

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.CreateFromGeometriesDelegate.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * CreateFromGeometriesDelegate.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -42,9 +42,8 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	public boolean acceptSource(final IScope scope, final Object source) {
 		// THIS CONDITION MUST BE CHECKED : bypass a condition that belong to
 		// the case createFromDatabase
-		if (source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof IList) {
+		if (source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof IList)
 			return false;
-		}
 		return source instanceof IList
 				&& ((IList) source).getGamlType().getContentType().isAssignableFrom(Types.GEOMETRY)
 
@@ -72,7 +71,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);
-			// GIS attributes are mixed with the attributes of agents
+			// GIS attributes are pushed to the scope in order to be read by read/get statements
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
 		}

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GamaSpatialMatrix.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaSpatialMatrix.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -92,33 +92,70 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	/** The geometry of host. */
 
 	public final boolean useIndividualShapes;
+
+	/** The environment frame. */
 	public final IShape environmentFrame;
+
+	/** The use neighbors cache. */
 	public boolean useNeighborsCache = false;
+
+	/** The optimizer. */
 	public String optimizer = "A*"; // possible value: ["BF","Dijkstra", "A*"]
+
+	/** The bounds. */
 	final Envelope bounds;
+
+	/** The precision. */
 	final double precision;
+
+	/** The matrix. */
 	protected IShape[] matrix;
 
+	/** The cell height. */
 	double cellWidth, cellHeight;
+
+	/** The support image pixels. */
 	public int[] supportImagePixels;
+
+	/** The grid value. */
 	public double[] gridValue;
+
+	/** The nb bands. */
 	public int nbBands = 1;
+
+	/** The bands. */
 	public List<IList<Double>> bands = null;
+
+	/** The uses VN. */
 	protected Boolean usesVN = null;
+
+	/** The is torus. */
 	protected Boolean isTorus = null;
+
+	/** The is hexagon. */
 	protected Boolean isHexagon = null;
 
+	/** The is horizontal orientation. */
 	protected Boolean isHorizontalOrientation = null;
+
+	/** The neighborhood. */
 	public INeighborhood neighborhood;
 
+	/** The actual number of cells. */
 	int actualNumberOfCells;
+
+	/** The last cell. */
 	int firstCell, lastCell;
+
+	/** The cell species. */
 	// UnmodifiableIterator<? extends IShape> iterator = null;
 	private ISpecies cellSpecies;
 	// private IAgentFilter cellFilter;
 
+	/** The hex agent to loc. */
 	Map hexAgentToLoc = null;
 
+	/** The reference shape. */
 	final IShape referenceShape;
 
 	@Override
@@ -131,6 +168,30 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		cellSpecies = null;
 	}
 
+	/**
+	 * Instantiates a new gama spatial matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param environment
+	 *            the environment
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param indiv
+	 *            the indiv
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 			final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighborsCache,
 			final String optimizer) throws GamaRuntimeException {
@@ -157,6 +218,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.optimizer = optimizer;
 	}
 
+	/**
+	 * Instantiates a new gama spatial matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param gfile
+	 *            the gfile
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param indiv
+	 *            the indiv
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
 			final boolean indiv, final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
 		super(100, 100, Types.GEOMETRY);
@@ -187,9 +268,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			bands = new ArrayList<>();
 			for (int i = 0; i < size; i++) {
 				IList<Double> bb = GamaListFactory.create(Types.FLOAT);
-				for (int b = 0; b < nbBands; b++) {
-					bb.add(gfile.getBand(scope, b)[i]);
-				}
+				for (int b = 0; b < nbBands; b++) { bb.add(gfile.getBand(scope, b)[i]); }
 				bands.add(bb);
 			}
 		}
@@ -200,6 +279,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		createCells(scope, false);
 	}
 
+	/**
+	 * Instantiates a new gama spatial matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param gfiles
+	 *            the gfiles
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param indiv
+	 *            the indiv
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialMatrix(final IScope scope, final IList<GamaGridFile> gfiles, final boolean isTorus,
 			final boolean usesVN, final boolean indiv, final boolean useNeighborsCache, final String optimizer)
 			throws GamaRuntimeException {
@@ -217,7 +316,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					.toString());
 			envF.add(gfiles.get(j).computeEnvelope(scope));
 		}
-			
+
 		for (int i = 0; i < matrix.length; i++) {
 			final IList vals = GamaListFactory.create(Types.FLOAT);
 			vals.add(gridValue[i]);
@@ -225,8 +324,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final GamaGridFile gfile2 = gfiles.get(j);
 				String taCRS = crsF.get(j - 1);
 				GamaPoint loc = matrix[i].getLocation();
-				
-				if (initCRS != null && taCRS != null ) {
+
+				if (initCRS != null && taCRS != null) {
 					loc = Projections.transform_CRS(scope, loc, taCRS).getLocation();
 				}
 				final Double v = gfile2.valueOf(scope, loc);
@@ -245,6 +344,32 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		createCells(scope, false);
 	}
 
+	/**
+	 * Instantiates a new gama spatial matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param environment
+	 *            the environment
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param isHexagon
+	 *            the is hexagon
+	 * @param horizontalOrientation
+	 *            the horizontal orientation
+	 * @param indiv
+	 *            the indiv
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 */
 	// constructor used to build hexagonal grid (-> useVN = false)
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation,
@@ -281,11 +406,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 	}
 
+	/**
+	 * Creates the matrix.
+	 *
+	 * @param size
+	 *            the size
+	 */
 	private void createMatrix(final int size) {
 		matrix = new IShape[size];
 		gridValue = new double[size];
 	}
 
+	/**
+	 * Creates the hexagons horizontal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param partialCells
+	 *            the partial cells
+	 */
 	private void createHexagonsHorizontal(final IScope scope, final boolean partialCells) {
 		final double widthEnv = environmentFrame.getEnvelope().getWidth();
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
@@ -333,6 +472,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 	}
 
+	/**
+	 * Creates the hexagons vertical.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param partialCells
+	 *            the partial cells
+	 */
 	private void createHexagonsVertical(final IScope scope, final boolean partialCells) {
 		final double widthEnv = environmentFrame.getEnvelope().getWidth();
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
@@ -381,6 +528,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 	}
 
+	/**
+	 * Creates the cells.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param partialCells
+	 *            the partial cells
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	private void createCells(final IScope scope, final boolean partialCells) throws GamaRuntimeException {
 		final boolean isRectangle = environmentFrame.getInnerGeometry().isRectangle();
 		final GamaPoint origin =
@@ -440,14 +597,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public int[] getDisplayData() {
-		return supportImagePixels;
-	}
+	public int[] getDisplayData() { return supportImagePixels; }
 
 	@Override
-	public double[] getGridValue() {
-		return gridValue;
-	}
+	public double[] getGridValue() { return gridValue; }
 
 	@Override
 	public double[] getGridValueOf(final IScope scope, final IExpression exp) {
@@ -463,12 +616,30 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return result;
 	}
 
+	/**
+	 * Gets the grid value.
+	 *
+	 * @param col
+	 *            the col
+	 * @param row
+	 *            the row
+	 * @return the grid value
+	 */
 	public double getGridValue(final int col, final int row) {
 		final int index = getPlaceIndexAt(col, row);
 		if (index != -1) return gridValue[index];
 		return 0.0;
 	}
 
+	/**
+	 * Gets the place index at.
+	 *
+	 * @param xx
+	 *            the xx
+	 * @param yy
+	 *            the yy
+	 * @return the place index at
+	 */
 	final int getPlaceIndexAt(final int xx, final int yy) {
 		if (isHexagon) return yy * numCols + xx;
 		if (isTorus) return (yy < 0 ? yy + numCols : yy) % numRows * numCols + (xx < 0 ? xx + numCols : xx) % numCols;
@@ -477,6 +648,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return yy * numCols + xx;
 	}
 
+	/**
+	 * Gets the place index at.
+	 *
+	 * @param p
+	 *            the p
+	 * @return the place index at
+	 */
 	private final int getPlaceIndexAt(final GamaPoint p) {
 		if (isHexagon) {
 			int xx = 0;
@@ -750,6 +928,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return allPlaces;
 	}
 
+	/**
+	 * Gets the neighbors of.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param shape
+	 *            the shape
+	 * @param distance
+	 *            the distance
+	 * @param filter
+	 *            the filter
+	 * @return the neighbors of
+	 */
 	protected Set<IAgent> getNeighborsOf(final IScope scope, final GamaPoint shape, final Double distance,
 			final IAgentFilter filter) {
 		final Set<IAgent> allPlaces =
@@ -761,6 +952,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return allPlaces;
 	}
 
+	/**
+	 * Test place.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param filter
+	 *            the filter
+	 * @param toTest
+	 *            the to test
+	 * @return the i agent
+	 */
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
 		if (filter.accept(scope, source, toTest)) return toTest.getAgent();
 		ITopology.SpatialRelation rel = filter.getSpecies() != null && toTest.getAgent() != null
@@ -773,6 +977,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return agents.get(0);
 	}
 
+	/**
+	 * Gets the agent closest to.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param filter
+	 *            the filter
+	 * @return the agent closest to
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter)
 			throws GamaRuntimeException {
 		final int currentplace = getPlaceIndexAt(source.getLocation());
@@ -803,6 +1020,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return null;
 	}
 
+	/**
+	 * Gets the neighborhoods.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param cells
+	 *            the cells
+	 * @param currentList
+	 *            the current list
+	 * @return the neighborhoods
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	private List<IAgent> getNeighborhoods(final IScope scope, final IAgent agent, final List<Integer> cells,
 			final List<IAgent> currentList) throws GamaRuntimeException {
 		final List<IAgent> agents = new ArrayList(getNeighborsOf(scope, agent.getLocation(), 1.0, null));
@@ -813,10 +1045,36 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return neighs;
 	}
 
+	/**
+	 * Heuristic.
+	 *
+	 * @param next
+	 *            the next
+	 * @param goal
+	 *            the goal
+	 * @return the double
+	 */
 	double heuristic(final IAgent next, final IAgent goal) {
 		return next.getLocation().euclidianDistanceTo(goal.getLocation());
 	}
 
+	/**
+	 * Compute shortest path between BF.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialPath computeShortestPathBetweenBF(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
 		final int currentplace = getPlaceIndexAt(source.getLocation());
@@ -847,6 +1105,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	}
 
+	/**
+	 * Compute shortest path between dijkstra.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
+	 * @param onWithWeight
+	 *            the on with weight
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialPath computeShortestPathBetweenDijkstra(final IScope scope, final IShape source,
 			final IShape target, final ITopology topo, final IList<IAgent> on, final Map<IAgent, Object> onWithWeight)
 			throws GamaRuntimeException {
@@ -908,6 +1185,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	}
 
+	/**
+	 * Compute shortest path between A star.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
+	 * @param onWithWeight
+	 *            the on with weight
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@SuppressWarnings ("null")
 	public GamaSpatialPath computeShortestPathBetweenAStar(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on, final Map<IAgent, Object> onWithWeight)
@@ -963,6 +1259,23 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	}
 
+	/**
+	 * Compute shortest path between JPS.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public GamaSpatialPath computeShortestPathBetweenJPS(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException {
 
@@ -1011,16 +1324,57 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return null;
 	}
 
+	/**
+	 * Walkable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param open
+	 *            the open
+	 * @return true, if successful
+	 */
 	public boolean walkable(final IScope scope, final int x, final int y, final boolean[] open) {
 		final IAgent n = (IAgent) this.get(scope, x, y);
 		return n != null && open[n.getIndex()];
 	}
 
+	/**
+	 * Notwalkable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param open
+	 *            the open
+	 * @return true, if successful
+	 */
 	public boolean notwalkable(final IScope scope, final int x, final int y, final boolean[] open) {
 		final IAgent n = (IAgent) this.get(scope, x, y);
 		return n == null || !open[n.getIndex()];
 	}
 
+	/**
+	 * Jump.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param node
+	 *            the node
+	 * @param parent
+	 *            the parent
+	 * @param open
+	 *            the open
+	 * @param endAg
+	 *            the end ag
+	 * @return the i agent
+	 */
 	public IAgent jump(final IScope scope, final IAgent node, final IAgent parent, final boolean[] open,
 			final IAgent endAg) {
 		if (node == null || !open[node.getIndex()]) return null;
@@ -1056,6 +1410,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return jump(scope, next, node, open, endAg);
 	}
 
+	/**
+	 * Gets the neighbors prune.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param node
+	 *            the node
+	 * @param parent
+	 *            the parent
+	 * @param open
+	 *            the open
+	 * @return the neighbors prune
+	 */
 	public Set<IAgent> getNeighborsPrune(final IScope scope, final IAgent node, final IAgent parent,
 			final boolean[] open) {
 		if (parent == null) return getNeighborhood().getNeighborsIn(scope, node.getIndex(), 1);
@@ -1138,6 +1505,23 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return computeShortestPathBetweenDijkstra(scope, source, target, topo, null, on);
 	}
 
+	/**
+	 * Simple path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param startAg
+	 *            the start ag
+	 * @param endAg
+	 *            the end ag
+	 * @return the gama spatial path
+	 */
 	private GamaSpatialPath simplePath(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IAgent startAg, final IAgent endAg) {
 		final IList<IShape> nodesPt = GamaListFactory.create(Types.GEOMETRY);
@@ -1146,6 +1530,27 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return PathFactory.newInstance(scope, topo, nodesPt, 0.0);
 	}
 
+	/**
+	 * Final path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param startAg
+	 *            the start ag
+	 * @param agent
+	 *            the agent
+	 * @param cameFrom
+	 *            the came from
+	 * @param on
+	 *            the on
+	 * @return the gama spatial path
+	 */
 	private GamaSpatialPath finalPath(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IAgent startAg, final IAgent agent, final Map<IAgent, IAgent> cameFrom,
 			final Map<IAgent, Object> on) {
@@ -1163,6 +1568,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return PathFactory.newInstance(scope, topo, nodesPt, weight);
 	}
 
+	/**
+	 * Final path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param startAg
+	 *            the start ag
+	 * @param agent
+	 *            the agent
+	 * @param cameFrom
+	 *            the came from
+	 * @return the gama spatial path
+	 */
 	private GamaSpatialPath finalPath(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IAgent startAg, final IAgent agent, final Map<IAgent, IAgent> cameFrom) {
 		IAgent current = agent;
@@ -1179,17 +1603,28 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return PathFactory.newInstance(scope, topo, nodesPt, weight);
 	}
 
+	/**
+	 * Inits the open.
+	 *
+	 * @param open
+	 *            the open
+	 * @param on
+	 *            the on
+	 */
 	private void initOpen(final boolean[] open, final Collection<IAgent> on) {
 		if (on == null) {
 			Arrays.fill(open, true);
 		} else {
 			Arrays.fill(open, false);
-			for (final IAgent ag : on) {
-				open[ag.getIndex()] = true;
-			}
+			for (final IAgent ag : on) { open[ag.getIndex()] = true; }
 		}
 	}
 
+	/**
+	 * New priority queue.
+	 *
+	 * @return the priority queue
+	 */
 	private PriorityQueue newPriorityQueue() {
 		final Comparator<List> comparator = (o1, o2) -> ((Double) o1.get(1)).compareTo((Double) o2.get(1));
 
@@ -1204,39 +1639,32 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public void setCellSpecies(final IPopulation pop) {
-		cellSpecies = pop.getSpecies();
-	}
+	public void setCellSpecies(final IPopulation pop) { cellSpecies = pop.getSpecies(); }
 
 	@Override
-	public ISpecies getCellSpecies() {
-		return cellSpecies;
-	}
+	public ISpecies getCellSpecies() { return cellSpecies; }
 
 	@Override
-	public Boolean isHexagon() {
-		return isHexagon;
-	}
+	public Boolean isHexagon() { return isHexagon; }
 
 	@Override
-	public Boolean isHorizontalOrientation() {
-		return isHorizontalOrientation;
-	}
+	public Boolean isHorizontalOrientation() { return isHorizontalOrientation; }
 
 	@Override
 	public List<IAgent> getAgents() {
 		if (matrix == null) return Collections.EMPTY_LIST;
 		// Later, do return Arrays.asList(matrix);
 		final List<IAgent> agents = GamaListFactory.create(Types.AGENT);
-		for (final IShape element : matrix) {
-			if (element != null) { agents.add(element.getAgent()); }
-		}
+		for (final IShape element : matrix) { if (element != null) { agents.add(element.getAgent()); } }
 		return agents;
 	}
 
-	public Object[] getMatrix() {
-		return matrix;
-	}
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
+	public Object[] getMatrix() { return matrix; }
 
 	@Override
 	public void insert(final IAgent a) {}
@@ -1294,6 +1722,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 	}
 
+	/**
+	 * In envelope.
+	 *
+	 * @param env
+	 *            the env
+	 * @return the sets the
+	 */
 	private Set<IAgent> inEnvelope(final Envelope env) {
 		// TODO Is it really efficient?
 		final Set<IAgent> shapes = new LinkedHashSet();
@@ -1363,9 +1798,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @see msi.gama.metamodel.topology.grid.IGrid#isTorus()
 	 */
 	@Override
-	public boolean isTorus() {
-		return isTorus;
-	}
+	public boolean isTorus() { return isTorus; }
 
 	/**
 	 * Method getEnvironmentFrame()
@@ -1373,12 +1806,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @see msi.gama.metamodel.topology.grid.IGrid#getEnvironmentFrame()
 	 */
 	@Override
-	public IShape getEnvironmentFrame() {
-		return environmentFrame;
-	}
+	public IShape getEnvironmentFrame() { return environmentFrame; }
 
+	/**
+	 * The Class CellProxyGeometry.
+	 */
 	private class CellProxyGeometry extends GamaProxyGeometry {
 
+		/**
+		 * Instantiates a new cell proxy geometry.
+		 *
+		 * @param loc
+		 *            the loc
+		 */
 		public CellProxyGeometry(final GamaPoint loc) {
 			super(loc);
 		}
@@ -1392,9 +1832,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		 * @see msi.gama.metamodel.shape.GamaProxyGeometry#getReferenceGeometry()
 		 */
 		@Override
-		protected IShape getReferenceGeometry() {
-			return referenceShape;
-		}
+		protected IShape getReferenceGeometry() { return referenceShape; }
 
 		@Override
 		public IAgent getAgent() {
@@ -1423,9 +1861,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
 			if (isMultiple()) {
 				final Geometry g = getInnerGeometry();
-				for (int i = 0, n = g.getNumGeometries(); i < n; i++) {
-					result.add(new GamaShape(g.getGeometryN(i)));
-				}
+				for (int i = 0, n = g.getNumGeometries(); i < n; i++) { result.add(new GamaShape(g.getGeometryN(i))); }
 			} else {
 				result.add(this);
 			}
@@ -1439,9 +1875,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 		 */
 		@Override
-		public boolean isMultiple() {
-			return getReferenceGeometry().isMultiple();
-		}
+		public boolean isMultiple() { return getReferenceGeometry().isMultiple(); }
 
 	}
 
@@ -1454,6 +1888,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 */
 	public class GridPopulation<G extends IAgent> extends GamaPopulation<G> {
 
+		/**
+		 * Instantiates a new grid population.
+		 *
+		 * @param t
+		 *            the t
+		 * @param host
+		 *            the host
+		 * @param species
+		 *            the species
+		 */
 		public GridPopulation(final ITopology t, final IMacroAgent host, final ISpecies species) {
 			super(host, species);
 			topology = t;
@@ -1474,17 +1918,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 				final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException {
 
-			createAgents(scope, null, sequence);
+			createAgents(scope, null);
 			for (final Map attr : initialValues) {
 				final IAgent agt = getAgent((Integer) attr.get("grid_x"), (Integer) attr.get("grid_y"));
-				agt.setExtraAttributes(attr);
+				agt.getOrCreateAttributes().putAll(attr);
 			}
 			return (IList) getAgents(scope);
 		}
 
 		@Override
-		public IList<G> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries,
-				final RemoteSequence sequence) {
+		public IList<G> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries) {
 			for (int i = 0; i < actualNumberOfCells; i++) {
 				final IShape s = matrix[i];
 				final Class javaBase = species.getDescription().getJavaBase();
@@ -1523,20 +1966,44 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return GamaExecutorService.step(scope, matrix, getSpecies());
 		}
 
-		public int getNbCols() {
-			return GamaSpatialMatrix.this.numCols;
-		}
+		/**
+		 * Gets the nb cols.
+		 *
+		 * @return the nb cols
+		 */
+		public int getNbCols() { return GamaSpatialMatrix.this.numCols; }
 
-		public int getNbRows() {
-			return GamaSpatialMatrix.this.numRows;
-		}
+		/**
+		 * Gets the nb rows.
+		 *
+		 * @return the nb rows
+		 */
+		public int getNbRows() { return GamaSpatialMatrix.this.numRows; }
 
+		/**
+		 * Gets the agent.
+		 *
+		 * @param col
+		 *            the col
+		 * @param row
+		 *            the row
+		 * @return the agent
+		 */
 		public IAgent getAgent(final Integer col, final Integer row) {
 			if (col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) return null;
 			final IShape s = GamaSpatialMatrix.this.get(null, col, row);
 			return s == null ? null : s.getAgent();
 		}
 
+		/**
+		 * Gets the grid value.
+		 *
+		 * @param col
+		 *            the col
+		 * @param row
+		 *            the row
+		 * @return the grid value
+		 */
 		public Double getGridValue(final Integer col, final Integer row) {
 			if (col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) return 0.0;
 			return GamaSpatialMatrix.this.getGridValue(col, row);
@@ -1550,14 +2017,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public boolean isGrid() {
-			return true;
-		}
+		public boolean isGrid() { return true; }
 
 		@Override
-		public GridTopology getTopology() {
-			return (GridTopology) super.getTopology();
-		}
+		public GridTopology getTopology() { return (GridTopology) super.getTopology(); }
 
 		@Override
 		public void initializeFor(final IScope scope) throws GamaRuntimeException {
@@ -1578,9 +2041,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public void killMembers() throws GamaRuntimeException {
-			for (final IShape a : GamaSpatialMatrix.this.matrix) {
-				if (a != null) { a.dispose(); }
-			}
+			for (final IShape a : GamaSpatialMatrix.this.matrix) { if (a != null) { a.dispose(); } }
 		}
 
 		@Override
@@ -1657,9 +2118,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public boolean isEmpty() {
-			return _isEmpty(null);
-		}
+		public boolean isEmpty() { return _isEmpty(null); }
 
 		@Override
 		public boolean isEmpty(final IScope scope) {
@@ -1692,12 +2151,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return GamaSpatialMatrix.this.matrixValue(scope, type, copy);
 		}
 
+		/**
+		 * The Class GamlGridAgent.
+		 */
 		public class GamlGridAgent extends GamlAgent implements IGridAgent {
 
 			// WARNING HACK TO ACCELERATE SOME OF THE OPERATIONS OF GRIDS
 			// WARNING THE PROBLEM IS THAT THESE AGENTS ARE BREAKING THE
 			// HIERARCHY
 
+			/**
+			 * Instantiates a new gaml grid agent.
+			 *
+			 * @param index
+			 *            the index
+			 */
 			public GamlGridAgent(final int index) {
 				super(GridPopulation.this, index, matrix[index].getGeometry());
 				// setIndex(index);
@@ -1754,9 +2222,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
-			public IPopulation getPopulation() {
-				return GridPopulation.this;
-			}
+			public IPopulation getPopulation() { return GridPopulation.this; }
 
 			@Override
 			public IList<IAgent> getNeighbors(final IScope scope) {
@@ -1765,10 +2231,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		}
 
+		/**
+		 * The Class MinimalGridAgent.
+		 */
 		public class MinimalGridAgent extends AbstractAgent implements IGridAgent {
 
+			/** The geometry. */
 			private final IShape geometry;
 
+			/**
+			 * Instantiates a new minimal grid agent.
+			 *
+			 * @param index
+			 *            the index
+			 */
 			public MinimalGridAgent(final int index) {
 				super(index);
 				geometry = matrix[index].getGeometry();
@@ -1818,14 +2294,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 
 			@Override
-			public IPopulation getPopulation() {
-				return GridPopulation.this;
-			}
+			public IPopulation getPopulation() { return GridPopulation.this; }
 
 			@Override
-			public IShape getGeometry() {
-				return geometry;
-			}
+			public IShape getGeometry() { return geometry; }
 
 			@Override
 			public IList<IAgent> getNeighbors(final IScope scope) {
@@ -1838,9 +2310,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getPoints()
 			 */
 			@Override
-			public IList<GamaPoint> getPoints() {
-				return geometry.getPoints();
-			}
+			public IList<GamaPoint> getPoints() { return geometry.getPoints(); }
 
 			@Override
 			public void setDepth(final double depth) {
@@ -1854,9 +2324,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getArea()
 			 */
 			@Override
-			public Double getArea() {
-				return geometry.getArea();
-			}
+			public Double getArea() { return geometry.getArea(); }
 
 			/**
 			 * Method getVolume()
@@ -1864,9 +2332,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getVolume()
 			 */
 			@Override
-			public Double getVolume() {
-				return geometry.getVolume();
-			}
+			public Double getVolume() { return geometry.getVolume(); }
 
 			/**
 			 * Method getPerimeter()
@@ -1874,9 +2340,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
 			 */
 			@Override
-			public double getPerimeter() {
-				return geometry.getPerimeter();
-			}
+			public double getPerimeter() { return geometry.getPerimeter(); }
 
 			/**
 			 * Method getHoles()
@@ -1884,9 +2348,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getHoles()
 			 */
 			@Override
-			public IList<GamaShape> getHoles() {
-				return geometry.getHoles();
-			}
+			public IList<GamaShape> getHoles() { return geometry.getHoles(); }
 
 			/**
 			 * Method getCentroid()
@@ -1894,9 +2356,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getCentroid()
 			 */
 			@Override
-			public GamaPoint getCentroid() {
-				return geometry.getCentroid();
-			}
+			public GamaPoint getCentroid() { return geometry.getCentroid(); }
 
 			/**
 			 * Method getExteriorRing()
@@ -1914,9 +2374,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getWidth()
 			 */
 			@Override
-			public Double getWidth() {
-				return geometry.getWidth();
-			}
+			public Double getWidth() { return geometry.getWidth(); }
 
 			/**
 			 * Method getHeight()
@@ -1924,9 +2382,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getHeight()
 			 */
 			@Override
-			public Double getHeight() {
-				return geometry.getHeight();
-			}
+			public Double getHeight() { return geometry.getHeight(); }
 
 			/**
 			 * Method getDepth()
@@ -1934,9 +2390,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getDepth()
 			 */
 			@Override
-			public Double getDepth() {
-				return geometry.getDepth();
-			}
+			public Double getDepth() { return geometry.getDepth(); }
 
 			/**
 			 * Method getGeometricEnvelope()
@@ -1944,14 +2398,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 			 */
 			@Override
-			public GamaShape getGeometricEnvelope() {
-				return geometry.getGeometricEnvelope();
-			}
+			public GamaShape getGeometricEnvelope() { return geometry.getGeometricEnvelope(); }
 
 			@Override
-			public IList<? extends IShape> getGeometries() {
-				return geometry.getGeometries();
-			}
+			public IList<? extends IShape> getGeometries() { return geometry.getGeometries(); }
 
 			/**
 			 * Method isMultiple()
@@ -1959,9 +2409,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 			 */
 			@Override
-			public boolean isMultiple() {
-				return geometry.isMultiple();
-			}
+			public boolean isMultiple() { return geometry.isMultiple(); }
 
 			@Override
 			public IList<Double> getBands() {
@@ -2015,9 +2463,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (index == 0) return getFieldData(scope);
 		double[] result = new double[bands.size()];
 		int i = 0;
-		for (List<Double> ll : bands) {
-			result[i++] = ll.get(index);
-		}
+		for (List<Double> ll : bands) { result[i++] = ll.get(index); }
 		return result;
 	}
 

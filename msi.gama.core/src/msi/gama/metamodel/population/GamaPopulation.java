@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaPopulation.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -103,10 +104,14 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Creates the population.
 	 *
-	 * @param <E> the element type
-	 * @param scope the scope
-	 * @param host the host
-	 * @param species the species
+	 * @param <E>
+	 *            the element type
+	 * @param scope
+	 *            the scope
+	 * @param host
+	 *            the host
+	 * @param species
+	 *            the species
 	 * @return the gama population
 	 */
 	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
@@ -128,22 +133,22 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * The object describing how the agents of this population are spatially organized
 	 */
 	protected ITopology topology;
-	
+
 	/** The species. */
 	protected final ISpecies species;
-	
+
 	/** The updatable vars. */
 	protected final IVariable[] orderedVars, updatableVars;
-	
+
 	/** The current agent index. */
 	protected int currentAgentIndex;
-	
+
 	/** The hash code. */
 	private final int hashCode;
-	
+
 	/** The is step overriden. */
 	private final boolean isInitOverriden, isStepOverriden;
-	
+
 	/** The mirror management. */
 	private final MirrorPopulationManagement mirrorManagement;
 
@@ -151,6 +156,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * Listeners, created in a lazy way
 	 */
 	private LinkedList<IPopulation.Listener> listeners = null;
+
+	/** The ordered var names. */
+	private final LinkedHashSet<String> orderedVarNames = new LinkedHashSet<>();
 
 	/** The Constant isLiving. */
 	public final static IPopulation.IsLiving isLiving = new IPopulation.IsLiving();
@@ -166,7 +174,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		/**
 		 * Instantiates a new mirror population management.
 		 *
-		 * @param exp the exp
+		 * @param exp
+		 *            the exp
 		 */
 		MirrorPopulationManagement(final IExpression exp) {
 			listOfTargetAgents = exp;
@@ -200,9 +209,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Try add.
 	 *
-	 * @param graph the graph
-	 * @param v the v
-	 * @param existing the existing
+	 * @param graph
+	 *            the graph
+	 * @param v
+	 *            the v
+	 * @param existing
+	 *            the existing
 	 */
 	private void tryAdd(final DirectedAcyclicGraph<String, Object> graph, final String v, final String existing) {
 		graph.addVertex(v);
@@ -216,9 +228,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Order attributes.
 	 *
-	 * @param ecd the ecd
-	 * @param keep the keep
-	 * @param facetsToConsider the facets to consider
+	 * @param ecd
+	 *            the ecd
+	 * @param keep
+	 *            the keep
+	 * @param facetsToConsider
+	 *            the facets to consider
 	 * @return the i variable[]
 	 */
 	public IVariable[] orderAttributes(final TypeDescription ecd, final Predicate<VariableDescription> keep,
@@ -247,8 +262,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Instantiates a new gama population.
 	 *
-	 * @param host the agent hosting this population which is considered as the direct macro-agent.
-	 * @param species the species
+	 * @param host
+	 *            the agent hosting this population which is considered as the direct macro-agent.
+	 * @param species
+	 *            the species
 	 */
 	public GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(EXPERIMENT)
@@ -257,6 +274,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
 		orderedVars = orderAttributes(ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
+		for (IVariable v : orderedVars) { orderedVarNames.add(v.getName()); }
 		updatableVars = orderAttributes(ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
@@ -296,7 +314,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Step agents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 */
 	protected boolean stepAgents(final IScope scope) {
@@ -404,8 +423,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * @return
 	 */
 	@Override
-	public IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries,
-			final RemoteSequence sequence) {
+	public IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries) {
 		final int number = geometries.length(scope);
 		if (number == 0) return GamaListFactory.EMPTY_LIST;
 		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
@@ -427,9 +445,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		// AD May 2021: adds the execution of the sequence *before* firing listeners (otherwise, improperly initialized
 		// agents were "notified"
 		createVariablesFor(scope, list, EMPTY_LIST);
-		if (sequence != null && !sequence.isEmpty()) {
-			for (final IAgent a : list) { if (!scope.execute(sequence, a, null).passed()) { break; } }
-		}
+		// if (sequence != null && !sequence.isEmpty()) {
+		// for (final IAgent a : list) { if (!scope.execute(sequence, a, null).passed()) { break; } }
+		// }
 		fireAgentsAdded(scope, list);
 		return list;
 
@@ -469,7 +487,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				if (init.containsKey(SHAPE)) {
 					final Object val = init.get(SHAPE);
 					if (val instanceof GamaPoint) {
-						a.setGeometry(new GamaShape((IShape) val));
+						a.setGeometry(new GamaShape((GamaPoint) val));
 					} else {
 						a.setGeometry((IShape) val);
 					}
@@ -505,42 +523,31 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Creates the variables for.
 	 *
-	 * @param scope the scope
-	 * @param agents the agents
-	 * @param initialValues the initial values
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param agents
+	 *            the agents
+	 * @param initialValues
+	 *            the initial values
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public void createVariablesFor(final IScope scope, final List<T> agents,
 			final List<? extends Map<String, Object>> initialValues) throws GamaRuntimeException {
-		createAndUpdateVariablesFor(scope, agents, initialValues, false);
-	}
-
-	/**
-	 * Creates the and update variables for.
-	 *
-	 * @param scope the scope
-	 * @param agents the agents
-	 * @param initialValues the initial values
-	 * @param update the update
-	 * @throws GamaRuntimeException the gama runtime exception
-	 */
-	@SuppressWarnings ("null")
-	public void createAndUpdateVariablesFor(final IScope scope, final List<T> agents,
-			final List<? extends Map<String, Object>> initialValues, final boolean update) throws GamaRuntimeException {
 		if (agents == null || agents.isEmpty()) return;
 		final boolean empty = initialValues == null || initialValues.isEmpty();
 		Map<String, Object> inits;
 		for (int i = 0, n = agents.size(); i < n; i++) {
 			final IAgent a = agents.get(i);
-			if (empty) {
-				inits = EMPTY_MAP;
-			} else {
-				inits = initialValues.get(i);
-			}
+			inits = empty ? EMPTY_MAP : initialValues.get(i);
 			for (final IVariable var : orderedVars) {
 				final Object initGet =
 						empty || !allowVarInitToBeOverridenByExternalInit(var) ? null : inits.get(var.getName());
-				if (!update || initGet != null) { var.initializeWith(scope, a, initGet); }
+				var.initializeWith(scope, a, initGet);
+			}
+			// Added to fix #3266 -- saves the values of the "extra" attributes found in the files
+			if (!empty) {
+				inits.forEach((name, v) -> { if (!orderedVarNames.contains(name)) { a.setAttribute(name, v); } });
 			}
 		}
 	}
@@ -548,8 +555,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Allow var init to be overriden by external init.
 	 *
-	 * @param var the var
+	 * @param var
+	 *            the var
 	 * @return true, if successful
+	 *
 	 */
 	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
 		return true;
@@ -640,9 +649,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Builds the grid topology.
 	 *
-	 * @param scope the scope
-	 * @param species the species
-	 * @param host the host
+	 * @param scope
+	 *            the scope
+	 * @param species
+	 *            the species
+	 * @param host
+	 *            the host
 	 * @return the i topology
 	 */
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
@@ -808,8 +820,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Fire agent added.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
 	 */
 	protected void fireAgentAdded(final IScope scope, final IAgent agent) {
 		if (!hasListeners()) return;
@@ -823,9 +837,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Fire agents added.
 	 *
-	 * @param <T> the generic type
-	 * @param scope the scope
-	 * @param container the container
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param container
+	 *            the container
 	 */
 	protected <T extends IAgent> void fireAgentsAdded(final IScope scope, final IList<T> container) {
 		if (!hasListeners()) return;
@@ -842,8 +859,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Fire agent removed.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
 	 */
 	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
 		if (!hasListeners()) return;
@@ -857,7 +876,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Fire population cleared.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	protected void firePopulationCleared(final IScope scope) {
 		if (!hasListeners()) return;

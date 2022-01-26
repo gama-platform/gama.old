@@ -1,8 +1,17 @@
+/*******************************************************************************************************
+ *
+ * ReferenceAgent.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reference;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -26,11 +35,24 @@ import msi.gama.util.IReference;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
+/**
+ * The Class ReferenceAgent.
+ */
 public class ReferenceAgent implements IReference, IAgent {
 
+	/** The agt attr. */
 	ArrayList<AgentAttribute> agtAttr;
+	
+	/** The attribute value. */
 	ReferenceToAgent attributeValue;
 
+	/**
+	 * Instantiates a new reference agent.
+	 *
+	 * @param _agt the agt
+	 * @param agtAttrName the agt attr name
+	 * @param agtAttrValue the agt attr value
+	 */
 	public ReferenceAgent(final IAgent _agt, final String agtAttrName, final IAgent agtAttrValue) {
 		// super(null,-1);
 		agtAttr = new ArrayList<>();
@@ -39,6 +61,13 @@ public class ReferenceAgent implements IReference, IAgent {
 		attributeValue = new ReferenceToAgent(agtAttrValue);
 	}
 
+	/**
+	 * Instantiates a new reference agent.
+	 *
+	 * @param refAgt the ref agt
+	 * @param attrName the attr name
+	 * @param refAttrValue the ref attr value
+	 */
 	public ReferenceAgent(final IAgent refAgt, final String attrName, final ReferenceToAgent refAttrValue) {
 		// super(null,-1);
 
@@ -47,9 +76,12 @@ public class ReferenceAgent implements IReference, IAgent {
 		attributeValue = refAttrValue;
 	}
 
-	public ReferenceToAgent getAttributeValue() {
-		return attributeValue;
-	}
+	/**
+	 * Gets the attribute value.
+	 *
+	 * @return the attribute value
+	 */
+	public ReferenceToAgent getAttributeValue() { return attributeValue; }
 
 	@Override
 	public Object constructReferencedObject(final SimulationAgent sim) {
@@ -57,16 +89,12 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public ArrayList<AgentAttribute> getAgentAttributes() {
-		return agtAttr;
-	}
+	public ArrayList<AgentAttribute> getAgentAttributes() { return agtAttr; }
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o == this)
-			return true;
-		else
-			return false;
+		if (o == this) return true;
+		return false;
 	}
 
 	@Override
@@ -144,7 +172,6 @@ public class ReferenceAgent implements IReference, IAgent {
 		return false;
 	}
 
-	
 	@Override
 	public boolean partiallyOverlaps(final IShape g) {
 		// TODO Auto-generated method stub
@@ -254,9 +281,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	}
 
 	@Override
-	public IList<GamaPoint> getPoints() {
-		return null;
-	}
+	public IList<GamaPoint> getPoints() { return null; }
 
 	@Override
 	public IList<? extends IShape> getGeometries() {
@@ -415,12 +440,6 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setExtraAttributes(final Map<String, Object> map) {
 		// TODO Auto-generated method stub
 
 	}

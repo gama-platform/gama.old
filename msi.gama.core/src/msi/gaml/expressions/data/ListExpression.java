@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.ListExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ListExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.data;
 
@@ -38,6 +38,12 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class ListExpression extends AbstractExpression implements IOperator {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param elements the elements
+	 * @return the i expression
+	 */
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
 
 		// if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue())
@@ -52,29 +58,55 @@ public class ListExpression extends AbstractExpression implements IOperator {
 		return new ListExpression(elements);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param elements the elements
+	 * @return the i expression
+	 */
 	public static IExpression create(final IExpression... elements) {
 		return new ListExpression(elements);
 	}
 
+	/** The elements. */
 	final IExpression[] elements;
 
 	// private final Object[] values;
 	// private boolean isConst;
 	// private boolean computed;
 
+	/**
+	 * Instantiates a new list expression.
+	 *
+	 * @param elements the elements
+	 */
 	ListExpression(final IExpression... elements) {
 		this.elements = elements;
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
 	}
 
+	/**
+	 * Instantiates a new list expression.
+	 *
+	 * @param elements the elements
+	 */
 	ListExpression(final Iterable<? extends IExpression> elements) {
 		this(Iterables.toArray(elements, IExpression.class));
 	}
 
-	public IExpression[] getElements() {
-		return elements;
-	}
+	/**
+	 * Gets the elements.
+	 *
+	 * @return the elements
+	 */
+	public IExpression[] getElements() { return elements; }
 
+	/**
+	 * Contains value.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	public boolean containsValue(final Object o) {
 		if (o == null) return false;
 		for (final IExpression exp : elements) {
@@ -99,9 +131,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	@Override
 	public IList _value(final IScope scope) throws GamaRuntimeException {
 		final IList<Object> result = GamaListFactory.create(getGamlType().getContentType());
-		for (final IExpression exp : elements) {
-			if (exp != null) { result.add(exp.value(scope)); }
-		}
+		for (final IExpression exp : elements) { if (exp != null) { result.add(exp.value(scope)); } }
 		return result;
 		// if ( isConst && computed ) { return
 		// GamaListFactory.createWithoutCasting(getType().getContentType(),
@@ -126,9 +156,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public boolean isConst() {
-		for (final IExpression expr : elements) {
-			if (!expr.isConst()) return false;
-		}
+		for (final IExpression expr : elements) { if (expr != null && !expr.isConst()) return false; }
 		return true;
 	}
 
@@ -148,9 +176,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String getTitle() {
-		return "literal list of type " + getGamlType().getTitle();
-	}
+	public String getTitle() { return "literal list of type " + getGamlType().getTitle(); }
 
 	@Override
 	public String getDocumentation() {
@@ -160,9 +186,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	/**
 	 * @return
 	 */
-	public boolean isEmpty() {
-		return elements.length == 0;
-	}
+	public boolean isEmpty() { return elements.length == 0; }
 
 	/**
 	 * Method collectPlugins()
@@ -191,17 +215,13 @@ public class ListExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public boolean isContextIndependant() {
-		for (final IExpression e : elements) {
-			if (e != null && !e.isContextIndependant()) return false;
-		}
+		for (final IExpression e : elements) { if (e != null && !e.isContextIndependant()) return false; }
 		return true;
 	}
 
 	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {
-		for (final IExpression e : elements) {
-			if (e instanceof IOperator) { visitor.visit((IOperator) e); }
-		}
+		for (final IExpression e : elements) { if (e instanceof IOperator) { visitor.visit((IOperator) e); } }
 
 	}
 
@@ -212,18 +232,12 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public OperatorProto getPrototype() {
-		return null;
-	}
+	public OperatorProto getPrototype() { return null; }
 
 	@Override
 	public boolean findAny(final Predicate<IExpression> predicate) {
 		if (predicate.test(this)) return true;
-		if (elements != null) {
-			for (final IExpression e : elements) {
-				if (e.findAny(predicate)) return true;
-			}
-		}
+		if (elements != null) { for (final IExpression e : elements) { if (e.findAny(predicate)) return true; } }
 		return false;
 	}
 
