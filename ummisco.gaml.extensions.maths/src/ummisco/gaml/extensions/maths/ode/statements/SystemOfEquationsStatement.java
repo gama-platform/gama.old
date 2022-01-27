@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -373,7 +374,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		if (scope.getAgent() == null) return Collections.EMPTY_SET;
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
-			result = new HashSet();
+			result = new LinkedHashSet<IAgent>();
 			scope.getAgent().setAttribute("__externalAgents", result);
 		}
 		return result;

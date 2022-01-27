@@ -11,7 +11,7 @@
 package simtools.gaml.extensions.traffic.driving;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1113,7 +1113,7 @@ public class DrivingSkill extends MovingSkill {
 			// road node blocking information, which is a map: vehicle -> list of blocked roads
 			Map<IAgent, List<IAgent>> blockInfo = (Map<IAgent, List<IAgent>>)
 				node.getAttribute(RoadNodeSkill.BLOCK);
-			Collection<IAgent> blockingVehicles = new HashSet<>(blockInfo.keySet());
+			Collection<IAgent> blockingVehicles = new LinkedHashSet<>(blockInfo.keySet());
 			// check if any blocking vehicle has moved
 			for (IAgent otherVehicle : blockingVehicles) {
 				if (!otherVehicle.getLocation().equals(node.getLocation())) {
@@ -1593,9 +1593,9 @@ public class DrivingSkill extends MovingSkill {
 
 		// Get all occupying lanes using `lowest_lane` and `num_lanes_occupied`
 		Set<Integer> oldLanes = IntStream.range(currentLowestLane, currentLowestLane + numLanesOccupied)
-				.boxed().collect(Collectors.toCollection(HashSet::new));
+				.boxed().collect(Collectors.toCollection(LinkedHashSet::new));
 		Set<Integer> newLanes = IntStream.range(newLowestLane, newLowestLane + numLanesOccupied)
-				.boxed().collect(Collectors.toCollection(HashSet::new));
+				.boxed().collect(Collectors.toCollection(LinkedHashSet::new));
 
 		IAgent correctRoad = getCurrentRoad(vehicle);
 		int numLanesCorrect = RoadSkill.getNumLanes(correctRoad);

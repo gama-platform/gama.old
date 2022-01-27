@@ -14,7 +14,7 @@ import static msi.gaml.operators.Cast.asFloat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -476,7 +476,7 @@ public class MapComparison {
 
 		final Map<List<Integer>, Map<Double, Double>> XaPerTransition = GamaMapFactory.create();
 		final Map<List<Integer>, Map<Double, Double>> XsPerTransition = GamaMapFactory.create();
-		final Set<Double> Xvals = new HashSet<>();
+		final Set<Double> Xvals = new LinkedHashSet<>();
 		for (int i = 0; i < nbCat; i++) { categoriesId.put(categories.get(i), i); }
 
 		for (int i = 0; i < nbCat; i++) {

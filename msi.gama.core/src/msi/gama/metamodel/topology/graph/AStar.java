@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +131,7 @@ public class AStar<V, E> {
 			openMap.remove(current.node);
 			closedMap.put(current.node, current);
 			final _Vertex<V, E> node = graph.getVertex(current.node);
-			final Set<E> edges = new HashSet<E>(node.getOutEdges());
+			final Set<E> edges = new LinkedHashSet<E>(node.getOutEdges());
 			if (!graph.isDirected()) {
 				edges.addAll(node.getInEdges());
 

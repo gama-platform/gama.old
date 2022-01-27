@@ -15,7 +15,6 @@ import static msi.gama.runtime.concurrent.GamaExecutorService.THREADS_NUMBER;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -324,7 +323,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<String, DefaultEdge> graph, final ISpecies nodeS,
 			final ISpecies edgeS) {
 		this(scope, nodeS == null ? Types.STRING : Types.AGENT, edgeS == null ? Types.STRING : Types.AGENT);
-		Map<String, IAgent> verticesAg = new HashMap();
+		Map<String, IAgent> verticesAg = GamaMapFactory.create();
 		for (Object v : graph.vertexSet()) {
 			if (nodeS == null) {
 				addVertex(v.toString());
@@ -382,7 +381,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<String, DefaultEdge> graph, final IList nodes,
 			final ISpecies edgeS) {
 		this(scope, Types.get(nodes.get(0).getClass()), edgeS == null ? Types.STRING : Types.AGENT);
-		Map<String, Object> verticesAg = new HashMap();
+		Map<String, Object> verticesAg = GamaMapFactory.create();
 		for (Object v : graph.vertexSet()) {
 			Object d = nodes.get(Integer.parseInt(v.toString()));
 			addVertex(d);

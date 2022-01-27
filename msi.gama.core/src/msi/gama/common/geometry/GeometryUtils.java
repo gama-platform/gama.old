@@ -19,7 +19,7 @@ import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -607,7 +607,7 @@ public class GeometryUtils {
 				for (final Object o : cc) {
 					final GamaShape node = (GamaShape) o;
 					final Coordinate[] coordsArr =
-							GeometryUtils.extractPoints(node, new HashSet(Graphs.neighborsOf(scope, graph, node)));
+							GeometryUtils.extractPoints(node, new LinkedHashSet<IShape>(Graphs.neighborsOf(scope, graph, node)));
 					if (coordsArr != null) { network.add(GEOMETRY_FACTORY.createLineString(coordsArr)); }
 				}
 			} else if (cc.size() == 2) {

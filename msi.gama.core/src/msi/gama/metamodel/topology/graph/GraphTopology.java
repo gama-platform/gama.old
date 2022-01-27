@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -539,8 +539,8 @@ public class GraphTopology extends AbstractTopology {
 		IList<IShape> edges = listOfEdges;
 		if (edges.isEmpty() || edges.get(0) == null) { return null; }
 		if (!sourceNode) {
-			Set edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
-			final Set edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+			Set edgesSetInit = new LinkedHashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+			final Set edgesSetS = new LinkedHashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 			if (!edgesSetS.equals(edgesSetInit)) {
 				double l1 = 0;
 				double l2 = 1;
@@ -554,7 +554,7 @@ public class GraphTopology extends AbstractTopology {
 					edges.add(0, edgeS);
 				} else {
 					edges = edgesbis;
-					edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+					edgesSetInit = new LinkedHashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 					if (!edgesSetS.equals(edgesSetInit)) {
 						edges.add(0, edgeS);
 					}
@@ -564,8 +564,8 @@ public class GraphTopology extends AbstractTopology {
 		}
 		if (!targetNode) {
 			final Set edgesSetEnd =
-					new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
-			final Set edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+					new LinkedHashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
+			final Set edgesSetT = new LinkedHashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
 			if (!edgesSetT.equals(edgesSetEnd)) {
 				edges.add(edgeT);
@@ -1005,13 +1005,13 @@ public class GraphTopology extends AbstractTopology {
 				searchVertices = filter.getSpecies() == graph.getVertexSpecies();
 			}
 			if (searchEdges) {
-				final Set<IShape> edgs = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
+				final Set<IShape> edgs = getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<IShape>());
 				for (final IShape ed : edgs) {
 					agents.add(ed.getAgent());
 				}
 				return agents.items();
 			} else if (searchVertices) {
-				final Set<IShape> nds = getNeighborsOfRec(scope, realS, false, distance, graph, new HashSet<IShape>());
+				final Set<IShape> nds = getNeighborsOfRec(scope, realS, false, distance, graph, new LinkedHashSet<IShape>());
 				for (final IShape nd : nds) {
 					agents.add(nd.getAgent());
 				}
@@ -1023,7 +1023,7 @@ public class GraphTopology extends AbstractTopology {
 			} else {
 				agentsTotest = scope.getSimulation().getAgents(scope);
 			}
-			final Set<IShape> edges = getNeighborsOfRec(scope, realS, true, distance, graph, new HashSet<IShape>());
+			final Set<IShape> edges = getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<IShape>());
 			for (final Object ob : agentsTotest.iterable(scope)) {
 				final IShape ag = (IShape) ob;
 				if (filter.accept(scope, source, ag)) {

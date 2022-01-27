@@ -10,8 +10,8 @@
 package msi.gama.util.graph.layout;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -142,7 +142,7 @@ public class LayoutGrid {
 				}
 				remaining.remove(nV);
 				open.add(nV);
-				final Set<IShape> neigh2 = new HashSet<IShape>(Graphs.predecessorsOf(scope, graph, nV));
+				final Set<IShape> neigh2 = new LinkedHashSet<IShape>(Graphs.predecessorsOf(scope, graph, nV));
 				neigh2.addAll(Graphs.successorsOf(scope, graph, nV));
 
 				neigh2.removeAll(close);

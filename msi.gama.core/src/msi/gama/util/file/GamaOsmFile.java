@@ -20,8 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -348,8 +348,8 @@ public class GamaOsmFile extends GamaGisFile {
 		final List<Node> nodes = new ArrayList<>();
 		final List<Way> ways = new ArrayList<>();
 		final List<Relation> relations = new ArrayList<>();
-		final Set<Long> intersectionNodes = new HashSet<>();
-		final Set<Long> usedNodes = new HashSet<>();
+		final Set<Long> intersectionNodes = new LinkedHashSet<>();
+		final Set<Long> usedNodes = new LinkedHashSet<>();
 
 		final Sink sinkImplementation = new Sink() {
 

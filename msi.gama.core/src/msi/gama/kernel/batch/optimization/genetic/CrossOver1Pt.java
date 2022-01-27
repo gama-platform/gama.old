@@ -11,7 +11,7 @@
 
 package msi.gama.kernel.batch.optimization.genetic;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import msi.gama.runtime.IScope;
@@ -22,7 +22,7 @@ public class CrossOver1Pt implements CrossOver {
 
 	@Override
 	public Set<Chromosome> crossOver(final IScope scope, final Chromosome parent1, final Chromosome parent2) {
-		final Set<Chromosome> children = new HashSet<>();
+		final Set<Chromosome> children = new LinkedHashSet<>();
 		final int nbGenes = parent2.getGenes().length;
 		if (nbGenes == 1) { return children; }
 		int cutPt = 0;

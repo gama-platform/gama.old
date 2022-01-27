@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,12 +90,12 @@ public class MulticriteriaAnalyzeOperator {
 	public static void buildCombination(final List<String> criteria, final Set<String> currentSol,
 			final Set<Set<String>> combinations, final int start, final int end, final int index) {
 		if (index == criteria.size()) {
-			combinations.add(new HashSet<>(criteria));
+			combinations.add(new LinkedHashSet<>(criteria));
 			return;
 		}
 
 		for (int i = start; i <= end; i++) {
-			final Set<String> comb = new HashSet<>(currentSol);
+			final Set<String> comb = new LinkedHashSet<>(currentSol);
 			comb.add(criteria.get(i));
 			combinations.add(comb);
 			buildCombination(criteria, comb, combinations, i + 1, end, index + 1);
@@ -119,7 +119,7 @@ public class MulticriteriaAnalyzeOperator {
 		final Map<String, Double> critWeight = new HashMap<>();
 		final Map<Set<String>, Double> weight = new HashMap<>();
 		for (final Object o : criteriaWeights.keySet()) {
-			final Set<String> key = new HashSet<>((List) o);
+			final Set<String> key = new LinkedHashSet<>((List) o);
 			final Double val = Cast.asFloat(scope, criteriaWeights.get(o));
 			if (key.size() == 1) {
 				critWeight.put(new ArrayList<>(key).get(0), val);
@@ -131,8 +131,8 @@ public class MulticriteriaAnalyzeOperator {
 				critWeight.put(crit, 1.0);
 			}
 		}
-		final Set<Set<String>> combinations = new HashSet<>();
-		buildCombination(criteria, new HashSet<>(), combinations, 0, criteria.size() - 1, 0);
+		final Set<Set<String>> combinations = new LinkedHashSet<>();
+		buildCombination(criteria, new LinkedHashSet<>(), combinations, 0, criteria.size() - 1, 0);
 		for (final Set<String> comb : combinations) {
 			if (!weight.containsKey(comb)) {
 				Double tot = 0.0;
@@ -163,7 +163,7 @@ public class MulticriteriaAnalyzeOperator {
 			double utility = prev;
 			for (int i = 1; i < orderedList.size(); i++) {
 				final double val = Cast.asFloat(scope, orderedList.get(i));
-				final Set<String> comb = new HashSet<>();
+				final Set<String> comb = new LinkedHashSet<>();
 				for (int j = i; j < listOfOrder.size(); j++) {
 					comb.add(criteria.get(listOfOrder.indexOf(j)));
 				}

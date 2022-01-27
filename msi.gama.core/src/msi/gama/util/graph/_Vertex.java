@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.jgrapht.util.ArrayUnenforcedSet;
@@ -84,7 +84,7 @@ public class _Vertex<E, V> extends GraphObject<GamaGraph<E, V>, E, V> {
 	}
 
 	public Set getEdges() {
-		final Set result = new HashSet(inEdges);
+		final Set result = new LinkedHashSet<>(inEdges);
 		result.addAll(outEdges);
 		return result;
 	}

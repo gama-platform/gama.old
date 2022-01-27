@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7030,7 +7030,7 @@ public abstract class Spatial {
 				final IList g1 = groups.get(i);
 				for (int j = i + 1; j < nb; j++) {
 					final IList g2 = groups.get(j);
-					final Set<IList> distGp = new HashSet<>();
+					final Set<IList> distGp = new LinkedHashSet<>();
 					distGp.add(g1);
 					distGp.add(g2);
 					final IAgent a = (IAgent) g1.get(0);
@@ -7060,7 +7060,7 @@ public abstract class Spatial {
 				groupeF.add(g1);
 
 				for (final IList groupe : groups) {
-					final Set<IList> newDistGp = new HashSet<>();
+					final Set<IList> newDistGp = new LinkedHashSet<>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;

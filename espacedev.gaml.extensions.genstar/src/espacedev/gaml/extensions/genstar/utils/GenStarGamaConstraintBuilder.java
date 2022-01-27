@@ -2,7 +2,7 @@ package espacedev.gaml.extensions.genstar.utils;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
 import core.metamodel.entity.AGeoEntity;
@@ -51,7 +51,7 @@ public class GenStarGamaConstraintBuilder {
 	private double distanceStep;
 	private int distancePriority;
 	
-	public GenStarGamaConstraintBuilder() { this.constraints = new HashSet<>(); }
+	public GenStarGamaConstraintBuilder() { this.constraints = new LinkedHashSet<>(); }
 	
 	/**
 	 * Get the constraints that have been setup to be created by this builder
@@ -77,7 +77,7 @@ public class GenStarGamaConstraintBuilder {
 	 */
 	public Collection<ISpatialConstraint> buildConstraints(Collection<? extends AGeoEntity<? extends IValue>> nests) throws IllegalStateException {
 		if(!hasConstraints()) { throw new IllegalStateException("You must have at least one constraint setup to use the builder"); }
-		Collection<ISpatialConstraint> buildConstraints = new HashSet<>();
+		Collection<ISpatialConstraint> buildConstraints = new LinkedHashSet<>();
 		for(SpatialConstraint sc : this.constraints) {
 			switch(sc) {
 			case DENSITY:
