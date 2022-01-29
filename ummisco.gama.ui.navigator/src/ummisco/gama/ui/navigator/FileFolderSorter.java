@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FileFolderSorter.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * FileFolderSorter.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
 import java.text.Collator;
@@ -24,12 +23,24 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.WrappedContainer;
 
+/**
+ * The Class FileFolderSorter.
+ */
 public class FileFolderSorter extends ViewerComparator {
 
+	/** The by date. */
 	public static boolean BY_DATE = false;
 
+	/**
+	 * Instantiates a new file folder sorter.
+	 */
 	public FileFolderSorter() {}
 
+	/**
+	 * Instantiates a new file folder sorter.
+	 *
+	 * @param collator the collator
+	 */
 	public FileFolderSorter(final Collator collator) { // NO_UCD (unused code)
 		super(collator);
 	}
@@ -60,6 +71,12 @@ public class FileFolderSorter extends ViewerComparator {
 		}
 	}
 
+	/**
+	 * Gets the date.
+	 *
+	 * @param e the e
+	 * @return the date
+	 */
 	private Long getDate(final Object e) {
 		final IResource r = ResourceManager.getResource(e);
 		if (r != null) {
@@ -69,6 +86,13 @@ public class FileFolderSorter extends ViewerComparator {
 		}
 	}
 
+	/**
+	 * Gets the label.
+	 *
+	 * @param viewer the viewer
+	 * @param e1 the e 1
+	 * @return the label
+	 */
 	private String getLabel(final Viewer viewer, final Object e1) {
 		String name1;
 		if (viewer == null || !(viewer instanceof ContentViewer)) {

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ColorReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ColorReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
 import org.eclipse.swt.events.SelectionAdapter;
@@ -34,13 +33,16 @@ import ummisco.gama.ui.resources.GamaIcons;
  */
 public class ColorReferenceMenu extends GamlReferenceMenu {
 
+	/** The color menu. */
 	GamaColorMenu colorMenu;
 
+	/** The runnable. */
 	IColorRunnable runnable = (r, g, b) -> {
 		final GamaColor c = new GamaColor(r, g, b, 255);
 		applyText(c.serialize(true));
 	};
 
+	/** The color inserter. */
 	final SelectionListener colorInserter = new SelectionAdapter() {
 
 		@Override

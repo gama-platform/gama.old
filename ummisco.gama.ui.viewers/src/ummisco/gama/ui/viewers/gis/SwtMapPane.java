@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SwtMapPane.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * SwtMapPane.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis;
 
 import java.awt.Graphics2D;
@@ -76,6 +75,7 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 public class SwtMapPane extends Canvas
 		implements Listener, MapLayerListListener, MapBoundsListener, MouseListener, MouseMoveListener {
 
+	/** The Constant PALETTE_DATA. */
 	private static final PaletteData PALETTE_DATA = new PaletteData(0xFF0000, 0xFF00, 0xFF);
 
 	/** RGB value to use as transparent color */
@@ -86,33 +86,72 @@ public class SwtMapPane extends Canvas
 	 */
 	private ReferencedEnvelope fullExtent;
 
+	/** The content. */
 	MapContent content;
+	
+	/** The renderer. */
 	private GTRenderer renderer;
+	
+	/** The layer table. */
 	private MapLayerComposite layerTable;
+	
+	/** The world to screen. */
 	private AffineTransform worldToScreen;
+	
+	/** The screen to world. */
 	private AffineTransform screenToWorld;
+	
+	/** The cur paint area. */
 	Rectangle curPaintArea;
+	
+	/** The base image. */
 	private BufferedImage baseImage;
+	
+	/** The image origin. */
 	private final Point imageOrigin;
+	
+	/** The redraw base image. */
 	private boolean redrawBaseImage;
 
 	/**
 	 * swt image used to draw
 	 */
 	private Image swtImage;
+	
+	/** The gc. */
 	private GC gc;
+	
+	/** The mouse down. */
 	private boolean mouseDown = false;
+	
+	/** The start X. */
 	private int startX;
+	
+	/** The start Y. */
 	private int startY;
+	
+	/** The end X. */
 	private int endX;
+	
+	/** The end Y. */
 	private int endY;
+	
+	/** The is dragging. */
 	private boolean isDragging = false;
+	
+	/** The pane pos. */
 	private final org.eclipse.swt.graphics.Point panePos = new org.eclipse.swt.graphics.Point(0, 0);
+	
+	/** The panning. */
 	boolean panning;
 
+	/** The alpha. */
 	private int alpha = 255;
 
+	/** The white. */
 	private final Color white;
+	
+	/** The yellow. */
 	private final Color yellow;
 
 	/**
@@ -293,6 +332,11 @@ public class SwtMapPane extends Canvas
 		return aoi;
 	}
 
+	/**
+	 * Sets the crs.
+	 *
+	 * @param crs the new crs
+	 */
 	public void setCrs(final CoordinateReferenceSystem crs) {
 		try {
 			final ReferencedEnvelope rEnv = getDisplayArea();
@@ -645,6 +689,11 @@ public class SwtMapPane extends Canvas
 		}
 	}
 
+	/**
+	 * World envelope.
+	 *
+	 * @return the referenced envelope
+	 */
 	private ReferencedEnvelope worldEnvelope() {
 		return new ReferencedEnvelope(-180, 180, -90, 90, DefaultGeographicCRS.WGS84);
 	}
@@ -658,6 +707,11 @@ public class SwtMapPane extends Canvas
 		screenToWorld = null;
 	}
 
+	/**
+	 * Gets the visible rect.
+	 *
+	 * @return the visible rect
+	 */
 	public Rectangle getVisibleRect() {
 		return getClientArea();
 	}
@@ -765,6 +819,11 @@ public class SwtMapPane extends Canvas
 		}
 	}
 
+	/**
+	 * Draw final image.
+	 *
+	 * @param swtImage the swt image
+	 */
 	private void drawFinalImage(final Image swtImage) {
 		final Image tmpImage = new Image(getDisplay(), curPaintArea.width, curPaintArea.height);
 		final GC tmpGc = new GC(tmpImage);

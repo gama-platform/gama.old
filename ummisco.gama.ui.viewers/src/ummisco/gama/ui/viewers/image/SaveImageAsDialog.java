@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SaveImageAsDialog.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * SaveImageAsDialog.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.image;
 
 import org.eclipse.core.resources.IFile;
@@ -32,14 +31,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 class SaveImageAsDialog extends SaveAsDialog2 {
 
+	/** The image types. */
 	// These 3 arrays need to stay in sync
 	static int[] IMAGE_TYPES =
 			{ SWT.IMAGE_PNG, SWT.IMAGE_GIF, SWT.IMAGE_JPEG, SWT.IMAGE_BMP, SWT.IMAGE_ICO, SWT.IMAGE_TIFF };
 
+	/** The image labels. */
 	static String[] IMAGE_LABELS = { "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
 			"JPEG (Joint Photographic Experts Group)", "BMP (Bitmap)", "ICO (Icon File)",
 			"TIFF (Tagged Image File Format)" };
 
+	/** The image exts. */
 	static String[] IMAGE_EXTS = { "png", //$NON-NLS-1$
 			"gif", //$NON-NLS-1$
 			"jpg", //$NON-NLS-1$
@@ -58,8 +60,14 @@ class SaveImageAsDialog extends SaveAsDialog2 {
 	 */
 	private int selectedImageTypeIndex = -1;
 
+	/** The image type combo. */
 	Combo imageTypeCombo;
 
+	/**
+	 * Instantiates a new save image as dialog.
+	 *
+	 * @param parentShell the parent shell
+	 */
 	public SaveImageAsDialog(final Shell parentShell) {
 		super(parentShell);
 	}

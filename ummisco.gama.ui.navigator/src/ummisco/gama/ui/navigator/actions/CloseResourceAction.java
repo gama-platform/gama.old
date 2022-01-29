@@ -1,11 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation Andrey Loskutov <loskutov@gmx.de> - Bug 41431, 462760,
- * 461786
- *******************************************************************************/
+ * CloseResourceAction.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CloseResourceAction"; //$NON-NLS-1$
 
+	/** The model provider ids. */
 	private String[] modelProviderIds;
 
 	/**
@@ -78,6 +81,9 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		initAction();
 	}
 
+	/**
+	 * Inits the action.
+	 */
 	private void initAction() {
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
@@ -263,6 +269,11 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
 	}
 
+	/**
+	 * Gets the active window.
+	 *
+	 * @return the active window
+	 */
 	static IWorkbenchWindow getActiveWindow() {
 		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (w == null) {
@@ -274,6 +285,14 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return w;
 	}
 
+	/**
+	 * Gets the matching editors.
+	 *
+	 * @param resourceRoots the resource roots
+	 * @param w the w
+	 * @param deletedOnly the deleted only
+	 * @return the matching editors
+	 */
 	static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
 			final IWorkbenchWindow w, final boolean deletedOnly) {
 		final List<IEditorReference> toClose = new ArrayList<>();
@@ -291,6 +310,12 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return toClose;
 	}
 
+	/**
+	 * Gets the editors.
+	 *
+	 * @param w the w
+	 * @return the editors
+	 */
 	static IEditorReference[] getEditors(final IWorkbenchWindow w) {
 		if (w != null) {
 			final IWorkbenchPage page = w.getActivePage();
@@ -299,6 +324,12 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return new IEditorReference[0];
 	}
 
+	/**
+	 * Gets the adapter.
+	 *
+	 * @param ref the ref
+	 * @return the adapter
+	 */
 	static IResource getAdapter(final IEditorReference ref) {
 		IEditorInput input;
 		try {
@@ -318,6 +349,14 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return getAdapter(input, IResource.class);
 	}
 
+	/**
+	 * Gets the adapter.
+	 *
+	 * @param <T> the generic type
+	 * @param sourceObject the source object
+	 * @param adapterType the adapter type
+	 * @return the adapter
+	 */
 	public final static <T> T getAdapter(final Object sourceObject, final Class<T> adapterType) {
 		Assert.isNotNull(adapterType);
 		if (sourceObject == null) { return null; }
@@ -342,6 +381,13 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return null;
 	}
 
+	/**
+	 * Belongs to.
+	 *
+	 * @param roots the roots
+	 * @param leaf the leaf
+	 * @return true, if successful
+	 */
 	static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
 		for (final IResource resource : roots) {
 			if (resource.contains(leaf)) { return true; }
@@ -349,6 +395,12 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 		return false;
 	}
 
+	/**
+	 * Close editors.
+	 *
+	 * @param toClose the to close
+	 * @param w the w
+	 */
 	static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
 		final IWorkbenchPage page = w.getActivePage();
 		if (page == null) { return; }

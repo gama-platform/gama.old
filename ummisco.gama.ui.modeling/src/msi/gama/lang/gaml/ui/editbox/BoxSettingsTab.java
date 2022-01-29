@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxSettingsTab.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BoxSettingsTab.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.io.FileInputStream;
@@ -36,49 +35,134 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 
+/**
+ * The Class BoxSettingsTab.
+ */
 public class BoxSettingsTab {
 
+	/** The provider. */
 	protected IBoxProvider provider;
+	
+	/** The store. */
 	protected IBoxSettingsStore store;
+	
+	/** The settings. */
 	protected IBoxSettings settings;
+	
+	/** The decorator. */
 	protected IBoxDecorator decorator;
 
+	/** The enabled. */
 	Button enabled;
+	
+	/** The combo. */
 	Combo combo;
+	
+	/** The border width. */
 	Combo borderWidth;
+	
+	/** The round box. */
 	Button roundBox;
+	
+	/** The highlight width. */
 	Combo highlightWidth;
+	
+	/** The highlight one. */
 	Button highlightOne;
+	
+	/** The fill selected color. */
 	ColorSelector fillSelectedColor;
+	
+	/** The fill selected. */
 	Button fillSelected;
+	
+	/** The builder combo. */
 	Combo builderCombo;
+	
+	/** The from color lab. */
 	ColorSelector fromColorLab;
+	
+	/** The to color lab. */
 	ColorSelector toColorLab;
+	
+	/** The st. */
 	StyledText st;
+	
+	/** The bordert draw line. */
 	Button bordertDrawLine;
+	
+	/** The highlight draw line. */
 	Button highlightDrawLine;
+	
+	/** The fill gradient. */
 	Button fillGradient;
+	
+	/** The fill gradient color. */
 	ColorSelector fillGradientColor;
+	
+	/** The fill on move. */
 	Button fillOnMove;
+	
+	/** The circulate colors. */
 	Button circulateColors;
+	
+	/** The levels. */
 	Combo levels;
+	
+	/** The fill key. */
 	Combo fillKey;
+	
+	/** The changed. */
 	protected boolean changed;
+	
+	/** The composite. */
 	Composite composite;
+	
+	/** The border color selector. */
 	ColorSelector borderColorSelector;
+	
+	/** The border color type. */
 	Combo borderColorType;
+	
+	/** The highlight color type. */
 	Combo highlightColorType;
+	
+	/** The highlight color selector. */
 	ColorSelector highlightColorSelector;
+	
+	/** The gen gradient but. */
 	Button genGradientBut;
+	
+	/** The border line style. */
 	Combo borderLineStyle;
+	
+	/** The highlight line style. */
 	Combo highlightLineStyle;
+	
+	/** The no background. */
 	Button noBackground;
+	
+	/** The eol box. */
 	Button eolBox;
+	
+	/** The scale. */
 	Scale scale;
+	
+	/** The spinner. */
 	Spinner spinner;
 
+	/**
+	 * Instantiates a new box settings tab.
+	 */
 	public BoxSettingsTab() {}
 
+	/**
+	 * Creates the contro.
+	 *
+	 * @param parent the parent
+	 * @param provider0 the provider 0
+	 * @return the control
+	 */
 	public Control createContro(final Composite parent, final IBoxProvider provider0) {
 		provider = provider0;
 		if (provider == null) {
@@ -107,6 +191,12 @@ public class BoxSettingsTab {
 		return result;
 	}
 
+	/**
+	 * Creates the contents 0.
+	 *
+	 * @param parent the parent
+	 * @return the control
+	 */
 	protected Control createContents0(final Composite parent) {
 		final int N = 6;
 		final Composite c = new Composite(parent, SWT.NONE);
@@ -586,11 +676,24 @@ public class BoxSettingsTab {
 		return c;
 	}
 
+	/**
+	 * Gets the shell.
+	 *
+	 * @return the shell
+	 */
 	protected Shell getShell() {
 		if (composite != null) { return composite.getShell(); }
 		return null;
 	}
 
+	/**
+	 * New combo.
+	 *
+	 * @param c the c
+	 * @param items the items
+	 * @param listener the listener
+	 * @return the combo
+	 */
 	protected Combo newCombo(final Composite c, final String[] items, final SelectionListener listener) {
 		final Combo combo1 = new Combo(c, SWT.READ_ONLY);
 		combo1.setItems(items);
@@ -598,6 +701,14 @@ public class BoxSettingsTab {
 		return combo1;
 	}
 
+	/**
+	 * New button.
+	 *
+	 * @param c the c
+	 * @param name the name
+	 * @param selectionAdapter the selection adapter
+	 * @return the button
+	 */
 	protected Button newButton(final Composite c, final String name, final SelectionAdapter selectionAdapter) {
 		final Button b = new Button(c, SWT.NONE);
 		b.setText(name);
@@ -605,6 +716,13 @@ public class BoxSettingsTab {
 		return b;
 	}
 
+	/**
+	 * New label.
+	 *
+	 * @param c the c
+	 * @param msg the msg
+	 * @return the label
+	 */
 	protected Label newLabel(final Composite c, final String msg) {
 		final Label l = new Label(c, SWT.NONE);
 		l.setText(msg);
@@ -615,6 +733,9 @@ public class BoxSettingsTab {
 		return l;
 	}
 
+	/**
+	 * Update contents.
+	 */
 	protected void updateContents() {
 		enabled.setSelection(settings.getEnabled());
 		combo.setItems(store.getCatalog().toArray(new String[0]));
@@ -670,6 +791,9 @@ public class BoxSettingsTab {
 		scale.setSelection(settings.getAlpha() * 100 / 255);
 	}
 
+	/**
+	 * Update from to colors.
+	 */
 	private void updateFromToColors() {
 		final Color[] c = settings.getColors();
 		if (c != null && c.length > 1) {
@@ -680,6 +804,12 @@ public class BoxSettingsTab {
 		}
 	}
 
+	/**
+	 * Update background.
+	 *
+	 * @param ctrl the ctrl
+	 * @param c the c
+	 */
 	protected void updateBackground(final ColorSelector ctrl, final Color c) {
 		if (c == null) {
 			genGradientBut.setEnabled(false);
@@ -688,12 +818,21 @@ public class BoxSettingsTab {
 		}
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		if (settings != null) {
 			settings.dispose();
 		}
 	}
 
+	/**
+	 * Rgb gradient.
+	 *
+	 * @param c the c
+	 * @return the RG b[]
+	 */
 	RGB[] rgbGradient(final Color[] c) {
 		final int n = c.length - 1;
 		final RGB c1 = fromColorLab.getColorValue();
@@ -711,6 +850,12 @@ public class BoxSettingsTab {
 		return gradient;
 	}
 
+	/**
+	 * Generate indent text.
+	 *
+	 * @param n the n
+	 * @return the string
+	 */
 	String generateIndentText(final int n) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < n; i++) {
@@ -723,20 +868,38 @@ public class BoxSettingsTab {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the provider.
+	 *
+	 * @return the provider
+	 */
 	public IBoxProvider getProvider() {
 		return provider;
 	}
 
+	/**
+	 * Gets the settings.
+	 *
+	 * @return the settings
+	 */
 	public IBoxSettings getSettings() {
 		return settings;
 	}
 
+	/**
+	 * Validate.
+	 *
+	 * @return the string
+	 */
 	public String validate() {
 		settings.setName(combo.getText());
 		if (settings.getName() == null || settings.getName().length() == 0) { return "Enter configuration name"; }
 		return null;
 	}
 
+	/**
+	 * Save.
+	 */
 	public void save() {
 		if (changed) {
 			store.saveDefaults(settings);
@@ -744,6 +907,9 @@ public class BoxSettingsTab {
 		}
 	}
 
+	/**
+	 * Cancel.
+	 */
 	public void cancel() {
 		if (changed) {
 			store.loadDefaults(provider.getEditorsBoxSettings());

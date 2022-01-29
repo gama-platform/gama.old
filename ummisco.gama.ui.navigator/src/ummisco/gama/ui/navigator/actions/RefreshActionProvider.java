@@ -1,10 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * RefreshActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
 
@@ -20,11 +23,18 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 import ummisco.gama.ui.resources.GamaIcons;
 
+/**
+ * The Class RefreshActionProvider.
+ */
 public class RefreshActionProvider extends CommonActionProvider {
 
+	/** The refresh action. */
 	private RefreshAction refreshAction;
+	
+	/** The run all tests action. */
 	private RunAllTestsAction runAllTestsAction;
 
+	/** The shell. */
 	private Shell shell;
 
 	@Override
@@ -50,6 +60,9 @@ public class RefreshActionProvider extends CommonActionProvider {
 		menu.appendToGroup("group.refresh", refreshAction);
 	}
 
+	/**
+	 * Make actions.
+	 */
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		refreshAction = new RefreshAction(sp);

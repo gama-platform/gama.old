@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'CSVRow.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * CSVRow.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class CSVRow {
 	/** track of commented line */
 	private boolean isCommentLine;
 
+	/** The is header. */
 	private boolean isHeader;
 
 	/**
@@ -134,22 +134,47 @@ public class CSVRow {
 		entries.remove(index);
 	}
 
+	/**
+	 * Sets the comment line.
+	 *
+	 * @param comment the new comment line
+	 */
 	public void setCommentLine(final boolean comment) {
 		isCommentLine = comment;
 	}
 
+	/**
+	 * Checks if is comment line.
+	 *
+	 * @return true, if is comment line
+	 */
 	public boolean isCommentLine() {
 		return isCommentLine;
 	}
 
+	/**
+	 * Sets the header.
+	 *
+	 * @param header the new header
+	 */
 	public void setHeader(final boolean header) {
 		isHeader = header;
 	}
 
+	/**
+	 * Checks if is header.
+	 *
+	 * @return true, if is header
+	 */
 	public boolean isHeader() {
 		return isHeader;
 	}
 
+	/**
+	 * Gets the comment.
+	 *
+	 * @return the comment
+	 */
 	public String getComment() {
 		return entries.get(0).substring(1);
 	}

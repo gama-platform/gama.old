@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SimulationStateProvider.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * SimulationStateProvider.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import java.util.HashMap;
@@ -23,12 +21,21 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.ISimulationStateProvider;
 
+/**
+ * The Class SimulationStateProvider.
+ */
 public class SimulationStateProvider extends AbstractSourceProvider implements ISimulationStateProvider {
 
+	/** The Constant SIMULATION_RUNNING_STATE. */
 	public final static String SIMULATION_RUNNING_STATE = "ummisco.gama.ui.experiment.SimulationRunningState";
+	
+	/** The Constant SIMULATION_TYPE. */
 	public final static String SIMULATION_TYPE = "ummisco.gama.ui.experiment.SimulationType";
+	
+	/** The Constant SIMULATION_STEPBACK. */
 	public final static String SIMULATION_STEPBACK = "ummisco.gama.ui.experiment.SimulationStepBack";
 
+	/** The Constant map. */
 	private final static Map<String, String> map = new HashMap<>(3);
 
 	@Override

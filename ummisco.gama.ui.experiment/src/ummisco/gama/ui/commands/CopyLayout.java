@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.ui.commands.CopyLayout.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * CopyLayout.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -19,6 +19,9 @@ import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class CopyLayout.
+ */
 public class CopyLayout extends AbstractHandler {
 
 	@Override

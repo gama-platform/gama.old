@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamlActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -11,11 +21,20 @@ import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 
+/**
+ * The Class GamlActionProvider.
+ */
 public class GamlActionProvider extends CommonActionProvider {
 
+	/** The selection. */
 	WrappedSyntacticContent selection;
+	
+	/** The reveal action. */
 	SelectionListenerAction runAction, revealAction;
 
+	/**
+	 * Instantiates a new gaml action provider.
+	 */
 	public GamlActionProvider() {}
 
 	@Override
@@ -24,6 +43,9 @@ public class GamlActionProvider extends CommonActionProvider {
 		makeActions();
 	}
 
+	/**
+	 * Make actions.
+	 */
 	private void makeActions() {
 		runAction = new SelectionListenerAction("Run...") {
 			@Override

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AbstractStatementEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
@@ -8,20 +18,45 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+/**
+ * The Class AbstractStatementEditor.
+ *
+ * @param <T> the generic type
+ */
 public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> {
 
+	/** The text box. */
 	protected FlatButton textBox;
+	
+	/** The statement. */
 	T statement;
 
+	/**
+	 * Instantiates a new abstract statement editor.
+	 *
+	 * @param scope the scope
+	 * @param command the command
+	 * @param l the l
+	 */
 	public AbstractStatementEditor(final IScope scope, final T command, final EditorListener<Object> l) {
 		super(scope, l);
 		this.statement = command;
 	}
 
+	/**
+	 * Gets the statement.
+	 *
+	 * @return the statement
+	 */
 	public T getStatement() {
 		return statement;
 	}
 
+	/**
+	 * Sets the statement.
+	 *
+	 * @param s the new statement
+	 */
 	public void setStatement(final T s) {
 		statement = s;
 	}

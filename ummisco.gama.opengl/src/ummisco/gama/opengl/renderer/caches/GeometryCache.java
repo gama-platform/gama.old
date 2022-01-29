@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.caches.GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * GeometryCache.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
@@ -53,10 +53,15 @@ import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.files.GamaObjFile;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
+/**
+ * The Class GeometryCache.
+ */
 public class GeometryCache {
 
+	/** The Constant PI_2. */
 	private static final double PI_2 = 2f * Math.PI;
 
+	/** The round rect. */
 	static double roundRect[] = { .92, 0, .933892, .001215, .947362, .004825, .96, .010718, .971423, .018716, .981284,
 			.028577, .989282, .04, .995175, .052638, .998785, .066108, 1, .08, 1, .92, .998785, .933892, .995175,
 			.947362, .989282, .96, .981284, .971423, .971423, .981284, .96, .989282, .947362, .995175, .933892, .998785,
@@ -65,36 +70,77 @@ public class GeometryCache {
 			.010718, .04, .018716, .028577, .028577, .018716, .04, .010718, .052638, .004825, .066108, .001215, .08,
 			0 };
 
+	/** The db. */
 	static DoubleBuffer db = Buffers.newDirectDoubleBuffer(roundRect.length).put(roundRect).rewind();
 
+	/**
+	 * The Class BuiltInGeometry.
+	 */
 	public static class BuiltInGeometry {
+		
+		/** The faces. */
 		Integer bottom, top, faces;
 
+		/**
+		 * Assemble.
+		 *
+		 * @return the built in geometry
+		 */
 		public static BuiltInGeometry assemble() {
 			return new BuiltInGeometry(null, null, null);
 		}
 
+		/**
+		 * Top.
+		 *
+		 * @param top the top
+		 * @return the built in geometry
+		 */
 		public BuiltInGeometry top(final Integer top) {
 			this.top = top;
 			return this;
 		}
 
+		/**
+		 * Faces.
+		 *
+		 * @param faces the faces
+		 * @return the built in geometry
+		 */
 		public BuiltInGeometry faces(final Integer faces) {
 			this.faces = faces;
 			return this;
 		}
 
+		/**
+		 * Bottom.
+		 *
+		 * @param bottom the bottom
+		 * @return the built in geometry
+		 */
 		public BuiltInGeometry bottom(final Integer bottom) {
 			this.bottom = bottom;
 			return this;
 		}
 
+		/**
+		 * Instantiates a new built in geometry.
+		 *
+		 * @param bottom the bottom
+		 * @param top the top
+		 * @param faces the faces
+		 */
 		private BuiltInGeometry(final Integer bottom, final Integer top, final Integer faces) {
 			this.bottom = bottom;
 			this.top = top;
 			this.faces = faces;
 		}
 
+		/**
+		 * Draw.
+		 *
+		 * @param gl the gl
+		 */
 		public void draw(final OpenGL gl) {
 			if (bottom != null) { gl.drawList(bottom); }
 			if (top != null) { gl.drawList(top); }
@@ -103,14 +149,32 @@ public class GeometryCache {
 		}
 	}
 
+	/** The built in cache. */
 	private final Cache<IShape.Type, BuiltInGeometry> builtInCache;
+	
+	/** The file cache. */
 	private final LoadingCache<String, Integer> fileCache;
+	
+	/** The file map. */
 	private final Map<String, GamaGeometryFile> fileMap = new ConcurrentHashMap<>();
+	
+	/** The geometries to process. */
 	private final Map<String, GamaGeometryFile> geometriesToProcess = new ConcurrentHashMap<>();
+	
+	/** The envelopes. */
 	private final Cache<String, Envelope3D> envelopes;
+	
+	/** The scope. */
 	private final IScope scope;
+	
+	/** The drawer. */
 	private final Consumer<Geometry> drawer;
 
+	/**
+	 * Instantiates a new geometry cache.
+	 *
+	 * @param renderer the renderer
+	 */
 	public GeometryCache(final IOpenGLRenderer renderer) {
 		this.scope = renderer.getSurface().getScope().copy("in opengl geometry cache");
 		this.drawer = g -> renderer.getOpenGLHelper().getGeometryDrawer().drawGeometry(g, null, 0, getTypeOf(g));
@@ -129,14 +193,33 @@ public class GeometryCache {
 		});
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param file the file
+	 * @return the integer
+	 */
 	public Integer get(final GamaGeometryFile file) {
 		return fileCache.getUnchecked(file.getPath(scope));
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param id the id
+	 * @return the built in geometry
+	 */
 	public BuiltInGeometry get(final IShape.Type id) {
 		return builtInCache.getIfPresent(id);
 	}
 
+	/**
+	 * Builds the list.
+	 *
+	 * @param gl the gl
+	 * @param name the name
+	 * @return the integer
+	 */
 	Integer buildList(final OpenGL gl, final String name) {
 		// DEBUG.OUT("Bulding OpenGL list for " + name);
 		final GamaGeometryFile file = fileMap.get(name);
@@ -160,15 +243,28 @@ public class GeometryCache {
 		});
 	}
 
+	/**
+	 * Draw simple geometry.
+	 *
+	 * @param gl the gl
+	 * @param geom the geom
+	 * @throws ExecutionException the execution exception
+	 */
 	void drawSimpleGeometry(final OpenGL gl, final Geometry geom) throws ExecutionException {
 		geom.apply((GeometryFilter) g -> drawer.accept(g));
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		fileMap.clear();
 		GAMA.releaseScope(scope);
 	}
 
+	/**
+	 * Process unloaded.
+	 */
 	public void processUnloaded() {
 		for (final GamaGeometryFile object : geometriesToProcess.values()) {
 			get(object);
@@ -176,6 +272,11 @@ public class GeometryCache {
 		geometriesToProcess.clear();
 	}
 
+	/**
+	 * Process.
+	 *
+	 * @param file the file
+	 */
 	public void process(final GamaGeometryFile file) {
 		if (file == null) return;
 		final String path = file.getPath(scope);
@@ -184,6 +285,12 @@ public class GeometryCache {
 		if (!geometriesToProcess.containsKey(path)) { geometriesToProcess.put(path, file); }
 	}
 
+	/**
+	 * Gets the envelope.
+	 *
+	 * @param file the file
+	 * @return the envelope
+	 */
 	public Envelope3D getEnvelope(final GamaGeometryFile file) {
 		try {
 			return envelopes.get(file.getPath(scope), () -> file.computeEnvelope(scope));
@@ -192,10 +299,21 @@ public class GeometryCache {
 		}
 	}
 
+	/**
+	 * Put.
+	 *
+	 * @param key the key
+	 * @param value the value
+	 */
 	public void put(final Type key, final BuiltInGeometry value) {
 		builtInCache.put(key, value);
 	}
 
+	/**
+	 * Initialize.
+	 *
+	 * @param gl the gl
+	 */
 	public void initialize(final OpenGL gl) {
 		final int slices = GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue();
 		final int stacks = slices;
@@ -264,6 +382,11 @@ public class GeometryCache {
 
 	}
 
+	/**
+	 * Draw rounded rectangle.
+	 *
+	 * @param gl the gl
+	 */
 	public void drawRoundedRectangle(final GL2 gl) {
 		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 		gl.glVertexPointer(2, GL2GL3.GL_DOUBLE, 0, db);
@@ -271,6 +394,15 @@ public class GeometryCache {
 		gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 	}
 
+	/**
+	 * Draw disk.
+	 *
+	 * @param gl the gl
+	 * @param inner the inner
+	 * @param outer the outer
+	 * @param slices the slices
+	 * @param loops the loops
+	 */
 	public void drawDisk(final OpenGL gl, final double inner, final double outer, final int slices, final int loops) {
 		double da, dr;
 		/* Normal vectors */
@@ -307,6 +439,14 @@ public class GeometryCache {
 		gl.getGL().glFrontFace(GL.GL_CW);
 	}
 
+	/**
+	 * Draw sphere.
+	 *
+	 * @param gl the gl
+	 * @param radius the radius
+	 * @param slices the slices
+	 * @param stacks the stacks
+	 */
 	public void drawSphere(final OpenGL gl, final double radius, final int slices, final int stacks) {
 		double rho, drho, theta, dtheta;
 		double x, y, z;
@@ -347,6 +487,16 @@ public class GeometryCache {
 		gl.getGL().glFrontFace(GL.GL_CW);
 	}
 
+	/**
+	 * Draw cylinder.
+	 *
+	 * @param gl the gl
+	 * @param base the base
+	 * @param top the top
+	 * @param height the height
+	 * @param slices the slices
+	 * @param stacks the stacks
+	 */
 	public void drawCylinder(final OpenGL gl, final double base, final double top, final double height,
 			final int slices, final int stacks) {
 

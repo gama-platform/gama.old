@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'NewFileWizardPage.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * NewFileWizardPage.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 import java.util.Arrays;
@@ -40,11 +39,23 @@ import com.google.common.collect.Maps;
 
 public class NewFileWizardPage extends AbstractNewModelWizardPage {
 
+	/** The description text. */
 	Text descriptionText;
+	
+	/** The yes button. */
 	Button yesButton;
+	
+	/** The template name. */
 	String templateName;
+	
+	/** The combo. */
 	Combo combo;
 
+	/**
+	 * Instantiates a new new file wizard page.
+	 *
+	 * @param selection the selection
+	 */
 	public NewFileWizardPage(final ISelection selection) {
 		super(selection);
 		setTitle("Model file");
@@ -120,6 +131,11 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 
 	}
 
+	/**
+	 * Adds the project templates.
+	 *
+	 * @param templates the templates
+	 */
 	private void addProjectTemplates(final Map<String, String> templates) {
 		final IContainer container = findContainer();
 		if (container == null) { return; }
@@ -140,6 +156,11 @@ public class NewFileWizardPage extends AbstractNewModelWizardPage {
 
 	}
 
+	/**
+	 * Creates the doc section.
+	 *
+	 * @param container the container
+	 */
 	private void createDocSection(final Composite container) {
 		FillLayout fillLayout;
 		createLabel(container, "&Create a documentation template ?");

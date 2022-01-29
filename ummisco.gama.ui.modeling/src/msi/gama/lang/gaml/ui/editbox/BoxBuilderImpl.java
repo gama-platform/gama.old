@@ -1,26 +1,34 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxBuilderImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * BoxBuilderImpl.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.LinkedList;
 import java.util.List;
 
 
+/**
+ * The Class BoxBuilderImpl.
+ */
 public class BoxBuilderImpl extends AbstractBoxBuilder {
 
+	/** The boxes. */
 	protected List<Box> boxes;
+	
+	/** The currentbox. */
 	protected Box currentbox;
+	
+	/** The empty prev line. */
 	protected boolean emptyPrevLine;
+	
+	/** The line has start tab. */
 	protected boolean lineHasStartTab;
 	
 	public List<Box> build() {
@@ -68,6 +76,9 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 		return boxes;
 	}
 
+	/**
+	 * Check carret.
+	 */
 	private void checkCarret() {
 		if (caretOffset < 0) return;
 		
@@ -88,6 +99,14 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 		}
 	}
 
+	/**
+	 * Adds the line.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @param offset the offset
+	 * @param empty the empty
+	 */
 	protected void addLine(int start, int end, int offset, boolean empty) {
 		if (!empty) {
 			addbox0(start, end, offset);
@@ -95,6 +114,13 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 		emptyPrevLine = empty;
 	}
 
+	/**
+	 * Addbox 0.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @param offset the offset
+	 */
 	protected void addbox0(int start, int end, int offset) {
 
 		if (offset == currentbox.offset) {
@@ -119,6 +145,12 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 	}
 
 
+	/**
+	 * Update max end offset.
+	 *
+	 * @param start the start
+	 * @param b the b
+	 */
 	protected void updateMaxEndOffset(int start, Box b) {
 		int n = b.end - start + b.offset;
 		if (n >= b.maxLineLen) {
@@ -127,6 +159,11 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 		}
 	}
 
+	/**
+	 * Update parent ends.
+	 *
+	 * @param box the box
+	 */
 	protected void updateParentEnds(Box box) {
 		Box b = box.parent;
 		while (b != null && b.end < box.end) {
@@ -140,6 +177,15 @@ public class BoxBuilderImpl extends AbstractBoxBuilder {
 
 	}
 
+	/**
+	 * Newbox.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @param offset the offset
+	 * @param parent the parent
+	 * @return the box
+	 */
 	protected Box newbox(int start, int end, int offset, Box parent) {
 		Box box = new Box();
 		box.end = end;

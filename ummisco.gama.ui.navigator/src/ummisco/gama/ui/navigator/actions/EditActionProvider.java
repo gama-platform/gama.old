@@ -1,10 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved. This program and the accompanying materials are
- * made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * EditActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
 
@@ -29,13 +32,25 @@ import ummisco.gama.ui.resources.GamaIcons;
  */
 public class EditActionProvider extends CommonActionProvider {
 
+	/** The clipboard. */
 	private Clipboard clipboard;
+	
+	/** The copy action. */
 	private CopyAction copyAction;
+	
+	/** The delete action. */
 	private DeleteResourceAction deleteAction;
+	
+	/** The paste action. */
 	private PasteAction pasteAction;
+	
+	/** The text action handler. */
 	private TextActionHandler textActionHandler;
+	
+	/** The shell. */
 	private Shell shell;
 
+	/** The site. */
 	private ICommonActionExtensionSite site;
 
 	@Override
@@ -46,6 +61,9 @@ public class EditActionProvider extends CommonActionProvider {
 
 	}
 
+	/**
+	 * Make actions.
+	 */
 	protected void makeActions() {
 		clipboard = new Clipboard(shell.getDisplay());
 

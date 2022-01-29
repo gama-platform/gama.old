@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AbstractShader.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * AbstractShader.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.shaders;
 
 import java.io.InputStream;
@@ -20,24 +19,45 @@ import com.jogamp.opengl.GL2;
 import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class AbstractShader.
+ */
 public abstract class AbstractShader {
 
+	/** The gl. */
 	protected GL2 gl;
 
+	/** The is overlay. */
 	protected boolean isOverlay = false;
 
+	/** The program ID. */
 	private int programID;
+	
+	/** The vertex shader ID. */
 	private final int vertexShaderID;
+	
+	/** The fragment shader ID. */
 	private final int fragmentShaderID;
 
+	/** The location layer alpha. */
 	private int location_layerAlpha;
 
+	/** The Constant POSITION_ATTRIBUTE_IDX. */
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 
+	/** The Constant UVMAPPING_ATTRIBUTE_IDX. */
 	public static final int UVMAPPING_ATTRIBUTE_IDX = 3;
 
+	/** The matrix buffer. */
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 
+	/**
+	 * Instantiates a new abstract shader.
+	 *
+	 * @param gl the gl
+	 * @param vertexFile the vertex file
+	 * @param fragmentFile the fragment file
+	 */
 	protected AbstractShader(final GL2 gl, final String vertexFile, final String fragmentFile) {
 		this.gl = gl;
 		InputStream vertexInputStream, fragmentInputStream;
@@ -75,6 +95,13 @@ public abstract class AbstractShader {
 		getAllUniformLocations();
 	}
 
+	/**
+	 * Load shader.
+	 *
+	 * @param is the is
+	 * @param type the type
+	 * @return the int
+	 */
 	private int loadShader(final InputStream is, final int type) {
 		String shaderString = null;
 
@@ -109,32 +136,68 @@ public abstract class AbstractShader {
 		}
 	}
 
+	/**
+	 * Start.
+	 */
 	public void start() {
 		gl.glUseProgram(programID);
 	}
 
+	/**
+	 * Stop.
+	 */
 	public void stop() {
 		gl.glUseProgram(0);
 	}
 
+	/**
+	 * Gets the program ID.
+	 *
+	 * @return the program ID
+	 */
 	public int getProgramID() {
 		return programID;
 	}
 
+	/**
+	 * Sets the program ID.
+	 *
+	 * @param programID the new program ID
+	 */
 	public void setProgramID(final int programID) {
 		this.programID = programID;
 	}
 
+	/**
+	 * Gets the uniform location.
+	 *
+	 * @param uniformName the uniform name
+	 * @return the uniform location
+	 */
 	public int getUniformLocation(final String uniformName) {
 		return gl.glGetUniformLocation(programID, uniformName);
 	}
 
+	/**
+	 * Bind attributes.
+	 */
 	protected abstract void bindAttributes();
 
+	/**
+	 * Bind attribute.
+	 *
+	 * @param attribute the attribute
+	 * @param variableName the variable name
+	 */
 	protected void bindAttribute(final int attribute, final String variableName) {
 		gl.glBindAttribLocation(programID, attribute, variableName);
 	}
 
+	/**
+	 * Gets the all uniform locations.
+	 *
+	 * @return the all uniform locations
+	 */
 	protected void getAllUniformLocations() {
 		location_layerAlpha = getUniformLocation("layerAlpha");
 	}
@@ -166,29 +229,71 @@ public abstract class AbstractShader {
 	// gl.glUniformMatrix4fv(location, 1, false, matrixBuffer.array(), 0);
 	// }
 
+	/**
+	 * Load float.
+	 *
+	 * @param location the location
+	 * @param value the value
+	 */
 	public void loadFloat(final int location, final float value) {
 		gl.glUniform1f(location, value);
 	}
 
+	/**
+	 * Load int.
+	 *
+	 * @param location the location
+	 * @param value the value
+	 */
 	protected void loadInt(final int location, final int value) {
 		gl.glUniform1i(location, value);
 	}
 
+	/**
+	 * Sets the layer alpha.
+	 *
+	 * @param layerAlpha the new layer alpha
+	 */
 	public void setLayerAlpha(final float layerAlpha) {
 		loadFloat(location_layerAlpha, layerAlpha);
 	}
 
+	/**
+	 * Gets the translation.
+	 *
+	 * @return the translation
+	 */
 	public GamaPoint getTranslation() {
 		return new GamaPoint(0, 0, 0);
 	}
 
+	/**
+	 * Checks if is overlay.
+	 *
+	 * @return true, if is overlay
+	 */
 	public boolean isOverlay() {
 		return isOverlay;
 	}
 
+	/**
+	 * Use normal.
+	 *
+	 * @return true, if successful
+	 */
 	abstract public boolean useNormal();
 
+	/**
+	 * Use texture.
+	 *
+	 * @return true, if successful
+	 */
 	abstract public boolean useTexture();
 
+	/**
+	 * Gets the texture ID.
+	 *
+	 * @return the texture ID
+	 */
 	abstract public int getTextureID();
 }

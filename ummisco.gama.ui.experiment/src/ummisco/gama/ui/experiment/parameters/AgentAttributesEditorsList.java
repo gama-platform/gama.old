@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AgentAttributesEditorsList.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * AgentAttributesEditorsList.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
 
 import java.util.Arrays;
@@ -28,10 +27,18 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
+/**
+ * The Class AgentAttributesEditorsList.
+ */
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
+	/** The Constant DEAD_MARKER. */
 	private static final String DEAD_MARKER = " dead at step ";
+	
+	/** The Constant AGENT_MARKER. */
 	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
+	
+	/** The Constant HIDDEN. */
 	private static final Set<String> HIDDEN =
 			new HashSet<>(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
 

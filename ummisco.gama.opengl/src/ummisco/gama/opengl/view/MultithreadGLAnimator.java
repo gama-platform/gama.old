@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SWTGLAnimator.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * MultithreadGLAnimator.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
 import java.util.Timer;
@@ -28,19 +27,47 @@ import msi.gama.common.preferences.GamaPreferences;
  */
 public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorControl.UncaughtExceptionHandler {
 
+	/** The timer. */
 	private Timer timer = null;
+	
+	/** The task. */
 	private MainTask task = null;
+	
+	/** The fps. */
 	private final int fps;
+	
+	/** The schedule at fixed rate. */
 	private final boolean scheduleAtFixedRate;
+	
+	/** The is animating. */
 	private boolean isAnimating; // MainTask feedback
+	
+	/** The pause issued. */
 	private volatile boolean pauseIssued; // MainTask trigger
+	
+	/** The stop issued. */
 	private volatile boolean stopIssued; // MainTask trigger
+	
+	/** The wait for stopped condition. */
 	private final Condition waitForStoppedCondition = this::isStarted;
+	
+	/** The wait for resume condition. */
 	private final Condition waitForResumeCondition = () -> !drawablesEmpty && !isAnimating && isStarted();
+	
+	/** The wait for started added condition. */
 	private final Condition waitForStartedAddedCondition = () -> !isStarted() || !isAnimating;
+	
+	/** The wait for started empty condition. */
 	private final Condition waitForStartedEmptyCondition = () -> !isStarted() || isAnimating;
+	
+	/** The wait for paused condition. */
 	private final Condition waitForPausedCondition = () -> isStarted() && isAnimating;
 
+	/**
+	 * Instantiates a new multithread GL animator.
+	 *
+	 * @param drawable the drawable
+	 */
 	public MultithreadGLAnimator(final GLAutoDrawable drawable) {
 		this.fps = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue() ? GamaPreferences.Displays.OPENGL_FPS.getValue()
 				: 1000;
@@ -53,13 +80,30 @@ public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorCon
 		return "FPS" + prefix + "Animator";
 	}
 
+	/**
+	 * The Class MainTask.
+	 */
 	class MainTask extends TimerTask {
+		
+		/** The just started. */
 		private boolean justStarted;
+		
+		/** The already stopped. */
 		private boolean alreadyStopped;
+		
+		/** The already paused. */
 		private boolean alreadyPaused;
 
+		/**
+		 * Instantiates a new main task.
+		 */
 		public MainTask() {}
 
+		/**
+		 * Start.
+		 *
+		 * @param timer the timer
+		 */
 		public void start(final Timer timer) {
 			fpsCounter.resetFPSCounter();
 			pauseIssued = false;
@@ -79,6 +123,11 @@ public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorCon
 			}
 		}
 
+		/**
+		 * Checks if is active.
+		 *
+		 * @return true, if is active
+		 */
 		public boolean isActive() {
 			return !alreadyStopped && !alreadyPaused;
 		}
@@ -174,6 +223,7 @@ public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorCon
 		return animThread != null && pauseIssued;
 	}
 
+	/** The timer no. */
 	static int timerNo = 0;
 
 	@Override
@@ -258,6 +308,9 @@ public class MultithreadGLAnimator extends AnimatorBase implements GLAnimatorCon
 		return res;
 	}
 
+	/**
+	 * Display GL.
+	 */
 	protected void displayGL() {
 		this.isAnimating = true;
 		try {

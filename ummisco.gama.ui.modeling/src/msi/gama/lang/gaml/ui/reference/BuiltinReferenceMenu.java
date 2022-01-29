@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BuiltinReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BuiltinReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
@@ -98,6 +97,13 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		}
 	}
 
+	/**
+	 * Fill skill submenu.
+	 *
+	 * @param submenu the submenu
+	 * @param skill the skill
+	 * @param isControl the is control
+	 */
 	private void fillSkillSubmenu(final Menu submenu, final String skill, final boolean isControl) {
 		action(submenu, "Insert name", new SelectionAdapter() {
 
@@ -148,6 +154,12 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		}
 	}
 
+	/**
+	 * Fill proto sub menu.
+	 *
+	 * @param menu the menu
+	 * @param statement the statement
+	 */
 	private void fillProtoSubMenu(final Menu menu, final SymbolProto statement) {
 		action(menu, "Insert statement name", new SelectionAdapter() {
 
@@ -160,6 +172,12 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 
 	}
 
+	/**
+	 * Fill proto sub menu.
+	 *
+	 * @param menu the menu
+	 * @param attribute the attribute
+	 */
 	private void fillProtoSubMenu(final Menu menu, final OperatorProto attribute) {
 		action(menu, "Insert attribute name", new SelectionAdapter() {
 
@@ -172,6 +190,12 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 
 	}
 
+	/**
+	 * Fill species submenu.
+	 *
+	 * @param submenu the submenu
+	 * @param species the species
+	 */
 	private void fillSpeciesSubmenu(final Menu submenu, final TypeDescription species) {
 		action(submenu, "Insert name", new SelectionAdapter() {
 
@@ -213,6 +237,12 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 		}
 	}
 
+	/**
+	 * Fill I description sub menu.
+	 *
+	 * @param submenu the submenu
+	 * @param v the v
+	 */
 	private void fillIDescriptionSubMenu(final Menu submenu, final IDescription v) {
 		final boolean isVar = v instanceof VariableDescription;
 		action(submenu, "Insert name", new SelectionAdapter() {

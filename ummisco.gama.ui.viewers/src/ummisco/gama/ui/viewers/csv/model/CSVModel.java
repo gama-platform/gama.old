@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'CSVModel.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * CSVModel.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
 
 import java.io.Reader;
@@ -38,10 +37,19 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class CSVModel implements IRowChangesListener {
 
+	/** The display first line. */
 	private final boolean displayFirstLine;
+	
+	/** The rows. */
 	private final ArrayList<CSVRow> rows;
+	
+	/** The listeners. */
 	private final ArrayList<ICsvFileModelListener> listeners;
+	
+	/** The file. */
 	private final IFile file;
+	
+	/** The current info. */
 	private CSVInfo currentInfo;
 
 	/**
@@ -63,6 +71,11 @@ public class CSVModel implements IRowChangesListener {
 		return getInfo().header;
 	}
 
+	/**
+	 * Sets the first line header.
+	 *
+	 * @param header the new first line header
+	 */
 	public void setFirstLineHeader(final boolean header) {
 		final CSVInfo info = getInfo();
 		if (info.header != header) {
@@ -81,6 +94,11 @@ public class CSVModel implements IRowChangesListener {
 		return getInfo().delimiter;
 	}
 
+	/**
+	 * Sets the custom delimiter.
+	 *
+	 * @param c the new custom delimiter
+	 */
 	public void setCustomDelimiter(final char c) {
 		final CSVInfo info = getInfo();
 		if (c == info.delimiter) { return; }
@@ -149,6 +167,11 @@ public class CSVModel implements IRowChangesListener {
 		return csvReader;
 	}
 
+	/**
+	 * Read lines.
+	 *
+	 * @param fileText the file text
+	 */
 	protected void readLines(final String fileText) {
 		readLines(new StringReader(fileText));
 	}

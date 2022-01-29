@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'StolenColorEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * StolenColorEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -37,13 +36,30 @@ import org.eclipse.swt.widgets.Display;
  */
 public class StolenColorEditor {
 
+	/** The extent. */
 	final Point fExtent;
+	
+	/** The image. */
 	Image fImage;
+	
+	/** The color value. */
 	RGB fColorValue;
+	
+	/** The color. */
 	Color fColor;
+	
+	/** The button. */
 	final Button fButton;
+	
+	/** The listener. */
 	SelectionListener listener;
 
+	/**
+	 * Instantiates a new stolen color editor.
+	 *
+	 * @param parent the parent
+	 * @param parentListener the parent listener
+	 */
 	public StolenColorEditor(final Composite parent, final SelectionListener parentListener) {
 		this.listener = parentListener;
 		fButton = new Button(parent, SWT.PUSH);
@@ -82,21 +98,41 @@ public class StolenColorEditor {
 		});
 	}
 
+	/**
+	 * Sets the listener.
+	 *
+	 * @param newListener the new listener
+	 */
 	public void setListener(final SelectionListener newListener) {
 		listener = newListener;
 	}
 
+	/**
+	 * Notify parent.
+	 *
+	 * @param event the event
+	 */
 	void notifyParent(final SelectionEvent event) {
 		if (listener != null) {
 			listener.widgetSelected(event);
 		}
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public java.awt.Color getColor() {
 		final RGB rgb = getColorValue();
 		return new java.awt.Color(rgb.red, rgb.green, rgb.blue);
 	}
 
+	/**
+	 * Sets the color.
+	 *
+	 * @param color the new color
+	 */
 	public void setColor(final java.awt.Color color) {
 		if (color == null) {
 			setColorValue(null);
@@ -106,23 +142,46 @@ public class StolenColorEditor {
 		}
 	}
 
+	/**
+	 * Sets the enabled.
+	 *
+	 * @param isEnabled the new enabled
+	 */
 	public void setEnabled(final boolean isEnabled) {
 		getButton().setEnabled(isEnabled);
 	}
 
+	/**
+	 * Gets the color value.
+	 *
+	 * @return the color value
+	 */
 	public RGB getColorValue() {
 		return fColorValue;
 	}
 
+	/**
+	 * Sets the color value.
+	 *
+	 * @param color the new color value
+	 */
 	public void setColorValue(final RGB color) {
 		fColorValue = color == null ? new RGB(0, 0, 0) : color;
 		updateColorImage();
 	}
 
+	/**
+	 * Gets the button.
+	 *
+	 * @return the button
+	 */
 	public Button getButton() {
 		return fButton;
 	}
 
+	/**
+	 * Update color image.
+	 */
 	protected void updateColorImage() {
 
 		final Display display = fButton.getDisplay();
@@ -143,6 +202,12 @@ public class StolenColorEditor {
 		fButton.setImage(fImage);
 	}
 
+	/**
+	 * Compute image size.
+	 *
+	 * @param window the window
+	 * @return the point
+	 */
 	protected Point computeImageSize(final Control window) {
 		final GC gc = new GC(window);
 		final Font f = JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);

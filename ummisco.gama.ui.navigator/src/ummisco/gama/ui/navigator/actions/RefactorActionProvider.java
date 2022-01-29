@@ -1,11 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation Oakland Software (Francis Upton - francisu@ieee.org)
- * bug 214271 Undo/redo not enabled if nothing selected
- ******************************************************************************/
+ * RefactorActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
 
@@ -29,9 +31,16 @@ import ummisco.gama.ui.resources.GamaIcons;
  */
 public class RefactorActionProvider extends CommonActionProvider {
 
+	/** The rename action. */
 	private RenameResourceAction renameAction;
+	
+	/** The history action. */
 	private ShowLocalHistory historyAction;
+	
+	/** The compare action. */
 	private CompareWithEachOtherAction compareAction;
+	
+	/** The shell. */
 	private Shell shell;
 
 	@Override
@@ -40,6 +49,9 @@ public class RefactorActionProvider extends CommonActionProvider {
 		makeActions();
 	}
 
+	/**
+	 * Make actions.
+	 */
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		renameAction = new RenameResourceAction(sp);
@@ -57,6 +69,11 @@ public class RefactorActionProvider extends CommonActionProvider {
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
 	}
 
+	/**
+	 * Handle key pressed.
+	 *
+	 * @param event the event
+	 */
 	public void handleKeyPressed(final KeyEvent event) {
 		if (event.keyCode == SWT.F2 && event.stateMask == 0) {
 			if (renameAction.isEnabled()) {

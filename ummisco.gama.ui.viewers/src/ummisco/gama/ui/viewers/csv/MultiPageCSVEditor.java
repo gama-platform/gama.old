@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MultiPageCSVEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * MultiPageCSVEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
 
 import org.eclipse.core.resources.IFile;
@@ -65,6 +64,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class MultiPageCSVEditor extends MultiPageEditorPart
 		implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
+	/** The is page modified. */
 	private boolean isPageModified;
 
 	/** index of the source page */
@@ -78,10 +78,16 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	/** The table viewer used in page 1. */
 	protected TableViewer tableViewer;
 
+	/** The table sorter. */
 	final CSVTableSorter tableSorter;
+	
+	/** The table filter. */
 	final CSVTableFilter tableFilter;
+	
+	/** The model. */
 	CSVModel model;
 
+	/** The csv file listener. */
 	private final ICsvFileModelListener csvFileListener = (row, rowIndex) -> tableModified();
 
 	/**
@@ -120,6 +126,12 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		}
 	}
 
+	/**
+	 * Gets the file for.
+	 *
+	 * @param input the input
+	 * @return the file for
+	 */
 	private static IFile getFileFor(final IEditorInput input) {
 		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput) input).getFile();
@@ -471,6 +483,11 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		}
 	}
 
+	/**
+	 * Refresh with delimiter.
+	 *
+	 * @param c the c
+	 */
 	void refreshWithDelimiter(final Character c) {
 		if (c != null) {
 			model.setCustomDelimiter(c);

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * KeystoneHelper.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
 import java.awt.Color;
@@ -23,31 +33,69 @@ import ummisco.gama.opengl.renderer.shaders.AbstractShader;
 import ummisco.gama.opengl.renderer.shaders.FrameBufferObject;
 import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
 
+/**
+ * The Class KeystoneHelper.
+ */
 public class KeystoneHelper extends AbstractRendererHelper {
 
+	/** The finishing helper. */
 	private final Pass finishingHelper = this::finishRenderToTexture;
+	
+	/** The fbo scene. */
 	private FrameBufferObject fboScene;
+	
+	/** The draw keystone helper. */
 	protected boolean drawKeystoneHelper = false;
+	
+	/** The corner hovered. */
 	protected int cornerSelected = -1, cornerHovered = -1;
+	
+	/** The uv mapping buffer index. */
 	private int uvMappingBufferIndex;
+	
+	/** The vertices buffer index. */
 	private int verticesBufferIndex;
+	
+	/** The index buffer index. */
 	private int indexBufferIndex;
+	
+	/** The shader. */
 	private KeystoneShaderProgram shader;
+	
+	/** The world corners. */
 	private boolean worldCorners = false;
+	
+	/** The Constant FILL_COLORS. */
 	private static final Color[] FILL_COLORS = { NamedGamaColor.getNamed("gamared").withAlpha(0.3),
 			NamedGamaColor.getNamed("gamablue").withAlpha(0.3), NamedGamaColor.getNamed("black").withAlpha(0.3) };
 
+	/** The ib idx buff. */
 	final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(new int[] { 0, 1, 2, 0, 2, 3 });
 
+	/**
+	 * Instantiates a new keystone helper.
+	 *
+	 * @param r the r
+	 */
 	public KeystoneHelper(final IOpenGLRenderer r) {
 		super(r);
 	}
 
+	/**
+	 * Gets the view width.
+	 *
+	 * @return the view width
+	 */
 	int getViewWidth() {
 		return getRenderer().getViewWidth();
 		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewWidth());
 	}
 
+	/**
+	 * Gets the view height.
+	 *
+	 * @return the view height
+	 */
 	int getViewHeight() {
 		return getRenderer().getViewHeight();
 		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewHeight());
@@ -58,33 +106,61 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	}
 
+	/**
+	 * Gets the corner selected.
+	 *
+	 * @return the corner selected
+	 */
 	public int getCornerSelected() {
 		return cornerSelected;
 	}
 
+	/**
+	 * Gets the coords.
+	 *
+	 * @return the coords
+	 */
 	public GamaPoint[] getCoords() {
 		return getData().getKeystone().toCoordinateArray();
 	}
 
+	/**
+	 * Gets the keystone coordinates.
+	 *
+	 * @param corner the corner
+	 * @return the keystone coordinates
+	 */
 	public GamaPoint getKeystoneCoordinates(final int corner) {
 		return getCoords()[corner];
 	}
 
+	/**
+	 * Start draw helper.
+	 */
 	public void startDrawHelper() {
 		drawKeystoneHelper = true;
 		cornerSelected = -1;
 	}
 
+	/**
+	 * Stop draw helper.
+	 */
 	public void stopDrawHelper() {
 		drawKeystoneHelper = false;
 	}
 
+	/**
+	 * Switch corners.
+	 */
 	public void switchCorners() {
 		getData();
 		worldCorners =
 				!LayeredDisplayData.KEYSTONE_IDENTITY.getEnvelope().covers(getData().getKeystone().getEnvelope());
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		final GL2 gl = getGL();
 		if (fboScene != null) { fboScene.cleanUp(); }
@@ -93,6 +169,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		}
 	}
 
+	/**
+	 * Begin render to texture.
+	 */
 	@SuppressWarnings ("restriction")
 	public void beginRenderToTexture() {
 		final GL2 gl = getGL();
@@ -104,6 +183,17 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	}
 
+	/**
+	 * Draw rectangle.
+	 *
+	 * @param openGL the open GL
+	 * @param centerX the center X
+	 * @param centerY the center Y
+	 * @param centerZ the center Z
+	 * @param width the width
+	 * @param height the height
+	 * @param fill the fill
+	 */
 	private void drawRectangle(final OpenGL openGL, final double centerX, final double centerY, final double centerZ,
 			final double width, final double height, final Color fill) {
 		openGL.pushMatrix();
@@ -114,6 +204,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		openGL.popMatrix();
 	}
 
+	/**
+	 * Draw keystone marks.
+	 */
 	private void drawKeystoneMarks() {
 		final OpenGL openGL = getOpenGL();
 		final GL2 gl = getGL();
@@ -174,6 +267,12 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	}
 
+	/**
+	 * Floor 4 digit.
+	 *
+	 * @param n the n
+	 * @return the double
+	 */
 	private double floor4Digit(final double n) {
 		double number = n * 1000;
 		number = Math.round(number);
@@ -181,6 +280,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		return number;
 	}
 
+	/**
+	 * Finish render to texture.
+	 */
 	public void finishRenderToTexture() {
 		if (drawKeystoneHelper) { drawKeystoneMarks(); }
 		// gl.glDisable(GL2.GL_DEPTH_TEST); // disables depth testing
@@ -202,6 +304,11 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 	}
 
+	/**
+	 * Gets the shader.
+	 *
+	 * @return the shader
+	 */
 	public KeystoneShaderProgram getShader() {
 		final GL2 gl = getGL();
 		if (shader == null) {
@@ -215,11 +322,19 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		return shader;
 	}
 
+	/**
+	 * Prepare shader.
+	 *
+	 * @param shaderProgram the shader program
+	 */
 	private void prepareShader(final AbstractPostprocessingShader shaderProgram) {
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(fboScene.getFBOTexture());
 	}
 
+	/**
+	 * Creates the screen surface.
+	 */
 	public void createScreenSurface() {
 		final GL2 gl = getGL();
 		// Keystoning computation (cf
@@ -271,6 +386,14 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		ibIdxBuff.rewind();
 	}
 
+	/**
+	 * Store attributes.
+	 *
+	 * @param shaderAttributeType the shader attribute type
+	 * @param bufferIndex the buffer index
+	 * @param size the size
+	 * @param data the data
+	 */
 	private void storeAttributes(final int shaderAttributeType, final int bufferIndex, final int size,
 			final float[] data) {
 		final GL2 gl = getGL();
@@ -287,16 +410,32 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		gl.glEnableVertexAttribArray(shaderAttributeType);
 	}
 
+	/**
+	 * Sets the corner selected.
+	 *
+	 * @param cornerId the new corner selected
+	 */
 	public void setCornerSelected(final int cornerId) {
 		cornerSelected = cornerId;
 	}
 
+	/**
+	 * Reset corner.
+	 *
+	 * @param cornerId the corner id
+	 */
 	public void resetCorner(final int cornerId) {
 		setKeystoneCoordinates(cornerId, LayeredDisplayData.KEYSTONE_IDENTITY.at(cornerId));
 		cornerSelected = -1;
 		cornerHovered = -1;
 	}
 
+	/**
+	 * Corner selected.
+	 *
+	 * @param mouse the mouse
+	 * @return the int
+	 */
 	public int cornerSelected(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
 			if (mouse.y < getViewHeight() / 2)
@@ -309,6 +448,12 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			return 3;
 	}
 
+	/**
+	 * Corner hovered.
+	 *
+	 * @param mouse the mouse
+	 * @return the int
+	 */
 	public int cornerHovered(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
 			if (mouse.y < getViewHeight() / 2)
@@ -321,20 +466,41 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			return 3;
 	}
 
+	/**
+	 * Sets the corner hovered.
+	 *
+	 * @param cornerId the new corner hovered
+	 */
 	public void setCornerHovered(final int cornerId) {
 		cornerHovered = cornerId;
 	}
 
+	/**
+	 * Sets the keystone coordinates.
+	 *
+	 * @param cornerId the corner id
+	 * @param p the p
+	 */
 	public void setKeystoneCoordinates(final int cornerId, final GamaPoint p) {
 		getData().getKeystone().replaceWith(cornerId, p.x, p.y, p.z);
 		switchCorners();
 		getData().setKeystone(getData().getKeystone());
 	}
 
+	/**
+	 * Checks if is active.
+	 *
+	 * @return true, if is active
+	 */
 	public boolean isActive() {
 		return drawKeystoneHelper;
 	}
 
+	/**
+	 * Render.
+	 *
+	 * @return the pass
+	 */
 	public Pass render() {
 		if (drawKeystoneHelper || getData().isKeystoneDefined()) {
 			beginRenderToTexture();
@@ -343,6 +509,12 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		return null;
 	}
 
+	/**
+	 * Reshape.
+	 *
+	 * @param width the width
+	 * @param height the height
+	 */
 	public void reshape(final int width, final int height) {
 		if (fboScene != null) { fboScene.setDisplayDimensions(width, height); }
 

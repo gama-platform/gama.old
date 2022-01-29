@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * RevealInWorkspace.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import java.util.ArrayList;
@@ -16,6 +26,9 @@ import ummisco.gama.ui.navigator.GamaNavigator;
 import ummisco.gama.ui.navigator.contents.LinkedFile;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 
+/**
+ * The Class RevealInWorkspace.
+ */
 public class RevealInWorkspace extends AbstractHandler implements IHandler {
 
 	@Override

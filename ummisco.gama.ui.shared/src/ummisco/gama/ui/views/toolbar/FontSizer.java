@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FontSizer.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FontSizer.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
@@ -30,21 +29,35 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class FontSizer {
 
+	/** The view. */
 	IToolbarDecoratedView.Sizable view;
+	
+	/** The current font. */
 	Font currentFont;
 
+	/** The gl. */
 	final GestureListener gl = ge -> {
 		if (ge.detail == SWT.GESTURE_MAGNIFY) {
 			changeFontSize((int) (2 * Math.signum(ge.magnification - 1.0)));
 		}
 	};
 
+	/**
+	 * Instantiates a new font sizer.
+	 *
+	 * @param view the view
+	 */
 	public FontSizer(final IToolbarDecoratedView.Sizable view) {
 		// We add a control listener to the toolbar in order to install the
 		// gesture once the control to resize have been created.
 		this.view = view;
 	}
 
+	/**
+	 * Change font size.
+	 *
+	 * @param delta the delta
+	 */
 	private void changeFontSize(final int delta) {
 		final Control c = view.getSizableFontControl();
 		if (c != null) {

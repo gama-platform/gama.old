@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlEditTemplateDialog.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlEditTemplateDialog.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
 import java.util.Iterator;
@@ -66,27 +65,51 @@ import com.google.common.collect.Lists;
 @SuppressWarnings ("deprecation")
 public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplateDialog {
 
+	/** The data. */
 	TemplatePersistenceData data;
 
 	// private Template fTemplate;
 
+	/** The name text. */
 	private Text fNameText;
+	
+	/** The description text. */
 	private Text fDescriptionText;
+	
+	/** The pattern editor. */
 	// private Label category;
 	SourceViewer fPatternEditor;
+	
+	/** The partial model editor. */
 	private EmbeddedEditorModelAccess partialModelEditor;
+	
+	/** The insert variable button. */
 	private Button fInsertVariableButton;
 	// private Button fAutoInsertCheckbox;
 	// private final boolean fIsNameModifiable;
 
 	// private final String[][] fContextTypes;
 
+	/** The language name. */
 	private final String languageName;
 
+	/** The configuration. */
 	private final TemplatesLanguageConfiguration configuration;
 
+	/** The resource provider. */
 	private final IEditedResourceProvider resourceProvider;
 
+	/**
+	 * Instantiates a new gaml edit template dialog.
+	 *
+	 * @param parent the parent
+	 * @param data the data
+	 * @param edit the edit
+	 * @param registry the registry
+	 * @param configuration the configuration
+	 * @param resourceProvider the resource provider
+	 * @param languageName the language name
+	 */
 	public GamlEditTemplateDialog(final Shell parent, final TemplatePersistenceData data, final boolean edit,
 			final ContextTypeRegistry registry, final TemplatesLanguageConfiguration configuration,
 			final IEditedResourceProvider resourceProvider, final String languageName) {
@@ -201,36 +224,75 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		return composite;
 	}
 
+	/**
+	 * Fill menu path.
+	 *
+	 * @param category the category
+	 */
 	private void fillMenuPath(final Label category) {
 		String s = data.getId();
 		s = s.substring(0, s.lastIndexOf('.')).replace(".", " > ");
 		category.setText(s);
 	}
 
+	/**
+	 * Do text widget changed.
+	 *
+	 * @param w the w
+	 */
 	protected void doTextWidgetChanged(final Widget w) {
 		if (w == fNameText) {
 			partialModelEditor.updatePrefix(getPrefix());
 		}
 	}
 
+	/**
+	 * Gets the context name.
+	 *
+	 * @return the context name
+	 */
 	protected String getContextName() {
 		return "Model";
 	}
 
+	/**
+	 * Gets the context id.
+	 *
+	 * @return the context id
+	 */
 	protected String getContextId() {
 		return "msi.gama.lang.gaml.Gaml.Model";
 	}
 
+	/**
+	 * Creates the error status.
+	 *
+	 * @param message the message
+	 * @param e the e
+	 * @return the status
+	 */
 	protected Status createErrorStatus(final String message, final TemplateException e) {
 		return new Status(IStatus.ERROR, CodetemplatesActivator.getInstance().getBundle().getSymbolicName(), message,
 				e);
 	}
 
+	/**
+	 * Gets the button grid data.
+	 *
+	 * @return the button grid data
+	 */
 	private static GridData getButtonGridData() {
 		final GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		return data;
 	}
 
+	/**
+	 * Creates the label.
+	 *
+	 * @param parent the parent
+	 * @param name the name
+	 * @return the label
+	 */
 	private static Label createLabel(final Composite parent, final String name) {
 		final Label label = new Label(parent, SWT.NULL);
 		label.setText(name);
@@ -238,12 +300,24 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		return label;
 	}
 
+	/**
+	 * Creates the text.
+	 *
+	 * @param parent the parent
+	 * @return the text
+	 */
 	private static Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return text;
 	}
 
+	/**
+	 * Creates the editor.
+	 *
+	 * @param parent the parent
+	 * @return the source viewer
+	 */
 	private SourceViewer createEditor(final Composite parent) {
 		final SourceViewer viewer = createViewer(parent);
 		int numberOfLines = viewer.getDocument().getNumberOfLines();
@@ -261,6 +335,12 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		return viewer;
 	}
 
+	/**
+	 * Creates the viewer.
+	 *
+	 * @param parent the parent
+	 * @return the source viewer
+	 */
 	protected SourceViewer createViewer(final Composite parent) {
 		final Builder editorBuilder = configuration.getEmbeddedEditorFactory().newEditor(resourceProvider);
 		editorBuilder.processIssuesBy((issues, monitor) -> {
@@ -285,6 +365,11 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		return handle.getViewer();
 	}
 
+	/**
+	 * Gets the prefix.
+	 *
+	 * @return the prefix
+	 */
 	protected String getPrefix() {
 		final String contextName = getContextName();
 		String name = data.getTemplate().getName();
@@ -303,10 +388,20 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		super.okPressed();
 	}
 
+	/**
+	 * Gets the data.
+	 *
+	 * @return the data
+	 */
 	public TemplatePersistenceData getData() {
 		return data;
 	}
 
+	/**
+	 * Gets the pattern.
+	 *
+	 * @return the pattern
+	 */
 	protected String getPattern() {
 		return partialModelEditor.getEditablePart();
 	}

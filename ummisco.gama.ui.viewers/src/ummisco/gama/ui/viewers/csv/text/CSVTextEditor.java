@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'CSVTextEditor.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * CSVTextEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv.text;
 
 import org.eclipse.swt.SWT;
@@ -27,10 +26,18 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  */
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.Sizable {
 
+	/** The ancestor. */
 	// GamaToolbar2 toolbar;
 	Composite ancestor;
+	
+	/** The parent. */
 	Composite parent;
 
+	/**
+	 * Instantiates a new CSV text editor.
+	 *
+	 * @param delimiter the delimiter
+	 */
 	public CSVTextEditor(final char delimiter) {
 		final CSVTextSourceViewerConfiguration csvTextConfig =
 				new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());
@@ -45,6 +52,11 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.S
 		super.createPartControl(compo);
 	}
 
+	/**
+	 * Sets the delimiter.
+	 *
+	 * @param delimiter the new delimiter
+	 */
 	public void setDelimiter(final char delimiter) {
 		final CSVTextSourceViewerConfiguration csvTextConfig =
 				new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());

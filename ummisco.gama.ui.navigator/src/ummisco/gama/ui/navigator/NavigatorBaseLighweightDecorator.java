@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'NavigatorBaseLighweightDecorator.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * NavigatorBaseLighweightDecorator.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.jface.viewers.IDecoration;
@@ -26,6 +25,7 @@ import ummisco.gama.ui.navigator.contents.VirtualContent;
  */
 public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecorator {
 
+	/** The sb. */
 	private final StringBuilder sb = new StringBuilder();
 
 	@Override

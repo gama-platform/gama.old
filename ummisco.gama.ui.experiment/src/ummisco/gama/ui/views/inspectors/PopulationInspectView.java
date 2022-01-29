@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'PopulationInspectView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * PopulationInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
 import java.io.IOException;
@@ -90,31 +89,65 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class PopulationInspectView extends GamaViewPart
 		implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
+	/** The export folder. */
 	protected static String exportFolder = "exports";
+	
+	/** The Constant ID. */
 	public static final String ID = IGui.TABLE_VIEW_ID;
+	
+	/** The Constant ID_ATTRIBUTE. */
 	public static final String ID_ATTRIBUTE = "#";
 	// public static final String CUSTOM = "custom";
 
+	/** The Constant SAVE. */
 	public final static int SAVE = 0;
+	
+	/** The Constant LOCK. */
 	public final static int LOCK = 1;
+	
+	/** The Constant POP. */
 	public final static int POP = 2;
+	
+	/** The Constant EXPR. */
 	public final static int EXPR = 3;
+	
+	/** The Constant DONT_INSPECT_BY_DEFAULT. */
 	public static final List<String> DONT_INSPECT_BY_DEFAULT =
 			Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
+	
+	/** The scope. */
 	private IScope scope;
+	
+	/** The locked. */
 	volatile boolean locked;
+	
+	/** The population menu. */
 	// volatile boolean refreshing;
 	ToolItem populationMenu;
+	
+	/** The viewer. */
 	TableViewer viewer;
+	
+	/** The attributes menu. */
 	Composite attributesMenu;
+	
+	/** The comparator. */
 	AgentComparator comparator;
+	
+	/** The editor. */
 	ExpressionControl editor;
 	// private String speciesName;
 
+	/** The elements. */
 	IAgent[] elements = {};
+	
+	/** The selected columns. */
 	// Font currentFont = new Font(WorkbenchHelper.getDisplay(), GamaFonts.getSmallFont().getFontData());
 	Map<String, List<String>> selectedColumns = new HashMap();
 
+	/**
+	 * The Class AgentContentProvider.
+	 */
 	class AgentContentProvider implements ILazyContentProvider {
 
 		@Override
@@ -147,6 +180,7 @@ public class PopulationInspectView extends GamaViewPart
 		this.setTitleImage(GamaIcons.create("view.browser2").image());
 	}
 
+	/** The provider. */
 	final private AgentContentProvider provider = new AgentContentProvider();
 
 	@Override
@@ -209,6 +243,9 @@ public class PopulationInspectView extends GamaViewPart
 		recreateViewer();
 	}
 
+	/**
+	 * Update species.
+	 */
 	void updateSpecies() {
 		final ISpecies species = getOutput().getSpecies();
 		final IExpression expr = getOutput().getValue();
@@ -242,6 +279,12 @@ public class PopulationInspectView extends GamaViewPart
 	// toolbar.status((Image) null, description, IGamaColors.BLUE);
 	// }
 
+	/**
+	 * Change part name.
+	 *
+	 * @param name the name
+	 * @param complete the complete
+	 */
 	private void changePartName(final String name, final boolean complete) {
 		if (name == null) return;
 		// this.setContentDescription(StringUtils.capitalize(name) + "
@@ -257,6 +300,11 @@ public class PopulationInspectView extends GamaViewPart
 
 	}
 
+	/**
+	 * Creates the menus.
+	 *
+	 * @param parent the parent
+	 */
 	private void createMenus(final Composite parent) {
 		final ScrolledComposite scroll = new ScrolledComposite(parent, SWT.V_SCROLL);
 		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
@@ -273,6 +321,9 @@ public class PopulationInspectView extends GamaViewPart
 		fillAttributeMenu();
 	}
 
+	/**
+	 * Fill attribute menu.
+	 */
 	void fillAttributeMenu() {
 		// Not yet declared or already disposed
 		if (getOutput() == null || attributesMenu == null || attributesMenu.isDisposed()) return;
@@ -311,6 +362,9 @@ public class PopulationInspectView extends GamaViewPart
 		((ScrolledComposite) attributesMenu.getParent()).setMinSize(size);
 	}
 
+	/**
+	 * Creates the expression composite.
+	 */
 	private void createExpressionComposite() {
 		final Composite compo = new Composite(toolbar.getToolbar(SWT.RIGHT), SWT.None);
 		compo.setSize(new Point(150, 30));
@@ -355,6 +409,11 @@ public class PopulationInspectView extends GamaViewPart
 		toolbar.refresh(true);
 	}
 
+	/**
+	 * Gets the attributes selection.
+	 *
+	 * @return the attributes selection
+	 */
 	List<String> getAttributesSelection() {
 		final ArrayList<String> result = new ArrayList<>();
 		for (final Control c : attributesMenu.getChildren()) {
@@ -366,6 +425,7 @@ public class PopulationInspectView extends GamaViewPart
 		return result;
 	}
 
+	/** The attribute adapter. */
 	private final SelectionAdapter attributeAdapter = new SelectionAdapter() {
 
 		@Override
@@ -377,6 +437,11 @@ public class PopulationInspectView extends GamaViewPart
 
 	};
 
+	/**
+	 * Gets the species name.
+	 *
+	 * @return the species name
+	 */
 	String getSpeciesName() {
 		if (getOutput() == null) return "";
 		final ISpecies species = getOutput().getSpecies();
@@ -405,6 +470,11 @@ public class PopulationInspectView extends GamaViewPart
 		setParentComposite(intermediate);
 	}
 
+	/**
+	 * Creates the viewer.
+	 *
+	 * @param parent the parent
+	 */
 	private void createViewer(final Composite parent) {
 		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		createColumns();
@@ -448,6 +518,9 @@ public class PopulationInspectView extends GamaViewPart
 		// viewer.setComparator(comparator);
 	}
 
+	/**
+	 * Recreate viewer.
+	 */
 	void recreateViewer() {
 		if (viewer == null) return;
 		final Table table = viewer.getTable();
@@ -457,6 +530,9 @@ public class PopulationInspectView extends GamaViewPart
 		getParentComposite().layout(true);
 	}
 
+	/**
+	 * Creates the columns.
+	 */
 	private void createColumns() {
 		final List<String> selection = new ArrayList(getAttributesSelection());
 		selection.remove(ID_ATTRIBUTE);
@@ -466,6 +542,12 @@ public class PopulationInspectView extends GamaViewPart
 		}
 	}
 
+	/**
+	 * Gets the column label provider.
+	 *
+	 * @param title the title
+	 * @return the column label provider
+	 */
 	private ColumnLabelProvider getColumnLabelProvider(final String title) {
 		return new ColumnLabelProvider() {
 
@@ -483,6 +565,13 @@ public class PopulationInspectView extends GamaViewPart
 		};
 	}
 
+	/**
+	 * Gets the selection adapter.
+	 *
+	 * @param column the column
+	 * @param name the name
+	 * @return the selection adapter
+	 */
 	private SelectionAdapter getSelectionAdapter(final TableColumn column, final String name) {
 		return new SelectionAdapter() {
 
@@ -498,6 +587,14 @@ public class PopulationInspectView extends GamaViewPart
 		};
 	}
 
+	/**
+	 * Creates the table viewer column.
+	 *
+	 * @param title the title
+	 * @param bound the bound
+	 * @param colNumber the col number
+	 * @return the table viewer column
+	 */
 	private TableViewerColumn createTableViewerColumn(final String title, final int bound, final int colNumber) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();
@@ -515,16 +612,34 @@ public class PopulationInspectView extends GamaViewPart
 		viewer.getControl().setFocus();
 	}
 
+	/**
+	 * The Class AgentComparator.
+	 */
 	public class AgentComparator extends ViewerComparator implements Comparator {
 
+		/** The attribute. */
 		private String attribute = null;
+		
+		/** The direction. */
 		private int direction = SWT.UP;
+		
+		/** The string comparator. */
 		private final NaturalOrderComparator stringComparator = new NaturalOrderComparator();
 
+		/**
+		 * Gets the direction.
+		 *
+		 * @return the direction
+		 */
 		public int getDirection() {
 			return direction;
 		}
 
+		/**
+		 * Sets the column.
+		 *
+		 * @param column the new column
+		 */
 		public void setColumn(final String column) {
 			if (column.equals(attribute)) {
 				// Same column as last sort; toggle the direction
@@ -595,12 +710,27 @@ public class PopulationInspectView extends GamaViewPart
 
 	}
 
+	/**
+	 * Gets the scope.
+	 *
+	 * @return the scope
+	 */
 	IScope getScope() {
 		return scope;
 	}
 
+	/**
+	 * The Class NaturalOrderComparator.
+	 */
 	public static class NaturalOrderComparator implements Comparator {
 
+		/**
+		 * Compare right.
+		 *
+		 * @param a the a
+		 * @param b the b
+		 * @return the int
+		 */
 		int compareRight(final String a, final String b) {
 			int bias = 0;
 			int ia = 0;
@@ -683,6 +813,13 @@ public class PopulationInspectView extends GamaViewPart
 
 		}
 
+		/**
+		 * Char at.
+		 *
+		 * @param s the s
+		 * @param i the i
+		 * @return the char
+		 */
 		char charAt(final String s, final int i) {
 			if (i >= s.length()) return 0;
 			return s.charAt(i);

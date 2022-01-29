@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxProviderImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BoxProviderImpl.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
@@ -20,15 +19,31 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.misc.TextMatcher;
 
+/**
+ * The Class BoxProviderImpl.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class BoxProviderImpl implements IBoxProvider {
 
+	/** The id. */
 	protected String id;
+	
+	/** The name. */
 	protected String name;
+	
+	/** The editors settings. */
 	protected IBoxSettings editorsSettings;
+	
+	/** The settings store. */
 	protected BoxSettingsStoreImpl settingsStore;
+	
+	/** The builders. */
 	protected Map<String, Class> builders;
+	
+	/** The default settings catalog. */
 	protected Collection<String> defaultSettingsCatalog;
+	
+	/** The matchers. */
 	private ArrayList<Matcher> matchers;
 
 	@Override
@@ -71,6 +86,12 @@ public class BoxProviderImpl implements IBoxProvider {
 				&& (supportsFile(editorPart.getTitle()) || supportsFile(editorPart.getTitleToolTip()));
 	}
 
+	/**
+	 * Supports file.
+	 *
+	 * @param fileName the file name
+	 * @return true, if successful
+	 */
 	protected boolean supportsFile(final String fileName) {
 		if (fileName != null) {
 			for (final Matcher matcher : getMatchers()) {
@@ -80,6 +101,11 @@ public class BoxProviderImpl implements IBoxProvider {
 		return false;
 	}
 
+	/**
+	 * Gets the matchers.
+	 *
+	 * @return the matchers
+	 */
 	protected Collection<Matcher> getMatchers() {
 		if (matchers == null) {
 			matchers = new ArrayList<>();
@@ -103,20 +129,40 @@ public class BoxProviderImpl implements IBoxProvider {
 		return name;
 	}
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param newId the new id
+	 */
 	public void setId(final String newId) {
 		id = newId;
 	}
 
+	/**
+	 * Sets the name.
+	 *
+	 * @param newName the new name
+	 */
 	public void setName(final String newName) {
 		name = newName;
 	}
 
+	/**
+	 * Creates the settings store.
+	 *
+	 * @return the box settings store impl
+	 */
 	protected BoxSettingsStoreImpl createSettingsStore() {
 		final BoxSettingsStoreImpl result = new BoxSettingsStoreImpl();
 		result.setDefaultSettingsCatalog(defaultSettingsCatalog);
 		return result;
 	}
 
+	/**
+	 * Sets the default settings catalog.
+	 *
+	 * @param cat the new default settings catalog
+	 */
 	public void setDefaultSettingsCatalog(final Collection<String> cat) {
 		defaultSettingsCatalog = cat;
 	}
@@ -128,6 +174,11 @@ public class BoxProviderImpl implements IBoxProvider {
 		return result;
 	}
 
+	/**
+	 * Creates the settings 0.
+	 *
+	 * @return the box settings impl
+	 */
 	protected BoxSettingsImpl createSettings0() {
 		return new BoxSettingsImpl();
 	}
@@ -144,6 +195,11 @@ public class BoxProviderImpl implements IBoxProvider {
 		return builders != null ? builders.keySet() : null;
 	}
 
+	/**
+	 * Sets the builders.
+	 *
+	 * @param newBuilders the new builders
+	 */
 	public void setBuilders(final Map<String, Class> newBuilders) {
 		builders = newBuilders;
 	}
@@ -163,14 +219,29 @@ public class BoxProviderImpl implements IBoxProvider {
 		return null;
 	}
 
+	/**
+	 * The Class Matcher.
+	 */
 	class Matcher {
 
+		/** The m. */
 		TextMatcher m;
 
+		/**
+		 * Instantiates a new matcher.
+		 *
+		 * @param pattern the pattern
+		 */
 		Matcher(final String pattern) {
 			m = new TextMatcher(pattern, true, false);
 		}
 
+		/**
+		 * Matches.
+		 *
+		 * @param text the text
+		 * @return true, if successful
+		 */
 		boolean matches(final String text) {
 			return m.match(text);
 		}

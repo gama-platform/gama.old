@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ImageViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * ImageViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.image;
 
 import java.io.BufferedInputStream;
@@ -92,14 +91,31 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class ImageViewer extends EditorPart
 		implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
+	/** The toolbar. */
 	GamaToolbar2 toolbar;
+	
+	/** The image. */
 	Image image;
+	
+	/** The image data. */
 	ImageData imageData;
+	
+	/** The scroll. */
 	ScrolledComposite scroll;
+	
+	/** The intermediate. */
 	Composite intermediate;
+	
+	/** The image canvas. */
 	Canvas imageCanvas;
+	
+	/** The zoom factor. */
 	double zoomFactor = 1.0d;
+	
+	/** The max zoom factor. */
 	double maxZoomFactor = 1.0d;
+	
+	/** The input listener. */
 	ImageResourceChangeListener inputListener = null;
 
 	@Override
@@ -116,6 +132,12 @@ public class ImageViewer extends EditorPart
 		setInput(input, true);
 	}
 
+	/**
+	 * Sets the input.
+	 *
+	 * @param input the input
+	 * @param notify the notify
+	 */
 	void setInput(final IEditorInput input, final boolean notify) {
 		final IEditorInput old = getEditorInput();
 		if (input != old) {
@@ -169,6 +191,9 @@ public class ImageViewer extends EditorPart
 		return null;
 	}
 
+	/**
+	 * Display info string.
+	 */
 	void displayInfoString() {
 		final GamaUIColor color = IGamaColors.OK;
 		final IGamaFileMetaData md =
@@ -269,6 +294,11 @@ public class ImageViewer extends EditorPart
 		startImageLoad();
 	}
 
+	/**
+	 * Resize canvas.
+	 *
+	 * @param p the p
+	 */
 	void resizeCanvas(final Point p) {
 		final Rectangle scrollSize = scroll.getClientArea();
 		final int width = p.x > scrollSize.width ? p.x : scrollSize.width;
@@ -496,6 +526,17 @@ public class ImageViewer extends EditorPart
 		}
 	}
 
+	/**
+	 * Save to.
+	 *
+	 * @param imageData the image data
+	 * @param dest the dest
+	 * @param imageType the image type
+	 * @param monitor the monitor
+	 * @throws CoreException the core exception
+	 * @throws InterruptedException the interrupted exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	void saveTo(final ImageData imageData, final IFile dest, final int imageType, final IProgressMonitor monitor)
 			throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
@@ -575,6 +616,11 @@ public class ImageViewer extends EditorPart
 		return true;
 	}
 
+	/**
+	 * Gets the image data.
+	 *
+	 * @return the image data
+	 */
 	public ImageData getImageData() {
 		return imageData;
 	}
@@ -657,8 +703,14 @@ public class ImageViewer extends EditorPart
 	 */
 	private class ImageResourceChangeListener implements IResourceChangeListener {
 
+		/** The image file. */
 		IResource imageFile;
 
+		/**
+		 * Instantiates a new image resource change listener.
+		 *
+		 * @param imageFile the image file
+		 */
 		public ImageResourceChangeListener(final IResource imageFile) {
 			this.imageFile = imageFile;
 		}

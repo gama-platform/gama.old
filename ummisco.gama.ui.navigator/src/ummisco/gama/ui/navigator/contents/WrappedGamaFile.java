@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * WrappedGamaFile.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import static msi.gama.common.GamlFileExtension.isExperiment;
@@ -24,16 +34,31 @@ import msi.gaml.descriptions.IExpressionDescription;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaIcons;
 
+/**
+ * The Class WrappedGamaFile.
+ */
 public class WrappedGamaFile extends WrappedFile {
 
+	/** The is experiment. */
 	boolean isExperiment;
+	
+	/** The uri problems. */
 	IMap<String, Integer> uriProblems;
 
+	/**
+	 * Instantiates a new wrapped gama file.
+	 *
+	 * @param root the root
+	 * @param wrapped the wrapped
+	 */
 	public WrappedGamaFile(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
 		computeURIProblems();
 	}
 
+	/**
+	 * Compute URI problems.
+	 */
 	public void computeURIProblems() {
 		try {
 			uriProblems = null;
@@ -93,6 +118,12 @@ public class WrappedGamaFile extends WrappedFile {
 		isExperiment = isExperiment(f.getName());
 	}
 
+	/**
+	 * Checks for tag.
+	 *
+	 * @param tag the tag
+	 * @return true, if successful
+	 */
 	public boolean hasTag(final String tag) {
 		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 		// DEBUG.LOG("Tags of " + getName() + ": " + ((GamlFileInfo) metaData).getTags());
@@ -146,6 +177,12 @@ public class WrappedGamaFile extends WrappedFile {
 		return VirtualContent.EMPTY;
 	}
 
+	/**
+	 * Gets the URI problem.
+	 *
+	 * @param uri the uri
+	 * @return the URI problem
+	 */
 	public int getURIProblem(final URI uri) {
 
 		if (uri == null) { return -1; }

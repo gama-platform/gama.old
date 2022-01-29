@@ -1,10 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved. This program and the accompanying materials are
- * made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * CompareWithEachOtherAction.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import org.eclipse.compare.internal.CompareAction;
@@ -15,17 +18,29 @@ import org.eclipse.ui.actions.WorkspaceAction;
 
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class CompareWithEachOtherAction.
+ */
 public class CompareWithEachOtherAction extends WorkspaceAction {
 
+	/** The is enabled. */
 	boolean isEnabled;
+	
+	/** The action. */
 	protected CompareAction action;
 
+	/**
+	 * Instantiates a new compare with each other action.
+	 *
+	 * @param provider the provider
+	 */
 	protected CompareWithEachOtherAction(final IShellProvider provider) {
 		super(provider, "Compare");
 		action = new CompareAction();
 		action.setActivePart(this, WorkbenchHelper.getActivePart());
 	}
 
+	/** The selection. */
 	private IStructuredSelection fSelection;
 
 	@Override
@@ -41,6 +56,11 @@ public class CompareWithEachOtherAction extends WorkspaceAction {
 		return isEnabled;
 	}
 
+	/**
+	 * Gets the selection.
+	 *
+	 * @return the selection
+	 */
 	public IStructuredSelection getSelection() {
 		return fSelection;
 	}

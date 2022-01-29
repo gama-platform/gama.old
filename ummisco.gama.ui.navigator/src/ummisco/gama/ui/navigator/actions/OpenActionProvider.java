@@ -1,11 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation mark.melvin@onsemi.com - bug 288997 [CommonNavigator]
- * Double-clicking an adapted resource in Common Navigator does not open underlying IFile
- *******************************************************************************/
+ * OpenActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import org.eclipse.core.resources.IResource;
@@ -34,8 +36,13 @@ import ummisco.gama.ui.navigator.contents.WrappedFile;
  */
 public class OpenActionProvider extends CommonActionProvider {
 
+	/** The open file action. */
 	private OpenFileAction openFileAction;
+	
+	/** The view site. */
 	private ICommonViewerWorkbenchSite viewSite = null;
+	
+	/** The contribute. */
 	private boolean contribute = false;
 
 	@Override
@@ -71,6 +78,11 @@ public class OpenActionProvider extends CommonActionProvider {
 
 	}
 
+	/**
+	 * Adds the open with menu.
+	 *
+	 * @param aMenu the a menu
+	 */
 	private void addOpenWithMenu(final IMenuManager aMenu) {
 		final IStructuredSelection ss = (IStructuredSelection) getContext().getSelection();
 		if (ss == null || ss.size() != 1) { return; }

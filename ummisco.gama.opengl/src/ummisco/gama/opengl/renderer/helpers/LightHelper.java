@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GLUtilLight.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * LightHelper.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
 import java.awt.Color;
@@ -25,14 +24,28 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
+/**
+ * The Class LightHelper.
+ */
 public class LightHelper extends AbstractRendererHelper {
 
+	/**
+	 * Instantiates a new light helper.
+	 *
+	 * @param renderer the renderer
+	 */
 	public LightHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
 	// public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
+	/**
+	 * Sets the ambiant light.
+	 *
+	 * @param gl the gl
+	 * @param ambientLightValue the ambient light value
+	 */
 	public void setAmbiantLight(final OpenGL gl, final Color ambientLightValue) {
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
 				ambientLightValue.getBlue() / 255.0f, 1.0f };
@@ -75,6 +88,11 @@ public class LightHelper extends AbstractRendererHelper {
 		gl.getGL().glEnable(GL2.GL_COLOR_MATERIAL);
 	}
 
+	/**
+	 * Update diffuse light value.
+	 *
+	 * @param openGL the open GL
+	 */
 	public void updateDiffuseLightValue(final OpenGL openGL) {
 		// final GL2 gl = openGL.getGL();
 		final List<LightPropertiesStructure> lightPropertiesList = getData().getDiffuseLights();
@@ -135,6 +153,16 @@ public class LightHelper extends AbstractRendererHelper {
 		}
 	}
 
+	/**
+	 * Draw light.
+	 *
+	 * @param openGL the open GL
+	 * @param size the size
+	 * @param worldWidth the world width
+	 * @param worldHeight the world height
+	 * @param lightProperties the light properties
+	 * @param lightPosition the light position
+	 */
 	private void drawLight(final OpenGL openGL, final double size, final double worldWidth, final double worldHeight,
 			final LightPropertiesStructure lightProperties, final float[] lightPosition) {
 
@@ -210,6 +238,13 @@ public class LightHelper extends AbstractRendererHelper {
 
 	}
 
+	/**
+	 * Cross product.
+	 *
+	 * @param vect1 the vect 1
+	 * @param vect2 the vect 2
+	 * @return the double[]
+	 */
 	public static double[] CrossProduct(final double[] vect1, final double[] vect2) {
 		final double[] result = new double[3];
 		result[0] = vect1[1] * vect2[2] - vect1[2] * vect2[1];
@@ -218,6 +253,9 @@ public class LightHelper extends AbstractRendererHelper {
 		return result;
 	}
 
+	/**
+	 * Draw.
+	 */
 	public void draw() {
 		if (isActive()) {
 			final OpenGL openGL = getOpenGL();
@@ -228,6 +266,11 @@ public class LightHelper extends AbstractRendererHelper {
 		}
 	}
 
+	/**
+	 * Checks if is active.
+	 *
+	 * @return true, if is active
+	 */
 	public boolean isActive() {
 		return getData().isLightOn();
 	}

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ConsoleView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ConsoleView.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.console;
 
 import java.io.BufferedWriter;
@@ -43,17 +42,34 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
+/**
+ * The Class ConsoleView.
+ */
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable,
 		IToolbarDecoratedView.LogExportable, IGamaView.Console {
 
+	/** The msg console. */
 	private IOConsole msgConsole;
+	
+	/** The viewer. */
 	IOConsoleViewer viewer;
+	
+	/** The paused. */
 	boolean paused = false;
+	
+	/** The pause buffer. */
 	private final StringBuilder pauseBuffer =
 			new StringBuilder(GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0
 					: GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue());
+	
+	/** The writers. */
 	private final HashMap<Color, BufferedWriter> writers = new HashMap<>();
 
+	/**
+	 * Sets the character limit.
+	 *
+	 * @param limit the new character limit
+	 */
 	public void setCharacterLimit(final int limit) {
 		if (limit == -1) {
 			msgConsole.setWaterMarks(-1, -1);
@@ -71,6 +87,13 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		viewer.setWordWrap(GamaPreferences.Interface.CORE_CONSOLE_WRAP.getValue());
 	}
 
+	/**
+	 * Gets the writer for.
+	 *
+	 * @param root the root
+	 * @param color the color
+	 * @return the writer for
+	 */
 	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
 		final Color c = getColorFor(root, color);
 		BufferedWriter writer = writers.get(c);
@@ -84,12 +107,20 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		return writer;
 	}
 
+	/**
+	 * Gets the color for.
+	 *
+	 * @param root the root
+	 * @param requested the requested
+	 * @return the color for
+	 */
 	private Color getColorFor(final ITopLevelAgent root, final GamaUIColor requested) {
 		final GamaUIColor result =
 				requested == null ? root == null ? IGamaColors.BLACK : GamaColors.get(root.getColor()) : requested;
 		return ThemeHelper.isDark() ? result.lighter() : result.color();
 	}
 
+	/** The indicated. */
 	private boolean indicated = false;
 
 	/**
@@ -104,6 +135,13 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		append(text, agent, color == null ? null : GamaColors.get(color));
 	}
 
+	/**
+	 * Append.
+	 *
+	 * @param text the text
+	 * @param root the root
+	 * @param color the color
+	 */
 	public void append(final String text, final ITopLevelAgent root, final GamaUIColor color) {
 
 		if (!paused) {

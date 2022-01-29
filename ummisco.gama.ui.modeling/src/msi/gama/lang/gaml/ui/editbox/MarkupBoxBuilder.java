@@ -1,19 +1,20 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MarkupBoxBuilder.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * MarkupBoxBuilder.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.LinkedList;
 
+/**
+ * The Class MarkupBoxBuilder.
+ */
 public class MarkupBoxBuilder extends BoxBuilderImpl {
 
 	protected void addLine(int start, int end, int offset, boolean empty) {
@@ -24,11 +25,25 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 			emptyPrevLine = empty;
 	}
 
+	/**
+	 * Checks if is closing tag 0.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if is closing tag 0
+	 */
 	protected boolean isClosingTag0(int start, int end) {
 		String line = text.substring(start, end).trim();
 		return countCloseOpen(line) < 0;
 	}
 
+	/**
+	 * Checks if is closing current tag.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if is closing current tag
+	 */
 	// add comment tag support
 	protected boolean isClosingCurrentTag(int start, int end) {
 		String line = text.substring(start, end).trim();
@@ -53,6 +68,13 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 		super.addbox0(start, end, offset);
 	}
 
+	/**
+	 * Checks if is open tag.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if is open tag
+	 */
 	protected boolean isOpenTag(int start, int end) {
 		String line = text.substring(start, end).trim();
 		if (line.length() < 3)
@@ -62,11 +84,23 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 	}
 
 
+	/**
+	 * Count close open.
+	 *
+	 * @param line the line
+	 * @return the int
+	 */
 	protected int countCloseOpen(String line) {
 		TokenStack stack = processTags(line);
 		return stack.result();
 	}
 
+	/**
+	 * Process tags.
+	 *
+	 * @param line the line
+	 * @return the token stack
+	 */
 	protected TokenStack processTags(String line) {
 		TokenStack stack = new TokenStack();
 		String token = null;
@@ -84,6 +118,13 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 		return stack;
 	}
 
+	/**
+	 * Gets the word.
+	 *
+	 * @param line the line
+	 * @param n the n
+	 * @return the word
+	 */
 	protected String getWord(String line, int n) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = n; i < line.length(); i++) {
@@ -95,11 +136,22 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 		return sb.toString();
 	}
 
+	/**
+	 * The Class TokenStack.
+	 */
 	class TokenStack {
 
+		/** The Constant CLOSING. */
 		private static final String CLOSING = ">";
+		
+		/** The tokens. */
 		LinkedList<String> tokens = new LinkedList<String>();
 
+		/**
+		 * Adds the closing.
+		 *
+		 * @param token the token
+		 */
 		public void addClosing(String token) {
 			if (token == null) {
 				if (!tokens.isEmpty() && !tokens.getLast().equals(CLOSING))
@@ -116,6 +168,11 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 			}
 		}
 
+		/**
+		 * Result.
+		 *
+		 * @return the int
+		 */
 		public int result() {
 			if (tokens.isEmpty())
 				return 0;
@@ -124,6 +181,11 @@ public class MarkupBoxBuilder extends BoxBuilderImpl {
 			return 1;
 		}
 
+		/**
+		 * Adds the opening.
+		 *
+		 * @param token the token
+		 */
 		public void addOpening(String token) {
 			tokens.add(token);
 		}

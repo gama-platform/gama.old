@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxSettingsImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BoxSettingsImpl.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.io.ByteArrayOutputStream;
@@ -26,8 +25,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+/**
+ * The Class BoxSettingsImpl.
+ */
 public class BoxSettingsImpl implements IBoxSettings {
 
+	/** The Constant DEFAULT. */
 	private static final BoxSettingsImpl DEFAULT = new BoxSettingsImpl() {
 		{
 			name = "Default";
@@ -46,38 +49,97 @@ public class BoxSettingsImpl implements IBoxSettings {
 		}
 	};
 
+	/** The enabled. */
 	protected boolean enabled;
+	
+	/** The name. */
 	protected String name;
+	
+	/** The text. */
 	protected String text;
 
+	/** The border color. */
 	protected Color borderColor;
+	
+	/** The highlight color. */
 	protected Color highlightColor;
+	
+	/** The fill color. */
 	protected Color fillColor;
+	
+	/** The border width. */
 	protected int borderWidth;
+	
+	/** The highlight width. */
 	protected int highlightWidth;
+	
+	/** The highlight one. */
 	protected boolean highlightOne;
+	
+	/** The fill selected. */
 	protected boolean fillSelected;
+	
+	/** The round box. */
 	protected boolean roundBox;
+	
+	/** The builder. */
 	protected String builder;
+	
+	/** The box colors. */
 	protected Color[] boxColors;
+	
+	/** The listeners. */
 	protected ArrayList<IPropertyChangeListener> listeners;
+	
+	/** The highlight draw line. */
 	protected boolean highlightDrawLine;
+	
+	/** The fill gradient color. */
 	protected Color fillGradientColor;
+	
+	/** The fill gradient. */
 	protected boolean fillGradient;
+	
+	/** The border draw line. */
 	protected boolean borderDrawLine;
+	
+	/** The fill on move. */
 	protected boolean fillOnMove;
+	
+	/** The circulate level colors. */
 	protected boolean circulateLevelColors;
+	
+	/** The fill key modifier. */
 	protected String fillKeyModifier;
+	
+	/** The file names. */
 	protected Collection<String> fileNames;
+	
+	/** The highlight color type. */
 	protected int highlightColorType;
+	
+	/** The border color type. */
 	protected int borderColorType;
+	
+	/** The border line style. */
 	protected int borderLineStyle;
+	
+	/** The highlight line style. */
 	protected int highlightLineStyle;
+	
+	/** The no background. */
 	protected boolean noBackground;
+	
+	/** The expand box. */
 	protected boolean expandBox;
+	
+	/** The alpha. */
 	protected int alpha;
 
+	/** The border colors. */
 	private transient Color[] borderColors;
+	
+	/** The highlight colors. */
 	private transient Color[] highlightColors;
 
 	@Override
@@ -118,6 +180,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 		notifyChange(PropertiesKeys.ALL.name(), null, null);
 	}
 
+	/**
+	 * Copy colors.
+	 *
+	 * @param o the o
+	 * @return the color[]
+	 */
 	private Color[] copyColors(final BoxSettingsImpl o) {
 		final Color[] newBoxColors = o.boxColors == null ? null : new Color[o.boxColors.length];
 		if (newBoxColors != null) {
@@ -131,6 +199,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return newBoxColors;
 	}
 
+	/**
+	 * Dispose colors.
+	 *
+	 * @param oldBoxColors the old box colors
+	 * @return the color[]
+	 */
 	private Color[] disposeColors(final Color[] oldBoxColors) {
 		if (oldBoxColors != null) {
 			for (final Color oldBoxColor : oldBoxColors) {
@@ -142,6 +216,13 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return null;
 	}
 
+	/**
+	 * Sets the color copy.
+	 *
+	 * @param old the old
+	 * @param newColor the new color
+	 * @return the color
+	 */
 	protected Color setColorCopy(final Color old, final Color newColor) {
 		if (old != null) {
 			old.dispose();
@@ -231,16 +312,36 @@ public class BoxSettingsImpl implements IBoxSettings {
 		this.text = newText;
 	}
 
+	/**
+	 * Sets the color 0.
+	 *
+	 * @param old the old
+	 * @param c the c
+	 * @return the color
+	 */
 	protected Color setColor0(final Color old, final Color c) {
 		disposeColor(old);
 		return c;
 	}
 
+	/**
+	 * Sets the color 0.
+	 *
+	 * @param old the old
+	 * @param c the c
+	 * @return the color
+	 */
 	protected Color setColor0(final Color old, final RGB c) {
 		if (c == null) { return old; }
 		return setColor0(old, new Color(null, c));
 	}
 
+	/**
+	 * Dispose color.
+	 *
+	 * @param c the c
+	 * @return the color
+	 */
 	protected Color disposeColor(final Color c) {
 		if (c != null) {
 			c.dispose();
@@ -489,11 +590,25 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return null;
 	}
 
+	/**
+	 * Calculate darker color.
+	 *
+	 * @param c the c
+	 * @param type the type
+	 * @return the color
+	 */
 	private final Color calculateDarkerColor(final Color c, final int type) {
 		return new Color(null, calcDarker(c.getRed(), type), calcDarker(c.getGreen(), type),
 				calcDarker(c.getBlue(), type));
 	}
 
+	/**
+	 * Calc darker.
+	 *
+	 * @param r the r
+	 * @param type the type
+	 * @return the int
+	 */
 	private final int calcDarker(final int r, final int type) {
 		return r - r * type / 4;
 	}
@@ -544,6 +659,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return highlightColorType;
 	}
 
+	/**
+	 * Gets the color index.
+	 *
+	 * @param level the level
+	 * @return the color index
+	 */
 	public int getColorIndex(final int level) {
 		if (boxColors != null && boxColors.length == 1 && noBackground && level > 0) { return -1; }
 		if (!circulateLevelColors && boxColors != null && boxColors.length <= level
@@ -559,6 +680,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return null;
 	}
 
+	/**
+	 * Gets the n color 0.
+	 *
+	 * @param n the n
+	 * @return the n color 0
+	 */
 	int getNColor0(final int n) {
 		final int len = boxColors.length;
 		if (len < 2) { return 0; }
@@ -606,32 +733,69 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return 0;
 	}
 
+	/**
+	 * The Class StringExternalization.
+	 */
 	class StringExternalization {
 
+		/** The Constant COMMENT. */
 		private static final String COMMENT = "Editbox Eclipse Plugin Settings";
 
+		/**
+		 * Export.
+		 *
+		 * @param b the b
+		 * @return the string
+		 */
 		public String export(final BoxSettingsImpl b) {
 			final Properties p = toProperies(b);
 			return propertiesToString(p);
 		}
 
+		/**
+		 * Load.
+		 *
+		 * @param stream the stream
+		 * @param b the b
+		 * @throws Exception the exception
+		 */
 		public void load(final InputStream stream, final BoxSettingsImpl b) throws Exception {
 			final Properties p = new Properties();
 			p.load(stream);
 			load(p, b);
 		}
 
+		/**
+		 * Export.
+		 *
+		 * @param stream the stream
+		 * @param b the b
+		 * @throws Exception the exception
+		 */
 		public void export(final OutputStream stream, final BoxSettingsImpl b) throws Exception {
 			final Properties p = toProperies(b);
 			p.store(stream, COMMENT);
 
 		}
 
+		/**
+		 * Load.
+		 *
+		 * @param s the s
+		 * @param b the b
+		 * @throws Exception the exception
+		 */
 		public void load(final String s, final BoxSettingsImpl b) throws Exception {
 			final Properties p = loadProperties(s);
 			load(p, b);
 		}
 
+		/**
+		 * Load.
+		 *
+		 * @param p the p
+		 * @param b the b
+		 */
 		private void load(final Properties p, final BoxSettingsImpl b) {
 			b.name = parseString(p.get(PropertiesKeys.Name.name()));
 			b.borderColor = parseColor(p.get(PropertiesKeys.BorderColor.name()));
@@ -660,6 +824,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 			b.alpha = parseInt(p.get(PropertiesKeys.Alpha.name()));
 		}
 
+		/**
+		 * To properies.
+		 *
+		 * @param b the b
+		 * @return the properties
+		 */
 		private Properties toProperies(final BoxSettingsImpl b) {
 			final Properties p = new Properties();
 			p.put(PropertiesKeys.Name.name(), toS(b.name));
@@ -690,12 +860,25 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return p;
 		}
 
+		/**
+		 * Load properties.
+		 *
+		 * @param s the s
+		 * @return the properties
+		 * @throws IOException Signals that an I/O exception has occurred.
+		 */
 		private Properties loadProperties(final String s) throws IOException {
 			final Properties p = new Properties();
 			p.load(new StringReader(s));
 			return p;
 		}
 
+		/**
+		 * Properties to string.
+		 *
+		 * @param p the p
+		 * @return the string
+		 */
 		private String propertiesToString(final Properties p) {
 			try {
 				final ByteArrayOutputStream bo = new ByteArrayOutputStream();
@@ -708,6 +891,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return "";
 		}
 
+		/**
+		 * Parses the colors array.
+		 *
+		 * @param o the o
+		 * @return the color[]
+		 */
 		private Color[] parseColorsArray(final Object o) {
 			if (o == null || o.equals("null")) { return null; }
 			final String[] s = o.toString().split("-");
@@ -718,16 +907,34 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return c;
 		}
 
+		/**
+		 * Parses the bool.
+		 *
+		 * @param o the o
+		 * @return true, if successful
+		 */
 		private boolean parseBool(final Object o) {
 			if (o == null) { return false; }
 			return o.equals("true");
 		}
 
+		/**
+		 * Parses the int.
+		 *
+		 * @param o the o
+		 * @return the int
+		 */
 		private int parseInt(final Object o) {
 			if (o == null || o.equals("null")) { return 0; }
 			return Integer.parseInt(o.toString());
 		}
 
+		/**
+		 * Parses the color.
+		 *
+		 * @param o the o
+		 * @return the color
+		 */
 		private Color parseColor(final Object o) {
 			if (o == null || o.equals("null")) { return null; }
 			final String c = o.toString();
@@ -742,15 +949,33 @@ public class BoxSettingsImpl implements IBoxSettings {
 			}
 		}
 
+		/**
+		 * Parses the string.
+		 *
+		 * @param o the o
+		 * @return the string
+		 */
 		private String parseString(final Object o) {
 			if (o == null || o.equals("null")) { return null; }
 			return o.toString();
 		}
 
+		/**
+		 * To S.
+		 *
+		 * @param b the b
+		 * @return the string
+		 */
 		private String toS(final boolean b) {
 			return b ? "true" : "false";
 		}
 
+		/**
+		 * To S.
+		 *
+		 * @param colors the colors
+		 * @return the string
+		 */
 		private String toS(final Color[] colors) {
 			final StringBuilder sb = new StringBuilder();
 			if (colors == null || colors.length == 0) {
@@ -766,14 +991,32 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return sb.toString();
 		}
 
+		/**
+		 * To S.
+		 *
+		 * @param i the i
+		 * @return the string
+		 */
 		private String toS(final int i) {
 			return Integer.toString(i);
 		}
 
+		/**
+		 * To S.
+		 *
+		 * @param c the c
+		 * @return the string
+		 */
 		private String toS(final Color c) {
 			return c == null ? "null" : toHex(c.getRed()) + toHex(c.getGreen()) + toHex(c.getBlue());
 		}
 
+		/**
+		 * To hex.
+		 *
+		 * @param v the v
+		 * @return the string
+		 */
 		private String toHex(final int v) {
 			String s = Integer.toHexString(v);
 			if (s.length() == 1) {
@@ -782,6 +1025,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return s;
 		}
 
+		/**
+		 * To S.
+		 *
+		 * @param s the s
+		 * @return the string
+		 */
 		private String toS(final String s) {
 			return s == null ? "null" : s;
 		}
@@ -802,6 +1051,13 @@ public class BoxSettingsImpl implements IBoxSettings {
 		}
 	}
 
+	/**
+	 * Notify change.
+	 *
+	 * @param propertyName the property name
+	 * @param oldValue the old value
+	 * @param newValue the new value
+	 */
 	protected void notifyChange(final String propertyName, final Object oldValue, final Object newValue) {
 		if (listeners != null) {
 			final PropertyChangeEvent e = new PropertyChangeEvent(this, propertyName, oldValue, newValue);
@@ -833,6 +1089,12 @@ public class BoxSettingsImpl implements IBoxSettings {
 		return swtLineStyle(borderLineStyle);
 	}
 
+	/**
+	 * Swt line style.
+	 *
+	 * @param index the index
+	 * @return the int
+	 */
 	private int swtLineStyle(final int index) {
 		switch (index) {
 			case 0:

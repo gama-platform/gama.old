@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaFoldingRegionProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * GamaFoldingRegionProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.folding;
 
 import java.util.Collection;
@@ -69,25 +67,54 @@ public class GamaFoldingRegionProvider extends DefaultFoldingRegionProvider {
 		return EGaml.getInstance().hasChildren(object);
 	}
 
+	/**
+	 * The Class TypedFoldedPosition.
+	 */
 	public class TypedFoldedPosition extends DefaultFoldedPosition {
+		
+		/** The type. */
 		String type;
 
+		/**
+		 * Instantiates a new typed folded position.
+		 *
+		 * @param offset the offset
+		 * @param length the length
+		 * @param contentStart the content start
+		 * @param contentLength the content length
+		 * @param type the type
+		 */
 		public TypedFoldedPosition(final int offset, final int length, final int contentStart, final int contentLength,
 				final String type) {
 			super(offset, length, contentStart, contentLength);
 			this.type = type;
 		}
 
+		/**
+		 * Gets the type.
+		 *
+		 * @return the type
+		 */
 		public String getType() {
 			return type;
 		}
 
 	}
 
+	/**
+	 * The Class GamaFoldingRegionAcceptor.
+	 */
 	private class GamaFoldingRegionAcceptor extends DefaultFoldingRegionAcceptor {
 
+		/** The type. */
 		String type;
 
+		/**
+		 * Instantiates a new gama folding region acceptor.
+		 *
+		 * @param document the document
+		 * @param result the result
+		 */
 		public GamaFoldingRegionAcceptor(final IXtextDocument document, final Collection<FoldedPosition> result) {
 			super(document, result);
 		}

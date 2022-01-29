@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlHyperlinkDetector.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlHyperlinkDetector.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
 import org.eclipse.emf.common.util.URI;
@@ -43,11 +42,23 @@ import ummisco.gama.ui.commands.FileOpener;
  */
 public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 
+	/**
+	 * The Class ImportHyperlink.
+	 */
 	class ImportHyperlink implements IHyperlink {
 
+		/** The import uri. */
 		private final URI importUri;
+		
+		/** The region. */
 		private final IRegion region;
 
+		/**
+		 * Instantiates a new import hyperlink.
+		 *
+		 * @param importUri the import uri
+		 * @param region the region
+		 */
 		ImportHyperlink(final URI importUri, final IRegion region) {
 			this.importUri = importUri;
 			this.region = region;
@@ -74,8 +85,10 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		}
 	}
 
+	/** The Constant NO_HYPERLINKS. */
 	private static final IHyperlink[] NO_HYPERLINKS = null;
 
+	/** The e object at offset helper. */
 	@Inject private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 
 	@Override
@@ -93,10 +106,23 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		});
 	}
 
+	/**
+	 * Gets the uri.
+	 *
+	 * @param resolved the resolved
+	 * @return the uri
+	 */
 	public URI getURI(final StringLiteral resolved) {
 		return FileUtils.getURI(resolved.getOp(), resolved.eResource().getURI());
 	}
 
+	/**
+	 * Import hyperlinks.
+	 *
+	 * @param document the document
+	 * @param region the region
+	 * @return the i hyperlink[]
+	 */
 	private IHyperlink[] importHyperlinks(final IXtextDocument document, final IRegion region) {
 		return document.readOnly(resource -> {
 			final EObject resolved = eObjectAtOffsetHelper.resolveElementAt(resource, region.getOffset());
@@ -135,6 +161,15 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		});
 	}
 
+	/**
+	 * Import uri region.
+	 *
+	 * @param document the document
+	 * @param offset the offset
+	 * @param importUri the import uri
+	 * @return the i region
+	 * @throws BadLocationException the bad location exception
+	 */
 	private IRegion importUriRegion(final IXtextDocument document, final int offset, final String importUri)
 			throws BadLocationException {
 		final int lineNumber = document.getLineOfOffset(offset);

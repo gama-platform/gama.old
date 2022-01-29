@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlLabelProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlLabelProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.labeling;
 
 import java.util.List;
@@ -52,8 +51,14 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 
 public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IGamlLabelProvider {
 
+	/** The name provider. */
 	@Inject private IQualifiedNameProvider nameProvider;
 
+	/**
+	 * Instantiates a new gaml label provider.
+	 *
+	 * @param delegate the delegate
+	 */
 	@Inject
 	public GamlLabelProvider(final AdapterFactoryLabelProvider delegate) {
 		super(delegate);
@@ -64,10 +69,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return super.convertToImage(imageDescription);
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	String image(final Model ele) {
 		return "_model.png";
 	}
 
+	/**
+	 * Text.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	// Import
 	String text(final Import ele) {
 		String display = ele.getImportURI();
@@ -78,10 +95,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return "import " + display;
 	}
 
+	/**
+	 * Text.
+	 *
+	 * @param e the e
+	 * @return the string
+	 */
 	String text(final HeadlessExperiment e) {
 		return "Experiment " + e.getName();
 	}
 
+	/**
+	 * Text.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	String text(final EObject ele) {
 		String text;
 		String key = EGaml.getInstance().getKeyOf(ele);
@@ -172,10 +201,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return "Action " + name + " " + (type.equals(IKeyword.ACTION) ? "" : " (" + type + ")");
 	}
 
+	/**
+	 * Text.
+	 *
+	 * @param obj the obj
+	 * @return the string
+	 */
 	String text(final Model obj) {
 		return "Model " + obj.getName();
 	}
 
+	/**
+	 * Parameter text.
+	 *
+	 * @param p the p
+	 * @return the string
+	 */
 	protected String parameterText(final Statement p) {
 		String type = null;
 		String var = null;
@@ -211,10 +252,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 				+ (var == null ? "" : " (" + var + ")" + (type == null ? "" : " (" + type + ")"));
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	String image(final Import ele) {
 		return "_include.png";
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	String image(final S_Experiment ele) {
 		final List<Facet> facets = EGaml.getInstance().getFacetsOf(ele);
 		Facet type = null;
@@ -228,6 +281,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return typeImage(EGaml.getInstance().toString(type.getExpr()));
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	String image(final HeadlessExperiment ele) {
 		final List<Facet> facets = EGaml.getInstance().getFacetsOf(ele);
 		Facet type = null;
@@ -241,6 +300,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return typeImage(EGaml.getInstance().toString(type.getExpr()));
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @param ele the ele
+	 * @return the string
+	 */
 	// Statement : keyword.value
 	public String image(final Statement ele) {
 		final String kw = EGaml.getInstance().getKeyOf(ele);
@@ -256,6 +321,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		return typeImage(kw);
 	}
 
+	/**
+	 * Parameter image.
+	 *
+	 * @param p the p
+	 * @return the string
+	 */
 	protected String parameterImage(final Statement p) {
 		if (IKeyword.PARAMETER.equals(p.getKey())) {
 			String var = null;
@@ -276,6 +347,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		}
 	}
 
+	/**
+	 * Type image.
+	 *
+	 * @param string the string
+	 * @return the string
+	 */
 	public String typeImage(final String string) {
 		return "_" + string + ".png";
 	}

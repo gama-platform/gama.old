@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * InternalGamlParser.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ide.contentassist.antlr.internal;
 
 import java.io.InputStream;
@@ -20,174 +30,502 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+
+/**
+ * The Class InternalGamlParser.
+ */
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalContentAssistParser {
+    
+    /** The Constant tokenNames. */
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INTEGER", "RULE_DOUBLE", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'equation'", "'solve'", "'experiment'", "'var:'", "';'", "'value:'", "'<-'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'status'", "'highlight'", "'focus_on'", "'layout'", "'light'", "'camera'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'mesh'", "'do'", "'invoke'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'aspect'", "'<<'", "'<<+'", "'+<-'", "'<+'", "'>-'", "'name:'", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'layout:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'light:'", "'action:'", "'on_change:'", "'!='", "'='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'__synthetic__'", "'model'", "'import'", "'as'", "'@'", "'model:'", "'else'", "'catch'", "'when'", "':'", "'('", "')'", "'{'", "'}'", "','", "'::'", "']'", "'['", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'", "'global'", "'loop'", "'if'", "'condition:'", "'try'", "'return'", "'action'", "'set'", "'equation:'", "'display'", "'->'", "'?'", "'or'", "'and'", "'^'", "'.'"
     };
+    
+    /** The Constant T__144. */
     public static final int T__144=144;
+    
+    /** The Constant T__143. */
     public static final int T__143=143;
+    
+    /** The Constant T__146. */
     public static final int T__146=146;
+    
+    /** The Constant T__50. */
     public static final int T__50=50;
+    
+    /** The Constant T__145. */
     public static final int T__145=145;
+    
+    /** The Constant T__140. */
     public static final int T__140=140;
+    
+    /** The Constant T__142. */
     public static final int T__142=142;
+    
+    /** The Constant T__141. */
     public static final int T__141=141;
+    
+    /** The Constant T__59. */
     public static final int T__59=59;
+    
+    /** The Constant T__55. */
     public static final int T__55=55;
+    
+    /** The Constant T__56. */
     public static final int T__56=56;
+    
+    /** The Constant T__57. */
     public static final int T__57=57;
+    
+    /** The Constant T__58. */
     public static final int T__58=58;
+    
+    /** The Constant T__51. */
     public static final int T__51=51;
+    
+    /** The Constant T__137. */
     public static final int T__137=137;
+    
+    /** The Constant T__52. */
     public static final int T__52=52;
+    
+    /** The Constant T__136. */
     public static final int T__136=136;
+    
+    /** The Constant T__53. */
     public static final int T__53=53;
+    
+    /** The Constant T__139. */
     public static final int T__139=139;
+    
+    /** The Constant T__54. */
     public static final int T__54=54;
+    
+    /** The Constant T__138. */
     public static final int T__138=138;
+    
+    /** The Constant T__133. */
     public static final int T__133=133;
+    
+    /** The Constant T__132. */
     public static final int T__132=132;
+    
+    /** The Constant T__60. */
     public static final int T__60=60;
+    
+    /** The Constant T__135. */
     public static final int T__135=135;
+    
+    /** The Constant T__61. */
     public static final int T__61=61;
+    
+    /** The Constant T__134. */
     public static final int T__134=134;
+    
+    /** The Constant RULE_ID. */
     public static final int RULE_ID=5;
+    
+    /** The Constant T__131. */
     public static final int T__131=131;
+    
+    /** The Constant T__130. */
     public static final int T__130=130;
+    
+    /** The Constant T__66. */
     public static final int T__66=66;
+    
+    /** The Constant RULE_ML_COMMENT. */
     public static final int RULE_ML_COMMENT=10;
+    
+    /** The Constant T__67. */
     public static final int T__67=67;
+    
+    /** The Constant T__129. */
     public static final int T__129=129;
+    
+    /** The Constant T__68. */
     public static final int T__68=68;
+    
+    /** The Constant T__69. */
     public static final int T__69=69;
+    
+    /** The Constant T__62. */
     public static final int T__62=62;
+    
+    /** The Constant T__126. */
     public static final int T__126=126;
+    
+    /** The Constant T__63. */
     public static final int T__63=63;
+    
+    /** The Constant T__125. */
     public static final int T__125=125;
+    
+    /** The Constant T__64. */
     public static final int T__64=64;
+    
+    /** The Constant T__128. */
     public static final int T__128=128;
+    
+    /** The Constant T__65. */
     public static final int T__65=65;
+    
+    /** The Constant T__127. */
     public static final int T__127=127;
+    
+    /** The Constant T__37. */
     public static final int T__37=37;
+    
+    /** The Constant T__38. */
     public static final int T__38=38;
+    
+    /** The Constant T__39. */
     public static final int T__39=39;
+    
+    /** The Constant T__33. */
     public static final int T__33=33;
+    
+    /** The Constant T__34. */
     public static final int T__34=34;
+    
+    /** The Constant T__35. */
     public static final int T__35=35;
+    
+    /** The Constant T__36. */
     public static final int T__36=36;
+    
+    /** The Constant T__30. */
     public static final int T__30=30;
+    
+    /** The Constant T__31. */
     public static final int T__31=31;
+    
+    /** The Constant T__32. */
     public static final int T__32=32;
+    
+    /** The Constant T__155. */
     public static final int T__155=155;
+    
+    /** The Constant RULE_KEYWORD. */
     public static final int RULE_KEYWORD=9;
+    
+    /** The Constant T__154. */
     public static final int T__154=154;
+    
+    /** The Constant T__157. */
     public static final int T__157=157;
+    
+    /** The Constant T__156. */
     public static final int T__156=156;
+    
+    /** The Constant T__151. */
     public static final int T__151=151;
+    
+    /** The Constant T__150. */
     public static final int T__150=150;
+    
+    /** The Constant T__153. */
     public static final int T__153=153;
+    
+    /** The Constant T__152. */
     public static final int T__152=152;
+    
+    /** The Constant T__48. */
     public static final int T__48=48;
+    
+    /** The Constant T__49. */
     public static final int T__49=49;
+    
+    /** The Constant T__44. */
     public static final int T__44=44;
+    
+    /** The Constant T__45. */
     public static final int T__45=45;
+    
+    /** The Constant T__46. */
     public static final int T__46=46;
+    
+    /** The Constant T__47. */
     public static final int T__47=47;
+    
+    /** The Constant T__40. */
     public static final int T__40=40;
+    
+    /** The Constant T__148. */
     public static final int T__148=148;
+    
+    /** The Constant T__41. */
     public static final int T__41=41;
+    
+    /** The Constant T__147. */
     public static final int T__147=147;
+    
+    /** The Constant T__42. */
     public static final int T__42=42;
+    
+    /** The Constant T__43. */
     public static final int T__43=43;
+    
+    /** The Constant T__149. */
     public static final int T__149=149;
+    
+    /** The Constant T__91. */
     public static final int T__91=91;
+    
+    /** The Constant T__100. */
     public static final int T__100=100;
+    
+    /** The Constant T__92. */
     public static final int T__92=92;
+    
+    /** The Constant T__93. */
     public static final int T__93=93;
+    
+    /** The Constant T__102. */
     public static final int T__102=102;
+    
+    /** The Constant T__94. */
     public static final int T__94=94;
+    
+    /** The Constant T__101. */
     public static final int T__101=101;
+    
+    /** The Constant T__90. */
     public static final int T__90=90;
+    
+    /** The Constant RULE_BOOLEAN. */
     public static final int RULE_BOOLEAN=8;
+    
+    /** The Constant T__19. */
     public static final int T__19=19;
+    
+    /** The Constant T__15. */
     public static final int T__15=15;
+    
+    /** The Constant T__16. */
     public static final int T__16=16;
+    
+    /** The Constant T__17. */
     public static final int T__17=17;
+    
+    /** The Constant T__18. */
     public static final int T__18=18;
+    
+    /** The Constant T__99. */
     public static final int T__99=99;
+    
+    /** The Constant T__14. */
     public static final int T__14=14;
+    
+    /** The Constant T__95. */
     public static final int T__95=95;
+    
+    /** The Constant T__96. */
     public static final int T__96=96;
+    
+    /** The Constant T__97. */
     public static final int T__97=97;
+    
+    /** The Constant T__98. */
     public static final int T__98=98;
+    
+    /** The Constant T__26. */
     public static final int T__26=26;
+    
+    /** The Constant T__27. */
     public static final int T__27=27;
+    
+    /** The Constant T__28. */
     public static final int T__28=28;
+    
+    /** The Constant T__29. */
     public static final int T__29=29;
+    
+    /** The Constant T__22. */
     public static final int T__22=22;
+    
+    /** The Constant T__23. */
     public static final int T__23=23;
+    
+    /** The Constant T__24. */
     public static final int T__24=24;
+    
+    /** The Constant T__25. */
     public static final int T__25=25;
+    
+    /** The Constant T__20. */
     public static final int T__20=20;
+    
+    /** The Constant T__21. */
     public static final int T__21=21;
+    
+    /** The Constant T__122. */
     public static final int T__122=122;
+    
+    /** The Constant T__70. */
     public static final int T__70=70;
+    
+    /** The Constant T__121. */
     public static final int T__121=121;
+    
+    /** The Constant T__71. */
     public static final int T__71=71;
+    
+    /** The Constant T__124. */
     public static final int T__124=124;
+    
+    /** The Constant T__72. */
     public static final int T__72=72;
+    
+    /** The Constant T__123. */
     public static final int T__123=123;
+    
+    /** The Constant T__120. */
     public static final int T__120=120;
+    
+    /** The Constant RULE_STRING. */
     public static final int RULE_STRING=4;
+    
+    /** The Constant RULE_SL_COMMENT. */
     public static final int RULE_SL_COMMENT=11;
+    
+    /** The Constant RULE_DOUBLE. */
     public static final int RULE_DOUBLE=7;
+    
+    /** The Constant T__77. */
     public static final int T__77=77;
+    
+    /** The Constant T__119. */
     public static final int T__119=119;
+    
+    /** The Constant T__78. */
     public static final int T__78=78;
+    
+    /** The Constant T__118. */
     public static final int T__118=118;
+    
+    /** The Constant T__79. */
     public static final int T__79=79;
+    
+    /** The Constant T__73. */
     public static final int T__73=73;
+    
+    /** The Constant T__115. */
     public static final int T__115=115;
+    
+    /** The Constant EOF. */
     public static final int EOF=-1;
+    
+    /** The Constant T__74. */
     public static final int T__74=74;
+    
+    /** The Constant T__114. */
     public static final int T__114=114;
+    
+    /** The Constant T__75. */
     public static final int T__75=75;
+    
+    /** The Constant T__117. */
     public static final int T__117=117;
+    
+    /** The Constant T__76. */
     public static final int T__76=76;
+    
+    /** The Constant T__116. */
     public static final int T__116=116;
+    
+    /** The Constant T__80. */
     public static final int T__80=80;
+    
+    /** The Constant T__111. */
     public static final int T__111=111;
+    
+    /** The Constant T__81. */
     public static final int T__81=81;
+    
+    /** The Constant T__110. */
     public static final int T__110=110;
+    
+    /** The Constant T__82. */
     public static final int T__82=82;
+    
+    /** The Constant T__113. */
     public static final int T__113=113;
+    
+    /** The Constant T__83. */
     public static final int T__83=83;
+    
+    /** The Constant T__112. */
     public static final int T__112=112;
+    
+    /** The Constant RULE_WS. */
     public static final int RULE_WS=12;
+    
+    /** The Constant RULE_ANY_OTHER. */
     public static final int RULE_ANY_OTHER=13;
+    
+    /** The Constant T__88. */
     public static final int T__88=88;
+    
+    /** The Constant T__108. */
     public static final int T__108=108;
+    
+    /** The Constant T__89. */
     public static final int T__89=89;
+    
+    /** The Constant T__107. */
     public static final int T__107=107;
+    
+    /** The Constant T__109. */
     public static final int T__109=109;
+    
+    /** The Constant T__84. */
     public static final int T__84=84;
+    
+    /** The Constant T__104. */
     public static final int T__104=104;
+    
+    /** The Constant T__85. */
     public static final int T__85=85;
+    
+    /** The Constant T__103. */
     public static final int T__103=103;
+    
+    /** The Constant RULE_INTEGER. */
     public static final int RULE_INTEGER=6;
+    
+    /** The Constant T__86. */
     public static final int T__86=86;
+    
+    /** The Constant T__106. */
     public static final int T__106=106;
+    
+    /** The Constant T__87. */
     public static final int T__87=87;
+    
+    /** The Constant T__105. */
     public static final int T__105=105;
 
     // delegates
     // delegators
 
 
-        public InternalGamlParser(TokenStream input) {
+        /**
+     * Instantiates a new internal gaml parser.
+     *
+     * @param input the input
+     */
+    public InternalGamlParser(TokenStream input) {
             this(input, new RecognizerSharedState());
         }
+        
+        /**
+         * Instantiates a new internal gaml parser.
+         *
+         * @param input the input
+         * @param state the state
+         */
         public InternalGamlParser(TokenStream input, RecognizerSharedState state) {
             super(input, state);
              
@@ -198,9 +536,15 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     public String getGrammarFileName() { return "InternalGaml.g"; }
 
 
-    	private GamlGrammarAccess grammarAccess;
+    	/** The grammar access. */
+	    private GamlGrammarAccess grammarAccess;
 
-    	public void setGrammarAccess(GamlGrammarAccess grammarAccess) {
+    	/**
+	     * Sets the grammar access.
+	     *
+	     * @param grammarAccess the new grammar access
+	     */
+	    public void setGrammarAccess(GamlGrammarAccess grammarAccess) {
     		this.grammarAccess = grammarAccess;
     	}
 
@@ -217,6 +561,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleEntry"
+    /**
+     * Entry rule entry.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:54:1: entryRuleEntry : ruleEntry EOF ;
     public final void entryRuleEntry() throws RecognitionException {
         try {
@@ -251,6 +600,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleEntry"
+    /**
+     * Rule entry.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:63:1: ruleEntry : ( ( rule__Entry__Alternatives ) ) ;
     public final void ruleEntry() throws RecognitionException {
 
@@ -302,6 +656,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleStandaloneBlock"
+    /**
+     * Entry rule standalone block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:79:1: entryRuleStandaloneBlock : ruleStandaloneBlock EOF ;
     public final void entryRuleStandaloneBlock() throws RecognitionException {
         try {
@@ -336,6 +695,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleStandaloneBlock"
+    /**
+     * Rule standalone block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:88:1: ruleStandaloneBlock : ( ( rule__StandaloneBlock__Group__0 ) ) ;
     public final void ruleStandaloneBlock() throws RecognitionException {
 
@@ -387,6 +751,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleStringEvaluator"
+    /**
+     * Entry rule string evaluator.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:104:1: entryRuleStringEvaluator : ruleStringEvaluator EOF ;
     public final void entryRuleStringEvaluator() throws RecognitionException {
         try {
@@ -421,6 +790,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleStringEvaluator"
+    /**
+     * Rule string evaluator.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:113:1: ruleStringEvaluator : ( ( rule__StringEvaluator__Group__0 ) ) ;
     public final void ruleStringEvaluator() throws RecognitionException {
 
@@ -472,6 +846,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleModel"
+    /**
+     * Entry rule model.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:129:1: entryRuleModel : ruleModel EOF ;
     public final void entryRuleModel() throws RecognitionException {
         try {
@@ -506,6 +885,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleModel"
+    /**
+     * Rule model.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:138:1: ruleModel : ( ( rule__Model__Group__0 ) ) ;
     public final void ruleModel() throws RecognitionException {
 
@@ -557,6 +941,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleModelBlock"
+    /**
+     * Entry rule model block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:154:1: entryRuleModelBlock : ruleModelBlock EOF ;
     public final void entryRuleModelBlock() throws RecognitionException {
         try {
@@ -591,6 +980,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleModelBlock"
+    /**
+     * Rule model block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:163:1: ruleModelBlock : ( ( rule__ModelBlock__Group__0 ) ) ;
     public final void ruleModelBlock() throws RecognitionException {
 
@@ -642,6 +1036,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleImport"
+    /**
+     * Entry rule import.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:179:1: entryRuleImport : ruleImport EOF ;
     public final void entryRuleImport() throws RecognitionException {
         try {
@@ -676,6 +1075,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleImport"
+    /**
+     * Rule import.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:188:1: ruleImport : ( ( rule__Import__Group__0 ) ) ;
     public final void ruleImport() throws RecognitionException {
 
@@ -727,6 +1131,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRulePragma"
+    /**
+     * Entry rule pragma.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:204:1: entryRulePragma : rulePragma EOF ;
     public final void entryRulePragma() throws RecognitionException {
         try {
@@ -761,6 +1170,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rulePragma"
+    /**
+     * Rule pragma.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:213:1: rulePragma : ( ( rule__Pragma__Group__0 ) ) ;
     public final void rulePragma() throws RecognitionException {
 
@@ -812,6 +1226,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleExperimentFileStructure"
+    /**
+     * Entry rule experiment file structure.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:229:1: entryRuleExperimentFileStructure : ruleExperimentFileStructure EOF ;
     public final void entryRuleExperimentFileStructure() throws RecognitionException {
         try {
@@ -846,6 +1265,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleExperimentFileStructure"
+    /**
+     * Rule experiment file structure.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:238:1: ruleExperimentFileStructure : ( ( rule__ExperimentFileStructure__ExpAssignment ) ) ;
     public final void ruleExperimentFileStructure() throws RecognitionException {
 
@@ -897,6 +1321,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleHeadlessExperiment"
+    /**
+     * Entry rule headless experiment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:254:1: entryRuleHeadlessExperiment : ruleHeadlessExperiment EOF ;
     public final void entryRuleHeadlessExperiment() throws RecognitionException {
         try {
@@ -931,6 +1360,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleHeadlessExperiment"
+    /**
+     * Rule headless experiment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:263:1: ruleHeadlessExperiment : ( ( rule__HeadlessExperiment__Group__0 ) ) ;
     public final void ruleHeadlessExperiment() throws RecognitionException {
 
@@ -982,6 +1416,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Section"
+    /**
+     * Entry rule S section.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:279:1: entryRuleS_Section : ruleS_Section EOF ;
     public final void entryRuleS_Section() throws RecognitionException {
         try {
@@ -1016,6 +1455,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Section"
+    /**
+     * Rule S section.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:288:1: ruleS_Section : ( ( rule__S_Section__Alternatives ) ) ;
     public final void ruleS_Section() throws RecognitionException {
 
@@ -1067,6 +1511,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Global"
+    /**
+     * Entry rule S global.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:304:1: entryRuleS_Global : ruleS_Global EOF ;
     public final void entryRuleS_Global() throws RecognitionException {
         try {
@@ -1101,6 +1550,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Global"
+    /**
+     * Rule S global.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:313:1: ruleS_Global : ( ( rule__S_Global__Group__0 ) ) ;
     public final void ruleS_Global() throws RecognitionException {
 
@@ -1152,6 +1606,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Species"
+    /**
+     * Entry rule S species.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:329:1: entryRuleS_Species : ruleS_Species EOF ;
     public final void entryRuleS_Species() throws RecognitionException {
         try {
@@ -1186,6 +1645,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Species"
+    /**
+     * Rule S species.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:338:1: ruleS_Species : ( ( rule__S_Species__Group__0 ) ) ;
     public final void ruleS_Species() throws RecognitionException {
 
@@ -1237,6 +1701,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Experiment"
+    /**
+     * Entry rule S experiment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:354:1: entryRuleS_Experiment : ruleS_Experiment EOF ;
     public final void entryRuleS_Experiment() throws RecognitionException {
         try {
@@ -1271,6 +1740,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Experiment"
+    /**
+     * Rule S experiment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:363:1: ruleS_Experiment : ( ( rule__S_Experiment__Group__0 ) ) ;
     public final void ruleS_Experiment() throws RecognitionException {
 
@@ -1322,6 +1796,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleStatement"
+    /**
+     * Entry rule statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:379:1: entryRuleStatement : ruleStatement EOF ;
     public final void entryRuleStatement() throws RecognitionException {
         try {
@@ -1356,6 +1835,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleStatement"
+    /**
+     * Rule statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:388:1: ruleStatement : ( ( rule__Statement__Alternatives ) ) ;
     public final void ruleStatement() throws RecognitionException {
 
@@ -1407,6 +1891,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_1Expr_Facets_BlockOrEnd"
+    /**
+     * Entry rule S 1 expr facets block or end.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:404:1: entryRuleS_1Expr_Facets_BlockOrEnd : ruleS_1Expr_Facets_BlockOrEnd EOF ;
     public final void entryRuleS_1Expr_Facets_BlockOrEnd() throws RecognitionException {
         try {
@@ -1441,6 +1930,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_1Expr_Facets_BlockOrEnd"
+    /**
+     * Rule S 1 expr facets block or end.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:413:1: ruleS_1Expr_Facets_BlockOrEnd : ( ( rule__S_1Expr_Facets_BlockOrEnd__Group__0 ) ) ;
     public final void ruleS_1Expr_Facets_BlockOrEnd() throws RecognitionException {
 
@@ -1492,6 +1986,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Do"
+    /**
+     * Entry rule S do.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:429:1: entryRuleS_Do : ruleS_Do EOF ;
     public final void entryRuleS_Do() throws RecognitionException {
         try {
@@ -1526,6 +2025,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Do"
+    /**
+     * Rule S do.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:438:1: ruleS_Do : ( ( rule__S_Do__Group__0 ) ) ;
     public final void ruleS_Do() throws RecognitionException {
 
@@ -1577,6 +2081,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Loop"
+    /**
+     * Entry rule S loop.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:454:1: entryRuleS_Loop : ruleS_Loop EOF ;
     public final void entryRuleS_Loop() throws RecognitionException {
         try {
@@ -1611,6 +2120,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Loop"
+    /**
+     * Rule S loop.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:463:1: ruleS_Loop : ( ( rule__S_Loop__Group__0 ) ) ;
     public final void ruleS_Loop() throws RecognitionException {
 
@@ -1662,6 +2176,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_If"
+    /**
+     * Entry rule S if.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:479:1: entryRuleS_If : ruleS_If EOF ;
     public final void entryRuleS_If() throws RecognitionException {
         try {
@@ -1696,6 +2215,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_If"
+    /**
+     * Rule S if.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:488:1: ruleS_If : ( ( rule__S_If__Group__0 ) ) ;
     public final void ruleS_If() throws RecognitionException {
 
@@ -1747,6 +2271,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Try"
+    /**
+     * Entry rule S try.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:504:1: entryRuleS_Try : ruleS_Try EOF ;
     public final void entryRuleS_Try() throws RecognitionException {
         try {
@@ -1781,6 +2310,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Try"
+    /**
+     * Rule S try.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:513:1: ruleS_Try : ( ( rule__S_Try__Group__0 ) ) ;
     public final void ruleS_Try() throws RecognitionException {
 
@@ -1832,6 +2366,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Other"
+    /**
+     * Entry rule S other.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:529:1: entryRuleS_Other : ruleS_Other EOF ;
     public final void entryRuleS_Other() throws RecognitionException {
         try {
@@ -1866,6 +2405,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Other"
+    /**
+     * Rule S other.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:538:1: ruleS_Other : ( ( rule__S_Other__Group__0 ) ) ;
     public final void ruleS_Other() throws RecognitionException {
 
@@ -1917,6 +2461,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Return"
+    /**
+     * Entry rule S return.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:554:1: entryRuleS_Return : ruleS_Return EOF ;
     public final void entryRuleS_Return() throws RecognitionException {
         try {
@@ -1951,6 +2500,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Return"
+    /**
+     * Rule S return.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:563:1: ruleS_Return : ( ( rule__S_Return__Group__0 ) ) ;
     public final void ruleS_Return() throws RecognitionException {
 
@@ -2002,6 +2556,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Declaration"
+    /**
+     * Entry rule S declaration.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:579:1: entryRuleS_Declaration : ruleS_Declaration EOF ;
     public final void entryRuleS_Declaration() throws RecognitionException {
         try {
@@ -2036,6 +2595,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Declaration"
+    /**
+     * Rule S declaration.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:588:1: ruleS_Declaration : ( ( rule__S_Declaration__Alternatives ) ) ;
     public final void ruleS_Declaration() throws RecognitionException {
 
@@ -2087,6 +2651,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Reflex"
+    /**
+     * Entry rule S reflex.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:604:1: entryRuleS_Reflex : ruleS_Reflex EOF ;
     public final void entryRuleS_Reflex() throws RecognitionException {
         try {
@@ -2121,6 +2690,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Reflex"
+    /**
+     * Rule S reflex.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:613:1: ruleS_Reflex : ( ( rule__S_Reflex__Group__0 ) ) ;
     public final void ruleS_Reflex() throws RecognitionException {
 
@@ -2172,6 +2746,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Definition"
+    /**
+     * Entry rule S definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:629:1: entryRuleS_Definition : ruleS_Definition EOF ;
     public final void entryRuleS_Definition() throws RecognitionException {
         try {
@@ -2206,6 +2785,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Definition"
+    /**
+     * Rule S definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:638:1: ruleS_Definition : ( ( rule__S_Definition__Group__0 ) ) ;
     public final void ruleS_Definition() throws RecognitionException {
 
@@ -2257,6 +2841,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Action"
+    /**
+     * Entry rule S action.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:654:1: entryRuleS_Action : ruleS_Action EOF ;
     public final void entryRuleS_Action() throws RecognitionException {
         try {
@@ -2291,6 +2880,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Action"
+    /**
+     * Rule S action.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:663:1: ruleS_Action : ( ( rule__S_Action__Group__0 ) ) ;
     public final void ruleS_Action() throws RecognitionException {
 
@@ -2342,6 +2936,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Var"
+    /**
+     * Entry rule S var.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:679:1: entryRuleS_Var : ruleS_Var EOF ;
     public final void entryRuleS_Var() throws RecognitionException {
         try {
@@ -2376,6 +2975,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Var"
+    /**
+     * Rule S var.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:688:1: ruleS_Var : ( ( rule__S_Var__Group__0 ) ) ;
     public final void ruleS_Var() throws RecognitionException {
 
@@ -2427,6 +3031,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Assignment"
+    /**
+     * Entry rule S assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:704:1: entryRuleS_Assignment : ruleS_Assignment EOF ;
     public final void entryRuleS_Assignment() throws RecognitionException {
         try {
@@ -2461,6 +3070,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Assignment"
+    /**
+     * Rule S assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:713:1: ruleS_Assignment : ( ( rule__S_Assignment__Alternatives ) ) ;
     public final void ruleS_Assignment() throws RecognitionException {
 
@@ -2512,6 +3126,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_DirectAssignment"
+    /**
+     * Entry rule S direct assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:729:1: entryRuleS_DirectAssignment : ruleS_DirectAssignment EOF ;
     public final void entryRuleS_DirectAssignment() throws RecognitionException {
         try {
@@ -2546,6 +3165,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_DirectAssignment"
+    /**
+     * Rule S direct assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:738:1: ruleS_DirectAssignment : ( ( rule__S_DirectAssignment__Group__0 ) ) ;
     public final void ruleS_DirectAssignment() throws RecognitionException {
 
@@ -2597,6 +3221,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Set"
+    /**
+     * Entry rule S set.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:754:1: entryRuleS_Set : ruleS_Set EOF ;
     public final void entryRuleS_Set() throws RecognitionException {
         try {
@@ -2631,6 +3260,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Set"
+    /**
+     * Rule S set.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:763:1: ruleS_Set : ( ( rule__S_Set__Group__0 ) ) ;
     public final void ruleS_Set() throws RecognitionException {
 
@@ -2682,6 +3316,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Equations"
+    /**
+     * Entry rule S equations.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:779:1: entryRuleS_Equations : ruleS_Equations EOF ;
     public final void entryRuleS_Equations() throws RecognitionException {
         try {
@@ -2716,6 +3355,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Equations"
+    /**
+     * Rule S equations.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:788:1: ruleS_Equations : ( ( rule__S_Equations__Group__0 ) ) ;
     public final void ruleS_Equations() throws RecognitionException {
 
@@ -2767,6 +3411,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Equation"
+    /**
+     * Entry rule S equation.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:804:1: entryRuleS_Equation : ruleS_Equation EOF ;
     public final void entryRuleS_Equation() throws RecognitionException {
         try {
@@ -2801,6 +3450,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Equation"
+    /**
+     * Rule S equation.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:813:1: ruleS_Equation : ( ( rule__S_Equation__Group__0 ) ) ;
     public final void ruleS_Equation() throws RecognitionException {
 
@@ -2852,6 +3506,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Solve"
+    /**
+     * Entry rule S solve.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:829:1: entryRuleS_Solve : ruleS_Solve EOF ;
     public final void entryRuleS_Solve() throws RecognitionException {
         try {
@@ -2886,6 +3545,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Solve"
+    /**
+     * Rule S solve.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:838:1: ruleS_Solve : ( ( rule__S_Solve__Group__0 ) ) ;
     public final void ruleS_Solve() throws RecognitionException {
 
@@ -2937,6 +3601,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleS_Display"
+    /**
+     * Entry rule S display.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:854:1: entryRuleS_Display : ruleS_Display EOF ;
     public final void entryRuleS_Display() throws RecognitionException {
         try {
@@ -2971,6 +3640,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleS_Display"
+    /**
+     * Rule S display.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:863:1: ruleS_Display : ( ( rule__S_Display__Group__0 ) ) ;
     public final void ruleS_Display() throws RecognitionException {
 
@@ -3022,6 +3696,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuledisplayBlock"
+    /**
+     * Entry ruledisplay block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:879:1: entryRuledisplayBlock : ruledisplayBlock EOF ;
     public final void entryRuledisplayBlock() throws RecognitionException {
         try {
@@ -3056,6 +3735,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruledisplayBlock"
+    /**
+     * Ruledisplay block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:888:1: ruledisplayBlock : ( ( rule__DisplayBlock__Group__0 ) ) ;
     public final void ruledisplayBlock() throws RecognitionException {
 
@@ -3107,6 +3791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuledisplayStatement"
+    /**
+     * Entry ruledisplay statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:904:1: entryRuledisplayStatement : ruledisplayStatement EOF ;
     public final void entryRuledisplayStatement() throws RecognitionException {
         try {
@@ -3141,6 +3830,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruledisplayStatement"
+    /**
+     * Ruledisplay statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:913:1: ruledisplayStatement : ( ( rule__DisplayStatement__Alternatives ) ) ;
     public final void ruledisplayStatement() throws RecognitionException {
 
@@ -3192,6 +3886,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRulespeciesOrGridDisplayStatement"
+    /**
+     * Entry rulespecies or grid display statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:929:1: entryRulespeciesOrGridDisplayStatement : rulespeciesOrGridDisplayStatement EOF ;
     public final void entryRulespeciesOrGridDisplayStatement() throws RecognitionException {
         try {
@@ -3226,6 +3925,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rulespeciesOrGridDisplayStatement"
+    /**
+     * Rulespecies or grid display statement.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:938:1: rulespeciesOrGridDisplayStatement : ( ( rule__SpeciesOrGridDisplayStatement__Group__0 ) ) ;
     public final void rulespeciesOrGridDisplayStatement() throws RecognitionException {
 
@@ -3277,6 +3981,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_EquationsKey"
+    /**
+     * Entry rule equations key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:954:1: entryRule_EquationsKey : rule_EquationsKey EOF ;
     public final void entryRule_EquationsKey() throws RecognitionException {
         try {
@@ -3311,6 +4020,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_EquationsKey"
+    /**
+     * Rule equations key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:963:1: rule_EquationsKey : ( 'equation' ) ;
     public final void rule_EquationsKey() throws RecognitionException {
 
@@ -3352,6 +4066,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_SolveKey"
+    /**
+     * Entry rule solve key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:979:1: entryRule_SolveKey : rule_SolveKey EOF ;
     public final void entryRule_SolveKey() throws RecognitionException {
         try {
@@ -3386,6 +4105,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_SolveKey"
+    /**
+     * Rule solve key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:988:1: rule_SolveKey : ( 'solve' ) ;
     public final void rule_SolveKey() throws RecognitionException {
 
@@ -3427,6 +4151,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_SpeciesKey"
+    /**
+     * Entry rule species key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1004:1: entryRule_SpeciesKey : rule_SpeciesKey EOF ;
     public final void entryRule_SpeciesKey() throws RecognitionException {
         try {
@@ -3461,6 +4190,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_SpeciesKey"
+    /**
+     * Rule species key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1013:1: rule_SpeciesKey : ( ( rule___SpeciesKey__Alternatives ) ) ;
     public final void rule_SpeciesKey() throws RecognitionException {
 
@@ -3512,6 +4246,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_ExperimentKey"
+    /**
+     * Entry rule experiment key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1029:1: entryRule_ExperimentKey : rule_ExperimentKey EOF ;
     public final void entryRule_ExperimentKey() throws RecognitionException {
         try {
@@ -3546,6 +4285,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_ExperimentKey"
+    /**
+     * Rule experiment key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1038:1: rule_ExperimentKey : ( 'experiment' ) ;
     public final void rule_ExperimentKey() throws RecognitionException {
 
@@ -3587,6 +4331,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_1Expr_Facets_BlockOrEnd_Key"
+    /**
+     * Entry rule 1 expr facets block or end key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1054:1: entryRule_1Expr_Facets_BlockOrEnd_Key : rule_1Expr_Facets_BlockOrEnd_Key EOF ;
     public final void entryRule_1Expr_Facets_BlockOrEnd_Key() throws RecognitionException {
         try {
@@ -3621,6 +4370,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_1Expr_Facets_BlockOrEnd_Key"
+    /**
+     * Rule 1 expr facets block or end key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1063:1: rule_1Expr_Facets_BlockOrEnd_Key : ( ( rule___1Expr_Facets_BlockOrEnd_Key__Alternatives ) ) ;
     public final void rule_1Expr_Facets_BlockOrEnd_Key() throws RecognitionException {
 
@@ -3672,6 +4426,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_LayerKey"
+    /**
+     * Entry rule layer key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1079:1: entryRule_LayerKey : rule_LayerKey EOF ;
     public final void entryRule_LayerKey() throws RecognitionException {
         try {
@@ -3706,6 +4465,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_LayerKey"
+    /**
+     * Rule layer key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1088:1: rule_LayerKey : ( ( rule___LayerKey__Alternatives ) ) ;
     public final void rule_LayerKey() throws RecognitionException {
 
@@ -3757,6 +4521,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_DoKey"
+    /**
+     * Entry rule do key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1104:1: entryRule_DoKey : rule_DoKey EOF ;
     public final void entryRule_DoKey() throws RecognitionException {
         try {
@@ -3791,6 +4560,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_DoKey"
+    /**
+     * Rule do key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1113:1: rule_DoKey : ( ( rule___DoKey__Alternatives ) ) ;
     public final void rule_DoKey() throws RecognitionException {
 
@@ -3842,6 +4616,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_VarOrConstKey"
+    /**
+     * Entry rule var or const key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1129:1: entryRule_VarOrConstKey : rule_VarOrConstKey EOF ;
     public final void entryRule_VarOrConstKey() throws RecognitionException {
         try {
@@ -3876,6 +4655,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_VarOrConstKey"
+    /**
+     * Rule var or const key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1138:1: rule_VarOrConstKey : ( ( rule___VarOrConstKey__Alternatives ) ) ;
     public final void rule_VarOrConstKey() throws RecognitionException {
 
@@ -3927,6 +4711,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_ReflexKey"
+    /**
+     * Entry rule reflex key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1154:1: entryRule_ReflexKey : rule_ReflexKey EOF ;
     public final void entryRule_ReflexKey() throws RecognitionException {
         try {
@@ -3961,6 +4750,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_ReflexKey"
+    /**
+     * Rule reflex key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1163:1: rule_ReflexKey : ( ( rule___ReflexKey__Alternatives ) ) ;
     public final void rule_ReflexKey() throws RecognitionException {
 
@@ -4012,6 +4806,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRule_AssignmentKey"
+    /**
+     * Entry rule assignment key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1179:1: entryRule_AssignmentKey : rule_AssignmentKey EOF ;
     public final void entryRule_AssignmentKey() throws RecognitionException {
         try {
@@ -4046,6 +4845,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule_AssignmentKey"
+    /**
+     * Rule assignment key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1188:1: rule_AssignmentKey : ( ( rule___AssignmentKey__Alternatives ) ) ;
     public final void rule_AssignmentKey() throws RecognitionException {
 
@@ -4097,6 +4901,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionArguments"
+    /**
+     * Entry rule action arguments.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1204:1: entryRuleActionArguments : ruleActionArguments EOF ;
     public final void entryRuleActionArguments() throws RecognitionException {
         try {
@@ -4131,6 +4940,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionArguments"
+    /**
+     * Rule action arguments.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1213:1: ruleActionArguments : ( ( rule__ActionArguments__Group__0 ) ) ;
     public final void ruleActionArguments() throws RecognitionException {
 
@@ -4182,6 +4996,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleArgumentDefinition"
+    /**
+     * Entry rule argument definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1229:1: entryRuleArgumentDefinition : ruleArgumentDefinition EOF ;
     public final void entryRuleArgumentDefinition() throws RecognitionException {
         try {
@@ -4216,6 +5035,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleArgumentDefinition"
+    /**
+     * Rule argument definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1238:1: ruleArgumentDefinition : ( ( rule__ArgumentDefinition__Group__0 ) ) ;
     public final void ruleArgumentDefinition() throws RecognitionException {
 
@@ -4267,6 +5091,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleFacet"
+    /**
+     * Entry rule facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1254:1: entryRuleFacet : ruleFacet EOF ;
     public final void entryRuleFacet() throws RecognitionException {
         try {
@@ -4301,6 +5130,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleFacet"
+    /**
+     * Rule facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1263:1: ruleFacet : ( ( rule__Facet__Alternatives ) ) ;
     public final void ruleFacet() throws RecognitionException {
 
@@ -4352,6 +5186,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleFirstFacetKey"
+    /**
+     * Entry rule first facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1279:1: entryRuleFirstFacetKey : ruleFirstFacetKey EOF ;
     public final void entryRuleFirstFacetKey() throws RecognitionException {
         try {
@@ -4386,6 +5225,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleFirstFacetKey"
+    /**
+     * Rule first facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1288:1: ruleFirstFacetKey : ( ( rule__FirstFacetKey__Alternatives ) ) ;
     public final void ruleFirstFacetKey() throws RecognitionException {
 
@@ -4437,6 +5281,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleClassicFacetKey"
+    /**
+     * Entry rule classic facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1304:1: entryRuleClassicFacetKey : ruleClassicFacetKey EOF ;
     public final void entryRuleClassicFacetKey() throws RecognitionException {
         try {
@@ -4471,6 +5320,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleClassicFacetKey"
+    /**
+     * Rule classic facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1313:1: ruleClassicFacetKey : ( ( rule__ClassicFacetKey__Group__0 ) ) ;
     public final void ruleClassicFacetKey() throws RecognitionException {
 
@@ -4522,6 +5376,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleDefinitionFacetKey"
+    /**
+     * Entry rule definition facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1329:1: entryRuleDefinitionFacetKey : ruleDefinitionFacetKey EOF ;
     public final void entryRuleDefinitionFacetKey() throws RecognitionException {
         try {
@@ -4556,6 +5415,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleDefinitionFacetKey"
+    /**
+     * Rule definition facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1338:1: ruleDefinitionFacetKey : ( ( rule__DefinitionFacetKey__Alternatives ) ) ;
     public final void ruleDefinitionFacetKey() throws RecognitionException {
 
@@ -4607,6 +5471,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeFacetKey"
+    /**
+     * Entry rule type facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1354:1: entryRuleTypeFacetKey : ruleTypeFacetKey EOF ;
     public final void entryRuleTypeFacetKey() throws RecognitionException {
         try {
@@ -4641,6 +5510,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeFacetKey"
+    /**
+     * Rule type facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1363:1: ruleTypeFacetKey : ( ( rule__TypeFacetKey__Alternatives ) ) ;
     public final void ruleTypeFacetKey() throws RecognitionException {
 
@@ -4692,6 +5566,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleSpecialFacetKey"
+    /**
+     * Entry rule special facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1379:1: entryRuleSpecialFacetKey : ruleSpecialFacetKey EOF ;
     public final void entryRuleSpecialFacetKey() throws RecognitionException {
         try {
@@ -4726,6 +5605,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleSpecialFacetKey"
+    /**
+     * Rule special facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1388:1: ruleSpecialFacetKey : ( ( rule__SpecialFacetKey__Alternatives ) ) ;
     public final void ruleSpecialFacetKey() throws RecognitionException {
 
@@ -4777,6 +5661,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionFacetKey"
+    /**
+     * Entry rule action facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1404:1: entryRuleActionFacetKey : ruleActionFacetKey EOF ;
     public final void entryRuleActionFacetKey() throws RecognitionException {
         try {
@@ -4811,6 +5700,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionFacetKey"
+    /**
+     * Rule action facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1413:1: ruleActionFacetKey : ( ( rule__ActionFacetKey__Alternatives ) ) ;
     public final void ruleActionFacetKey() throws RecognitionException {
 
@@ -4862,6 +5756,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleVarFacetKey"
+    /**
+     * Entry rule var facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1429:1: entryRuleVarFacetKey : ruleVarFacetKey EOF ;
     public final void entryRuleVarFacetKey() throws RecognitionException {
         try {
@@ -4896,6 +5795,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleVarFacetKey"
+    /**
+     * Rule var facet key.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1438:1: ruleVarFacetKey : ( 'var:' ) ;
     public final void ruleVarFacetKey() throws RecognitionException {
 
@@ -4937,6 +5841,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleClassicFacet"
+    /**
+     * Entry rule classic facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1454:1: entryRuleClassicFacet : ruleClassicFacet EOF ;
     public final void entryRuleClassicFacet() throws RecognitionException {
         try {
@@ -4971,6 +5880,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleClassicFacet"
+    /**
+     * Rule classic facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1463:1: ruleClassicFacet : ( ( rule__ClassicFacet__Group__0 ) ) ;
     public final void ruleClassicFacet() throws RecognitionException {
 
@@ -5022,6 +5936,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleDefinitionFacet"
+    /**
+     * Entry rule definition facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1479:1: entryRuleDefinitionFacet : ruleDefinitionFacet EOF ;
     public final void entryRuleDefinitionFacet() throws RecognitionException {
         try {
@@ -5056,6 +5975,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleDefinitionFacet"
+    /**
+     * Rule definition facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1488:1: ruleDefinitionFacet : ( ( rule__DefinitionFacet__Group__0 ) ) ;
     public final void ruleDefinitionFacet() throws RecognitionException {
 
@@ -5107,6 +6031,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleFunctionFacet"
+    /**
+     * Entry rule function facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1504:1: entryRuleFunctionFacet : ruleFunctionFacet EOF ;
     public final void entryRuleFunctionFacet() throws RecognitionException {
         try {
@@ -5141,6 +6070,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleFunctionFacet"
+    /**
+     * Rule function facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1513:1: ruleFunctionFacet : ( ( rule__FunctionFacet__Group__0 ) ) ;
     public final void ruleFunctionFacet() throws RecognitionException {
 
@@ -5192,6 +6126,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeFacet"
+    /**
+     * Entry rule type facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1529:1: entryRuleTypeFacet : ruleTypeFacet EOF ;
     public final void entryRuleTypeFacet() throws RecognitionException {
         try {
@@ -5226,6 +6165,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeFacet"
+    /**
+     * Rule type facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1538:1: ruleTypeFacet : ( ( rule__TypeFacet__Group__0 ) ) ;
     public final void ruleTypeFacet() throws RecognitionException {
 
@@ -5277,6 +6221,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionFacet"
+    /**
+     * Entry rule action facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1554:1: entryRuleActionFacet : ruleActionFacet EOF ;
     public final void entryRuleActionFacet() throws RecognitionException {
         try {
@@ -5311,6 +6260,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionFacet"
+    /**
+     * Rule action facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1563:1: ruleActionFacet : ( ( rule__ActionFacet__Group__0 ) ) ;
     public final void ruleActionFacet() throws RecognitionException {
 
@@ -5362,6 +6316,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleVarFacet"
+    /**
+     * Entry rule var facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1579:1: entryRuleVarFacet : ruleVarFacet EOF ;
     public final void entryRuleVarFacet() throws RecognitionException {
         try {
@@ -5396,6 +6355,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleVarFacet"
+    /**
+     * Rule var facet.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1588:1: ruleVarFacet : ( ( rule__VarFacet__Group__0 ) ) ;
     public final void ruleVarFacet() throws RecognitionException {
 
@@ -5447,6 +6411,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleBlock"
+    /**
+     * Entry rule block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1604:1: entryRuleBlock : ruleBlock EOF ;
     public final void entryRuleBlock() throws RecognitionException {
         try {
@@ -5481,6 +6450,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleBlock"
+    /**
+     * Rule block.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1613:1: ruleBlock : ( ( rule__Block__Group__0 ) ) ;
     public final void ruleBlock() throws RecognitionException {
 
@@ -5532,6 +6506,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleExpression"
+    /**
+     * Entry rule expression.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1629:1: entryRuleExpression : ruleExpression EOF ;
     public final void entryRuleExpression() throws RecognitionException {
         try {
@@ -5566,6 +6545,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleExpression"
+    /**
+     * Rule expression.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1638:1: ruleExpression : ( ( rule__Expression__Alternatives ) ) ;
     public final void ruleExpression() throws RecognitionException {
 
@@ -5617,6 +6601,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleArgumentPair"
+    /**
+     * Entry rule argument pair.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1654:1: entryRuleArgumentPair : ruleArgumentPair EOF ;
     public final void entryRuleArgumentPair() throws RecognitionException {
         try {
@@ -5651,6 +6640,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleArgumentPair"
+    /**
+     * Rule argument pair.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1663:1: ruleArgumentPair : ( ( rule__ArgumentPair__Group__0 ) ) ;
     public final void ruleArgumentPair() throws RecognitionException {
 
@@ -5702,6 +6696,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRulePair"
+    /**
+     * Entry rule pair.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1679:1: entryRulePair : rulePair EOF ;
     public final void entryRulePair() throws RecognitionException {
         try {
@@ -5736,6 +6735,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rulePair"
+    /**
+     * Rule pair.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1688:1: rulePair : ( ( rule__Pair__Group__0 ) ) ;
     public final void rulePair() throws RecognitionException {
 
@@ -5787,6 +6791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleIf"
+    /**
+     * Entry rule if.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1704:1: entryRuleIf : ruleIf EOF ;
     public final void entryRuleIf() throws RecognitionException {
         try {
@@ -5821,6 +6830,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleIf"
+    /**
+     * Rule if.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1713:1: ruleIf : ( ( rule__If__Group__0 ) ) ;
     public final void ruleIf() throws RecognitionException {
 
@@ -5872,6 +6886,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleOr"
+    /**
+     * Entry rule or.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1729:1: entryRuleOr : ruleOr EOF ;
     public final void entryRuleOr() throws RecognitionException {
         try {
@@ -5906,6 +6925,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleOr"
+    /**
+     * Rule or.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1738:1: ruleOr : ( ( rule__Or__Group__0 ) ) ;
     public final void ruleOr() throws RecognitionException {
 
@@ -5957,6 +6981,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleAnd"
+    /**
+     * Entry rule and.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1754:1: entryRuleAnd : ruleAnd EOF ;
     public final void entryRuleAnd() throws RecognitionException {
         try {
@@ -5991,6 +7020,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleAnd"
+    /**
+     * Rule and.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1763:1: ruleAnd : ( ( rule__And__Group__0 ) ) ;
     public final void ruleAnd() throws RecognitionException {
 
@@ -6042,6 +7076,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleCast"
+    /**
+     * Entry rule cast.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1779:1: entryRuleCast : ruleCast EOF ;
     public final void entryRuleCast() throws RecognitionException {
         try {
@@ -6076,6 +7115,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleCast"
+    /**
+     * Rule cast.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1788:1: ruleCast : ( ( rule__Cast__Group__0 ) ) ;
     public final void ruleCast() throws RecognitionException {
 
@@ -6127,6 +7171,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleComparison"
+    /**
+     * Entry rule comparison.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1804:1: entryRuleComparison : ruleComparison EOF ;
     public final void entryRuleComparison() throws RecognitionException {
         try {
@@ -6161,6 +7210,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleComparison"
+    /**
+     * Rule comparison.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1813:1: ruleComparison : ( ( rule__Comparison__Group__0 ) ) ;
     public final void ruleComparison() throws RecognitionException {
 
@@ -6212,6 +7266,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleAddition"
+    /**
+     * Entry rule addition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1829:1: entryRuleAddition : ruleAddition EOF ;
     public final void entryRuleAddition() throws RecognitionException {
         try {
@@ -6246,6 +7305,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleAddition"
+    /**
+     * Rule addition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1838:1: ruleAddition : ( ( rule__Addition__Group__0 ) ) ;
     public final void ruleAddition() throws RecognitionException {
 
@@ -6297,6 +7361,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleMultiplication"
+    /**
+     * Entry rule multiplication.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1854:1: entryRuleMultiplication : ruleMultiplication EOF ;
     public final void entryRuleMultiplication() throws RecognitionException {
         try {
@@ -6331,6 +7400,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleMultiplication"
+    /**
+     * Rule multiplication.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1863:1: ruleMultiplication : ( ( rule__Multiplication__Group__0 ) ) ;
     public final void ruleMultiplication() throws RecognitionException {
 
@@ -6382,6 +7456,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleExponentiation"
+    /**
+     * Entry rule exponentiation.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1879:1: entryRuleExponentiation : ruleExponentiation EOF ;
     public final void entryRuleExponentiation() throws RecognitionException {
         try {
@@ -6416,6 +7495,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleExponentiation"
+    /**
+     * Rule exponentiation.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1888:1: ruleExponentiation : ( ( rule__Exponentiation__Group__0 ) ) ;
     public final void ruleExponentiation() throws RecognitionException {
 
@@ -6467,6 +7551,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleBinary"
+    /**
+     * Entry rule binary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1904:1: entryRuleBinary : ruleBinary EOF ;
     public final void entryRuleBinary() throws RecognitionException {
         try {
@@ -6501,6 +7590,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleBinary"
+    /**
+     * Rule binary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1913:1: ruleBinary : ( ( rule__Binary__Group__0 ) ) ;
     public final void ruleBinary() throws RecognitionException {
 
@@ -6552,6 +7646,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleUnit"
+    /**
+     * Entry rule unit.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1929:1: entryRuleUnit : ruleUnit EOF ;
     public final void entryRuleUnit() throws RecognitionException {
         try {
@@ -6586,6 +7685,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleUnit"
+    /**
+     * Rule unit.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1938:1: ruleUnit : ( ( rule__Unit__Group__0 ) ) ;
     public final void ruleUnit() throws RecognitionException {
 
@@ -6637,6 +7741,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleUnary"
+    /**
+     * Entry rule unary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1954:1: entryRuleUnary : ruleUnary EOF ;
     public final void entryRuleUnary() throws RecognitionException {
         try {
@@ -6671,6 +7780,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleUnary"
+    /**
+     * Rule unary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1963:1: ruleUnary : ( ( rule__Unary__Alternatives ) ) ;
     public final void ruleUnary() throws RecognitionException {
 
@@ -6722,6 +7836,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleAccess"
+    /**
+     * Entry rule access.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1979:1: entryRuleAccess : ruleAccess EOF ;
     public final void entryRuleAccess() throws RecognitionException {
         try {
@@ -6756,6 +7875,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleAccess"
+    /**
+     * Rule access.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1988:1: ruleAccess : ( ( rule__Access__Group__0 ) ) ;
     public final void ruleAccess() throws RecognitionException {
 
@@ -6807,6 +7931,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRulePrimary"
+    /**
+     * Entry rule primary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2004:1: entryRulePrimary : rulePrimary EOF ;
     public final void entryRulePrimary() throws RecognitionException {
         try {
@@ -6841,6 +7970,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rulePrimary"
+    /**
+     * Rule primary.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2013:1: rulePrimary : ( ( rule__Primary__Alternatives ) ) ;
     public final void rulePrimary() throws RecognitionException {
 
@@ -6892,6 +8026,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleAbstractRef"
+    /**
+     * Entry rule abstract ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2029:1: entryRuleAbstractRef : ruleAbstractRef EOF ;
     public final void entryRuleAbstractRef() throws RecognitionException {
         try {
@@ -6926,6 +8065,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleAbstractRef"
+    /**
+     * Rule abstract ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2038:1: ruleAbstractRef : ( ( rule__AbstractRef__Alternatives ) ) ;
     public final void ruleAbstractRef() throws RecognitionException {
 
@@ -6977,6 +8121,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleFunction"
+    /**
+     * Entry rule function.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2054:1: entryRuleFunction : ruleFunction EOF ;
     public final void entryRuleFunction() throws RecognitionException {
         try {
@@ -7011,6 +8160,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleFunction"
+    /**
+     * Rule function.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2063:1: ruleFunction : ( ( rule__Function__Group__0 ) ) ;
     public final void ruleFunction() throws RecognitionException {
 
@@ -7062,6 +8216,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleExpressionList"
+    /**
+     * Entry rule expression list.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2079:1: entryRuleExpressionList : ruleExpressionList EOF ;
     public final void entryRuleExpressionList() throws RecognitionException {
         try {
@@ -7096,6 +8255,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleExpressionList"
+    /**
+     * Rule expression list.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2088:1: ruleExpressionList : ( ( rule__ExpressionList__Alternatives ) ) ;
     public final void ruleExpressionList() throws RecognitionException {
 
@@ -7147,6 +8311,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleParameter"
+    /**
+     * Entry rule parameter.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2104:1: entryRuleParameter : ruleParameter EOF ;
     public final void entryRuleParameter() throws RecognitionException {
         try {
@@ -7181,6 +8350,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleParameter"
+    /**
+     * Rule parameter.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2113:1: ruleParameter : ( ( rule__Parameter__Group__0 ) ) ;
     public final void ruleParameter() throws RecognitionException {
 
@@ -7232,6 +8406,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleUnitRef"
+    /**
+     * Entry rule unit ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2129:1: entryRuleUnitRef : ruleUnitRef EOF ;
     public final void entryRuleUnitRef() throws RecognitionException {
         try {
@@ -7266,6 +8445,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleUnitRef"
+    /**
+     * Rule unit ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2138:1: ruleUnitRef : ( ( rule__UnitRef__Group__0 ) ) ;
     public final void ruleUnitRef() throws RecognitionException {
 
@@ -7317,6 +8501,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleVariableRef"
+    /**
+     * Entry rule variable ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2154:1: entryRuleVariableRef : ruleVariableRef EOF ;
     public final void entryRuleVariableRef() throws RecognitionException {
         try {
@@ -7351,6 +8540,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleVariableRef"
+    /**
+     * Rule variable ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2163:1: ruleVariableRef : ( ( rule__VariableRef__Group__0 ) ) ;
     public final void ruleVariableRef() throws RecognitionException {
 
@@ -7402,6 +8596,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeRef"
+    /**
+     * Entry rule type ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2179:1: entryRuleTypeRef : ruleTypeRef EOF ;
     public final void entryRuleTypeRef() throws RecognitionException {
         try {
@@ -7436,6 +8635,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeRef"
+    /**
+     * Rule type ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2188:1: ruleTypeRef : ( ( rule__TypeRef__Alternatives ) ) ;
     public final void ruleTypeRef() throws RecognitionException {
 
@@ -7487,6 +8691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeInfo"
+    /**
+     * Entry rule type info.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2204:1: entryRuleTypeInfo : ruleTypeInfo EOF ;
     public final void entryRuleTypeInfo() throws RecognitionException {
         try {
@@ -7521,6 +8730,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeInfo"
+    /**
+     * Rule type info.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2213:1: ruleTypeInfo : ( ( rule__TypeInfo__Group__0 ) ) ;
     public final void ruleTypeInfo() throws RecognitionException {
 
@@ -7572,6 +8786,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionRef"
+    /**
+     * Entry rule action ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2229:1: entryRuleActionRef : ruleActionRef EOF ;
     public final void entryRuleActionRef() throws RecognitionException {
         try {
@@ -7606,6 +8825,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionRef"
+    /**
+     * Rule action ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2238:1: ruleActionRef : ( ( rule__ActionRef__Group__0 ) ) ;
     public final void ruleActionRef() throws RecognitionException {
 
@@ -7657,6 +8881,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleEquationRef"
+    /**
+     * Entry rule equation ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2254:1: entryRuleEquationRef : ruleEquationRef EOF ;
     public final void entryRuleEquationRef() throws RecognitionException {
         try {
@@ -7691,6 +8920,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleEquationRef"
+    /**
+     * Rule equation ref.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2263:1: ruleEquationRef : ( ( rule__EquationRef__Group__0 ) ) ;
     public final void ruleEquationRef() throws RecognitionException {
 
@@ -7742,6 +8976,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleEquationDefinition"
+    /**
+     * Entry rule equation definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2279:1: entryRuleEquationDefinition : ruleEquationDefinition EOF ;
     public final void entryRuleEquationDefinition() throws RecognitionException {
         try {
@@ -7776,6 +9015,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleEquationDefinition"
+    /**
+     * Rule equation definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2288:1: ruleEquationDefinition : ( ( rule__EquationDefinition__Alternatives ) ) ;
     public final void ruleEquationDefinition() throws RecognitionException {
 
@@ -7827,6 +9071,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeDefinition"
+    /**
+     * Entry rule type definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2304:1: entryRuleTypeDefinition : ruleTypeDefinition EOF ;
     public final void entryRuleTypeDefinition() throws RecognitionException {
         try {
@@ -7861,6 +9110,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeDefinition"
+    /**
+     * Rule type definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2313:1: ruleTypeDefinition : ( ( rule__TypeDefinition__Alternatives ) ) ;
     public final void ruleTypeDefinition() throws RecognitionException {
 
@@ -7912,6 +9166,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleVarDefinition"
+    /**
+     * Entry rule var definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2329:1: entryRuleVarDefinition : ruleVarDefinition EOF ;
     public final void entryRuleVarDefinition() throws RecognitionException {
         try {
@@ -7946,6 +9205,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleVarDefinition"
+    /**
+     * Rule var definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2338:1: ruleVarDefinition : ( ( rule__VarDefinition__Alternatives ) ) ;
     public final void ruleVarDefinition() throws RecognitionException {
 
@@ -7997,6 +9261,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionDefinition"
+    /**
+     * Entry rule action definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2354:1: entryRuleActionDefinition : ruleActionDefinition EOF ;
     public final void entryRuleActionDefinition() throws RecognitionException {
         try {
@@ -8031,6 +9300,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionDefinition"
+    /**
+     * Rule action definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2363:1: ruleActionDefinition : ( ( rule__ActionDefinition__Alternatives ) ) ;
     public final void ruleActionDefinition() throws RecognitionException {
 
@@ -8082,6 +9356,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleUnitFakeDefinition"
+    /**
+     * Entry rule unit fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2379:1: entryRuleUnitFakeDefinition : ruleUnitFakeDefinition EOF ;
     public final void entryRuleUnitFakeDefinition() throws RecognitionException {
         try {
@@ -8116,6 +9395,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleUnitFakeDefinition"
+    /**
+     * Rule unit fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2388:1: ruleUnitFakeDefinition : ( ( rule__UnitFakeDefinition__Group__0 ) ) ;
     public final void ruleUnitFakeDefinition() throws RecognitionException {
 
@@ -8167,6 +9451,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTypeFakeDefinition"
+    /**
+     * Entry rule type fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2404:1: entryRuleTypeFakeDefinition : ruleTypeFakeDefinition EOF ;
     public final void entryRuleTypeFakeDefinition() throws RecognitionException {
         try {
@@ -8201,6 +9490,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTypeFakeDefinition"
+    /**
+     * Rule type fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2413:1: ruleTypeFakeDefinition : ( ( rule__TypeFakeDefinition__Group__0 ) ) ;
     public final void ruleTypeFakeDefinition() throws RecognitionException {
 
@@ -8252,6 +9546,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleActionFakeDefinition"
+    /**
+     * Entry rule action fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2429:1: entryRuleActionFakeDefinition : ruleActionFakeDefinition EOF ;
     public final void entryRuleActionFakeDefinition() throws RecognitionException {
         try {
@@ -8286,6 +9585,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleActionFakeDefinition"
+    /**
+     * Rule action fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2438:1: ruleActionFakeDefinition : ( ( rule__ActionFakeDefinition__Group__0 ) ) ;
     public final void ruleActionFakeDefinition() throws RecognitionException {
 
@@ -8337,6 +9641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleSkillFakeDefinition"
+    /**
+     * Entry rule skill fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2454:1: entryRuleSkillFakeDefinition : ruleSkillFakeDefinition EOF ;
     public final void entryRuleSkillFakeDefinition() throws RecognitionException {
         try {
@@ -8371,6 +9680,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleSkillFakeDefinition"
+    /**
+     * Rule skill fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2463:1: ruleSkillFakeDefinition : ( ( rule__SkillFakeDefinition__Group__0 ) ) ;
     public final void ruleSkillFakeDefinition() throws RecognitionException {
 
@@ -8422,6 +9736,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleVarFakeDefinition"
+    /**
+     * Entry rule var fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2479:1: entryRuleVarFakeDefinition : ruleVarFakeDefinition EOF ;
     public final void entryRuleVarFakeDefinition() throws RecognitionException {
         try {
@@ -8456,6 +9775,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleVarFakeDefinition"
+    /**
+     * Rule var fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2488:1: ruleVarFakeDefinition : ( ( rule__VarFakeDefinition__Group__0 ) ) ;
     public final void ruleVarFakeDefinition() throws RecognitionException {
 
@@ -8507,6 +9831,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleEquationFakeDefinition"
+    /**
+     * Entry rule equation fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2504:1: entryRuleEquationFakeDefinition : ruleEquationFakeDefinition EOF ;
     public final void entryRuleEquationFakeDefinition() throws RecognitionException {
         try {
@@ -8541,6 +9870,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleEquationFakeDefinition"
+    /**
+     * Rule equation fake definition.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2513:1: ruleEquationFakeDefinition : ( ( rule__EquationFakeDefinition__Group__0 ) ) ;
     public final void ruleEquationFakeDefinition() throws RecognitionException {
 
@@ -8592,6 +9926,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleValid_ID"
+    /**
+     * Entry rule valid ID.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2529:1: entryRuleValid_ID : ruleValid_ID EOF ;
     public final void entryRuleValid_ID() throws RecognitionException {
         try {
@@ -8626,6 +9965,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleValid_ID"
+    /**
+     * Rule valid ID.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2538:1: ruleValid_ID : ( ( rule__Valid_ID__Alternatives ) ) ;
     public final void ruleValid_ID() throws RecognitionException {
 
@@ -8677,6 +10021,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleTerminalExpression"
+    /**
+     * Entry rule terminal expression.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2554:1: entryRuleTerminalExpression : ruleTerminalExpression EOF ;
     public final void entryRuleTerminalExpression() throws RecognitionException {
         try {
@@ -8711,6 +10060,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleTerminalExpression"
+    /**
+     * Rule terminal expression.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2563:1: ruleTerminalExpression : ( ( rule__TerminalExpression__Alternatives ) ) ;
     public final void ruleTerminalExpression() throws RecognitionException {
 
@@ -8762,6 +10116,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "entryRuleStringLiteral"
+    /**
+     * Entry rule string literal.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2579:1: entryRuleStringLiteral : ruleStringLiteral EOF ;
     public final void entryRuleStringLiteral() throws RecognitionException {
         try {
@@ -8796,6 +10155,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "ruleStringLiteral"
+    /**
+     * Rule string literal.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2588:1: ruleStringLiteral : ( ( rule__StringLiteral__OpAssignment ) ) ;
     public final void ruleStringLiteral() throws RecognitionException {
 
@@ -8847,6 +10211,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Entry__Alternatives"
+    /**
+     * Rule entry alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2603:1: rule__Entry__Alternatives : ( ( ( ruleModel ) ) | ( ruleStringEvaluator ) | ( ruleStandaloneBlock ) | ( ruleExperimentFileStructure ) );
     public final void rule__Entry__Alternatives() throws RecognitionException {
 
@@ -9002,6 +10371,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__NameAlternatives_2_0"
+    /**
+     * Rule headless experiment name alternatives 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2636:1: rule__HeadlessExperiment__NameAlternatives_2_0 : ( ( ruleValid_ID ) | ( RULE_STRING ) );
     public final void rule__HeadlessExperiment__NameAlternatives_2_0() throws RecognitionException {
 
@@ -9086,6 +10460,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Alternatives_5"
+    /**
+     * Rule headless experiment alternatives 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2657:1: rule__HeadlessExperiment__Alternatives_5 : ( ( ( rule__HeadlessExperiment__BlockAssignment_5_0 ) ) | ( ';' ) );
     public final void rule__HeadlessExperiment__Alternatives_5() throws RecognitionException {
 
@@ -9176,6 +10555,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Section__Alternatives"
+    /**
+     * Rule S section alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2678:1: rule__S_Section__Alternatives : ( ( ruleS_Global ) | ( ruleS_Species ) | ( ruleS_Experiment ) );
     public final void rule__S_Section__Alternatives() throws RecognitionException {
 
@@ -9297,6 +10681,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Alternatives_2"
+    /**
+     * Rule S global alternatives 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2705:1: rule__S_Global__Alternatives_2 : ( ( ( rule__S_Global__BlockAssignment_2_0 ) ) | ( ';' ) );
     public final void rule__S_Global__Alternatives_2() throws RecognitionException {
 
@@ -9387,6 +10776,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Alternatives_4"
+    /**
+     * Rule S species alternatives 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2726:1: rule__S_Species__Alternatives_4 : ( ( ( rule__S_Species__BlockAssignment_4_0 ) ) | ( ';' ) );
     public final void rule__S_Species__Alternatives_4() throws RecognitionException {
 
@@ -9477,6 +10871,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__NameAlternatives_2_0"
+    /**
+     * Rule S experiment name alternatives 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2747:1: rule__S_Experiment__NameAlternatives_2_0 : ( ( ruleValid_ID ) | ( RULE_STRING ) );
     public final void rule__S_Experiment__NameAlternatives_2_0() throws RecognitionException {
 
@@ -9561,6 +10960,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Alternatives_4"
+    /**
+     * Rule S experiment alternatives 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2768:1: rule__S_Experiment__Alternatives_4 : ( ( ( rule__S_Experiment__BlockAssignment_4_0 ) ) | ( ';' ) );
     public final void rule__S_Experiment__Alternatives_4() throws RecognitionException {
 
@@ -9651,6 +11055,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Statement__Alternatives"
+    /**
+     * Rule statement alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2789:1: rule__Statement__Alternatives : ( ( ( rule__Statement__Alternatives_0 ) ) | ( ruleS_Display ) );
     public final void rule__Statement__Alternatives() throws RecognitionException {
 
@@ -9745,6 +11154,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Statement__Alternatives_0"
+    /**
+     * Rule statement alternatives 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2810:1: rule__Statement__Alternatives_0 : ( ( ( ruleS_Declaration ) ) | ( ( rule__Statement__Alternatives_0_1 ) ) );
     public final void rule__Statement__Alternatives_0() throws RecognitionException {
 
@@ -9831,6 +11245,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Statement__Alternatives_0_1"
+    /**
+     * Rule statement alternatives 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2831:1: rule__Statement__Alternatives_0_1 : ( ( ( ruleS_Assignment ) ) | ( ruleS_1Expr_Facets_BlockOrEnd ) | ( ruleS_Other ) | ( ruleS_Do ) | ( ruleS_Return ) | ( ruleS_Solve ) | ( ruleS_If ) | ( ruleS_Try ) | ( ruleS_Equations ) );
     public final void rule__Statement__Alternatives_0_1() throws RecognitionException {
 
@@ -10072,6 +11491,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4"
+    /**
+     * Rule S 1 expr facets block or end alternatives 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2894:1: rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4 : ( ( ( rule__S_1Expr_Facets_BlockOrEnd__BlockAssignment_4_0 ) ) | ( ';' ) );
     public final void rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4() throws RecognitionException {
 
@@ -10162,6 +11586,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Alternatives_4"
+    /**
+     * Rule S do alternatives 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2915:1: rule__S_Do__Alternatives_4 : ( ( ( rule__S_Do__BlockAssignment_4_0 ) ) | ( ';' ) );
     public final void rule__S_Do__Alternatives_4() throws RecognitionException {
 
@@ -10252,6 +11681,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__ElseAlternatives_4_1_0"
+    /**
+     * Rule S if else alternatives 4 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2936:1: rule__S_If__ElseAlternatives_4_1_0 : ( ( ruleS_If ) | ( ruleBlock ) );
     public final void rule__S_If__ElseAlternatives_4_1_0() throws RecognitionException {
 
@@ -10340,6 +11774,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Alternatives_2"
+    /**
+     * Rule S other alternatives 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2957:1: rule__S_Other__Alternatives_2 : ( ( ( rule__S_Other__BlockAssignment_2_0 ) ) | ( ';' ) );
     public final void rule__S_Other__Alternatives_2() throws RecognitionException {
 
@@ -10430,6 +11869,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Declaration__Alternatives"
+    /**
+     * Rule S declaration alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2978:1: rule__S_Declaration__Alternatives : ( ( ( ruleS_Definition ) ) | ( ruleS_Species ) | ( ruleS_Reflex ) | ( ruleS_Action ) | ( ruleS_Var ) | ( ruleS_Loop ) );
     public final void rule__S_Declaration__Alternatives() throws RecognitionException {
 
@@ -10664,6 +12108,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__NameAlternatives_2_0"
+    /**
+     * Rule S definition name alternatives 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3023:1: rule__S_Definition__NameAlternatives_2_0 : ( ( ruleValid_ID ) | ( RULE_STRING ) );
     public final void rule__S_Definition__NameAlternatives_2_0() throws RecognitionException {
 
@@ -10748,6 +12197,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Alternatives_5"
+    /**
+     * Rule S definition alternatives 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3044:1: rule__S_Definition__Alternatives_5 : ( ( ( rule__S_Definition__BlockAssignment_5_0 ) ) | ( ';' ) );
     public final void rule__S_Definition__Alternatives_5() throws RecognitionException {
 
@@ -10838,6 +12292,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Alternatives_6"
+    /**
+     * Rule S action alternatives 6.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3065:1: rule__S_Action__Alternatives_6 : ( ( ( rule__S_Action__BlockAssignment_6_0 ) ) | ( ';' ) );
     public final void rule__S_Action__Alternatives_6() throws RecognitionException {
 
@@ -10928,6 +12387,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Assignment__Alternatives"
+    /**
+     * Rule S assignment alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3086:1: rule__S_Assignment__Alternatives : ( ( ruleS_DirectAssignment ) | ( ruleS_Set ) );
     public final void rule__S_Assignment__Alternatives() throws RecognitionException {
 
@@ -11016,6 +12480,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Alternatives_2"
+    /**
+     * Rule S set alternatives 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3107:1: rule__S_Set__Alternatives_2 : ( ( 'value:' ) | ( '<-' ) );
     public final void rule__S_Set__Alternatives_2() throws RecognitionException {
 
@@ -11096,6 +12565,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Alternatives_3"
+    /**
+     * Rule S equations alternatives 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3128:1: rule__S_Equations__Alternatives_3 : ( ( ( rule__S_Equations__Group_3_0__0 ) ) | ( ';' ) );
     public final void rule__S_Equations__Alternatives_3() throws RecognitionException {
 
@@ -11186,6 +12660,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__ExprAlternatives_0_0"
+    /**
+     * Rule S equation expr alternatives 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3149:1: rule__S_Equation__ExprAlternatives_0_0 : ( ( ruleFunction ) | ( ruleVariableRef ) );
     public final void rule__S_Equation__ExprAlternatives_0_0() throws RecognitionException {
 
@@ -11260,6 +12739,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Alternatives_4"
+    /**
+     * Rule S solve alternatives 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3170:1: rule__S_Solve__Alternatives_4 : ( ( ( rule__S_Solve__BlockAssignment_4_0 ) ) | ( ';' ) );
     public final void rule__S_Solve__Alternatives_4() throws RecognitionException {
 
@@ -11350,6 +12834,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__NameAlternatives_2_0"
+    /**
+     * Rule S display name alternatives 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3191:1: rule__S_Display__NameAlternatives_2_0 : ( ( ruleValid_ID ) | ( RULE_STRING ) );
     public final void rule__S_Display__NameAlternatives_2_0() throws RecognitionException {
 
@@ -11434,6 +12923,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayStatement__Alternatives"
+    /**
+     * Rule display statement alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3212:1: rule__DisplayStatement__Alternatives : ( ( ( rulespeciesOrGridDisplayStatement ) ) | ( ruleStatement ) );
     public final void rule__DisplayStatement__Alternatives() throws RecognitionException {
 
@@ -11514,6 +13008,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Alternatives_3"
+    /**
+     * Rule species or grid display statement alternatives 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3233:1: rule__SpeciesOrGridDisplayStatement__Alternatives_3 : ( ( ( rule__SpeciesOrGridDisplayStatement__BlockAssignment_3_0 ) ) | ( ';' ) );
     public final void rule__SpeciesOrGridDisplayStatement__Alternatives_3() throws RecognitionException {
 
@@ -11604,6 +13103,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___SpeciesKey__Alternatives"
+    /**
+     * Rule species key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3254:1: rule___SpeciesKey__Alternatives : ( ( 'species' ) | ( 'grid' ) );
     public final void rule___SpeciesKey__Alternatives() throws RecognitionException {
 
@@ -11684,6 +13188,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___1Expr_Facets_BlockOrEnd_Key__Alternatives"
+    /**
+     * Rule 1 expr facets block or end key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3275:1: rule___1Expr_Facets_BlockOrEnd_Key__Alternatives : ( ( rule_LayerKey ) | ( 'ask' ) | ( 'release' ) | ( 'capture' ) | ( 'create' ) | ( 'write' ) | ( 'error' ) | ( 'warn' ) | ( 'exception' ) | ( 'save' ) | ( 'assert' ) | ( 'inspect' ) | ( 'browse' ) | ( 'draw' ) | ( 'using' ) | ( 'switch' ) | ( 'put' ) | ( 'add' ) | ( 'remove' ) | ( 'match' ) | ( 'match_between' ) | ( 'match_one' ) | ( 'parameter' ) | ( 'status' ) | ( 'highlight' ) | ( 'focus_on' ) | ( 'layout' ) );
     public final void rule___1Expr_Facets_BlockOrEnd_Key__Alternatives() throws RecognitionException {
 
@@ -12386,6 +13895,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___LayerKey__Alternatives"
+    /**
+     * Rule layer key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3446:1: rule___LayerKey__Alternatives : ( ( 'light' ) | ( 'camera' ) | ( 'text' ) | ( 'image' ) | ( 'data' ) | ( 'chart' ) | ( 'agents' ) | ( 'graphics' ) | ( 'display_population' ) | ( 'display_grid' ) | ( 'quadtree' ) | ( 'event' ) | ( 'overlay' ) | ( 'datalist' ) | ( 'mesh' ) );
     public final void rule___LayerKey__Alternatives() throws RecognitionException {
 
@@ -12782,6 +14296,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___DoKey__Alternatives"
+    /**
+     * Rule do key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3545:1: rule___DoKey__Alternatives : ( ( 'do' ) | ( 'invoke' ) );
     public final void rule___DoKey__Alternatives() throws RecognitionException {
 
@@ -12862,6 +14381,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___VarOrConstKey__Alternatives"
+    /**
+     * Rule var or const key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3566:1: rule___VarOrConstKey__Alternatives : ( ( 'var' ) | ( 'const' ) | ( 'let' ) | ( 'arg' ) );
     public final void rule___VarOrConstKey__Alternatives() throws RecognitionException {
 
@@ -12994,6 +14518,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___ReflexKey__Alternatives"
+    /**
+     * Rule reflex key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3599:1: rule___ReflexKey__Alternatives : ( ( 'init' ) | ( 'reflex' ) | ( 'aspect' ) );
     public final void rule___ReflexKey__Alternatives() throws RecognitionException {
 
@@ -13102,6 +14631,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Alternatives"
+    /**
+     * Rule assignment key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3626:1: rule___AssignmentKey__Alternatives : ( ( '<-' ) | ( '<<' ) | ( ( rule___AssignmentKey__Group_2__0 ) ) | ( '<<+' ) | ( ( rule___AssignmentKey__Group_4__0 ) ) | ( '+<-' ) | ( '<+' ) | ( '>-' ) );
     public final void rule___AssignmentKey__Alternatives() throws RecognitionException {
 
@@ -13302,6 +14836,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Facet__Alternatives"
+    /**
+     * Rule facet alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3683:1: rule__Facet__Alternatives : ( ( ruleActionFacet ) | ( ruleDefinitionFacet ) | ( ruleClassicFacet ) | ( ruleTypeFacet ) | ( ruleVarFacet ) | ( ruleFunctionFacet ) );
     public final void rule__Facet__Alternatives() throws RecognitionException {
 
@@ -13530,6 +15069,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FirstFacetKey__Alternatives"
+    /**
+     * Rule first facet key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3728:1: rule__FirstFacetKey__Alternatives : ( ( ruleDefinitionFacetKey ) | ( ruleTypeFacetKey ) | ( ruleSpecialFacetKey ) | ( ruleVarFacetKey ) | ( ruleActionFacetKey ) | ( ruleClassicFacetKey ) );
     public final void rule__FirstFacetKey__Alternatives() throws RecognitionException {
 
@@ -13756,6 +15300,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacetKey__Alternatives"
+    /**
+     * Rule definition facet key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3773:1: rule__DefinitionFacetKey__Alternatives : ( ( 'name:' ) | ( 'returns:' ) );
     public final void rule__DefinitionFacetKey__Alternatives() throws RecognitionException {
 
@@ -13836,6 +15385,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacetKey__Alternatives"
+    /**
+     * Rule type facet key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3794:1: rule__TypeFacetKey__Alternatives : ( ( 'as:' ) | ( 'of:' ) | ( 'parent:' ) | ( 'species:' ) | ( 'type:' ) );
     public final void rule__TypeFacetKey__Alternatives() throws RecognitionException {
 
@@ -13992,6 +15546,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpecialFacetKey__Alternatives"
+    /**
+     * Rule special facet key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3833:1: rule__SpecialFacetKey__Alternatives : ( ( 'data:' ) | ( ( rule__SpecialFacetKey__Group_1__0 ) ) | ( 'const:' ) | ( 'value:' ) | ( 'topology:' ) | ( 'item:' ) | ( 'init:' ) | ( 'message:' ) | ( 'control:' ) | ( 'layout:' ) | ( 'environment:' ) | ( 'text:' ) | ( 'image:' ) | ( 'using:' ) | ( 'parameter:' ) | ( 'aspect:' ) | ( 'light:' ) );
     public final void rule__SpecialFacetKey__Alternatives() throws RecognitionException {
 
@@ -14446,6 +16005,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacetKey__Alternatives"
+    /**
+     * Rule action facet key alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3944:1: rule__ActionFacetKey__Alternatives : ( ( 'action:' ) | ( 'on_change:' ) );
     public final void rule__ActionFacetKey__Alternatives() throws RecognitionException {
 
@@ -14526,6 +16090,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__Alternatives_0"
+    /**
+     * Rule classic facet alternatives 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3965:1: rule__ClassicFacet__Alternatives_0 : ( ( ( rule__ClassicFacet__KeyAssignment_0_0 ) ) | ( ( rule__ClassicFacet__KeyAssignment_0_1 ) ) | ( ( rule__ClassicFacet__KeyAssignment_0_2 ) ) );
     public final void rule__ClassicFacet__Alternatives_0() throws RecognitionException {
 
@@ -14680,6 +16249,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__NameAlternatives_1_0"
+    /**
+     * Rule definition facet name alternatives 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3992:1: rule__DefinitionFacet__NameAlternatives_1_0 : ( ( ruleValid_ID ) | ( RULE_STRING ) );
     public final void rule__DefinitionFacet__NameAlternatives_1_0() throws RecognitionException {
 
@@ -14764,6 +16338,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Alternatives_1"
+    /**
+     * Rule function facet alternatives 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4013:1: rule__FunctionFacet__Alternatives_1 : ( ( ( rule__FunctionFacet__Group_1_0__0 ) ) | ( ( rule__FunctionFacet__Group_1_1__0 ) ) );
     public final void rule__FunctionFacet__Alternatives_1() throws RecognitionException {
 
@@ -14850,6 +16429,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Alternatives_1"
+    /**
+     * Rule type facet alternatives 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4034:1: rule__TypeFacet__Alternatives_1 : ( ( ( rule__TypeFacet__Group_1_0__0 ) ) | ( ( rule__TypeFacet__ExprAssignment_1_1 ) ) );
     public final void rule__TypeFacet__Alternatives_1() throws RecognitionException {
 
@@ -14936,6 +16520,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__Alternatives_1"
+    /**
+     * Rule action facet alternatives 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4055:1: rule__ActionFacet__Alternatives_1 : ( ( ( rule__ActionFacet__ExprAssignment_1_0 ) ) | ( ( rule__ActionFacet__BlockAssignment_1_1 ) ) );
     public final void rule__ActionFacet__Alternatives_1() throws RecognitionException {
 
@@ -15036,6 +16625,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Expression__Alternatives"
+    /**
+     * Rule expression alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4076:1: rule__Expression__Alternatives : ( ( ( ruleArgumentPair ) ) | ( rulePair ) );
     public final void rule__Expression__Alternatives() throws RecognitionException {
 
@@ -15116,6 +16710,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Alternatives_0_0"
+    /**
+     * Rule argument pair alternatives 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4097:1: rule__ArgumentPair__Alternatives_0_0 : ( ( ( rule__ArgumentPair__Group_0_0_0__0 ) ) | ( ( rule__ArgumentPair__Group_0_0_1__0 ) ) );
     public final void rule__ArgumentPair__Alternatives_0_0() throws RecognitionException {
 
@@ -15216,6 +16815,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__OpAlternatives_0_0_1_0_0"
+    /**
+     * Rule argument pair op alternatives 0 0 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4118:1: rule__ArgumentPair__OpAlternatives_0_0_1_0_0 : ( ( ruleDefinitionFacetKey ) | ( ruleTypeFacetKey ) | ( ruleSpecialFacetKey ) | ( ruleActionFacetKey ) | ( ruleVarFacetKey ) );
     public final void rule__ArgumentPair__OpAlternatives_0_0_1_0_0() throws RecognitionException {
 
@@ -15414,6 +17018,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Alternatives_1_1"
+    /**
+     * Rule cast alternatives 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4157:1: rule__Cast__Alternatives_1_1 : ( ( ( rule__Cast__RightAssignment_1_1_0 ) ) | ( ( rule__Cast__Group_1_1_1__0 ) ) );
     public final void rule__Cast__Alternatives_1_1() throws RecognitionException {
 
@@ -15514,6 +17123,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__OpAlternatives_1_0_1_0"
+    /**
+     * Rule comparison op alternatives 1 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4178:1: rule__Comparison__OpAlternatives_1_0_1_0 : ( ( '!=' ) | ( '=' ) | ( '>=' ) | ( '<=' ) | ( '<' ) | ( '>' ) );
     public final void rule__Comparison__OpAlternatives_1_0_1_0() throws RecognitionException {
 
@@ -15694,6 +17308,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__OpAlternatives_1_0_1_0"
+    /**
+     * Rule addition op alternatives 1 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4223:1: rule__Addition__OpAlternatives_1_0_1_0 : ( ( '+' ) | ( '-' ) );
     public final void rule__Addition__OpAlternatives_1_0_1_0() throws RecognitionException {
 
@@ -15774,6 +17393,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__OpAlternatives_1_0_1_0"
+    /**
+     * Rule multiplication op alternatives 1 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4244:1: rule__Multiplication__OpAlternatives_1_0_1_0 : ( ( '*' ) | ( '/' ) );
     public final void rule__Multiplication__OpAlternatives_1_0_1_0() throws RecognitionException {
 
@@ -15854,6 +17478,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__OpAlternatives_1_0_1_0"
+    /**
+     * Rule unit op alternatives 1 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4265:1: rule__Unit__OpAlternatives_1_0_1_0 : ( ( '\\u00B0' ) | ( '#' ) );
     public final void rule__Unit__OpAlternatives_1_0_1_0() throws RecognitionException {
 
@@ -15934,6 +17563,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Alternatives"
+    /**
+     * Rule unary alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4286:1: rule__Unary__Alternatives : ( ( ruleAccess ) | ( ( rule__Unary__Group_1__0 ) ) );
     public final void rule__Unary__Alternatives() throws RecognitionException {
 
@@ -16028,6 +17662,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Alternatives_1_1"
+    /**
+     * Rule unary alternatives 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4307:1: rule__Unary__Alternatives_1_1 : ( ( ( rule__Unary__Group_1_1_0__0 ) ) | ( ( rule__Unary__Group_1_1_1__0 ) ) );
     public final void rule__Unary__Alternatives_1_1() throws RecognitionException {
 
@@ -16128,6 +17767,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__OpAlternatives_1_1_0_0_0"
+    /**
+     * Rule unary op alternatives 1 1 0 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4328:1: rule__Unary__OpAlternatives_1_1_0_0_0 : ( ( '\\u00B0' ) | ( '#' ) );
     public final void rule__Unary__OpAlternatives_1_1_0_0_0() throws RecognitionException {
 
@@ -16208,6 +17852,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__OpAlternatives_1_1_1_0_0"
+    /**
+     * Rule unary op alternatives 1 1 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4349:1: rule__Unary__OpAlternatives_1_1_1_0_0 : ( ( '-' ) | ( '!' ) | ( 'my' ) | ( 'the' ) | ( 'not' ) );
     public final void rule__Unary__OpAlternatives_1_1_1_0_0() throws RecognitionException {
 
@@ -16364,6 +18013,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Alternatives_1_1"
+    /**
+     * Rule access alternatives 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4388:1: rule__Access__Alternatives_1_1 : ( ( ( rule__Access__Group_1_1_0__0 ) ) | ( ( rule__Access__Group_1_1_1__0 ) ) );
     public final void rule__Access__Alternatives_1_1() throws RecognitionException {
 
@@ -16464,6 +18118,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__RightAlternatives_1_1_1_1_0"
+    /**
+     * Rule access right alternatives 1 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4409:1: rule__Access__RightAlternatives_1_1_1_1_0 : ( ( ruleAbstractRef ) | ( ruleStringLiteral ) );
     public final void rule__Access__RightAlternatives_1_1_1_1_0() throws RecognitionException {
 
@@ -16552,6 +18211,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Alternatives"
+    /**
+     * Rule primary alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4430:1: rule__Primary__Alternatives : ( ( ruleTerminalExpression ) | ( ruleAbstractRef ) | ( ( rule__Primary__Group_2__0 ) ) | ( ( rule__Primary__Group_3__0 ) ) | ( ( rule__Primary__Group_4__0 ) ) );
     public final void rule__Primary__Alternatives() throws RecognitionException {
 
@@ -16804,6 +18468,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__AbstractRef__Alternatives"
+    /**
+     * Rule abstract ref alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4469:1: rule__AbstractRef__Alternatives : ( ( ( ruleFunction ) ) | ( ruleVariableRef ) );
     public final void rule__AbstractRef__Alternatives() throws RecognitionException {
 
@@ -16884,6 +18553,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Alternatives"
+    /**
+     * Rule expression list alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4490:1: rule__ExpressionList__Alternatives : ( ( ( rule__ExpressionList__Group_0__0 ) ) | ( ( rule__ExpressionList__Group_1__0 ) ) );
     public final void rule__ExpressionList__Alternatives() throws RecognitionException {
 
@@ -16970,6 +18644,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Alternatives_1"
+    /**
+     * Rule parameter alternatives 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4511:1: rule__Parameter__Alternatives_1 : ( ( ( rule__Parameter__BuiltInFacetKeyAssignment_1_0 ) ) | ( ( rule__Parameter__Group_1_1__0 ) ) );
     public final void rule__Parameter__Alternatives_1() throws RecognitionException {
 
@@ -17070,6 +18749,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__BuiltInFacetKeyAlternatives_1_0_0"
+    /**
+     * Rule parameter built in facet key alternatives 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4532:1: rule__Parameter__BuiltInFacetKeyAlternatives_1_0_0 : ( ( ruleDefinitionFacetKey ) | ( ruleTypeFacetKey ) | ( ruleSpecialFacetKey ) | ( ruleActionFacetKey ) | ( ruleVarFacetKey ) );
     public final void rule__Parameter__BuiltInFacetKeyAlternatives_1_0_0() throws RecognitionException {
 
@@ -17268,6 +18952,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Alternatives"
+    /**
+     * Rule type ref alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4571:1: rule__TypeRef__Alternatives : ( ( ( rule__TypeRef__Group_0__0 ) ) | ( ( rule__TypeRef__Group_1__0 ) ) );
     public final void rule__TypeRef__Alternatives() throws RecognitionException {
 
@@ -17368,6 +19057,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationDefinition__Alternatives"
+    /**
+     * Rule equation definition alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4592:1: rule__EquationDefinition__Alternatives : ( ( ruleS_Equations ) | ( ruleEquationFakeDefinition ) );
     public final void rule__EquationDefinition__Alternatives() throws RecognitionException {
 
@@ -17456,6 +19150,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeDefinition__Alternatives"
+    /**
+     * Rule type definition alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4613:1: rule__TypeDefinition__Alternatives : ( ( ruleS_Species ) | ( ruleTypeFakeDefinition ) );
     public final void rule__TypeDefinition__Alternatives() throws RecognitionException {
 
@@ -17544,6 +19243,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarDefinition__Alternatives"
+    /**
+     * Rule var definition alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4634:1: rule__VarDefinition__Alternatives : ( ( ( ruleS_Declaration ) ) | ( ( rule__VarDefinition__Alternatives_1 ) ) );
     public final void rule__VarDefinition__Alternatives() throws RecognitionException {
 
@@ -17630,6 +19334,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarDefinition__Alternatives_1"
+    /**
+     * Rule var definition alternatives 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4655:1: rule__VarDefinition__Alternatives_1 : ( ( ruleModel ) | ( ruleArgumentDefinition ) | ( ruleDefinitionFacet ) | ( ruleVarFakeDefinition ) | ( ruleImport ) | ( ruleS_Experiment ) );
     public final void rule__VarDefinition__Alternatives_1() throws RecognitionException {
 
@@ -17837,6 +19546,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionDefinition__Alternatives"
+    /**
+     * Rule action definition alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4700:1: rule__ActionDefinition__Alternatives : ( ( ruleS_Action ) | ( ruleActionFakeDefinition ) | ( ruleS_Definition ) | ( ruleTypeDefinition ) );
     public final void rule__ActionDefinition__Alternatives() throws RecognitionException {
 
@@ -18005,6 +19719,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Valid_ID__Alternatives"
+    /**
+     * Rule valid I D alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4733:1: rule__Valid_ID__Alternatives : ( ( rule_SpeciesKey ) | ( rule_DoKey ) | ( rule_ReflexKey ) | ( rule_VarOrConstKey ) | ( rule_1Expr_Facets_BlockOrEnd_Key ) | ( rule_EquationsKey ) | ( RULE_ID ) | ( rule_ExperimentKey ) );
     public final void rule__Valid_ID__Alternatives() throws RecognitionException {
 
@@ -18308,6 +20027,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Alternatives"
+    /**
+     * Rule terminal expression alternatives.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4790:1: rule__TerminalExpression__Alternatives : ( ( ruleStringLiteral ) | ( ( rule__TerminalExpression__Group_1__0 ) ) | ( ( rule__TerminalExpression__Group_2__0 ) ) | ( ( rule__TerminalExpression__Group_3__0 ) ) | ( ( rule__TerminalExpression__Group_4__0 ) ) );
     public final void rule__TerminalExpression__Alternatives() throws RecognitionException {
 
@@ -18508,6 +20232,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StandaloneBlock__Group__0"
+    /**
+     * Rule standalone block group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4829:1: rule__StandaloneBlock__Group__0 : rule__StandaloneBlock__Group__0__Impl rule__StandaloneBlock__Group__1 ;
     public final void rule__StandaloneBlock__Group__0() throws RecognitionException {
 
@@ -18546,6 +20275,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StandaloneBlock__Group__0__Impl"
+    /**
+     * Rule standalone block group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4841:1: rule__StandaloneBlock__Group__0__Impl : ( '__synthetic__' ) ;
     public final void rule__StandaloneBlock__Group__0__Impl() throws RecognitionException {
 
@@ -18587,6 +20321,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StandaloneBlock__Group__1"
+    /**
+     * Rule standalone block group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4856:1: rule__StandaloneBlock__Group__1 : rule__StandaloneBlock__Group__1__Impl ;
     public final void rule__StandaloneBlock__Group__1() throws RecognitionException {
 
@@ -18620,6 +20359,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StandaloneBlock__Group__1__Impl"
+    /**
+     * Rule standalone block group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4867:1: rule__StandaloneBlock__Group__1__Impl : ( ( rule__StandaloneBlock__BlockAssignment_1 ) ) ;
     public final void rule__StandaloneBlock__Group__1__Impl() throws RecognitionException {
 
@@ -18671,6 +20415,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__0"
+    /**
+     * Rule string evaluator group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4883:1: rule__StringEvaluator__Group__0 : rule__StringEvaluator__Group__0__Impl rule__StringEvaluator__Group__1 ;
     public final void rule__StringEvaluator__Group__0() throws RecognitionException {
 
@@ -18709,6 +20458,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__0__Impl"
+    /**
+     * Rule string evaluator group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4895:1: rule__StringEvaluator__Group__0__Impl : ( ( rule__StringEvaluator__TotoAssignment_0 ) ) ;
     public final void rule__StringEvaluator__Group__0__Impl() throws RecognitionException {
 
@@ -18760,6 +20514,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__1"
+    /**
+     * Rule string evaluator group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4910:1: rule__StringEvaluator__Group__1 : rule__StringEvaluator__Group__1__Impl rule__StringEvaluator__Group__2 ;
     public final void rule__StringEvaluator__Group__1() throws RecognitionException {
 
@@ -18798,6 +20557,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__1__Impl"
+    /**
+     * Rule string evaluator group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4922:1: rule__StringEvaluator__Group__1__Impl : ( '<-' ) ;
     public final void rule__StringEvaluator__Group__1__Impl() throws RecognitionException {
 
@@ -18839,6 +20603,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__2"
+    /**
+     * Rule string evaluator group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4937:1: rule__StringEvaluator__Group__2 : rule__StringEvaluator__Group__2__Impl ;
     public final void rule__StringEvaluator__Group__2() throws RecognitionException {
 
@@ -18872,6 +20641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__Group__2__Impl"
+    /**
+     * Rule string evaluator group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4948:1: rule__StringEvaluator__Group__2__Impl : ( ( rule__StringEvaluator__ExprAssignment_2 ) ) ;
     public final void rule__StringEvaluator__Group__2__Impl() throws RecognitionException {
 
@@ -18923,6 +20697,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__0"
+    /**
+     * Rule model group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4964:1: rule__Model__Group__0 : rule__Model__Group__0__Impl rule__Model__Group__1 ;
     public final void rule__Model__Group__0() throws RecognitionException {
 
@@ -18961,6 +20740,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__0__Impl"
+    /**
+     * Rule model group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4976:1: rule__Model__Group__0__Impl : ( ( rule__Model__PragmasAssignment_0 )* ) ;
     public final void rule__Model__Group__0__Impl() throws RecognitionException {
 
@@ -19030,6 +20814,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__1"
+    /**
+     * Rule model group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4991:1: rule__Model__Group__1 : rule__Model__Group__1__Impl rule__Model__Group__2 ;
     public final void rule__Model__Group__1() throws RecognitionException {
 
@@ -19068,6 +20857,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__1__Impl"
+    /**
+     * Rule model group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5003:1: rule__Model__Group__1__Impl : ( 'model' ) ;
     public final void rule__Model__Group__1__Impl() throws RecognitionException {
 
@@ -19109,6 +20903,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__2"
+    /**
+     * Rule model group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5018:1: rule__Model__Group__2 : rule__Model__Group__2__Impl rule__Model__Group__3 ;
     public final void rule__Model__Group__2() throws RecognitionException {
 
@@ -19147,6 +20946,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__2__Impl"
+    /**
+     * Rule model group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5030:1: rule__Model__Group__2__Impl : ( ( rule__Model__NameAssignment_2 ) ) ;
     public final void rule__Model__Group__2__Impl() throws RecognitionException {
 
@@ -19198,6 +21002,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__3"
+    /**
+     * Rule model group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5045:1: rule__Model__Group__3 : rule__Model__Group__3__Impl rule__Model__Group__4 ;
     public final void rule__Model__Group__3() throws RecognitionException {
 
@@ -19236,6 +21045,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__3__Impl"
+    /**
+     * Rule model group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5057:1: rule__Model__Group__3__Impl : ( ( rule__Model__ImportsAssignment_3 )* ) ;
     public final void rule__Model__Group__3__Impl() throws RecognitionException {
 
@@ -19305,6 +21119,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__4"
+    /**
+     * Rule model group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5072:1: rule__Model__Group__4 : rule__Model__Group__4__Impl ;
     public final void rule__Model__Group__4() throws RecognitionException {
 
@@ -19338,6 +21157,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__Group__4__Impl"
+    /**
+     * Rule model group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5083:1: rule__Model__Group__4__Impl : ( ( rule__Model__BlockAssignment_4 ) ) ;
     public final void rule__Model__Group__4__Impl() throws RecognitionException {
 
@@ -19389,6 +21213,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ModelBlock__Group__0"
+    /**
+     * Rule model block group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5099:1: rule__ModelBlock__Group__0 : rule__ModelBlock__Group__0__Impl rule__ModelBlock__Group__1 ;
     public final void rule__ModelBlock__Group__0() throws RecognitionException {
 
@@ -19427,6 +21256,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ModelBlock__Group__0__Impl"
+    /**
+     * Rule model block group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5111:1: rule__ModelBlock__Group__0__Impl : ( () ) ;
     public final void rule__ModelBlock__Group__0__Impl() throws RecognitionException {
 
@@ -19468,6 +21302,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ModelBlock__Group__1"
+    /**
+     * Rule model block group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5126:1: rule__ModelBlock__Group__1 : rule__ModelBlock__Group__1__Impl ;
     public final void rule__ModelBlock__Group__1() throws RecognitionException {
 
@@ -19501,6 +21340,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ModelBlock__Group__1__Impl"
+    /**
+     * Rule model block group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5137:1: rule__ModelBlock__Group__1__Impl : ( ( rule__ModelBlock__StatementsAssignment_1 )* ) ;
     public final void rule__ModelBlock__Group__1__Impl() throws RecognitionException {
 
@@ -19570,6 +21414,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__0"
+    /**
+     * Rule import group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5153:1: rule__Import__Group__0 : rule__Import__Group__0__Impl rule__Import__Group__1 ;
     public final void rule__Import__Group__0() throws RecognitionException {
 
@@ -19608,6 +21457,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__0__Impl"
+    /**
+     * Rule import group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5165:1: rule__Import__Group__0__Impl : ( 'import' ) ;
     public final void rule__Import__Group__0__Impl() throws RecognitionException {
 
@@ -19649,6 +21503,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__1"
+    /**
+     * Rule import group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5180:1: rule__Import__Group__1 : rule__Import__Group__1__Impl rule__Import__Group__2 ;
     public final void rule__Import__Group__1() throws RecognitionException {
 
@@ -19687,6 +21546,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__1__Impl"
+    /**
+     * Rule import group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5192:1: rule__Import__Group__1__Impl : ( ( rule__Import__ImportURIAssignment_1 ) ) ;
     public final void rule__Import__Group__1__Impl() throws RecognitionException {
 
@@ -19738,6 +21602,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__2"
+    /**
+     * Rule import group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5207:1: rule__Import__Group__2 : rule__Import__Group__2__Impl ;
     public final void rule__Import__Group__2() throws RecognitionException {
 
@@ -19771,6 +21640,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group__2__Impl"
+    /**
+     * Rule import group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5218:1: rule__Import__Group__2__Impl : ( ( rule__Import__Group_2__0 )? ) ;
     public final void rule__Import__Group__2__Impl() throws RecognitionException {
 
@@ -19833,6 +21707,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group_2__0"
+    /**
+     * Rule import group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5234:1: rule__Import__Group_2__0 : rule__Import__Group_2__0__Impl rule__Import__Group_2__1 ;
     public final void rule__Import__Group_2__0() throws RecognitionException {
 
@@ -19871,6 +21750,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group_2__0__Impl"
+    /**
+     * Rule import group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5246:1: rule__Import__Group_2__0__Impl : ( 'as' ) ;
     public final void rule__Import__Group_2__0__Impl() throws RecognitionException {
 
@@ -19912,6 +21796,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group_2__1"
+    /**
+     * Rule import group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5261:1: rule__Import__Group_2__1 : rule__Import__Group_2__1__Impl ;
     public final void rule__Import__Group_2__1() throws RecognitionException {
 
@@ -19945,6 +21834,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__Group_2__1__Impl"
+    /**
+     * Rule import group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5272:1: rule__Import__Group_2__1__Impl : ( ( rule__Import__NameAssignment_2_1 ) ) ;
     public final void rule__Import__Group_2__1__Impl() throws RecognitionException {
 
@@ -19996,6 +21890,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pragma__Group__0"
+    /**
+     * Rule pragma group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5288:1: rule__Pragma__Group__0 : rule__Pragma__Group__0__Impl rule__Pragma__Group__1 ;
     public final void rule__Pragma__Group__0() throws RecognitionException {
 
@@ -20034,6 +21933,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pragma__Group__0__Impl"
+    /**
+     * Rule pragma group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5300:1: rule__Pragma__Group__0__Impl : ( '@' ) ;
     public final void rule__Pragma__Group__0__Impl() throws RecognitionException {
 
@@ -20075,6 +21979,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pragma__Group__1"
+    /**
+     * Rule pragma group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5315:1: rule__Pragma__Group__1 : rule__Pragma__Group__1__Impl ;
     public final void rule__Pragma__Group__1() throws RecognitionException {
 
@@ -20108,6 +22017,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pragma__Group__1__Impl"
+    /**
+     * Rule pragma group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5326:1: rule__Pragma__Group__1__Impl : ( ( rule__Pragma__NameAssignment_1 ) ) ;
     public final void rule__Pragma__Group__1__Impl() throws RecognitionException {
 
@@ -20159,6 +22073,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__0"
+    /**
+     * Rule headless experiment group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5342:1: rule__HeadlessExperiment__Group__0 : rule__HeadlessExperiment__Group__0__Impl rule__HeadlessExperiment__Group__1 ;
     public final void rule__HeadlessExperiment__Group__0() throws RecognitionException {
 
@@ -20197,6 +22116,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__0__Impl"
+    /**
+     * Rule headless experiment group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5354:1: rule__HeadlessExperiment__Group__0__Impl : ( ( rule__HeadlessExperiment__KeyAssignment_0 ) ) ;
     public final void rule__HeadlessExperiment__Group__0__Impl() throws RecognitionException {
 
@@ -20248,6 +22172,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__1"
+    /**
+     * Rule headless experiment group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5369:1: rule__HeadlessExperiment__Group__1 : rule__HeadlessExperiment__Group__1__Impl rule__HeadlessExperiment__Group__2 ;
     public final void rule__HeadlessExperiment__Group__1() throws RecognitionException {
 
@@ -20286,6 +22215,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__1__Impl"
+    /**
+     * Rule headless experiment group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5381:1: rule__HeadlessExperiment__Group__1__Impl : ( ( rule__HeadlessExperiment__FirstFacetAssignment_1 )? ) ;
     public final void rule__HeadlessExperiment__Group__1__Impl() throws RecognitionException {
 
@@ -20348,6 +22282,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__2"
+    /**
+     * Rule headless experiment group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5396:1: rule__HeadlessExperiment__Group__2 : rule__HeadlessExperiment__Group__2__Impl rule__HeadlessExperiment__Group__3 ;
     public final void rule__HeadlessExperiment__Group__2() throws RecognitionException {
 
@@ -20386,6 +22325,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__2__Impl"
+    /**
+     * Rule headless experiment group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5408:1: rule__HeadlessExperiment__Group__2__Impl : ( ( rule__HeadlessExperiment__NameAssignment_2 ) ) ;
     public final void rule__HeadlessExperiment__Group__2__Impl() throws RecognitionException {
 
@@ -20437,6 +22381,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__3"
+    /**
+     * Rule headless experiment group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5423:1: rule__HeadlessExperiment__Group__3 : rule__HeadlessExperiment__Group__3__Impl rule__HeadlessExperiment__Group__4 ;
     public final void rule__HeadlessExperiment__Group__3() throws RecognitionException {
 
@@ -20475,6 +22424,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__3__Impl"
+    /**
+     * Rule headless experiment group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5435:1: rule__HeadlessExperiment__Group__3__Impl : ( ( rule__HeadlessExperiment__Group_3__0 )? ) ;
     public final void rule__HeadlessExperiment__Group__3__Impl() throws RecognitionException {
 
@@ -20537,6 +22491,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__4"
+    /**
+     * Rule headless experiment group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5450:1: rule__HeadlessExperiment__Group__4 : rule__HeadlessExperiment__Group__4__Impl rule__HeadlessExperiment__Group__5 ;
     public final void rule__HeadlessExperiment__Group__4() throws RecognitionException {
 
@@ -20575,6 +22534,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__4__Impl"
+    /**
+     * Rule headless experiment group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5462:1: rule__HeadlessExperiment__Group__4__Impl : ( ( rule__HeadlessExperiment__FacetsAssignment_4 )* ) ;
     public final void rule__HeadlessExperiment__Group__4__Impl() throws RecognitionException {
 
@@ -20644,6 +22608,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__5"
+    /**
+     * Rule headless experiment group 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5477:1: rule__HeadlessExperiment__Group__5 : rule__HeadlessExperiment__Group__5__Impl ;
     public final void rule__HeadlessExperiment__Group__5() throws RecognitionException {
 
@@ -20677,6 +22646,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group__5__Impl"
+    /**
+     * Rule headless experiment group 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5488:1: rule__HeadlessExperiment__Group__5__Impl : ( ( rule__HeadlessExperiment__Alternatives_5 ) ) ;
     public final void rule__HeadlessExperiment__Group__5__Impl() throws RecognitionException {
 
@@ -20728,6 +22702,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group_3__0"
+    /**
+     * Rule headless experiment group 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5504:1: rule__HeadlessExperiment__Group_3__0 : rule__HeadlessExperiment__Group_3__0__Impl rule__HeadlessExperiment__Group_3__1 ;
     public final void rule__HeadlessExperiment__Group_3__0() throws RecognitionException {
 
@@ -20766,6 +22745,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group_3__0__Impl"
+    /**
+     * Rule headless experiment group 3 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5516:1: rule__HeadlessExperiment__Group_3__0__Impl : ( 'model:' ) ;
     public final void rule__HeadlessExperiment__Group_3__0__Impl() throws RecognitionException {
 
@@ -20807,6 +22791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group_3__1"
+    /**
+     * Rule headless experiment group 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5531:1: rule__HeadlessExperiment__Group_3__1 : rule__HeadlessExperiment__Group_3__1__Impl ;
     public final void rule__HeadlessExperiment__Group_3__1() throws RecognitionException {
 
@@ -20840,6 +22829,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__Group_3__1__Impl"
+    /**
+     * Rule headless experiment group 3 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5542:1: rule__HeadlessExperiment__Group_3__1__Impl : ( ( rule__HeadlessExperiment__ImportURIAssignment_3_1 ) ) ;
     public final void rule__HeadlessExperiment__Group_3__1__Impl() throws RecognitionException {
 
@@ -20891,6 +22885,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__0"
+    /**
+     * Rule S global group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5558:1: rule__S_Global__Group__0 : rule__S_Global__Group__0__Impl rule__S_Global__Group__1 ;
     public final void rule__S_Global__Group__0() throws RecognitionException {
 
@@ -20929,6 +22928,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__0__Impl"
+    /**
+     * Rule S global group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5570:1: rule__S_Global__Group__0__Impl : ( ( rule__S_Global__KeyAssignment_0 ) ) ;
     public final void rule__S_Global__Group__0__Impl() throws RecognitionException {
 
@@ -20980,6 +22984,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__1"
+    /**
+     * Rule S global group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5585:1: rule__S_Global__Group__1 : rule__S_Global__Group__1__Impl rule__S_Global__Group__2 ;
     public final void rule__S_Global__Group__1() throws RecognitionException {
 
@@ -21018,6 +23027,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__1__Impl"
+    /**
+     * Rule S global group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5597:1: rule__S_Global__Group__1__Impl : ( ( rule__S_Global__FacetsAssignment_1 )* ) ;
     public final void rule__S_Global__Group__1__Impl() throws RecognitionException {
 
@@ -21087,6 +23101,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__2"
+    /**
+     * Rule S global group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5612:1: rule__S_Global__Group__2 : rule__S_Global__Group__2__Impl ;
     public final void rule__S_Global__Group__2() throws RecognitionException {
 
@@ -21120,6 +23139,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__Group__2__Impl"
+    /**
+     * Rule S global group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5623:1: rule__S_Global__Group__2__Impl : ( ( rule__S_Global__Alternatives_2 ) ) ;
     public final void rule__S_Global__Group__2__Impl() throws RecognitionException {
 
@@ -21171,6 +23195,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__0"
+    /**
+     * Rule S species group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5639:1: rule__S_Species__Group__0 : rule__S_Species__Group__0__Impl rule__S_Species__Group__1 ;
     public final void rule__S_Species__Group__0() throws RecognitionException {
 
@@ -21209,6 +23238,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__0__Impl"
+    /**
+     * Rule S species group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5651:1: rule__S_Species__Group__0__Impl : ( ( rule__S_Species__KeyAssignment_0 ) ) ;
     public final void rule__S_Species__Group__0__Impl() throws RecognitionException {
 
@@ -21260,6 +23294,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__1"
+    /**
+     * Rule S species group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5666:1: rule__S_Species__Group__1 : rule__S_Species__Group__1__Impl rule__S_Species__Group__2 ;
     public final void rule__S_Species__Group__1() throws RecognitionException {
 
@@ -21298,6 +23337,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__1__Impl"
+    /**
+     * Rule S species group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5678:1: rule__S_Species__Group__1__Impl : ( ( rule__S_Species__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Species__Group__1__Impl() throws RecognitionException {
 
@@ -21360,6 +23404,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__2"
+    /**
+     * Rule S species group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5693:1: rule__S_Species__Group__2 : rule__S_Species__Group__2__Impl rule__S_Species__Group__3 ;
     public final void rule__S_Species__Group__2() throws RecognitionException {
 
@@ -21398,6 +23447,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__2__Impl"
+    /**
+     * Rule S species group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5705:1: rule__S_Species__Group__2__Impl : ( ( rule__S_Species__NameAssignment_2 ) ) ;
     public final void rule__S_Species__Group__2__Impl() throws RecognitionException {
 
@@ -21449,6 +23503,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__3"
+    /**
+     * Rule S species group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5720:1: rule__S_Species__Group__3 : rule__S_Species__Group__3__Impl rule__S_Species__Group__4 ;
     public final void rule__S_Species__Group__3() throws RecognitionException {
 
@@ -21487,6 +23546,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__3__Impl"
+    /**
+     * Rule S species group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5732:1: rule__S_Species__Group__3__Impl : ( ( rule__S_Species__FacetsAssignment_3 )* ) ;
     public final void rule__S_Species__Group__3__Impl() throws RecognitionException {
 
@@ -21556,6 +23620,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__4"
+    /**
+     * Rule S species group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5747:1: rule__S_Species__Group__4 : rule__S_Species__Group__4__Impl ;
     public final void rule__S_Species__Group__4() throws RecognitionException {
 
@@ -21589,6 +23658,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__Group__4__Impl"
+    /**
+     * Rule S species group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5758:1: rule__S_Species__Group__4__Impl : ( ( rule__S_Species__Alternatives_4 ) ) ;
     public final void rule__S_Species__Group__4__Impl() throws RecognitionException {
 
@@ -21640,6 +23714,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__0"
+    /**
+     * Rule S experiment group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5774:1: rule__S_Experiment__Group__0 : rule__S_Experiment__Group__0__Impl rule__S_Experiment__Group__1 ;
     public final void rule__S_Experiment__Group__0() throws RecognitionException {
 
@@ -21678,6 +23757,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__0__Impl"
+    /**
+     * Rule S experiment group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5786:1: rule__S_Experiment__Group__0__Impl : ( ( rule__S_Experiment__KeyAssignment_0 ) ) ;
     public final void rule__S_Experiment__Group__0__Impl() throws RecognitionException {
 
@@ -21729,6 +23813,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__1"
+    /**
+     * Rule S experiment group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5801:1: rule__S_Experiment__Group__1 : rule__S_Experiment__Group__1__Impl rule__S_Experiment__Group__2 ;
     public final void rule__S_Experiment__Group__1() throws RecognitionException {
 
@@ -21767,6 +23856,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__1__Impl"
+    /**
+     * Rule S experiment group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5813:1: rule__S_Experiment__Group__1__Impl : ( ( rule__S_Experiment__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Experiment__Group__1__Impl() throws RecognitionException {
 
@@ -21829,6 +23923,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__2"
+    /**
+     * Rule S experiment group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5828:1: rule__S_Experiment__Group__2 : rule__S_Experiment__Group__2__Impl rule__S_Experiment__Group__3 ;
     public final void rule__S_Experiment__Group__2() throws RecognitionException {
 
@@ -21867,6 +23966,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__2__Impl"
+    /**
+     * Rule S experiment group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5840:1: rule__S_Experiment__Group__2__Impl : ( ( rule__S_Experiment__NameAssignment_2 ) ) ;
     public final void rule__S_Experiment__Group__2__Impl() throws RecognitionException {
 
@@ -21918,6 +24022,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__3"
+    /**
+     * Rule S experiment group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5855:1: rule__S_Experiment__Group__3 : rule__S_Experiment__Group__3__Impl rule__S_Experiment__Group__4 ;
     public final void rule__S_Experiment__Group__3() throws RecognitionException {
 
@@ -21956,6 +24065,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__3__Impl"
+    /**
+     * Rule S experiment group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5867:1: rule__S_Experiment__Group__3__Impl : ( ( rule__S_Experiment__FacetsAssignment_3 )* ) ;
     public final void rule__S_Experiment__Group__3__Impl() throws RecognitionException {
 
@@ -22025,6 +24139,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__4"
+    /**
+     * Rule S experiment group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5882:1: rule__S_Experiment__Group__4 : rule__S_Experiment__Group__4__Impl ;
     public final void rule__S_Experiment__Group__4() throws RecognitionException {
 
@@ -22058,6 +24177,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__Group__4__Impl"
+    /**
+     * Rule S experiment group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5893:1: rule__S_Experiment__Group__4__Impl : ( ( rule__S_Experiment__Alternatives_4 ) ) ;
     public final void rule__S_Experiment__Group__4__Impl() throws RecognitionException {
 
@@ -22109,6 +24233,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__0"
+    /**
+     * Rule S 1 expr facets block or end group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5909:1: rule__S_1Expr_Facets_BlockOrEnd__Group__0 : rule__S_1Expr_Facets_BlockOrEnd__Group__0__Impl rule__S_1Expr_Facets_BlockOrEnd__Group__1 ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__0() throws RecognitionException {
 
@@ -22147,6 +24276,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__0__Impl"
+    /**
+     * Rule S 1 expr facets block or end group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5921:1: rule__S_1Expr_Facets_BlockOrEnd__Group__0__Impl : ( ( rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0 ) ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__0__Impl() throws RecognitionException {
 
@@ -22198,6 +24332,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__1"
+    /**
+     * Rule S 1 expr facets block or end group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5936:1: rule__S_1Expr_Facets_BlockOrEnd__Group__1 : rule__S_1Expr_Facets_BlockOrEnd__Group__1__Impl rule__S_1Expr_Facets_BlockOrEnd__Group__2 ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__1() throws RecognitionException {
 
@@ -22236,6 +24375,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__1__Impl"
+    /**
+     * Rule S 1 expr facets block or end group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5948:1: rule__S_1Expr_Facets_BlockOrEnd__Group__1__Impl : ( ( rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__1__Impl() throws RecognitionException {
 
@@ -22294,6 +24438,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__2"
+    /**
+     * Rule S 1 expr facets block or end group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5963:1: rule__S_1Expr_Facets_BlockOrEnd__Group__2 : rule__S_1Expr_Facets_BlockOrEnd__Group__2__Impl rule__S_1Expr_Facets_BlockOrEnd__Group__3 ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__2() throws RecognitionException {
 
@@ -22332,6 +24481,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__2__Impl"
+    /**
+     * Rule S 1 expr facets block or end group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5975:1: rule__S_1Expr_Facets_BlockOrEnd__Group__2__Impl : ( ( rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2 ) ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__2__Impl() throws RecognitionException {
 
@@ -22383,6 +24537,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__3"
+    /**
+     * Rule S 1 expr facets block or end group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5990:1: rule__S_1Expr_Facets_BlockOrEnd__Group__3 : rule__S_1Expr_Facets_BlockOrEnd__Group__3__Impl rule__S_1Expr_Facets_BlockOrEnd__Group__4 ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__3() throws RecognitionException {
 
@@ -22421,6 +24580,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__3__Impl"
+    /**
+     * Rule S 1 expr facets block or end group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6002:1: rule__S_1Expr_Facets_BlockOrEnd__Group__3__Impl : ( ( rule__S_1Expr_Facets_BlockOrEnd__FacetsAssignment_3 )* ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__3__Impl() throws RecognitionException {
 
@@ -22490,6 +24654,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__4"
+    /**
+     * Rule S 1 expr facets block or end group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6017:1: rule__S_1Expr_Facets_BlockOrEnd__Group__4 : rule__S_1Expr_Facets_BlockOrEnd__Group__4__Impl ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__4() throws RecognitionException {
 
@@ -22523,6 +24692,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__Group__4__Impl"
+    /**
+     * Rule S 1 expr facets block or end group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6028:1: rule__S_1Expr_Facets_BlockOrEnd__Group__4__Impl : ( ( rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4 ) ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__Group__4__Impl() throws RecognitionException {
 
@@ -22574,6 +24748,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__0"
+    /**
+     * Rule S do group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6044:1: rule__S_Do__Group__0 : rule__S_Do__Group__0__Impl rule__S_Do__Group__1 ;
     public final void rule__S_Do__Group__0() throws RecognitionException {
 
@@ -22612,6 +24791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__0__Impl"
+    /**
+     * Rule S do group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6056:1: rule__S_Do__Group__0__Impl : ( ( rule__S_Do__KeyAssignment_0 ) ) ;
     public final void rule__S_Do__Group__0__Impl() throws RecognitionException {
 
@@ -22663,6 +24847,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__1"
+    /**
+     * Rule S do group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6071:1: rule__S_Do__Group__1 : rule__S_Do__Group__1__Impl rule__S_Do__Group__2 ;
     public final void rule__S_Do__Group__1() throws RecognitionException {
 
@@ -22701,6 +24890,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__1__Impl"
+    /**
+     * Rule S do group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6083:1: rule__S_Do__Group__1__Impl : ( ( rule__S_Do__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Do__Group__1__Impl() throws RecognitionException {
 
@@ -22763,6 +24957,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__2"
+    /**
+     * Rule S do group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6098:1: rule__S_Do__Group__2 : rule__S_Do__Group__2__Impl rule__S_Do__Group__3 ;
     public final void rule__S_Do__Group__2() throws RecognitionException {
 
@@ -22801,6 +25000,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__2__Impl"
+    /**
+     * Rule S do group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6110:1: rule__S_Do__Group__2__Impl : ( ( rule__S_Do__ExprAssignment_2 ) ) ;
     public final void rule__S_Do__Group__2__Impl() throws RecognitionException {
 
@@ -22852,6 +25056,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__3"
+    /**
+     * Rule S do group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6125:1: rule__S_Do__Group__3 : rule__S_Do__Group__3__Impl rule__S_Do__Group__4 ;
     public final void rule__S_Do__Group__3() throws RecognitionException {
 
@@ -22890,6 +25099,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__3__Impl"
+    /**
+     * Rule S do group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6137:1: rule__S_Do__Group__3__Impl : ( ( rule__S_Do__FacetsAssignment_3 )* ) ;
     public final void rule__S_Do__Group__3__Impl() throws RecognitionException {
 
@@ -22959,6 +25173,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__4"
+    /**
+     * Rule S do group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6152:1: rule__S_Do__Group__4 : rule__S_Do__Group__4__Impl ;
     public final void rule__S_Do__Group__4() throws RecognitionException {
 
@@ -22992,6 +25211,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__Group__4__Impl"
+    /**
+     * Rule S do group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6163:1: rule__S_Do__Group__4__Impl : ( ( rule__S_Do__Alternatives_4 ) ) ;
     public final void rule__S_Do__Group__4__Impl() throws RecognitionException {
 
@@ -23043,6 +25267,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__0"
+    /**
+     * Rule S loop group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6179:1: rule__S_Loop__Group__0 : rule__S_Loop__Group__0__Impl rule__S_Loop__Group__1 ;
     public final void rule__S_Loop__Group__0() throws RecognitionException {
 
@@ -23081,6 +25310,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__0__Impl"
+    /**
+     * Rule S loop group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6191:1: rule__S_Loop__Group__0__Impl : ( ( rule__S_Loop__KeyAssignment_0 ) ) ;
     public final void rule__S_Loop__Group__0__Impl() throws RecognitionException {
 
@@ -23132,6 +25366,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__1"
+    /**
+     * Rule S loop group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6206:1: rule__S_Loop__Group__1 : rule__S_Loop__Group__1__Impl rule__S_Loop__Group__2 ;
     public final void rule__S_Loop__Group__1() throws RecognitionException {
 
@@ -23170,6 +25409,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__1__Impl"
+    /**
+     * Rule S loop group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6218:1: rule__S_Loop__Group__1__Impl : ( ( rule__S_Loop__NameAssignment_1 )? ) ;
     public final void rule__S_Loop__Group__1__Impl() throws RecognitionException {
 
@@ -23236,6 +25480,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__2"
+    /**
+     * Rule S loop group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6233:1: rule__S_Loop__Group__2 : rule__S_Loop__Group__2__Impl rule__S_Loop__Group__3 ;
     public final void rule__S_Loop__Group__2() throws RecognitionException {
 
@@ -23274,6 +25523,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__2__Impl"
+    /**
+     * Rule S loop group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6245:1: rule__S_Loop__Group__2__Impl : ( ( rule__S_Loop__FacetsAssignment_2 )* ) ;
     public final void rule__S_Loop__Group__2__Impl() throws RecognitionException {
 
@@ -23343,6 +25597,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__3"
+    /**
+     * Rule S loop group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6260:1: rule__S_Loop__Group__3 : rule__S_Loop__Group__3__Impl ;
     public final void rule__S_Loop__Group__3() throws RecognitionException {
 
@@ -23376,6 +25635,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__Group__3__Impl"
+    /**
+     * Rule S loop group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6271:1: rule__S_Loop__Group__3__Impl : ( ( rule__S_Loop__BlockAssignment_3 ) ) ;
     public final void rule__S_Loop__Group__3__Impl() throws RecognitionException {
 
@@ -23427,6 +25691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__0"
+    /**
+     * Rule S if group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6287:1: rule__S_If__Group__0 : rule__S_If__Group__0__Impl rule__S_If__Group__1 ;
     public final void rule__S_If__Group__0() throws RecognitionException {
 
@@ -23465,6 +25734,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__0__Impl"
+    /**
+     * Rule S if group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6299:1: rule__S_If__Group__0__Impl : ( ( rule__S_If__KeyAssignment_0 ) ) ;
     public final void rule__S_If__Group__0__Impl() throws RecognitionException {
 
@@ -23516,6 +25790,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__1"
+    /**
+     * Rule S if group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6314:1: rule__S_If__Group__1 : rule__S_If__Group__1__Impl rule__S_If__Group__2 ;
     public final void rule__S_If__Group__1() throws RecognitionException {
 
@@ -23554,6 +25833,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__1__Impl"
+    /**
+     * Rule S if group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6326:1: rule__S_If__Group__1__Impl : ( ( rule__S_If__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_If__Group__1__Impl() throws RecognitionException {
 
@@ -23616,6 +25900,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__2"
+    /**
+     * Rule S if group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6341:1: rule__S_If__Group__2 : rule__S_If__Group__2__Impl rule__S_If__Group__3 ;
     public final void rule__S_If__Group__2() throws RecognitionException {
 
@@ -23654,6 +25943,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__2__Impl"
+    /**
+     * Rule S if group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6353:1: rule__S_If__Group__2__Impl : ( ( rule__S_If__ExprAssignment_2 ) ) ;
     public final void rule__S_If__Group__2__Impl() throws RecognitionException {
 
@@ -23705,6 +25999,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__3"
+    /**
+     * Rule S if group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6368:1: rule__S_If__Group__3 : rule__S_If__Group__3__Impl rule__S_If__Group__4 ;
     public final void rule__S_If__Group__3() throws RecognitionException {
 
@@ -23743,6 +26042,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__3__Impl"
+    /**
+     * Rule S if group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6380:1: rule__S_If__Group__3__Impl : ( ( rule__S_If__BlockAssignment_3 ) ) ;
     public final void rule__S_If__Group__3__Impl() throws RecognitionException {
 
@@ -23794,6 +26098,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__4"
+    /**
+     * Rule S if group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6395:1: rule__S_If__Group__4 : rule__S_If__Group__4__Impl ;
     public final void rule__S_If__Group__4() throws RecognitionException {
 
@@ -23827,6 +26136,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group__4__Impl"
+    /**
+     * Rule S if group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6406:1: rule__S_If__Group__4__Impl : ( ( rule__S_If__Group_4__0 )? ) ;
     public final void rule__S_If__Group__4__Impl() throws RecognitionException {
 
@@ -23889,6 +26203,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group_4__0"
+    /**
+     * Rule S if group 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6422:1: rule__S_If__Group_4__0 : rule__S_If__Group_4__0__Impl rule__S_If__Group_4__1 ;
     public final void rule__S_If__Group_4__0() throws RecognitionException {
 
@@ -23927,6 +26246,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group_4__0__Impl"
+    /**
+     * Rule S if group 4 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6434:1: rule__S_If__Group_4__0__Impl : ( ( 'else' ) ) ;
     public final void rule__S_If__Group_4__0__Impl() throws RecognitionException {
 
@@ -23974,6 +26298,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group_4__1"
+    /**
+     * Rule S if group 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6449:1: rule__S_If__Group_4__1 : rule__S_If__Group_4__1__Impl ;
     public final void rule__S_If__Group_4__1() throws RecognitionException {
 
@@ -24007,6 +26336,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__Group_4__1__Impl"
+    /**
+     * Rule S if group 4 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6460:1: rule__S_If__Group_4__1__Impl : ( ( rule__S_If__ElseAssignment_4_1 ) ) ;
     public final void rule__S_If__Group_4__1__Impl() throws RecognitionException {
 
@@ -24058,6 +26392,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__0"
+    /**
+     * Rule S try group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6476:1: rule__S_Try__Group__0 : rule__S_Try__Group__0__Impl rule__S_Try__Group__1 ;
     public final void rule__S_Try__Group__0() throws RecognitionException {
 
@@ -24096,6 +26435,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__0__Impl"
+    /**
+     * Rule S try group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6488:1: rule__S_Try__Group__0__Impl : ( ( rule__S_Try__KeyAssignment_0 ) ) ;
     public final void rule__S_Try__Group__0__Impl() throws RecognitionException {
 
@@ -24147,6 +26491,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__1"
+    /**
+     * Rule S try group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6503:1: rule__S_Try__Group__1 : rule__S_Try__Group__1__Impl rule__S_Try__Group__2 ;
     public final void rule__S_Try__Group__1() throws RecognitionException {
 
@@ -24185,6 +26534,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__1__Impl"
+    /**
+     * Rule S try group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6515:1: rule__S_Try__Group__1__Impl : ( ( rule__S_Try__BlockAssignment_1 ) ) ;
     public final void rule__S_Try__Group__1__Impl() throws RecognitionException {
 
@@ -24236,6 +26590,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__2"
+    /**
+     * Rule S try group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6530:1: rule__S_Try__Group__2 : rule__S_Try__Group__2__Impl ;
     public final void rule__S_Try__Group__2() throws RecognitionException {
 
@@ -24269,6 +26628,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group__2__Impl"
+    /**
+     * Rule S try group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6541:1: rule__S_Try__Group__2__Impl : ( ( rule__S_Try__Group_2__0 )? ) ;
     public final void rule__S_Try__Group__2__Impl() throws RecognitionException {
 
@@ -24331,6 +26695,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group_2__0"
+    /**
+     * Rule S try group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6557:1: rule__S_Try__Group_2__0 : rule__S_Try__Group_2__0__Impl rule__S_Try__Group_2__1 ;
     public final void rule__S_Try__Group_2__0() throws RecognitionException {
 
@@ -24369,6 +26738,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group_2__0__Impl"
+    /**
+     * Rule S try group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6569:1: rule__S_Try__Group_2__0__Impl : ( ( 'catch' ) ) ;
     public final void rule__S_Try__Group_2__0__Impl() throws RecognitionException {
 
@@ -24416,6 +26790,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group_2__1"
+    /**
+     * Rule S try group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6584:1: rule__S_Try__Group_2__1 : rule__S_Try__Group_2__1__Impl ;
     public final void rule__S_Try__Group_2__1() throws RecognitionException {
 
@@ -24449,6 +26828,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__Group_2__1__Impl"
+    /**
+     * Rule S try group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6595:1: rule__S_Try__Group_2__1__Impl : ( ( rule__S_Try__CatchAssignment_2_1 ) ) ;
     public final void rule__S_Try__Group_2__1__Impl() throws RecognitionException {
 
@@ -24500,6 +26884,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__0"
+    /**
+     * Rule S other group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6611:1: rule__S_Other__Group__0 : rule__S_Other__Group__0__Impl rule__S_Other__Group__1 ;
     public final void rule__S_Other__Group__0() throws RecognitionException {
 
@@ -24538,6 +26927,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__0__Impl"
+    /**
+     * Rule S other group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6623:1: rule__S_Other__Group__0__Impl : ( ( rule__S_Other__KeyAssignment_0 ) ) ;
     public final void rule__S_Other__Group__0__Impl() throws RecognitionException {
 
@@ -24589,6 +26983,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__1"
+    /**
+     * Rule S other group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6638:1: rule__S_Other__Group__1 : rule__S_Other__Group__1__Impl rule__S_Other__Group__2 ;
     public final void rule__S_Other__Group__1() throws RecognitionException {
 
@@ -24627,6 +27026,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__1__Impl"
+    /**
+     * Rule S other group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6650:1: rule__S_Other__Group__1__Impl : ( ( rule__S_Other__FacetsAssignment_1 )* ) ;
     public final void rule__S_Other__Group__1__Impl() throws RecognitionException {
 
@@ -24696,6 +27100,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__2"
+    /**
+     * Rule S other group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6665:1: rule__S_Other__Group__2 : rule__S_Other__Group__2__Impl ;
     public final void rule__S_Other__Group__2() throws RecognitionException {
 
@@ -24729,6 +27138,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__Group__2__Impl"
+    /**
+     * Rule S other group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6676:1: rule__S_Other__Group__2__Impl : ( ( rule__S_Other__Alternatives_2 ) ) ;
     public final void rule__S_Other__Group__2__Impl() throws RecognitionException {
 
@@ -24780,6 +27194,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__0"
+    /**
+     * Rule S return group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6692:1: rule__S_Return__Group__0 : rule__S_Return__Group__0__Impl rule__S_Return__Group__1 ;
     public final void rule__S_Return__Group__0() throws RecognitionException {
 
@@ -24818,6 +27237,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__0__Impl"
+    /**
+     * Rule S return group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6704:1: rule__S_Return__Group__0__Impl : ( ( rule__S_Return__KeyAssignment_0 ) ) ;
     public final void rule__S_Return__Group__0__Impl() throws RecognitionException {
 
@@ -24869,6 +27293,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__1"
+    /**
+     * Rule S return group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6719:1: rule__S_Return__Group__1 : rule__S_Return__Group__1__Impl rule__S_Return__Group__2 ;
     public final void rule__S_Return__Group__1() throws RecognitionException {
 
@@ -24907,6 +27336,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__1__Impl"
+    /**
+     * Rule S return group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6731:1: rule__S_Return__Group__1__Impl : ( ( rule__S_Return__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Return__Group__1__Impl() throws RecognitionException {
 
@@ -24973,6 +27407,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__2"
+    /**
+     * Rule S return group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6746:1: rule__S_Return__Group__2 : rule__S_Return__Group__2__Impl rule__S_Return__Group__3 ;
     public final void rule__S_Return__Group__2() throws RecognitionException {
 
@@ -25011,6 +27450,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__2__Impl"
+    /**
+     * Rule S return group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6758:1: rule__S_Return__Group__2__Impl : ( ( rule__S_Return__ExprAssignment_2 )? ) ;
     public final void rule__S_Return__Group__2__Impl() throws RecognitionException {
 
@@ -25073,6 +27517,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__3"
+    /**
+     * Rule S return group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6773:1: rule__S_Return__Group__3 : rule__S_Return__Group__3__Impl ;
     public final void rule__S_Return__Group__3() throws RecognitionException {
 
@@ -25106,6 +27555,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__Group__3__Impl"
+    /**
+     * Rule S return group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6784:1: rule__S_Return__Group__3__Impl : ( ';' ) ;
     public final void rule__S_Return__Group__3__Impl() throws RecognitionException {
 
@@ -25147,6 +27601,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__0"
+    /**
+     * Rule S reflex group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6800:1: rule__S_Reflex__Group__0 : rule__S_Reflex__Group__0__Impl rule__S_Reflex__Group__1 ;
     public final void rule__S_Reflex__Group__0() throws RecognitionException {
 
@@ -25185,6 +27644,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__0__Impl"
+    /**
+     * Rule S reflex group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6812:1: rule__S_Reflex__Group__0__Impl : ( ( rule__S_Reflex__KeyAssignment_0 ) ) ;
     public final void rule__S_Reflex__Group__0__Impl() throws RecognitionException {
 
@@ -25236,6 +27700,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__1"
+    /**
+     * Rule S reflex group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6827:1: rule__S_Reflex__Group__1 : rule__S_Reflex__Group__1__Impl rule__S_Reflex__Group__2 ;
     public final void rule__S_Reflex__Group__1() throws RecognitionException {
 
@@ -25274,6 +27743,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__1__Impl"
+    /**
+     * Rule S reflex group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6839:1: rule__S_Reflex__Group__1__Impl : ( ( rule__S_Reflex__Group_1__0 )? ) ;
     public final void rule__S_Reflex__Group__1__Impl() throws RecognitionException {
 
@@ -25336,6 +27810,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__2"
+    /**
+     * Rule S reflex group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6854:1: rule__S_Reflex__Group__2 : rule__S_Reflex__Group__2__Impl rule__S_Reflex__Group__3 ;
     public final void rule__S_Reflex__Group__2() throws RecognitionException {
 
@@ -25374,6 +27853,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__2__Impl"
+    /**
+     * Rule S reflex group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6866:1: rule__S_Reflex__Group__2__Impl : ( ( rule__S_Reflex__Group_2__0 )? ) ;
     public final void rule__S_Reflex__Group__2__Impl() throws RecognitionException {
 
@@ -25436,6 +27920,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__3"
+    /**
+     * Rule S reflex group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6881:1: rule__S_Reflex__Group__3 : rule__S_Reflex__Group__3__Impl ;
     public final void rule__S_Reflex__Group__3() throws RecognitionException {
 
@@ -25469,6 +27958,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group__3__Impl"
+    /**
+     * Rule S reflex group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6892:1: rule__S_Reflex__Group__3__Impl : ( ( rule__S_Reflex__BlockAssignment_3 ) ) ;
     public final void rule__S_Reflex__Group__3__Impl() throws RecognitionException {
 
@@ -25520,6 +28014,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_1__0"
+    /**
+     * Rule S reflex group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6908:1: rule__S_Reflex__Group_1__0 : rule__S_Reflex__Group_1__0__Impl rule__S_Reflex__Group_1__1 ;
     public final void rule__S_Reflex__Group_1__0() throws RecognitionException {
 
@@ -25558,6 +28057,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_1__0__Impl"
+    /**
+     * Rule S reflex group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6920:1: rule__S_Reflex__Group_1__0__Impl : ( ( rule__S_Reflex__FirstFacetAssignment_1_0 )? ) ;
     public final void rule__S_Reflex__Group_1__0__Impl() throws RecognitionException {
 
@@ -25620,6 +28124,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_1__1"
+    /**
+     * Rule S reflex group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6935:1: rule__S_Reflex__Group_1__1 : rule__S_Reflex__Group_1__1__Impl ;
     public final void rule__S_Reflex__Group_1__1() throws RecognitionException {
 
@@ -25653,6 +28162,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_1__1__Impl"
+    /**
+     * Rule S reflex group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6946:1: rule__S_Reflex__Group_1__1__Impl : ( ( rule__S_Reflex__NameAssignment_1_1 ) ) ;
     public final void rule__S_Reflex__Group_1__1__Impl() throws RecognitionException {
 
@@ -25704,6 +28218,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__0"
+    /**
+     * Rule S reflex group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6962:1: rule__S_Reflex__Group_2__0 : rule__S_Reflex__Group_2__0__Impl rule__S_Reflex__Group_2__1 ;
     public final void rule__S_Reflex__Group_2__0() throws RecognitionException {
 
@@ -25742,6 +28261,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__0__Impl"
+    /**
+     * Rule S reflex group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6974:1: rule__S_Reflex__Group_2__0__Impl : ( 'when' ) ;
     public final void rule__S_Reflex__Group_2__0__Impl() throws RecognitionException {
 
@@ -25783,6 +28307,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__1"
+    /**
+     * Rule S reflex group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6989:1: rule__S_Reflex__Group_2__1 : rule__S_Reflex__Group_2__1__Impl rule__S_Reflex__Group_2__2 ;
     public final void rule__S_Reflex__Group_2__1() throws RecognitionException {
 
@@ -25821,6 +28350,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__1__Impl"
+    /**
+     * Rule S reflex group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7001:1: rule__S_Reflex__Group_2__1__Impl : ( ':' ) ;
     public final void rule__S_Reflex__Group_2__1__Impl() throws RecognitionException {
 
@@ -25862,6 +28396,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__2"
+    /**
+     * Rule S reflex group 2 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7016:1: rule__S_Reflex__Group_2__2 : rule__S_Reflex__Group_2__2__Impl ;
     public final void rule__S_Reflex__Group_2__2() throws RecognitionException {
 
@@ -25895,6 +28434,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__Group_2__2__Impl"
+    /**
+     * Rule S reflex group 2 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7027:1: rule__S_Reflex__Group_2__2__Impl : ( ( rule__S_Reflex__ExprAssignment_2_2 ) ) ;
     public final void rule__S_Reflex__Group_2__2__Impl() throws RecognitionException {
 
@@ -25946,6 +28490,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__0"
+    /**
+     * Rule S definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7043:1: rule__S_Definition__Group__0 : rule__S_Definition__Group__0__Impl rule__S_Definition__Group__1 ;
     public final void rule__S_Definition__Group__0() throws RecognitionException {
 
@@ -25984,6 +28533,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__0__Impl"
+    /**
+     * Rule S definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7055:1: rule__S_Definition__Group__0__Impl : ( ( rule__S_Definition__TkeyAssignment_0 ) ) ;
     public final void rule__S_Definition__Group__0__Impl() throws RecognitionException {
 
@@ -26035,6 +28589,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__1"
+    /**
+     * Rule S definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7070:1: rule__S_Definition__Group__1 : rule__S_Definition__Group__1__Impl rule__S_Definition__Group__2 ;
     public final void rule__S_Definition__Group__1() throws RecognitionException {
 
@@ -26073,6 +28632,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__1__Impl"
+    /**
+     * Rule S definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7082:1: rule__S_Definition__Group__1__Impl : ( ( rule__S_Definition__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Definition__Group__1__Impl() throws RecognitionException {
 
@@ -26135,6 +28699,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__2"
+    /**
+     * Rule S definition group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7097:1: rule__S_Definition__Group__2 : rule__S_Definition__Group__2__Impl rule__S_Definition__Group__3 ;
     public final void rule__S_Definition__Group__2() throws RecognitionException {
 
@@ -26173,6 +28742,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__2__Impl"
+    /**
+     * Rule S definition group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7109:1: rule__S_Definition__Group__2__Impl : ( ( rule__S_Definition__NameAssignment_2 ) ) ;
     public final void rule__S_Definition__Group__2__Impl() throws RecognitionException {
 
@@ -26224,6 +28798,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__3"
+    /**
+     * Rule S definition group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7124:1: rule__S_Definition__Group__3 : rule__S_Definition__Group__3__Impl rule__S_Definition__Group__4 ;
     public final void rule__S_Definition__Group__3() throws RecognitionException {
 
@@ -26262,6 +28841,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__3__Impl"
+    /**
+     * Rule S definition group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7136:1: rule__S_Definition__Group__3__Impl : ( ( rule__S_Definition__Group_3__0 )? ) ;
     public final void rule__S_Definition__Group__3__Impl() throws RecognitionException {
 
@@ -26324,6 +28908,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__4"
+    /**
+     * Rule S definition group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7151:1: rule__S_Definition__Group__4 : rule__S_Definition__Group__4__Impl rule__S_Definition__Group__5 ;
     public final void rule__S_Definition__Group__4() throws RecognitionException {
 
@@ -26362,6 +28951,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__4__Impl"
+    /**
+     * Rule S definition group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7163:1: rule__S_Definition__Group__4__Impl : ( ( rule__S_Definition__FacetsAssignment_4 )* ) ;
     public final void rule__S_Definition__Group__4__Impl() throws RecognitionException {
 
@@ -26431,6 +29025,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__5"
+    /**
+     * Rule S definition group 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7178:1: rule__S_Definition__Group__5 : rule__S_Definition__Group__5__Impl ;
     public final void rule__S_Definition__Group__5() throws RecognitionException {
 
@@ -26464,6 +29063,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group__5__Impl"
+    /**
+     * Rule S definition group 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7189:1: rule__S_Definition__Group__5__Impl : ( ( rule__S_Definition__Alternatives_5 ) ) ;
     public final void rule__S_Definition__Group__5__Impl() throws RecognitionException {
 
@@ -26515,6 +29119,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__0"
+    /**
+     * Rule S definition group 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7205:1: rule__S_Definition__Group_3__0 : rule__S_Definition__Group_3__0__Impl rule__S_Definition__Group_3__1 ;
     public final void rule__S_Definition__Group_3__0() throws RecognitionException {
 
@@ -26553,6 +29162,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__0__Impl"
+    /**
+     * Rule S definition group 3 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7217:1: rule__S_Definition__Group_3__0__Impl : ( '(' ) ;
     public final void rule__S_Definition__Group_3__0__Impl() throws RecognitionException {
 
@@ -26594,6 +29208,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__1"
+    /**
+     * Rule S definition group 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7232:1: rule__S_Definition__Group_3__1 : rule__S_Definition__Group_3__1__Impl rule__S_Definition__Group_3__2 ;
     public final void rule__S_Definition__Group_3__1() throws RecognitionException {
 
@@ -26632,6 +29251,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__1__Impl"
+    /**
+     * Rule S definition group 3 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7244:1: rule__S_Definition__Group_3__1__Impl : ( ( rule__S_Definition__ArgsAssignment_3_1 ) ) ;
     public final void rule__S_Definition__Group_3__1__Impl() throws RecognitionException {
 
@@ -26683,6 +29307,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__2"
+    /**
+     * Rule S definition group 3 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7259:1: rule__S_Definition__Group_3__2 : rule__S_Definition__Group_3__2__Impl ;
     public final void rule__S_Definition__Group_3__2() throws RecognitionException {
 
@@ -26716,6 +29345,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__Group_3__2__Impl"
+    /**
+     * Rule S definition group 3 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7270:1: rule__S_Definition__Group_3__2__Impl : ( ')' ) ;
     public final void rule__S_Definition__Group_3__2__Impl() throws RecognitionException {
 
@@ -26757,6 +29391,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__0"
+    /**
+     * Rule S action group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7286:1: rule__S_Action__Group__0 : rule__S_Action__Group__0__Impl rule__S_Action__Group__1 ;
     public final void rule__S_Action__Group__0() throws RecognitionException {
 
@@ -26795,6 +29434,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__0__Impl"
+    /**
+     * Rule S action group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7298:1: rule__S_Action__Group__0__Impl : ( () ) ;
     public final void rule__S_Action__Group__0__Impl() throws RecognitionException {
 
@@ -26836,6 +29480,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__1"
+    /**
+     * Rule S action group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7313:1: rule__S_Action__Group__1 : rule__S_Action__Group__1__Impl rule__S_Action__Group__2 ;
     public final void rule__S_Action__Group__1() throws RecognitionException {
 
@@ -26874,6 +29523,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__1__Impl"
+    /**
+     * Rule S action group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7325:1: rule__S_Action__Group__1__Impl : ( ( rule__S_Action__KeyAssignment_1 ) ) ;
     public final void rule__S_Action__Group__1__Impl() throws RecognitionException {
 
@@ -26925,6 +29579,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__2"
+    /**
+     * Rule S action group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7340:1: rule__S_Action__Group__2 : rule__S_Action__Group__2__Impl rule__S_Action__Group__3 ;
     public final void rule__S_Action__Group__2() throws RecognitionException {
 
@@ -26963,6 +29622,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__2__Impl"
+    /**
+     * Rule S action group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7352:1: rule__S_Action__Group__2__Impl : ( ( rule__S_Action__FirstFacetAssignment_2 )? ) ;
     public final void rule__S_Action__Group__2__Impl() throws RecognitionException {
 
@@ -27025,6 +29689,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__3"
+    /**
+     * Rule S action group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7367:1: rule__S_Action__Group__3 : rule__S_Action__Group__3__Impl rule__S_Action__Group__4 ;
     public final void rule__S_Action__Group__3() throws RecognitionException {
 
@@ -27063,6 +29732,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__3__Impl"
+    /**
+     * Rule S action group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7379:1: rule__S_Action__Group__3__Impl : ( ( rule__S_Action__NameAssignment_3 ) ) ;
     public final void rule__S_Action__Group__3__Impl() throws RecognitionException {
 
@@ -27114,6 +29788,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__4"
+    /**
+     * Rule S action group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7394:1: rule__S_Action__Group__4 : rule__S_Action__Group__4__Impl rule__S_Action__Group__5 ;
     public final void rule__S_Action__Group__4() throws RecognitionException {
 
@@ -27152,6 +29831,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__4__Impl"
+    /**
+     * Rule S action group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7406:1: rule__S_Action__Group__4__Impl : ( ( rule__S_Action__Group_4__0 )? ) ;
     public final void rule__S_Action__Group__4__Impl() throws RecognitionException {
 
@@ -27214,6 +29898,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__5"
+    /**
+     * Rule S action group 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7421:1: rule__S_Action__Group__5 : rule__S_Action__Group__5__Impl rule__S_Action__Group__6 ;
     public final void rule__S_Action__Group__5() throws RecognitionException {
 
@@ -27252,6 +29941,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__5__Impl"
+    /**
+     * Rule S action group 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7433:1: rule__S_Action__Group__5__Impl : ( ( rule__S_Action__FacetsAssignment_5 )* ) ;
     public final void rule__S_Action__Group__5__Impl() throws RecognitionException {
 
@@ -27321,6 +30015,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__6"
+    /**
+     * Rule S action group 6.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7448:1: rule__S_Action__Group__6 : rule__S_Action__Group__6__Impl ;
     public final void rule__S_Action__Group__6() throws RecognitionException {
 
@@ -27354,6 +30053,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group__6__Impl"
+    /**
+     * Rule S action group 6 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7459:1: rule__S_Action__Group__6__Impl : ( ( rule__S_Action__Alternatives_6 ) ) ;
     public final void rule__S_Action__Group__6__Impl() throws RecognitionException {
 
@@ -27405,6 +30109,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__0"
+    /**
+     * Rule S action group 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7475:1: rule__S_Action__Group_4__0 : rule__S_Action__Group_4__0__Impl rule__S_Action__Group_4__1 ;
     public final void rule__S_Action__Group_4__0() throws RecognitionException {
 
@@ -27443,6 +30152,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__0__Impl"
+    /**
+     * Rule S action group 4 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7487:1: rule__S_Action__Group_4__0__Impl : ( '(' ) ;
     public final void rule__S_Action__Group_4__0__Impl() throws RecognitionException {
 
@@ -27484,6 +30198,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__1"
+    /**
+     * Rule S action group 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7502:1: rule__S_Action__Group_4__1 : rule__S_Action__Group_4__1__Impl rule__S_Action__Group_4__2 ;
     public final void rule__S_Action__Group_4__1() throws RecognitionException {
 
@@ -27522,6 +30241,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__1__Impl"
+    /**
+     * Rule S action group 4 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7514:1: rule__S_Action__Group_4__1__Impl : ( ( rule__S_Action__ArgsAssignment_4_1 ) ) ;
     public final void rule__S_Action__Group_4__1__Impl() throws RecognitionException {
 
@@ -27573,6 +30297,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__2"
+    /**
+     * Rule S action group 4 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7529:1: rule__S_Action__Group_4__2 : rule__S_Action__Group_4__2__Impl ;
     public final void rule__S_Action__Group_4__2() throws RecognitionException {
 
@@ -27606,6 +30335,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__Group_4__2__Impl"
+    /**
+     * Rule S action group 4 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7540:1: rule__S_Action__Group_4__2__Impl : ( ')' ) ;
     public final void rule__S_Action__Group_4__2__Impl() throws RecognitionException {
 
@@ -27647,6 +30381,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__0"
+    /**
+     * Rule S var group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7556:1: rule__S_Var__Group__0 : rule__S_Var__Group__0__Impl rule__S_Var__Group__1 ;
     public final void rule__S_Var__Group__0() throws RecognitionException {
 
@@ -27685,6 +30424,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__0__Impl"
+    /**
+     * Rule S var group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7568:1: rule__S_Var__Group__0__Impl : ( () ) ;
     public final void rule__S_Var__Group__0__Impl() throws RecognitionException {
 
@@ -27726,6 +30470,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__1"
+    /**
+     * Rule S var group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7583:1: rule__S_Var__Group__1 : rule__S_Var__Group__1__Impl rule__S_Var__Group__2 ;
     public final void rule__S_Var__Group__1() throws RecognitionException {
 
@@ -27764,6 +30513,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__1__Impl"
+    /**
+     * Rule S var group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7595:1: rule__S_Var__Group__1__Impl : ( ( rule__S_Var__KeyAssignment_1 ) ) ;
     public final void rule__S_Var__Group__1__Impl() throws RecognitionException {
 
@@ -27815,6 +30569,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__2"
+    /**
+     * Rule S var group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7610:1: rule__S_Var__Group__2 : rule__S_Var__Group__2__Impl rule__S_Var__Group__3 ;
     public final void rule__S_Var__Group__2() throws RecognitionException {
 
@@ -27853,6 +30612,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__2__Impl"
+    /**
+     * Rule S var group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7622:1: rule__S_Var__Group__2__Impl : ( ( rule__S_Var__FirstFacetAssignment_2 )? ) ;
     public final void rule__S_Var__Group__2__Impl() throws RecognitionException {
 
@@ -27915,6 +30679,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__3"
+    /**
+     * Rule S var group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7637:1: rule__S_Var__Group__3 : rule__S_Var__Group__3__Impl rule__S_Var__Group__4 ;
     public final void rule__S_Var__Group__3() throws RecognitionException {
 
@@ -27953,6 +30722,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__3__Impl"
+    /**
+     * Rule S var group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7649:1: rule__S_Var__Group__3__Impl : ( ( rule__S_Var__NameAssignment_3 ) ) ;
     public final void rule__S_Var__Group__3__Impl() throws RecognitionException {
 
@@ -28004,6 +30778,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__4"
+    /**
+     * Rule S var group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7664:1: rule__S_Var__Group__4 : rule__S_Var__Group__4__Impl rule__S_Var__Group__5 ;
     public final void rule__S_Var__Group__4() throws RecognitionException {
 
@@ -28042,6 +30821,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__4__Impl"
+    /**
+     * Rule S var group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7676:1: rule__S_Var__Group__4__Impl : ( ( rule__S_Var__FacetsAssignment_4 )* ) ;
     public final void rule__S_Var__Group__4__Impl() throws RecognitionException {
 
@@ -28111,6 +30895,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__5"
+    /**
+     * Rule S var group 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7691:1: rule__S_Var__Group__5 : rule__S_Var__Group__5__Impl ;
     public final void rule__S_Var__Group__5() throws RecognitionException {
 
@@ -28144,6 +30933,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__Group__5__Impl"
+    /**
+     * Rule S var group 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7702:1: rule__S_Var__Group__5__Impl : ( ';' ) ;
     public final void rule__S_Var__Group__5__Impl() throws RecognitionException {
 
@@ -28185,6 +30979,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group__0"
+    /**
+     * Rule S direct assignment group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7718:1: rule__S_DirectAssignment__Group__0 : rule__S_DirectAssignment__Group__0__Impl rule__S_DirectAssignment__Group__1 ;
     public final void rule__S_DirectAssignment__Group__0() throws RecognitionException {
 
@@ -28223,6 +31022,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group__0__Impl"
+    /**
+     * Rule S direct assignment group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7730:1: rule__S_DirectAssignment__Group__0__Impl : ( ( rule__S_DirectAssignment__Group_0__0 ) ) ;
     public final void rule__S_DirectAssignment__Group__0__Impl() throws RecognitionException {
 
@@ -28274,6 +31078,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group__1"
+    /**
+     * Rule S direct assignment group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7745:1: rule__S_DirectAssignment__Group__1 : rule__S_DirectAssignment__Group__1__Impl ;
     public final void rule__S_DirectAssignment__Group__1() throws RecognitionException {
 
@@ -28307,6 +31116,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group__1__Impl"
+    /**
+     * Rule S direct assignment group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7756:1: rule__S_DirectAssignment__Group__1__Impl : ( ';' ) ;
     public final void rule__S_DirectAssignment__Group__1__Impl() throws RecognitionException {
 
@@ -28348,6 +31162,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__0"
+    /**
+     * Rule S direct assignment group 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7772:1: rule__S_DirectAssignment__Group_0__0 : rule__S_DirectAssignment__Group_0__0__Impl rule__S_DirectAssignment__Group_0__1 ;
     public final void rule__S_DirectAssignment__Group_0__0() throws RecognitionException {
 
@@ -28386,6 +31205,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__0__Impl"
+    /**
+     * Rule S direct assignment group 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7784:1: rule__S_DirectAssignment__Group_0__0__Impl : ( ( rule__S_DirectAssignment__ExprAssignment_0_0 ) ) ;
     public final void rule__S_DirectAssignment__Group_0__0__Impl() throws RecognitionException {
 
@@ -28437,6 +31261,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__1"
+    /**
+     * Rule S direct assignment group 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7799:1: rule__S_DirectAssignment__Group_0__1 : rule__S_DirectAssignment__Group_0__1__Impl rule__S_DirectAssignment__Group_0__2 ;
     public final void rule__S_DirectAssignment__Group_0__1() throws RecognitionException {
 
@@ -28475,6 +31304,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__1__Impl"
+    /**
+     * Rule S direct assignment group 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7811:1: rule__S_DirectAssignment__Group_0__1__Impl : ( ( rule__S_DirectAssignment__KeyAssignment_0_1 ) ) ;
     public final void rule__S_DirectAssignment__Group_0__1__Impl() throws RecognitionException {
 
@@ -28526,6 +31360,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__2"
+    /**
+     * Rule S direct assignment group 0 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7826:1: rule__S_DirectAssignment__Group_0__2 : rule__S_DirectAssignment__Group_0__2__Impl rule__S_DirectAssignment__Group_0__3 ;
     public final void rule__S_DirectAssignment__Group_0__2() throws RecognitionException {
 
@@ -28564,6 +31403,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__2__Impl"
+    /**
+     * Rule S direct assignment group 0 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7838:1: rule__S_DirectAssignment__Group_0__2__Impl : ( ( rule__S_DirectAssignment__ValueAssignment_0_2 ) ) ;
     public final void rule__S_DirectAssignment__Group_0__2__Impl() throws RecognitionException {
 
@@ -28615,6 +31459,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__3"
+    /**
+     * Rule S direct assignment group 0 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7853:1: rule__S_DirectAssignment__Group_0__3 : rule__S_DirectAssignment__Group_0__3__Impl ;
     public final void rule__S_DirectAssignment__Group_0__3() throws RecognitionException {
 
@@ -28648,6 +31497,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__Group_0__3__Impl"
+    /**
+     * Rule S direct assignment group 0 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7864:1: rule__S_DirectAssignment__Group_0__3__Impl : ( ( rule__S_DirectAssignment__FacetsAssignment_0_3 )* ) ;
     public final void rule__S_DirectAssignment__Group_0__3__Impl() throws RecognitionException {
 
@@ -28717,6 +31571,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__0"
+    /**
+     * Rule S set group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7880:1: rule__S_Set__Group__0 : rule__S_Set__Group__0__Impl rule__S_Set__Group__1 ;
     public final void rule__S_Set__Group__0() throws RecognitionException {
 
@@ -28755,6 +31614,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__0__Impl"
+    /**
+     * Rule S set group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7892:1: rule__S_Set__Group__0__Impl : ( ( rule__S_Set__KeyAssignment_0 ) ) ;
     public final void rule__S_Set__Group__0__Impl() throws RecognitionException {
 
@@ -28806,6 +31670,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__1"
+    /**
+     * Rule S set group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7907:1: rule__S_Set__Group__1 : rule__S_Set__Group__1__Impl rule__S_Set__Group__2 ;
     public final void rule__S_Set__Group__1() throws RecognitionException {
 
@@ -28844,6 +31713,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__1__Impl"
+    /**
+     * Rule S set group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7919:1: rule__S_Set__Group__1__Impl : ( ( rule__S_Set__ExprAssignment_1 ) ) ;
     public final void rule__S_Set__Group__1__Impl() throws RecognitionException {
 
@@ -28895,6 +31769,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__2"
+    /**
+     * Rule S set group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7934:1: rule__S_Set__Group__2 : rule__S_Set__Group__2__Impl rule__S_Set__Group__3 ;
     public final void rule__S_Set__Group__2() throws RecognitionException {
 
@@ -28933,6 +31812,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__2__Impl"
+    /**
+     * Rule S set group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7946:1: rule__S_Set__Group__2__Impl : ( ( rule__S_Set__Alternatives_2 ) ) ;
     public final void rule__S_Set__Group__2__Impl() throws RecognitionException {
 
@@ -28984,6 +31868,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__3"
+    /**
+     * Rule S set group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7961:1: rule__S_Set__Group__3 : rule__S_Set__Group__3__Impl rule__S_Set__Group__4 ;
     public final void rule__S_Set__Group__3() throws RecognitionException {
 
@@ -29022,6 +31911,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__3__Impl"
+    /**
+     * Rule S set group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7973:1: rule__S_Set__Group__3__Impl : ( ( rule__S_Set__ValueAssignment_3 ) ) ;
     public final void rule__S_Set__Group__3__Impl() throws RecognitionException {
 
@@ -29073,6 +31967,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__4"
+    /**
+     * Rule S set group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7988:1: rule__S_Set__Group__4 : rule__S_Set__Group__4__Impl ;
     public final void rule__S_Set__Group__4() throws RecognitionException {
 
@@ -29106,6 +32005,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__Group__4__Impl"
+    /**
+     * Rule S set group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7999:1: rule__S_Set__Group__4__Impl : ( ';' ) ;
     public final void rule__S_Set__Group__4__Impl() throws RecognitionException {
 
@@ -29147,6 +32051,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__0"
+    /**
+     * Rule S equations group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8015:1: rule__S_Equations__Group__0 : rule__S_Equations__Group__0__Impl rule__S_Equations__Group__1 ;
     public final void rule__S_Equations__Group__0() throws RecognitionException {
 
@@ -29185,6 +32094,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__0__Impl"
+    /**
+     * Rule S equations group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8027:1: rule__S_Equations__Group__0__Impl : ( ( rule__S_Equations__KeyAssignment_0 ) ) ;
     public final void rule__S_Equations__Group__0__Impl() throws RecognitionException {
 
@@ -29236,6 +32150,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__1"
+    /**
+     * Rule S equations group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8042:1: rule__S_Equations__Group__1 : rule__S_Equations__Group__1__Impl rule__S_Equations__Group__2 ;
     public final void rule__S_Equations__Group__1() throws RecognitionException {
 
@@ -29274,6 +32193,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__1__Impl"
+    /**
+     * Rule S equations group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8054:1: rule__S_Equations__Group__1__Impl : ( ( rule__S_Equations__NameAssignment_1 ) ) ;
     public final void rule__S_Equations__Group__1__Impl() throws RecognitionException {
 
@@ -29325,6 +32249,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__2"
+    /**
+     * Rule S equations group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8069:1: rule__S_Equations__Group__2 : rule__S_Equations__Group__2__Impl rule__S_Equations__Group__3 ;
     public final void rule__S_Equations__Group__2() throws RecognitionException {
 
@@ -29363,6 +32292,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__2__Impl"
+    /**
+     * Rule S equations group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8081:1: rule__S_Equations__Group__2__Impl : ( ( rule__S_Equations__FacetsAssignment_2 )* ) ;
     public final void rule__S_Equations__Group__2__Impl() throws RecognitionException {
 
@@ -29432,6 +32366,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__3"
+    /**
+     * Rule S equations group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8096:1: rule__S_Equations__Group__3 : rule__S_Equations__Group__3__Impl ;
     public final void rule__S_Equations__Group__3() throws RecognitionException {
 
@@ -29465,6 +32404,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group__3__Impl"
+    /**
+     * Rule S equations group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8107:1: rule__S_Equations__Group__3__Impl : ( ( rule__S_Equations__Alternatives_3 ) ) ;
     public final void rule__S_Equations__Group__3__Impl() throws RecognitionException {
 
@@ -29516,6 +32460,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__0"
+    /**
+     * Rule S equations group 3 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8123:1: rule__S_Equations__Group_3_0__0 : rule__S_Equations__Group_3_0__0__Impl rule__S_Equations__Group_3_0__1 ;
     public final void rule__S_Equations__Group_3_0__0() throws RecognitionException {
 
@@ -29554,6 +32503,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__0__Impl"
+    /**
+     * Rule S equations group 3 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8135:1: rule__S_Equations__Group_3_0__0__Impl : ( '{' ) ;
     public final void rule__S_Equations__Group_3_0__0__Impl() throws RecognitionException {
 
@@ -29595,6 +32549,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__1"
+    /**
+     * Rule S equations group 3 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8150:1: rule__S_Equations__Group_3_0__1 : rule__S_Equations__Group_3_0__1__Impl rule__S_Equations__Group_3_0__2 ;
     public final void rule__S_Equations__Group_3_0__1() throws RecognitionException {
 
@@ -29633,6 +32592,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__1__Impl"
+    /**
+     * Rule S equations group 3 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8162:1: rule__S_Equations__Group_3_0__1__Impl : ( ( rule__S_Equations__Group_3_0_1__0 )* ) ;
     public final void rule__S_Equations__Group_3_0__1__Impl() throws RecognitionException {
 
@@ -29702,6 +32666,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__2"
+    /**
+     * Rule S equations group 3 0 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8177:1: rule__S_Equations__Group_3_0__2 : rule__S_Equations__Group_3_0__2__Impl ;
     public final void rule__S_Equations__Group_3_0__2() throws RecognitionException {
 
@@ -29735,6 +32704,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0__2__Impl"
+    /**
+     * Rule S equations group 3 0 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8188:1: rule__S_Equations__Group_3_0__2__Impl : ( '}' ) ;
     public final void rule__S_Equations__Group_3_0__2__Impl() throws RecognitionException {
 
@@ -29776,6 +32750,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0_1__0"
+    /**
+     * Rule S equations group 3 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8204:1: rule__S_Equations__Group_3_0_1__0 : rule__S_Equations__Group_3_0_1__0__Impl rule__S_Equations__Group_3_0_1__1 ;
     public final void rule__S_Equations__Group_3_0_1__0() throws RecognitionException {
 
@@ -29814,6 +32793,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0_1__0__Impl"
+    /**
+     * Rule S equations group 3 0 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8216:1: rule__S_Equations__Group_3_0_1__0__Impl : ( ( rule__S_Equations__EquationsAssignment_3_0_1_0 ) ) ;
     public final void rule__S_Equations__Group_3_0_1__0__Impl() throws RecognitionException {
 
@@ -29865,6 +32849,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0_1__1"
+    /**
+     * Rule S equations group 3 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8231:1: rule__S_Equations__Group_3_0_1__1 : rule__S_Equations__Group_3_0_1__1__Impl ;
     public final void rule__S_Equations__Group_3_0_1__1() throws RecognitionException {
 
@@ -29898,6 +32887,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__Group_3_0_1__1__Impl"
+    /**
+     * Rule S equations group 3 0 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8242:1: rule__S_Equations__Group_3_0_1__1__Impl : ( ';' ) ;
     public final void rule__S_Equations__Group_3_0_1__1__Impl() throws RecognitionException {
 
@@ -29939,6 +32933,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__0"
+    /**
+     * Rule S equation group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8258:1: rule__S_Equation__Group__0 : rule__S_Equation__Group__0__Impl rule__S_Equation__Group__1 ;
     public final void rule__S_Equation__Group__0() throws RecognitionException {
 
@@ -29977,6 +32976,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__0__Impl"
+    /**
+     * Rule S equation group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8270:1: rule__S_Equation__Group__0__Impl : ( ( rule__S_Equation__ExprAssignment_0 ) ) ;
     public final void rule__S_Equation__Group__0__Impl() throws RecognitionException {
 
@@ -30028,6 +33032,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__1"
+    /**
+     * Rule S equation group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8285:1: rule__S_Equation__Group__1 : rule__S_Equation__Group__1__Impl rule__S_Equation__Group__2 ;
     public final void rule__S_Equation__Group__1() throws RecognitionException {
 
@@ -30066,6 +33075,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__1__Impl"
+    /**
+     * Rule S equation group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8297:1: rule__S_Equation__Group__1__Impl : ( ( rule__S_Equation__KeyAssignment_1 ) ) ;
     public final void rule__S_Equation__Group__1__Impl() throws RecognitionException {
 
@@ -30117,6 +33131,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__2"
+    /**
+     * Rule S equation group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8312:1: rule__S_Equation__Group__2 : rule__S_Equation__Group__2__Impl ;
     public final void rule__S_Equation__Group__2() throws RecognitionException {
 
@@ -30150,6 +33169,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__Group__2__Impl"
+    /**
+     * Rule S equation group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8323:1: rule__S_Equation__Group__2__Impl : ( ( rule__S_Equation__ValueAssignment_2 ) ) ;
     public final void rule__S_Equation__Group__2__Impl() throws RecognitionException {
 
@@ -30201,6 +33225,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__0"
+    /**
+     * Rule S solve group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8339:1: rule__S_Solve__Group__0 : rule__S_Solve__Group__0__Impl rule__S_Solve__Group__1 ;
     public final void rule__S_Solve__Group__0() throws RecognitionException {
 
@@ -30239,6 +33268,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__0__Impl"
+    /**
+     * Rule S solve group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8351:1: rule__S_Solve__Group__0__Impl : ( ( rule__S_Solve__KeyAssignment_0 ) ) ;
     public final void rule__S_Solve__Group__0__Impl() throws RecognitionException {
 
@@ -30290,6 +33324,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__1"
+    /**
+     * Rule S solve group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8366:1: rule__S_Solve__Group__1 : rule__S_Solve__Group__1__Impl rule__S_Solve__Group__2 ;
     public final void rule__S_Solve__Group__1() throws RecognitionException {
 
@@ -30328,6 +33367,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__1__Impl"
+    /**
+     * Rule S solve group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8378:1: rule__S_Solve__Group__1__Impl : ( ( rule__S_Solve__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Solve__Group__1__Impl() throws RecognitionException {
 
@@ -30390,6 +33434,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__2"
+    /**
+     * Rule S solve group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8393:1: rule__S_Solve__Group__2 : rule__S_Solve__Group__2__Impl rule__S_Solve__Group__3 ;
     public final void rule__S_Solve__Group__2() throws RecognitionException {
 
@@ -30428,6 +33477,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__2__Impl"
+    /**
+     * Rule S solve group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8405:1: rule__S_Solve__Group__2__Impl : ( ( rule__S_Solve__ExprAssignment_2 ) ) ;
     public final void rule__S_Solve__Group__2__Impl() throws RecognitionException {
 
@@ -30479,6 +33533,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__3"
+    /**
+     * Rule S solve group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8420:1: rule__S_Solve__Group__3 : rule__S_Solve__Group__3__Impl rule__S_Solve__Group__4 ;
     public final void rule__S_Solve__Group__3() throws RecognitionException {
 
@@ -30517,6 +33576,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__3__Impl"
+    /**
+     * Rule S solve group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8432:1: rule__S_Solve__Group__3__Impl : ( ( rule__S_Solve__FacetsAssignment_3 )* ) ;
     public final void rule__S_Solve__Group__3__Impl() throws RecognitionException {
 
@@ -30586,6 +33650,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__4"
+    /**
+     * Rule S solve group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8447:1: rule__S_Solve__Group__4 : rule__S_Solve__Group__4__Impl ;
     public final void rule__S_Solve__Group__4() throws RecognitionException {
 
@@ -30619,6 +33688,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__Group__4__Impl"
+    /**
+     * Rule S solve group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8458:1: rule__S_Solve__Group__4__Impl : ( ( rule__S_Solve__Alternatives_4 ) ) ;
     public final void rule__S_Solve__Group__4__Impl() throws RecognitionException {
 
@@ -30670,6 +33744,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__0"
+    /**
+     * Rule S display group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8474:1: rule__S_Display__Group__0 : rule__S_Display__Group__0__Impl rule__S_Display__Group__1 ;
     public final void rule__S_Display__Group__0() throws RecognitionException {
 
@@ -30708,6 +33787,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__0__Impl"
+    /**
+     * Rule S display group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8486:1: rule__S_Display__Group__0__Impl : ( ( rule__S_Display__KeyAssignment_0 ) ) ;
     public final void rule__S_Display__Group__0__Impl() throws RecognitionException {
 
@@ -30759,6 +33843,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__1"
+    /**
+     * Rule S display group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8501:1: rule__S_Display__Group__1 : rule__S_Display__Group__1__Impl rule__S_Display__Group__2 ;
     public final void rule__S_Display__Group__1() throws RecognitionException {
 
@@ -30797,6 +33886,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__1__Impl"
+    /**
+     * Rule S display group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8513:1: rule__S_Display__Group__1__Impl : ( ( rule__S_Display__FirstFacetAssignment_1 )? ) ;
     public final void rule__S_Display__Group__1__Impl() throws RecognitionException {
 
@@ -30859,6 +33953,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__2"
+    /**
+     * Rule S display group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8528:1: rule__S_Display__Group__2 : rule__S_Display__Group__2__Impl rule__S_Display__Group__3 ;
     public final void rule__S_Display__Group__2() throws RecognitionException {
 
@@ -30897,6 +33996,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__2__Impl"
+    /**
+     * Rule S display group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8540:1: rule__S_Display__Group__2__Impl : ( ( rule__S_Display__NameAssignment_2 ) ) ;
     public final void rule__S_Display__Group__2__Impl() throws RecognitionException {
 
@@ -30948,6 +34052,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__3"
+    /**
+     * Rule S display group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8555:1: rule__S_Display__Group__3 : rule__S_Display__Group__3__Impl rule__S_Display__Group__4 ;
     public final void rule__S_Display__Group__3() throws RecognitionException {
 
@@ -30986,6 +34095,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__3__Impl"
+    /**
+     * Rule S display group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8567:1: rule__S_Display__Group__3__Impl : ( ( rule__S_Display__FacetsAssignment_3 )* ) ;
     public final void rule__S_Display__Group__3__Impl() throws RecognitionException {
 
@@ -31055,6 +34169,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__4"
+    /**
+     * Rule S display group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8582:1: rule__S_Display__Group__4 : rule__S_Display__Group__4__Impl ;
     public final void rule__S_Display__Group__4() throws RecognitionException {
 
@@ -31088,6 +34207,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__Group__4__Impl"
+    /**
+     * Rule S display group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8593:1: rule__S_Display__Group__4__Impl : ( ( rule__S_Display__BlockAssignment_4 ) ) ;
     public final void rule__S_Display__Group__4__Impl() throws RecognitionException {
 
@@ -31139,6 +34263,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__0"
+    /**
+     * Rule display block group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8609:1: rule__DisplayBlock__Group__0 : rule__DisplayBlock__Group__0__Impl rule__DisplayBlock__Group__1 ;
     public final void rule__DisplayBlock__Group__0() throws RecognitionException {
 
@@ -31177,6 +34306,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__0__Impl"
+    /**
+     * Rule display block group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8621:1: rule__DisplayBlock__Group__0__Impl : ( () ) ;
     public final void rule__DisplayBlock__Group__0__Impl() throws RecognitionException {
 
@@ -31218,6 +34352,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__1"
+    /**
+     * Rule display block group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8636:1: rule__DisplayBlock__Group__1 : rule__DisplayBlock__Group__1__Impl rule__DisplayBlock__Group__2 ;
     public final void rule__DisplayBlock__Group__1() throws RecognitionException {
 
@@ -31256,6 +34395,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__1__Impl"
+    /**
+     * Rule display block group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8648:1: rule__DisplayBlock__Group__1__Impl : ( '{' ) ;
     public final void rule__DisplayBlock__Group__1__Impl() throws RecognitionException {
 
@@ -31297,6 +34441,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__2"
+    /**
+     * Rule display block group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8663:1: rule__DisplayBlock__Group__2 : rule__DisplayBlock__Group__2__Impl rule__DisplayBlock__Group__3 ;
     public final void rule__DisplayBlock__Group__2() throws RecognitionException {
 
@@ -31335,6 +34484,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__2__Impl"
+    /**
+     * Rule display block group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8675:1: rule__DisplayBlock__Group__2__Impl : ( ( rule__DisplayBlock__StatementsAssignment_2 )* ) ;
     public final void rule__DisplayBlock__Group__2__Impl() throws RecognitionException {
 
@@ -31404,6 +34558,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__3"
+    /**
+     * Rule display block group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8690:1: rule__DisplayBlock__Group__3 : rule__DisplayBlock__Group__3__Impl ;
     public final void rule__DisplayBlock__Group__3() throws RecognitionException {
 
@@ -31437,6 +34596,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__Group__3__Impl"
+    /**
+     * Rule display block group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8701:1: rule__DisplayBlock__Group__3__Impl : ( '}' ) ;
     public final void rule__DisplayBlock__Group__3__Impl() throws RecognitionException {
 
@@ -31478,6 +34642,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__0"
+    /**
+     * Rule species or grid display statement group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8717:1: rule__SpeciesOrGridDisplayStatement__Group__0 : rule__SpeciesOrGridDisplayStatement__Group__0__Impl rule__SpeciesOrGridDisplayStatement__Group__1 ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__0() throws RecognitionException {
 
@@ -31516,6 +34685,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__0__Impl"
+    /**
+     * Rule species or grid display statement group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8729:1: rule__SpeciesOrGridDisplayStatement__Group__0__Impl : ( ( rule__SpeciesOrGridDisplayStatement__KeyAssignment_0 ) ) ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__0__Impl() throws RecognitionException {
 
@@ -31567,6 +34741,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__1"
+    /**
+     * Rule species or grid display statement group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8744:1: rule__SpeciesOrGridDisplayStatement__Group__1 : rule__SpeciesOrGridDisplayStatement__Group__1__Impl rule__SpeciesOrGridDisplayStatement__Group__2 ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__1() throws RecognitionException {
 
@@ -31605,6 +34784,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__1__Impl"
+    /**
+     * Rule species or grid display statement group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8756:1: rule__SpeciesOrGridDisplayStatement__Group__1__Impl : ( ( rule__SpeciesOrGridDisplayStatement__ExprAssignment_1 ) ) ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__1__Impl() throws RecognitionException {
 
@@ -31656,6 +34840,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__2"
+    /**
+     * Rule species or grid display statement group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8771:1: rule__SpeciesOrGridDisplayStatement__Group__2 : rule__SpeciesOrGridDisplayStatement__Group__2__Impl rule__SpeciesOrGridDisplayStatement__Group__3 ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__2() throws RecognitionException {
 
@@ -31694,6 +34883,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__2__Impl"
+    /**
+     * Rule species or grid display statement group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8783:1: rule__SpeciesOrGridDisplayStatement__Group__2__Impl : ( ( rule__SpeciesOrGridDisplayStatement__FacetsAssignment_2 )* ) ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__2__Impl() throws RecognitionException {
 
@@ -31763,6 +34957,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__3"
+    /**
+     * Rule species or grid display statement group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8798:1: rule__SpeciesOrGridDisplayStatement__Group__3 : rule__SpeciesOrGridDisplayStatement__Group__3__Impl ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__3() throws RecognitionException {
 
@@ -31796,6 +34995,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__Group__3__Impl"
+    /**
+     * Rule species or grid display statement group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8809:1: rule__SpeciesOrGridDisplayStatement__Group__3__Impl : ( ( rule__SpeciesOrGridDisplayStatement__Alternatives_3 ) ) ;
     public final void rule__SpeciesOrGridDisplayStatement__Group__3__Impl() throws RecognitionException {
 
@@ -31847,6 +35051,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_2__0"
+    /**
+     * Rule assignment key group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8825:1: rule___AssignmentKey__Group_2__0 : rule___AssignmentKey__Group_2__0__Impl rule___AssignmentKey__Group_2__1 ;
     public final void rule___AssignmentKey__Group_2__0() throws RecognitionException {
 
@@ -31885,6 +35094,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_2__0__Impl"
+    /**
+     * Rule assignment key group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8837:1: rule___AssignmentKey__Group_2__0__Impl : ( '>' ) ;
     public final void rule___AssignmentKey__Group_2__0__Impl() throws RecognitionException {
 
@@ -31926,6 +35140,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_2__1"
+    /**
+     * Rule assignment key group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8852:1: rule___AssignmentKey__Group_2__1 : rule___AssignmentKey__Group_2__1__Impl ;
     public final void rule___AssignmentKey__Group_2__1() throws RecognitionException {
 
@@ -31959,6 +35178,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_2__1__Impl"
+    /**
+     * Rule assignment key group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8863:1: rule___AssignmentKey__Group_2__1__Impl : ( '>' ) ;
     public final void rule___AssignmentKey__Group_2__1__Impl() throws RecognitionException {
 
@@ -32000,6 +35224,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_4__0"
+    /**
+     * Rule assignment key group 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8879:1: rule___AssignmentKey__Group_4__0 : rule___AssignmentKey__Group_4__0__Impl rule___AssignmentKey__Group_4__1 ;
     public final void rule___AssignmentKey__Group_4__0() throws RecognitionException {
 
@@ -32038,6 +35267,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_4__0__Impl"
+    /**
+     * Rule assignment key group 4 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8891:1: rule___AssignmentKey__Group_4__0__Impl : ( '>' ) ;
     public final void rule___AssignmentKey__Group_4__0__Impl() throws RecognitionException {
 
@@ -32079,6 +35313,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_4__1"
+    /**
+     * Rule assignment key group 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8906:1: rule___AssignmentKey__Group_4__1 : rule___AssignmentKey__Group_4__1__Impl ;
     public final void rule___AssignmentKey__Group_4__1() throws RecognitionException {
 
@@ -32112,6 +35351,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule___AssignmentKey__Group_4__1__Impl"
+    /**
+     * Rule assignment key group 4 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8917:1: rule___AssignmentKey__Group_4__1__Impl : ( '>-' ) ;
     public final void rule___AssignmentKey__Group_4__1__Impl() throws RecognitionException {
 
@@ -32153,6 +35397,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group__0"
+    /**
+     * Rule action arguments group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8933:1: rule__ActionArguments__Group__0 : rule__ActionArguments__Group__0__Impl rule__ActionArguments__Group__1 ;
     public final void rule__ActionArguments__Group__0() throws RecognitionException {
 
@@ -32191,6 +35440,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group__0__Impl"
+    /**
+     * Rule action arguments group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8945:1: rule__ActionArguments__Group__0__Impl : ( ( rule__ActionArguments__ArgsAssignment_0 ) ) ;
     public final void rule__ActionArguments__Group__0__Impl() throws RecognitionException {
 
@@ -32242,6 +35496,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group__1"
+    /**
+     * Rule action arguments group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8960:1: rule__ActionArguments__Group__1 : rule__ActionArguments__Group__1__Impl ;
     public final void rule__ActionArguments__Group__1() throws RecognitionException {
 
@@ -32275,6 +35534,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group__1__Impl"
+    /**
+     * Rule action arguments group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8971:1: rule__ActionArguments__Group__1__Impl : ( ( rule__ActionArguments__Group_1__0 )* ) ;
     public final void rule__ActionArguments__Group__1__Impl() throws RecognitionException {
 
@@ -32344,6 +35608,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group_1__0"
+    /**
+     * Rule action arguments group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8987:1: rule__ActionArguments__Group_1__0 : rule__ActionArguments__Group_1__0__Impl rule__ActionArguments__Group_1__1 ;
     public final void rule__ActionArguments__Group_1__0() throws RecognitionException {
 
@@ -32382,6 +35651,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group_1__0__Impl"
+    /**
+     * Rule action arguments group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8999:1: rule__ActionArguments__Group_1__0__Impl : ( ',' ) ;
     public final void rule__ActionArguments__Group_1__0__Impl() throws RecognitionException {
 
@@ -32423,6 +35697,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group_1__1"
+    /**
+     * Rule action arguments group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9014:1: rule__ActionArguments__Group_1__1 : rule__ActionArguments__Group_1__1__Impl ;
     public final void rule__ActionArguments__Group_1__1() throws RecognitionException {
 
@@ -32456,6 +35735,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__Group_1__1__Impl"
+    /**
+     * Rule action arguments group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9025:1: rule__ActionArguments__Group_1__1__Impl : ( ( rule__ActionArguments__ArgsAssignment_1_1 ) ) ;
     public final void rule__ActionArguments__Group_1__1__Impl() throws RecognitionException {
 
@@ -32507,6 +35791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__0"
+    /**
+     * Rule argument definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9041:1: rule__ArgumentDefinition__Group__0 : rule__ArgumentDefinition__Group__0__Impl rule__ArgumentDefinition__Group__1 ;
     public final void rule__ArgumentDefinition__Group__0() throws RecognitionException {
 
@@ -32545,6 +35834,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__0__Impl"
+    /**
+     * Rule argument definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9053:1: rule__ArgumentDefinition__Group__0__Impl : ( ( rule__ArgumentDefinition__TypeAssignment_0 ) ) ;
     public final void rule__ArgumentDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -32596,6 +35890,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__1"
+    /**
+     * Rule argument definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9068:1: rule__ArgumentDefinition__Group__1 : rule__ArgumentDefinition__Group__1__Impl rule__ArgumentDefinition__Group__2 ;
     public final void rule__ArgumentDefinition__Group__1() throws RecognitionException {
 
@@ -32634,6 +35933,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__1__Impl"
+    /**
+     * Rule argument definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9080:1: rule__ArgumentDefinition__Group__1__Impl : ( ( rule__ArgumentDefinition__NameAssignment_1 ) ) ;
     public final void rule__ArgumentDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -32685,6 +35989,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__2"
+    /**
+     * Rule argument definition group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9095:1: rule__ArgumentDefinition__Group__2 : rule__ArgumentDefinition__Group__2__Impl ;
     public final void rule__ArgumentDefinition__Group__2() throws RecognitionException {
 
@@ -32718,6 +36027,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group__2__Impl"
+    /**
+     * Rule argument definition group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9106:1: rule__ArgumentDefinition__Group__2__Impl : ( ( rule__ArgumentDefinition__Group_2__0 )? ) ;
     public final void rule__ArgumentDefinition__Group__2__Impl() throws RecognitionException {
 
@@ -32780,6 +36094,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group_2__0"
+    /**
+     * Rule argument definition group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9122:1: rule__ArgumentDefinition__Group_2__0 : rule__ArgumentDefinition__Group_2__0__Impl rule__ArgumentDefinition__Group_2__1 ;
     public final void rule__ArgumentDefinition__Group_2__0() throws RecognitionException {
 
@@ -32818,6 +36137,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group_2__0__Impl"
+    /**
+     * Rule argument definition group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9134:1: rule__ArgumentDefinition__Group_2__0__Impl : ( '<-' ) ;
     public final void rule__ArgumentDefinition__Group_2__0__Impl() throws RecognitionException {
 
@@ -32859,6 +36183,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group_2__1"
+    /**
+     * Rule argument definition group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9149:1: rule__ArgumentDefinition__Group_2__1 : rule__ArgumentDefinition__Group_2__1__Impl ;
     public final void rule__ArgumentDefinition__Group_2__1() throws RecognitionException {
 
@@ -32892,6 +36221,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__Group_2__1__Impl"
+    /**
+     * Rule argument definition group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9160:1: rule__ArgumentDefinition__Group_2__1__Impl : ( ( rule__ArgumentDefinition__DefaultAssignment_2_1 ) ) ;
     public final void rule__ArgumentDefinition__Group_2__1__Impl() throws RecognitionException {
 
@@ -32943,6 +36277,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacetKey__Group__0"
+    /**
+     * Rule classic facet key group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9176:1: rule__ClassicFacetKey__Group__0 : rule__ClassicFacetKey__Group__0__Impl rule__ClassicFacetKey__Group__1 ;
     public final void rule__ClassicFacetKey__Group__0() throws RecognitionException {
 
@@ -32981,6 +36320,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacetKey__Group__0__Impl"
+    /**
+     * Rule classic facet key group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9188:1: rule__ClassicFacetKey__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__ClassicFacetKey__Group__0__Impl() throws RecognitionException {
 
@@ -33022,6 +36366,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacetKey__Group__1"
+    /**
+     * Rule classic facet key group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9203:1: rule__ClassicFacetKey__Group__1 : rule__ClassicFacetKey__Group__1__Impl ;
     public final void rule__ClassicFacetKey__Group__1() throws RecognitionException {
 
@@ -33055,6 +36404,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacetKey__Group__1__Impl"
+    /**
+     * Rule classic facet key group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9214:1: rule__ClassicFacetKey__Group__1__Impl : ( ':' ) ;
     public final void rule__ClassicFacetKey__Group__1__Impl() throws RecognitionException {
 
@@ -33096,6 +36450,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpecialFacetKey__Group_1__0"
+    /**
+     * Rule special facet key group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9230:1: rule__SpecialFacetKey__Group_1__0 : rule__SpecialFacetKey__Group_1__0__Impl rule__SpecialFacetKey__Group_1__1 ;
     public final void rule__SpecialFacetKey__Group_1__0() throws RecognitionException {
 
@@ -33134,6 +36493,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpecialFacetKey__Group_1__0__Impl"
+    /**
+     * Rule special facet key group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9242:1: rule__SpecialFacetKey__Group_1__0__Impl : ( 'when' ) ;
     public final void rule__SpecialFacetKey__Group_1__0__Impl() throws RecognitionException {
 
@@ -33175,6 +36539,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpecialFacetKey__Group_1__1"
+    /**
+     * Rule special facet key group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9257:1: rule__SpecialFacetKey__Group_1__1 : rule__SpecialFacetKey__Group_1__1__Impl ;
     public final void rule__SpecialFacetKey__Group_1__1() throws RecognitionException {
 
@@ -33208,6 +36577,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpecialFacetKey__Group_1__1__Impl"
+    /**
+     * Rule special facet key group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9268:1: rule__SpecialFacetKey__Group_1__1__Impl : ( ':' ) ;
     public final void rule__SpecialFacetKey__Group_1__1__Impl() throws RecognitionException {
 
@@ -33249,6 +36623,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__Group__0"
+    /**
+     * Rule classic facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9284:1: rule__ClassicFacet__Group__0 : rule__ClassicFacet__Group__0__Impl rule__ClassicFacet__Group__1 ;
     public final void rule__ClassicFacet__Group__0() throws RecognitionException {
 
@@ -33287,6 +36666,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__Group__0__Impl"
+    /**
+     * Rule classic facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9296:1: rule__ClassicFacet__Group__0__Impl : ( ( rule__ClassicFacet__Alternatives_0 ) ) ;
     public final void rule__ClassicFacet__Group__0__Impl() throws RecognitionException {
 
@@ -33338,6 +36722,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__Group__1"
+    /**
+     * Rule classic facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9311:1: rule__ClassicFacet__Group__1 : rule__ClassicFacet__Group__1__Impl ;
     public final void rule__ClassicFacet__Group__1() throws RecognitionException {
 
@@ -33371,6 +36760,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__Group__1__Impl"
+    /**
+     * Rule classic facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9322:1: rule__ClassicFacet__Group__1__Impl : ( ( rule__ClassicFacet__ExprAssignment_1 ) ) ;
     public final void rule__ClassicFacet__Group__1__Impl() throws RecognitionException {
 
@@ -33422,6 +36816,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__Group__0"
+    /**
+     * Rule definition facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9338:1: rule__DefinitionFacet__Group__0 : rule__DefinitionFacet__Group__0__Impl rule__DefinitionFacet__Group__1 ;
     public final void rule__DefinitionFacet__Group__0() throws RecognitionException {
 
@@ -33460,6 +36859,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__Group__0__Impl"
+    /**
+     * Rule definition facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9350:1: rule__DefinitionFacet__Group__0__Impl : ( ( rule__DefinitionFacet__KeyAssignment_0 ) ) ;
     public final void rule__DefinitionFacet__Group__0__Impl() throws RecognitionException {
 
@@ -33511,6 +36915,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__Group__1"
+    /**
+     * Rule definition facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9365:1: rule__DefinitionFacet__Group__1 : rule__DefinitionFacet__Group__1__Impl ;
     public final void rule__DefinitionFacet__Group__1() throws RecognitionException {
 
@@ -33544,6 +36953,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__Group__1__Impl"
+    /**
+     * Rule definition facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9376:1: rule__DefinitionFacet__Group__1__Impl : ( ( rule__DefinitionFacet__NameAssignment_1 ) ) ;
     public final void rule__DefinitionFacet__Group__1__Impl() throws RecognitionException {
 
@@ -33595,6 +37009,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group__0"
+    /**
+     * Rule function facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9392:1: rule__FunctionFacet__Group__0 : rule__FunctionFacet__Group__0__Impl rule__FunctionFacet__Group__1 ;
     public final void rule__FunctionFacet__Group__0() throws RecognitionException {
 
@@ -33633,6 +37052,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group__0__Impl"
+    /**
+     * Rule function facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9404:1: rule__FunctionFacet__Group__0__Impl : ( ( rule__FunctionFacet__KeyAssignment_0 ) ) ;
     public final void rule__FunctionFacet__Group__0__Impl() throws RecognitionException {
 
@@ -33684,6 +37108,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group__1"
+    /**
+     * Rule function facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9419:1: rule__FunctionFacet__Group__1 : rule__FunctionFacet__Group__1__Impl ;
     public final void rule__FunctionFacet__Group__1() throws RecognitionException {
 
@@ -33717,6 +37146,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group__1__Impl"
+    /**
+     * Rule function facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9430:1: rule__FunctionFacet__Group__1__Impl : ( ( rule__FunctionFacet__Alternatives_1 ) ) ;
     public final void rule__FunctionFacet__Group__1__Impl() throws RecognitionException {
 
@@ -33768,6 +37202,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_0__0"
+    /**
+     * Rule function facet group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9446:1: rule__FunctionFacet__Group_1_0__0 : rule__FunctionFacet__Group_1_0__0__Impl ;
     public final void rule__FunctionFacet__Group_1_0__0() throws RecognitionException {
 
@@ -33801,6 +37240,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_0__0__Impl"
+    /**
+     * Rule function facet group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9457:1: rule__FunctionFacet__Group_1_0__0__Impl : ( ( rule__FunctionFacet__ExprAssignment_1_0_0 ) ) ;
     public final void rule__FunctionFacet__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -33852,6 +37296,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__0"
+    /**
+     * Rule function facet group 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9473:1: rule__FunctionFacet__Group_1_1__0 : rule__FunctionFacet__Group_1_1__0__Impl rule__FunctionFacet__Group_1_1__1 ;
     public final void rule__FunctionFacet__Group_1_1__0() throws RecognitionException {
 
@@ -33890,6 +37339,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__0__Impl"
+    /**
+     * Rule function facet group 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9485:1: rule__FunctionFacet__Group_1_1__0__Impl : ( '{' ) ;
     public final void rule__FunctionFacet__Group_1_1__0__Impl() throws RecognitionException {
 
@@ -33931,6 +37385,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__1"
+    /**
+     * Rule function facet group 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9500:1: rule__FunctionFacet__Group_1_1__1 : rule__FunctionFacet__Group_1_1__1__Impl rule__FunctionFacet__Group_1_1__2 ;
     public final void rule__FunctionFacet__Group_1_1__1() throws RecognitionException {
 
@@ -33969,6 +37428,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__1__Impl"
+    /**
+     * Rule function facet group 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9512:1: rule__FunctionFacet__Group_1_1__1__Impl : ( ( rule__FunctionFacet__ExprAssignment_1_1_1 ) ) ;
     public final void rule__FunctionFacet__Group_1_1__1__Impl() throws RecognitionException {
 
@@ -34020,6 +37484,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__2"
+    /**
+     * Rule function facet group 1 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9527:1: rule__FunctionFacet__Group_1_1__2 : rule__FunctionFacet__Group_1_1__2__Impl ;
     public final void rule__FunctionFacet__Group_1_1__2() throws RecognitionException {
 
@@ -34053,6 +37522,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__Group_1_1__2__Impl"
+    /**
+     * Rule function facet group 1 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9538:1: rule__FunctionFacet__Group_1_1__2__Impl : ( '}' ) ;
     public final void rule__FunctionFacet__Group_1_1__2__Impl() throws RecognitionException {
 
@@ -34094,6 +37568,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group__0"
+    /**
+     * Rule type facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9554:1: rule__TypeFacet__Group__0 : rule__TypeFacet__Group__0__Impl rule__TypeFacet__Group__1 ;
     public final void rule__TypeFacet__Group__0() throws RecognitionException {
 
@@ -34132,6 +37611,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group__0__Impl"
+    /**
+     * Rule type facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9566:1: rule__TypeFacet__Group__0__Impl : ( ( rule__TypeFacet__KeyAssignment_0 ) ) ;
     public final void rule__TypeFacet__Group__0__Impl() throws RecognitionException {
 
@@ -34183,6 +37667,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group__1"
+    /**
+     * Rule type facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9581:1: rule__TypeFacet__Group__1 : rule__TypeFacet__Group__1__Impl ;
     public final void rule__TypeFacet__Group__1() throws RecognitionException {
 
@@ -34216,6 +37705,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group__1__Impl"
+    /**
+     * Rule type facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9592:1: rule__TypeFacet__Group__1__Impl : ( ( rule__TypeFacet__Alternatives_1 ) ) ;
     public final void rule__TypeFacet__Group__1__Impl() throws RecognitionException {
 
@@ -34267,6 +37761,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group_1_0__0"
+    /**
+     * Rule type facet group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9608:1: rule__TypeFacet__Group_1_0__0 : rule__TypeFacet__Group_1_0__0__Impl ;
     public final void rule__TypeFacet__Group_1_0__0() throws RecognitionException {
 
@@ -34300,6 +37799,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__Group_1_0__0__Impl"
+    /**
+     * Rule type facet group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9619:1: rule__TypeFacet__Group_1_0__0__Impl : ( ( rule__TypeFacet__ExprAssignment_1_0_0 ) ) ;
     public final void rule__TypeFacet__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -34351,6 +37855,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__Group__0"
+    /**
+     * Rule action facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9635:1: rule__ActionFacet__Group__0 : rule__ActionFacet__Group__0__Impl rule__ActionFacet__Group__1 ;
     public final void rule__ActionFacet__Group__0() throws RecognitionException {
 
@@ -34389,6 +37898,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__Group__0__Impl"
+    /**
+     * Rule action facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9647:1: rule__ActionFacet__Group__0__Impl : ( ( rule__ActionFacet__KeyAssignment_0 ) ) ;
     public final void rule__ActionFacet__Group__0__Impl() throws RecognitionException {
 
@@ -34440,6 +37954,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__Group__1"
+    /**
+     * Rule action facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9662:1: rule__ActionFacet__Group__1 : rule__ActionFacet__Group__1__Impl ;
     public final void rule__ActionFacet__Group__1() throws RecognitionException {
 
@@ -34473,6 +37992,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__Group__1__Impl"
+    /**
+     * Rule action facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9673:1: rule__ActionFacet__Group__1__Impl : ( ( rule__ActionFacet__Alternatives_1 ) ) ;
     public final void rule__ActionFacet__Group__1__Impl() throws RecognitionException {
 
@@ -34524,6 +38048,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__Group__0"
+    /**
+     * Rule var facet group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9689:1: rule__VarFacet__Group__0 : rule__VarFacet__Group__0__Impl rule__VarFacet__Group__1 ;
     public final void rule__VarFacet__Group__0() throws RecognitionException {
 
@@ -34562,6 +38091,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__Group__0__Impl"
+    /**
+     * Rule var facet group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9701:1: rule__VarFacet__Group__0__Impl : ( ( rule__VarFacet__KeyAssignment_0 ) ) ;
     public final void rule__VarFacet__Group__0__Impl() throws RecognitionException {
 
@@ -34613,6 +38147,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__Group__1"
+    /**
+     * Rule var facet group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9716:1: rule__VarFacet__Group__1 : rule__VarFacet__Group__1__Impl ;
     public final void rule__VarFacet__Group__1() throws RecognitionException {
 
@@ -34646,6 +38185,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__Group__1__Impl"
+    /**
+     * Rule var facet group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9727:1: rule__VarFacet__Group__1__Impl : ( ( rule__VarFacet__ExprAssignment_1 ) ) ;
     public final void rule__VarFacet__Group__1__Impl() throws RecognitionException {
 
@@ -34697,6 +38241,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__0"
+    /**
+     * Rule block group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9743:1: rule__Block__Group__0 : rule__Block__Group__0__Impl rule__Block__Group__1 ;
     public final void rule__Block__Group__0() throws RecognitionException {
 
@@ -34735,6 +38284,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__0__Impl"
+    /**
+     * Rule block group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9755:1: rule__Block__Group__0__Impl : ( () ) ;
     public final void rule__Block__Group__0__Impl() throws RecognitionException {
 
@@ -34776,6 +38330,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__1"
+    /**
+     * Rule block group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9770:1: rule__Block__Group__1 : rule__Block__Group__1__Impl rule__Block__Group__2 ;
     public final void rule__Block__Group__1() throws RecognitionException {
 
@@ -34814,6 +38373,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__1__Impl"
+    /**
+     * Rule block group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9782:1: rule__Block__Group__1__Impl : ( '{' ) ;
     public final void rule__Block__Group__1__Impl() throws RecognitionException {
 
@@ -34855,6 +38419,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__2"
+    /**
+     * Rule block group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9797:1: rule__Block__Group__2 : rule__Block__Group__2__Impl ;
     public final void rule__Block__Group__2() throws RecognitionException {
 
@@ -34888,6 +38457,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group__2__Impl"
+    /**
+     * Rule block group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9808:1: rule__Block__Group__2__Impl : ( ( rule__Block__Group_2__0 ) ) ;
     public final void rule__Block__Group__2__Impl() throws RecognitionException {
 
@@ -34939,6 +38513,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group_2__0"
+    /**
+     * Rule block group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9824:1: rule__Block__Group_2__0 : rule__Block__Group_2__0__Impl rule__Block__Group_2__1 ;
     public final void rule__Block__Group_2__0() throws RecognitionException {
 
@@ -34977,6 +38556,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group_2__0__Impl"
+    /**
+     * Rule block group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9836:1: rule__Block__Group_2__0__Impl : ( ( rule__Block__StatementsAssignment_2_0 )* ) ;
     public final void rule__Block__Group_2__0__Impl() throws RecognitionException {
 
@@ -35046,6 +38630,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group_2__1"
+    /**
+     * Rule block group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9851:1: rule__Block__Group_2__1 : rule__Block__Group_2__1__Impl ;
     public final void rule__Block__Group_2__1() throws RecognitionException {
 
@@ -35079,6 +38668,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__Group_2__1__Impl"
+    /**
+     * Rule block group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9862:1: rule__Block__Group_2__1__Impl : ( '}' ) ;
     public final void rule__Block__Group_2__1__Impl() throws RecognitionException {
 
@@ -35120,6 +38714,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group__0"
+    /**
+     * Rule argument pair group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9878:1: rule__ArgumentPair__Group__0 : rule__ArgumentPair__Group__0__Impl rule__ArgumentPair__Group__1 ;
     public final void rule__ArgumentPair__Group__0() throws RecognitionException {
 
@@ -35158,6 +38757,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group__0__Impl"
+    /**
+     * Rule argument pair group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9890:1: rule__ArgumentPair__Group__0__Impl : ( ( rule__ArgumentPair__Group_0__0 )? ) ;
     public final void rule__ArgumentPair__Group__0__Impl() throws RecognitionException {
 
@@ -35216,6 +38820,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group__1"
+    /**
+     * Rule argument pair group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9905:1: rule__ArgumentPair__Group__1 : rule__ArgumentPair__Group__1__Impl ;
     public final void rule__ArgumentPair__Group__1() throws RecognitionException {
 
@@ -35249,6 +38858,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group__1__Impl"
+    /**
+     * Rule argument pair group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9916:1: rule__ArgumentPair__Group__1__Impl : ( ( rule__ArgumentPair__RightAssignment_1 ) ) ;
     public final void rule__ArgumentPair__Group__1__Impl() throws RecognitionException {
 
@@ -35300,6 +38914,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0__0"
+    /**
+     * Rule argument pair group 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9932:1: rule__ArgumentPair__Group_0__0 : rule__ArgumentPair__Group_0__0__Impl ;
     public final void rule__ArgumentPair__Group_0__0() throws RecognitionException {
 
@@ -35333,6 +38952,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0__0__Impl"
+    /**
+     * Rule argument pair group 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9943:1: rule__ArgumentPair__Group_0__0__Impl : ( ( rule__ArgumentPair__Alternatives_0_0 ) ) ;
     public final void rule__ArgumentPair__Group_0__0__Impl() throws RecognitionException {
 
@@ -35384,6 +39008,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_0__0"
+    /**
+     * Rule argument pair group 0 0 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9959:1: rule__ArgumentPair__Group_0_0_0__0 : rule__ArgumentPair__Group_0_0_0__0__Impl rule__ArgumentPair__Group_0_0_0__1 ;
     public final void rule__ArgumentPair__Group_0_0_0__0() throws RecognitionException {
 
@@ -35422,6 +39051,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_0__0__Impl"
+    /**
+     * Rule argument pair group 0 0 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9971:1: rule__ArgumentPair__Group_0_0_0__0__Impl : ( ( rule__ArgumentPair__OpAssignment_0_0_0_0 ) ) ;
     public final void rule__ArgumentPair__Group_0_0_0__0__Impl() throws RecognitionException {
 
@@ -35473,6 +39107,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_0__1"
+    /**
+     * Rule argument pair group 0 0 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9986:1: rule__ArgumentPair__Group_0_0_0__1 : rule__ArgumentPair__Group_0_0_0__1__Impl ;
     public final void rule__ArgumentPair__Group_0_0_0__1() throws RecognitionException {
 
@@ -35506,6 +39145,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_0__1__Impl"
+    /**
+     * Rule argument pair group 0 0 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:9997:1: rule__ArgumentPair__Group_0_0_0__1__Impl : ( '::' ) ;
     public final void rule__ArgumentPair__Group_0_0_0__1__Impl() throws RecognitionException {
 
@@ -35547,6 +39191,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_1__0"
+    /**
+     * Rule argument pair group 0 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10013:1: rule__ArgumentPair__Group_0_0_1__0 : rule__ArgumentPair__Group_0_0_1__0__Impl rule__ArgumentPair__Group_0_0_1__1 ;
     public final void rule__ArgumentPair__Group_0_0_1__0() throws RecognitionException {
 
@@ -35585,6 +39234,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_1__0__Impl"
+    /**
+     * Rule argument pair group 0 0 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10025:1: rule__ArgumentPair__Group_0_0_1__0__Impl : ( ( rule__ArgumentPair__OpAssignment_0_0_1_0 ) ) ;
     public final void rule__ArgumentPair__Group_0_0_1__0__Impl() throws RecognitionException {
 
@@ -35636,6 +39290,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_1__1"
+    /**
+     * Rule argument pair group 0 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10040:1: rule__ArgumentPair__Group_0_0_1__1 : rule__ArgumentPair__Group_0_0_1__1__Impl ;
     public final void rule__ArgumentPair__Group_0_0_1__1() throws RecognitionException {
 
@@ -35669,6 +39328,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__Group_0_0_1__1__Impl"
+    /**
+     * Rule argument pair group 0 0 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10051:1: rule__ArgumentPair__Group_0_0_1__1__Impl : ( ':' ) ;
     public final void rule__ArgumentPair__Group_0_0_1__1__Impl() throws RecognitionException {
 
@@ -35710,6 +39374,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group__0"
+    /**
+     * Rule pair group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10067:1: rule__Pair__Group__0 : rule__Pair__Group__0__Impl rule__Pair__Group__1 ;
     public final void rule__Pair__Group__0() throws RecognitionException {
 
@@ -35748,6 +39417,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group__0__Impl"
+    /**
+     * Rule pair group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10079:1: rule__Pair__Group__0__Impl : ( ruleIf ) ;
     public final void rule__Pair__Group__0__Impl() throws RecognitionException {
 
@@ -35793,6 +39467,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group__1"
+    /**
+     * Rule pair group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10094:1: rule__Pair__Group__1 : rule__Pair__Group__1__Impl ;
     public final void rule__Pair__Group__1() throws RecognitionException {
 
@@ -35826,6 +39505,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group__1__Impl"
+    /**
+     * Rule pair group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10105:1: rule__Pair__Group__1__Impl : ( ( rule__Pair__Group_1__0 )? ) ;
     public final void rule__Pair__Group__1__Impl() throws RecognitionException {
 
@@ -35888,6 +39572,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__0"
+    /**
+     * Rule pair group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10121:1: rule__Pair__Group_1__0 : rule__Pair__Group_1__0__Impl rule__Pair__Group_1__1 ;
     public final void rule__Pair__Group_1__0() throws RecognitionException {
 
@@ -35926,6 +39615,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__0__Impl"
+    /**
+     * Rule pair group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10133:1: rule__Pair__Group_1__0__Impl : ( () ) ;
     public final void rule__Pair__Group_1__0__Impl() throws RecognitionException {
 
@@ -35967,6 +39661,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__1"
+    /**
+     * Rule pair group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10148:1: rule__Pair__Group_1__1 : rule__Pair__Group_1__1__Impl rule__Pair__Group_1__2 ;
     public final void rule__Pair__Group_1__1() throws RecognitionException {
 
@@ -36005,6 +39704,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__1__Impl"
+    /**
+     * Rule pair group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10160:1: rule__Pair__Group_1__1__Impl : ( ( rule__Pair__OpAssignment_1_1 ) ) ;
     public final void rule__Pair__Group_1__1__Impl() throws RecognitionException {
 
@@ -36056,6 +39760,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__2"
+    /**
+     * Rule pair group 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10175:1: rule__Pair__Group_1__2 : rule__Pair__Group_1__2__Impl ;
     public final void rule__Pair__Group_1__2() throws RecognitionException {
 
@@ -36089,6 +39798,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__Group_1__2__Impl"
+    /**
+     * Rule pair group 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10186:1: rule__Pair__Group_1__2__Impl : ( ( rule__Pair__RightAssignment_1_2 ) ) ;
     public final void rule__Pair__Group_1__2__Impl() throws RecognitionException {
 
@@ -36140,6 +39854,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group__0"
+    /**
+     * Rule if group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10202:1: rule__If__Group__0 : rule__If__Group__0__Impl rule__If__Group__1 ;
     public final void rule__If__Group__0() throws RecognitionException {
 
@@ -36178,6 +39897,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group__0__Impl"
+    /**
+     * Rule if group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10214:1: rule__If__Group__0__Impl : ( ruleOr ) ;
     public final void rule__If__Group__0__Impl() throws RecognitionException {
 
@@ -36223,6 +39947,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group__1"
+    /**
+     * Rule if group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10229:1: rule__If__Group__1 : rule__If__Group__1__Impl ;
     public final void rule__If__Group__1() throws RecognitionException {
 
@@ -36256,6 +39985,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group__1__Impl"
+    /**
+     * Rule if group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10240:1: rule__If__Group__1__Impl : ( ( rule__If__Group_1__0 )? ) ;
     public final void rule__If__Group__1__Impl() throws RecognitionException {
 
@@ -36318,6 +40052,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__0"
+    /**
+     * Rule if group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10256:1: rule__If__Group_1__0 : rule__If__Group_1__0__Impl rule__If__Group_1__1 ;
     public final void rule__If__Group_1__0() throws RecognitionException {
 
@@ -36356,6 +40095,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__0__Impl"
+    /**
+     * Rule if group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10268:1: rule__If__Group_1__0__Impl : ( () ) ;
     public final void rule__If__Group_1__0__Impl() throws RecognitionException {
 
@@ -36397,6 +40141,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__1"
+    /**
+     * Rule if group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10283:1: rule__If__Group_1__1 : rule__If__Group_1__1__Impl rule__If__Group_1__2 ;
     public final void rule__If__Group_1__1() throws RecognitionException {
 
@@ -36435,6 +40184,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__1__Impl"
+    /**
+     * Rule if group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10295:1: rule__If__Group_1__1__Impl : ( ( rule__If__OpAssignment_1_1 ) ) ;
     public final void rule__If__Group_1__1__Impl() throws RecognitionException {
 
@@ -36486,6 +40240,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__2"
+    /**
+     * Rule if group 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10310:1: rule__If__Group_1__2 : rule__If__Group_1__2__Impl rule__If__Group_1__3 ;
     public final void rule__If__Group_1__2() throws RecognitionException {
 
@@ -36524,6 +40283,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__2__Impl"
+    /**
+     * Rule if group 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10322:1: rule__If__Group_1__2__Impl : ( ( rule__If__RightAssignment_1_2 ) ) ;
     public final void rule__If__Group_1__2__Impl() throws RecognitionException {
 
@@ -36575,6 +40339,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__3"
+    /**
+     * Rule if group 1 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10337:1: rule__If__Group_1__3 : rule__If__Group_1__3__Impl ;
     public final void rule__If__Group_1__3() throws RecognitionException {
 
@@ -36608,6 +40377,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1__3__Impl"
+    /**
+     * Rule if group 1 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10348:1: rule__If__Group_1__3__Impl : ( ( rule__If__Group_1_3__0 ) ) ;
     public final void rule__If__Group_1__3__Impl() throws RecognitionException {
 
@@ -36659,6 +40433,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1_3__0"
+    /**
+     * Rule if group 1 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10364:1: rule__If__Group_1_3__0 : rule__If__Group_1_3__0__Impl rule__If__Group_1_3__1 ;
     public final void rule__If__Group_1_3__0() throws RecognitionException {
 
@@ -36697,6 +40476,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1_3__0__Impl"
+    /**
+     * Rule if group 1 3 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10376:1: rule__If__Group_1_3__0__Impl : ( ':' ) ;
     public final void rule__If__Group_1_3__0__Impl() throws RecognitionException {
 
@@ -36738,6 +40522,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1_3__1"
+    /**
+     * Rule if group 1 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10391:1: rule__If__Group_1_3__1 : rule__If__Group_1_3__1__Impl ;
     public final void rule__If__Group_1_3__1() throws RecognitionException {
 
@@ -36771,6 +40560,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__Group_1_3__1__Impl"
+    /**
+     * Rule if group 1 3 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10402:1: rule__If__Group_1_3__1__Impl : ( ( rule__If__IfFalseAssignment_1_3_1 ) ) ;
     public final void rule__If__Group_1_3__1__Impl() throws RecognitionException {
 
@@ -36822,6 +40616,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group__0"
+    /**
+     * Rule or group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10418:1: rule__Or__Group__0 : rule__Or__Group__0__Impl rule__Or__Group__1 ;
     public final void rule__Or__Group__0() throws RecognitionException {
 
@@ -36860,6 +40659,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group__0__Impl"
+    /**
+     * Rule or group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10430:1: rule__Or__Group__0__Impl : ( ruleAnd ) ;
     public final void rule__Or__Group__0__Impl() throws RecognitionException {
 
@@ -36905,6 +40709,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group__1"
+    /**
+     * Rule or group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10445:1: rule__Or__Group__1 : rule__Or__Group__1__Impl ;
     public final void rule__Or__Group__1() throws RecognitionException {
 
@@ -36938,6 +40747,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group__1__Impl"
+    /**
+     * Rule or group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10456:1: rule__Or__Group__1__Impl : ( ( rule__Or__Group_1__0 )* ) ;
     public final void rule__Or__Group__1__Impl() throws RecognitionException {
 
@@ -37007,6 +40821,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__0"
+    /**
+     * Rule or group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10472:1: rule__Or__Group_1__0 : rule__Or__Group_1__0__Impl rule__Or__Group_1__1 ;
     public final void rule__Or__Group_1__0() throws RecognitionException {
 
@@ -37045,6 +40864,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__0__Impl"
+    /**
+     * Rule or group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10484:1: rule__Or__Group_1__0__Impl : ( () ) ;
     public final void rule__Or__Group_1__0__Impl() throws RecognitionException {
 
@@ -37086,6 +40910,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__1"
+    /**
+     * Rule or group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10499:1: rule__Or__Group_1__1 : rule__Or__Group_1__1__Impl rule__Or__Group_1__2 ;
     public final void rule__Or__Group_1__1() throws RecognitionException {
 
@@ -37124,6 +40953,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__1__Impl"
+    /**
+     * Rule or group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10511:1: rule__Or__Group_1__1__Impl : ( ( rule__Or__OpAssignment_1_1 ) ) ;
     public final void rule__Or__Group_1__1__Impl() throws RecognitionException {
 
@@ -37175,6 +41009,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__2"
+    /**
+     * Rule or group 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10526:1: rule__Or__Group_1__2 : rule__Or__Group_1__2__Impl ;
     public final void rule__Or__Group_1__2() throws RecognitionException {
 
@@ -37208,6 +41047,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__Group_1__2__Impl"
+    /**
+     * Rule or group 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10537:1: rule__Or__Group_1__2__Impl : ( ( rule__Or__RightAssignment_1_2 ) ) ;
     public final void rule__Or__Group_1__2__Impl() throws RecognitionException {
 
@@ -37259,6 +41103,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group__0"
+    /**
+     * Rule and group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10553:1: rule__And__Group__0 : rule__And__Group__0__Impl rule__And__Group__1 ;
     public final void rule__And__Group__0() throws RecognitionException {
 
@@ -37297,6 +41146,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group__0__Impl"
+    /**
+     * Rule and group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10565:1: rule__And__Group__0__Impl : ( ruleCast ) ;
     public final void rule__And__Group__0__Impl() throws RecognitionException {
 
@@ -37342,6 +41196,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group__1"
+    /**
+     * Rule and group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10580:1: rule__And__Group__1 : rule__And__Group__1__Impl ;
     public final void rule__And__Group__1() throws RecognitionException {
 
@@ -37375,6 +41234,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group__1__Impl"
+    /**
+     * Rule and group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10591:1: rule__And__Group__1__Impl : ( ( rule__And__Group_1__0 )* ) ;
     public final void rule__And__Group__1__Impl() throws RecognitionException {
 
@@ -37444,6 +41308,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__0"
+    /**
+     * Rule and group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10607:1: rule__And__Group_1__0 : rule__And__Group_1__0__Impl rule__And__Group_1__1 ;
     public final void rule__And__Group_1__0() throws RecognitionException {
 
@@ -37482,6 +41351,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__0__Impl"
+    /**
+     * Rule and group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10619:1: rule__And__Group_1__0__Impl : ( () ) ;
     public final void rule__And__Group_1__0__Impl() throws RecognitionException {
 
@@ -37523,6 +41397,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__1"
+    /**
+     * Rule and group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10634:1: rule__And__Group_1__1 : rule__And__Group_1__1__Impl rule__And__Group_1__2 ;
     public final void rule__And__Group_1__1() throws RecognitionException {
 
@@ -37561,6 +41440,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__1__Impl"
+    /**
+     * Rule and group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10646:1: rule__And__Group_1__1__Impl : ( ( rule__And__OpAssignment_1_1 ) ) ;
     public final void rule__And__Group_1__1__Impl() throws RecognitionException {
 
@@ -37612,6 +41496,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__2"
+    /**
+     * Rule and group 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10661:1: rule__And__Group_1__2 : rule__And__Group_1__2__Impl ;
     public final void rule__And__Group_1__2() throws RecognitionException {
 
@@ -37645,6 +41534,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__Group_1__2__Impl"
+    /**
+     * Rule and group 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10672:1: rule__And__Group_1__2__Impl : ( ( rule__And__RightAssignment_1_2 ) ) ;
     public final void rule__And__Group_1__2__Impl() throws RecognitionException {
 
@@ -37696,6 +41590,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group__0"
+    /**
+     * Rule cast group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10688:1: rule__Cast__Group__0 : rule__Cast__Group__0__Impl rule__Cast__Group__1 ;
     public final void rule__Cast__Group__0() throws RecognitionException {
 
@@ -37734,6 +41633,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group__0__Impl"
+    /**
+     * Rule cast group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10700:1: rule__Cast__Group__0__Impl : ( ruleComparison ) ;
     public final void rule__Cast__Group__0__Impl() throws RecognitionException {
 
@@ -37779,6 +41683,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group__1"
+    /**
+     * Rule cast group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10715:1: rule__Cast__Group__1 : rule__Cast__Group__1__Impl ;
     public final void rule__Cast__Group__1() throws RecognitionException {
 
@@ -37812,6 +41721,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group__1__Impl"
+    /**
+     * Rule cast group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10726:1: rule__Cast__Group__1__Impl : ( ( rule__Cast__Group_1__0 )? ) ;
     public final void rule__Cast__Group__1__Impl() throws RecognitionException {
 
@@ -37874,6 +41788,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1__0"
+    /**
+     * Rule cast group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10742:1: rule__Cast__Group_1__0 : rule__Cast__Group_1__0__Impl rule__Cast__Group_1__1 ;
     public final void rule__Cast__Group_1__0() throws RecognitionException {
 
@@ -37912,6 +41831,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1__0__Impl"
+    /**
+     * Rule cast group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10754:1: rule__Cast__Group_1__0__Impl : ( ( rule__Cast__Group_1_0__0 ) ) ;
     public final void rule__Cast__Group_1__0__Impl() throws RecognitionException {
 
@@ -37963,6 +41887,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1__1"
+    /**
+     * Rule cast group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10769:1: rule__Cast__Group_1__1 : rule__Cast__Group_1__1__Impl ;
     public final void rule__Cast__Group_1__1() throws RecognitionException {
 
@@ -37996,6 +41925,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1__1__Impl"
+    /**
+     * Rule cast group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10780:1: rule__Cast__Group_1__1__Impl : ( ( rule__Cast__Alternatives_1_1 ) ) ;
     public final void rule__Cast__Group_1__1__Impl() throws RecognitionException {
 
@@ -38047,6 +41981,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_0__0"
+    /**
+     * Rule cast group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10796:1: rule__Cast__Group_1_0__0 : rule__Cast__Group_1_0__0__Impl rule__Cast__Group_1_0__1 ;
     public final void rule__Cast__Group_1_0__0() throws RecognitionException {
 
@@ -38085,6 +42024,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_0__0__Impl"
+    /**
+     * Rule cast group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10808:1: rule__Cast__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Cast__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -38126,6 +42070,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_0__1"
+    /**
+     * Rule cast group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10823:1: rule__Cast__Group_1_0__1 : rule__Cast__Group_1_0__1__Impl ;
     public final void rule__Cast__Group_1_0__1() throws RecognitionException {
 
@@ -38159,6 +42108,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_0__1__Impl"
+    /**
+     * Rule cast group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10834:1: rule__Cast__Group_1_0__1__Impl : ( ( rule__Cast__OpAssignment_1_0_1 ) ) ;
     public final void rule__Cast__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -38210,6 +42164,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__0"
+    /**
+     * Rule cast group 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10850:1: rule__Cast__Group_1_1_1__0 : rule__Cast__Group_1_1_1__0__Impl rule__Cast__Group_1_1_1__1 ;
     public final void rule__Cast__Group_1_1_1__0() throws RecognitionException {
 
@@ -38248,6 +42207,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__0__Impl"
+    /**
+     * Rule cast group 1 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10862:1: rule__Cast__Group_1_1_1__0__Impl : ( '(' ) ;
     public final void rule__Cast__Group_1_1_1__0__Impl() throws RecognitionException {
 
@@ -38289,6 +42253,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__1"
+    /**
+     * Rule cast group 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10877:1: rule__Cast__Group_1_1_1__1 : rule__Cast__Group_1_1_1__1__Impl rule__Cast__Group_1_1_1__2 ;
     public final void rule__Cast__Group_1_1_1__1() throws RecognitionException {
 
@@ -38327,6 +42296,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__1__Impl"
+    /**
+     * Rule cast group 1 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10889:1: rule__Cast__Group_1_1_1__1__Impl : ( ( rule__Cast__RightAssignment_1_1_1_1 ) ) ;
     public final void rule__Cast__Group_1_1_1__1__Impl() throws RecognitionException {
 
@@ -38378,6 +42352,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__2"
+    /**
+     * Rule cast group 1 1 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10904:1: rule__Cast__Group_1_1_1__2 : rule__Cast__Group_1_1_1__2__Impl ;
     public final void rule__Cast__Group_1_1_1__2() throws RecognitionException {
 
@@ -38411,6 +42390,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__Group_1_1_1__2__Impl"
+    /**
+     * Rule cast group 1 1 1 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10915:1: rule__Cast__Group_1_1_1__2__Impl : ( ')' ) ;
     public final void rule__Cast__Group_1_1_1__2__Impl() throws RecognitionException {
 
@@ -38452,6 +42436,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group__0"
+    /**
+     * Rule comparison group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10931:1: rule__Comparison__Group__0 : rule__Comparison__Group__0__Impl rule__Comparison__Group__1 ;
     public final void rule__Comparison__Group__0() throws RecognitionException {
 
@@ -38490,6 +42479,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group__0__Impl"
+    /**
+     * Rule comparison group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10943:1: rule__Comparison__Group__0__Impl : ( ruleAddition ) ;
     public final void rule__Comparison__Group__0__Impl() throws RecognitionException {
 
@@ -38535,6 +42529,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group__1"
+    /**
+     * Rule comparison group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10958:1: rule__Comparison__Group__1 : rule__Comparison__Group__1__Impl ;
     public final void rule__Comparison__Group__1() throws RecognitionException {
 
@@ -38568,6 +42567,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group__1__Impl"
+    /**
+     * Rule comparison group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10969:1: rule__Comparison__Group__1__Impl : ( ( rule__Comparison__Group_1__0 )? ) ;
     public final void rule__Comparison__Group__1__Impl() throws RecognitionException {
 
@@ -38637,6 +42641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1__0"
+    /**
+     * Rule comparison group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10985:1: rule__Comparison__Group_1__0 : rule__Comparison__Group_1__0__Impl rule__Comparison__Group_1__1 ;
     public final void rule__Comparison__Group_1__0() throws RecognitionException {
 
@@ -38675,6 +42684,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1__0__Impl"
+    /**
+     * Rule comparison group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:10997:1: rule__Comparison__Group_1__0__Impl : ( ( rule__Comparison__Group_1_0__0 ) ) ;
     public final void rule__Comparison__Group_1__0__Impl() throws RecognitionException {
 
@@ -38726,6 +42740,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1__1"
+    /**
+     * Rule comparison group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11012:1: rule__Comparison__Group_1__1 : rule__Comparison__Group_1__1__Impl ;
     public final void rule__Comparison__Group_1__1() throws RecognitionException {
 
@@ -38759,6 +42778,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1__1__Impl"
+    /**
+     * Rule comparison group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11023:1: rule__Comparison__Group_1__1__Impl : ( ( rule__Comparison__RightAssignment_1_1 ) ) ;
     public final void rule__Comparison__Group_1__1__Impl() throws RecognitionException {
 
@@ -38810,6 +42834,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1_0__0"
+    /**
+     * Rule comparison group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11039:1: rule__Comparison__Group_1_0__0 : rule__Comparison__Group_1_0__0__Impl rule__Comparison__Group_1_0__1 ;
     public final void rule__Comparison__Group_1_0__0() throws RecognitionException {
 
@@ -38848,6 +42877,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1_0__0__Impl"
+    /**
+     * Rule comparison group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11051:1: rule__Comparison__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Comparison__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -38889,6 +42923,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1_0__1"
+    /**
+     * Rule comparison group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11066:1: rule__Comparison__Group_1_0__1 : rule__Comparison__Group_1_0__1__Impl ;
     public final void rule__Comparison__Group_1_0__1() throws RecognitionException {
 
@@ -38922,6 +42961,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__Group_1_0__1__Impl"
+    /**
+     * Rule comparison group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11077:1: rule__Comparison__Group_1_0__1__Impl : ( ( rule__Comparison__OpAssignment_1_0_1 ) ) ;
     public final void rule__Comparison__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -38973,6 +43017,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group__0"
+    /**
+     * Rule addition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11093:1: rule__Addition__Group__0 : rule__Addition__Group__0__Impl rule__Addition__Group__1 ;
     public final void rule__Addition__Group__0() throws RecognitionException {
 
@@ -39011,6 +43060,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group__0__Impl"
+    /**
+     * Rule addition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11105:1: rule__Addition__Group__0__Impl : ( ruleMultiplication ) ;
     public final void rule__Addition__Group__0__Impl() throws RecognitionException {
 
@@ -39056,6 +43110,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group__1"
+    /**
+     * Rule addition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11120:1: rule__Addition__Group__1 : rule__Addition__Group__1__Impl ;
     public final void rule__Addition__Group__1() throws RecognitionException {
 
@@ -39089,6 +43148,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group__1__Impl"
+    /**
+     * Rule addition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11131:1: rule__Addition__Group__1__Impl : ( ( rule__Addition__Group_1__0 )* ) ;
     public final void rule__Addition__Group__1__Impl() throws RecognitionException {
 
@@ -39158,6 +43222,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1__0"
+    /**
+     * Rule addition group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11147:1: rule__Addition__Group_1__0 : rule__Addition__Group_1__0__Impl rule__Addition__Group_1__1 ;
     public final void rule__Addition__Group_1__0() throws RecognitionException {
 
@@ -39196,6 +43265,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1__0__Impl"
+    /**
+     * Rule addition group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11159:1: rule__Addition__Group_1__0__Impl : ( ( rule__Addition__Group_1_0__0 ) ) ;
     public final void rule__Addition__Group_1__0__Impl() throws RecognitionException {
 
@@ -39247,6 +43321,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1__1"
+    /**
+     * Rule addition group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11174:1: rule__Addition__Group_1__1 : rule__Addition__Group_1__1__Impl ;
     public final void rule__Addition__Group_1__1() throws RecognitionException {
 
@@ -39280,6 +43359,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1__1__Impl"
+    /**
+     * Rule addition group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11185:1: rule__Addition__Group_1__1__Impl : ( ( rule__Addition__RightAssignment_1_1 ) ) ;
     public final void rule__Addition__Group_1__1__Impl() throws RecognitionException {
 
@@ -39331,6 +43415,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1_0__0"
+    /**
+     * Rule addition group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11201:1: rule__Addition__Group_1_0__0 : rule__Addition__Group_1_0__0__Impl rule__Addition__Group_1_0__1 ;
     public final void rule__Addition__Group_1_0__0() throws RecognitionException {
 
@@ -39369,6 +43458,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1_0__0__Impl"
+    /**
+     * Rule addition group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11213:1: rule__Addition__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Addition__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -39410,6 +43504,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1_0__1"
+    /**
+     * Rule addition group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11228:1: rule__Addition__Group_1_0__1 : rule__Addition__Group_1_0__1__Impl ;
     public final void rule__Addition__Group_1_0__1() throws RecognitionException {
 
@@ -39443,6 +43542,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__Group_1_0__1__Impl"
+    /**
+     * Rule addition group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11239:1: rule__Addition__Group_1_0__1__Impl : ( ( rule__Addition__OpAssignment_1_0_1 ) ) ;
     public final void rule__Addition__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -39494,6 +43598,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group__0"
+    /**
+     * Rule multiplication group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11255:1: rule__Multiplication__Group__0 : rule__Multiplication__Group__0__Impl rule__Multiplication__Group__1 ;
     public final void rule__Multiplication__Group__0() throws RecognitionException {
 
@@ -39532,6 +43641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group__0__Impl"
+    /**
+     * Rule multiplication group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11267:1: rule__Multiplication__Group__0__Impl : ( ruleExponentiation ) ;
     public final void rule__Multiplication__Group__0__Impl() throws RecognitionException {
 
@@ -39577,6 +43691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group__1"
+    /**
+     * Rule multiplication group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11282:1: rule__Multiplication__Group__1 : rule__Multiplication__Group__1__Impl ;
     public final void rule__Multiplication__Group__1() throws RecognitionException {
 
@@ -39610,6 +43729,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group__1__Impl"
+    /**
+     * Rule multiplication group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11293:1: rule__Multiplication__Group__1__Impl : ( ( rule__Multiplication__Group_1__0 )* ) ;
     public final void rule__Multiplication__Group__1__Impl() throws RecognitionException {
 
@@ -39679,6 +43803,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1__0"
+    /**
+     * Rule multiplication group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11309:1: rule__Multiplication__Group_1__0 : rule__Multiplication__Group_1__0__Impl rule__Multiplication__Group_1__1 ;
     public final void rule__Multiplication__Group_1__0() throws RecognitionException {
 
@@ -39717,6 +43846,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1__0__Impl"
+    /**
+     * Rule multiplication group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11321:1: rule__Multiplication__Group_1__0__Impl : ( ( rule__Multiplication__Group_1_0__0 ) ) ;
     public final void rule__Multiplication__Group_1__0__Impl() throws RecognitionException {
 
@@ -39768,6 +43902,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1__1"
+    /**
+     * Rule multiplication group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11336:1: rule__Multiplication__Group_1__1 : rule__Multiplication__Group_1__1__Impl ;
     public final void rule__Multiplication__Group_1__1() throws RecognitionException {
 
@@ -39801,6 +43940,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1__1__Impl"
+    /**
+     * Rule multiplication group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11347:1: rule__Multiplication__Group_1__1__Impl : ( ( rule__Multiplication__RightAssignment_1_1 ) ) ;
     public final void rule__Multiplication__Group_1__1__Impl() throws RecognitionException {
 
@@ -39852,6 +43996,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1_0__0"
+    /**
+     * Rule multiplication group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11363:1: rule__Multiplication__Group_1_0__0 : rule__Multiplication__Group_1_0__0__Impl rule__Multiplication__Group_1_0__1 ;
     public final void rule__Multiplication__Group_1_0__0() throws RecognitionException {
 
@@ -39890,6 +44039,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1_0__0__Impl"
+    /**
+     * Rule multiplication group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11375:1: rule__Multiplication__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Multiplication__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -39931,6 +44085,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1_0__1"
+    /**
+     * Rule multiplication group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11390:1: rule__Multiplication__Group_1_0__1 : rule__Multiplication__Group_1_0__1__Impl ;
     public final void rule__Multiplication__Group_1_0__1() throws RecognitionException {
 
@@ -39964,6 +44123,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__Group_1_0__1__Impl"
+    /**
+     * Rule multiplication group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11401:1: rule__Multiplication__Group_1_0__1__Impl : ( ( rule__Multiplication__OpAssignment_1_0_1 ) ) ;
     public final void rule__Multiplication__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -40015,6 +44179,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group__0"
+    /**
+     * Rule exponentiation group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11417:1: rule__Exponentiation__Group__0 : rule__Exponentiation__Group__0__Impl rule__Exponentiation__Group__1 ;
     public final void rule__Exponentiation__Group__0() throws RecognitionException {
 
@@ -40053,6 +44222,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group__0__Impl"
+    /**
+     * Rule exponentiation group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11429:1: rule__Exponentiation__Group__0__Impl : ( ruleBinary ) ;
     public final void rule__Exponentiation__Group__0__Impl() throws RecognitionException {
 
@@ -40098,6 +44272,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group__1"
+    /**
+     * Rule exponentiation group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11444:1: rule__Exponentiation__Group__1 : rule__Exponentiation__Group__1__Impl ;
     public final void rule__Exponentiation__Group__1() throws RecognitionException {
 
@@ -40131,6 +44310,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group__1__Impl"
+    /**
+     * Rule exponentiation group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11455:1: rule__Exponentiation__Group__1__Impl : ( ( rule__Exponentiation__Group_1__0 )* ) ;
     public final void rule__Exponentiation__Group__1__Impl() throws RecognitionException {
 
@@ -40200,6 +44384,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1__0"
+    /**
+     * Rule exponentiation group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11471:1: rule__Exponentiation__Group_1__0 : rule__Exponentiation__Group_1__0__Impl rule__Exponentiation__Group_1__1 ;
     public final void rule__Exponentiation__Group_1__0() throws RecognitionException {
 
@@ -40238,6 +44427,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1__0__Impl"
+    /**
+     * Rule exponentiation group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11483:1: rule__Exponentiation__Group_1__0__Impl : ( ( rule__Exponentiation__Group_1_0__0 ) ) ;
     public final void rule__Exponentiation__Group_1__0__Impl() throws RecognitionException {
 
@@ -40289,6 +44483,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1__1"
+    /**
+     * Rule exponentiation group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11498:1: rule__Exponentiation__Group_1__1 : rule__Exponentiation__Group_1__1__Impl ;
     public final void rule__Exponentiation__Group_1__1() throws RecognitionException {
 
@@ -40322,6 +44521,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1__1__Impl"
+    /**
+     * Rule exponentiation group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11509:1: rule__Exponentiation__Group_1__1__Impl : ( ( rule__Exponentiation__RightAssignment_1_1 ) ) ;
     public final void rule__Exponentiation__Group_1__1__Impl() throws RecognitionException {
 
@@ -40373,6 +44577,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1_0__0"
+    /**
+     * Rule exponentiation group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11525:1: rule__Exponentiation__Group_1_0__0 : rule__Exponentiation__Group_1_0__0__Impl rule__Exponentiation__Group_1_0__1 ;
     public final void rule__Exponentiation__Group_1_0__0() throws RecognitionException {
 
@@ -40411,6 +44620,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1_0__0__Impl"
+    /**
+     * Rule exponentiation group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11537:1: rule__Exponentiation__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Exponentiation__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -40452,6 +44666,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1_0__1"
+    /**
+     * Rule exponentiation group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11552:1: rule__Exponentiation__Group_1_0__1 : rule__Exponentiation__Group_1_0__1__Impl ;
     public final void rule__Exponentiation__Group_1_0__1() throws RecognitionException {
 
@@ -40485,6 +44704,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__Group_1_0__1__Impl"
+    /**
+     * Rule exponentiation group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11563:1: rule__Exponentiation__Group_1_0__1__Impl : ( ( rule__Exponentiation__OpAssignment_1_0_1 ) ) ;
     public final void rule__Exponentiation__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -40536,6 +44760,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group__0"
+    /**
+     * Rule binary group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11579:1: rule__Binary__Group__0 : rule__Binary__Group__0__Impl rule__Binary__Group__1 ;
     public final void rule__Binary__Group__0() throws RecognitionException {
 
@@ -40574,6 +44803,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group__0__Impl"
+    /**
+     * Rule binary group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11591:1: rule__Binary__Group__0__Impl : ( ruleUnit ) ;
     public final void rule__Binary__Group__0__Impl() throws RecognitionException {
 
@@ -40619,6 +44853,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group__1"
+    /**
+     * Rule binary group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11606:1: rule__Binary__Group__1 : rule__Binary__Group__1__Impl ;
     public final void rule__Binary__Group__1() throws RecognitionException {
 
@@ -40652,6 +44891,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group__1__Impl"
+    /**
+     * Rule binary group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11617:1: rule__Binary__Group__1__Impl : ( ( rule__Binary__Group_1__0 )* ) ;
     public final void rule__Binary__Group__1__Impl() throws RecognitionException {
 
@@ -40730,6 +44974,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1__0"
+    /**
+     * Rule binary group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11633:1: rule__Binary__Group_1__0 : rule__Binary__Group_1__0__Impl rule__Binary__Group_1__1 ;
     public final void rule__Binary__Group_1__0() throws RecognitionException {
 
@@ -40768,6 +45017,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1__0__Impl"
+    /**
+     * Rule binary group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11645:1: rule__Binary__Group_1__0__Impl : ( ( rule__Binary__Group_1_0__0 ) ) ;
     public final void rule__Binary__Group_1__0__Impl() throws RecognitionException {
 
@@ -40819,6 +45073,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1__1"
+    /**
+     * Rule binary group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11660:1: rule__Binary__Group_1__1 : rule__Binary__Group_1__1__Impl ;
     public final void rule__Binary__Group_1__1() throws RecognitionException {
 
@@ -40852,6 +45111,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1__1__Impl"
+    /**
+     * Rule binary group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11671:1: rule__Binary__Group_1__1__Impl : ( ( rule__Binary__RightAssignment_1_1 ) ) ;
     public final void rule__Binary__Group_1__1__Impl() throws RecognitionException {
 
@@ -40903,6 +45167,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1_0__0"
+    /**
+     * Rule binary group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11687:1: rule__Binary__Group_1_0__0 : rule__Binary__Group_1_0__0__Impl rule__Binary__Group_1_0__1 ;
     public final void rule__Binary__Group_1_0__0() throws RecognitionException {
 
@@ -40941,6 +45210,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1_0__0__Impl"
+    /**
+     * Rule binary group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11699:1: rule__Binary__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Binary__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -40982,6 +45256,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1_0__1"
+    /**
+     * Rule binary group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11714:1: rule__Binary__Group_1_0__1 : rule__Binary__Group_1_0__1__Impl ;
     public final void rule__Binary__Group_1_0__1() throws RecognitionException {
 
@@ -41015,6 +45294,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__Group_1_0__1__Impl"
+    /**
+     * Rule binary group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11725:1: rule__Binary__Group_1_0__1__Impl : ( ( rule__Binary__OpAssignment_1_0_1 ) ) ;
     public final void rule__Binary__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -41066,6 +45350,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group__0"
+    /**
+     * Rule unit group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11741:1: rule__Unit__Group__0 : rule__Unit__Group__0__Impl rule__Unit__Group__1 ;
     public final void rule__Unit__Group__0() throws RecognitionException {
 
@@ -41104,6 +45393,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group__0__Impl"
+    /**
+     * Rule unit group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11753:1: rule__Unit__Group__0__Impl : ( ruleUnary ) ;
     public final void rule__Unit__Group__0__Impl() throws RecognitionException {
 
@@ -41149,6 +45443,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group__1"
+    /**
+     * Rule unit group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11768:1: rule__Unit__Group__1 : rule__Unit__Group__1__Impl ;
     public final void rule__Unit__Group__1() throws RecognitionException {
 
@@ -41182,6 +45481,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group__1__Impl"
+    /**
+     * Rule unit group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11779:1: rule__Unit__Group__1__Impl : ( ( rule__Unit__Group_1__0 )? ) ;
     public final void rule__Unit__Group__1__Impl() throws RecognitionException {
 
@@ -41244,6 +45548,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1__0"
+    /**
+     * Rule unit group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11795:1: rule__Unit__Group_1__0 : rule__Unit__Group_1__0__Impl rule__Unit__Group_1__1 ;
     public final void rule__Unit__Group_1__0() throws RecognitionException {
 
@@ -41282,6 +45591,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1__0__Impl"
+    /**
+     * Rule unit group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11807:1: rule__Unit__Group_1__0__Impl : ( ( rule__Unit__Group_1_0__0 ) ) ;
     public final void rule__Unit__Group_1__0__Impl() throws RecognitionException {
 
@@ -41333,6 +45647,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1__1"
+    /**
+     * Rule unit group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11822:1: rule__Unit__Group_1__1 : rule__Unit__Group_1__1__Impl ;
     public final void rule__Unit__Group_1__1() throws RecognitionException {
 
@@ -41366,6 +45685,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1__1__Impl"
+    /**
+     * Rule unit group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11833:1: rule__Unit__Group_1__1__Impl : ( ( rule__Unit__RightAssignment_1_1 ) ) ;
     public final void rule__Unit__Group_1__1__Impl() throws RecognitionException {
 
@@ -41417,6 +45741,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1_0__0"
+    /**
+     * Rule unit group 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11849:1: rule__Unit__Group_1_0__0 : rule__Unit__Group_1_0__0__Impl rule__Unit__Group_1_0__1 ;
     public final void rule__Unit__Group_1_0__0() throws RecognitionException {
 
@@ -41455,6 +45784,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1_0__0__Impl"
+    /**
+     * Rule unit group 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11861:1: rule__Unit__Group_1_0__0__Impl : ( () ) ;
     public final void rule__Unit__Group_1_0__0__Impl() throws RecognitionException {
 
@@ -41496,6 +45830,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1_0__1"
+    /**
+     * Rule unit group 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11876:1: rule__Unit__Group_1_0__1 : rule__Unit__Group_1_0__1__Impl ;
     public final void rule__Unit__Group_1_0__1() throws RecognitionException {
 
@@ -41529,6 +45868,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__Group_1_0__1__Impl"
+    /**
+     * Rule unit group 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11887:1: rule__Unit__Group_1_0__1__Impl : ( ( rule__Unit__OpAssignment_1_0_1 ) ) ;
     public final void rule__Unit__Group_1_0__1__Impl() throws RecognitionException {
 
@@ -41580,6 +45924,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1__0"
+    /**
+     * Rule unary group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11903:1: rule__Unary__Group_1__0 : rule__Unary__Group_1__0__Impl rule__Unary__Group_1__1 ;
     public final void rule__Unary__Group_1__0() throws RecognitionException {
 
@@ -41618,6 +45967,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1__0__Impl"
+    /**
+     * Rule unary group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11915:1: rule__Unary__Group_1__0__Impl : ( () ) ;
     public final void rule__Unary__Group_1__0__Impl() throws RecognitionException {
 
@@ -41659,6 +46013,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1__1"
+    /**
+     * Rule unary group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11930:1: rule__Unary__Group_1__1 : rule__Unary__Group_1__1__Impl ;
     public final void rule__Unary__Group_1__1() throws RecognitionException {
 
@@ -41692,6 +46051,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1__1__Impl"
+    /**
+     * Rule unary group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11941:1: rule__Unary__Group_1__1__Impl : ( ( rule__Unary__Alternatives_1_1 ) ) ;
     public final void rule__Unary__Group_1__1__Impl() throws RecognitionException {
 
@@ -41743,6 +46107,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_0__0"
+    /**
+     * Rule unary group 1 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11957:1: rule__Unary__Group_1_1_0__0 : rule__Unary__Group_1_1_0__0__Impl rule__Unary__Group_1_1_0__1 ;
     public final void rule__Unary__Group_1_1_0__0() throws RecognitionException {
 
@@ -41781,6 +46150,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_0__0__Impl"
+    /**
+     * Rule unary group 1 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11969:1: rule__Unary__Group_1_1_0__0__Impl : ( ( rule__Unary__OpAssignment_1_1_0_0 ) ) ;
     public final void rule__Unary__Group_1_1_0__0__Impl() throws RecognitionException {
 
@@ -41832,6 +46206,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_0__1"
+    /**
+     * Rule unary group 1 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11984:1: rule__Unary__Group_1_1_0__1 : rule__Unary__Group_1_1_0__1__Impl ;
     public final void rule__Unary__Group_1_1_0__1() throws RecognitionException {
 
@@ -41865,6 +46244,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_0__1__Impl"
+    /**
+     * Rule unary group 1 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:11995:1: rule__Unary__Group_1_1_0__1__Impl : ( ( rule__Unary__RightAssignment_1_1_0_1 ) ) ;
     public final void rule__Unary__Group_1_1_0__1__Impl() throws RecognitionException {
 
@@ -41916,6 +46300,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_1__0"
+    /**
+     * Rule unary group 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12011:1: rule__Unary__Group_1_1_1__0 : rule__Unary__Group_1_1_1__0__Impl rule__Unary__Group_1_1_1__1 ;
     public final void rule__Unary__Group_1_1_1__0() throws RecognitionException {
 
@@ -41954,6 +46343,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_1__0__Impl"
+    /**
+     * Rule unary group 1 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12023:1: rule__Unary__Group_1_1_1__0__Impl : ( ( rule__Unary__OpAssignment_1_1_1_0 ) ) ;
     public final void rule__Unary__Group_1_1_1__0__Impl() throws RecognitionException {
 
@@ -42005,6 +46399,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_1__1"
+    /**
+     * Rule unary group 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12038:1: rule__Unary__Group_1_1_1__1 : rule__Unary__Group_1_1_1__1__Impl ;
     public final void rule__Unary__Group_1_1_1__1() throws RecognitionException {
 
@@ -42038,6 +46437,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__Group_1_1_1__1__Impl"
+    /**
+     * Rule unary group 1 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12049:1: rule__Unary__Group_1_1_1__1__Impl : ( ( rule__Unary__RightAssignment_1_1_1_1 ) ) ;
     public final void rule__Unary__Group_1_1_1__1__Impl() throws RecognitionException {
 
@@ -42089,6 +46493,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group__0"
+    /**
+     * Rule access group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12065:1: rule__Access__Group__0 : rule__Access__Group__0__Impl rule__Access__Group__1 ;
     public final void rule__Access__Group__0() throws RecognitionException {
 
@@ -42127,6 +46536,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group__0__Impl"
+    /**
+     * Rule access group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12077:1: rule__Access__Group__0__Impl : ( rulePrimary ) ;
     public final void rule__Access__Group__0__Impl() throws RecognitionException {
 
@@ -42172,6 +46586,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group__1"
+    /**
+     * Rule access group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12092:1: rule__Access__Group__1 : rule__Access__Group__1__Impl ;
     public final void rule__Access__Group__1() throws RecognitionException {
 
@@ -42205,6 +46624,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group__1__Impl"
+    /**
+     * Rule access group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12103:1: rule__Access__Group__1__Impl : ( ( rule__Access__Group_1__0 )* ) ;
     public final void rule__Access__Group__1__Impl() throws RecognitionException {
 
@@ -42274,6 +46698,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1__0"
+    /**
+     * Rule access group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12119:1: rule__Access__Group_1__0 : rule__Access__Group_1__0__Impl rule__Access__Group_1__1 ;
     public final void rule__Access__Group_1__0() throws RecognitionException {
 
@@ -42312,6 +46741,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1__0__Impl"
+    /**
+     * Rule access group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12131:1: rule__Access__Group_1__0__Impl : ( () ) ;
     public final void rule__Access__Group_1__0__Impl() throws RecognitionException {
 
@@ -42353,6 +46787,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1__1"
+    /**
+     * Rule access group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12146:1: rule__Access__Group_1__1 : rule__Access__Group_1__1__Impl ;
     public final void rule__Access__Group_1__1() throws RecognitionException {
 
@@ -42386,6 +46825,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1__1__Impl"
+    /**
+     * Rule access group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12157:1: rule__Access__Group_1__1__Impl : ( ( rule__Access__Alternatives_1_1 ) ) ;
     public final void rule__Access__Group_1__1__Impl() throws RecognitionException {
 
@@ -42437,6 +46881,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__0"
+    /**
+     * Rule access group 1 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12173:1: rule__Access__Group_1_1_0__0 : rule__Access__Group_1_1_0__0__Impl rule__Access__Group_1_1_0__1 ;
     public final void rule__Access__Group_1_1_0__0() throws RecognitionException {
 
@@ -42475,6 +46924,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__0__Impl"
+    /**
+     * Rule access group 1 1 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12185:1: rule__Access__Group_1_1_0__0__Impl : ( ( rule__Access__OpAssignment_1_1_0_0 ) ) ;
     public final void rule__Access__Group_1_1_0__0__Impl() throws RecognitionException {
 
@@ -42526,6 +46980,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__1"
+    /**
+     * Rule access group 1 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12200:1: rule__Access__Group_1_1_0__1 : rule__Access__Group_1_1_0__1__Impl rule__Access__Group_1_1_0__2 ;
     public final void rule__Access__Group_1_1_0__1() throws RecognitionException {
 
@@ -42564,6 +47023,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__1__Impl"
+    /**
+     * Rule access group 1 1 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12212:1: rule__Access__Group_1_1_0__1__Impl : ( ( rule__Access__RightAssignment_1_1_0_1 )? ) ;
     public final void rule__Access__Group_1_1_0__1__Impl() throws RecognitionException {
 
@@ -42626,6 +47090,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__2"
+    /**
+     * Rule access group 1 1 0 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12227:1: rule__Access__Group_1_1_0__2 : rule__Access__Group_1_1_0__2__Impl ;
     public final void rule__Access__Group_1_1_0__2() throws RecognitionException {
 
@@ -42659,6 +47128,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_0__2__Impl"
+    /**
+     * Rule access group 1 1 0 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12238:1: rule__Access__Group_1_1_0__2__Impl : ( ']' ) ;
     public final void rule__Access__Group_1_1_0__2__Impl() throws RecognitionException {
 
@@ -42700,6 +47174,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_1__0"
+    /**
+     * Rule access group 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12254:1: rule__Access__Group_1_1_1__0 : rule__Access__Group_1_1_1__0__Impl rule__Access__Group_1_1_1__1 ;
     public final void rule__Access__Group_1_1_1__0() throws RecognitionException {
 
@@ -42738,6 +47217,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_1__0__Impl"
+    /**
+     * Rule access group 1 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12266:1: rule__Access__Group_1_1_1__0__Impl : ( ( rule__Access__OpAssignment_1_1_1_0 ) ) ;
     public final void rule__Access__Group_1_1_1__0__Impl() throws RecognitionException {
 
@@ -42789,6 +47273,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_1__1"
+    /**
+     * Rule access group 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12281:1: rule__Access__Group_1_1_1__1 : rule__Access__Group_1_1_1__1__Impl ;
     public final void rule__Access__Group_1_1_1__1() throws RecognitionException {
 
@@ -42822,6 +47311,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__Group_1_1_1__1__Impl"
+    /**
+     * Rule access group 1 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12292:1: rule__Access__Group_1_1_1__1__Impl : ( ( rule__Access__RightAssignment_1_1_1_1 ) ) ;
     public final void rule__Access__Group_1_1_1__1__Impl() throws RecognitionException {
 
@@ -42873,6 +47367,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__0"
+    /**
+     * Rule primary group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12308:1: rule__Primary__Group_2__0 : rule__Primary__Group_2__0__Impl rule__Primary__Group_2__1 ;
     public final void rule__Primary__Group_2__0() throws RecognitionException {
 
@@ -42911,6 +47410,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__0__Impl"
+    /**
+     * Rule primary group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12320:1: rule__Primary__Group_2__0__Impl : ( '(' ) ;
     public final void rule__Primary__Group_2__0__Impl() throws RecognitionException {
 
@@ -42952,6 +47456,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__1"
+    /**
+     * Rule primary group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12335:1: rule__Primary__Group_2__1 : rule__Primary__Group_2__1__Impl rule__Primary__Group_2__2 ;
     public final void rule__Primary__Group_2__1() throws RecognitionException {
 
@@ -42990,6 +47499,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__1__Impl"
+    /**
+     * Rule primary group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12347:1: rule__Primary__Group_2__1__Impl : ( ruleExpressionList ) ;
     public final void rule__Primary__Group_2__1__Impl() throws RecognitionException {
 
@@ -43035,6 +47549,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__2"
+    /**
+     * Rule primary group 2 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12362:1: rule__Primary__Group_2__2 : rule__Primary__Group_2__2__Impl ;
     public final void rule__Primary__Group_2__2() throws RecognitionException {
 
@@ -43068,6 +47587,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_2__2__Impl"
+    /**
+     * Rule primary group 2 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12373:1: rule__Primary__Group_2__2__Impl : ( ')' ) ;
     public final void rule__Primary__Group_2__2__Impl() throws RecognitionException {
 
@@ -43109,6 +47633,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__0"
+    /**
+     * Rule primary group 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12389:1: rule__Primary__Group_3__0 : rule__Primary__Group_3__0__Impl rule__Primary__Group_3__1 ;
     public final void rule__Primary__Group_3__0() throws RecognitionException {
 
@@ -43147,6 +47676,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__0__Impl"
+    /**
+     * Rule primary group 3 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12401:1: rule__Primary__Group_3__0__Impl : ( '[' ) ;
     public final void rule__Primary__Group_3__0__Impl() throws RecognitionException {
 
@@ -43188,6 +47722,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__1"
+    /**
+     * Rule primary group 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12416:1: rule__Primary__Group_3__1 : rule__Primary__Group_3__1__Impl rule__Primary__Group_3__2 ;
     public final void rule__Primary__Group_3__1() throws RecognitionException {
 
@@ -43226,6 +47765,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__1__Impl"
+    /**
+     * Rule primary group 3 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12428:1: rule__Primary__Group_3__1__Impl : ( () ) ;
     public final void rule__Primary__Group_3__1__Impl() throws RecognitionException {
 
@@ -43267,6 +47811,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__2"
+    /**
+     * Rule primary group 3 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12443:1: rule__Primary__Group_3__2 : rule__Primary__Group_3__2__Impl rule__Primary__Group_3__3 ;
     public final void rule__Primary__Group_3__2() throws RecognitionException {
 
@@ -43305,6 +47854,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__2__Impl"
+    /**
+     * Rule primary group 3 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12455:1: rule__Primary__Group_3__2__Impl : ( ( rule__Primary__ExprsAssignment_3_2 )? ) ;
     public final void rule__Primary__Group_3__2__Impl() throws RecognitionException {
 
@@ -43367,6 +47921,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__3"
+    /**
+     * Rule primary group 3 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12470:1: rule__Primary__Group_3__3 : rule__Primary__Group_3__3__Impl ;
     public final void rule__Primary__Group_3__3() throws RecognitionException {
 
@@ -43400,6 +47959,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_3__3__Impl"
+    /**
+     * Rule primary group 3 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12481:1: rule__Primary__Group_3__3__Impl : ( ']' ) ;
     public final void rule__Primary__Group_3__3__Impl() throws RecognitionException {
 
@@ -43441,6 +48005,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__0"
+    /**
+     * Rule primary group 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12497:1: rule__Primary__Group_4__0 : rule__Primary__Group_4__0__Impl rule__Primary__Group_4__1 ;
     public final void rule__Primary__Group_4__0() throws RecognitionException {
 
@@ -43479,6 +48048,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__0__Impl"
+    /**
+     * Rule primary group 4 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12509:1: rule__Primary__Group_4__0__Impl : ( '{' ) ;
     public final void rule__Primary__Group_4__0__Impl() throws RecognitionException {
 
@@ -43520,6 +48094,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__1"
+    /**
+     * Rule primary group 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12524:1: rule__Primary__Group_4__1 : rule__Primary__Group_4__1__Impl rule__Primary__Group_4__2 ;
     public final void rule__Primary__Group_4__1() throws RecognitionException {
 
@@ -43558,6 +48137,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__1__Impl"
+    /**
+     * Rule primary group 4 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12536:1: rule__Primary__Group_4__1__Impl : ( () ) ;
     public final void rule__Primary__Group_4__1__Impl() throws RecognitionException {
 
@@ -43599,6 +48183,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__2"
+    /**
+     * Rule primary group 4 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12551:1: rule__Primary__Group_4__2 : rule__Primary__Group_4__2__Impl rule__Primary__Group_4__3 ;
     public final void rule__Primary__Group_4__2() throws RecognitionException {
 
@@ -43637,6 +48226,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__2__Impl"
+    /**
+     * Rule primary group 4 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12563:1: rule__Primary__Group_4__2__Impl : ( ( rule__Primary__LeftAssignment_4_2 ) ) ;
     public final void rule__Primary__Group_4__2__Impl() throws RecognitionException {
 
@@ -43688,6 +48282,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__3"
+    /**
+     * Rule primary group 4 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12578:1: rule__Primary__Group_4__3 : rule__Primary__Group_4__3__Impl rule__Primary__Group_4__4 ;
     public final void rule__Primary__Group_4__3() throws RecognitionException {
 
@@ -43726,6 +48325,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__3__Impl"
+    /**
+     * Rule primary group 4 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12590:1: rule__Primary__Group_4__3__Impl : ( ( rule__Primary__OpAssignment_4_3 ) ) ;
     public final void rule__Primary__Group_4__3__Impl() throws RecognitionException {
 
@@ -43777,6 +48381,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__4"
+    /**
+     * Rule primary group 4 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12605:1: rule__Primary__Group_4__4 : rule__Primary__Group_4__4__Impl rule__Primary__Group_4__5 ;
     public final void rule__Primary__Group_4__4() throws RecognitionException {
 
@@ -43815,6 +48424,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__4__Impl"
+    /**
+     * Rule primary group 4 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12617:1: rule__Primary__Group_4__4__Impl : ( ( rule__Primary__RightAssignment_4_4 ) ) ;
     public final void rule__Primary__Group_4__4__Impl() throws RecognitionException {
 
@@ -43866,6 +48480,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__5"
+    /**
+     * Rule primary group 4 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12632:1: rule__Primary__Group_4__5 : rule__Primary__Group_4__5__Impl rule__Primary__Group_4__6 ;
     public final void rule__Primary__Group_4__5() throws RecognitionException {
 
@@ -43904,6 +48523,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__5__Impl"
+    /**
+     * Rule primary group 4 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12644:1: rule__Primary__Group_4__5__Impl : ( ( rule__Primary__Group_4_5__0 )? ) ;
     public final void rule__Primary__Group_4__5__Impl() throws RecognitionException {
 
@@ -43966,6 +48590,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__6"
+    /**
+     * Rule primary group 4 6.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12659:1: rule__Primary__Group_4__6 : rule__Primary__Group_4__6__Impl ;
     public final void rule__Primary__Group_4__6() throws RecognitionException {
 
@@ -43999,6 +48628,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4__6__Impl"
+    /**
+     * Rule primary group 4 6 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12670:1: rule__Primary__Group_4__6__Impl : ( '}' ) ;
     public final void rule__Primary__Group_4__6__Impl() throws RecognitionException {
 
@@ -44040,6 +48674,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4_5__0"
+    /**
+     * Rule primary group 4 5 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12686:1: rule__Primary__Group_4_5__0 : rule__Primary__Group_4_5__0__Impl rule__Primary__Group_4_5__1 ;
     public final void rule__Primary__Group_4_5__0() throws RecognitionException {
 
@@ -44078,6 +48717,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4_5__0__Impl"
+    /**
+     * Rule primary group 4 5 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12698:1: rule__Primary__Group_4_5__0__Impl : ( ',' ) ;
     public final void rule__Primary__Group_4_5__0__Impl() throws RecognitionException {
 
@@ -44119,6 +48763,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4_5__1"
+    /**
+     * Rule primary group 4 5 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12713:1: rule__Primary__Group_4_5__1 : rule__Primary__Group_4_5__1__Impl ;
     public final void rule__Primary__Group_4_5__1() throws RecognitionException {
 
@@ -44152,6 +48801,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__Group_4_5__1__Impl"
+    /**
+     * Rule primary group 4 5 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12724:1: rule__Primary__Group_4_5__1__Impl : ( ( rule__Primary__ZAssignment_4_5_1 ) ) ;
     public final void rule__Primary__Group_4_5__1__Impl() throws RecognitionException {
 
@@ -44203,6 +48857,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__0"
+    /**
+     * Rule function group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12740:1: rule__Function__Group__0 : rule__Function__Group__0__Impl rule__Function__Group__1 ;
     public final void rule__Function__Group__0() throws RecognitionException {
 
@@ -44241,6 +48900,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__0__Impl"
+    /**
+     * Rule function group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12752:1: rule__Function__Group__0__Impl : ( () ) ;
     public final void rule__Function__Group__0__Impl() throws RecognitionException {
 
@@ -44282,6 +48946,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__1"
+    /**
+     * Rule function group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12767:1: rule__Function__Group__1 : rule__Function__Group__1__Impl rule__Function__Group__2 ;
     public final void rule__Function__Group__1() throws RecognitionException {
 
@@ -44320,6 +48989,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__1__Impl"
+    /**
+     * Rule function group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12779:1: rule__Function__Group__1__Impl : ( ( rule__Function__LeftAssignment_1 ) ) ;
     public final void rule__Function__Group__1__Impl() throws RecognitionException {
 
@@ -44371,6 +49045,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__2"
+    /**
+     * Rule function group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12794:1: rule__Function__Group__2 : rule__Function__Group__2__Impl rule__Function__Group__3 ;
     public final void rule__Function__Group__2() throws RecognitionException {
 
@@ -44409,6 +49088,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__2__Impl"
+    /**
+     * Rule function group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12806:1: rule__Function__Group__2__Impl : ( ( rule__Function__TypeAssignment_2 )? ) ;
     public final void rule__Function__Group__2__Impl() throws RecognitionException {
 
@@ -44471,6 +49155,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__3"
+    /**
+     * Rule function group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12821:1: rule__Function__Group__3 : rule__Function__Group__3__Impl rule__Function__Group__4 ;
     public final void rule__Function__Group__3() throws RecognitionException {
 
@@ -44509,6 +49198,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__3__Impl"
+    /**
+     * Rule function group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12833:1: rule__Function__Group__3__Impl : ( '(' ) ;
     public final void rule__Function__Group__3__Impl() throws RecognitionException {
 
@@ -44550,6 +49244,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__4"
+    /**
+     * Rule function group 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12848:1: rule__Function__Group__4 : rule__Function__Group__4__Impl rule__Function__Group__5 ;
     public final void rule__Function__Group__4() throws RecognitionException {
 
@@ -44588,6 +49287,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__4__Impl"
+    /**
+     * Rule function group 4 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12860:1: rule__Function__Group__4__Impl : ( ( rule__Function__RightAssignment_4 )? ) ;
     public final void rule__Function__Group__4__Impl() throws RecognitionException {
 
@@ -44650,6 +49354,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__5"
+    /**
+     * Rule function group 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12875:1: rule__Function__Group__5 : rule__Function__Group__5__Impl ;
     public final void rule__Function__Group__5() throws RecognitionException {
 
@@ -44683,6 +49392,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__Group__5__Impl"
+    /**
+     * Rule function group 5 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12886:1: rule__Function__Group__5__Impl : ( ')' ) ;
     public final void rule__Function__Group__5__Impl() throws RecognitionException {
 
@@ -44724,6 +49438,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0__0"
+    /**
+     * Rule expression list group 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12902:1: rule__ExpressionList__Group_0__0 : rule__ExpressionList__Group_0__0__Impl rule__ExpressionList__Group_0__1 ;
     public final void rule__ExpressionList__Group_0__0() throws RecognitionException {
 
@@ -44762,6 +49481,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0__0__Impl"
+    /**
+     * Rule expression list group 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12914:1: rule__ExpressionList__Group_0__0__Impl : ( ( rule__ExpressionList__ExprsAssignment_0_0 ) ) ;
     public final void rule__ExpressionList__Group_0__0__Impl() throws RecognitionException {
 
@@ -44813,6 +49537,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0__1"
+    /**
+     * Rule expression list group 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12929:1: rule__ExpressionList__Group_0__1 : rule__ExpressionList__Group_0__1__Impl ;
     public final void rule__ExpressionList__Group_0__1() throws RecognitionException {
 
@@ -44846,6 +49575,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0__1__Impl"
+    /**
+     * Rule expression list group 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12940:1: rule__ExpressionList__Group_0__1__Impl : ( ( rule__ExpressionList__Group_0_1__0 )* ) ;
     public final void rule__ExpressionList__Group_0__1__Impl() throws RecognitionException {
 
@@ -44915,6 +49649,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0_1__0"
+    /**
+     * Rule expression list group 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12956:1: rule__ExpressionList__Group_0_1__0 : rule__ExpressionList__Group_0_1__0__Impl rule__ExpressionList__Group_0_1__1 ;
     public final void rule__ExpressionList__Group_0_1__0() throws RecognitionException {
 
@@ -44953,6 +49692,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0_1__0__Impl"
+    /**
+     * Rule expression list group 0 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12968:1: rule__ExpressionList__Group_0_1__0__Impl : ( ',' ) ;
     public final void rule__ExpressionList__Group_0_1__0__Impl() throws RecognitionException {
 
@@ -44994,6 +49738,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0_1__1"
+    /**
+     * Rule expression list group 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12983:1: rule__ExpressionList__Group_0_1__1 : rule__ExpressionList__Group_0_1__1__Impl ;
     public final void rule__ExpressionList__Group_0_1__1() throws RecognitionException {
 
@@ -45027,6 +49776,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_0_1__1__Impl"
+    /**
+     * Rule expression list group 0 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:12994:1: rule__ExpressionList__Group_0_1__1__Impl : ( ( rule__ExpressionList__ExprsAssignment_0_1_1 ) ) ;
     public final void rule__ExpressionList__Group_0_1__1__Impl() throws RecognitionException {
 
@@ -45078,6 +49832,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1__0"
+    /**
+     * Rule expression list group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13010:1: rule__ExpressionList__Group_1__0 : rule__ExpressionList__Group_1__0__Impl rule__ExpressionList__Group_1__1 ;
     public final void rule__ExpressionList__Group_1__0() throws RecognitionException {
 
@@ -45116,6 +49875,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1__0__Impl"
+    /**
+     * Rule expression list group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13022:1: rule__ExpressionList__Group_1__0__Impl : ( ( rule__ExpressionList__ExprsAssignment_1_0 ) ) ;
     public final void rule__ExpressionList__Group_1__0__Impl() throws RecognitionException {
 
@@ -45167,6 +49931,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1__1"
+    /**
+     * Rule expression list group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13037:1: rule__ExpressionList__Group_1__1 : rule__ExpressionList__Group_1__1__Impl ;
     public final void rule__ExpressionList__Group_1__1() throws RecognitionException {
 
@@ -45200,6 +49969,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1__1__Impl"
+    /**
+     * Rule expression list group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13048:1: rule__ExpressionList__Group_1__1__Impl : ( ( rule__ExpressionList__Group_1_1__0 )* ) ;
     public final void rule__ExpressionList__Group_1__1__Impl() throws RecognitionException {
 
@@ -45269,6 +50043,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1_1__0"
+    /**
+     * Rule expression list group 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13064:1: rule__ExpressionList__Group_1_1__0 : rule__ExpressionList__Group_1_1__0__Impl rule__ExpressionList__Group_1_1__1 ;
     public final void rule__ExpressionList__Group_1_1__0() throws RecognitionException {
 
@@ -45307,6 +50086,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1_1__0__Impl"
+    /**
+     * Rule expression list group 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13076:1: rule__ExpressionList__Group_1_1__0__Impl : ( ',' ) ;
     public final void rule__ExpressionList__Group_1_1__0__Impl() throws RecognitionException {
 
@@ -45348,6 +50132,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1_1__1"
+    /**
+     * Rule expression list group 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13091:1: rule__ExpressionList__Group_1_1__1 : rule__ExpressionList__Group_1_1__1__Impl ;
     public final void rule__ExpressionList__Group_1_1__1() throws RecognitionException {
 
@@ -45381,6 +50170,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__Group_1_1__1__Impl"
+    /**
+     * Rule expression list group 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13102:1: rule__ExpressionList__Group_1_1__1__Impl : ( ( rule__ExpressionList__ExprsAssignment_1_1_1 ) ) ;
     public final void rule__ExpressionList__Group_1_1__1__Impl() throws RecognitionException {
 
@@ -45432,6 +50226,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__0"
+    /**
+     * Rule parameter group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13118:1: rule__Parameter__Group__0 : rule__Parameter__Group__0__Impl rule__Parameter__Group__1 ;
     public final void rule__Parameter__Group__0() throws RecognitionException {
 
@@ -45470,6 +50269,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__0__Impl"
+    /**
+     * Rule parameter group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13130:1: rule__Parameter__Group__0__Impl : ( () ) ;
     public final void rule__Parameter__Group__0__Impl() throws RecognitionException {
 
@@ -45511,6 +50315,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__1"
+    /**
+     * Rule parameter group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13145:1: rule__Parameter__Group__1 : rule__Parameter__Group__1__Impl rule__Parameter__Group__2 ;
     public final void rule__Parameter__Group__1() throws RecognitionException {
 
@@ -45549,6 +50358,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__1__Impl"
+    /**
+     * Rule parameter group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13157:1: rule__Parameter__Group__1__Impl : ( ( rule__Parameter__Alternatives_1 ) ) ;
     public final void rule__Parameter__Group__1__Impl() throws RecognitionException {
 
@@ -45600,6 +50414,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__2"
+    /**
+     * Rule parameter group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13172:1: rule__Parameter__Group__2 : rule__Parameter__Group__2__Impl ;
     public final void rule__Parameter__Group__2() throws RecognitionException {
 
@@ -45633,6 +50452,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group__2__Impl"
+    /**
+     * Rule parameter group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13183:1: rule__Parameter__Group__2__Impl : ( ( rule__Parameter__RightAssignment_2 ) ) ;
     public final void rule__Parameter__Group__2__Impl() throws RecognitionException {
 
@@ -45684,6 +50508,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group_1_1__0"
+    /**
+     * Rule parameter group 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13199:1: rule__Parameter__Group_1_1__0 : rule__Parameter__Group_1_1__0__Impl rule__Parameter__Group_1_1__1 ;
     public final void rule__Parameter__Group_1_1__0() throws RecognitionException {
 
@@ -45722,6 +50551,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group_1_1__0__Impl"
+    /**
+     * Rule parameter group 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13211:1: rule__Parameter__Group_1_1__0__Impl : ( ( rule__Parameter__LeftAssignment_1_1_0 ) ) ;
     public final void rule__Parameter__Group_1_1__0__Impl() throws RecognitionException {
 
@@ -45773,6 +50607,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group_1_1__1"
+    /**
+     * Rule parameter group 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13226:1: rule__Parameter__Group_1_1__1 : rule__Parameter__Group_1_1__1__Impl ;
     public final void rule__Parameter__Group_1_1__1() throws RecognitionException {
 
@@ -45806,6 +50645,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__Group_1_1__1__Impl"
+    /**
+     * Rule parameter group 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13237:1: rule__Parameter__Group_1_1__1__Impl : ( ':' ) ;
     public final void rule__Parameter__Group_1_1__1__Impl() throws RecognitionException {
 
@@ -45847,6 +50691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitRef__Group__0"
+    /**
+     * Rule unit ref group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13253:1: rule__UnitRef__Group__0 : rule__UnitRef__Group__0__Impl rule__UnitRef__Group__1 ;
     public final void rule__UnitRef__Group__0() throws RecognitionException {
 
@@ -45885,6 +50734,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitRef__Group__0__Impl"
+    /**
+     * Rule unit ref group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13265:1: rule__UnitRef__Group__0__Impl : ( () ) ;
     public final void rule__UnitRef__Group__0__Impl() throws RecognitionException {
 
@@ -45926,6 +50780,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitRef__Group__1"
+    /**
+     * Rule unit ref group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13280:1: rule__UnitRef__Group__1 : rule__UnitRef__Group__1__Impl ;
     public final void rule__UnitRef__Group__1() throws RecognitionException {
 
@@ -45959,6 +50818,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitRef__Group__1__Impl"
+    /**
+     * Rule unit ref group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13291:1: rule__UnitRef__Group__1__Impl : ( ( rule__UnitRef__RefAssignment_1 ) ) ;
     public final void rule__UnitRef__Group__1__Impl() throws RecognitionException {
 
@@ -46010,6 +50874,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VariableRef__Group__0"
+    /**
+     * Rule variable ref group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13307:1: rule__VariableRef__Group__0 : rule__VariableRef__Group__0__Impl rule__VariableRef__Group__1 ;
     public final void rule__VariableRef__Group__0() throws RecognitionException {
 
@@ -46048,6 +50917,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VariableRef__Group__0__Impl"
+    /**
+     * Rule variable ref group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13319:1: rule__VariableRef__Group__0__Impl : ( () ) ;
     public final void rule__VariableRef__Group__0__Impl() throws RecognitionException {
 
@@ -46089,6 +50963,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VariableRef__Group__1"
+    /**
+     * Rule variable ref group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13334:1: rule__VariableRef__Group__1 : rule__VariableRef__Group__1__Impl ;
     public final void rule__VariableRef__Group__1() throws RecognitionException {
 
@@ -46122,6 +51001,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VariableRef__Group__1__Impl"
+    /**
+     * Rule variable ref group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13345:1: rule__VariableRef__Group__1__Impl : ( ( rule__VariableRef__RefAssignment_1 ) ) ;
     public final void rule__VariableRef__Group__1__Impl() throws RecognitionException {
 
@@ -46173,6 +51057,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0__0"
+    /**
+     * Rule type ref group 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13361:1: rule__TypeRef__Group_0__0 : rule__TypeRef__Group_0__0__Impl rule__TypeRef__Group_0__1 ;
     public final void rule__TypeRef__Group_0__0() throws RecognitionException {
 
@@ -46211,6 +51100,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0__0__Impl"
+    /**
+     * Rule type ref group 0 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13373:1: rule__TypeRef__Group_0__0__Impl : ( () ) ;
     public final void rule__TypeRef__Group_0__0__Impl() throws RecognitionException {
 
@@ -46252,6 +51146,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0__1"
+    /**
+     * Rule type ref group 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13388:1: rule__TypeRef__Group_0__1 : rule__TypeRef__Group_0__1__Impl ;
     public final void rule__TypeRef__Group_0__1() throws RecognitionException {
 
@@ -46285,6 +51184,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0__1__Impl"
+    /**
+     * Rule type ref group 0 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13399:1: rule__TypeRef__Group_0__1__Impl : ( ( rule__TypeRef__Group_0_1__0 ) ) ;
     public final void rule__TypeRef__Group_0__1__Impl() throws RecognitionException {
 
@@ -46336,6 +51240,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0_1__0"
+    /**
+     * Rule type ref group 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13415:1: rule__TypeRef__Group_0_1__0 : rule__TypeRef__Group_0_1__0__Impl rule__TypeRef__Group_0_1__1 ;
     public final void rule__TypeRef__Group_0_1__0() throws RecognitionException {
 
@@ -46374,6 +51283,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0_1__0__Impl"
+    /**
+     * Rule type ref group 0 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13427:1: rule__TypeRef__Group_0_1__0__Impl : ( ( rule__TypeRef__RefAssignment_0_1_0 ) ) ;
     public final void rule__TypeRef__Group_0_1__0__Impl() throws RecognitionException {
 
@@ -46425,6 +51339,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0_1__1"
+    /**
+     * Rule type ref group 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13442:1: rule__TypeRef__Group_0_1__1 : rule__TypeRef__Group_0_1__1__Impl ;
     public final void rule__TypeRef__Group_0_1__1() throws RecognitionException {
 
@@ -46458,6 +51377,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_0_1__1__Impl"
+    /**
+     * Rule type ref group 0 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13453:1: rule__TypeRef__Group_0_1__1__Impl : ( ( rule__TypeRef__ParameterAssignment_0_1_1 )? ) ;
     public final void rule__TypeRef__Group_0_1__1__Impl() throws RecognitionException {
 
@@ -46520,6 +51444,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1__0"
+    /**
+     * Rule type ref group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13469:1: rule__TypeRef__Group_1__0 : rule__TypeRef__Group_1__0__Impl rule__TypeRef__Group_1__1 ;
     public final void rule__TypeRef__Group_1__0() throws RecognitionException {
 
@@ -46558,6 +51487,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1__0__Impl"
+    /**
+     * Rule type ref group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13481:1: rule__TypeRef__Group_1__0__Impl : ( () ) ;
     public final void rule__TypeRef__Group_1__0__Impl() throws RecognitionException {
 
@@ -46599,6 +51533,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1__1"
+    /**
+     * Rule type ref group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13496:1: rule__TypeRef__Group_1__1 : rule__TypeRef__Group_1__1__Impl ;
     public final void rule__TypeRef__Group_1__1() throws RecognitionException {
 
@@ -46632,6 +51571,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1__1__Impl"
+    /**
+     * Rule type ref group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13507:1: rule__TypeRef__Group_1__1__Impl : ( ( rule__TypeRef__Group_1_1__0 ) ) ;
     public final void rule__TypeRef__Group_1__1__Impl() throws RecognitionException {
 
@@ -46683,6 +51627,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1_1__0"
+    /**
+     * Rule type ref group 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13523:1: rule__TypeRef__Group_1_1__0 : rule__TypeRef__Group_1_1__0__Impl rule__TypeRef__Group_1_1__1 ;
     public final void rule__TypeRef__Group_1_1__0() throws RecognitionException {
 
@@ -46721,6 +51670,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1_1__0__Impl"
+    /**
+     * Rule type ref group 1 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13535:1: rule__TypeRef__Group_1_1__0__Impl : ( 'species' ) ;
     public final void rule__TypeRef__Group_1_1__0__Impl() throws RecognitionException {
 
@@ -46762,6 +51716,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1_1__1"
+    /**
+     * Rule type ref group 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13550:1: rule__TypeRef__Group_1_1__1 : rule__TypeRef__Group_1_1__1__Impl ;
     public final void rule__TypeRef__Group_1_1__1() throws RecognitionException {
 
@@ -46795,6 +51754,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__Group_1_1__1__Impl"
+    /**
+     * Rule type ref group 1 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13561:1: rule__TypeRef__Group_1_1__1__Impl : ( ( rule__TypeRef__ParameterAssignment_1_1_1 ) ) ;
     public final void rule__TypeRef__Group_1_1__1__Impl() throws RecognitionException {
 
@@ -46846,6 +51810,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__0"
+    /**
+     * Rule type info group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13577:1: rule__TypeInfo__Group__0 : rule__TypeInfo__Group__0__Impl rule__TypeInfo__Group__1 ;
     public final void rule__TypeInfo__Group__0() throws RecognitionException {
 
@@ -46884,6 +51853,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__0__Impl"
+    /**
+     * Rule type info group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13589:1: rule__TypeInfo__Group__0__Impl : ( '<' ) ;
     public final void rule__TypeInfo__Group__0__Impl() throws RecognitionException {
 
@@ -46925,6 +51899,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__1"
+    /**
+     * Rule type info group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13604:1: rule__TypeInfo__Group__1 : rule__TypeInfo__Group__1__Impl rule__TypeInfo__Group__2 ;
     public final void rule__TypeInfo__Group__1() throws RecognitionException {
 
@@ -46963,6 +51942,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__1__Impl"
+    /**
+     * Rule type info group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13616:1: rule__TypeInfo__Group__1__Impl : ( ( rule__TypeInfo__FirstAssignment_1 ) ) ;
     public final void rule__TypeInfo__Group__1__Impl() throws RecognitionException {
 
@@ -47014,6 +51998,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__2"
+    /**
+     * Rule type info group 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13631:1: rule__TypeInfo__Group__2 : rule__TypeInfo__Group__2__Impl rule__TypeInfo__Group__3 ;
     public final void rule__TypeInfo__Group__2() throws RecognitionException {
 
@@ -47052,6 +52041,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__2__Impl"
+    /**
+     * Rule type info group 2 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13643:1: rule__TypeInfo__Group__2__Impl : ( ( rule__TypeInfo__Group_2__0 )? ) ;
     public final void rule__TypeInfo__Group__2__Impl() throws RecognitionException {
 
@@ -47114,6 +52108,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__3"
+    /**
+     * Rule type info group 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13658:1: rule__TypeInfo__Group__3 : rule__TypeInfo__Group__3__Impl ;
     public final void rule__TypeInfo__Group__3() throws RecognitionException {
 
@@ -47147,6 +52146,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group__3__Impl"
+    /**
+     * Rule type info group 3 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13669:1: rule__TypeInfo__Group__3__Impl : ( ( '>' ) ) ;
     public final void rule__TypeInfo__Group__3__Impl() throws RecognitionException {
 
@@ -47194,6 +52198,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group_2__0"
+    /**
+     * Rule type info group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13685:1: rule__TypeInfo__Group_2__0 : rule__TypeInfo__Group_2__0__Impl rule__TypeInfo__Group_2__1 ;
     public final void rule__TypeInfo__Group_2__0() throws RecognitionException {
 
@@ -47232,6 +52241,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group_2__0__Impl"
+    /**
+     * Rule type info group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13697:1: rule__TypeInfo__Group_2__0__Impl : ( ',' ) ;
     public final void rule__TypeInfo__Group_2__0__Impl() throws RecognitionException {
 
@@ -47273,6 +52287,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group_2__1"
+    /**
+     * Rule type info group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13712:1: rule__TypeInfo__Group_2__1 : rule__TypeInfo__Group_2__1__Impl ;
     public final void rule__TypeInfo__Group_2__1() throws RecognitionException {
 
@@ -47306,6 +52325,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__Group_2__1__Impl"
+    /**
+     * Rule type info group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13723:1: rule__TypeInfo__Group_2__1__Impl : ( ( rule__TypeInfo__SecondAssignment_2_1 ) ) ;
     public final void rule__TypeInfo__Group_2__1__Impl() throws RecognitionException {
 
@@ -47357,6 +52381,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionRef__Group__0"
+    /**
+     * Rule action ref group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13739:1: rule__ActionRef__Group__0 : rule__ActionRef__Group__0__Impl rule__ActionRef__Group__1 ;
     public final void rule__ActionRef__Group__0() throws RecognitionException {
 
@@ -47395,6 +52424,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionRef__Group__0__Impl"
+    /**
+     * Rule action ref group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13751:1: rule__ActionRef__Group__0__Impl : ( () ) ;
     public final void rule__ActionRef__Group__0__Impl() throws RecognitionException {
 
@@ -47436,6 +52470,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionRef__Group__1"
+    /**
+     * Rule action ref group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13766:1: rule__ActionRef__Group__1 : rule__ActionRef__Group__1__Impl ;
     public final void rule__ActionRef__Group__1() throws RecognitionException {
 
@@ -47469,6 +52508,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionRef__Group__1__Impl"
+    /**
+     * Rule action ref group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13777:1: rule__ActionRef__Group__1__Impl : ( ( rule__ActionRef__RefAssignment_1 ) ) ;
     public final void rule__ActionRef__Group__1__Impl() throws RecognitionException {
 
@@ -47520,6 +52564,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationRef__Group__0"
+    /**
+     * Rule equation ref group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13793:1: rule__EquationRef__Group__0 : rule__EquationRef__Group__0__Impl rule__EquationRef__Group__1 ;
     public final void rule__EquationRef__Group__0() throws RecognitionException {
 
@@ -47558,6 +52607,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationRef__Group__0__Impl"
+    /**
+     * Rule equation ref group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13805:1: rule__EquationRef__Group__0__Impl : ( () ) ;
     public final void rule__EquationRef__Group__0__Impl() throws RecognitionException {
 
@@ -47599,6 +52653,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationRef__Group__1"
+    /**
+     * Rule equation ref group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13820:1: rule__EquationRef__Group__1 : rule__EquationRef__Group__1__Impl ;
     public final void rule__EquationRef__Group__1() throws RecognitionException {
 
@@ -47632,6 +52691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationRef__Group__1__Impl"
+    /**
+     * Rule equation ref group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13831:1: rule__EquationRef__Group__1__Impl : ( ( rule__EquationRef__RefAssignment_1 ) ) ;
     public final void rule__EquationRef__Group__1__Impl() throws RecognitionException {
 
@@ -47683,6 +52747,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitFakeDefinition__Group__0"
+    /**
+     * Rule unit fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13847:1: rule__UnitFakeDefinition__Group__0 : rule__UnitFakeDefinition__Group__0__Impl rule__UnitFakeDefinition__Group__1 ;
     public final void rule__UnitFakeDefinition__Group__0() throws RecognitionException {
 
@@ -47721,6 +52790,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitFakeDefinition__Group__0__Impl"
+    /**
+     * Rule unit fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13859:1: rule__UnitFakeDefinition__Group__0__Impl : ( '**unit*' ) ;
     public final void rule__UnitFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -47762,6 +52836,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitFakeDefinition__Group__1"
+    /**
+     * Rule unit fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13874:1: rule__UnitFakeDefinition__Group__1 : rule__UnitFakeDefinition__Group__1__Impl ;
     public final void rule__UnitFakeDefinition__Group__1() throws RecognitionException {
 
@@ -47795,6 +52874,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitFakeDefinition__Group__1__Impl"
+    /**
+     * Rule unit fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13885:1: rule__UnitFakeDefinition__Group__1__Impl : ( ( rule__UnitFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__UnitFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -47846,6 +52930,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFakeDefinition__Group__0"
+    /**
+     * Rule type fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13901:1: rule__TypeFakeDefinition__Group__0 : rule__TypeFakeDefinition__Group__0__Impl rule__TypeFakeDefinition__Group__1 ;
     public final void rule__TypeFakeDefinition__Group__0() throws RecognitionException {
 
@@ -47884,6 +52973,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFakeDefinition__Group__0__Impl"
+    /**
+     * Rule type fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13913:1: rule__TypeFakeDefinition__Group__0__Impl : ( '**type*' ) ;
     public final void rule__TypeFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -47925,6 +53019,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFakeDefinition__Group__1"
+    /**
+     * Rule type fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13928:1: rule__TypeFakeDefinition__Group__1 : rule__TypeFakeDefinition__Group__1__Impl ;
     public final void rule__TypeFakeDefinition__Group__1() throws RecognitionException {
 
@@ -47958,6 +53057,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFakeDefinition__Group__1__Impl"
+    /**
+     * Rule type fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13939:1: rule__TypeFakeDefinition__Group__1__Impl : ( ( rule__TypeFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__TypeFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -48009,6 +53113,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFakeDefinition__Group__0"
+    /**
+     * Rule action fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13955:1: rule__ActionFakeDefinition__Group__0 : rule__ActionFakeDefinition__Group__0__Impl rule__ActionFakeDefinition__Group__1 ;
     public final void rule__ActionFakeDefinition__Group__0() throws RecognitionException {
 
@@ -48047,6 +53156,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFakeDefinition__Group__0__Impl"
+    /**
+     * Rule action fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13967:1: rule__ActionFakeDefinition__Group__0__Impl : ( '**action*' ) ;
     public final void rule__ActionFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -48088,6 +53202,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFakeDefinition__Group__1"
+    /**
+     * Rule action fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13982:1: rule__ActionFakeDefinition__Group__1 : rule__ActionFakeDefinition__Group__1__Impl ;
     public final void rule__ActionFakeDefinition__Group__1() throws RecognitionException {
 
@@ -48121,6 +53240,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFakeDefinition__Group__1__Impl"
+    /**
+     * Rule action fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:13993:1: rule__ActionFakeDefinition__Group__1__Impl : ( ( rule__ActionFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__ActionFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -48172,6 +53296,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SkillFakeDefinition__Group__0"
+    /**
+     * Rule skill fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14009:1: rule__SkillFakeDefinition__Group__0 : rule__SkillFakeDefinition__Group__0__Impl rule__SkillFakeDefinition__Group__1 ;
     public final void rule__SkillFakeDefinition__Group__0() throws RecognitionException {
 
@@ -48210,6 +53339,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SkillFakeDefinition__Group__0__Impl"
+    /**
+     * Rule skill fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14021:1: rule__SkillFakeDefinition__Group__0__Impl : ( '**skill*' ) ;
     public final void rule__SkillFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -48251,6 +53385,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SkillFakeDefinition__Group__1"
+    /**
+     * Rule skill fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14036:1: rule__SkillFakeDefinition__Group__1 : rule__SkillFakeDefinition__Group__1__Impl ;
     public final void rule__SkillFakeDefinition__Group__1() throws RecognitionException {
 
@@ -48284,6 +53423,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SkillFakeDefinition__Group__1__Impl"
+    /**
+     * Rule skill fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14047:1: rule__SkillFakeDefinition__Group__1__Impl : ( ( rule__SkillFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__SkillFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -48335,6 +53479,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFakeDefinition__Group__0"
+    /**
+     * Rule var fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14063:1: rule__VarFakeDefinition__Group__0 : rule__VarFakeDefinition__Group__0__Impl rule__VarFakeDefinition__Group__1 ;
     public final void rule__VarFakeDefinition__Group__0() throws RecognitionException {
 
@@ -48373,6 +53522,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFakeDefinition__Group__0__Impl"
+    /**
+     * Rule var fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14075:1: rule__VarFakeDefinition__Group__0__Impl : ( '**var*' ) ;
     public final void rule__VarFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -48414,6 +53568,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFakeDefinition__Group__1"
+    /**
+     * Rule var fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14090:1: rule__VarFakeDefinition__Group__1 : rule__VarFakeDefinition__Group__1__Impl ;
     public final void rule__VarFakeDefinition__Group__1() throws RecognitionException {
 
@@ -48447,6 +53606,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFakeDefinition__Group__1__Impl"
+    /**
+     * Rule var fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14101:1: rule__VarFakeDefinition__Group__1__Impl : ( ( rule__VarFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__VarFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -48498,6 +53662,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationFakeDefinition__Group__0"
+    /**
+     * Rule equation fake definition group 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14117:1: rule__EquationFakeDefinition__Group__0 : rule__EquationFakeDefinition__Group__0__Impl rule__EquationFakeDefinition__Group__1 ;
     public final void rule__EquationFakeDefinition__Group__0() throws RecognitionException {
 
@@ -48536,6 +53705,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationFakeDefinition__Group__0__Impl"
+    /**
+     * Rule equation fake definition group 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14129:1: rule__EquationFakeDefinition__Group__0__Impl : ( '**equation*' ) ;
     public final void rule__EquationFakeDefinition__Group__0__Impl() throws RecognitionException {
 
@@ -48577,6 +53751,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationFakeDefinition__Group__1"
+    /**
+     * Rule equation fake definition group 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14144:1: rule__EquationFakeDefinition__Group__1 : rule__EquationFakeDefinition__Group__1__Impl ;
     public final void rule__EquationFakeDefinition__Group__1() throws RecognitionException {
 
@@ -48610,6 +53789,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationFakeDefinition__Group__1__Impl"
+    /**
+     * Rule equation fake definition group 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14155:1: rule__EquationFakeDefinition__Group__1__Impl : ( ( rule__EquationFakeDefinition__NameAssignment_1 ) ) ;
     public final void rule__EquationFakeDefinition__Group__1__Impl() throws RecognitionException {
 
@@ -48661,6 +53845,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_1__0"
+    /**
+     * Rule terminal expression group 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14171:1: rule__TerminalExpression__Group_1__0 : rule__TerminalExpression__Group_1__0__Impl rule__TerminalExpression__Group_1__1 ;
     public final void rule__TerminalExpression__Group_1__0() throws RecognitionException {
 
@@ -48699,6 +53888,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_1__0__Impl"
+    /**
+     * Rule terminal expression group 1 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14183:1: rule__TerminalExpression__Group_1__0__Impl : ( () ) ;
     public final void rule__TerminalExpression__Group_1__0__Impl() throws RecognitionException {
 
@@ -48740,6 +53934,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_1__1"
+    /**
+     * Rule terminal expression group 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14198:1: rule__TerminalExpression__Group_1__1 : rule__TerminalExpression__Group_1__1__Impl ;
     public final void rule__TerminalExpression__Group_1__1() throws RecognitionException {
 
@@ -48773,6 +53972,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_1__1__Impl"
+    /**
+     * Rule terminal expression group 1 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14209:1: rule__TerminalExpression__Group_1__1__Impl : ( ( rule__TerminalExpression__OpAssignment_1_1 ) ) ;
     public final void rule__TerminalExpression__Group_1__1__Impl() throws RecognitionException {
 
@@ -48824,6 +54028,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_2__0"
+    /**
+     * Rule terminal expression group 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14225:1: rule__TerminalExpression__Group_2__0 : rule__TerminalExpression__Group_2__0__Impl rule__TerminalExpression__Group_2__1 ;
     public final void rule__TerminalExpression__Group_2__0() throws RecognitionException {
 
@@ -48862,6 +54071,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_2__0__Impl"
+    /**
+     * Rule terminal expression group 2 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14237:1: rule__TerminalExpression__Group_2__0__Impl : ( () ) ;
     public final void rule__TerminalExpression__Group_2__0__Impl() throws RecognitionException {
 
@@ -48903,6 +54117,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_2__1"
+    /**
+     * Rule terminal expression group 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14252:1: rule__TerminalExpression__Group_2__1 : rule__TerminalExpression__Group_2__1__Impl ;
     public final void rule__TerminalExpression__Group_2__1() throws RecognitionException {
 
@@ -48936,6 +54155,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_2__1__Impl"
+    /**
+     * Rule terminal expression group 2 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14263:1: rule__TerminalExpression__Group_2__1__Impl : ( ( rule__TerminalExpression__OpAssignment_2_1 ) ) ;
     public final void rule__TerminalExpression__Group_2__1__Impl() throws RecognitionException {
 
@@ -48987,6 +54211,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_3__0"
+    /**
+     * Rule terminal expression group 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14279:1: rule__TerminalExpression__Group_3__0 : rule__TerminalExpression__Group_3__0__Impl rule__TerminalExpression__Group_3__1 ;
     public final void rule__TerminalExpression__Group_3__0() throws RecognitionException {
 
@@ -49025,6 +54254,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_3__0__Impl"
+    /**
+     * Rule terminal expression group 3 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14291:1: rule__TerminalExpression__Group_3__0__Impl : ( () ) ;
     public final void rule__TerminalExpression__Group_3__0__Impl() throws RecognitionException {
 
@@ -49066,6 +54300,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_3__1"
+    /**
+     * Rule terminal expression group 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14306:1: rule__TerminalExpression__Group_3__1 : rule__TerminalExpression__Group_3__1__Impl ;
     public final void rule__TerminalExpression__Group_3__1() throws RecognitionException {
 
@@ -49099,6 +54338,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_3__1__Impl"
+    /**
+     * Rule terminal expression group 3 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14317:1: rule__TerminalExpression__Group_3__1__Impl : ( ( rule__TerminalExpression__OpAssignment_3_1 ) ) ;
     public final void rule__TerminalExpression__Group_3__1__Impl() throws RecognitionException {
 
@@ -49150,6 +54394,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_4__0"
+    /**
+     * Rule terminal expression group 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14333:1: rule__TerminalExpression__Group_4__0 : rule__TerminalExpression__Group_4__0__Impl rule__TerminalExpression__Group_4__1 ;
     public final void rule__TerminalExpression__Group_4__0() throws RecognitionException {
 
@@ -49188,6 +54437,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_4__0__Impl"
+    /**
+     * Rule terminal expression group 4 0 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14345:1: rule__TerminalExpression__Group_4__0__Impl : ( () ) ;
     public final void rule__TerminalExpression__Group_4__0__Impl() throws RecognitionException {
 
@@ -49229,6 +54483,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_4__1"
+    /**
+     * Rule terminal expression group 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14360:1: rule__TerminalExpression__Group_4__1 : rule__TerminalExpression__Group_4__1__Impl ;
     public final void rule__TerminalExpression__Group_4__1() throws RecognitionException {
 
@@ -49262,6 +54521,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__Group_4__1__Impl"
+    /**
+     * Rule terminal expression group 4 1 impl.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14371:1: rule__TerminalExpression__Group_4__1__Impl : ( ( rule__TerminalExpression__OpAssignment_4_1 ) ) ;
     public final void rule__TerminalExpression__Group_4__1__Impl() throws RecognitionException {
 
@@ -49313,6 +54577,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StandaloneBlock__BlockAssignment_1"
+    /**
+     * Rule standalone block block assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14387:1: rule__StandaloneBlock__BlockAssignment_1 : ( ruleBlock ) ;
     public final void rule__StandaloneBlock__BlockAssignment_1() throws RecognitionException {
 
@@ -49358,6 +54627,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__TotoAssignment_0"
+    /**
+     * Rule string evaluator toto assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14402:1: rule__StringEvaluator__TotoAssignment_0 : ( RULE_ID ) ;
     public final void rule__StringEvaluator__TotoAssignment_0() throws RecognitionException {
 
@@ -49399,6 +54673,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringEvaluator__ExprAssignment_2"
+    /**
+     * Rule string evaluator expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14417:1: rule__StringEvaluator__ExprAssignment_2 : ( ruleExpression ) ;
     public final void rule__StringEvaluator__ExprAssignment_2() throws RecognitionException {
 
@@ -49444,6 +54723,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__PragmasAssignment_0"
+    /**
+     * Rule model pragmas assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14432:1: rule__Model__PragmasAssignment_0 : ( rulePragma ) ;
     public final void rule__Model__PragmasAssignment_0() throws RecognitionException {
 
@@ -49489,6 +54773,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__NameAssignment_2"
+    /**
+     * Rule model name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14447:1: rule__Model__NameAssignment_2 : ( RULE_ID ) ;
     public final void rule__Model__NameAssignment_2() throws RecognitionException {
 
@@ -49530,6 +54819,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__ImportsAssignment_3"
+    /**
+     * Rule model imports assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14462:1: rule__Model__ImportsAssignment_3 : ( ruleImport ) ;
     public final void rule__Model__ImportsAssignment_3() throws RecognitionException {
 
@@ -49575,6 +54869,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Model__BlockAssignment_4"
+    /**
+     * Rule model block assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14477:1: rule__Model__BlockAssignment_4 : ( ruleModelBlock ) ;
     public final void rule__Model__BlockAssignment_4() throws RecognitionException {
 
@@ -49620,6 +54919,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ModelBlock__StatementsAssignment_1"
+    /**
+     * Rule model block statements assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14492:1: rule__ModelBlock__StatementsAssignment_1 : ( ruleS_Section ) ;
     public final void rule__ModelBlock__StatementsAssignment_1() throws RecognitionException {
 
@@ -49665,6 +54969,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__ImportURIAssignment_1"
+    /**
+     * Rule import import URI assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14507:1: rule__Import__ImportURIAssignment_1 : ( RULE_STRING ) ;
     public final void rule__Import__ImportURIAssignment_1() throws RecognitionException {
 
@@ -49706,6 +55015,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Import__NameAssignment_2_1"
+    /**
+     * Rule import name assignment 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14522:1: rule__Import__NameAssignment_2_1 : ( ruleValid_ID ) ;
     public final void rule__Import__NameAssignment_2_1() throws RecognitionException {
 
@@ -49751,6 +55065,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pragma__NameAssignment_1"
+    /**
+     * Rule pragma name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14537:1: rule__Pragma__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__Pragma__NameAssignment_1() throws RecognitionException {
 
@@ -49792,6 +55111,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExperimentFileStructure__ExpAssignment"
+    /**
+     * Rule experiment file structure exp assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14552:1: rule__ExperimentFileStructure__ExpAssignment : ( ruleHeadlessExperiment ) ;
     public final void rule__ExperimentFileStructure__ExpAssignment() throws RecognitionException {
 
@@ -49837,6 +55161,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__KeyAssignment_0"
+    /**
+     * Rule headless experiment key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14567:1: rule__HeadlessExperiment__KeyAssignment_0 : ( rule_ExperimentKey ) ;
     public final void rule__HeadlessExperiment__KeyAssignment_0() throws RecognitionException {
 
@@ -49882,6 +55211,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__FirstFacetAssignment_1"
+    /**
+     * Rule headless experiment first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14582:1: rule__HeadlessExperiment__FirstFacetAssignment_1 : ( ( 'name:' ) ) ;
     public final void rule__HeadlessExperiment__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -49935,6 +55269,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__NameAssignment_2"
+    /**
+     * Rule headless experiment name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14601:1: rule__HeadlessExperiment__NameAssignment_2 : ( ( rule__HeadlessExperiment__NameAlternatives_2_0 ) ) ;
     public final void rule__HeadlessExperiment__NameAssignment_2() throws RecognitionException {
 
@@ -49986,6 +55325,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__ImportURIAssignment_3_1"
+    /**
+     * Rule headless experiment import URI assignment 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14616:1: rule__HeadlessExperiment__ImportURIAssignment_3_1 : ( RULE_STRING ) ;
     public final void rule__HeadlessExperiment__ImportURIAssignment_3_1() throws RecognitionException {
 
@@ -50027,6 +55371,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__FacetsAssignment_4"
+    /**
+     * Rule headless experiment facets assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14631:1: rule__HeadlessExperiment__FacetsAssignment_4 : ( ruleFacet ) ;
     public final void rule__HeadlessExperiment__FacetsAssignment_4() throws RecognitionException {
 
@@ -50072,6 +55421,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__HeadlessExperiment__BlockAssignment_5_0"
+    /**
+     * Rule headless experiment block assignment 5 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14646:1: rule__HeadlessExperiment__BlockAssignment_5_0 : ( ruleBlock ) ;
     public final void rule__HeadlessExperiment__BlockAssignment_5_0() throws RecognitionException {
 
@@ -50117,6 +55471,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__KeyAssignment_0"
+    /**
+     * Rule S global key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14661:1: rule__S_Global__KeyAssignment_0 : ( ( 'global' ) ) ;
     public final void rule__S_Global__KeyAssignment_0() throws RecognitionException {
 
@@ -50170,6 +55529,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__FacetsAssignment_1"
+    /**
+     * Rule S global facets assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14680:1: rule__S_Global__FacetsAssignment_1 : ( ruleFacet ) ;
     public final void rule__S_Global__FacetsAssignment_1() throws RecognitionException {
 
@@ -50215,6 +55579,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Global__BlockAssignment_2_0"
+    /**
+     * Rule S global block assignment 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14695:1: rule__S_Global__BlockAssignment_2_0 : ( ruleBlock ) ;
     public final void rule__S_Global__BlockAssignment_2_0() throws RecognitionException {
 
@@ -50260,6 +55629,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__KeyAssignment_0"
+    /**
+     * Rule S species key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14710:1: rule__S_Species__KeyAssignment_0 : ( rule_SpeciesKey ) ;
     public final void rule__S_Species__KeyAssignment_0() throws RecognitionException {
 
@@ -50305,6 +55679,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__FirstFacetAssignment_1"
+    /**
+     * Rule S species first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14725:1: rule__S_Species__FirstFacetAssignment_1 : ( ( 'name:' ) ) ;
     public final void rule__S_Species__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -50358,6 +55737,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__NameAssignment_2"
+    /**
+     * Rule S species name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14744:1: rule__S_Species__NameAssignment_2 : ( RULE_ID ) ;
     public final void rule__S_Species__NameAssignment_2() throws RecognitionException {
 
@@ -50399,6 +55783,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__FacetsAssignment_3"
+    /**
+     * Rule S species facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14759:1: rule__S_Species__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_Species__FacetsAssignment_3() throws RecognitionException {
 
@@ -50444,6 +55833,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Species__BlockAssignment_4_0"
+    /**
+     * Rule S species block assignment 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14774:1: rule__S_Species__BlockAssignment_4_0 : ( ruleBlock ) ;
     public final void rule__S_Species__BlockAssignment_4_0() throws RecognitionException {
 
@@ -50489,6 +55883,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__KeyAssignment_0"
+    /**
+     * Rule S experiment key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14789:1: rule__S_Experiment__KeyAssignment_0 : ( rule_ExperimentKey ) ;
     public final void rule__S_Experiment__KeyAssignment_0() throws RecognitionException {
 
@@ -50534,6 +55933,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__FirstFacetAssignment_1"
+    /**
+     * Rule S experiment first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14804:1: rule__S_Experiment__FirstFacetAssignment_1 : ( ( 'name:' ) ) ;
     public final void rule__S_Experiment__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -50587,6 +55991,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__NameAssignment_2"
+    /**
+     * Rule S experiment name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14823:1: rule__S_Experiment__NameAssignment_2 : ( ( rule__S_Experiment__NameAlternatives_2_0 ) ) ;
     public final void rule__S_Experiment__NameAssignment_2() throws RecognitionException {
 
@@ -50638,6 +56047,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__FacetsAssignment_3"
+    /**
+     * Rule S experiment facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14838:1: rule__S_Experiment__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_Experiment__FacetsAssignment_3() throws RecognitionException {
 
@@ -50683,6 +56097,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Experiment__BlockAssignment_4_0"
+    /**
+     * Rule S experiment block assignment 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14853:1: rule__S_Experiment__BlockAssignment_4_0 : ( ruleBlock ) ;
     public final void rule__S_Experiment__BlockAssignment_4_0() throws RecognitionException {
 
@@ -50728,6 +56147,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0"
+    /**
+     * Rule S 1 expr facets block or end key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14868:1: rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0 : ( rule_1Expr_Facets_BlockOrEnd_Key ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0() throws RecognitionException {
 
@@ -50773,6 +56197,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1"
+    /**
+     * Rule S 1 expr facets block or end first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14883:1: rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1 : ( ruleFirstFacetKey ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -50818,6 +56247,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2"
+    /**
+     * Rule S 1 expr facets block or end expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14898:1: rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2 : ( ruleExpression ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2() throws RecognitionException {
 
@@ -50863,6 +56297,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__FacetsAssignment_3"
+    /**
+     * Rule S 1 expr facets block or end facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14913:1: rule__S_1Expr_Facets_BlockOrEnd__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__FacetsAssignment_3() throws RecognitionException {
 
@@ -50908,6 +56347,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_1Expr_Facets_BlockOrEnd__BlockAssignment_4_0"
+    /**
+     * Rule S 1 expr facets block or end block assignment 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14928:1: rule__S_1Expr_Facets_BlockOrEnd__BlockAssignment_4_0 : ( ruleBlock ) ;
     public final void rule__S_1Expr_Facets_BlockOrEnd__BlockAssignment_4_0() throws RecognitionException {
 
@@ -50953,6 +56397,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__KeyAssignment_0"
+    /**
+     * Rule S do key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14943:1: rule__S_Do__KeyAssignment_0 : ( rule_DoKey ) ;
     public final void rule__S_Do__KeyAssignment_0() throws RecognitionException {
 
@@ -50998,6 +56447,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__FirstFacetAssignment_1"
+    /**
+     * Rule S do first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14958:1: rule__S_Do__FirstFacetAssignment_1 : ( ( 'action:' ) ) ;
     public final void rule__S_Do__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -51051,6 +56505,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__ExprAssignment_2"
+    /**
+     * Rule S do expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14977:1: rule__S_Do__ExprAssignment_2 : ( ruleAbstractRef ) ;
     public final void rule__S_Do__ExprAssignment_2() throws RecognitionException {
 
@@ -51096,6 +56555,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__FacetsAssignment_3"
+    /**
+     * Rule S do facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:14992:1: rule__S_Do__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_Do__FacetsAssignment_3() throws RecognitionException {
 
@@ -51141,6 +56605,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Do__BlockAssignment_4_0"
+    /**
+     * Rule S do block assignment 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15007:1: rule__S_Do__BlockAssignment_4_0 : ( ruleBlock ) ;
     public final void rule__S_Do__BlockAssignment_4_0() throws RecognitionException {
 
@@ -51186,6 +56655,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__KeyAssignment_0"
+    /**
+     * Rule S loop key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15022:1: rule__S_Loop__KeyAssignment_0 : ( ( 'loop' ) ) ;
     public final void rule__S_Loop__KeyAssignment_0() throws RecognitionException {
 
@@ -51239,6 +56713,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__NameAssignment_1"
+    /**
+     * Rule S loop name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15041:1: rule__S_Loop__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__S_Loop__NameAssignment_1() throws RecognitionException {
 
@@ -51280,6 +56759,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__FacetsAssignment_2"
+    /**
+     * Rule S loop facets assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15056:1: rule__S_Loop__FacetsAssignment_2 : ( ruleFacet ) ;
     public final void rule__S_Loop__FacetsAssignment_2() throws RecognitionException {
 
@@ -51325,6 +56809,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Loop__BlockAssignment_3"
+    /**
+     * Rule S loop block assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15071:1: rule__S_Loop__BlockAssignment_3 : ( ruleBlock ) ;
     public final void rule__S_Loop__BlockAssignment_3() throws RecognitionException {
 
@@ -51370,6 +56859,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__KeyAssignment_0"
+    /**
+     * Rule S if key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15086:1: rule__S_If__KeyAssignment_0 : ( ( 'if' ) ) ;
     public final void rule__S_If__KeyAssignment_0() throws RecognitionException {
 
@@ -51423,6 +56917,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__FirstFacetAssignment_1"
+    /**
+     * Rule S if first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15105:1: rule__S_If__FirstFacetAssignment_1 : ( ( 'condition:' ) ) ;
     public final void rule__S_If__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -51476,6 +56975,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__ExprAssignment_2"
+    /**
+     * Rule S if expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15124:1: rule__S_If__ExprAssignment_2 : ( ruleExpression ) ;
     public final void rule__S_If__ExprAssignment_2() throws RecognitionException {
 
@@ -51521,6 +57025,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__BlockAssignment_3"
+    /**
+     * Rule S if block assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15139:1: rule__S_If__BlockAssignment_3 : ( ruleBlock ) ;
     public final void rule__S_If__BlockAssignment_3() throws RecognitionException {
 
@@ -51566,6 +57075,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_If__ElseAssignment_4_1"
+    /**
+     * Rule S if else assignment 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15154:1: rule__S_If__ElseAssignment_4_1 : ( ( rule__S_If__ElseAlternatives_4_1_0 ) ) ;
     public final void rule__S_If__ElseAssignment_4_1() throws RecognitionException {
 
@@ -51617,6 +57131,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__KeyAssignment_0"
+    /**
+     * Rule S try key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15169:1: rule__S_Try__KeyAssignment_0 : ( ( 'try' ) ) ;
     public final void rule__S_Try__KeyAssignment_0() throws RecognitionException {
 
@@ -51670,6 +57189,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__BlockAssignment_1"
+    /**
+     * Rule S try block assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15188:1: rule__S_Try__BlockAssignment_1 : ( ruleBlock ) ;
     public final void rule__S_Try__BlockAssignment_1() throws RecognitionException {
 
@@ -51715,6 +57239,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Try__CatchAssignment_2_1"
+    /**
+     * Rule S try catch assignment 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15203:1: rule__S_Try__CatchAssignment_2_1 : ( ruleBlock ) ;
     public final void rule__S_Try__CatchAssignment_2_1() throws RecognitionException {
 
@@ -51760,6 +57289,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__KeyAssignment_0"
+    /**
+     * Rule S other key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15218:1: rule__S_Other__KeyAssignment_0 : ( RULE_ID ) ;
     public final void rule__S_Other__KeyAssignment_0() throws RecognitionException {
 
@@ -51801,6 +57335,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__FacetsAssignment_1"
+    /**
+     * Rule S other facets assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15233:1: rule__S_Other__FacetsAssignment_1 : ( ruleFacet ) ;
     public final void rule__S_Other__FacetsAssignment_1() throws RecognitionException {
 
@@ -51846,6 +57385,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Other__BlockAssignment_2_0"
+    /**
+     * Rule S other block assignment 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15248:1: rule__S_Other__BlockAssignment_2_0 : ( ruleBlock ) ;
     public final void rule__S_Other__BlockAssignment_2_0() throws RecognitionException {
 
@@ -51891,6 +57435,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__KeyAssignment_0"
+    /**
+     * Rule S return key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15263:1: rule__S_Return__KeyAssignment_0 : ( ( 'return' ) ) ;
     public final void rule__S_Return__KeyAssignment_0() throws RecognitionException {
 
@@ -51944,6 +57493,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__FirstFacetAssignment_1"
+    /**
+     * Rule S return first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15282:1: rule__S_Return__FirstFacetAssignment_1 : ( ( 'value:' ) ) ;
     public final void rule__S_Return__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -51997,6 +57551,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Return__ExprAssignment_2"
+    /**
+     * Rule S return expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15301:1: rule__S_Return__ExprAssignment_2 : ( ruleExpression ) ;
     public final void rule__S_Return__ExprAssignment_2() throws RecognitionException {
 
@@ -52042,6 +57601,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__KeyAssignment_0"
+    /**
+     * Rule S reflex key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15316:1: rule__S_Reflex__KeyAssignment_0 : ( rule_ReflexKey ) ;
     public final void rule__S_Reflex__KeyAssignment_0() throws RecognitionException {
 
@@ -52087,6 +57651,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__FirstFacetAssignment_1_0"
+    /**
+     * Rule S reflex first facet assignment 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15331:1: rule__S_Reflex__FirstFacetAssignment_1_0 : ( ( 'name:' ) ) ;
     public final void rule__S_Reflex__FirstFacetAssignment_1_0() throws RecognitionException {
 
@@ -52140,6 +57709,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__NameAssignment_1_1"
+    /**
+     * Rule S reflex name assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15350:1: rule__S_Reflex__NameAssignment_1_1 : ( ruleValid_ID ) ;
     public final void rule__S_Reflex__NameAssignment_1_1() throws RecognitionException {
 
@@ -52185,6 +57759,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__ExprAssignment_2_2"
+    /**
+     * Rule S reflex expr assignment 2 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15365:1: rule__S_Reflex__ExprAssignment_2_2 : ( ruleExpression ) ;
     public final void rule__S_Reflex__ExprAssignment_2_2() throws RecognitionException {
 
@@ -52230,6 +57809,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Reflex__BlockAssignment_3"
+    /**
+     * Rule S reflex block assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15380:1: rule__S_Reflex__BlockAssignment_3 : ( ruleBlock ) ;
     public final void rule__S_Reflex__BlockAssignment_3() throws RecognitionException {
 
@@ -52275,6 +57859,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__TkeyAssignment_0"
+    /**
+     * Rule S definition tkey assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15395:1: rule__S_Definition__TkeyAssignment_0 : ( ruleTypeRef ) ;
     public final void rule__S_Definition__TkeyAssignment_0() throws RecognitionException {
 
@@ -52320,6 +57909,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__FirstFacetAssignment_1"
+    /**
+     * Rule S definition first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15410:1: rule__S_Definition__FirstFacetAssignment_1 : ( ( 'name:' ) ) ;
     public final void rule__S_Definition__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -52373,6 +57967,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__NameAssignment_2"
+    /**
+     * Rule S definition name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15429:1: rule__S_Definition__NameAssignment_2 : ( ( rule__S_Definition__NameAlternatives_2_0 ) ) ;
     public final void rule__S_Definition__NameAssignment_2() throws RecognitionException {
 
@@ -52424,6 +58023,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__ArgsAssignment_3_1"
+    /**
+     * Rule S definition args assignment 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15444:1: rule__S_Definition__ArgsAssignment_3_1 : ( ruleActionArguments ) ;
     public final void rule__S_Definition__ArgsAssignment_3_1() throws RecognitionException {
 
@@ -52469,6 +58073,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__FacetsAssignment_4"
+    /**
+     * Rule S definition facets assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15459:1: rule__S_Definition__FacetsAssignment_4 : ( ruleFacet ) ;
     public final void rule__S_Definition__FacetsAssignment_4() throws RecognitionException {
 
@@ -52514,6 +58123,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Definition__BlockAssignment_5_0"
+    /**
+     * Rule S definition block assignment 5 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15474:1: rule__S_Definition__BlockAssignment_5_0 : ( ruleBlock ) ;
     public final void rule__S_Definition__BlockAssignment_5_0() throws RecognitionException {
 
@@ -52559,6 +58173,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__KeyAssignment_1"
+    /**
+     * Rule S action key assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15489:1: rule__S_Action__KeyAssignment_1 : ( ( 'action' ) ) ;
     public final void rule__S_Action__KeyAssignment_1() throws RecognitionException {
 
@@ -52612,6 +58231,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__FirstFacetAssignment_2"
+    /**
+     * Rule S action first facet assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15508:1: rule__S_Action__FirstFacetAssignment_2 : ( ( 'name:' ) ) ;
     public final void rule__S_Action__FirstFacetAssignment_2() throws RecognitionException {
 
@@ -52665,6 +58289,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__NameAssignment_3"
+    /**
+     * Rule S action name assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15527:1: rule__S_Action__NameAssignment_3 : ( ruleValid_ID ) ;
     public final void rule__S_Action__NameAssignment_3() throws RecognitionException {
 
@@ -52710,6 +58339,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__ArgsAssignment_4_1"
+    /**
+     * Rule S action args assignment 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15542:1: rule__S_Action__ArgsAssignment_4_1 : ( ruleActionArguments ) ;
     public final void rule__S_Action__ArgsAssignment_4_1() throws RecognitionException {
 
@@ -52755,6 +58389,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__FacetsAssignment_5"
+    /**
+     * Rule S action facets assignment 5.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15557:1: rule__S_Action__FacetsAssignment_5 : ( ruleFacet ) ;
     public final void rule__S_Action__FacetsAssignment_5() throws RecognitionException {
 
@@ -52800,6 +58439,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Action__BlockAssignment_6_0"
+    /**
+     * Rule S action block assignment 6 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15572:1: rule__S_Action__BlockAssignment_6_0 : ( ruleBlock ) ;
     public final void rule__S_Action__BlockAssignment_6_0() throws RecognitionException {
 
@@ -52845,6 +58489,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__KeyAssignment_1"
+    /**
+     * Rule S var key assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15587:1: rule__S_Var__KeyAssignment_1 : ( rule_VarOrConstKey ) ;
     public final void rule__S_Var__KeyAssignment_1() throws RecognitionException {
 
@@ -52890,6 +58539,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__FirstFacetAssignment_2"
+    /**
+     * Rule S var first facet assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15602:1: rule__S_Var__FirstFacetAssignment_2 : ( ( 'name:' ) ) ;
     public final void rule__S_Var__FirstFacetAssignment_2() throws RecognitionException {
 
@@ -52943,6 +58597,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__NameAssignment_3"
+    /**
+     * Rule S var name assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15621:1: rule__S_Var__NameAssignment_3 : ( ruleValid_ID ) ;
     public final void rule__S_Var__NameAssignment_3() throws RecognitionException {
 
@@ -52988,6 +58647,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Var__FacetsAssignment_4"
+    /**
+     * Rule S var facets assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15636:1: rule__S_Var__FacetsAssignment_4 : ( ruleFacet ) ;
     public final void rule__S_Var__FacetsAssignment_4() throws RecognitionException {
 
@@ -53033,6 +58697,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__ExprAssignment_0_0"
+    /**
+     * Rule S direct assignment expr assignment 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15651:1: rule__S_DirectAssignment__ExprAssignment_0_0 : ( ruleExpression ) ;
     public final void rule__S_DirectAssignment__ExprAssignment_0_0() throws RecognitionException {
 
@@ -53078,6 +58747,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__KeyAssignment_0_1"
+    /**
+     * Rule S direct assignment key assignment 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15666:1: rule__S_DirectAssignment__KeyAssignment_0_1 : ( rule_AssignmentKey ) ;
     public final void rule__S_DirectAssignment__KeyAssignment_0_1() throws RecognitionException {
 
@@ -53123,6 +58797,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__ValueAssignment_0_2"
+    /**
+     * Rule S direct assignment value assignment 0 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15681:1: rule__S_DirectAssignment__ValueAssignment_0_2 : ( ruleExpression ) ;
     public final void rule__S_DirectAssignment__ValueAssignment_0_2() throws RecognitionException {
 
@@ -53168,6 +58847,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_DirectAssignment__FacetsAssignment_0_3"
+    /**
+     * Rule S direct assignment facets assignment 0 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15696:1: rule__S_DirectAssignment__FacetsAssignment_0_3 : ( ruleFacet ) ;
     public final void rule__S_DirectAssignment__FacetsAssignment_0_3() throws RecognitionException {
 
@@ -53213,6 +58897,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__KeyAssignment_0"
+    /**
+     * Rule S set key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15711:1: rule__S_Set__KeyAssignment_0 : ( ( 'set' ) ) ;
     public final void rule__S_Set__KeyAssignment_0() throws RecognitionException {
 
@@ -53266,6 +58955,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__ExprAssignment_1"
+    /**
+     * Rule S set expr assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15730:1: rule__S_Set__ExprAssignment_1 : ( ruleExpression ) ;
     public final void rule__S_Set__ExprAssignment_1() throws RecognitionException {
 
@@ -53311,6 +59005,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Set__ValueAssignment_3"
+    /**
+     * Rule S set value assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15745:1: rule__S_Set__ValueAssignment_3 : ( ruleExpression ) ;
     public final void rule__S_Set__ValueAssignment_3() throws RecognitionException {
 
@@ -53356,6 +59055,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__KeyAssignment_0"
+    /**
+     * Rule S equations key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15760:1: rule__S_Equations__KeyAssignment_0 : ( rule_EquationsKey ) ;
     public final void rule__S_Equations__KeyAssignment_0() throws RecognitionException {
 
@@ -53401,6 +59105,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__NameAssignment_1"
+    /**
+     * Rule S equations name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15775:1: rule__S_Equations__NameAssignment_1 : ( ruleValid_ID ) ;
     public final void rule__S_Equations__NameAssignment_1() throws RecognitionException {
 
@@ -53446,6 +59155,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__FacetsAssignment_2"
+    /**
+     * Rule S equations facets assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15790:1: rule__S_Equations__FacetsAssignment_2 : ( ruleFacet ) ;
     public final void rule__S_Equations__FacetsAssignment_2() throws RecognitionException {
 
@@ -53491,6 +59205,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equations__EquationsAssignment_3_0_1_0"
+    /**
+     * Rule S equations equations assignment 3 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15805:1: rule__S_Equations__EquationsAssignment_3_0_1_0 : ( ruleS_Equation ) ;
     public final void rule__S_Equations__EquationsAssignment_3_0_1_0() throws RecognitionException {
 
@@ -53536,6 +59255,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__ExprAssignment_0"
+    /**
+     * Rule S equation expr assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15820:1: rule__S_Equation__ExprAssignment_0 : ( ( rule__S_Equation__ExprAlternatives_0_0 ) ) ;
     public final void rule__S_Equation__ExprAssignment_0() throws RecognitionException {
 
@@ -53587,6 +59311,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__KeyAssignment_1"
+    /**
+     * Rule S equation key assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15835:1: rule__S_Equation__KeyAssignment_1 : ( ( '=' ) ) ;
     public final void rule__S_Equation__KeyAssignment_1() throws RecognitionException {
 
@@ -53640,6 +59369,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Equation__ValueAssignment_2"
+    /**
+     * Rule S equation value assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15854:1: rule__S_Equation__ValueAssignment_2 : ( ruleExpression ) ;
     public final void rule__S_Equation__ValueAssignment_2() throws RecognitionException {
 
@@ -53685,6 +59419,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__KeyAssignment_0"
+    /**
+     * Rule S solve key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15869:1: rule__S_Solve__KeyAssignment_0 : ( rule_SolveKey ) ;
     public final void rule__S_Solve__KeyAssignment_0() throws RecognitionException {
 
@@ -53730,6 +59469,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__FirstFacetAssignment_1"
+    /**
+     * Rule S solve first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15884:1: rule__S_Solve__FirstFacetAssignment_1 : ( ( 'equation:' ) ) ;
     public final void rule__S_Solve__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -53783,6 +59527,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__ExprAssignment_2"
+    /**
+     * Rule S solve expr assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15903:1: rule__S_Solve__ExprAssignment_2 : ( ruleEquationRef ) ;
     public final void rule__S_Solve__ExprAssignment_2() throws RecognitionException {
 
@@ -53828,6 +59577,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__FacetsAssignment_3"
+    /**
+     * Rule S solve facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15918:1: rule__S_Solve__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_Solve__FacetsAssignment_3() throws RecognitionException {
 
@@ -53873,6 +59627,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Solve__BlockAssignment_4_0"
+    /**
+     * Rule S solve block assignment 4 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15933:1: rule__S_Solve__BlockAssignment_4_0 : ( ruleBlock ) ;
     public final void rule__S_Solve__BlockAssignment_4_0() throws RecognitionException {
 
@@ -53918,6 +59677,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__KeyAssignment_0"
+    /**
+     * Rule S display key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15948:1: rule__S_Display__KeyAssignment_0 : ( ( 'display' ) ) ;
     public final void rule__S_Display__KeyAssignment_0() throws RecognitionException {
 
@@ -53971,6 +59735,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__FirstFacetAssignment_1"
+    /**
+     * Rule S display first facet assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15967:1: rule__S_Display__FirstFacetAssignment_1 : ( ( 'name:' ) ) ;
     public final void rule__S_Display__FirstFacetAssignment_1() throws RecognitionException {
 
@@ -54024,6 +59793,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__NameAssignment_2"
+    /**
+     * Rule S display name assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:15986:1: rule__S_Display__NameAssignment_2 : ( ( rule__S_Display__NameAlternatives_2_0 ) ) ;
     public final void rule__S_Display__NameAssignment_2() throws RecognitionException {
 
@@ -54075,6 +59849,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__FacetsAssignment_3"
+    /**
+     * Rule S display facets assignment 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16001:1: rule__S_Display__FacetsAssignment_3 : ( ruleFacet ) ;
     public final void rule__S_Display__FacetsAssignment_3() throws RecognitionException {
 
@@ -54120,6 +59899,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__S_Display__BlockAssignment_4"
+    /**
+     * Rule S display block assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16016:1: rule__S_Display__BlockAssignment_4 : ( ruledisplayBlock ) ;
     public final void rule__S_Display__BlockAssignment_4() throws RecognitionException {
 
@@ -54165,6 +59949,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DisplayBlock__StatementsAssignment_2"
+    /**
+     * Rule display block statements assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16031:1: rule__DisplayBlock__StatementsAssignment_2 : ( ruledisplayStatement ) ;
     public final void rule__DisplayBlock__StatementsAssignment_2() throws RecognitionException {
 
@@ -54210,6 +59999,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__KeyAssignment_0"
+    /**
+     * Rule species or grid display statement key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16046:1: rule__SpeciesOrGridDisplayStatement__KeyAssignment_0 : ( rule_SpeciesKey ) ;
     public final void rule__SpeciesOrGridDisplayStatement__KeyAssignment_0() throws RecognitionException {
 
@@ -54255,6 +60049,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__ExprAssignment_1"
+    /**
+     * Rule species or grid display statement expr assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16061:1: rule__SpeciesOrGridDisplayStatement__ExprAssignment_1 : ( ruleExpression ) ;
     public final void rule__SpeciesOrGridDisplayStatement__ExprAssignment_1() throws RecognitionException {
 
@@ -54300,6 +60099,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__FacetsAssignment_2"
+    /**
+     * Rule species or grid display statement facets assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16076:1: rule__SpeciesOrGridDisplayStatement__FacetsAssignment_2 : ( ruleFacet ) ;
     public final void rule__SpeciesOrGridDisplayStatement__FacetsAssignment_2() throws RecognitionException {
 
@@ -54345,6 +60149,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SpeciesOrGridDisplayStatement__BlockAssignment_3_0"
+    /**
+     * Rule species or grid display statement block assignment 3 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16091:1: rule__SpeciesOrGridDisplayStatement__BlockAssignment_3_0 : ( ruledisplayBlock ) ;
     public final void rule__SpeciesOrGridDisplayStatement__BlockAssignment_3_0() throws RecognitionException {
 
@@ -54390,6 +60199,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__ArgsAssignment_0"
+    /**
+     * Rule action arguments args assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16106:1: rule__ActionArguments__ArgsAssignment_0 : ( ruleArgumentDefinition ) ;
     public final void rule__ActionArguments__ArgsAssignment_0() throws RecognitionException {
 
@@ -54435,6 +60249,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionArguments__ArgsAssignment_1_1"
+    /**
+     * Rule action arguments args assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16121:1: rule__ActionArguments__ArgsAssignment_1_1 : ( ruleArgumentDefinition ) ;
     public final void rule__ActionArguments__ArgsAssignment_1_1() throws RecognitionException {
 
@@ -54480,6 +60299,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__TypeAssignment_0"
+    /**
+     * Rule argument definition type assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16136:1: rule__ArgumentDefinition__TypeAssignment_0 : ( ruleTypeRef ) ;
     public final void rule__ArgumentDefinition__TypeAssignment_0() throws RecognitionException {
 
@@ -54525,6 +60349,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__NameAssignment_1"
+    /**
+     * Rule argument definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16151:1: rule__ArgumentDefinition__NameAssignment_1 : ( ruleValid_ID ) ;
     public final void rule__ArgumentDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -54570,6 +60399,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentDefinition__DefaultAssignment_2_1"
+    /**
+     * Rule argument definition default assignment 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16166:1: rule__ArgumentDefinition__DefaultAssignment_2_1 : ( ruleExpression ) ;
     public final void rule__ArgumentDefinition__DefaultAssignment_2_1() throws RecognitionException {
 
@@ -54615,6 +60449,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__KeyAssignment_0_0"
+    /**
+     * Rule classic facet key assignment 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16181:1: rule__ClassicFacet__KeyAssignment_0_0 : ( ruleClassicFacetKey ) ;
     public final void rule__ClassicFacet__KeyAssignment_0_0() throws RecognitionException {
 
@@ -54660,6 +60499,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__KeyAssignment_0_1"
+    /**
+     * Rule classic facet key assignment 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16196:1: rule__ClassicFacet__KeyAssignment_0_1 : ( ( '<-' ) ) ;
     public final void rule__ClassicFacet__KeyAssignment_0_1() throws RecognitionException {
 
@@ -54713,6 +60557,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__KeyAssignment_0_2"
+    /**
+     * Rule classic facet key assignment 0 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16215:1: rule__ClassicFacet__KeyAssignment_0_2 : ( ruleSpecialFacetKey ) ;
     public final void rule__ClassicFacet__KeyAssignment_0_2() throws RecognitionException {
 
@@ -54758,6 +60607,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ClassicFacet__ExprAssignment_1"
+    /**
+     * Rule classic facet expr assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16230:1: rule__ClassicFacet__ExprAssignment_1 : ( ruleExpression ) ;
     public final void rule__ClassicFacet__ExprAssignment_1() throws RecognitionException {
 
@@ -54803,6 +60657,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__KeyAssignment_0"
+    /**
+     * Rule definition facet key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16245:1: rule__DefinitionFacet__KeyAssignment_0 : ( ruleDefinitionFacetKey ) ;
     public final void rule__DefinitionFacet__KeyAssignment_0() throws RecognitionException {
 
@@ -54848,6 +60707,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__DefinitionFacet__NameAssignment_1"
+    /**
+     * Rule definition facet name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16260:1: rule__DefinitionFacet__NameAssignment_1 : ( ( rule__DefinitionFacet__NameAlternatives_1_0 ) ) ;
     public final void rule__DefinitionFacet__NameAssignment_1() throws RecognitionException {
 
@@ -54899,6 +60763,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__KeyAssignment_0"
+    /**
+     * Rule function facet key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16275:1: rule__FunctionFacet__KeyAssignment_0 : ( ( '->' ) ) ;
     public final void rule__FunctionFacet__KeyAssignment_0() throws RecognitionException {
 
@@ -54952,6 +60821,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__ExprAssignment_1_0_0"
+    /**
+     * Rule function facet expr assignment 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16294:1: rule__FunctionFacet__ExprAssignment_1_0_0 : ( ruleExpression ) ;
     public final void rule__FunctionFacet__ExprAssignment_1_0_0() throws RecognitionException {
 
@@ -54997,6 +60871,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FunctionFacet__ExprAssignment_1_1_1"
+    /**
+     * Rule function facet expr assignment 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16309:1: rule__FunctionFacet__ExprAssignment_1_1_1 : ( ruleExpression ) ;
     public final void rule__FunctionFacet__ExprAssignment_1_1_1() throws RecognitionException {
 
@@ -55042,6 +60921,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__KeyAssignment_0"
+    /**
+     * Rule type facet key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16324:1: rule__TypeFacet__KeyAssignment_0 : ( ruleTypeFacetKey ) ;
     public final void rule__TypeFacet__KeyAssignment_0() throws RecognitionException {
 
@@ -55087,6 +60971,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__ExprAssignment_1_0_0"
+    /**
+     * Rule type facet expr assignment 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16339:1: rule__TypeFacet__ExprAssignment_1_0_0 : ( ruleTypeRef ) ;
     public final void rule__TypeFacet__ExprAssignment_1_0_0() throws RecognitionException {
 
@@ -55132,6 +61021,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacet__ExprAssignment_1_1"
+    /**
+     * Rule type facet expr assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16354:1: rule__TypeFacet__ExprAssignment_1_1 : ( ruleExpression ) ;
     public final void rule__TypeFacet__ExprAssignment_1_1() throws RecognitionException {
 
@@ -55177,6 +61071,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__KeyAssignment_0"
+    /**
+     * Rule action facet key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16369:1: rule__ActionFacet__KeyAssignment_0 : ( ruleActionFacetKey ) ;
     public final void rule__ActionFacet__KeyAssignment_0() throws RecognitionException {
 
@@ -55222,6 +61121,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__ExprAssignment_1_0"
+    /**
+     * Rule action facet expr assignment 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16384:1: rule__ActionFacet__ExprAssignment_1_0 : ( ruleActionRef ) ;
     public final void rule__ActionFacet__ExprAssignment_1_0() throws RecognitionException {
 
@@ -55267,6 +61171,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFacet__BlockAssignment_1_1"
+    /**
+     * Rule action facet block assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16399:1: rule__ActionFacet__BlockAssignment_1_1 : ( ruleBlock ) ;
     public final void rule__ActionFacet__BlockAssignment_1_1() throws RecognitionException {
 
@@ -55312,6 +61221,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__KeyAssignment_0"
+    /**
+     * Rule var facet key assignment 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16414:1: rule__VarFacet__KeyAssignment_0 : ( ruleVarFacetKey ) ;
     public final void rule__VarFacet__KeyAssignment_0() throws RecognitionException {
 
@@ -55357,6 +61271,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFacet__ExprAssignment_1"
+    /**
+     * Rule var facet expr assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16429:1: rule__VarFacet__ExprAssignment_1 : ( ruleVariableRef ) ;
     public final void rule__VarFacet__ExprAssignment_1() throws RecognitionException {
 
@@ -55402,6 +61321,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Block__StatementsAssignment_2_0"
+    /**
+     * Rule block statements assignment 2 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16444:1: rule__Block__StatementsAssignment_2_0 : ( ruleStatement ) ;
     public final void rule__Block__StatementsAssignment_2_0() throws RecognitionException {
 
@@ -55447,6 +61371,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__OpAssignment_0_0_0_0"
+    /**
+     * Rule argument pair op assignment 0 0 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16459:1: rule__ArgumentPair__OpAssignment_0_0_0_0 : ( ruleValid_ID ) ;
     public final void rule__ArgumentPair__OpAssignment_0_0_0_0() throws RecognitionException {
 
@@ -55492,6 +61421,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__OpAssignment_0_0_1_0"
+    /**
+     * Rule argument pair op assignment 0 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16474:1: rule__ArgumentPair__OpAssignment_0_0_1_0 : ( ( rule__ArgumentPair__OpAlternatives_0_0_1_0_0 ) ) ;
     public final void rule__ArgumentPair__OpAssignment_0_0_1_0() throws RecognitionException {
 
@@ -55543,6 +61477,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ArgumentPair__RightAssignment_1"
+    /**
+     * Rule argument pair right assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16489:1: rule__ArgumentPair__RightAssignment_1 : ( rulePair ) ;
     public final void rule__ArgumentPair__RightAssignment_1() throws RecognitionException {
 
@@ -55588,6 +61527,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__OpAssignment_1_1"
+    /**
+     * Rule pair op assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16504:1: rule__Pair__OpAssignment_1_1 : ( ( '::' ) ) ;
     public final void rule__Pair__OpAssignment_1_1() throws RecognitionException {
 
@@ -55641,6 +61585,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Pair__RightAssignment_1_2"
+    /**
+     * Rule pair right assignment 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16523:1: rule__Pair__RightAssignment_1_2 : ( ruleIf ) ;
     public final void rule__Pair__RightAssignment_1_2() throws RecognitionException {
 
@@ -55686,6 +61635,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__OpAssignment_1_1"
+    /**
+     * Rule if op assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16538:1: rule__If__OpAssignment_1_1 : ( ( '?' ) ) ;
     public final void rule__If__OpAssignment_1_1() throws RecognitionException {
 
@@ -55739,6 +61693,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__RightAssignment_1_2"
+    /**
+     * Rule if right assignment 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16557:1: rule__If__RightAssignment_1_2 : ( ruleOr ) ;
     public final void rule__If__RightAssignment_1_2() throws RecognitionException {
 
@@ -55784,6 +61743,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__If__IfFalseAssignment_1_3_1"
+    /**
+     * Rule if if false assignment 1 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16572:1: rule__If__IfFalseAssignment_1_3_1 : ( ruleOr ) ;
     public final void rule__If__IfFalseAssignment_1_3_1() throws RecognitionException {
 
@@ -55829,6 +61793,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__OpAssignment_1_1"
+    /**
+     * Rule or op assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16587:1: rule__Or__OpAssignment_1_1 : ( ( 'or' ) ) ;
     public final void rule__Or__OpAssignment_1_1() throws RecognitionException {
 
@@ -55882,6 +61851,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Or__RightAssignment_1_2"
+    /**
+     * Rule or right assignment 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16606:1: rule__Or__RightAssignment_1_2 : ( ruleAnd ) ;
     public final void rule__Or__RightAssignment_1_2() throws RecognitionException {
 
@@ -55927,6 +61901,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__OpAssignment_1_1"
+    /**
+     * Rule and op assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16621:1: rule__And__OpAssignment_1_1 : ( ( 'and' ) ) ;
     public final void rule__And__OpAssignment_1_1() throws RecognitionException {
 
@@ -55980,6 +61959,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__And__RightAssignment_1_2"
+    /**
+     * Rule and right assignment 1 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16640:1: rule__And__RightAssignment_1_2 : ( ruleCast ) ;
     public final void rule__And__RightAssignment_1_2() throws RecognitionException {
 
@@ -56025,6 +62009,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__OpAssignment_1_0_1"
+    /**
+     * Rule cast op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16655:1: rule__Cast__OpAssignment_1_0_1 : ( ( 'as' ) ) ;
     public final void rule__Cast__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56078,6 +62067,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__RightAssignment_1_1_0"
+    /**
+     * Rule cast right assignment 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16674:1: rule__Cast__RightAssignment_1_1_0 : ( ruleTypeRef ) ;
     public final void rule__Cast__RightAssignment_1_1_0() throws RecognitionException {
 
@@ -56123,6 +62117,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Cast__RightAssignment_1_1_1_1"
+    /**
+     * Rule cast right assignment 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16689:1: rule__Cast__RightAssignment_1_1_1_1 : ( ruleTypeRef ) ;
     public final void rule__Cast__RightAssignment_1_1_1_1() throws RecognitionException {
 
@@ -56168,6 +62167,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__OpAssignment_1_0_1"
+    /**
+     * Rule comparison op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16704:1: rule__Comparison__OpAssignment_1_0_1 : ( ( rule__Comparison__OpAlternatives_1_0_1_0 ) ) ;
     public final void rule__Comparison__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56219,6 +62223,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Comparison__RightAssignment_1_1"
+    /**
+     * Rule comparison right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16719:1: rule__Comparison__RightAssignment_1_1 : ( ruleAddition ) ;
     public final void rule__Comparison__RightAssignment_1_1() throws RecognitionException {
 
@@ -56264,6 +62273,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__OpAssignment_1_0_1"
+    /**
+     * Rule addition op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16734:1: rule__Addition__OpAssignment_1_0_1 : ( ( rule__Addition__OpAlternatives_1_0_1_0 ) ) ;
     public final void rule__Addition__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56315,6 +62329,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Addition__RightAssignment_1_1"
+    /**
+     * Rule addition right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16749:1: rule__Addition__RightAssignment_1_1 : ( ruleMultiplication ) ;
     public final void rule__Addition__RightAssignment_1_1() throws RecognitionException {
 
@@ -56360,6 +62379,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__OpAssignment_1_0_1"
+    /**
+     * Rule multiplication op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16764:1: rule__Multiplication__OpAssignment_1_0_1 : ( ( rule__Multiplication__OpAlternatives_1_0_1_0 ) ) ;
     public final void rule__Multiplication__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56411,6 +62435,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Multiplication__RightAssignment_1_1"
+    /**
+     * Rule multiplication right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16779:1: rule__Multiplication__RightAssignment_1_1 : ( ruleExponentiation ) ;
     public final void rule__Multiplication__RightAssignment_1_1() throws RecognitionException {
 
@@ -56456,6 +62485,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__OpAssignment_1_0_1"
+    /**
+     * Rule exponentiation op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16794:1: rule__Exponentiation__OpAssignment_1_0_1 : ( ( '^' ) ) ;
     public final void rule__Exponentiation__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56509,6 +62543,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Exponentiation__RightAssignment_1_1"
+    /**
+     * Rule exponentiation right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16813:1: rule__Exponentiation__RightAssignment_1_1 : ( ruleBinary ) ;
     public final void rule__Exponentiation__RightAssignment_1_1() throws RecognitionException {
 
@@ -56554,6 +62593,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__OpAssignment_1_0_1"
+    /**
+     * Rule binary op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16828:1: rule__Binary__OpAssignment_1_0_1 : ( ruleValid_ID ) ;
     public final void rule__Binary__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56599,6 +62643,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Binary__RightAssignment_1_1"
+    /**
+     * Rule binary right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16843:1: rule__Binary__RightAssignment_1_1 : ( ruleUnit ) ;
     public final void rule__Binary__RightAssignment_1_1() throws RecognitionException {
 
@@ -56644,6 +62693,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__OpAssignment_1_0_1"
+    /**
+     * Rule unit op assignment 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16858:1: rule__Unit__OpAssignment_1_0_1 : ( ( rule__Unit__OpAlternatives_1_0_1_0 ) ) ;
     public final void rule__Unit__OpAssignment_1_0_1() throws RecognitionException {
 
@@ -56695,6 +62749,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unit__RightAssignment_1_1"
+    /**
+     * Rule unit right assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16873:1: rule__Unit__RightAssignment_1_1 : ( ruleUnitRef ) ;
     public final void rule__Unit__RightAssignment_1_1() throws RecognitionException {
 
@@ -56740,6 +62799,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__OpAssignment_1_1_0_0"
+    /**
+     * Rule unary op assignment 1 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16888:1: rule__Unary__OpAssignment_1_1_0_0 : ( ( rule__Unary__OpAlternatives_1_1_0_0_0 ) ) ;
     public final void rule__Unary__OpAssignment_1_1_0_0() throws RecognitionException {
 
@@ -56791,6 +62855,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__RightAssignment_1_1_0_1"
+    /**
+     * Rule unary right assignment 1 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16903:1: rule__Unary__RightAssignment_1_1_0_1 : ( ruleUnitRef ) ;
     public final void rule__Unary__RightAssignment_1_1_0_1() throws RecognitionException {
 
@@ -56836,6 +62905,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__OpAssignment_1_1_1_0"
+    /**
+     * Rule unary op assignment 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16918:1: rule__Unary__OpAssignment_1_1_1_0 : ( ( rule__Unary__OpAlternatives_1_1_1_0_0 ) ) ;
     public final void rule__Unary__OpAssignment_1_1_1_0() throws RecognitionException {
 
@@ -56887,6 +62961,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Unary__RightAssignment_1_1_1_1"
+    /**
+     * Rule unary right assignment 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16933:1: rule__Unary__RightAssignment_1_1_1_1 : ( ruleUnary ) ;
     public final void rule__Unary__RightAssignment_1_1_1_1() throws RecognitionException {
 
@@ -56932,6 +63011,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__OpAssignment_1_1_0_0"
+    /**
+     * Rule access op assignment 1 1 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16948:1: rule__Access__OpAssignment_1_1_0_0 : ( ( '[' ) ) ;
     public final void rule__Access__OpAssignment_1_1_0_0() throws RecognitionException {
 
@@ -56985,6 +63069,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__RightAssignment_1_1_0_1"
+    /**
+     * Rule access right assignment 1 1 0 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16967:1: rule__Access__RightAssignment_1_1_0_1 : ( ruleExpressionList ) ;
     public final void rule__Access__RightAssignment_1_1_0_1() throws RecognitionException {
 
@@ -57030,6 +63119,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__OpAssignment_1_1_1_0"
+    /**
+     * Rule access op assignment 1 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:16982:1: rule__Access__OpAssignment_1_1_1_0 : ( ( '.' ) ) ;
     public final void rule__Access__OpAssignment_1_1_1_0() throws RecognitionException {
 
@@ -57083,6 +63177,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Access__RightAssignment_1_1_1_1"
+    /**
+     * Rule access right assignment 1 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17001:1: rule__Access__RightAssignment_1_1_1_1 : ( ( rule__Access__RightAlternatives_1_1_1_1_0 ) ) ;
     public final void rule__Access__RightAssignment_1_1_1_1() throws RecognitionException {
 
@@ -57134,6 +63233,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__ExprsAssignment_3_2"
+    /**
+     * Rule primary exprs assignment 3 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17016:1: rule__Primary__ExprsAssignment_3_2 : ( ruleExpressionList ) ;
     public final void rule__Primary__ExprsAssignment_3_2() throws RecognitionException {
 
@@ -57179,6 +63283,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__LeftAssignment_4_2"
+    /**
+     * Rule primary left assignment 4 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17031:1: rule__Primary__LeftAssignment_4_2 : ( ruleExpression ) ;
     public final void rule__Primary__LeftAssignment_4_2() throws RecognitionException {
 
@@ -57224,6 +63333,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__OpAssignment_4_3"
+    /**
+     * Rule primary op assignment 4 3.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17046:1: rule__Primary__OpAssignment_4_3 : ( ( ',' ) ) ;
     public final void rule__Primary__OpAssignment_4_3() throws RecognitionException {
 
@@ -57277,6 +63391,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__RightAssignment_4_4"
+    /**
+     * Rule primary right assignment 4 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17065:1: rule__Primary__RightAssignment_4_4 : ( ruleExpression ) ;
     public final void rule__Primary__RightAssignment_4_4() throws RecognitionException {
 
@@ -57322,6 +63441,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Primary__ZAssignment_4_5_1"
+    /**
+     * Rule primary Z assignment 4 5 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17080:1: rule__Primary__ZAssignment_4_5_1 : ( ruleExpression ) ;
     public final void rule__Primary__ZAssignment_4_5_1() throws RecognitionException {
 
@@ -57367,6 +63491,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__LeftAssignment_1"
+    /**
+     * Rule function left assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17095:1: rule__Function__LeftAssignment_1 : ( ruleActionRef ) ;
     public final void rule__Function__LeftAssignment_1() throws RecognitionException {
 
@@ -57412,6 +63541,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__TypeAssignment_2"
+    /**
+     * Rule function type assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17110:1: rule__Function__TypeAssignment_2 : ( ruleTypeInfo ) ;
     public final void rule__Function__TypeAssignment_2() throws RecognitionException {
 
@@ -57457,6 +63591,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Function__RightAssignment_4"
+    /**
+     * Rule function right assignment 4.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17125:1: rule__Function__RightAssignment_4 : ( ruleExpressionList ) ;
     public final void rule__Function__RightAssignment_4() throws RecognitionException {
 
@@ -57502,6 +63641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__ExprsAssignment_0_0"
+    /**
+     * Rule expression list exprs assignment 0 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17140:1: rule__ExpressionList__ExprsAssignment_0_0 : ( ruleExpression ) ;
     public final void rule__ExpressionList__ExprsAssignment_0_0() throws RecognitionException {
 
@@ -57547,6 +63691,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__ExprsAssignment_0_1_1"
+    /**
+     * Rule expression list exprs assignment 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17155:1: rule__ExpressionList__ExprsAssignment_0_1_1 : ( ruleExpression ) ;
     public final void rule__ExpressionList__ExprsAssignment_0_1_1() throws RecognitionException {
 
@@ -57592,6 +63741,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__ExprsAssignment_1_0"
+    /**
+     * Rule expression list exprs assignment 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17170:1: rule__ExpressionList__ExprsAssignment_1_0 : ( ruleParameter ) ;
     public final void rule__ExpressionList__ExprsAssignment_1_0() throws RecognitionException {
 
@@ -57637,6 +63791,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ExpressionList__ExprsAssignment_1_1_1"
+    /**
+     * Rule expression list exprs assignment 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17185:1: rule__ExpressionList__ExprsAssignment_1_1_1 : ( ruleParameter ) ;
     public final void rule__ExpressionList__ExprsAssignment_1_1_1() throws RecognitionException {
 
@@ -57682,6 +63841,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__BuiltInFacetKeyAssignment_1_0"
+    /**
+     * Rule parameter built in facet key assignment 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17200:1: rule__Parameter__BuiltInFacetKeyAssignment_1_0 : ( ( rule__Parameter__BuiltInFacetKeyAlternatives_1_0_0 ) ) ;
     public final void rule__Parameter__BuiltInFacetKeyAssignment_1_0() throws RecognitionException {
 
@@ -57733,6 +63897,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__LeftAssignment_1_1_0"
+    /**
+     * Rule parameter left assignment 1 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17215:1: rule__Parameter__LeftAssignment_1_1_0 : ( ruleVariableRef ) ;
     public final void rule__Parameter__LeftAssignment_1_1_0() throws RecognitionException {
 
@@ -57778,6 +63947,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Parameter__RightAssignment_2"
+    /**
+     * Rule parameter right assignment 2.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17230:1: rule__Parameter__RightAssignment_2 : ( ruleExpression ) ;
     public final void rule__Parameter__RightAssignment_2() throws RecognitionException {
 
@@ -57823,6 +63997,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitRef__RefAssignment_1"
+    /**
+     * Rule unit ref ref assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17245:1: rule__UnitRef__RefAssignment_1 : ( ( RULE_ID ) ) ;
     public final void rule__UnitRef__RefAssignment_1() throws RecognitionException {
 
@@ -57876,6 +64055,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VariableRef__RefAssignment_1"
+    /**
+     * Rule variable ref ref assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17264:1: rule__VariableRef__RefAssignment_1 : ( ( ruleValid_ID ) ) ;
     public final void rule__VariableRef__RefAssignment_1() throws RecognitionException {
 
@@ -57933,6 +64117,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__RefAssignment_0_1_0"
+    /**
+     * Rule type ref ref assignment 0 1 0.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17283:1: rule__TypeRef__RefAssignment_0_1_0 : ( ( RULE_ID ) ) ;
     public final void rule__TypeRef__RefAssignment_0_1_0() throws RecognitionException {
 
@@ -57986,6 +64175,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__ParameterAssignment_0_1_1"
+    /**
+     * Rule type ref parameter assignment 0 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17302:1: rule__TypeRef__ParameterAssignment_0_1_1 : ( ruleTypeInfo ) ;
     public final void rule__TypeRef__ParameterAssignment_0_1_1() throws RecognitionException {
 
@@ -58031,6 +64225,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeRef__ParameterAssignment_1_1_1"
+    /**
+     * Rule type ref parameter assignment 1 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17317:1: rule__TypeRef__ParameterAssignment_1_1_1 : ( ruleTypeInfo ) ;
     public final void rule__TypeRef__ParameterAssignment_1_1_1() throws RecognitionException {
 
@@ -58076,6 +64275,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__FirstAssignment_1"
+    /**
+     * Rule type info first assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17332:1: rule__TypeInfo__FirstAssignment_1 : ( ruleTypeRef ) ;
     public final void rule__TypeInfo__FirstAssignment_1() throws RecognitionException {
 
@@ -58121,6 +64325,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeInfo__SecondAssignment_2_1"
+    /**
+     * Rule type info second assignment 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17347:1: rule__TypeInfo__SecondAssignment_2_1 : ( ruleTypeRef ) ;
     public final void rule__TypeInfo__SecondAssignment_2_1() throws RecognitionException {
 
@@ -58166,6 +64375,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionRef__RefAssignment_1"
+    /**
+     * Rule action ref ref assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17362:1: rule__ActionRef__RefAssignment_1 : ( ( ruleValid_ID ) ) ;
     public final void rule__ActionRef__RefAssignment_1() throws RecognitionException {
 
@@ -58223,6 +64437,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationRef__RefAssignment_1"
+    /**
+     * Rule equation ref ref assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17381:1: rule__EquationRef__RefAssignment_1 : ( ( ruleValid_ID ) ) ;
     public final void rule__EquationRef__RefAssignment_1() throws RecognitionException {
 
@@ -58280,6 +64499,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__UnitFakeDefinition__NameAssignment_1"
+    /**
+     * Rule unit fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17400:1: rule__UnitFakeDefinition__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__UnitFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58321,6 +64545,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFakeDefinition__NameAssignment_1"
+    /**
+     * Rule type fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17415:1: rule__TypeFakeDefinition__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__TypeFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58362,6 +64591,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActionFakeDefinition__NameAssignment_1"
+    /**
+     * Rule action fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17430:1: rule__ActionFakeDefinition__NameAssignment_1 : ( ruleValid_ID ) ;
     public final void rule__ActionFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58407,6 +64641,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__SkillFakeDefinition__NameAssignment_1"
+    /**
+     * Rule skill fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17445:1: rule__SkillFakeDefinition__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__SkillFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58448,6 +64687,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__VarFakeDefinition__NameAssignment_1"
+    /**
+     * Rule var fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17460:1: rule__VarFakeDefinition__NameAssignment_1 : ( ruleValid_ID ) ;
     public final void rule__VarFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58493,6 +64737,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EquationFakeDefinition__NameAssignment_1"
+    /**
+     * Rule equation fake definition name assignment 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17475:1: rule__EquationFakeDefinition__NameAssignment_1 : ( ruleValid_ID ) ;
     public final void rule__EquationFakeDefinition__NameAssignment_1() throws RecognitionException {
 
@@ -58538,6 +64787,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__OpAssignment_1_1"
+    /**
+     * Rule terminal expression op assignment 1 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17490:1: rule__TerminalExpression__OpAssignment_1_1 : ( RULE_INTEGER ) ;
     public final void rule__TerminalExpression__OpAssignment_1_1() throws RecognitionException {
 
@@ -58579,6 +64833,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__OpAssignment_2_1"
+    /**
+     * Rule terminal expression op assignment 2 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17505:1: rule__TerminalExpression__OpAssignment_2_1 : ( RULE_DOUBLE ) ;
     public final void rule__TerminalExpression__OpAssignment_2_1() throws RecognitionException {
 
@@ -58620,6 +64879,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__OpAssignment_3_1"
+    /**
+     * Rule terminal expression op assignment 3 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17520:1: rule__TerminalExpression__OpAssignment_3_1 : ( RULE_BOOLEAN ) ;
     public final void rule__TerminalExpression__OpAssignment_3_1() throws RecognitionException {
 
@@ -58661,6 +64925,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TerminalExpression__OpAssignment_4_1"
+    /**
+     * Rule terminal expression op assignment 4 1.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17535:1: rule__TerminalExpression__OpAssignment_4_1 : ( RULE_KEYWORD ) ;
     public final void rule__TerminalExpression__OpAssignment_4_1() throws RecognitionException {
 
@@ -58702,6 +64971,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__StringLiteral__OpAssignment"
+    /**
+     * Rule string literal op assignment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:17550:1: rule__StringLiteral__OpAssignment : ( RULE_STRING ) ;
     public final void rule__StringLiteral__OpAssignment() throws RecognitionException {
 
@@ -58741,6 +65015,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end "rule__StringLiteral__OpAssignment"
 
+    /**
+     * Synpred 13 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred13_InternalGaml
     public final void synpred13_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:2815:2: ( ( ( ruleS_Declaration ) ) )
@@ -58771,6 +65050,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred13_InternalGaml
 
+    /**
+     * Synpred 14 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred14_InternalGaml
     public final void synpred14_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:2836:2: ( ( ( ruleS_Assignment ) ) )
@@ -58801,6 +65085,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred14_InternalGaml
 
+    /**
+     * Synpred 15 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred15_InternalGaml
     public final void synpred15_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:2842:2: ( ( ruleS_1Expr_Facets_BlockOrEnd ) )
@@ -58825,6 +65114,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred15_InternalGaml
 
+    /**
+     * Synpred 16 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred16_InternalGaml
     public final void synpred16_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:2848:2: ( ( ruleS_Other ) )
@@ -58849,6 +65143,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred16_InternalGaml
 
+    /**
+     * Synpred 17 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred17_InternalGaml
     public final void synpred17_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:2854:2: ( ( ruleS_Do ) )
@@ -58873,6 +65172,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred17_InternalGaml
 
+    /**
+     * Synpred 40 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred40_InternalGaml
     public final void synpred40_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:3217:2: ( ( ( rulespeciesOrGridDisplayStatement ) ) )
@@ -58903,6 +65207,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred40_InternalGaml
 
+    /**
+     * Synpred 131 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred131_InternalGaml
     public final void synpred131_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4018:2: ( ( ( rule__FunctionFacet__Group_1_0__0 ) ) )
@@ -58933,6 +65242,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred131_InternalGaml
 
+    /**
+     * Synpred 132 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred132_InternalGaml
     public final void synpred132_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4039:2: ( ( ( rule__TypeFacet__Group_1_0__0 ) ) )
@@ -58963,6 +65277,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred132_InternalGaml
 
+    /**
+     * Synpred 134 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred134_InternalGaml
     public final void synpred134_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4081:2: ( ( ( ruleArgumentPair ) ) )
@@ -58993,6 +65312,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred134_InternalGaml
 
+    /**
+     * Synpred 162 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred162_InternalGaml
     public final void synpred162_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4474:2: ( ( ( ruleFunction ) ) )
@@ -59023,6 +65347,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred162_InternalGaml
 
+    /**
+     * Synpred 172 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred172_InternalGaml
     public final void synpred172_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4639:2: ( ( ( ruleS_Declaration ) ) )
@@ -59053,6 +65382,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred172_InternalGaml
 
+    /**
+     * Synpred 239 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred239_InternalGaml
     public final void synpred239_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:9897:3: ( rule__ArgumentPair__Group_0__0 )
@@ -59070,6 +65404,11 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
     // Delegated rules
 
+    /**
+     * Synpred 134 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred134_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59084,6 +65423,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 40 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred40_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59098,6 +65443,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 13 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred13_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59112,6 +65463,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 162 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred162_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59126,6 +65483,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 239 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred239_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59140,6 +65503,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 16 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred16_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59154,6 +65523,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 17 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred17_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59168,6 +65543,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 15 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred15_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59182,6 +65563,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 172 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred172_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59196,6 +65583,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 131 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred131_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59210,6 +65603,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 132 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred132_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59224,6 +65623,12 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 14 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred14_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -59240,24 +65645,61 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
 
 
+    /** The dfa 10. */
     protected DFA10 dfa10 = new DFA10(this);
+    
+    /** The dfa 11. */
     protected DFA11 dfa11 = new DFA11(this);
+    
+    /** The dfa 23. */
     protected DFA23 dfa23 = new DFA23(this);
+    
+    /** The dfa 26. */
     protected DFA26 dfa26 = new DFA26(this);
+    
+    /** The dfa 34. */
     protected DFA34 dfa34 = new DFA34(this);
+    
+    /** The dfa 43. */
     protected DFA43 dfa43 = new DFA43(this);
+    
+    /** The dfa 44. */
     protected DFA44 dfa44 = new DFA44(this);
+    
+    /** The dfa 46. */
     protected DFA46 dfa46 = new DFA46(this);
+    
+    /** The dfa 61. */
     protected DFA61 dfa61 = new DFA61(this);
+    
+    /** The dfa 62. */
     protected DFA62 dfa62 = new DFA62(this);
+    
+    /** The dfa 68. */
     protected DFA68 dfa68 = new DFA68(this);
+    
+    /** The dfa 85. */
     protected DFA85 dfa85 = new DFA85(this);
+    
+    /** The dfa 120. */
     protected DFA120 dfa120 = new DFA120(this);
+    
+    /** The Constant dfa_1s. */
     static final String dfa_1s = "\151\uffff";
+    
+    /** The Constant dfa_2s. */
     static final String dfa_2s = "\1\4\6\0\1\uffff\4\0\135\uffff";
+    
+    /** The Constant dfa_3s. */
     static final String dfa_3s = "\1\u0095\6\0\1\uffff\4\0\135\uffff";
+    
+    /** The Constant dfa_4s. */
     static final String dfa_4s = "\7\uffff\1\1\5\uffff\1\2\133\uffff";
+    
+    /** The Constant dfa_5s. */
     static final String dfa_5s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\uffff\1\6\1\7\1\10\1\11\135\uffff}>";
+    
+    /** The Constant dfa_6s. */
     static final String[] dfa_6s = {
             "\1\15\1\1\4\15\4\uffff\4\15\1\uffff\1\15\1\uffff\1\2\1\3\53\15\1\10\1\11\1\12\1\13\1\4\1\5\1\6\5\uffff\30\15\7\uffff\1\15\2\uffff\6\15\10\uffff\1\15\1\uffff\1\15\1\uffff\1\15\4\uffff\1\15\7\uffff\1\7\1\15\1\uffff\2\15\1\7\1\15",
             "\1\uffff",
@@ -59366,15 +65808,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_1. */
     static final short[] dfa_1 = DFA.unpackEncodedString(dfa_1s);
+    
+    /** The Constant dfa_2. */
     static final char[] dfa_2 = DFA.unpackEncodedStringToUnsignedChars(dfa_2s);
+    
+    /** The Constant dfa_3. */
     static final char[] dfa_3 = DFA.unpackEncodedStringToUnsignedChars(dfa_3s);
+    
+    /** The Constant dfa_4. */
     static final short[] dfa_4 = DFA.unpackEncodedString(dfa_4s);
+    
+    /** The Constant dfa_5. */
     static final short[] dfa_5 = DFA.unpackEncodedString(dfa_5s);
+    
+    /** The Constant dfa_6. */
     static final short[][] dfa_6 = unpackEncodedStringArray(dfa_6s);
 
+    /**
+     * The Class DFA10.
+     */
     class DFA10 extends DFA {
 
+        /**
+         * Instantiates a new dfa10.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA10(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 10;
@@ -59551,11 +66012,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_7s. */
     static final String dfa_7s = "\153\uffff";
+    
+    /** The Constant dfa_8s. */
     static final String dfa_8s = "\1\4\2\uffff\2\0\7\uffff\53\0\64\uffff";
+    
+    /** The Constant dfa_9s. */
     static final String dfa_9s = "\1\u0095\2\uffff\2\0\7\uffff\53\0\64\uffff";
+    
+    /** The Constant dfa_10s. */
     static final String dfa_10s = "\1\uffff\1\1\141\uffff\1\5\1\6\1\7\1\10\1\4\1\2\1\11\1\3";
+    
+    /** The Constant dfa_11s. */
     static final String dfa_11s = "\3\uffff\1\0\1\1\7\uffff\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\64\uffff}>";
+    
+    /** The Constant dfa_12s. */
     static final String[] dfa_12s = {
             "\1\1\1\66\4\1\4\uffff\1\65\1\144\2\1\1\uffff\1\1\1\uffff\2\1\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\7\1\5\uffff\30\1\7\uffff\1\1\2\uffff\6\1\10\uffff\1\1\1\uffff\1\1\1\uffff\1\1\4\uffff\1\1\10\uffff\1\145\1\uffff\1\146\1\143\1\uffff\1\1",
             "",
@@ -59666,15 +66139,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_7. */
     static final short[] dfa_7 = DFA.unpackEncodedString(dfa_7s);
+    
+    /** The Constant dfa_8. */
     static final char[] dfa_8 = DFA.unpackEncodedStringToUnsignedChars(dfa_8s);
+    
+    /** The Constant dfa_9. */
     static final char[] dfa_9 = DFA.unpackEncodedStringToUnsignedChars(dfa_9s);
+    
+    /** The Constant dfa_10. */
     static final short[] dfa_10 = DFA.unpackEncodedString(dfa_10s);
+    
+    /** The Constant dfa_11. */
     static final short[] dfa_11 = DFA.unpackEncodedString(dfa_11s);
+    
+    /** The Constant dfa_12. */
     static final short[][] dfa_12 = unpackEncodedStringArray(dfa_12s);
 
+    /**
+     * The Class DFA11.
+     */
     class DFA11 extends DFA {
 
+        /**
+         * Instantiates a new dfa11.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA11(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 11;
@@ -60376,11 +66868,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_13s. */
     static final String dfa_13s = "\72\uffff";
+    
+    /** The Constant dfa_14s. */
     static final String dfa_14s = "\1\5\67\147\2\uffff";
+    
+    /** The Constant dfa_15s. */
     static final String dfa_15s = "\1\110\67\u0080\2\uffff";
+    
+    /** The Constant dfa_16s. */
     static final String dfa_16s = "\70\uffff\1\1\1\2";
+    
+    /** The Constant dfa_17s. */
     static final String dfa_17s = "\72\uffff}>";
+    
+    /** The Constant dfa_18s. */
     static final String[] dfa_18s = {
             "\1\66\10\uffff\1\65\1\uffff\1\67\4\uffff\1\1\1\2\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7",
             "\1\71\2\uffff\1\70\25\uffff\1\70",
@@ -60442,15 +66946,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_13. */
     static final short[] dfa_13 = DFA.unpackEncodedString(dfa_13s);
+    
+    /** The Constant dfa_14. */
     static final char[] dfa_14 = DFA.unpackEncodedStringToUnsignedChars(dfa_14s);
+    
+    /** The Constant dfa_15. */
     static final char[] dfa_15 = DFA.unpackEncodedStringToUnsignedChars(dfa_15s);
+    
+    /** The Constant dfa_16. */
     static final short[] dfa_16 = DFA.unpackEncodedString(dfa_16s);
+    
+    /** The Constant dfa_17. */
     static final short[] dfa_17 = DFA.unpackEncodedString(dfa_17s);
+    
+    /** The Constant dfa_18. */
     static final short[][] dfa_18 = unpackEncodedStringArray(dfa_18s);
 
+    /**
+     * The Class DFA23.
+     */
     class DFA23 extends DFA {
 
+        /**
+         * Instantiates a new dfa23.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA23(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 23;
@@ -60466,10 +66989,20 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             return "3149:1: rule__S_Equation__ExprAlternatives_0_0 : ( ( ruleFunction ) | ( ruleVariableRef ) );";
         }
     }
+    
+    /** The Constant dfa_19s. */
     static final String dfa_19s = "\1\4\2\0\150\uffff";
+    
+    /** The Constant dfa_20s. */
     static final String dfa_20s = "\1\u0097\2\0\150\uffff";
+    
+    /** The Constant dfa_21s. */
     static final String dfa_21s = "\3\uffff\1\2\146\uffff\1\1";
+    
+    /** The Constant dfa_22s. */
     static final String dfa_22s = "\1\uffff\1\0\1\1\150\uffff}>";
+    
+    /** The Constant dfa_23s. */
     static final String[] dfa_23s = {
             "\6\3\4\uffff\4\3\1\uffff\1\3\1\uffff\1\1\1\2\62\3\5\uffff\30\3\7\uffff\1\3\2\uffff\6\3\10\uffff\1\3\1\uffff\1\3\1\uffff\1\3\4\uffff\1\3\7\uffff\2\3\1\uffff\4\3\1\uffff\1\3",
             "\1\uffff",
@@ -60579,14 +67112,32 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_19. */
     static final char[] dfa_19 = DFA.unpackEncodedStringToUnsignedChars(dfa_19s);
+    
+    /** The Constant dfa_20. */
     static final char[] dfa_20 = DFA.unpackEncodedStringToUnsignedChars(dfa_20s);
+    
+    /** The Constant dfa_21. */
     static final short[] dfa_21 = DFA.unpackEncodedString(dfa_21s);
+    
+    /** The Constant dfa_22. */
     static final short[] dfa_22 = DFA.unpackEncodedString(dfa_22s);
+    
+    /** The Constant dfa_23. */
     static final short[][] dfa_23 = unpackEncodedStringArray(dfa_23s);
 
+    /**
+     * The Class DFA26.
+     */
     class DFA26 extends DFA {
 
+        /**
+         * Instantiates a new dfa26.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA26(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 26;
@@ -60643,11 +67194,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_24s. */
     static final String dfa_24s = "\12\uffff";
+    
+    /** The Constant dfa_25s. */
     static final String dfa_25s = "\1\24\2\uffff\1\115\6\uffff";
+    
+    /** The Constant dfa_26s. */
     static final String dfa_26s = "\1\153\2\uffff\1\153\6\uffff";
+    
+    /** The Constant dfa_27s. */
     static final String dfa_27s = "\1\uffff\1\1\1\2\1\uffff\1\4\1\6\1\7\1\10\1\3\1\5";
+    
+    /** The Constant dfa_28s. */
     static final String dfa_28s = "\12\uffff}>";
+    
+    /** The Constant dfa_29s. */
     static final String[] dfa_29s = {
             "\1\1\64\uffff\1\2\1\4\1\5\1\6\1\7\35\uffff\1\3",
             "",
@@ -60661,15 +67224,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_24. */
     static final short[] dfa_24 = DFA.unpackEncodedString(dfa_24s);
+    
+    /** The Constant dfa_25. */
     static final char[] dfa_25 = DFA.unpackEncodedStringToUnsignedChars(dfa_25s);
+    
+    /** The Constant dfa_26. */
     static final char[] dfa_26 = DFA.unpackEncodedStringToUnsignedChars(dfa_26s);
+    
+    /** The Constant dfa_27. */
     static final short[] dfa_27 = DFA.unpackEncodedString(dfa_27s);
+    
+    /** The Constant dfa_28. */
     static final short[] dfa_28 = DFA.unpackEncodedString(dfa_28s);
+    
+    /** The Constant dfa_29. */
     static final short[][] dfa_29 = unpackEncodedStringArray(dfa_29s);
 
+    /**
+     * The Class DFA34.
+     */
     class DFA34 extends DFA {
 
+        /**
+         * Instantiates a new dfa34.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA34(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 34;
@@ -60685,11 +67267,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             return "3626:1: rule___AssignmentKey__Alternatives : ( ( '<-' ) | ( '<<' ) | ( ( rule___AssignmentKey__Group_2__0 ) ) | ( '<<+' ) | ( ( rule___AssignmentKey__Group_4__0 ) ) | ( '+<-' ) | ( '<+' ) | ( '>-' ) );";
         }
     }
+    
+    /** The Constant dfa_30s. */
     static final String dfa_30s = "\143\uffff";
+    
+    /** The Constant dfa_31s. */
     static final String dfa_31s = "\1\4\131\uffff\1\0\10\uffff";
+    
+    /** The Constant dfa_32s. */
     static final String dfa_32s = "\1\u0087\131\uffff\1\0\10\uffff";
+    
+    /** The Constant dfa_33s. */
     static final String dfa_33s = "\1\uffff\1\1\140\uffff\1\2";
+    
+    /** The Constant dfa_34s. */
     static final String dfa_34s = "\132\uffff\1\0\10\uffff}>";
+    
+    /** The Constant dfa_35s. */
     static final String[] dfa_35s = {
             "\6\1\4\uffff\1\1\1\uffff\2\1\1\uffff\1\1\1\uffff\64\1\5\uffff\30\1\7\uffff\1\1\2\uffff\6\1\10\uffff\1\1\1\uffff\1\1\1\uffff\1\132\4\uffff\1\1",
             "",
@@ -60792,15 +67386,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_30. */
     static final short[] dfa_30 = DFA.unpackEncodedString(dfa_30s);
+    
+    /** The Constant dfa_31. */
     static final char[] dfa_31 = DFA.unpackEncodedStringToUnsignedChars(dfa_31s);
+    
+    /** The Constant dfa_32. */
     static final char[] dfa_32 = DFA.unpackEncodedStringToUnsignedChars(dfa_32s);
+    
+    /** The Constant dfa_33. */
     static final short[] dfa_33 = DFA.unpackEncodedString(dfa_33s);
+    
+    /** The Constant dfa_34. */
     static final short[] dfa_34 = DFA.unpackEncodedString(dfa_34s);
+    
+    /** The Constant dfa_35. */
     static final short[][] dfa_35 = unpackEncodedStringArray(dfa_35s);
 
+    /**
+     * The Class DFA43.
+     */
     class DFA43 extends DFA {
 
+        /**
+         * Instantiates a new dfa43.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA43(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 43;
@@ -60842,10 +67455,20 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_36s. */
     static final String dfa_36s = "\1\4\2\0\140\uffff";
+    
+    /** The Constant dfa_37s. */
     static final String dfa_37s = "\1\u0087\2\0\140\uffff";
+    
+    /** The Constant dfa_38s. */
     static final String dfa_38s = "\3\uffff\1\2\136\uffff\1\1";
+    
+    /** The Constant dfa_39s. */
     static final String dfa_39s = "\1\uffff\1\0\1\1\140\uffff}>";
+    
+    /** The Constant dfa_40s. */
     static final String[] dfa_40s = {
             "\1\3\1\1\4\3\4\uffff\1\3\1\uffff\2\3\1\uffff\1\3\1\uffff\1\2\63\3\5\uffff\30\3\7\uffff\1\3\2\uffff\6\3\10\uffff\1\3\1\uffff\1\3\1\uffff\1\3\4\uffff\1\3",
             "\1\uffff",
@@ -60947,14 +67570,32 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_36. */
     static final char[] dfa_36 = DFA.unpackEncodedStringToUnsignedChars(dfa_36s);
+    
+    /** The Constant dfa_37. */
     static final char[] dfa_37 = DFA.unpackEncodedStringToUnsignedChars(dfa_37s);
+    
+    /** The Constant dfa_38. */
     static final short[] dfa_38 = DFA.unpackEncodedString(dfa_38s);
+    
+    /** The Constant dfa_39. */
     static final short[] dfa_39 = DFA.unpackEncodedString(dfa_39s);
+    
+    /** The Constant dfa_40. */
     static final short[][] dfa_40 = unpackEncodedStringArray(dfa_40s);
 
+    /**
+     * The Class DFA44.
+     */
     class DFA44 extends DFA {
 
+        /**
+         * Instantiates a new dfa44.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA44(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 44;
@@ -61011,10 +67652,20 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_41s. */
     static final String dfa_41s = "\1\4\67\0\33\uffff\17\0\1\uffff";
+    
+    /** The Constant dfa_42s. */
     static final String dfa_42s = "\1\u0087\67\0\33\uffff\17\0\1\uffff";
+    
+    /** The Constant dfa_43s. */
     static final String dfa_43s = "\70\uffff\1\1\51\uffff\1\2";
+    
+    /** The Constant dfa_44s. */
     static final String dfa_44s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\33\uffff\1\67\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\100\1\101\1\102\1\103\1\104\1\105\1\uffff}>";
+    
+    /** The Constant dfa_45s. */
     static final String[] dfa_45s = {
             "\1\123\1\66\1\124\1\125\1\126\1\127\4\uffff\1\65\1\uffff\1\67\1\70\1\uffff\1\70\1\uffff\1\1\1\2\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\5\uffff\30\70\7\uffff\1\135\2\uffff\1\133\1\134\1\136\1\137\1\140\1\141\10\uffff\1\70\1\uffff\1\130\1\uffff\1\132\4\uffff\1\131",
             "\1\uffff",
@@ -61116,14 +67767,32 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "\1\uffff",
             ""
     };
+    
+    /** The Constant dfa_41. */
     static final char[] dfa_41 = DFA.unpackEncodedStringToUnsignedChars(dfa_41s);
+    
+    /** The Constant dfa_42. */
     static final char[] dfa_42 = DFA.unpackEncodedStringToUnsignedChars(dfa_42s);
+    
+    /** The Constant dfa_43. */
     static final short[] dfa_43 = DFA.unpackEncodedString(dfa_43s);
+    
+    /** The Constant dfa_44. */
     static final short[] dfa_44 = DFA.unpackEncodedString(dfa_44s);
+    
+    /** The Constant dfa_45. */
     static final short[][] dfa_45 = unpackEncodedStringArray(dfa_45s);
 
+    /**
+     * The Class DFA46.
+     */
     class DFA46 extends DFA {
 
+        /**
+         * Instantiates a new dfa46.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA46(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 46;
@@ -62200,9 +68869,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_46s. */
     static final String dfa_46s = "\1\5\67\0\2\uffff";
+    
+    /** The Constant dfa_47s. */
     static final String dfa_47s = "\1\110\67\0\2\uffff";
+    
+    /** The Constant dfa_48s. */
     static final String dfa_48s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\2\uffff}>";
+    
+    /** The Constant dfa_49s. */
     static final String[] dfa_49s = {
             "\1\66\10\uffff\1\65\1\uffff\1\67\4\uffff\1\1\1\2\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7",
             "\1\uffff",
@@ -62263,13 +68940,29 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_46. */
     static final char[] dfa_46 = DFA.unpackEncodedStringToUnsignedChars(dfa_46s);
+    
+    /** The Constant dfa_47. */
     static final char[] dfa_47 = DFA.unpackEncodedStringToUnsignedChars(dfa_47s);
+    
+    /** The Constant dfa_48. */
     static final short[] dfa_48 = DFA.unpackEncodedString(dfa_48s);
+    
+    /** The Constant dfa_49. */
     static final short[][] dfa_49 = unpackEncodedStringArray(dfa_49s);
 
+    /**
+     * The Class DFA61.
+     */
     class DFA61 extends DFA {
 
+        /**
+         * Instantiates a new dfa61.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA61(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 61;
@@ -63121,12 +69814,26 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_50s. */
     static final String dfa_50s = "\126\uffff";
+    
+    /** The Constant dfa_51s. */
     static final String dfa_51s = "\1\uffff\67\123\36\uffff";
+    
+    /** The Constant dfa_52s. */
     static final String dfa_52s = "\1\4\67\5\10\4\1\177\22\4\2\uffff\1\4";
+    
+    /** The Constant dfa_53s. */
     static final String dfa_53s = "\1\u0087\67\u009d\10\u0087\1\177\22\u0087\2\uffff\1\u0087";
+    
+    /** The Constant dfa_54s. */
     static final String dfa_54s = "\123\uffff\1\1\1\2\1\uffff";
+    
+    /** The Constant dfa_55s. */
     static final String dfa_55s = "\126\uffff}>";
+    
+    /** The Constant dfa_56s. */
     static final String[] dfa_56s = {
             "\1\123\1\66\4\123\4\uffff\1\65\1\uffff\1\67\1\122\1\uffff\1\102\1\uffff\1\1\1\2\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\5\uffff\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\7\uffff\1\123\2\uffff\6\123\10\uffff\1\100\1\uffff\1\123\1\uffff\1\123\4\uffff\1\123",
             "\1\123\10\uffff\1\123\1\uffff\1\123\4\uffff\64\123\35\uffff\14\123\7\uffff\1\123\5\uffff\1\124\2\123\2\uffff\4\123\21\uffff\5\123",
@@ -63216,16 +69923,37 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "\6\124\4\uffff\1\124\1\uffff\2\124\1\uffff\1\124\1\uffff\64\124\5\uffff\30\124\7\uffff\1\124\2\uffff\6\124\10\uffff\1\124\1\123\1\124\1\uffff\1\124\4\uffff\1\124"
     };
 
+    /** The Constant dfa_50. */
     static final short[] dfa_50 = DFA.unpackEncodedString(dfa_50s);
+    
+    /** The Constant dfa_51. */
     static final short[] dfa_51 = DFA.unpackEncodedString(dfa_51s);
+    
+    /** The Constant dfa_52. */
     static final char[] dfa_52 = DFA.unpackEncodedStringToUnsignedChars(dfa_52s);
+    
+    /** The Constant dfa_53. */
     static final char[] dfa_53 = DFA.unpackEncodedStringToUnsignedChars(dfa_53s);
+    
+    /** The Constant dfa_54. */
     static final short[] dfa_54 = DFA.unpackEncodedString(dfa_54s);
+    
+    /** The Constant dfa_55. */
     static final short[] dfa_55 = DFA.unpackEncodedString(dfa_55s);
+    
+    /** The Constant dfa_56. */
     static final short[][] dfa_56 = unpackEncodedStringArray(dfa_56s);
 
+    /**
+     * The Class DFA62.
+     */
     class DFA62 extends DFA {
 
+        /**
+         * Instantiates a new dfa62.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA62(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 62;
@@ -63241,11 +69969,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             return "4490:1: rule__ExpressionList__Alternatives : ( ( ( rule__ExpressionList__Group_0__0 ) ) | ( ( rule__ExpressionList__Group_1__0 ) ) );";
         }
     }
+    
+    /** The Constant dfa_57s. */
     static final String dfa_57s = "\24\uffff";
+    
+    /** The Constant dfa_58s. */
     static final String dfa_58s = "\1\5\2\0\21\uffff";
+    
+    /** The Constant dfa_59s. */
     static final String dfa_59s = "\1\u0094\2\0\21\uffff";
+    
+    /** The Constant dfa_60s. */
     static final String dfa_60s = "\3\uffff\1\1\11\uffff\1\2\6\uffff";
+    
+    /** The Constant dfa_61s. */
     static final String dfa_61s = "\1\uffff\1\0\1\1\21\uffff}>";
+    
+    /** The Constant dfa_62s. */
     static final String[] dfa_62s = {
             "\1\1\12\uffff\1\15\4\uffff\1\2\1\3\53\uffff\7\3\5\uffff\2\15\47\uffff\2\15\1\uffff\1\15\21\uffff\1\15\2\uffff\1\3\4\uffff\1\3",
             "\1\uffff",
@@ -63269,15 +70009,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_57. */
     static final short[] dfa_57 = DFA.unpackEncodedString(dfa_57s);
+    
+    /** The Constant dfa_58. */
     static final char[] dfa_58 = DFA.unpackEncodedStringToUnsignedChars(dfa_58s);
+    
+    /** The Constant dfa_59. */
     static final char[] dfa_59 = DFA.unpackEncodedStringToUnsignedChars(dfa_59s);
+    
+    /** The Constant dfa_60. */
     static final short[] dfa_60 = DFA.unpackEncodedString(dfa_60s);
+    
+    /** The Constant dfa_61. */
     static final short[] dfa_61 = DFA.unpackEncodedString(dfa_61s);
+    
+    /** The Constant dfa_62. */
     static final short[][] dfa_62 = unpackEncodedStringArray(dfa_62s);
 
+    /**
+     * The Class DFA68.
+     */
     class DFA68 extends DFA {
 
+        /**
+         * Instantiates a new dfa68.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA68(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 68;
@@ -63334,11 +70093,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_63s. */
     static final String dfa_63s = "\40\uffff";
+    
+    /** The Constant dfa_64s. */
     static final String dfa_64s = "\11\4\1\177\22\4\1\5\2\uffff\1\4";
+    
+    /** The Constant dfa_65s. */
     static final String dfa_65s = "\11\u0087\1\177\22\u0087\1\u009d\2\uffff\1\u0087";
+    
+    /** The Constant dfa_66s. */
     static final String dfa_66s = "\35\uffff\1\2\1\1\1\uffff";
+    
+    /** The Constant dfa_67s. */
     static final String dfa_67s = "\40\uffff}>";
+    
+    /** The Constant dfa_68s. */
     static final String[] dfa_68s = {
             "\1\35\1\34\4\35\4\uffff\1\35\1\uffff\1\35\1\31\1\uffff\1\13\1\uffff\64\35\5\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\12\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\32\1\33\7\uffff\1\35\2\uffff\6\35\10\uffff\1\11\1\uffff\1\35\1\uffff\1\35\4\uffff\1\35",
             "\6\36\4\uffff\1\36\1\uffff\2\36\1\uffff\1\36\1\uffff\64\36\5\uffff\30\36\7\uffff\1\36\2\uffff\6\36\10\uffff\1\36\1\35\1\36\1\uffff\1\36\4\uffff\1\36",
@@ -63374,15 +70145,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             "\6\36\4\uffff\1\36\1\uffff\2\36\1\uffff\1\36\1\uffff\64\36\5\uffff\30\36\7\uffff\1\36\2\uffff\6\36\10\uffff\1\36\1\35\1\36\1\uffff\1\36\4\uffff\1\36"
     };
 
+    /** The Constant dfa_63. */
     static final short[] dfa_63 = DFA.unpackEncodedString(dfa_63s);
+    
+    /** The Constant dfa_64. */
     static final char[] dfa_64 = DFA.unpackEncodedStringToUnsignedChars(dfa_64s);
+    
+    /** The Constant dfa_65. */
     static final char[] dfa_65 = DFA.unpackEncodedStringToUnsignedChars(dfa_65s);
+    
+    /** The Constant dfa_66. */
     static final short[] dfa_66 = DFA.unpackEncodedString(dfa_66s);
+    
+    /** The Constant dfa_67. */
     static final short[] dfa_67 = DFA.unpackEncodedString(dfa_67s);
+    
+    /** The Constant dfa_68. */
     static final short[][] dfa_68 = unpackEncodedStringArray(dfa_68s);
 
+    /**
+     * The Class DFA85.
+     */
     class DFA85 extends DFA {
 
+        /**
+         * Instantiates a new dfa85.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA85(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 85;
@@ -63398,11 +70188,23 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             return "5955:2: ( rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1 )?";
         }
     }
+    
+    /** The Constant dfa_69s. */
     static final String dfa_69s = "\142\uffff";
+    
+    /** The Constant dfa_70s. */
     static final String dfa_70s = "\1\4\67\0\52\uffff";
+    
+    /** The Constant dfa_71s. */
     static final String dfa_71s = "\1\u0087\67\0\52\uffff";
+    
+    /** The Constant dfa_72s. */
     static final String dfa_72s = "\70\uffff\1\1\32\uffff\1\2\16\uffff";
+    
+    /** The Constant dfa_73s. */
     static final String dfa_73s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\52\uffff}>";
+    
+    /** The Constant dfa_74s. */
     static final String[] dfa_74s = {
             "\1\123\1\66\4\123\4\uffff\1\65\1\uffff\1\67\1\70\1\uffff\1\70\1\uffff\1\1\1\2\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\5\uffff\30\70\7\uffff\1\123\2\uffff\6\123\10\uffff\1\70\1\uffff\1\123\1\uffff\1\123\4\uffff\1\123",
             "\1\uffff",
@@ -63504,15 +70306,34 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
             ""
     };
 
+    /** The Constant dfa_69. */
     static final short[] dfa_69 = DFA.unpackEncodedString(dfa_69s);
+    
+    /** The Constant dfa_70. */
     static final char[] dfa_70 = DFA.unpackEncodedStringToUnsignedChars(dfa_70s);
+    
+    /** The Constant dfa_71. */
     static final char[] dfa_71 = DFA.unpackEncodedStringToUnsignedChars(dfa_71s);
+    
+    /** The Constant dfa_72. */
     static final short[] dfa_72 = DFA.unpackEncodedString(dfa_72s);
+    
+    /** The Constant dfa_73. */
     static final short[] dfa_73 = DFA.unpackEncodedString(dfa_73s);
+    
+    /** The Constant dfa_74. */
     static final short[][] dfa_74 = unpackEncodedStringArray(dfa_74s);
 
+    /**
+     * The Class DFA120.
+     */
     class DFA120 extends DFA {
 
+        /**
+         * Instantiates a new dfa120.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA120(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 120;
@@ -64366,84 +71187,241 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
     }
  
 
+    /** The Constant FOLLOW_1. */
     public static final BitSet FOLLOW_1 = new BitSet(new long[]{0x0000000000000000L});
+    
+    /** The Constant FOLLOW_2. */
     public static final BitSet FOLLOW_2 = new BitSet(new long[]{0x0000000000000002L});
+    
+    /** The Constant FOLLOW_3. */
     public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    
+    /** The Constant FOLLOW_4. */
     public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000100000L});
+    
+    /** The Constant FOLLOW_5. */
     public static final BitSet FOLLOW_5 = new BitSet(new long[]{0xFFFFFFFFFFEB43F0L,0x403F203FFFFFC1FFL,0x0000000000000085L});
+    
+    /** The Constant FOLLOW_6. */
     public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000000L,0x0080000000000000L});
+    
+    /** The Constant FOLLOW_7. */
     public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000000002L,0x0400000000000000L});
+    
+    /** The Constant FOLLOW_8. */
     public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000000020L});
+    
+    /** The Constant FOLLOW_9. */
     public static final BitSet FOLLOW_9 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x01000000000001FFL,0x0000000000004000L});
+    
+    /** The Constant FOLLOW_10. */
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000000002L,0x0100000000000000L});
+    
+    /** The Constant FOLLOW_11. */
     public static final BitSet FOLLOW_11 = new BitSet(new long[]{0xFFFFFFFFFFE14022L,0x00000000000001FFL,0x0000000000004000L});
+    
+    /** The Constant FOLLOW_12. */
     public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000000010L});
+    
+    /** The Constant FOLLOW_13. */
     public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000000000L,0x0200000000000000L});
+    
+    /** The Constant FOLLOW_14. */
     public static final BitSet FOLLOW_14 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000000000001FFL});
+    
+    /** The Constant FOLLOW_15. */
     public static final BitSet FOLLOW_15 = new BitSet(new long[]{0xFFFFFFFFFFE14030L,0x00000000000041FFL});
+    
+    /** The Constant FOLLOW_16. */
     public static final BitSet FOLLOW_16 = new BitSet(new long[]{0xFFFFFFFFFFFF4020L,0x4800003FFFFFC1FFL,0x0000000001000004L});
+    
+    /** The Constant FOLLOW_17. */
     public static final BitSet FOLLOW_17 = new BitSet(new long[]{0xFFFFFFFFFFFB4022L,0x4000003FFFFFC1FFL,0x0000000001000000L});
+    
+    /** The Constant FOLLOW_18. */
     public static final BitSet FOLLOW_18 = new BitSet(new long[]{0xFFFFFFFFFFFF4020L,0x4000003FFFFFC1FFL,0x0000000001000004L});
+    
+    /** The Constant FOLLOW_19. */
     public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000000000020L,0x0000000000004000L});
+    
+    /** The Constant FOLLOW_20. */
     public static final BitSet FOLLOW_20 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000010000001FFL});
+    
+    /** The Constant FOLLOW_21. */
     public static final BitSet FOLLOW_21 = new BitSet(new long[]{0xFFFFFFFFFFFB4020L,0x4000003FFFFFC1FFL,0x0000000001000004L});
+    
+    /** The Constant FOLLOW_22. */
     public static final BitSet FOLLOW_22 = new BitSet(new long[]{0xFFFFFFFFFFEB43F0L,0x403F203FFFFFC1FFL,0x0000000000020085L});
+    
+    /** The Constant FOLLOW_23. */
     public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000000000000000L,0x1000000000000000L});
+    
+    /** The Constant FOLLOW_24. */
     public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000010004L});
+    
+    /** The Constant FOLLOW_25. */
     public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000000000L,0x2000000000000000L});
+    
+    /** The Constant FOLLOW_26. */
     public static final BitSet FOLLOW_26 = new BitSet(new long[]{0xFFFFFFFFFFEF43F0L,0x403F203FFFFFC1FFL,0x0000000000000085L});
+    
+    /** The Constant FOLLOW_27. */
     public static final BitSet FOLLOW_27 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x40000000000041FFL,0x0000000000000004L});
+    
+    /** The Constant FOLLOW_28. */
     public static final BitSet FOLLOW_28 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000000000041FFL});
+    
+    /** The Constant FOLLOW_29. */
     public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000000000000L,0x8000000000000000L});
+    
+    /** The Constant FOLLOW_30. */
     public static final BitSet FOLLOW_30 = new BitSet(new long[]{0xFFFFFFFFFFFF4020L,0x4000003FFFFFC1FFL,0x0000000001000005L});
+    
+    /** The Constant FOLLOW_31. */
     public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000000000200020L});
+    
+    /** The Constant FOLLOW_32. */
     public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000002L});
+    
+    /** The Constant FOLLOW_33. */
     public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000100000L});
+    
+    /** The Constant FOLLOW_34. */
     public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000000L,0x000000000000003CL});
+    
+    /** The Constant FOLLOW_35. */
     public static final BitSet FOLLOW_35 = new BitSet(new long[]{0xFFFFFFFFFFFF4020L,0x4000003FFFFFC1FFL,0x0000000001000000L});
+    
+    /** The Constant FOLLOW_36. */
     public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000000000040000L});
+    
+    /** The Constant FOLLOW_37. */
     public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000000000100000L,0x0000080000003E00L});
+    
+    /** The Constant FOLLOW_38. */
     public static final BitSet FOLLOW_38 = new BitSet(new long[]{0xFFFFFFFFFFFB4020L,0x4000003FFFFFC1FFL,0x0000000001000000L});
+    
+    /** The Constant FOLLOW_39. */
     public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x0000000000180000L});
+    
+    /** The Constant FOLLOW_40. */
     public static final BitSet FOLLOW_40 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000000000001FFL,0x0000000000000008L});
+    
+    /** The Constant FOLLOW_41. */
     public static final BitSet FOLLOW_41 = new BitSet(new long[]{0xFFFFFFFFFFE14022L,0x00000000000001FFL});
+    
+    /** The Constant FOLLOW_42. */
     public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000000000000000L,0x0000008000000000L});
+    
+    /** The Constant FOLLOW_43. */
     public static final BitSet FOLLOW_43 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000000000001FFL,0x0000000000400000L});
+    
+    /** The Constant FOLLOW_44. */
     public static final BitSet FOLLOW_44 = new BitSet(new long[]{0xFFFFFFFFFFEBC3F0L,0x403F203FFFFFC1FFL,0x0000000000BD808DL});
+    
+    /** The Constant FOLLOW_45. */
     public static final BitSet FOLLOW_45 = new BitSet(new long[]{0xFFFFFFFFFFEBC3F2L,0x403F203FFFFFC1FFL,0x0000000000BD8085L});
+    
+    /** The Constant FOLLOW_46. */
     public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
+    
+    /** The Constant FOLLOW_47. */
     public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
+    
+    /** The Constant FOLLOW_48. */
     public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000010L});
+    
+    /** The Constant FOLLOW_49. */
     public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000010L});
+    
+    /** The Constant FOLLOW_50. */
     public static final BitSet FOLLOW_50 = new BitSet(new long[]{0xFFFFFFFFFFE14030L,0x00000000000001FFL});
+    
+    /** The Constant FOLLOW_51. */
     public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000008L});
+    
+    /** The Constant FOLLOW_52. */
     public static final BitSet FOLLOW_52 = new BitSet(new long[]{0xFFFFFFFFFFE14020L,0x00000000000001FFL,0x0000000000000004L});
+    
+    /** The Constant FOLLOW_53. */
     public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000020L});
+    
+    /** The Constant FOLLOW_54. */
     public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000002000000L});
+    
+    /** The Constant FOLLOW_55. */
     public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000004000000L});
+    
+    /** The Constant FOLLOW_56. */
     public static final BitSet FOLLOW_56 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000004000000L});
+    
+    /** The Constant FOLLOW_57. */
     public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000008000000L});
+    
+    /** The Constant FOLLOW_58. */
     public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000008000000L});
+    
+    /** The Constant FOLLOW_59. */
     public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x0000000000200020L,0x0000000000000000L,0x0000000000000001L});
+    
+    /** The Constant FOLLOW_60. */
     public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000000000000L,0x00000FC000000000L});
+    
+    /** The Constant FOLLOW_61. */
     public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000000000000000L,0x0000300000000000L});
+    
+    /** The Constant FOLLOW_62. */
     public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000000000000002L,0x0000300000000000L});
+    
+    /** The Constant FOLLOW_63. */
     public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000000000000L,0x0000C00000000000L});
+    
+    /** The Constant FOLLOW_64. */
     public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x0000000000000002L,0x0000C00000000000L});
+    
+    /** The Constant FOLLOW_65. */
     public static final BitSet FOLLOW_65 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000010000000L});
+    
+    /** The Constant FOLLOW_66. */
     public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000010000000L});
+    
+    /** The Constant FOLLOW_67. */
     public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000000000000L,0x0003000000000000L});
+    
+    /** The Constant FOLLOW_68. */
     public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000020000080L});
+    
+    /** The Constant FOLLOW_69. */
     public static final BitSet FOLLOW_69 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000020000080L});
+    
+    /** The Constant FOLLOW_70. */
     public static final BitSet FOLLOW_70 = new BitSet(new long[]{0xFFFFFFFFFFEB43F0L,0x403F203FFFFFC1FFL,0x00000000000000C5L});
+    
+    /** The Constant FOLLOW_71. */
     public static final BitSet FOLLOW_71 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000018L});
+    
+    /** The Constant FOLLOW_72. */
     public static final BitSet FOLLOW_72 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L,0x0000000000000001L});
+    
+    /** The Constant FOLLOW_73. */
     public static final BitSet FOLLOW_73 = new BitSet(new long[]{0xFFFFFFFFFFEB43F0L,0x403F203FFFFFC1FFL,0x0000000000000087L});
+    
+    /** The Constant FOLLOW_74. */
     public static final BitSet FOLLOW_74 = new BitSet(new long[]{0x0000000000000000L,0x0000040000000000L});
+    
+    /** The Constant FOLLOW_75. */
     public static final BitSet FOLLOW_75 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L,0x0000000000000010L});
+    
+    /** The Constant FOLLOW_76. */
     public static final BitSet FOLLOW_76 = new BitSet(new long[]{0x0000000000000040L});
+    
+    /** The Constant FOLLOW_77. */
     public static final BitSet FOLLOW_77 = new BitSet(new long[]{0x0000000000000080L});
+    
+    /** The Constant FOLLOW_78. */
     public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x0000000000000100L});
+    
+    /** The Constant FOLLOW_79. */
     public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x00000000000003D0L});
 
 }

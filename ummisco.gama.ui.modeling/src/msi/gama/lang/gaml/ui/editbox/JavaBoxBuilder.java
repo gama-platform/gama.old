@@ -1,17 +1,18 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'JavaBoxBuilder.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * JavaBoxBuilder.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
+/**
+ * The Class JavaBoxBuilder.
+ */
 public class JavaBoxBuilder extends BoxBuilderImpl {
 
 	@Override
@@ -54,6 +55,13 @@ public class JavaBoxBuilder extends BoxBuilderImpl {
 		}
 	}
 
+	/**
+	 * Update ends.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @param n the n
+	 */
 	private void updateEnds(final int start, final int end, final int n) {
 		Box b = currentbox;
 		final int len = end - start;
@@ -68,14 +76,37 @@ public class JavaBoxBuilder extends BoxBuilderImpl {
 		}
 	}
 
+	/**
+	 * Start line comment.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @param offset the offset
+	 * @param empty the empty
+	 * @return true, if successful
+	 */
 	private boolean startLineComment(final int start, final int end, final int offset, final boolean empty) {
 		return offset == 0 && end - start > 1 && text.charAt(start) == '/' && text.charAt(start + 1) == '/';
 	}
 
+	/**
+	 * Comment starts.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if successful
+	 */
 	private boolean commentStarts(final int start, final int end) {
 		return end - start > 1 && text.charAt(start) == '/' && text.charAt(start + 1) == '*';
 	}
 
+	/**
+	 * Comment ends.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if successful
+	 */
 	private boolean commentEnds(final int start, final int end) {
 		for ( int i = start; i < end; i++ ) {
 			if ( text.charAt(i) == '*' && text.charAt(i + 1) == '/' ) { return true; }
@@ -83,6 +114,13 @@ public class JavaBoxBuilder extends BoxBuilderImpl {
 		return false;
 	}
 
+	/**
+	 * Checks if is closing token.
+	 *
+	 * @param start the start
+	 * @param end the end
+	 * @return true, if is closing token
+	 */
 	private boolean isClosingToken(final int start, final int end) {
 		int open = 0;
 		int close = 0;

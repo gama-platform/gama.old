@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FillViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FillViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
@@ -66,14 +65,27 @@ import org.geotools.styling.StyleBuilder;
  */
 public class FillViewer {
 
+	/** The enabled. */
 	boolean enabled;
+	
+	/** The color. */
 	Color color;
+	
+	/** The opacity. */
 	double opacity;
 
+	/** The on. */
 	Button on;
+	
+	/** The chooser. */
 	StolenColorEditor chooser;
+	
+	/** The percent. */
 	Combo percent;
 
+	/**
+	 * The Class Listener.
+	 */
 	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
@@ -91,6 +103,11 @@ public class FillViewer {
 			sync(SimpleConfigurator.selectionEvent(e));
 		};
 
+		/**
+		 * Sync.
+		 *
+		 * @param selectionEvent the selection event
+		 */
 		private void sync(final SelectionEvent selectionEvent) {
 			try {
 				FillViewer.this.enabled = FillViewer.this.on.getSelection();
@@ -121,7 +138,10 @@ public class FillViewer {
 
 	};
 
+	/** The sync. */
 	Listener sync = new Listener();
+	
+	/** The listener. */
 	private SelectionListener listener;
 
 	/**
@@ -179,6 +199,11 @@ public class FillViewer {
 		return build.createFill(this.color);
 	}
 
+	/**
+	 * Listen.
+	 *
+	 * @param listen the listen
+	 */
 	void listen(final boolean listen) {
 		if (listen) {
 			this.on.addSelectionListener(this.sync);

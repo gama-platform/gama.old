@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditorFactory.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * EditorFactory.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import java.util.List;
@@ -25,36 +24,105 @@ import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 
+/**
+ * A factory for creating Editor objects.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class EditorFactory {
 
+	/** The Constant instance. */
 	private static final EditorFactory instance = new EditorFactory();
 
+	/**
+	 * Gets the single instance of EditorFactory.
+	 *
+	 * @return single instance of EditorFactory
+	 */
 	public static EditorFactory getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @return the boolean editor
+	 */
 	public static BooleanEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final Boolean value, final EditorListener<Boolean> whenModified) {
 		return new BooleanEditor(scope, parent, title, value, whenModified);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @return the color editor
+	 */
 	public static ColorEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final java.awt.Color value, final EditorListener<java.awt.Color> whenModified) {
 		return new ColorEditor(scope, parent, title, value, whenModified);
 	}
 
+	/**
+	 * Creates a new Editor object.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @param expectedType the expected type
+	 * @return the expression editor
+	 */
 	public static ExpressionEditor createExpression(final IScope scope, final EditorsGroup parent, final String title,
 			final IExpression value, final EditorListener<IExpression> whenModified, final IType expectedType) {
 		return new ExpressionEditor(scope, parent, title, value, whenModified, expectedType);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param min the min
+	 * @param max the max
+	 * @param step the step
+	 * @param canBeNull the can be null
+	 * @param whenModified the when modified
+	 * @return the float editor
+	 */
 	public static FloatEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final Double value, final Double min, final Double max, final Double step, final boolean canBeNull,
 			final EditorListener<Double> whenModified) {
 		return new FloatEditor(scope, parent, title, value, min, max, step, canBeNull, whenModified);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param min the min
+	 * @param max the max
+	 * @param step the step
+	 * @param canBeNull the can be null
+	 * @param isSlider the is slider
+	 * @param whenModified the when modified
+	 * @return the abstract editor
+	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final Double value, final Double min, final Double max, final Double step, final boolean canBeNull,
 			final boolean isSlider, final EditorListener<Double> whenModified) {
@@ -67,33 +135,100 @@ public class EditorFactory {
 		return new FloatEditor(scope, parent, title, value, min, max, step, canBeNull, whenModified);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param unit the unit
+	 * @param value the value
+	 * @param min the min
+	 * @param max the max
+	 * @param step the step
+	 * @param whenModified the when modified
+	 * @return the int editor
+	 */
 	public static IntEditor create(final IScope scope, final EditorsGroup parent, final String title, final String unit,
 			final Integer value, final Integer min, final Integer max, final Integer step,
 			final EditorListener<Integer> whenModified) {
 		return new IntEditor(scope, parent, title, unit, value, min, max, step, whenModified, false);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @return the point editor
+	 */
 	public static PointEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final GamaPoint value, final EditorListener<GamaPoint> whenModified) {
 		return new PointEditor(scope, parent, title, value, whenModified);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param asLabel the as label
+	 * @param whenModified the when modified
+	 * @return the abstract editor
+	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final String value, final boolean asLabel, final EditorListener<String> whenModified) {
 		if (asLabel) return new LabelEditor(scope, parent, title, value, whenModified);
 		return new StringEditor(scope, parent, title, value, whenModified);
 	}
 
+	/**
+	 * Choose.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param among the among
+	 * @param whenModified the when modified
+	 * @return the string editor
+	 */
 	public static StringEditor choose(final IScope scope, final EditorsGroup parent, final String title,
 			final String value, final List<String> among, final EditorListener<String> whenModified) {
 		return new StringEditor(scope, parent, title, value, among, whenModified);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param var the var
+	 * @param isSubParameter the is sub parameter
+	 * @param dontUseScope the dont use scope
+	 * @return the abstract editor
+	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final IParameter var,
 			final boolean isSubParameter, final boolean dontUseScope) {
 		return create(scope, parent, var, null, isSubParameter, dontUseScope);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param var the var
+	 * @param l the l
+	 * @param isSubParameter the is sub parameter
+	 * @param dontUseScope the dont use scope
+	 * @return the abstract editor
+	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final IParameter var,
 			final EditorListener l, final boolean isSubParameter, final boolean dontUseScope) {
 		final AbstractEditor ed = instance.create(scope, (IAgent) null, var, l);
@@ -103,6 +238,15 @@ public class EditorFactory {
 		return ed;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param disp the disp
+	 * @param l the l
+	 * @return the abstract editor
+	 */
 	public AbstractEditor create(final IScope scope, final IAgent agent, final IParameter disp,
 			final EditorListener l) {
 		final IParameter var = disp;
@@ -147,6 +291,14 @@ public class EditorFactory {
 		}
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope the scope
+	 * @param command the command
+	 * @param selectionAdapter the selection adapter
+	 * @return the i parameter editor
+	 */
 	public IParameterEditor create(final IScope scope, final UserCommandStatement command,
 			final EditorListener.Command selectionAdapter) {
 		return new CommandEditor(scope, command, selectionAdapter);

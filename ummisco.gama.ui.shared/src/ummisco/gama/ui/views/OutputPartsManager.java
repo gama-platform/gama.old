@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'WorkaroundForIssue1353.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * OutputPartsManager.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
 import org.eclipse.ui.IPartListener2;
@@ -28,6 +27,17 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class OutputPartsManager {
 
+	/**
+	 * The listener interface for receiving part events.
+	 * The class that is interested in processing a part
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addPartListener<code> method. When
+	 * the part event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see PartEvent
+	 */
 	public static class PartListener implements IPartListener2 {
 
 		@Override
@@ -78,8 +88,12 @@ public class OutputPartsManager {
 		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	}
 
+	/** The Constant listener. */
 	private final static PartListener listener = new PartListener();
 
+	/**
+	 * Install.
+	 */
 	public static void install() {
 		WorkbenchHelper.getPage().addPartListener(listener);
 

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MatrixEditorDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * MatrixEditorDialog.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -40,17 +39,34 @@ import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class MatrixEditorDialog.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class MatrixEditorDialog extends Dialog {
 
+	/** The data. */
 	IMatrix data;
 
+	/** The container. */
 	Composite container = null;
+	
+	/** The table. */
 	Table table = null;
+	
+	/** The scope. */
 	final IScope scope;
 
+	/** The gray. */
 	final Color gray = WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_GRAY);
 
+	/**
+	 * Instantiates a new matrix editor dialog.
+	 *
+	 * @param scope the scope
+	 * @param parentShell the parent shell
+	 * @param paramValue the param value
+	 */
 	protected MatrixEditorDialog(final IScope scope, final Shell parentShell, final IMatrix paramValue) {
 		super(parentShell);
 		this.scope = scope;
@@ -233,6 +249,13 @@ public class MatrixEditorDialog extends Dialog {
 		return m;
 	}
 
+	/**
+	 * Creates the matrix.
+	 *
+	 * @param rows the rows
+	 * @param cols the cols
+	 * @return the i matrix
+	 */
 	private IMatrix createMatrix(final int rows, final int cols) {
 		if (data instanceof GamaIntMatrix) {
 			return new GamaIntMatrix(cols, rows);
@@ -244,6 +267,11 @@ public class MatrixEditorDialog extends Dialog {
 
 	}
 
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public IMatrix getMatrix() {
 		return data;
 	}

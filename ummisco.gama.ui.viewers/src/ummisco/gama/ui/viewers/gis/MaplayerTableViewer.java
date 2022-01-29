@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MaplayerTableViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * MaplayerTableViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.viewers.gis;
 
@@ -48,10 +47,17 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
  * @source $URL$
  */
 public class MaplayerTableViewer extends TableViewer implements ISelectionChangedListener {
+	
+	/** The layers list. */
 	private final List<Layer> layersList = new ArrayList<>();
+	
+	/** The selected map layer. */
 	private Layer selectedMapLayer;
 
+	/** The titles. */
 	private final String[] titles = { "Layer name", "Visible", "Style" };
+	
+	/** The pane. */
 	private SwtMapPane pane;
 
 	/**
@@ -104,6 +110,12 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		return selectedMapLayer;
 	}
 
+	/**
+	 * Creates the columns.
+	 *
+	 * @param parent the parent
+	 * @param viewer the viewer
+	 */
 	private void createColumns(final Composite parent, final TableViewer viewer) {
 
 		final int[] bounds = { 120, 50, 50 };
@@ -166,6 +178,14 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 
 	}
 
+	/**
+	 * Creates the table viewer column.
+	 *
+	 * @param title the title
+	 * @param bound the bound
+	 * @param colNumber the col number
+	 * @return the table viewer column
+	 */
 	private TableViewerColumn createTableViewerColumn(final String title, final int bound, final int colNumber) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(this, SWT.NONE);
 		final TableColumn column = viewerColumn.getColumn();

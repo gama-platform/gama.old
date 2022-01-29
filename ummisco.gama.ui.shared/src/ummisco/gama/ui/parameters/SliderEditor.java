@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SliderEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * SliderEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import static msi.gama.application.workbench.ThemeHelper.isDark;
@@ -43,14 +42,31 @@ import ummisco.gama.ui.resources.IGamaColors;
  */
 public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<T> {
 
+	/** The nb ints. */
 	final protected int nbInts;
+	
+	/** The slider. */
 	SimpleSlider slider;
+	
+	/** The formatter. */
 	final DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
 
+	/** The Constant ITEMS. */
 	private static final int[] ITEMS = { VALUE, REVERT };
 
+	/**
+	 * The Class Int.
+	 */
 	public static class Int extends SliderEditor<Integer> {
 
+		/**
+		 * Instantiates a new int.
+		 *
+		 * @param scope the scope
+		 * @param a the a
+		 * @param variable the variable
+		 * @param l the l
+		 */
 		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Integer> l) {
 			super(scope, a, variable, l);
 			formatter.setMaximumFractionDigits(0);
@@ -68,10 +84,22 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		}
 	}
 
+	/**
+	 * The Class Float.
+	 */
 	public static class Float extends SliderEditor<Double> {
 
+		/** The nb fracs. */
 		final int nbFracs;
 
+		/**
+		 * Instantiates a new float.
+		 *
+		 * @param scope the scope
+		 * @param a the a
+		 * @param variable the variable
+		 * @param l the l
+		 */
 		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Double> l) {
 			super(scope, a, variable, l);
 			if (stepValue == null) {
@@ -98,6 +126,14 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 
 	}
 
+	/**
+	 * Instantiates a new slider editor.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param variable the variable
+	 * @param l the l
+	 */
 	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
 		super(scope, a, variable, l);
 		final int minChars = String.valueOf(Cast.asInt(getScope(), getMinValue())).length();
@@ -149,6 +185,12 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		return result;
 	}
 
+	/**
+	 * Compute value.
+	 *
+	 * @param position the position
+	 * @return the t
+	 */
 	protected abstract T computeValue(final double position);
 
 	@Override

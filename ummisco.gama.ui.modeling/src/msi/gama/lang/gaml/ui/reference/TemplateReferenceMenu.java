@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'TemplateReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * TemplateReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
@@ -45,31 +44,77 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ("deprecation")
 public class TemplateReferenceMenu extends GamlReferenceMenu {
 
+	/**
+	 * The Class Node.
+	 */
 	abstract class Node {
 
+		/** The parent. */
 		final Node parent;
 
+		/**
+		 * Instantiates a new node.
+		 *
+		 * @param parent the parent
+		 */
 		Node(final Node parent) {
 			this.parent = parent;
 		}
 
+		/**
+		 * Gets the path.
+		 *
+		 * @return the path
+		 */
 		abstract String getPath();
 
+		/**
+		 * Gets the name.
+		 *
+		 * @return the name
+		 */
 		abstract String getName();
 
+		/**
+		 * Gets the children.
+		 *
+		 * @return the children
+		 */
 		abstract Set<Node> getChildren();
 
+		/**
+		 * Fill menu.
+		 *
+		 * @param m the m
+		 */
 		abstract void fillMenu(Menu m);
 
 	}
 
+	/**
+	 * The Class TemplateNode.
+	 */
 	class TemplateNode extends Node {
 
+		/** The name. */
 		final String name;
+		
+		/** The desc. */
 		final String desc;
+		
+		/** The pattern. */
 		final String pattern;
+		
+		/** The rank. */
 		final int rank;
 
+		/**
+		 * Instantiates a new template node.
+		 *
+		 * @param parent the parent
+		 * @param t the t
+		 * @param rank the rank
+		 */
 		TemplateNode(final Node parent, final TemplatePersistenceData t, final int rank) {
 			super(parent);
 			name = t.getTemplate().getName();
@@ -129,22 +174,45 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 	}
 
+	/**
+	 * The Class TemplateTree.
+	 */
 	class TemplateTree extends Node {
 
+		/** The children. */
 		final Set<Node> children = new LinkedHashSet<>();
+		
+		/** The name. */
 		final String name;
 
+		/**
+		 * Instantiates a new template tree.
+		 *
+		 * @param parent the parent
+		 * @param name the name
+		 */
 		TemplateTree(final Node parent, final String name) {
 			super(parent);
 			this.name = name;
 		}
 
+		/**
+		 * Adds the.
+		 *
+		 * @param t the t
+		 */
 		void add(final TemplatePersistenceData t) {
 			final String id = t.getId();
 			final List<String> path = new ArrayList<>(Arrays.asList(id.split("\\.")));
 			add(t, path);
 		}
 
+		/**
+		 * Child with name.
+		 *
+		 * @param s the s
+		 * @return the node
+		 */
 		Node childWithName(final String s) {
 			for (final Node n : getChildren()) {
 				if (n.getName().equals(s)) { return n; }
@@ -152,6 +220,12 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 			return null;
 		}
 
+		/**
+		 * Adds the.
+		 *
+		 * @param t the t
+		 * @param path the path
+		 */
 		void add(final TemplatePersistenceData t, final List<String> path) {
 			if (path.size() == 0) {
 				children.add(new TemplateNode(this, t, 1));
@@ -206,8 +280,14 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 	}
 
+	/**
+	 * The Class TemplateRoot.
+	 */
 	class TemplateRoot extends TemplateTree {
 
+		/**
+		 * Instantiates a new template root.
+		 */
 		TemplateRoot() {
 			super(null, "");
 		}
@@ -219,6 +299,9 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 			}
 		}
 
+		/**
+		 * Clear.
+		 */
 		void clear() {
 			children.clear();
 		}
@@ -230,7 +313,10 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 	}
 
+	/** The tree. */
 	TemplateRoot tree = null;
+	
+	/** The store. */
 	TemplateStore store;
 
 	@Override
@@ -254,6 +340,11 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		tree = null;
 	}
 
+	/**
+	 * Edits the template.
+	 *
+	 * @param dataId the data id
+	 */
 	public void editTemplate(final String dataId) {
 		TemplatePersistenceData data = store.getTemplateData(dataId);
 		final boolean edit = data != null;

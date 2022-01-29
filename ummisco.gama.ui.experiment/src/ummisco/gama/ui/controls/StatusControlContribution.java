@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'StatusControlContribution.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * StatusControlContribution.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
 import java.awt.Color;
@@ -44,33 +43,75 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
+/**
+ * The Class StatusControlContribution.
+ */
 public class StatusControlContribution extends WorkbenchWindowControlContribution
 		implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
+	/** The is updating. */
 	volatile boolean isUpdating;
+	
+	/** The label. */
 	FlatButton label;
+	
+	/** The popup. */
 	private Popup2 popup;
+	
+	/** The state. */
 	int state;
+	
+	/** The main task name. */
 	volatile String mainTaskName;
+	
+	/** The sub task name. */
 	volatile String subTaskName;
+	
+	/** The in sub task. */
 	volatile boolean inSubTask = false;
+	
+	/** The in user status. */
 	volatile boolean inUserStatus = false;
+	
+	/** The sub task completion. */
 	volatile Double subTaskCompletion;
+	
+	/** The Constant WIDTH. */
 	private final static int WIDTH = 400;
+	
+	/** The color. */
 	private GamaUIColor color;
+	
+	/** The agent index. */
 	int agentIndex; // 0 for experiments, > 0 for simulation(s)
+	
+	/** The text. */
 	StringBuilder text = new StringBuilder(2000);
 
+	/** The instance. */
 	static StatusControlContribution INSTANCE;
 
+	/**
+	 * Gets the single instance of StatusControlContribution.
+	 *
+	 * @return single instance of StatusControlContribution
+	 */
 	public static StatusControlContribution getInstance() {
 		return INSTANCE;
 	}
 
+	/**
+	 * Instantiates a new status control contribution.
+	 */
 	public StatusControlContribution() {
 		INSTANCE = this;
 	}
 
+	/**
+	 * Instantiates a new status control contribution.
+	 *
+	 * @param id the id
+	 */
 	public StatusControlContribution(final String id) { // NO_UCD (unused code)
 		super(id);
 		INSTANCE = this;
@@ -122,6 +163,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.isDisposed();
 	}
 
+	/**
+	 * Gets the status agent.
+	 *
+	 * @return the status agent
+	 */
 	ITopLevelAgent getStatusAgent() {
 		if (agentIndex < 0) { agentIndex = 0; }
 		final IExperimentPlan exp = GAMA.getExperiment();
@@ -174,6 +220,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return result;
 	}
 
+	/**
+	 * Append popup text for.
+	 *
+	 * @param exp the exp
+	 * @param result the result
+	 */
 	void appendPopupTextFor(final ITopLevelAgent exp, final PopupText result) {
 		text.setLength(0);
 		text.append(Strings.LN);
@@ -288,6 +340,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	}
 
+	/**
+	 * Gets the clock message.
+	 *
+	 * @param agent the agent
+	 * @return the clock message
+	 */
 	private String getClockMessage(final ITopLevelAgent agent) {
 		if (agent == null) return "";
 		final StringBuilder sb = new StringBuilder(200);

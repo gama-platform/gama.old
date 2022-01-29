@@ -1,7 +1,13 @@
-/**
- * Created by drogoul, 22 juil. 2018
+/*******************************************************************************************************
  *
- */
+ * GamlEditorDragAndDropHandler.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
 import static org.eclipse.swt.dnd.DND.DROP_COPY;
@@ -55,38 +61,83 @@ import ummisco.gama.ui.metadata.FileMetaDataProvider;
  */
 public class GamlEditorDragAndDropHandler {
 
+	/** The text. */
 	TextTransfer TEXT = TextTransfer.getInstance();
+	
+	/** The file. */
 	FileTransfer FILE = FileTransfer.getInstance();
+	
+	/** The rsrc. */
 	ResourceTransfer RSRC = ResourceTransfer.getInstance();
 
+	/** The transfer all. */
 	Transfer[] TRANSFER_ALL = new Transfer[] { FILE, RSRC, TEXT };
+	
+	/** The transfer text. */
 	Transfer[] TRANSFER_TEXT = new Transfer[] { TEXT };
 
+	/** The editor. */
 	final GamlEditor editor;
+	
+	/** The is text drag and drop installed. */
 	boolean fIsTextDragAndDropInstalled;
+	
+	/** The text drag and drop token. */
 	protected Object fTextDragAndDropToken;
+	
+	/** The used names. */
 	protected static Set<String> usedNames = new HashSet<>();
 
+	/**
+	 * Instantiates a new gaml editor drag and drop handler.
+	 *
+	 * @param editor the editor
+	 */
 	public GamlEditorDragAndDropHandler(final GamlEditor editor) {
 		this.editor = editor;
 	}
 
+	/**
+	 * Gets the styled text.
+	 *
+	 * @return the styled text
+	 */
 	public StyledText getStyledText() {
 		return getViewer().getTextWidget();
 	}
 
+	/**
+	 * Gets the document.
+	 *
+	 * @return the document
+	 */
 	public XtextDocument getDocument() {
 		return (XtextDocument) getViewer().getDocument();
 	}
 
+	/**
+	 * Gets the viewer.
+	 *
+	 * @return the viewer
+	 */
 	public GamaSourceViewer getViewer() {
 		return editor.getInternalSourceViewer();
 	}
 
+	/**
+	 * Gets the selection provider.
+	 *
+	 * @return the selection provider
+	 */
 	public ISelectionProvider getSelectionProvider() {
 		return getViewer().getSelectionProvider();
 	}
 
+	/**
+	 * Install.
+	 *
+	 * @param onlyText the only text
+	 */
 	public void install(final boolean onlyText) {
 		if (getViewer() == null || fIsTextDragAndDropInstalled) { return; }
 		final StyledText st = getStyledText();
@@ -271,6 +322,9 @@ public class GamlEditorDragAndDropHandler {
 
 	}
 
+	/**
+	 * Uninstall.
+	 */
 	protected void uninstall() {
 		if (getViewer() == null || !fIsTextDragAndDropInstalled) { return; }
 
@@ -289,6 +343,11 @@ public class GamlEditorDragAndDropHandler {
 		fIsTextDragAndDropInstalled = false;
 	}
 
+	/**
+	 * Try drop files.
+	 *
+	 * @param data the data
+	 */
 	void tryDropFiles(final String[] data) {
 		final List<IFile> files = new ArrayList<>();
 		for (final String raw : data) {
@@ -312,6 +371,11 @@ public class GamlEditorDragAndDropHandler {
 		tryDropResources(resources);
 	}
 
+	/**
+	 * Try drop resources.
+	 *
+	 * @param data the data
+	 */
 	void tryDropResources(final IResource[] data) {
 		final List<IFile> imports = new ArrayList<>();
 		final List<IFile> declarations = new ArrayList<>();
@@ -332,6 +396,12 @@ public class GamlEditorDragAndDropHandler {
 		usedNames.clear();
 	}
 
+	/**
+	 * Adds the files to text.
+	 *
+	 * @param files the files
+	 * @param imports the imports
+	 */
 	private void addFilesToText(final List<IFile> files, final boolean imports) {
 		if (files.size() == 0) { return; }
 		final StringBuilder sb = new StringBuilder();
@@ -372,6 +442,12 @@ public class GamlEditorDragAndDropHandler {
 
 	}
 
+	/**
+	 * Clean.
+	 *
+	 * @param name the name
+	 * @return the string
+	 */
 	private static String clean(final String name) {
 		int i = 1;
 		String rootName = name.substring(0, name.indexOf('.'));
@@ -384,6 +460,12 @@ public class GamlEditorDragAndDropHandler {
 		return result;
 	}
 
+	/**
+	 * Obtain relative path.
+	 *
+	 * @param file the file
+	 * @return the string
+	 */
 	private String obtainRelativePath(final IFile file) {
 		final IPath path = file.getFullPath();
 		final IPath editorFile = new Path(editor.getURI().toPlatformString(true)).removeLastSegments(1);
@@ -392,6 +474,12 @@ public class GamlEditorDragAndDropHandler {
 		return name;
 	}
 
+	/**
+	 * Adds the global if necessary.
+	 *
+	 * @param fileDeclarations the file declarations
+	 * @return the string
+	 */
 	private String addGlobalIfNecessary(final String fileDeclarations) {
 		if (fileDeclarations.contains("import \"")) { return fileDeclarations; }
 		final StyledText st = getStyledText();

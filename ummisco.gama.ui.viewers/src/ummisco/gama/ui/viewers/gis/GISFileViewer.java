@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GISFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GISFileViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis;
 
 import java.io.File;
@@ -37,17 +36,37 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
+/**
+ * The Class GISFileViewer.
+ */
 public abstract class GISFileViewer extends EditorPart
 		implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable {
 
+	/** The pane. */
 	SwtMapPane pane;
+	
+	/** The content. */
 	MapContent content;
+	
+	/** The toolbar. */
 	GamaToolbar2 toolbar;
+	
+	/** The file. */
 	IFile file;
+	
+	/** The feature source. */
 	SimpleFeatureSource featureSource;
+	
+	/** The no CRS. */
 	boolean noCRS = false;
+	
+	/** The style. */
 	Style style;
+	
+	/** The layer. */
 	Layer layer;
+	
+	/** The path str. */
 	String pathStr;
 
 	@Override
@@ -75,6 +94,9 @@ public abstract class GISFileViewer extends EditorPart
 		pane.redraw();
 	}
 
+	/**
+	 * Display info string.
+	 */
 	protected abstract void displayInfoString();
 
 	@Override
@@ -110,6 +132,11 @@ public abstract class GISFileViewer extends EditorPart
 		pane.reset();
 	}
 
+	/**
+	 * Gets the map composite.
+	 *
+	 * @return the map composite
+	 */
 	public Control getMapComposite() {
 		return pane;
 	}
@@ -140,6 +167,13 @@ public abstract class GISFileViewer extends EditorPart
 		return true;
 	}
 
+	/**
+	 * Save as CSV.
+	 *
+	 * @param attributes the attributes
+	 * @param geoms the geoms
+	 * @param name the name
+	 */
 	public void saveAsCSV(final List<String> attributes, final List<IShape> geoms, final String name) {
 		String path = "";
 		final String[] decomp = pathStr.split("\\.");

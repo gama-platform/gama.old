@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlQuickOutlinePopup.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlQuickOutlinePopup.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -39,9 +38,18 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  */
 public class GamlQuickOutlinePopup extends QuickOutlinePopup {
 
+	/** The text widget. */
 	private final Control textWidget;
+	
+	/** The toolbar. */
 	private final GamaToolbar2 toolbar;
 
+	/**
+	 * Instantiates a new gaml quick outline popup.
+	 *
+	 * @param editor the editor
+	 * @param toolbar the toolbar
+	 */
 	public GamlQuickOutlinePopup(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		super(editor.getEditorSite().getShell());
 		setEditor(editor);

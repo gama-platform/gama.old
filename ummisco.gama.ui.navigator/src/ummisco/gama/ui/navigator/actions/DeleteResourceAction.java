@@ -1,12 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation Benjamin Muskalla <b.muskalla@gmx.net> - Fix for bug
- * 172574 - [IDE] DeleteProjectDialog inconsequent selection behavior Andrey Loskutov <loskutov@gmx.de> - Bug 41431,
- * 462760
- *******************************************************************************/
+ * DeleteResourceAction.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".DeleteResourceAction";//$NON-NLS-1$
 
+	/** The model provider ids. */
 	private String[] modelProviderIds;
 
 	/**
@@ -248,6 +250,14 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getDisplay(), runnable);
 	}
 
+	/**
+	 * Gets the matching editors.
+	 *
+	 * @param resourceRoots the resource roots
+	 * @param w the w
+	 * @param deletedOnly the deleted only
+	 * @return the matching editors
+	 */
 	static List<IEditorReference> getMatchingEditors(final List<? extends IResource> resourceRoots,
 			final IWorkbenchWindow w, final boolean deletedOnly) {
 		final List<IEditorReference> toClose = new ArrayList<>();
@@ -265,6 +275,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return toClose;
 	}
 
+	/**
+	 * Gets the editors.
+	 *
+	 * @param w the w
+	 * @return the editors
+	 */
 	static IEditorReference[] getEditors(final IWorkbenchWindow w) {
 		if (w != null) {
 			final IWorkbenchPage page = w.getActivePage();
@@ -273,6 +289,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return new IEditorReference[0];
 	}
 
+	/**
+	 * Gets the adapter.
+	 *
+	 * @param ref the ref
+	 * @return the adapter
+	 */
 	static IResource getAdapter(final IEditorReference ref) {
 		IEditorInput input;
 		try {
@@ -292,6 +314,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return CloseResourceAction.getAdapter(input, IResource.class);
 	}
 
+	/**
+	 * Belongs to.
+	 *
+	 * @param roots the roots
+	 * @param leaf the leaf
+	 * @return true, if successful
+	 */
 	static boolean belongsTo(final List<? extends IResource> roots, final IResource leaf) {
 		for (final IResource resource : roots) {
 			if (resource.contains(leaf)) { return true; }
@@ -299,6 +328,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return false;
 	}
 
+	/**
+	 * Close editors.
+	 *
+	 * @param toClose the to close
+	 * @param w the w
+	 */
 	static void closeEditors(final List<IEditorReference> toClose, final IWorkbenchWindow w) {
 		final IWorkbenchPage page = w.getActivePage();
 		if (page == null) { return; }

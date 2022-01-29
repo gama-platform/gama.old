@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlAnnotationImageProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * GamlAnnotationImageProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
 import static org.eclipse.xtext.ui.editor.XtextEditor.ERROR_ANNOTATION_TYPE;
@@ -30,9 +29,13 @@ import com.google.inject.Inject;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 
+/**
+ * The Class GamlAnnotationImageProvider.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
+	/** The Constant fixables. */
 	private static final Map<String, GamaIcon> fixables = new HashMap() {
 
 		{
@@ -42,6 +45,8 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
+	
+	/** The Constant nonFixables. */
 	private static final Map<String, GamaIcon> nonFixables = new HashMap() {
 
 		{
@@ -51,6 +56,8 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
+	
+	/** The Constant deleted. */
 	private static final Map<String, GamaIcon> deleted = new HashMap() {
 
 		{
@@ -61,6 +68,9 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 		}
 	};
 
+	/**
+	 * Instantiates a new gaml annotation image provider.
+	 */
 	@Inject
 	public GamlAnnotationImageProvider() {}
 

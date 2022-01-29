@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExpressionEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ExpressionEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
@@ -19,10 +18,24 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+/**
+ * The Class ExpressionEditor.
+ */
 public class ExpressionEditor extends GenericEditor<IExpression> {
 
+	/** The expression text. */
 	private String expressionText;
 
+	/**
+	 * Instantiates a new expression editor.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @param expectedType the expected type
+	 */
 	ExpressionEditor(final IScope scope, final EditorsGroup parent, final String title, final IExpression value,
 			final EditorListener<IExpression> whenModified, final IType<?> expectedType) {
 		super(scope, parent, title, value, whenModified);
@@ -50,6 +63,11 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 		return false;
 	}
 
+	/**
+	 * Sets the editor text no popup.
+	 *
+	 * @param s the new editor text no popup
+	 */
 	public void setEditorTextNoPopup(final String s) {
 		internalModification = true;
 		editorControl.setText(s);

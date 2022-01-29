@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaFoldingActionGroup.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaFoldingActionGroup.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.folding;
 
 import java.util.ArrayList;
@@ -29,10 +28,19 @@ import org.eclipse.xtext.ui.editor.folding.FoldingActionGroup;
 
 import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingRegionProvider.TypedFoldedPosition;
 
+/**
+ * The Class GamaFoldingActionGroup.
+ */
 class GamaFoldingActionGroup extends FoldingActionGroup {
 
+	/**
+	 * The Class FoldingAction.
+	 */
 	private class FoldingAction extends Action implements IUpdate {
 
+		/**
+		 * Instantiates a new folding action.
+		 */
 		FoldingAction() {
 			super("Collapse comments", IAction.AS_PUSH_BUTTON);
 		}
@@ -43,9 +51,18 @@ class GamaFoldingActionGroup extends FoldingActionGroup {
 		}
 	}
 
+	/** The p viewer. */
 	ProjectionViewer pViewer;
+	
+	/** The collapse strings. */
 	private FoldingAction collapseStrings;
 
+	/**
+	 * Instantiates a new gama folding action group.
+	 *
+	 * @param editor the editor
+	 * @param viewer the viewer
+	 */
 	GamaFoldingActionGroup(final ITextEditor editor, final ITextViewer viewer) {
 		super(editor, viewer);
 		if (!(viewer instanceof ProjectionViewer)) { return; }

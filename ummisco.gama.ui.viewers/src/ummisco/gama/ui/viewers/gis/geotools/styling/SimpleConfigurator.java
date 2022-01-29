@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SimpleStyleConfigurator.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * SimpleConfigurator.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
@@ -121,8 +120,13 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class SimpleConfigurator extends Dialog {
 
+	/** The build. */
 	protected StyleBuilder build = new StyleBuilder();
+	
+	/** The feature collection. */
 	protected SimpleFeatureCollection featureCollection;
+	
+	/** The style. */
 	protected Style style;
 
 	/** Viewer used to allow interaction with Stroke definition */
@@ -154,6 +158,7 @@ public class SimpleConfigurator extends Dialog {
 		}
 	};
 
+	/** The replace. */
 	private Button replace;
 
 	/**
@@ -168,6 +173,11 @@ public class SimpleConfigurator extends Dialog {
 		this.point.addListener(this.synchronize);
 	}
 
+	/**
+	 * Sets the layout.
+	 *
+	 * @param parent the new layout
+	 */
 	protected void setLayout(final Composite parent) {
 		final RowLayout layout = new RowLayout();
 		layout.pack = false;
@@ -182,6 +192,11 @@ public class SimpleConfigurator extends Dialog {
 		parent.setLayout(layout);
 	}
 
+	/**
+	 * Gets the style.
+	 *
+	 * @return the style
+	 */
 	protected Style getStyle() {
 		assert featureCollection != null;
 		Style style = this.style;
@@ -249,6 +264,13 @@ public class SimpleConfigurator extends Dialog {
 		return parentPanel;
 	}
 
+	/**
+	 * Determine mode.
+	 *
+	 * @param schema the schema
+	 * @param askUser the ask user
+	 * @return the mode
+	 */
 	public Mode determineMode(final SimpleFeatureType schema, final boolean askUser) {
 		if (schema == null) {
 			return Mode.NONE;
@@ -263,6 +285,9 @@ public class SimpleConfigurator extends Dialog {
 		}
 	}
 
+	/**
+	 * Refresh.
+	 */
 	protected void refresh() {
 		final Style style = getStyle(); // grab an SLD style or bust
 
@@ -416,6 +441,14 @@ public class SimpleConfigurator extends Dialog {
 		this.style = style;
 	}
 
+	/**
+	 * Show dialog.
+	 *
+	 * @param parent the parent
+	 * @param layer the layer
+	 * @return the style
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static Style showDialog(final Shell parent, final Layer layer) throws IOException {
 		final SimpleFeatureSource featureSource = (SimpleFeatureSource) layer.getFeatureSource();
 		final Style style = layer.getStyle();
@@ -423,6 +456,15 @@ public class SimpleConfigurator extends Dialog {
 		return null;
 	}
 
+	/**
+	 * Show dialog.
+	 *
+	 * @param parent the parent
+	 * @param featureSource the feature source
+	 * @param style the style
+	 * @return the style
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static Style showDialog(final Shell parent, final SimpleFeatureSource featureSource, final Style style)
 			throws IOException {
 		final SimpleFeatureCollection features = featureSource.getFeatures();
@@ -432,6 +474,13 @@ public class SimpleConfigurator extends Dialog {
 		return tmp.getStyle();
 	}
 
+	/**
+	 * Subpart.
+	 *
+	 * @param parent the parent
+	 * @param label the label
+	 * @return the composite
+	 */
 	public static Composite subpart(final Composite parent, final String label) {
 		final Composite subpart = new Composite(parent, SWT.NONE);
 		final RowLayout across = new RowLayout();
@@ -466,6 +515,12 @@ public class SimpleConfigurator extends Dialog {
 		return subpart;
 	}
 
+	/**
+	 * Selection event.
+	 *
+	 * @param e the e
+	 * @return the selection event
+	 */
 	public static SelectionEvent selectionEvent(final ModifyEvent e) {
 		final Event event = new Event();
 		event.widget = e.widget;

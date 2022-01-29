@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AbstractDetailsDialog.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * AbstractDetailsDialog.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -61,6 +60,14 @@ public abstract class AbstractDetailsDialog extends Dialog {
 	// * @param title the title for the dialog or <code>null</code> for none
 	// * @param image the image to be displayed
 	// * @param message the message to be displayed
+	/**
+	 * Instantiates a new abstract details dialog.
+	 *
+	 * @param parentShell the parent shell
+	 * @param title the title.
+	 * @param image the image.
+	 * @param message the message.
+	 */
 	// */
 	public AbstractDetailsDialog(final Shell parentShell, final String title, final Image image, final String message) {
 		this(new SameShellProvider(parentShell), title, image, message);

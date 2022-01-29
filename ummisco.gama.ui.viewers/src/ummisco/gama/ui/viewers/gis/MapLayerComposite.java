@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MapLayerComposite.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * MapLayerComposite.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.viewers.gis;
 
@@ -46,7 +45,10 @@ import ummisco.gama.ui.resources.IGamaIcons;
  */
 public class MapLayerComposite extends Composite {
 
+	/** The pane. */
 	protected SwtMapPane pane;
+	
+	/** The map layer table viewer. */
 	protected MaplayerTableViewer mapLayerTableViewer;
 
 	/**
@@ -213,6 +215,9 @@ public class MapLayerComposite extends Composite {
 
 	}
 
+	/**
+	 * On show all layers.
+	 */
 	void onShowAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
@@ -225,6 +230,9 @@ public class MapLayerComposite extends Composite {
 		}
 	}
 
+	/**
+	 * On hide all layers.
+	 */
 	void onHideAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
@@ -237,6 +245,11 @@ public class MapLayerComposite extends Composite {
 		}
 	}
 
+	/**
+	 * Gets the map layer table viewer.
+	 *
+	 * @return the map layer table viewer
+	 */
 	public MaplayerTableViewer getMapLayerTableViewer() {
 		return mapLayerTableViewer;
 	}

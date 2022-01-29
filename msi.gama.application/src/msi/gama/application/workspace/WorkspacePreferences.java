@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'WorkspacePreferences.java, in plugin msi.gama.application, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * WorkspacePreferences.java, in msi.gama.application, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.application.workspace;
 
 import static msi.gama.common.preferences.GamaPreferenceStore.getStore;
@@ -28,16 +27,33 @@ import org.eclipse.swt.widgets.Display;
 import msi.gama.application.Application;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class WorkspacePreferences.
+ */
 public class WorkspacePreferences {
 
+	/** The Constant KEY_WORSPACE_PATH. */
 	private static final String KEY_WORSPACE_PATH = "pref_workspace_path";
+	
+	/** The Constant KEY_WORKSPACE_REMEMBER. */
 	private static final String KEY_WORKSPACE_REMEMBER = "pref_workspace_remember";
+	
+	/** The Constant KEY_WORKSPACE_LIST. */
 	private static final String KEY_WORKSPACE_LIST = "pref_workspace_list";
+	
+	/** The Constant KEY_ASK_REBUILD. */
 	private static final String KEY_ASK_REBUILD = "pref_ask_rebuild";
+	
+	/** The Constant KEY_ASK_OUTDATED. */
 	private static final String KEY_ASK_OUTDATED = "pref_ask_outdated";
+	
+	/** The Constant WORKSPACE_IDENTIFIER. */
 	public static final String WORKSPACE_IDENTIFIER = ".gama_application_workspace";
+	
+	/** The model identifier. */
 	private static String MODEL_IDENTIFIER = null;
 
+	/** The selected workspace root location. */
 	static String selectedWorkspaceRootLocation;
 
 	/**
@@ -47,14 +63,29 @@ public class WorkspacePreferences {
 		return getStore().getBoolean(KEY_WORKSPACE_REMEMBER, false);
 	}
 
+	/**
+	 * Checks if is remember workspace.
+	 *
+	 * @param remember the remember
+	 */
 	public static void isRememberWorkspace(final boolean remember) {
 		getStore().putBoolean(KEY_WORKSPACE_REMEMBER, remember);
 	}
 
+	/**
+	 * Gets the last used workspaces.
+	 *
+	 * @return the last used workspaces
+	 */
 	public static String getLastUsedWorkspaces() {
 		return getStore().get(KEY_WORKSPACE_LIST, "");
 	}
 
+	/**
+	 * Sets the last used workspaces.
+	 *
+	 * @param used the new last used workspaces
+	 */
 	public static void setLastUsedWorkspaces(final String used) {
 		getStore().put(KEY_WORKSPACE_LIST, used);
 	}
@@ -68,38 +99,78 @@ public class WorkspacePreferences {
 		return getStore().get(KEY_WORSPACE_PATH, "");
 	}
 
+	/**
+	 * Sets the last set workspace directory.
+	 *
+	 * @param last the new last set workspace directory
+	 */
 	public static void setLastSetWorkspaceDirectory(final String last) {
 		getStore().put(KEY_WORSPACE_PATH, last);
 	}
 
+	/**
+	 * Ask before rebuilding workspace.
+	 *
+	 * @return true, if successful
+	 */
 	public static boolean askBeforeRebuildingWorkspace() {
 		// true by default
 		return getStore().getBoolean(KEY_ASK_REBUILD, true);
 	}
 
+	/**
+	 * Ask before rebuilding workspace.
+	 *
+	 * @param ask the ask
+	 */
 	public static void askBeforeRebuildingWorkspace(final boolean ask) {
 		// true by default
 		getStore().putBoolean(KEY_ASK_REBUILD, ask);
 	}
 
+	/**
+	 * Ask before using outdated workspace.
+	 *
+	 * @return true, if successful
+	 */
 	public static boolean askBeforeUsingOutdatedWorkspace() {
 		// true by default
 		return getStore().getBoolean(KEY_ASK_OUTDATED, true);
 	}
 
+	/**
+	 * Ask before using outdated workspace.
+	 *
+	 * @param ask the ask
+	 */
 	public static void askBeforeUsingOutdatedWorkspace(final boolean ask) {
 		// true by default
 		getStore().putBoolean(KEY_ASK_OUTDATED, ask);
 	}
 
+	/**
+	 * Gets the selected workspace root location.
+	 *
+	 * @return the selected workspace root location
+	 */
 	public static String getSelectedWorkspaceRootLocation() {
 		return selectedWorkspaceRootLocation;
 	}
 
+	/**
+	 * Sets the selected workspace root location.
+	 *
+	 * @param s the new selected workspace root location
+	 */
 	public static void setSelectedWorkspaceRootLocation(final String s) {
 		selectedWorkspaceRootLocation = s;
 	}
 
+	/**
+	 * Gets the current gama stamp string.
+	 *
+	 * @return the current gama stamp string
+	 */
 	public static String getCurrentGamaStampString() {
 		String gamaStamp = null;
 		try {
@@ -216,6 +287,12 @@ public class WorkspacePreferences {
 		return null;
 	}
 
+	/**
+	 * Test workspace sanity.
+	 *
+	 * @param workspace the workspace
+	 * @return true, if successful
+	 */
 	public static boolean testWorkspaceSanity(final File workspace) {
 		DEBUG.OUT("[GAMA] Checking for workspace sanity");
 		File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
@@ -251,6 +328,11 @@ public class WorkspacePreferences {
 		return true;
 	}
 
+	/**
+	 * Gets the model identifier.
+	 *
+	 * @return the model identifier
+	 */
 	public static String getModelIdentifier() {
 		if (MODEL_IDENTIFIER == null) { MODEL_IDENTIFIER = getCurrentGamaStampString(); }
 		return MODEL_IDENTIFIER;

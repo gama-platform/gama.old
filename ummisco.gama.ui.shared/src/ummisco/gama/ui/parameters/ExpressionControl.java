@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExpressionControl.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ExpressionControl.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import static ummisco.gama.ui.resources.GamaColors.get;
@@ -46,17 +45,37 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
+/**
+ * The Class ExpressionControl.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ExpressionControl implements /* IPopupProvider, */SelectionListener, ModifyListener, FocusListener {
 
+	/** The text. */
 	private final Text text;
+	
+	/** The editor. */
 	private final ExpressionBasedEditor<Object> editor;
+	
+	/** The current value. */
 	private Object currentValue;
+	
+	/** The current exception. */
 	protected Exception currentException;
+	
+	/** The evaluate expression. */
 	final boolean evaluateExpression;
+	
+	/** The host agent. */
 	private final IAgent hostAgent;
+	
+	/** The scope. */
 	private final IScope scope;
+	
+	/** The expected type. */
 	private final IType<?> expectedType;
+	
+	/** The tooltip listener. */
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
 		@Override
@@ -65,6 +84,17 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	};
 
+	/**
+	 * Instantiates a new expression control.
+	 *
+	 * @param scope the scope
+	 * @param comp the comp
+	 * @param ed the ed
+	 * @param agent the agent
+	 * @param expectedType the expected type
+	 * @param controlStyle the control style
+	 * @param evaluate the evaluate
+	 */
 	public ExpressionControl(final IScope scope, final Composite comp, final ExpressionBasedEditor ed,
 			final IAgent agent, final IType<?> expectedType, final int controlStyle, final boolean evaluate) {
 		this.scope = scope;
@@ -87,6 +117,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		displayTooltip();
 	}
 
+	/**
+	 * Display tooltip.
+	 */
 	protected void displayTooltip() {
 		final var s = getPopupText();
 		if (s == null || s.isEmpty()) {
@@ -98,6 +131,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		if (editor != null && currentException != null) { editor.getLabel().signalErrored(); }
 	}
 
+	/**
+	 * Removes the tooltip.
+	 */
 	protected void removeTooltip() {
 		final var displayer = GamaToolbarFactory.findTooltipDisplayer(text);
 		if (displayer != null) { displayer.stopDisplayingTooltips(); }
@@ -116,6 +152,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	}
 
+	/**
+	 * Compute value.
+	 *
+	 * @return the object
+	 */
 	private Object computeValue() {
 		try {
 			currentException = null;
@@ -149,6 +190,9 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		return getCurrentValue();
 	}
 
+	/**
+	 * Modify value.
+	 */
 	public void modifyValue() {
 		final var oldValue = getCurrentValue();
 		final var value = computeValue();
@@ -176,6 +220,13 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		}
 	}
 
+	/**
+	 * Creates the text box.
+	 *
+	 * @param comp the comp
+	 * @param controlStyle the control style
+	 * @return the text
+	 */
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
 		var c = new Composite(comp, SWT.NONE);
 		var f = new FillLayout();
@@ -210,6 +261,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		widgetDefaultSelected(null);
 	}
 
+	/**
+	 * Gets the control.
+	 *
+	 * @return the control
+	 */
 	public Text getControl() {
 		return text;
 	}
@@ -231,6 +287,12 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 		return result.toString();
 	}
 
+	/**
+	 * Checks if is OK.
+	 *
+	 * @param value the value
+	 * @return the boolean
+	 */
 	private Boolean isOK(final Object value) {
 		if (evaluateExpression)
 			return expectedType.canBeTypeOf(scope, value);
@@ -240,6 +302,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			return false;
 	}
 
+	/**
+	 * Gets the host agent.
+	 *
+	 * @return the host agent
+	 */
 	IAgent getHostAgent() {
 		return hostAgent == null ? editor == null ? null : editor.getAgent() : hostAgent;
 	}

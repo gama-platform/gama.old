@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxDecoratorImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BoxDecoratorImpl.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
@@ -39,39 +38,105 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.ColorDialog;
 
+/**
+ * The Class BoxDecoratorImpl.
+ */
 public class BoxDecoratorImpl implements IBoxDecorator {
 
+	/** The Constant ROUND_BOX_ARC. */
 	protected static final int ROUND_BOX_ARC = 5;
+	
+	/** The provider. */
 	protected IBoxProvider provider;
+	
+	/** The visible. */
 	protected boolean visible;
+	
+	/** The settings. */
 	protected IBoxSettings settings;
+	
+	/** The box text. */
 	protected StyledText boxText;
+	
+	/** The box key. */
 	protected BoxKeyListener boxKey;
+	
+	/** The box modify. */
 	protected BoxModifyListener boxModify;
+	
+	/** The box paint. */
 	protected BoxPaintListener boxPaint;
+	
+	/** The box mouse move. */
 	protected BoxMouseMoveListener boxMouseMove;
+	
+	/** The box mouse track. */
 	protected BoxMouseTrackListener boxMouseTrack;
+	
+	/** The box text change. */
 	protected BoxTextChangeListener boxTextChange;
+	
+	/** The box mouse click. */
 	protected BoxMouseClickListener boxMouseClick;
+	
+	/** The fill mouse click. */
 	protected FillBoxMouseClick fillMouseClick;
+	
+	/** The settings change listener. */
 	protected SettingsChangeListener settingsChangeListener;
+	
+	/** The old background. */
 	protected RGB oldBackground;
+	
+	/** The old indent. */
 	protected int oldIndent;
+	
+	/** The decorated. */
 	protected boolean decorated;
+	
+	/** The boxes. */
 	protected List<Box> boxes;
+	
+	/** The set caret offset. */
 	protected boolean setCaretOffset;
+	
+	/** The builder name. */
 	protected String builderName;
+	
+	/** The builder. */
 	protected IBoxBuilder builder;
+	
+	/** The current box. */
 	protected Box currentBox;
+	
+	/** The old caret loc. */
 	protected Point oldCaretLoc;
+	
+	/** The old X offset. */
 	protected int oldXOffset = -1;
+	
+	/** The old Y offset. */
 	protected int oldYOffset = -1;
+	
+	/** The old client area. */
 	protected Rectangle oldClientArea;
+	
+	/** The fill box start. */
 	protected int fillBoxStart = -1;
+	
+	/** The fill box end. */
 	protected int fillBoxEnd = -1;
+	
+	/** The fill box level. */
 	protected int fillBoxLevel = -1;
+	
+	/** The state mask. */
 	protected int stateMask;
+	
+	/** The key pressed. */
 	public boolean keyPressed;
+	
+	/** The char count. */
 	protected int charCount;
 
 	@Override
@@ -106,6 +171,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		this.boxText = newSt;
 	}
 
+	/**
+	 * Builds the boxes.
+	 */
 	protected void buildBoxes() {
 		final IBoxBuilder boxBuilder = getBuilder();
 		if (boxBuilder == null) { return; }
@@ -126,6 +194,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		charCount = boxText.getCharCount();
 	}
 
+	/**
+	 * Gets the builder.
+	 *
+	 * @return the builder
+	 */
 	protected IBoxBuilder getBuilder() {
 		if (settings.getBuilder() == null) { return null; }
 		if (builder == null || builderName == null || !builderName.equals(settings.getBuilder())) {
@@ -141,6 +214,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		update();
 	}
 
+	/**
+	 * Update.
+	 */
 	public void update() {
 		if (decorated && visible) {
 			if (builder != null
@@ -158,6 +234,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Draw background boxes.
+	 */
 	void drawBackgroundBoxes() {
 		if (boxes == null || !visible) { return; }
 
@@ -236,11 +315,30 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		oldYOffset = yOffset;
 	}
 
+	/**
+	 * Draw box.
+	 *
+	 * @param gc the gc
+	 * @param yOffset the y offset
+	 * @param xOffset the x offset
+	 * @param b the b
+	 * @param exWidth the ex width
+	 */
 	protected void drawBox(final GC gc, final int yOffset, final int xOffset, final Box b, final int exWidth) {
 		drawRect(gc, b, b.rec.x - xOffset, b.rec.y - yOffset, settings.getExpandBox() ? exWidth : b.rec.width,
 				b.rec.height);
 	}
 
+	/**
+	 * Draw rect.
+	 *
+	 * @param gc the gc
+	 * @param b the b
+	 * @param x the x
+	 * @param y the y
+	 * @param width the width
+	 * @param height the height
+	 */
 	private void drawRect(final GC gc, final Box b, final int x, final int y, final int width, final int height) {
 		if (b.isOn && settings.getHighlightWidth() > 0 && settings.getHighlightColor(b.level) != null) {
 			gc.setLineStyle(settings.getHighlightLineStyleSWTInt());
@@ -268,6 +366,15 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Draw rectangle.
+	 *
+	 * @param gc the gc
+	 * @param x the x
+	 * @param y the y
+	 * @param width the width
+	 * @param height the height
+	 */
 	void drawRectangle(final GC gc, final int x, final int y, final int width, final int height) {
 		if (settings.getRoundBox()) {
 			gc.drawRoundRectangle(x, y, width, height, ROUND_BOX_ARC, ROUND_BOX_ARC);
@@ -276,6 +383,16 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Fill rectangle.
+	 *
+	 * @param c the c
+	 * @param gc the gc
+	 * @param x the x
+	 * @param y the y
+	 * @param width the width
+	 * @param height the height
+	 */
 	void fillRectangle(final Color c, final GC gc, final int x, final int y, final int width, final int height) {
 		if (c == null) { return; }
 
@@ -375,6 +492,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 	}
 
+	/**
+	 * Visible boxes.
+	 *
+	 * @return the collection
+	 */
 	protected Collection<Box> visibleBoxes() {
 		final Rectangle r0 = boxText.getClientArea();
 		final int start = boxText.getHorizontalIndex() + boxText.getOffsetAtLine(boxText.getTopIndex());
@@ -395,6 +517,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return result;
 	}
 
+	/**
+	 * Calc bounds.
+	 *
+	 * @param boxes0 the boxes 0
+	 */
 	protected void calcBounds(final Collection<Box> boxes0) {
 		final int yOffset = boxText.getTopPixel();
 		final int xOffset = boxText.getHorizontalPixel();
@@ -421,6 +548,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Update width.
+	 *
+	 * @param box the box
+	 */
 	void updateWidth(final Box box) {
 		Box b = box;
 		Box p = b.parent;
@@ -431,6 +563,11 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Update width 3.
+	 *
+	 * @param box the box
+	 */
 	void updateWidth3(final Box box) {
 		Box b = box;
 		Box p = b.parent;
@@ -442,6 +579,13 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * Turn on box.
+	 *
+	 * @param x0 the x 0
+	 * @param y0 the y 0
+	 * @return true, if successful
+	 */
 	protected boolean turnOnBox(final int x0, final int y0) {
 		if (boxes == null || !visible) { return false; }
 
@@ -451,6 +595,13 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return settings.getHighlightOne() ? turnOnOne(x, y) : turnOnAll(x, y);
 	}
 
+	/**
+	 * Turn on all.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @return true, if successful
+	 */
 	protected boolean turnOnAll(final int x, final int y) {
 		boolean redraw = false;
 
@@ -477,6 +628,13 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return redraw;
 	}
 
+	/**
+	 * Turn on one.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @return true, if successful
+	 */
 	protected boolean turnOnOne(final int x, final int y) {
 		Box newCurrent = null;
 		for (final Box b : visibleBoxes()) {
@@ -493,10 +651,23 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return redraw;
 	}
 
+	/**
+	 * Contains.
+	 *
+	 * @param rec the rec
+	 * @param x the x
+	 * @param y the y
+	 * @return true, if successful
+	 */
 	boolean contains(final Rectangle rec, final int x, final int y) {
 		return x >= rec.x && y >= rec.y && x - rec.x < rec.width && y - rec.y < rec.height;
 	}
 
+	/**
+	 * Redraw if client area changed.
+	 *
+	 * @return true, if successful
+	 */
 	boolean redrawIfClientAreaChanged() {
 		if (oldClientArea == null || !oldClientArea.equals(boxText.getClientArea())) {
 			drawBackgroundBoxes();
@@ -505,11 +676,19 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return false;
 	}
 
+	/**
+	 * Update caret.
+	 */
 	void updateCaret() {
 		oldCaretLoc = boxText.getLocationAtOffset(boxText.getCaretOffset());
 		turnOnBox(oldCaretLoc.x > 0 ? oldCaretLoc.x - 1 : oldCaretLoc.x, oldCaretLoc.y);
 	}
 
+	/**
+	 * Offset moved.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean offsetMoved() {
 		final int yOffset = boxText.getTopPixel();
 		final int xOffset = boxText.getHorizontalPixel();
@@ -521,6 +700,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return false;
 	}
 
+	/**
+	 * Carret moved.
+	 */
 	protected void carretMoved() {
 		final Point newLoc = boxText.getLocationAtOffset(boxText.getCaretOffset());
 		if (boxes != null && (oldCaretLoc == null || !oldCaretLoc.equals(newLoc))) {
@@ -537,6 +719,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxModify events.
+	 * The class that is interested in processing a boxModify
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxModifyListener<code> method. When
+	 * the boxModify event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxModifyEvent
+	 */
 	private final class BoxModifyListener implements ModifyListener {
 
 		/**
@@ -557,6 +750,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxKey events.
+	 * The class that is interested in processing a boxKey
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxKeyListener<code> method. When
+	 * the boxKey event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxKeyEvent
+	 */
 	private final class BoxKeyListener implements KeyListener {
 
 		/**
@@ -574,6 +778,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		public void keyPressed(final KeyEvent e) {}
 	}
 
+	/**
+	 * The listener interface for receiving settingsChange events.
+	 * The class that is interested in processing a settingsChange
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addSettingsChangeListener<code> method. When
+	 * the settingsChange event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see SettingsChangeEvent
+	 */
 	class SettingsChangeListener implements IPropertyChangeListener {
 
 		@Override
@@ -582,8 +797,20 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxPaint events.
+	 * The class that is interested in processing a boxPaint
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxPaintListener<code> method. When
+	 * the boxPaint event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxPaintEvent
+	 */
 	class BoxPaintListener implements PaintListener {
 
+		/** The paint mode. */
 		volatile boolean paintMode;
 
 		@Override
@@ -611,6 +838,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxMouseMove events.
+	 * The class that is interested in processing a boxMouseMove
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxMouseMoveListener<code> method. When
+	 * the boxMouseMove event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxMouseMoveEvent
+	 */
 	class BoxMouseMoveListener implements MouseMoveListener {
 
 		@Override
@@ -622,6 +860,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxMouseTrack events.
+	 * The class that is interested in processing a boxMouseTrack
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxMouseTrackListener<code> method. When
+	 * the boxMouseTrack event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxMouseTrackEvent
+	 */
 	class BoxMouseTrackListener implements MouseTrackListener {
 
 		@Override
@@ -647,8 +896,22 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		public void mouseHover(final MouseEvent e) {}
 	}
 
+	/**
+	 * The listener interface for receiving boxTextChange events.
+	 * The class that is interested in processing a boxTextChange
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxTextChangeListener<code> method. When
+	 * the boxTextChange event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxTextChangeEvent
+	 */
 	class BoxTextChangeListener implements TextChangeListener {
 
+		/**
+		 * Change.
+		 */
 		private void change() {
 			boxes = null;
 			setCaretOffset = true;
@@ -668,6 +931,17 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		}
 	}
 
+	/**
+	 * The listener interface for receiving boxMouseClick events.
+	 * The class that is interested in processing a boxMouseClick
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBoxMouseClickListener<code> method. When
+	 * the boxMouseClick event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BoxMouseClickEvent
+	 */
 	class BoxMouseClickListener extends MouseAdapter {
 
 		@Override
@@ -696,6 +970,9 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 	}
 
+	/**
+	 * The Class FillBoxMouseClick.
+	 */
 	class FillBoxMouseClick extends MouseAdapter {
 
 		@Override

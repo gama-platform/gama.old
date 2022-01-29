@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlMarkerUpdater.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlMarkerUpdater.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
 import org.eclipse.core.resources.IFile;
@@ -43,6 +42,7 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 
+	/** The mapper. */
 	@Inject IStorage2UriMapper mapper;
 
 	@Override
@@ -91,12 +91,25 @@ public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 
 	}
 
+	/**
+	 * Delete all validation marker.
+	 *
+	 * @param file the file
+	 * @param checkMode the check mode
+	 * @param monitor the monitor
+	 */
 	private void deleteAllValidationMarker(final IFile file, final CheckMode checkMode,
 			final IProgressMonitor monitor) {
 		final MarkerEraser markerEraser = new MarkerEraser();
 		markerEraser.deleteValidationMarkers(file, checkMode, monitor);
 	}
 
+	/**
+	 * Delete all contributed markers.
+	 *
+	 * @param file the file
+	 * @param monitor the monitor
+	 */
 	private void deleteAllContributedMarkers(final IFile file, final IProgressMonitor monitor) {
 		try {
 			file.deleteMarkers(IMarkerContributor.MARKER_TYPE, true, IResource.DEPTH_ZERO);

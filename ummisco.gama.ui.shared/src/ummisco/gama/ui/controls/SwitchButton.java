@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SwitchButton.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * SwitchButton.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
 import static msi.gama.application.workbench.ThemeHelper.isDark;
@@ -117,6 +116,14 @@ public class SwitchButton extends Canvas {
 		this.text = text;
 	}
 
+	/**
+	 * Instantiates a new switch button.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 * @param selectedBackgroundColor the selected background color
+	 * @param unselectedBackgroundColor the unselected background color
+	 */
 	public SwitchButton(final Composite parent, final int style, final Color selectedBackgroundColor,
 			final Color unselectedBackgroundColor) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
@@ -305,6 +312,11 @@ public class SwitchButton extends Canvas {
 		redraw();
 	}
 
+	/**
+	 * Gets the text corresponding to the button (default is "").
+	 *
+	 * @return the text corresponding to the button (default is "")
+	 */
 	public String getText() {
 		return this.text;
 	}

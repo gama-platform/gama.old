@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * TestsRunner.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
 import java.util.ArrayList;
@@ -22,10 +32,17 @@ import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class TestsRunner.
+ */
 public class TestsRunner {
 
+	/** The last run. */
 	public static CompoundSummary<TestExperimentSummary, ?> LAST_RUN;
 
+	/**
+	 * Start.
+	 */
 	public static void start() {
 		if (SwtGui.ALL_TESTS_RUNNING)
 			return;
@@ -77,6 +94,12 @@ public class TestsRunner {
 
 	}
 
+	/**
+	 * Find test models.
+	 *
+	 * @return the list
+	 * @throws CoreException the core exception
+	 */
 	private static List<IFile> findTestModels() throws CoreException {
 		final List<IFile> result = new ArrayList<>();
 		final IWorkspaceRoot w = ResourcesPlugin.getWorkspace().getRoot();
@@ -88,6 +111,13 @@ public class TestsRunner {
 
 	}
 
+	/**
+	 * Checks if is interesting.
+	 *
+	 * @param p the p
+	 * @return true, if is interesting
+	 * @throws CoreException the core exception
+	 */
 	private static boolean isInteresting(final IProject p) throws CoreException {
 		if (p == null || !p.exists() || !p.isAccessible())
 			return false;

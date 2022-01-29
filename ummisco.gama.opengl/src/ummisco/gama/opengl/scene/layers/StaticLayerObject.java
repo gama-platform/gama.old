@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.scene.layers.StaticLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * StaticLayerObject.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -16,10 +16,21 @@ import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 
+/**
+ * The Class StaticLayerObject.
+ */
 public class StaticLayerObject extends LayerObject {
 
+	/**
+	 * The Class World.
+	 */
 	public static abstract class World extends StaticLayerObject {
 
+		/**
+		 * Instantiates a new world.
+		 *
+		 * @param renderer the renderer
+		 */
 		public World(final IOpenGLRenderer renderer) {
 			super(renderer);
 		}
@@ -61,9 +72,19 @@ public class StaticLayerObject extends LayerObject {
 			return false;
 		}
 
+		/**
+		 * Fill with objects.
+		 *
+		 * @param list the list
+		 */
 		public abstract void fillWithObjects(List<AbstractObject<?, ?>> list);
 	}
 
+	/**
+	 * Instantiates a new static layer object.
+	 *
+	 * @param renderer the renderer
+	 */
 	public StaticLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer, null);
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ummisco.gama.opengl.renderer.caches.TextureCache2.java, in plugin ummisco.gama.opengl, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * TextureCache2.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
@@ -34,19 +34,36 @@ import msi.gama.common.util.ImageUtils;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 
+/**
+ * The Class TextureCache2.
+ */
 public class TextureCache2 implements ITextureCache {
 
 	static {
 		DEBUG.OFF();
 	}
 
+	/** The volatile textures. */
 	private final LoadingCache<BufferedImage, Texture> volatileTextures;
+	
+	/** The static textures. */
 	private final Cache<String, Texture> staticTextures =
 			CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).build();
+	
+	/** The textures to process. */
 	final List<String> texturesToProcess = new CopyOnWriteArrayList<>();
+	
+	/** The gl. */
 	final OpenGL gl;
+	
+	/** The is non power of 2 textures available. */
 	Boolean isNonPowerOf2TexturesAvailable;
 
+	/**
+	 * Instantiates a new texture cache 2.
+	 *
+	 * @param gl the gl
+	 */
 	public TextureCache2(final OpenGL gl) {
 		this.gl = gl;
 		volatileTextures = CacheBuilder.newBuilder().build(new CacheLoader<BufferedImage, Texture>() {
@@ -151,6 +168,13 @@ public class TextureCache2 implements ITextureCache {
 		return texture;
 	}
 
+	/**
+	 * Builds the texture.
+	 *
+	 * @param gl the gl
+	 * @param file the file
+	 * @return the texture
+	 */
 	private Texture buildTexture(final GL gl, final File file) {
 
 		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file,
@@ -174,6 +198,13 @@ public class TextureCache2 implements ITextureCache {
 		// }
 	}
 
+	/**
+	 * Builds the texture.
+	 *
+	 * @param gl the gl
+	 * @param im the im
+	 * @return the texture
+	 */
 	Texture buildTexture(final GL gl, final BufferedImage im) {
 		try {
 			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);

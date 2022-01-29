@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ImportProjectWizard.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -9,17 +19,35 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import ummisco.gama.ui.resources.GamaIcons;
 
+/**
+ * The Class ImportProjectWizard.
+ */
 public class ImportProjectWizard extends Wizard implements IImportWizard {
 
+	/** The Constant EXTERNAL_PROJECT_SECTION. */
 	private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectImportWizard";//$NON-NLS-1$
+	
+	/** The main page. */
 	private ImportProjectWizardPage mainPage;
+	
+	/** The current selection. */
 	private final IStructuredSelection currentSelection = null;
+	
+	/** The initial path. */
 	private String initialPath = null;
 
+	/**
+	 * Instantiates a new import project wizard.
+	 */
 	public ImportProjectWizard() {
 		this(null);
 	}
 
+	/**
+	 * Instantiates a new import project wizard.
+	 *
+	 * @param initialPath the initial path
+	 */
 	public ImportProjectWizard(final String initialPath) {
 		this.initialPath = initialPath;
 		setNeedsProgressMonitor(true);

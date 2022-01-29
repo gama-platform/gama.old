@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * WrappedContainer.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.resources.IContainer;
@@ -6,17 +16,36 @@ import org.eclipse.core.runtime.CoreException;
 
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class WrappedContainer.
+ *
+ * @param <C> the generic type
+ */
 public abstract class WrappedContainer<C extends IContainer> extends WrappedResource<VirtualContent<?>, C> {
 
+	/** The models count. */
 	int modelsCount = NOT_COMPUTED;
+	
+	/** The suffix. */
 	String suffix = null;
+	
+	/** The children. */
 	Object[] children;
 
+	/**
+	 * Instantiates a new wrapped container.
+	 *
+	 * @param root the root
+	 * @param wrapped the wrapped
+	 */
 	public WrappedContainer(final VirtualContent<?> root, final C wrapped) {
 		super(root, wrapped);
 		initializeChildren();
 	}
 
+	/**
+	 * Initialize children.
+	 */
 	public void initializeChildren() {
 		if (!isOpen()) {
 			children = EMPTY;
@@ -64,6 +93,9 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 		return modelsCount;
 	}
 
+	/**
+	 * Invalidate models count.
+	 */
 	public void invalidateModelsCount() {
 		modelsCount = NOT_COMPUTED;
 		final Object p = getParent();

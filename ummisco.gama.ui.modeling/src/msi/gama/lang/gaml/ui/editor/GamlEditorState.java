@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlEditorState.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlEditorState.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.ArrayList;
@@ -26,18 +25,44 @@ import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
+/**
+ * The Class GamlEditorState.
+ */
 public class GamlEditorState {
 
+	/** The has internal errors. */
 	boolean hasInternalErrors;
+	
+	/** The has imported errors. */
 	boolean hasImportedErrors;
+	
+	/** The has experiments. */
 	boolean hasExperiments;
+	
+	/** The has null status. */
 	boolean hasNullStatus;
+	
+	/** The show experiments. */
 	final boolean showExperiments;
+	
+	/** The experiments. */
 	public final List<String> experiments;
+	
+	/** The abbreviations. */
 	public final List<String> abbreviations;
+	
+	/** The types. */
 	final List<String> types;
+	
+	/** The imported errors. */
 	final Map<String, URI> importedErrors;
 
+	/**
+	 * Instantiates a new gaml editor state.
+	 *
+	 * @param status the status
+	 * @param descriptions the descriptions
+	 */
 	public GamlEditorState(final ValidationContext status, final Iterable<? extends IDescription> descriptions) {
 
 		if (status != null) {
@@ -70,6 +95,12 @@ public class GamlEditorState {
 		}
 	}
 
+	/**
+	 * Equals 2.
+	 *
+	 * @param old the old
+	 * @return true, if successful
+	 */
 	public boolean equals2(final Object old) {
 		if (!(old instanceof GamlEditorState)) { return false; }
 		final GamlEditorState state = (GamlEditorState) old;
@@ -116,6 +147,11 @@ public class GamlEditorState {
 		return true;
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public GamaUIColor getColor() {
 		if (hasImportedErrors) { return IGamaColors.ERROR; }
 		if (hasInternalErrors) { return IGamaColors.ERROR; }
@@ -123,11 +159,23 @@ public class GamlEditorState {
 		return IGamaColors.OK;
 	}
 
+	/** The Constant NO_EXP_DEFINED. */
 	public final static String NO_EXP_DEFINED = "No experiments defined";
+	
+	/** The Constant ERRORS_DETECTED. */
 	public final static String ERRORS_DETECTED = "Error(s) detected";
+	
+	/** The Constant IN_IMPORTED_FILES. */
 	public final static String IN_IMPORTED_FILES = "Error(s) in imported files";
+	
+	/** The Constant IMPOSSIBLE_TO_RUN. */
 	public final static String IMPOSSIBLE_TO_RUN = "Impossible to run any experiment";
 
+	/**
+	 * Gets the status.
+	 *
+	 * @return the status
+	 */
 	public String getStatus() {
 		String msg = null;
 		if (hasInternalErrors) {
@@ -148,6 +196,11 @@ public class GamlEditorState {
 		return msg;
 	}
 
+	/**
+	 * Gets the imported errors.
+	 *
+	 * @return the imported errors
+	 */
 	public Map<String, URI> getImportedErrors() {
 		return importedErrors;
 	}

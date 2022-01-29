@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaIcon.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamaIcon.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,15 +19,25 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class GamaIcon.
+ */
 public class GamaIcon {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The code. */
 	final String code;
+	
+	/** The path. */
 	final String path;
+	
+	/** The plugin. */
 	final String plugin;
+	
+	/** The descriptor. */
 	ImageDescriptor descriptor;
 
 	/**
@@ -69,6 +78,11 @@ public class GamaIcon {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Descriptor.
+	 *
+	 * @return the image descriptor
+	 */
 	public ImageDescriptor descriptor() {
 		if (descriptor == null) {
 			final Image image = GamaIcons.getInstance().getImageInCache(code);
@@ -86,6 +100,11 @@ public class GamaIcon {
 		return descriptor;
 	}
 
+	/**
+	 * Image.
+	 *
+	 * @return the image
+	 */
 	public Image image() {
 		final Image[] image = { GamaIcons.getInstance().getImageInCache(code) };
 		if (image[0] == null) {
@@ -95,6 +114,11 @@ public class GamaIcon {
 		return image[0];
 	}
 
+	/**
+	 * Disabled.
+	 *
+	 * @return the image
+	 */
 	public Image disabled() {
 		final Image[] image = { GamaIcons.getInstance().getImageInCache(code + "_disabled") };
 		if (image[0] == null) {
@@ -104,6 +128,12 @@ public class GamaIcon {
 		return image[0];
 	}
 
+	/**
+	 * Disabled version of.
+	 *
+	 * @param im the im
+	 * @return the image
+	 */
 	Image disabledVersionOf(final Image im) {
 		Rectangle bounds = im.getBounds();
 		ImageData srcData = im.getImageData();
@@ -119,6 +149,11 @@ public class GamaIcon {
 		return new Image(im.getDevice(), dstData);
 	}
 
+	/**
+	 * Gets the code.
+	 *
+	 * @return the code
+	 */
 	public String getCode() {
 		return code;
 	}

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ShapeFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ShapeFileViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis;
 
 import java.awt.Color;
@@ -64,9 +63,15 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.SLDs;
 import ummisco.gama.ui.viewers.gis.geotools.styling.Utils;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
+/**
+ * The Class ShapeFileViewer.
+ */
 public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedView.Colorizable {
 
+	/** The mode. */
 	Mode mode;
+	
+	/** The fts. */
 	FeatureTypeStyle fts;
 
 	@Override
@@ -185,6 +190,13 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 
 	}
 
+	/**
+	 * Sets the stroke color.
+	 *
+	 * @param color the color
+	 * @param mode the mode
+	 * @param fts the fts
+	 */
 	public void setStrokeColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
 		if (mode == Mode.LINE) {
 			final LineSymbolizer sym = SLD.lineSymbolizer(fts);
@@ -201,6 +213,13 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		}
 	}
 
+	/**
+	 * Gets the stroke.
+	 *
+	 * @param mode the mode
+	 * @param fts the fts
+	 * @return the stroke
+	 */
 	public Stroke getStroke(final Mode mode, final FeatureTypeStyle fts) {
 		// Stroke stroke = null;
 		if (mode == Mode.LINE) {
@@ -218,6 +237,13 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		return new StyleBuilder().createStroke();
 	}
 
+	/**
+	 * Gets the fill.
+	 *
+	 * @param mode the mode
+	 * @param fts the fts
+	 * @return the fill
+	 */
 	public Fill getFill(final Mode mode, final FeatureTypeStyle fts) {
 		if (mode == Mode.POLYGON) {
 			final PolygonSymbolizer sym = SLD.polySymbolizer(fts);
@@ -231,6 +257,13 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		return new StyleBuilder().createFill();
 	}
 
+	/**
+	 * Sets the fill color.
+	 *
+	 * @param color the color
+	 * @param mode the mode
+	 * @param fts the fts
+	 */
 	public void setFillColor(final Color color, final Mode mode, final FeatureTypeStyle fts) {
 		if (mode == Mode.POLYGON) {
 			final PolygonSymbolizer sym = SLD.polySymbolizer(fts);
@@ -244,6 +277,13 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		}
 	}
 
+	/**
+	 * Determine mode.
+	 *
+	 * @param schema the schema
+	 * @param def the def
+	 * @return the mode
+	 */
 	public Mode determineMode(final SimpleFeatureType schema, final String def) {
 		if (schema == null) {
 			return Mode.NONE;

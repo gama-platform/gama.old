@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlAccessContents.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlAccessContents.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.access;
 
 import java.util.ArrayList;
@@ -44,12 +43,18 @@ import ummisco.gama.ui.controls.IPopupProvider;
 import ummisco.gama.ui.controls.Popup2;
 import ummisco.gama.ui.resources.IGamaColors;
 
+/**
+ * The Class GamlAccessContents.
+ */
 public abstract class GamlAccessContents implements IPopupProvider {
 
+	/** The Constant EMPTY_INDICES. */
 	private static final int[][] EMPTY_INDICES = {};
 
+	/** The filter text. */
 	protected Text filterText;
 
+	/** The table. */
 	protected Table table;
 
 	/**
@@ -58,10 +63,13 @@ public abstract class GamlAccessContents implements IPopupProvider {
 	 */
 	TextLayout textLayout;
 
+	/** The popup. */
 	Popup2 popup;
 
+	/** The max provider width. */
 	public int maxProviderWidth = 145;
 
+	/** The max definition width. */
 	public int maxDefinitionWidth = 1000;
 
 	/**
@@ -94,6 +102,12 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		}
 	}
 
+	/**
+	 * Refresh table.
+	 *
+	 * @param entries the entries
+	 * @return the int
+	 */
 	private int refreshTable(final List<GamlAccessEntry>[] entries) {
 		if (table.getItemCount() > entries.length && table.getItemCount() - entries.length > 20) { table.removeAll(); }
 		final TableItem[] items = table.getItems();
@@ -202,6 +216,14 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		return entries;
 	}
 
+	/**
+	 * Match.
+	 *
+	 * @param element the element
+	 * @param filter the filter
+	 * @param providerForMatching the provider for matching
+	 * @return the gaml access entry
+	 */
 	public GamlAccessEntry match(final IGamlDescription element, final String filter,
 			final GamlIdiomsProvider<?> providerForMatching) {
 		final String sortLabel = element.getTitle();
@@ -236,16 +258,31 @@ public abstract class GamlAccessContents implements IPopupProvider {
 		return true;
 	}
 
+	/**
+	 * Do dispose.
+	 */
 	private void doDispose() {
 		if (textLayout != null && !textLayout.isDisposed()) { textLayout.dispose(); }
 	}
 
+	/**
+	 * Handle element selected.
+	 *
+	 * @param text the text
+	 * @param selectedElement the selected element
+	 */
 	protected abstract void handleElementSelected(String text, GamlAccessEntry selectedElement);
 
+	/**
+	 * Handle click.
+	 */
 	void handleClick() {
 
 	}
 
+	/**
+	 * Handle selection.
+	 */
 	void handleSelection() {
 		final String text = filterText.getText().toLowerCase();
 		if (table.getSelectionCount() == 1) {

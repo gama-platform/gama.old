@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'EditboxPreferencePage.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * EditboxPreferencePage.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
@@ -40,13 +39,27 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
+/**
+ * The Class EditboxPreferencePage.
+ */
 public class EditboxPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	/** The category list. */
 	List categoryList;
+	
+	/** The folder. */
 	TabFolder folder;
+	
+	/** The category files. */
 	Map<String, LinkedHashSet<String>> categoryFiles;
+	
+	/** The names list. */
 	List namesList;
+	
+	/** The b add file. */
 	Button bAddFile;
+	
+	/** The providers changed. */
 	boolean providersChanged;
 
 	@Override
@@ -81,6 +94,12 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		return c;
 	}
 
+	/**
+	 * Creates the category control.
+	 *
+	 * @param parent the parent
+	 * @return the control
+	 */
 	protected Control createCategoryControl(final Composite parent) {
 		final Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout(2, true));
@@ -127,6 +146,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		return c;
 	}
 
+	/**
+	 * Load data.
+	 */
 	protected void loadData() {
 		final Collection<IBoxProvider> boxProviders = BoxProviderRegistry.getInstance().getBoxProviders();
 		for (final IBoxProvider provider : boxProviders) {
@@ -137,6 +159,13 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public void init(final IWorkbench workbench) {}
 
+	/**
+	 * Contains.
+	 *
+	 * @param items the items
+	 * @param newText the new text
+	 * @return true, if successful
+	 */
 	protected boolean contains(final String[] items, final String newText) {
 		if (items == null || items.length == 0) { return false; }
 		for (final String s : items) {
@@ -145,6 +174,11 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		return false;
 	}
 
+	/**
+	 * New tab.
+	 *
+	 * @param value the value
+	 */
 	protected void newTab(final String value) {
 		categoryList.add(value);
 		final TabItem item = new TabItem(folder, SWT.NONE);
@@ -166,12 +200,23 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		bAddFile.setEnabled(true);
 	}
 
+	/**
+	 * Names array.
+	 *
+	 * @param name the name
+	 * @return the string[]
+	 */
 	public String[] namesArray(final String name) {
 		final LinkedHashSet<String> set = categoryFiles.get(name);
 		if (set == null || set.isEmpty()) { return new String[0]; }
 		return set.toArray(new String[0]);
 	}
 
+	/**
+	 * Adds the file name.
+	 *
+	 * @param value the value
+	 */
 	public void addFileName(final String value) {
 		final int i = categoryList.getSelectionIndex();
 		if (i > -1) {
@@ -224,6 +269,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		return true;
 	}
 
+	/**
+	 * The Class AddCategory.
+	 */
 	class AddCategory extends SelectionAdapter {
 
 		@Override
@@ -243,6 +291,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 
 	}
 
+	/**
+	 * The Class RemoveCategory.
+	 */
 	class RemoveCategory extends SelectionAdapter {
 
 		@Override
@@ -266,6 +317,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	}
 
+	/**
+	 * The Class SelectCategory.
+	 */
 	class SelectCategory extends SelectionAdapter {
 
 		@Override
@@ -282,6 +336,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	}
 
+	/**
+	 * The Class AddFile.
+	 */
 	class AddFile extends SelectionAdapter {
 
 		@Override
@@ -299,6 +356,9 @@ public class EditboxPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 	}
 
+	/**
+	 * The Class RemoveFile.
+	 */
 	class RemoveFile extends SelectionAdapter {
 
 		@Override

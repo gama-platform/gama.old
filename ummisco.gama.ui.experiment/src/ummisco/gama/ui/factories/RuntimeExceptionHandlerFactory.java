@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'RuntimeExceptionHandlerFactory.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * RuntimeExceptionHandlerFactory.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -18,10 +16,19 @@ import org.eclipse.ui.services.IServiceLocator;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import ummisco.gama.ui.commands.RuntimeExceptionHandler;
 
+/**
+ * A factory for creating RuntimeExceptionHandler objects.
+ */
 public class RuntimeExceptionHandlerFactory extends AbstractServiceFactory {
 
+	/** The handler. */
 	IRuntimeExceptionHandler handler;
 
+	/**
+	 * Gets the handler.
+	 *
+	 * @return the handler
+	 */
 	public IRuntimeExceptionHandler getHandler() {
 		if (handler == null) {
 			handler = new RuntimeExceptionHandler();

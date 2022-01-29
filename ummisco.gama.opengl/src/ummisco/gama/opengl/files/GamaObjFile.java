@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaObjFile.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamaObjFile.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.files;
 
 import java.io.BufferedReader;
@@ -57,23 +56,53 @@ import ummisco.gama.opengl.OpenGL;
 		doc = @doc ("'.obj' files are files containing 3D geometries. The internal representation is a list of one geometry"))
 public class GamaObjFile extends Gama3DGeometryFile {
 
+	/** The set of vertex. */
 	public final ArrayList<double[]> setOfVertex = new ArrayList<>();
+	
+	/** The set of vertex normals. */
 	private final ArrayList<double[]> setOfVertexNormals = new ArrayList<>();
+	
+	/** The set of vertex textures. */
 	private final ArrayList<double[]> setOfVertexTextures = new ArrayList<>();
+	
+	/** The faces. */
 	private final ArrayList<int[]> faces = new ArrayList<>();
+	
+	/** The faces texs. */
 	private final ArrayList<int[]> facesTexs = new ArrayList<>();
+	
+	/** The faces norms. */
 	private final ArrayList<int[]> facesNorms = new ArrayList<>();
+	
+	/** The mat timings. */
 	private final ArrayList<String[]> matTimings = new ArrayList<>();
+	
+	/** The materials. */
 	private MtlLoader materials;
 	// private int objectList;
+	/** The toppoint. */
 	// private int numPolys = 0;
 	public double toppoint = 0f;
+	
+	/** The bottompoint. */
 	public double bottompoint = 0f;
+	
+	/** The leftpoint. */
 	public double leftpoint = 0f;
+	
+	/** The rightpoint. */
 	public double rightpoint = 0f;
+	
+	/** The farpoint. */
 	public double farpoint = 0f;
+	
+	/** The nearpoint. */
 	public double nearpoint = 0f;
+	
+	/** The mtl path. */
 	private final String mtlPath;
+	
+	/** The loaded. */
 	boolean loaded = false;
 
 	/**
@@ -91,6 +120,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		this(scope, pathName, (GamaPair<Double, GamaPoint>) null);
 	}
 
+	/**
+	 * Instantiates a new gama obj file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param initRotation the init rotation
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read an obj file and apply an init rotation to it. The rotation"
 					+ "is a pair angle::rotation vector. The associated mlt file have to have the same name as the file to be read.",
@@ -103,6 +140,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		this(scope, pathName, pathName.replace(".obj", ".mtl"), initRotation);
 	}
 
+	/**
+	 * Instantiates a new gama obj file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param mtlPath the mtl path
+	 */
 	@doc (
 			value = "This file constructor allows to read an obj file, using a specific mlt file",
 			examples = { @example (
@@ -112,6 +156,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		this(scope, pathName, mtlPath, null);
 	}
 
+	/**
+	 * Instantiates a new gama obj file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param mtlPath the mtl path
+	 * @param initRotation the init rotation
+	 */
 	@doc (
 			value = "This file constructor allows to read an obj file, using a specific mlt file, and apply an init rotation to it. The rotation"
 					+ "is a pair angle::rotation vector",
@@ -130,6 +182,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
+	/**
+	 * Centerit.
+	 */
 	private void centerit() {
 		final double xshift = (rightpoint - leftpoint) / 2.0d;
 		final double yshift = (toppoint - bottompoint) / 2.0d;
@@ -144,6 +199,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
+	/**
+	 * Load object.
+	 *
+	 * @param scope the scope
+	 * @param forDrawing the for drawing
+	 */
 	public void loadObject(final IScope scope, final boolean forDrawing) {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(getFile(scope)))) {
@@ -156,6 +217,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
+	/**
+	 * Load object.
+	 *
+	 * @param br the br
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void loadObject(final BufferedReader br) throws IOException {
 		if (loaded) { return; }
 		int facecounter = 0;
@@ -328,6 +395,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		return GamaListFactory.create();
 	}
 
+	/**
+	 * Load materials.
+	 */
 	private void loadMaterials() {
 		final String refm = mtlPath;
 		try (FileReader frm = new FileReader(refm); final BufferedReader brm = new BufferedReader(frm);) {

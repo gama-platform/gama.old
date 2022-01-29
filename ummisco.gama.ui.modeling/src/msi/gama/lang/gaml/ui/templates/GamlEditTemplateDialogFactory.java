@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlEditTemplateDialogFactory.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * GamlEditTemplateDialogFactory.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -35,14 +34,26 @@ import com.google.inject.name.Named;
 @SuppressWarnings ("deprecation")
 public class GamlEditTemplateDialogFactory extends EditTemplateDialogFactory {
 
+	/** The configuration provider. */
 	@Inject private Provider<TemplatesLanguageConfiguration> configurationProvider;
 
+	/** The context type registry. */
 	@Inject private ContextTypeRegistry contextTypeRegistry;
 
+	/** The resource provider. */
 	@Inject private TemplateResourceProvider resourceProvider;
 
+	/** The language name. */
 	@Inject @Named (Constants.LANGUAGE_NAME) private String languageName;
 
+	/**
+	 * Creates a new GamlEditTemplateDialog object.
+	 *
+	 * @param template the template
+	 * @param edit the edit
+	 * @param shell the shell
+	 * @return the gaml edit template dialog
+	 */
 	public GamlEditTemplateDialog createDialog(final TemplatePersistenceData template, final boolean edit,
 			final Shell shell) {
 		final GamlEditTemplateDialog dialog = new GamlEditTemplateDialog(shell, template, edit, contextTypeRegistry,

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MtlLoader.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * MtlLoader.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.opengl.files;
 
 import java.io.BufferedReader;
@@ -17,36 +16,81 @@ import java.util.ArrayList;
 
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class MtlLoader.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MtlLoader {
 
+	/** The Materials. */
 	public ArrayList Materials = new ArrayList<>();
 
+	/**
+	 * The Class mtl.
+	 */
 	public class mtl {
+		
+		/** The name. */
 		public String name;
+		
+		/** The mtlnum. */
 		public int mtlnum;
+		
+		/** The d. */
 		public float d = 1f;
+		
+		/** The Ka. */
 		public float[] Ka = new float[3];
+		
+		/** The Kd. */
 		public float[] Kd = new float[3];
+		
+		/** The Ks. */
 		public float[] Ks = new float[3];
+		
+		/** The map kd. */
 		public String map_Kd;
+		
+		/** The map ka. */
 		public String map_Ka;
+		
+		/** The map d. */
 		public String map_d;
 
 	}
 
+	/**
+	 * Instantiates a new mtl loader.
+	 *
+	 * @param ref the ref
+	 * @param pathtoimages the pathtoimages
+	 */
 	public MtlLoader(final BufferedReader ref, final String pathtoimages) {
 
 		loadobject(ref, pathtoimages);
 		cleanup();
 	}
 
+	/**
+	 * Cleanup.
+	 */
 	private void cleanup() {}
 
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
 	public int getSize() {
 		return Materials.size();
 	}
 
+	/**
+	 * Gets the d.
+	 *
+	 * @param namepass the namepass
+	 * @return the d
+	 */
 	public float getd(final String namepass) {
 		final float returnfloat = 1f;
 		for (int i = 0; i < Materials.size(); i++) {
@@ -59,6 +103,12 @@ public class MtlLoader {
 		return returnfloat;
 	}
 
+	/**
+	 * Gets the kd.
+	 *
+	 * @param namepass the namepass
+	 * @return the kd
+	 */
 	public float[] getKd(final String namepass) {
 		final float[] returnfloat = new float[3];
 		for (int i = 0; i < Materials.size(); i++) {
@@ -71,6 +121,12 @@ public class MtlLoader {
 		return returnfloat;
 	}
 
+	/**
+	 * Gets the map ka.
+	 *
+	 * @param namepass the namepass
+	 * @return the map ka
+	 */
 	public String getMapKa(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
@@ -79,6 +135,12 @@ public class MtlLoader {
 		return null;
 	}
 
+	/**
+	 * Gets the map kd.
+	 *
+	 * @param namepass the namepass
+	 * @return the map kd
+	 */
 	public String getMapKd(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
@@ -87,6 +149,12 @@ public class MtlLoader {
 		return null;
 	}
 
+	/**
+	 * Gets the mapd.
+	 *
+	 * @param namepass the namepass
+	 * @return the mapd
+	 */
 	public String getMapd(final String namepass) {
 		for (int i = 0; i < Materials.size(); i++) {
 			final mtl tempmtl = (mtl) Materials.get(i);
@@ -95,6 +163,12 @@ public class MtlLoader {
 		return null;
 	}
 
+	/**
+	 * Loadobject.
+	 *
+	 * @param br the br
+	 * @param pathtoimages the pathtoimages
+	 */
 	private void loadobject(final BufferedReader br, final String pathtoimages) {
 		int linecounter = 0;
 		try {

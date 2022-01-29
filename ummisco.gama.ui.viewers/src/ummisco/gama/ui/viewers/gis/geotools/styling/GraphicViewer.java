@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GraphicViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GraphicViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling;
 
 import java.awt.Color;
@@ -70,14 +69,27 @@ import org.opengis.style.GraphicalSymbol;
  */
 public class GraphicViewer {
 
+	/** The enabled. */
 	boolean enabled;
+	
+	/** The type. */
 	String type;
+	
+	/** The width. */
 	double width;
 
+	/** The on. */
 	Button on;
+	
+	/** The name. */
 	Combo name;
+	
+	/** The size. */
 	Combo size;
 
+	/**
+	 * The Class Listener.
+	 */
 	class Listener implements SelectionListener, ModifyListener {
 
 		@Override
@@ -95,6 +107,11 @@ public class GraphicViewer {
 			sync(SimpleConfigurator.selectionEvent(e));
 		};
 
+		/**
+		 * Sync.
+		 *
+		 * @param selectionEvent the selection event
+		 */
 		private void sync(final SelectionEvent selectionEvent) {
 			try {
 				GraphicViewer.this.enabled = GraphicViewer.this.on.getSelection();
@@ -115,7 +132,10 @@ public class GraphicViewer {
 
 	};
 
+	/** The sync. */
 	Listener sync = new Listener();
+	
+	/** The listener. */
 	private SelectionListener listener;
 
 	/**
@@ -228,6 +248,12 @@ public class GraphicViewer {
 		this.enabled = this.enabled && enabled;
 	}
 
+	/**
+	 * Sets the mark.
+	 *
+	 * @param mark the mark
+	 * @param mode the mode
+	 */
 	private void setMark(final Mark mark, final Mode mode) {
 		listen(false);
 		try {
@@ -250,6 +276,11 @@ public class GraphicViewer {
 		}
 	}
 
+	/**
+	 * Listen.
+	 *
+	 * @param listen the listen
+	 */
 	void listen(final boolean listen) {
 		if (listen) {
 			this.on.addSelectionListener(this.sync);

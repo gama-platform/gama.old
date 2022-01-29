@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'FileEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * FileEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
@@ -34,18 +33,43 @@ import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class FileEditor.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
+	/** The text box. */
 	private FlatButton textBox;
+	
+	/** The is folder. */
 	private final boolean isFolder;
 
+	/**
+	 * Instantiates a new file editor.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param param the param
+	 * @param l the l
+	 * @param isFolder the is folder
+	 */
 	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l,
 			final boolean isFolder) {
 		super(scope, agent, param, l);
 		this.isFolder = isFolder;
 	}
 
+	/**
+	 * Instantiates a new file editor.
+	 *
+	 * @param scope the scope
+	 * @param parent the parent
+	 * @param title the title
+	 * @param value the value
+	 * @param whenModified the when modified
+	 * @param isFolder the is folder
+	 */
 	FileEditor(final IScope scope, final EditorsGroup parent, final String title, final String value,
 			final EditorListener<IGamaFile> whenModified, final boolean isFolder) {
 		// Convenience method

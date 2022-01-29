@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExperimentParametersView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
 import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
@@ -41,10 +40,18 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
+/**
+ * The Class ExperimentParametersView.
+ */
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
+	/** The Constant ID. */
 	public static final String ID = IGui.PARAMETER_VIEW_ID;
+	
+	/** The Constant REVERT. */
 	public final static int REVERT = 0;
+	
+	/** The experiment. */
 	private IExperimentPlan experiment;
 
 	@Override
@@ -111,6 +118,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		return true;
 	}
 
+	/**
+	 * Gets the experiment.
+	 *
+	 * @return the experiment
+	 */
 	public IExperimentPlan getExperiment() {
 		return experiment;
 	}

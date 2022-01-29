@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * CommandEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
@@ -13,8 +23,18 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
+/**
+ * The Class CommandEditor.
+ */
 public class CommandEditor extends AbstractStatementEditor<UserCommandStatement> {
 
+	/**
+	 * Instantiates a new command editor.
+	 *
+	 * @param scope the scope
+	 * @param command the command
+	 * @param l the l
+	 */
 	public CommandEditor(final IScope scope, final UserCommandStatement command, final EditorListener.Command l) {
 		super(scope, command, l);
 	}

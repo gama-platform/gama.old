@@ -1,10 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others. All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+/*******************************************************************************************************
  *
- * Contributors: IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * OpenCloseActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
 
@@ -28,8 +31,14 @@ import ummisco.gama.ui.resources.GamaIcons;
  *
  */
 public class OpenCloseActionProvider extends CommonActionProvider {
+	
+	/** The open project action. */
 	private OpenResourceAction openProjectAction;
+	
+	/** The close project action. */
 	private CloseResourceAction closeProjectAction;
+	
+	/** The shell. */
 	private Shell shell;
 
 	@Override
@@ -104,6 +113,9 @@ public class OpenCloseActionProvider extends CommonActionProvider {
 		}
 	}
 
+	/**
+	 * Make actions.
+	 */
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 

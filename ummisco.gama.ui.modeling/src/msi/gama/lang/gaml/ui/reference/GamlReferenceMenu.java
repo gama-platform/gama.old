@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
 import java.util.Comparator;
@@ -28,6 +27,9 @@ import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+/**
+ * The Class GamlReferenceMenu.
+ */
 public abstract class GamlReferenceMenu extends GamaMenu {
 
 	// public class TMenuItem extends GamaMenuItem {
@@ -50,6 +52,7 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 	//
 	// }
 
+	/** The ignore case. */
 	protected static Comparator<String> IGNORE_CASE = (o1, o2) -> o1.compareToIgnoreCase(o2);
 
 	// private GamlEditor currentEditor;
@@ -71,6 +74,12 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 	// return new TMenuItem(m, style, this);
 	// }
 
+	/**
+	 * Open.
+	 *
+	 * @param parent the parent
+	 * @param trigger the trigger
+	 */
 	protected void open(final Decorations parent, final SelectionEvent trigger) {
 		// final boolean asMenu = trigger.detail == SWT.ARROW;
 		final boolean init = mainMenu == null;
@@ -94,6 +103,9 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 		// }
 	}
 
+	/**
+	 * Open view.
+	 */
 	protected abstract void openView();
 
 	@Override
@@ -101,6 +113,11 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 
 	// Helper methods for working with editors and menus
 
+	/**
+	 * Gets the editor.
+	 *
+	 * @return the editor
+	 */
 	protected GamlEditor getEditor() {
 		return (GamlEditor) WorkbenchHelper.getActiveEditor();
 	}
@@ -113,12 +130,22 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 		}
 	}
 
+	/**
+	 * Apply text.
+	 *
+	 * @param t the t
+	 */
 	protected final void applyText(final String t) {
 		final GamlEditor editor = getEditor();
 		if (editor == null) { return; }
 		editor.insertText(t);
 	}
 
+	/**
+	 * Apply template.
+	 *
+	 * @param t the t
+	 */
 	public void applyTemplate(final Template t) {
 		final GamlEditor editor = getEditor();
 		if (editor == null) { return; }
@@ -126,6 +153,11 @@ public abstract class GamlReferenceMenu extends GamaMenu {
 
 	}
 
+	/**
+	 * Install sub menu in.
+	 *
+	 * @param menu the menu
+	 */
 	public void installSubMenuIn(final Menu menu) {
 		final MenuItem builtInItem = new MenuItem(menu, SWT.CASCADE);
 		builtInItem.setText(getTitle());

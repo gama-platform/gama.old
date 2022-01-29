@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlUiModule.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlUiModule.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
@@ -92,6 +91,11 @@ import ummisco.gama.ui.interfaces.IModelRunner;
  */
 public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
+	/**
+	 * Instantiates a new gaml ui module.
+	 *
+	 * @param plugin the plugin
+	 */
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
 	}
@@ -121,11 +125,21 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
 	}
 
+	/**
+	 * Bind parser based content assist context factory$ stateful factory.
+	 *
+	 * @return the class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr. parser based content assist context factory. stateful factory>
+	 */
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
 			bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
 	}
 
+	/**
+	 * Bind source viewer factory.
+	 *
+	 * @return the class<? extends xtext source viewer. factory>
+	 */
 	public Class<? extends XtextSourceViewer.Factory> bindSourceViewerFactory() {
 		return GamaSourceViewerFactory.class;
 	}
@@ -142,6 +156,11 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlTemplateProposalProvider.class;
 	}
 
+	/**
+	 * Bind folding region provider.
+	 *
+	 * @return the class<? extends I folding region provider>
+	 */
 	public Class<? extends IFoldingRegionProvider> bindFoldingRegionProvider() {
 		return GamaFoldingRegionProvider.class;
 	}
@@ -172,12 +191,22 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return GamlSemanticHighlightingCalculator.class;
 	}
 
+	/**
+	 * Bind I highlighting configuration.
+	 *
+	 * @return the class<? extends I highlighting configuration>
+	 */
 	@SingletonBinding (
 			eager = false)
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
 		return GamlHighlightingConfiguration.class;
 	}
 
+	/**
+	 * Bind I text attribute provider.
+	 *
+	 * @return the class<? extends I text attribute provider>
+	 */
 	@SingletonBinding ()
 	public Class<? extends ITextAttributeProvider> bindITextAttributeProvider() {
 		return GamlTextAttributeProvider.class;
@@ -192,14 +221,29 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return IXtextEditorCallback.NullImpl.class;
 	}
 
+	/**
+	 * Bind I syntax error message provider.
+	 *
+	 * @return the class<? extends I syntax error message provider>
+	 */
 	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
 		return GamlSyntaxErrorMessageProvider.class;
 	}
 
+	/**
+	 * Bind IE object hover provider.
+	 *
+	 * @return the class<? extends IE object hover provider>
+	 */
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
 		return GamlHoverProvider.class;
 	}
 
+	/**
+	 * Bind IE object documentation providerr.
+	 *
+	 * @return the class<? extends IE object documentation provider>
+	 */
 	public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
 		return GamlDocumentationProvider.class;
 	}
@@ -209,10 +253,20 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();
 	}
 
+	/**
+	 * Bind xtext editor.
+	 *
+	 * @return the class<? extends xtext editor>
+	 */
 	public Class<? extends XtextEditor> bindXtextEditor() {
 		return GamlEditor.class;
 	}
 
+	/**
+	 * Bind xtext source viewer configuration.
+	 *
+	 * @return the class<? extends xtext source viewer configuration>
+	 */
 	public Class<? extends XtextSourceViewerConfiguration> bindXtextSourceViewerConfiguration() {
 		return GamaSourceViewerConfiguration.class;
 	}

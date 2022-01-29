@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxSettingsStoreImpl.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * BoxSettingsStoreImpl.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
@@ -22,17 +21,40 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import ummisco.gama.ui.modeling.internal.ModelingActivator;
 
+/**
+ * The Class BoxSettingsStoreImpl.
+ */
 public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 
+	/** The Constant FILE_NAMES. */
 	private static final String FILE_NAMES = "fileNames";
+	
+	/** The Constant TXT_POSTFIX. */
 	private static final String TXT_POSTFIX = "$txt";
+	
+	/** The Constant DEFAULT. */
 	private static final String DEFAULT = "default";
+	
+	/** The Constant ENABLED. */
 	private static final String ENABLED = "enabled";
+	
+	/** The provider id. */
 	protected String providerId;
+	
+	/** The store. */
 	protected IPreferenceStore store;
+	
+	/** The catalog. */
 	private Set<String> catalog;
+	
+	/** The default catalog. */
 	private Collection<String> defaultCatalog;
 
+	/**
+	 * Gets the store.
+	 *
+	 * @return the store
+	 */
 	protected IPreferenceStore getStore() {
 		if (store == null) {
 			store = ModelingActivator.getInstance().getPreferenceStore();
@@ -40,6 +62,12 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		return store;
 	}
 
+	/**
+	 * Key.
+	 *
+	 * @param postfix the postfix
+	 * @return the string
+	 */
 	protected String key(final String postfix) {
 		return providerId + "_" + postfix;
 	}
@@ -74,10 +102,21 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		editorsSettings.setFileNames(getFileNames());
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @param s the s
+	 * @return true, if is empty
+	 */
 	protected boolean isEmpty(final String s) {
 		return s == null || s.length() == 0;
 	}
 
+	/**
+	 * Gets the checks if is enabled.
+	 *
+	 * @return the checks if is enabled
+	 */
 	protected boolean getIsEnabled() {
 		final String key = key(ENABLED);
 		if (getStore().contains(key)) { return getStore().getBoolean(key); }
@@ -91,6 +130,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		store(settings);
 	}
 
+	/**
+	 * Store.
+	 *
+	 * @param settings the settings
+	 */
 	@SuppressWarnings ("deprecation")
 	public void store(final IBoxSettings settings) {
 		final String name = settings.getName();
@@ -100,6 +144,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		ModelingActivator.getInstance().savePluginPreferences();
 	}
 
+	/**
+	 * Adds the to catalog.
+	 *
+	 * @param name the name
+	 */
 	protected void addToCatalog(final String name) {
 		final Set<String> cat = getCatalog();
 		if (!cat.contains(name)) {
@@ -108,6 +157,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		}
 	}
 
+	/**
+	 * Store catalog.
+	 *
+	 * @param cat the cat
+	 */
 	private void storeCatalog(final Set<String> cat) {
 		final StringBuilder sb = new StringBuilder();
 		for (final String c : cat) {
@@ -137,6 +191,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		return catalog;
 	}
 
+	/**
+	 * Sets the default settings catalog.
+	 *
+	 * @param cat the new default settings catalog
+	 */
 	public void setDefaultSettingsCatalog(final Collection<String> cat) {
 		defaultCatalog = cat;
 	}
@@ -152,6 +211,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		ModelingActivator.getInstance().savePluginPreferences();
 	}
 
+	/**
+	 * Sets the file names.
+	 *
+	 * @param fileNames the new file names
+	 */
 	protected void setFileNames(final Collection<String> fileNames) {
 		final StringBuilder sb = new StringBuilder();
 		if (fileNames != null) {
@@ -167,6 +231,11 @@ public class BoxSettingsStoreImpl implements IBoxSettingsStore {
 		getStore().setValue(key(FILE_NAMES), sb.toString());
 	}
 
+	/**
+	 * Gets the file names.
+	 *
+	 * @return the file names
+	 */
 	/*
 	 * @return null if settings never stored before
 	 */

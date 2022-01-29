@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AutoStartup.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * AutoStartup.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
 import static org.eclipse.jface.preference.PreferenceConverter.setValue;
@@ -33,8 +32,16 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import ummisco.gama.ui.utils.GamlReferenceSearch;
 
+/**
+ * The Class AutoStartup.
+ */
 public class AutoStartup implements IStartup {
 
+	/**
+	 * Gets the default background.
+	 *
+	 * @return the default background
+	 */
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()
 				.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, false);
@@ -43,6 +50,11 @@ public class AutoStartup implements IStartup {
 		return new GamaColor(rgb.red, rgb.green, rgb.blue);
 	}
 
+	/**
+	 * Gets the default font data.
+	 *
+	 * @return the default font data
+	 */
 	public static GamaFont getDefaultFontData() {
 		final FontData fd = PreferenceConverter.getFontData(EditorsPlugin.getDefault().getPreferenceStore(), TEXT_FONT);
 		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());

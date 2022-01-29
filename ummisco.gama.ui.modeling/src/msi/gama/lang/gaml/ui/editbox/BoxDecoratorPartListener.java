@@ -1,22 +1,38 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'BoxDecoratorPartListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * BoxDecoratorPartListener.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editbox;
 
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
+/**
+ * The listener interface for receiving boxDecoratorPart events.
+ * The class that is interested in processing a boxDecoratorPart
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addBoxDecoratorPartListener<code> method. When
+ * the boxDecoratorPart event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see BoxDecoratorPartEvent
+ */
 public class BoxDecoratorPartListener implements IPartListener2 {
 
+	/**
+	 * Gets the editor.
+	 *
+	 * @param ref the ref
+	 * @return the editor
+	 */
 	private IBoxEnabledEditor getEditor(final IWorkbenchPartReference ref) {
 		final IWorkbenchPart part = ref.getPart(false);
 		if (part == null) { return null; }

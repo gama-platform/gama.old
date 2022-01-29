@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'AgentsMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * AgentsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.ui.menus;
 
 import java.util.ArrayList;
@@ -45,8 +44,20 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
+/**
+ * The Class AgentsMenu.
+ */
 public class AgentsMenu extends ContributionItem {
 
+	/**
+	 * Cascading agent menu item.
+	 *
+	 * @param parent the parent
+	 * @param agent the agent
+	 * @param title the title
+	 * @param actions the actions
+	 * @return the menu item
+	 */
 	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final String title,
 			final MenuAction... actions) {
 		final MenuItem result = new MenuItem(parent, SWT.CASCADE);
@@ -65,6 +76,16 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
+	/**
+	 * Action agent menu item.
+	 *
+	 * @param parent the parent
+	 * @param agent the agent
+	 * @param listener the listener
+	 * @param image the image
+	 * @param prefix the prefix
+	 * @return the menu item
+	 */
 	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final SelectionListener listener,
 			final Image image, final String prefix) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
@@ -75,6 +96,14 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
+	/**
+	 * Browse population menu item.
+	 *
+	 * @param parent the parent
+	 * @param pop the pop
+	 * @param image the image
+	 * @return the menu item
+	 */
 	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<? extends IAgent> pop,
 			final Image image) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
@@ -104,6 +133,16 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
+	/**
+	 * Cascading population menu item.
+	 *
+	 * @param parent the parent
+	 * @param agent the agent
+	 * @param population the population
+	 * @param image the image
+	 * @param actions the actions
+	 * @return the menu item
+	 */
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
 			final IPopulation<? extends IAgent> population, final Image image, final MenuAction... actions) {
 		if (population instanceof SimulationPopulation) {
@@ -123,6 +162,15 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
+	/**
+	 * Action agent menu item.
+	 *
+	 * @param parent the parent
+	 * @param agent the agent
+	 * @param command the command
+	 * @param prefix the prefix
+	 * @return the menu item
+	 */
 	private static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final IStatement command,
 			final String prefix) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
@@ -134,12 +182,21 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
+	/**
+	 * Instantiates a new agents menu.
+	 *
+	 * @param id the id
+	 */
 	public AgentsMenu(final String id) { // NO_UCD (unused code)
 		super(id);
 	}
 
+	/**
+	 * Instantiates a new agents menu.
+	 */
 	public AgentsMenu() {}
 
+	/** The inspector. */
 	private static SelectionAdapter inspector = new SelectionAdapter() {
 
 		@Override
@@ -150,6 +207,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
+	/** The highlighter. */
 	public static SelectionAdapter highlighter = new SelectionAdapter() {
 
 		@Override
@@ -168,8 +226,14 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
+	/**
+	 * The Class Focuser.
+	 */
 	public static class Focuser extends SelectionAdapter {
 
+		/**
+		 * Instantiates a new focuser.
+		 */
 		public Focuser() {}
 
 		@Override
@@ -194,6 +258,7 @@ public class AgentsMenu extends ContributionItem {
 	//
 	// };
 
+	/** The killer. */
 	private static SelectionAdapter killer = new SelectionAdapter() {
 
 		@Override
@@ -207,6 +272,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
+	/** The runner. */
 	private static SelectionAdapter runner = new SelectionAdapter() {
 
 		@Override
@@ -237,6 +303,15 @@ public class AgentsMenu extends ContributionItem {
 		return true;
 	}
 
+	/**
+	 * Creates the menu for agent.
+	 *
+	 * @param menu the menu
+	 * @param agent the agent
+	 * @param topLevel the top level
+	 * @param withInspect the with inspect
+	 * @param actions the actions
+	 */
 	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
 			final boolean withInspect, final MenuAction... actions) {
 		if (agent == null) return;
@@ -285,6 +360,13 @@ public class AgentsMenu extends ContributionItem {
 
 	}
 
+	/**
+	 * Fill population sub menu.
+	 *
+	 * @param menu the menu
+	 * @param species the species
+	 * @param actions the actions
+	 */
 	public static void fillPopulationSubMenu(final Menu menu, final Collection<? extends IAgent> species,
 			final MenuAction... actions) {
 		final boolean isSimulations = species instanceof SimulationPopulation;
@@ -340,6 +422,12 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
+	/**
+	 * Gets the highlight action for.
+	 *
+	 * @param a the a
+	 * @return the highlight action for
+	 */
 	public static MenuAction getHighlightActionFor(final IAgent a) {
 		if (a == null) return null;
 		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
