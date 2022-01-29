@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * learningGraphDatabaseGenerator.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.websiteGen;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,11 +29,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Class learningGraphDatabaseGenerator.
+ */
 public class learningGraphDatabaseGenerator {
 	
+	/** The learning concept list. */
 	static List<LearningConcept> learningConceptList = new ArrayList<LearningConcept>();
+	
+	/** The topic list. */
 	static List<Topic> topicList = new ArrayList<Topic>();
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws FileNotFoundException the file not found exception
+	 */
 	public static void main(String[] args) throws FileNotFoundException {
 		
 		String inputFilePath = Constants.WIKI_FOLDER + File.separator + "learningGraph.xml";

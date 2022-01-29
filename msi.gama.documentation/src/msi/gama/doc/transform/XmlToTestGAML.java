@@ -1,15 +1,13 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'XmlToTestGAML.java', in plugin 'msi.gama.documentation', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * XmlToTestGAML.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.doc.transform;
 
 import java.io.File;
@@ -31,10 +29,23 @@ import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLElements;
 import msi.gama.precompiler.doc.utils.XMLUtils;
 
+/**
+ * The Class XmlToTestGAML.
+ */
 public class XmlToTestGAML {
 
+	/** The Constant ATT_NAME_FILE. */
 	public static final String ATT_NAME_FILE = "fileName";
 
+	/**
+	 * Creates the each test.
+	 *
+	 * @param docFile the doc file
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createEachTest(final File docFile)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		final File pluginFolder = docFile.getParentFile().getParentFile();
@@ -60,6 +71,14 @@ public class XmlToTestGAML {
 
 	}
 
+	/**
+	 * Creates the all tests.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createAllTests()
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		Document document = XMLUtils.createDoc(Constants.DOCGAMA_GLOBAL_FILE);
@@ -95,11 +114,33 @@ public class XmlToTestGAML {
 		System.out.println("End of the transformation");
 	}
 
+	/**
+	 * Creates the master test.
+	 *
+	 * @param document the document
+	 * @param xsl the xsl
+	 * @param targetFolder the target folder
+	 * @param targetFile the target file
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void createMasterTest(final Document document, final String xsl, final String targetFolder,
 			final String targetFile) throws ParserConfigurationException, SAXException, IOException {
 		XMLUtils.transformDocument(document, xsl, targetFolder + File.separator + targetFile);
 	}
 
+	/**
+	 * Creates the operators tests.
+	 *
+	 * @param document the document
+	 * @param xsl the xsl
+	 * @param targetFolder the target folder
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	private static void createOperatorsTests(final Document document, final String xsl, final String targetFolder)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
@@ -153,6 +194,12 @@ public class XmlToTestGAML {
 	// Cleaning means:
 	// - Category: remove space and minus characters in the category name to be able to use it in the model
 	// - Operators: replace special characters like +, -, *, /
+	/**
+	 * Clean document test.
+	 *
+	 * @param doc the doc
+	 * @return the document
+	 */
 	// - Operators and statements: addition of an index to have different variables
 	public static Document cleanDocumentTest(final Document doc) {
 		final NameOperatorConverter nameConverter = new NameOperatorConverter();
@@ -205,13 +252,26 @@ public class XmlToTestGAML {
 		createAllTests();
 	}
 
+	/**
+	 * The Class NameOperatorConverter.
+	 */
 	static class NameOperatorConverter {
+		
+		/** The proper name operator map. */
 		HashMap<String, String> properNameOperatorMap;
 
+		/**
+		 * Instantiates a new name operator converter.
+		 */
 		public NameOperatorConverter() {
 			properNameOperatorMap = initProperNameOperatorMap();
 		}
 
+		/**
+		 * Inits the proper name operator map.
+		 *
+		 * @return the hash map
+		 */
 		private HashMap<String, String> initProperNameOperatorMap() {
 			final HashMap<String, String> hm = new HashMap<String, String>();
 			hm.put("*", "Multiply");
@@ -235,6 +295,12 @@ public class XmlToTestGAML {
 			return hm;
 		}
 
+		/**
+		 * Gets the proper operator name.
+		 *
+		 * @param opName the op name
+		 * @return the proper operator name
+		 */
 		public String getProperOperatorName(final String opName) {
 			if (properNameOperatorMap.containsKey(opName)) {
 				return properNameOperatorMap.get(opName);

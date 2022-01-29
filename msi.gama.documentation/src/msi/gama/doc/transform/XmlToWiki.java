@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * XmlToWiki.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'XmlToWiki.java', in plugin 'msi.gama.documentation', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.transform;
 
 import java.io.BufferedWriter;
@@ -33,12 +31,28 @@ import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLElements;
 import msi.gama.precompiler.doc.utils.XMLUtils;
 
+/**
+ * The Class XmlToWiki.
+ */
 public class XmlToWiki {
 
+	/** The suffix. */
 	public static String suffix = ""; // "Dev"
+	
+	/** The ext file name. */
 	public static String extFileName = "Extension";
+	
+	/** The ext folder. */
 	public static String extFolder = "PluginDocumentation/";
 
+	/**
+	 * Creates the all wikis.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createAllWikis()
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
@@ -122,11 +136,34 @@ public class XmlToWiki {
 		System.out.println("End of the transformation");
 	}
 
+	/**
+	 * Creates the wiki.
+	 *
+	 * @param xml the xml
+	 * @param xsl the xsl
+	 * @param wiki the wiki
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	private static void createWiki(final String xml, final String xsl, final String wiki)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		createWiki(xml, xsl, wiki, "");
 	}
 
+	/**
+	 * Creates the wiki.
+	 *
+	 * @param xml the xml
+	 * @param xsl the xsl
+	 * @param wiki the wiki
+	 * @param pluginName the plugin name
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	private static void createWiki(final String xml, final String xsl, final String wiki, final String pluginName)
 			throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		// Creation of the DOM source
@@ -154,6 +191,14 @@ public class XmlToWiki {
 		XMLUtils.transformDocument(document, xsl, wiki);
 	}
 
+	/**
+	 * Creates the extentions wiki.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createExtentionsWiki()
 			throws IOException, ParserConfigurationException, SAXException, TransformerException {
 		final WorkspaceManager ws = new WorkspaceManager(".", false);

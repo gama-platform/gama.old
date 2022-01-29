@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * XmlToCategoryXML.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.transform;
 
 import java.io.File;
@@ -10,8 +20,19 @@ import org.xml.sax.SAXException;
 
 import msi.gama.precompiler.doc.utils.Constants;
 
+/**
+ * The Class XmlToCategoryXML.
+ */
 public class XmlToCategoryXML {
 
+	/**
+	 * Creates the category wiki.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createCategoryWiki() throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
 

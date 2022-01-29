@@ -1,16 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * UnifyDoc.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'UnifyDoc.java', in plugin 'msi.gama.documentation', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.util;
 
 import java.io.File;
@@ -30,8 +27,12 @@ import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
+/**
+ * The Class UnifyDoc.
+ */
 public class UnifyDoc {
 
+	/** The tab elt XML. */
 	private static String[] tabEltXML = { XMLElements.CONCEPT_LIST, XMLElements.OPERATORS_CATEGORIES,
 			XMLElements.OPERATORS, XMLElements.SKILLS, XMLElements.ARCHITECTURES, XMLElements.SPECIESS,
 			XMLElements.STATEMENTS, XMLElements.CONSTANTS_CATEGORIES, XMLElements.CONSTANTS,
@@ -43,6 +44,11 @@ public class UnifyDoc {
 //			XMLElements.INSIDE_STAT_KINDS, XMLElements.INSIDE_STAT_SYMBOLS, XMLElements.STATEMENT_KINDS,
 //			XMLElements.CONCEPT_LIST };
 
+	/**
+	 * Unify.
+	 *
+	 * @param local the local
+	 */
 	public static void unify(boolean local) {
 		try {
 
@@ -60,6 +66,11 @@ public class UnifyDoc {
 		}
 	}
 
+	/**
+	 * Unify all projects.
+	 *
+	 * @param local the local
+	 */
 	public static void unifyAllProjects(boolean local) {
 		try {
 
@@ -77,6 +88,12 @@ public class UnifyDoc {
 		}
 	}
 
+	/**
+	 * Merge files.
+	 *
+	 * @param hmFilesPackages the hm files packages
+	 * @return the document
+	 */
 	private static Document mergeFiles(final HashMap<String, File> hmFilesPackages) {
 		try {
 
@@ -137,6 +154,11 @@ public class UnifyDoc {
 		return null;
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(final String[] args) {
 		try {
 			UnifyDoc.unify(true);

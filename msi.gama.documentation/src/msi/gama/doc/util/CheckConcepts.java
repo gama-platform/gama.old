@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * CheckConcepts.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.util;
 
 import java.io.BufferedReader;
@@ -21,20 +31,36 @@ import msi.gama.doc.websiteGen.utilClasses.ConceptManager.WebsitePart;
 import msi.gama.doc.websiteGen.utilClasses.Utils;
 import msi.gama.precompiler.doc.utils.Constants;
 
+/**
+ * The Class CheckConcepts.
+ */
 public class CheckConcepts {
 	// this class will check if all the concepts present in the documentations
 	// are conform. It will then build a report about repartition of concept
 	// keywords.
 
+	/** The path to model library. */
 	public static String PATH_TO_MODEL_LIBRARY =
 			Constants.WIKI_FOLDER + File.separator + "References" + File.separator + "ModelLibrary";
+	
+	/** The path to gaml references. */
 	public static String PATH_TO_GAML_REFERENCES =
 			Constants.WIKI_FOLDER + File.separator + "References" + File.separator + "GAMLReferences";
+	
+	/** The path to documentation. */
 	public static String PATH_TO_DOCUMENTATION = Constants.WIKI_FOLDER + File.separator + "Tutorials";
 
+	/** The path to md report. */
 	public static String PATH_TO_MD_REPORT = Constants.WIKI_FOLDER + File.separator + "WikiOnly" + File.separator
 			+ "DevelopingExtensions" + File.separator + "WebsiteGeneration.md";
 
+	/**
+	 * Do check concepts.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws IllegalAccessException the illegal access exception
+	 */
 	public static void DoCheckConcepts() throws IOException, IllegalArgumentException, IllegalAccessException {
 		// get all the concepts.
 		ConceptManager.loadConcepts();
@@ -56,6 +82,12 @@ public class CheckConcepts {
 		writeReport(PATH_TO_MD_REPORT);
 	}
 
+	/**
+	 * Execute for A website part.
+	 *
+	 * @param path the path
+	 * @param websitePart the website part
+	 */
 	private static void executeForAWebsitePart(final String path, final String websitePart) {
 		final ArrayList<File> listFiles = new ArrayList<>();
 		Utils.getFilesFromFolder(path, listFiles);
@@ -79,6 +111,11 @@ public class CheckConcepts {
 		}
 	}
 
+	/**
+	 * Browse keywords.
+	 *
+	 * @param path the path
+	 */
 	private static void browseKeywords(final String path) {
 		try {
 			final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -107,6 +144,12 @@ public class CheckConcepts {
 		}
 	}
 
+	/**
+	 * Write report.
+	 *
+	 * @param file the file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void writeReport(final String file) throws IOException {
 		String result = "";
 

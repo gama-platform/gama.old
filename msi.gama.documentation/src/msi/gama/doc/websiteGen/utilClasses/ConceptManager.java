@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ConceptManager.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.websiteGen.utilClasses;
 
 import java.lang.reflect.Field;
@@ -5,8 +15,12 @@ import java.text.*;
 import java.util.*;
 import msi.gama.precompiler.IConcept;
 
+/**
+ * The Class ConceptManager.
+ */
 public class ConceptManager {
 
+	/** The concepts not for gaml ref. */
 	static public String[] CONCEPTS_NOT_FOR_GAML_REF = {
 		IConcept.AUTOSAVE,
 		IConcept.BACKGROUND,
@@ -36,6 +50,7 @@ public class ConceptManager {
 		IConcept.WORLD
 	};
 
+	/** The concepts not for model library. */
 	static public String[] CONCEPTS_NOT_FOR_MODEL_LIBRARY = {
 		IConcept.ACTION,
 		IConcept.ATTRIBUTE,
@@ -86,6 +101,7 @@ public class ConceptManager {
 		IConcept.WORLD
 	};
 
+	/** The concepts dedicated to syntax. */
 	static public String[] CONCEPTS_DEDICATED_TO_SYNTAX = {
 		IConcept.ARITHMETIC,
 		IConcept.ATTRIBUTE,
@@ -103,15 +119,35 @@ public class ConceptManager {
 
 	};
 
-	static public enum WebsitePart { DOCUMENTATION, GAML_REFERENCES, MODEL_LIBRARY }
+	/**
+	 * The Enum WebsitePart.
+	 */
+	static public enum WebsitePart { /** The documentation. */
+ DOCUMENTATION, /** The gaml references. */
+ GAML_REFERENCES, /** The model library. */
+ MODEL_LIBRARY }
 
+	/** The m concepts. */
 	static private ArrayList<String> m_concepts;
+	
+	/** The m occurrence of concept. */
 	static HashMap<String,Integer> m_occurrence_of_concept; // the key is the name of the concept, the value is the number of occurrences.
 
+	/** The m occurrence of concept in model library. */
 	static HashMap<String,Integer> m_occurrence_of_concept_in_model_library; // the key is the name of the concept, the value is the number of occurrences.
+	
+	/** The m occurrence of concept in gaml ref. */
 	static HashMap<String,Integer> m_occurrence_of_concept_in_gaml_ref; // the key is the name of the concept, the value is the number of occurrences.
+	
+	/** The m occurrence of concept in documentation. */
 	static HashMap<String,Integer> m_occurrence_of_concept_in_documentation; // the key is the name of the concept, the value is the number of occurrences.
 
+	/**
+	 * Load concepts.
+	 *
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws IllegalAccessException the illegal access exception
+	 */
 	static public void loadConcepts() throws IllegalArgumentException, IllegalAccessException {
 		m_concepts = new ArrayList<String>();
 		m_occurrence_of_concept = new HashMap<String,Integer>();
@@ -131,14 +167,31 @@ public class ConceptManager {
 		}
 	}
 
+	/**
+	 * Concept is possible to add.
+	 *
+	 * @param concept the concept
+	 * @return true, if successful
+	 */
 	static public boolean conceptIsPossibleToAdd(final String concept) {
 		return m_concepts.contains(concept);
 	}
 
+	/**
+	 * Adds the occurrence of concept.
+	 *
+	 * @param concept the concept
+	 */
 	static public void addOccurrenceOfConcept(final String concept) {
 		addOccurrenceOfConcept(concept, "");
 	}
 
+	/**
+	 * Adds the occurrence of concept.
+	 *
+	 * @param concept the concept
+	 * @param websitePart the website part
+	 */
 	static public void addOccurrenceOfConcept(final String concept, final String websitePart) {
 		if (m_concepts.contains(concept)) {
 			// it is possible to add the concept. Update the number of occurrences of this concept in the library
@@ -165,6 +218,9 @@ public class ConceptManager {
 		}
 	}
 
+	/**
+	 * Prints the statistics.
+	 */
 	static public void printStatistics() {
 		Iterator<String> it = m_occurrence_of_concept.keySet().iterator();
 		ArrayList<String> concept_not_represented = new ArrayList<String>();
@@ -189,6 +245,11 @@ public class ConceptManager {
 		}
 	}
 
+	/**
+	 * Gets the extended statistics.
+	 *
+	 * @return the extended statistics
+	 */
 	static public String getExtendedStatistics() {
 		String result = "";
 		Collections.sort(m_concepts, new Comparator<String>() {

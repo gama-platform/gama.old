@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * TOCManager.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.doc.util;
 
 import java.io.BufferedReader;
@@ -21,14 +31,30 @@ import org.xml.sax.SAXException;
 import msi.gama.precompiler.doc.utils.Constants;
 import msi.gama.precompiler.doc.utils.XMLUtils;
 
+/**
+ * The Class TOCManager.
+ */
 public class TOCManager {
 
+	/** The toc file. */
 	String tocFile;
 
+	/**
+	 * Instantiates a new TOC manager.
+	 *
+	 * @param toc the toc
+	 */
 	public TOCManager(final String toc) {
 		tocFile = toc;
 	}
 
+	/**
+	 * Creates the part files.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void createPartFiles() throws ParserConfigurationException, SAXException, IOException {
 		final Document doc = XMLUtils.createDoc(tocFile);
 		final NodeList nl = doc.getElementsByTagName("part");
@@ -48,6 +74,13 @@ public class TOCManager {
 		}
 	}
 
+	/**
+	 * Creates the subpart files.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void createSubpartFiles() throws ParserConfigurationException, SAXException, IOException {
 		final Document doc = XMLUtils.createDoc(tocFile);
 		final NodeList nl = doc.getElementsByTagName("subpart");
@@ -90,6 +123,14 @@ public class TOCManager {
 		}
 	}
 
+	/**
+	 * Gets the toc files list.
+	 *
+	 * @return the toc files list
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public List<String> getTocFilesList() throws ParserConfigurationException, SAXException, IOException {
 		final List<String> lFile = new ArrayList<>();
 		final Document doc = XMLUtils.createDoc(tocFile);
@@ -123,6 +164,14 @@ public class TOCManager {
 		return lFile;
 	}
 
+	/**
+	 * Gets the toc files string.
+	 *
+	 * @return the toc files string
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public String getTocFilesString() throws ParserConfigurationException, SAXException, IOException {
 		final List<String> lf = getTocFilesList();
 		final File blankPage = new File(Constants.MD_BLANK_PAGE);
@@ -135,6 +184,12 @@ public class TOCManager {
 		return files;
 	}
 
+	/**
+	 * Gets the relative path from wiki.
+	 *
+	 * @param targetPath the target path
+	 * @return the relative path from wiki
+	 */
 	public static String getRelativePathFromWiki(final String targetPath/* , String basePath, String pathSeparator */) {
 
 		final File tmp = new File(Constants.WIKI_FOLDER);
@@ -214,15 +269,32 @@ public class TOCManager {
 		return relative.toString();
 	}
 
+	/**
+	 * The Class PathResolutionException.
+	 */
 	static class PathResolutionException extends RuntimeException {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Instantiates a new path resolution exception.
+		 *
+		 * @param msg the msg
+		 */
 		PathResolutionException(final String msg) {
 			super(msg);
 		}
 	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public static void main(final String[] args) throws ParserConfigurationException, SAXException, IOException {
 		final TOCManager t = new TOCManager(Constants.TOC_FILE);
 		System.out.println(t.getTocFilesString());

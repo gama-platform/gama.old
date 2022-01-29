@@ -1,26 +1,32 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'MainGenerateWiki.java', in plugin 'msi.gama.documentation', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * MainGeneratePDF.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.doc;
 
 import msi.gama.doc.util.ConvertToPDF;
 import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
 
+/**
+ * The Class MainGeneratePDF.
+ */
 public class MainGeneratePDF {
 
+	/** The generate gama style. */
 	public static boolean generateGamaStyle = false;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		try {
 			System.out.println("GENERATION OF THE PDF DOCUMENTATION");

@@ -1,16 +1,13 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'XmlToWiki.java', in plugin 'msi.gama.documentation', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * XmlToCatalog.java, in msi.gama.documentation, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.doc.transform;
 
 import java.io.File;
@@ -21,7 +18,19 @@ import org.xml.sax.SAXException;
 import msi.gama.precompiler.doc.utils.Constants;
 
 
+/**
+ * The Class XmlToCatalog.
+ */
 public class XmlToCatalog {
+	
+	/**
+	 * Creates the catalog.
+	 *
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void createCatalog() throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		System.out.println("Beginning of the transformation");
 
