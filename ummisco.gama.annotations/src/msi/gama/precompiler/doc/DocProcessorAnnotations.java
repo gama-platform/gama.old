@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'DocProcessorAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * DocProcessorAnnotations.java, in ummisco.gama.annotations, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc;
 
 import java.util.ArrayList;
@@ -41,15 +40,41 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
+/**
+ * The Class DocProcessorAnnotations.
+ */
 public class DocProcessorAnnotations {
 
+	/** The Constant PREFIX_CONSTANT. */
 	public static final String PREFIX_CONSTANT = "#";
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnot the doc annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @return the doc elt
+	 */
 	public static org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final Messager mes,
 			final String eltName, final TypeConverter tc, final ExecutableElement e) {
 		return DocProcessorAnnotations.getDocElt(docAnnot, doc, null, mes, eltName, tc, e);
 	}
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnotTab the doc annot tab
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @return the doc elt
+	 */
 	public static org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
 			final String eltName, final TypeConverter tc, final ExecutableElement e) { // e.getSimpleName()
 		if (docAnnotTab == null || docAnnotTab.length == 0) { return DocProcessorAnnotations.getDocElt(null, doc, null,
@@ -57,6 +82,18 @@ public class DocProcessorAnnotations {
 		return DocProcessorAnnotations.getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e);
 	}
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnot the doc annot
+	 * @param doc the doc
+	 * @param docElement the doc element
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @return the doc elt
+	 */
 	public static org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc,
 			final org.w3c.dom.Element docElement, final Messager mes, final String eltName, final TypeConverter tc,
 			final ExecutableElement e) { // e.getSimpleName()
@@ -228,6 +265,15 @@ public class DocProcessorAnnotations {
 		return docElt;
 	}
 
+	/**
+	 * Gets the examples elt.
+	 *
+	 * @param examples the examples
+	 * @param doc the doc
+	 * @param e the e
+	 * @param tc the tc
+	 * @return the examples elt
+	 */
 	public static org.w3c.dom.Element getExamplesElt(final example[] examples, final Document doc,
 			final ExecutableElement e, final TypeConverter tc) {
 		final org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);
@@ -237,6 +283,15 @@ public class DocProcessorAnnotations {
 		return examplesElt;
 	}
 
+	/**
+	 * Gets the example elt.
+	 *
+	 * @param example the example
+	 * @param doc the doc
+	 * @param e the e
+	 * @param tc the tc
+	 * @return the example elt
+	 */
 	public static org.w3c.dom.Element getExampleElt(final example example, final Document doc,
 			final ExecutableElement e, final TypeConverter tc) {
 		final org.w3c.dom.Element exampleElt = doc.createElement(XMLElements.EXAMPLE);
@@ -270,6 +325,16 @@ public class DocProcessorAnnotations {
 		return exampleElt;
 	}
 
+	/**
+	 * Gets the constant elt.
+	 *
+	 * @param constant the constant
+	 * @param doc the doc
+	 * @param e the e
+	 * @param mes the mes
+	 * @param tc the tc
+	 * @return the constant elt
+	 */
 	public static org.w3c.dom.Element getConstantElt(final constant constant, final Document doc, final Element e,
 			final Messager mes, final TypeConverter tc) {
 		final org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);
@@ -299,6 +364,16 @@ public class DocProcessorAnnotations {
 		return constantElt;
 	}
 
+	/**
+	 * Gets the vars elt.
+	 *
+	 * @param varsAnnot the vars annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param skillName the skill name
+	 * @param tc the tc
+	 * @return the vars elt
+	 */
 	public static org.w3c.dom.Element getVarsElt(final vars varsAnnot, final Document doc, final Messager mes,
 			final String skillName, final TypeConverter tc) {
 		if (varsAnnot != null) {
@@ -327,6 +402,16 @@ public class DocProcessorAnnotations {
 		return null;
 	}
 
+	/**
+	 * Gets the action elt.
+	 *
+	 * @param actionAnnot the action annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param e the e
+	 * @param tc the tc
+	 * @return the action elt
+	 */
 	public static org.w3c.dom.Element getActionElt(final action actionAnnot, final Document doc, final Messager mes,
 			final Element e, final TypeConverter tc) {
 		if (!(e instanceof ExecutableElement) || actionAnnot == null) { return null; }
@@ -368,6 +453,16 @@ public class DocProcessorAnnotations {
 		return actionElt;
 	}
 
+	/**
+	 * Gets the facets elt.
+	 *
+	 * @param facetsAnnot the facets annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param statName the stat name
+	 * @param tc the tc
+	 * @return the facets elt
+	 */
 	public static org.w3c.dom.Element getFacetsElt(final facets facetsAnnot, final Document doc, final Messager mes,
 			final String statName, final TypeConverter tc) {
 		if (facetsAnnot == null) { return null; }
@@ -400,6 +495,14 @@ public class DocProcessorAnnotations {
 		return facetsElt;
 	}
 
+	/**
+	 * Gets the inside elt.
+	 *
+	 * @param insideAnnot the inside annot
+	 * @param doc the doc
+	 * @param tc the tc
+	 * @return the inside elt
+	 */
 	public static org.w3c.dom.Element getInsideElt(final inside insideAnnot, final Document doc,
 			final TypeConverter tc) {
 		if (insideAnnot == null) { return null; }
@@ -425,6 +528,13 @@ public class DocProcessorAnnotations {
 		return insideElt;
 	}
 
+	/**
+	 * Gets the operator element.
+	 *
+	 * @param operators the operators
+	 * @param eltName the elt name
+	 * @return the operator element
+	 */
 	public static org.w3c.dom.Element getOperatorElement(final org.w3c.dom.Element operators, final String eltName) {
 		final NodeList nL = operators.getElementsByTagName(XMLElements.OPERATOR);
 		int i = 0;
@@ -437,6 +547,15 @@ public class DocProcessorAnnotations {
 		return null;
 	}
 
+	/**
+	 * Gets the categories.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param categoriesElt the categories elt
+	 * @param tc the tc
+	 * @return the categories
+	 */
 	public static org.w3c.dom.Element getCategories(final Element e, final Document doc,
 			final org.w3c.dom.Element categoriesElt, final TypeConverter tc) {
 		final ArrayList<String> categories = new ArrayList<String>();
@@ -484,12 +603,29 @@ public class DocProcessorAnnotations {
 		return categoriesElt;
 	}
 
+	/**
+	 * Gets the categories.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param tc the tc
+	 * @return the categories
+	 */
 	public static org.w3c.dom.Element getCategories(final Element e, final Document doc, final TypeConverter tc) {
 		final org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
 
 		return getCategories(e, doc, categoriesElt, tc);
 	}
 
+	/**
+	 * Gets the concepts.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param conceptElt the concept elt
+	 * @param tc the tc
+	 * @return the concepts
+	 */
 	public static org.w3c.dom.Element getConcepts(final Element e, final Document doc,
 			final org.w3c.dom.Element conceptElt, final TypeConverter tc) {
 		final ArrayList<String> concepts = new ArrayList<String>();

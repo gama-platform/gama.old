@@ -1,21 +1,23 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ColorCSS.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * ColorCSS.java, in ummisco.gama.annotations, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.constants;
 
 
+/**
+ * The Class ColorCSS.
+ */
 public class ColorCSS {
 
 	// @constant(value="the set of CSS colors", category=IConstantCategory.COLOR_CSS,
+	/** The Constant array. */
 	// doc=@doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
 	public final static Object[] array = new Object[] { "transparent", new int[] { 0, 0, 0, 0 }, "aliceblue",
 		new int[] { 240, 248, 255, 1 }, "antiquewhite", new int[] { 250, 235, 215, 1 }, "aqua",

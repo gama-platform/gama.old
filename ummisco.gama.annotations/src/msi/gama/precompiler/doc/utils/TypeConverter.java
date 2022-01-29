@@ -1,28 +1,42 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'TypeConverter.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * TypeConverter.java, in ummisco.gama.annotations, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc.utils;
 
 import java.util.HashMap;
 
 import msi.gama.precompiler.IOperatorCategory;
 
+/**
+ * The Class TypeConverter.
+ */
 public class TypeConverter {
 
+	/** The Constant properNameTypeMap. */
 	public static final HashMap<String, String> properNameTypeMap = new HashMap<>();
+	
+	/** The special cases proper name type map. */
 	HashMap<String, String> specialCasesProperNameTypeMap;
+	
+	/** The proper category name map. */
 	HashMap<String, String> properCategoryNameMap;
+	
+	/** The Constant typeStringFromIType. */
 	public static final HashMap<Integer, String> typeStringFromIType = new HashMap<>();
+	
+	/** The symbol kind string from I symbol kind. */
 	HashMap<Integer, String> symbolKindStringFromISymbolKind;
 
+	/**
+	 * Instantiates a new type converter.
+	 */
 	public TypeConverter() {
 		properNameTypeMap.putAll(initProperNameTypeMap());
 		specialCasesProperNameTypeMap = initSpecialCasesProperNameTypeMap();
@@ -31,6 +45,13 @@ public class TypeConverter {
 		symbolKindStringFromISymbolKind = initSymbolKindStringFromISymbolKind();
 	}
 
+	/**
+	 * Register type.
+	 *
+	 * @param className the class name
+	 * @param type the type
+	 * @param id the id
+	 */
 	public static void registerType(final String className, final String type, final Integer id) {
 		if (!properNameTypeMap.containsKey(className)) {
 			properNameTypeMap.put(className, type);
@@ -40,6 +61,11 @@ public class TypeConverter {
 		}
 	}
 
+	/**
+	 * Inits the symbol kind string from I symbol kind.
+	 *
+	 * @return the hash map
+	 */
 	private HashMap<Integer, String> initSymbolKindStringFromISymbolKind() {
 		final HashMap<Integer, String> hm = new HashMap<>();
 		hm.put(0, "Species");
@@ -63,6 +89,11 @@ public class TypeConverter {
 		return hm;
 	}
 
+	/**
+	 * Inits the proper name type map.
+	 *
+	 * @return the hash map
+	 */
 	private HashMap<String, String> initProperNameTypeMap() {
 		final HashMap<String, String> hm = new HashMap<>();
 
@@ -207,6 +238,11 @@ public class TypeConverter {
 		return hm;
 	}
 
+	/**
+	 * Inits the special cases proper name type map.
+	 *
+	 * @return the hash map
+	 */
 	private HashMap<String, String> initSpecialCasesProperNameTypeMap() {
 		final HashMap<String, String> sphm = new HashMap<>();
 		sphm.put(
@@ -217,6 +253,11 @@ public class TypeConverter {
 		return sphm;
 	}
 
+	/**
+	 * Inits the name type from I type.
+	 *
+	 * @return the hash map
+	 */
 	// FROM IType.java
 	private HashMap<Integer, String> initNameTypeFromIType() {
 		final HashMap<Integer, String> hm = new HashMap<>();
@@ -251,6 +292,11 @@ public class TypeConverter {
 		return hm;
 	}
 
+	/**
+	 * Inits the proper name categories map.
+	 *
+	 * @return the hash map
+	 */
 	private HashMap<String, String> initProperNameCategoriesMap() {
 		final HashMap<String, String> hm = new HashMap<>();
 		hm.put("Cast", IOperatorCategory.CASTING);
@@ -294,6 +340,12 @@ public class TypeConverter {
 		return hm;
 	}
 
+	/**
+	 * Gets the proper type.
+	 *
+	 * @param rawName the raw name
+	 * @return the proper type
+	 */
 	public String getProperType(final String rawName) {
 		if (specialCasesProperNameTypeMap.containsKey(rawName)) { return specialCasesProperNameTypeMap.get(rawName); }
 
@@ -336,6 +388,12 @@ public class TypeConverter {
 
 	}
 
+	/**
+	 * Find central coma.
+	 *
+	 * @param s the s
+	 * @return the int
+	 */
 	public static int findCentralComa(final String s) {
 		int foundIndex = 0;
 
@@ -357,11 +415,23 @@ public class TypeConverter {
 		return -1;
 	}
 
+	/**
+	 * Gets the proper operator name.
+	 *
+	 * @param opName the op name
+	 * @return the proper operator name
+	 */
 	public String getProperOperatorName(final String opName) {
 		// if("*".equals(opName)) return "`*`";
 		return opName;
 	}
 
+	/**
+	 * Gets the proper category.
+	 *
+	 * @param rawName the raw name
+	 * @return the proper category
+	 */
 	public String getProperCategory(final String rawName) {
 		if (properCategoryNameMap.containsKey(rawName)) {
 			return properCategoryNameMap.get(rawName);
@@ -370,6 +440,12 @@ public class TypeConverter {
 		}
 	}
 
+	/**
+	 * Gets the type string.
+	 *
+	 * @param i the i
+	 * @return the type string
+	 */
 	public String getTypeString(final Integer i) {
 		if (typeStringFromIType.containsKey(i)) {
 			return typeStringFromIType.get(i);
@@ -378,6 +454,12 @@ public class TypeConverter {
 		}
 	}
 
+	/**
+	 * Gets the type string.
+	 *
+	 * @param types the types
+	 * @return the type string
+	 */
 	public String getTypeString(final int[] types) {
 		final StringBuilder s = new StringBuilder(30);
 		s.append(types.length < 2 ? "" : "any type in [");
@@ -394,6 +476,12 @@ public class TypeConverter {
 		return s.toString();
 	}
 
+	/**
+	 * Gets the symbol kind string from I symbol kind.
+	 *
+	 * @param i the i
+	 * @return the symbol kind string from I symbol kind
+	 */
 	public String getSymbolKindStringFromISymbolKind(final Integer i) {
 		if (symbolKindStringFromISymbolKind.containsKey(i)) {
 			return symbolKindStringFromISymbolKind.get(i);

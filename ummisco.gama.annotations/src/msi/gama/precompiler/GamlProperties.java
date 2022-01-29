@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlProperties.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlProperties.java, in ummisco.gama.annotations, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.io.IOException;
@@ -31,44 +30,99 @@ import java.util.Set;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlProperties {
 
+	/** The map. */
 	Map<String, LinkedHashSet<String>> map;
 
+	/** The Constant SKILLS. */
 	public final static String SKILLS = "skills";
+	
+	/** The Constant ACTIONS. */
 	public final static String ACTIONS = "actions";
+	
+	/** The Constant ATTRIBUTES. */
 	public final static String ATTRIBUTES = "attributes";
+	
+	/** The Constant STATEMENTS. */
 	public final static String STATEMENTS = "statements";
+	
+	/** The Constant OPERATORS. */
 	public final static String OPERATORS = "operators";
+	
+	/** The Constant GAML. */
 	public final static String GAML = "gaml.properties";
+	
+	/** The Constant SPECIES. */
 	public final static String SPECIES = "species";
+	
+	/** The Constant CONSTANTS. */
 	public final static String CONSTANTS = "constants";
+	
+	/** The Constant ARCHITECTURES. */
 	public final static String ARCHITECTURES = "architectures";
+	
+	/** The Constant TYPES. */
 	public final static String TYPES = "types";
+	
+	/** The Constant PLUGINS. */
 	public final static String PLUGINS = "plugins";
+	
+	/** The Constant SEPARATOR. */
 	public final static String SEPARATOR = "~";
 
+	/** The Constant NULL. */
 	static final String NULL = "";
 
+	/**
+	 * Instantiates a new gaml properties.
+	 */
 	public GamlProperties() {
 		map = new LinkedHashMap();
 	}
 
+	/**
+	 * Instantiates a new gaml properties.
+	 *
+	 * @param r the r
+	 */
 	public GamlProperties(final Reader r) {
 		this();
 		load(r);
 	}
 
+	/**
+	 * Key set.
+	 *
+	 * @return the sets the
+	 */
 	public Set<String> keySet() {
 		return map.keySet();
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 		return map.isEmpty();
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param key the key
+	 * @return the linked hash set
+	 */
 	public LinkedHashSet<String> get(final String key) {
 		return map.get(key);
 	}
 
+	/**
+	 * Gets the first.
+	 *
+	 * @param key the key
+	 * @return the first
+	 */
 	public String getFirst(final String key) {
 		final Set<String> result = get(key);
 		if (result == null) { return null; }
@@ -78,10 +132,21 @@ public class GamlProperties {
 		return null;
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param key the key
+	 */
 	public void remove(final String key) {
 		map.remove(key);
 	}
 
+	/**
+	 * Put.
+	 *
+	 * @param key the key
+	 * @param value the value
+	 */
 	public void put(final String key, final String value) {
 		if (!map.containsKey(key)) {
 			map.put(key, new LinkedHashSet<String>());
@@ -91,6 +156,12 @@ public class GamlProperties {
 		}
 	}
 
+	/**
+	 * Put.
+	 *
+	 * @param key the key
+	 * @param values the values
+	 */
 	public void put(final String key, final Iterable<String> values) {
 		if (!map.containsKey(key))
 			map.put(key, new LinkedHashSet());
@@ -99,6 +170,11 @@ public class GamlProperties {
 		}
 	}
 
+	/**
+	 * Put all.
+	 *
+	 * @param m the m
+	 */
 	public void putAll(final GamlProperties m) {
 		for (final Iterator<Map.Entry<String, LinkedHashSet<String>>> it = m.map.entrySet().iterator(); it.hasNext();) {
 			final Map.Entry<String, LinkedHashSet<String>> entry = it.next();
@@ -106,6 +182,11 @@ public class GamlProperties {
 		}
 	}
 
+	/**
+	 * Store.
+	 *
+	 * @param writer the writer
+	 */
 	public void store(final Writer writer) {
 		final Properties prop = new Properties();
 		for (final Iterator<Map.Entry<String, LinkedHashSet<String>>> it = map.entrySet().iterator(); it.hasNext();) {
@@ -122,6 +203,12 @@ public class GamlProperties {
 
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @param strings the strings
+	 * @return the string
+	 */
 	public static String toString(final Set<String> strings) {
 		if (!strings.isEmpty()) {
 			final StringBuilder sb = new StringBuilder();
@@ -135,6 +222,12 @@ public class GamlProperties {
 
 	}
 
+	/**
+	 * Filter first.
+	 *
+	 * @param c the c
+	 * @return the map
+	 */
 	public Map<String, String> filterFirst(final String c) {
 		final Map<String, String> gp = new LinkedHashMap();
 		for (final String original : map.keySet()) {
@@ -146,6 +239,12 @@ public class GamlProperties {
 		return gp;
 	}
 
+	/**
+	 * Filter all.
+	 *
+	 * @param c the c
+	 * @return the map
+	 */
 	public Map<String, Set<String>> filterAll(final String c) {
 		final Map<String, Set<String>> gp = new LinkedHashMap();
 		for (final String original : map.keySet()) {
@@ -157,6 +256,12 @@ public class GamlProperties {
 		return gp;
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @param reader the reader
+	 * @return the gaml properties
+	 */
 	public GamlProperties load(final Reader reader) {
 		final Properties prop = new Properties();
 		try {
