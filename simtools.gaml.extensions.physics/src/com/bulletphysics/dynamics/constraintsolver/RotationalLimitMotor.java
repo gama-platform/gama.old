@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * RotationalLimitMotor.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 /*
  * 2007-09-09 btGeneric6DofConstraint Refactored by Francisco Le�n email: projectileman@yahoo.com http://gimpact.sf.net
@@ -38,21 +31,48 @@ public class RotationalLimitMotor {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The lo limit. */
 	public float loLimit; // !< joint limit
+	
+	/** The hi limit. */
 	public float hiLimit; // !< joint limit
+	
+	/** The target velocity. */
 	public float targetVelocity; // !< target motor velocity
+	
+	/** The max motor force. */
 	public float maxMotorForce; // !< max force on motor
+	
+	/** The max limit force. */
 	public float maxLimitForce; // !< max force on limit
+	
+	/** The damping. */
 	public float damping; // !< Damping.
+	
+	/** The limit softness. */
 	public float limitSoftness; // ! Relaxation factor
+	
+	/** The erp. */
 	public float ERP; // !< Error tolerance factor when joint is at limit
+	
+	/** The bounce. */
 	public float bounce; // !< restitution factor
+	
+	/** The enable motor. */
 	public boolean enableMotor;
 
+	/** The current limit error. */
 	public float currentLimitError;// ! How much is violated this limit
+	
+	/** The current limit. */
 	public int currentLimit;// !< 0=free, 1=at lo limit, 2=at hi limit
+	
+	/** The accumulated impulse. */
 	public float accumulatedImpulse;
 
+	/**
+	 * Instantiates a new rotational limit motor.
+	 */
 	public RotationalLimitMotor() {
 		accumulatedImpulse = 0.f;
 		targetVelocity = 0;
@@ -69,6 +89,11 @@ public class RotationalLimitMotor {
 		enableMotor = false;
 	}
 
+	/**
+	 * Instantiates a new rotational limit motor.
+	 *
+	 * @param limot the limot
+	 */
 	public RotationalLimitMotor(final RotationalLimitMotor limot) {
 		targetVelocity = limot.targetVelocity;
 		maxMotorForce = limot.maxMotorForce;

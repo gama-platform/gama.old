@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * GjkPairDetector.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.narrowphase;
 
@@ -37,22 +30,49 @@ public class GjkPairDetector implements DiscreteCollisionDetectorInterface {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The Constant REL_ERROR2. */
 	// must be above the machine epsilon
 	private static final float REL_ERROR2 = 1.0e-6f;
 
+	/** The cached separating axis. */
 	private final Vector3f cachedSeparatingAxis = new Vector3f();
+	
+	/** The penetration depth solver. */
 	private ConvexPenetrationDepthSolver penetrationDepthSolver;
+	
+	/** The simplex solver. */
 	private SimplexSolverInterface simplexSolver;
+	
+	/** The minkowski A. */
 	private ConvexShape minkowskiA;
+	
+	/** The minkowski B. */
 	private ConvexShape minkowskiB;
+	
+	/** The ignore margin. */
 	private boolean ignoreMargin;
 
+	/** The last used method. */
 	// some debugging to fix degeneracy problems
 	public int lastUsedMethod;
+	
+	/** The cur iter. */
 	public int curIter;
+	
+	/** The degenerate simplex. */
 	public int degenerateSimplex;
+	
+	/** The catch degeneracies. */
 	public int catchDegeneracies;
 
+	/**
+	 * Inits the.
+	 *
+	 * @param objectA the object A
+	 * @param objectB the object B
+	 * @param simplexSolver the simplex solver
+	 * @param penetrationDepthSolver the penetration depth solver
+	 */
 	public void init(final ConvexShape objectA, final ConvexShape objectB, final SimplexSolverInterface simplexSolver,
 			final ConvexPenetrationDepthSolver penetrationDepthSolver) {
 		this.cachedSeparatingAxis.set(0f, 0f, 1f);
@@ -303,18 +323,38 @@ public class GjkPairDetector implements DiscreteCollisionDetectorInterface {
 		}
 	}
 
+	/**
+	 * Sets the minkowski A.
+	 *
+	 * @param minkA the new minkowski A
+	 */
 	public void setMinkowskiA(final ConvexShape minkA) {
 		minkowskiA = minkA;
 	}
 
+	/**
+	 * Sets the minkowski B.
+	 *
+	 * @param minkB the new minkowski B
+	 */
 	public void setMinkowskiB(final ConvexShape minkB) {
 		minkowskiB = minkB;
 	}
 
+	/**
+	 * Sets the cached seperating axis.
+	 *
+	 * @param seperatingAxis the new cached seperating axis
+	 */
 	public void setCachedSeperatingAxis(final Vector3f seperatingAxis) {
 		cachedSeparatingAxis.set(seperatingAxis);
 	}
 
+	/**
+	 * Sets the penetration depth solver.
+	 *
+	 * @param penetrationDepthSolver the new penetration depth solver
+	 */
 	public void setPenetrationDepthSolver(final ConvexPenetrationDepthSolver penetrationDepthSolver) {
 		this.penetrationDepthSolver = penetrationDepthSolver;
 	}

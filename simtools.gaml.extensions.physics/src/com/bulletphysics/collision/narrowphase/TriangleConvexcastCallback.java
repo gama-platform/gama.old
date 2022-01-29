@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * TriangleConvexcastCallback.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.narrowphase;
 
@@ -33,13 +26,33 @@ import com.bulletphysics.linearmath.Transform;
  */
 public abstract class TriangleConvexcastCallback implements TriangleCallback {
 
+	/** The convex shape. */
 	public ConvexShape convexShape;
+	
+	/** The convex shape from. */
 	public final Transform convexShapeFrom = new Transform();
+	
+	/** The convex shape to. */
 	public final Transform convexShapeTo = new Transform();
+	
+	/** The triangle to world. */
 	public final Transform triangleToWorld = new Transform();
+	
+	/** The hit fraction. */
 	public float hitFraction;
+	
+	/** The triangle collision margin. */
 	public float triangleCollisionMargin;
 
+	/**
+	 * Instantiates a new triangle convexcast callback.
+	 *
+	 * @param convexShape the convex shape
+	 * @param convexShapeFrom the convex shape from
+	 * @param convexShapeTo the convex shape to
+	 * @param triangleToWorld the triangle to world
+	 * @param triangleCollisionMargin the triangle collision margin
+	 */
 	public TriangleConvexcastCallback(final ConvexShape convexShape, final Transform convexShapeFrom,
 			final Transform convexShapeTo, final Transform triangleToWorld, final float triangleCollisionMargin) {
 		this.convexShape = convexShape;
@@ -91,6 +104,16 @@ public abstract class TriangleConvexcastCallback implements TriangleCallback {
 		}
 	}
 
+	/**
+	 * Report hit.
+	 *
+	 * @param hitNormalLocal the hit normal local
+	 * @param hitPointLocal the hit point local
+	 * @param hitFraction the hit fraction
+	 * @param partId the part id
+	 * @param triangleIndex the triangle index
+	 * @return the float
+	 */
 	public abstract float reportHit(Vector3f hitNormalLocal, Vector3f hitPointLocal, float hitFraction, int partId,
 			int triangleIndex);
 

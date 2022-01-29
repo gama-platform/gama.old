@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * DefaultWorldPool.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 /**
  * Created at 3:26:14 AM Jan 11, 2011
  */
@@ -57,65 +44,100 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class DefaultWorldPool implements IWorldPool {
 
+  /** The vecs. */
   private final OrderedStack<Vec2> vecs;
+  
+  /** The vec 3 s. */
   private final OrderedStack<Vec3> vec3s;
+  
+  /** The mats. */
   private final OrderedStack<Mat22> mats;
+  
+  /** The mat 33 s. */
   private final OrderedStack<Mat33> mat33s;
+  
+  /** The aabbs. */
   private final OrderedStack<AABB> aabbs;
+  
+  /** The rots. */
   private final OrderedStack<Rot> rots;
 
+  /** The afloats. */
   private final HashMap<Integer, float[]> afloats = new HashMap<Integer, float[]>();
+  
+  /** The aints. */
   private final HashMap<Integer, int[]> aints = new HashMap<Integer, int[]>();
+  
+  /** The avecs. */
   private final HashMap<Integer, Vec2[]> avecs = new HashMap<Integer, Vec2[]>();
 
+  /** The world. */
   private final IWorldPool world = this;
 
+  /** The pcstack. */
   private final MutableStack<Contact> pcstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new PolygonContact(world); }
       protected Contact[] newArray(int size) { return new PolygonContact[size]; }
   };
 
+  /** The ccstack. */
   private final MutableStack<Contact> ccstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new CircleContact(world); }
       protected Contact[] newArray(int size) { return new CircleContact[size]; }
     };
 
+  /** The cpstack. */
   private final MutableStack<Contact> cpstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new PolygonAndCircleContact(world); }
       protected Contact[] newArray(int size) { return new PolygonAndCircleContact[size]; }
     };
 
+  /** The ecstack. */
   private final MutableStack<Contact> ecstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new EdgeAndCircleContact(world); }
       protected Contact[] newArray(int size) { return new EdgeAndCircleContact[size]; }
     };
 
+  /** The epstack. */
   private final MutableStack<Contact> epstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new EdgeAndPolygonContact(world); }
       protected Contact[] newArray(int size) { return new EdgeAndPolygonContact[size]; }
     };
 
+  /** The chcstack. */
   private final MutableStack<Contact> chcstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new ChainAndCircleContact(world); }
       protected Contact[] newArray(int size) { return new ChainAndCircleContact[size]; }
     };
 
+  /** The chpstack. */
   private final MutableStack<Contact> chpstack =
     new MutableStack<Contact>(Settings.CONTACT_STACK_INIT_SIZE) {
       protected Contact newInstance () { return new ChainAndPolygonContact(world); }
       protected Contact[] newArray(int size) { return new ChainAndPolygonContact[size]; }
     };
 
+  /** The collision. */
   private final Collision collision;
+  
+  /** The toi. */
   private final TimeOfImpact toi;
+  
+  /** The dist. */
   private final Distance dist;
 
+  /**
+   * Instantiates a new default world pool.
+   *
+   * @param argSize the arg size
+   * @param argContainerSize the arg container size
+   */
   public DefaultWorldPool(int argSize, int argContainerSize) {
     vecs = new OrderedStack<Vec2>(argSize, argContainerSize) {
       protected Vec2 newInstance() { return new Vec2(); }

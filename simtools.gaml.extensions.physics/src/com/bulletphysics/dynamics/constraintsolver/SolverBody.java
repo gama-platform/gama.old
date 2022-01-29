@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * SolverBody.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -37,17 +30,40 @@ public class SolverBody {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The angular velocity. */
 	public final Vector3f angularVelocity = new Vector3f();
+	
+	/** The angular factor. */
 	public float angularFactor;
+	
+	/** The inv mass. */
 	public float invMass;
+	
+	/** The friction. */
 	public float friction;
+	
+	/** The original body. */
 	public RigidBody originalBody;
+	
+	/** The linear velocity. */
 	public final Vector3f linearVelocity = new Vector3f();
+	
+	/** The center of mass position. */
 	public final Vector3f centerOfMassPosition = new Vector3f();
 
+	/** The push velocity. */
 	public final Vector3f pushVelocity = new Vector3f();
+	
+	/** The turn velocity. */
 	public final Vector3f turnVelocity = new Vector3f();
 
+	/**
+	 * Gets the velocity in local point.
+	 *
+	 * @param rel_pos the rel pos
+	 * @param velocity the velocity
+	 * @return the velocity in local point
+	 */
 	public void getVelocityInLocalPoint(final Vector3f rel_pos, final Vector3f velocity) {
 		Vector3f tmp = VECTORS.get();
 		tmp.cross(angularVelocity, rel_pos);
@@ -67,6 +83,13 @@ public class SolverBody {
 		}
 	}
 
+	/**
+	 * Internal apply push impulse.
+	 *
+	 * @param linearComponent the linear component
+	 * @param angularComponent the angular component
+	 * @param impulseMagnitude the impulse magnitude
+	 */
 	public void internalApplyPushImpulse(final Vector3f linearComponent, final Vector3f angularComponent,
 			final float impulseMagnitude) {
 		if (invMass != 0f) {
@@ -75,6 +98,9 @@ public class SolverBody {
 		}
 	}
 
+	/**
+	 * Writeback velocity.
+	 */
 	public void writebackVelocity() {
 		if (invMass != 0f) {
 			originalBody.setLinearVelocity(linearVelocity);
@@ -83,6 +109,11 @@ public class SolverBody {
 		}
 	}
 
+	/**
+	 * Writeback velocity.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void writebackVelocity(final float timeStep) {
 		if (invMass != 0f) {
 			originalBody.setLinearVelocity(linearVelocity);
@@ -98,6 +129,9 @@ public class SolverBody {
 		}
 	}
 
+	/**
+	 * Read velocity.
+	 */
 	public void readVelocity() {
 		if (invMass != 0f) {
 			originalBody.getLinearVelocity(linearVelocity);

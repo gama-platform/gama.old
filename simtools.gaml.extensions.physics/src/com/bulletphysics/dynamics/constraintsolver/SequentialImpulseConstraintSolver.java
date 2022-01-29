@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * SequentialImpulseConstraintSolver.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -56,16 +49,26 @@ import com.bulletphysics.util.IntArrayList;
 public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 
 	// Prevents parallel operations !
+	/** The temp vec. */
 	// Done for optimization purposes
 	Vector3f tempVec = new Vector3f();
+	
+	/** The temp trans. */
 	Transform tempTrans = new Transform();
+	
+	/** The temp mat. */
 	Matrix3f tempMat = new Matrix3f();
 
+	/** The Constant MAX_CONTACT_SOLVER_TYPES. */
 	private static final int MAX_CONTACT_SOLVER_TYPES = ContactConstraintEnum.MAX_CONTACT_SOLVER_TYPES.ordinal();
 
+	/** The Constant SEQUENTIAL_IMPULSE_MAX_SOLVER_POINTS. */
 	private static final int SEQUENTIAL_IMPULSE_MAX_SOLVER_POINTS = 16384;
+	
+	/** The g order. */
 	private final OrderIndex[] gOrder = new OrderIndex[SEQUENTIAL_IMPULSE_MAX_SOLVER_POINTS];
 
+	/** The total cpd. */
 	private int totalCpd = 0;
 
 	{
@@ -80,20 +83,36 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 	// private final ObjectPool<SolverConstraint> constraintsPool = ObjectPool.get(SolverConstraint.class);
 	// private final ObjectPool<JacobianEntry> jacobiansPool = ObjectPool.get(JacobianEntry.class);
 
+	/** The tmp solver body pool. */
 	private final ArrayList<SolverBody> tmpSolverBodyPool = new ArrayList<>();
+	
+	/** The tmp solver constraint pool. */
 	private final ArrayList<SolverConstraint> tmpSolverConstraintPool = new ArrayList<>();
+	
+	/** The tmp solver friction constraint pool. */
 	private final ArrayList<SolverConstraint> tmpSolverFrictionConstraintPool = new ArrayList<>();
+	
+	/** The order tmp constraint pool. */
 	private final IntArrayList orderTmpConstraintPool = new IntArrayList();
+	
+	/** The order friction constraint pool. */
 	private final IntArrayList orderFrictionConstraintPool = new IntArrayList();
 
+	/** The contact dispatch. */
 	protected final ContactSolverFunc[][] contactDispatch =
 			new ContactSolverFunc[MAX_CONTACT_SOLVER_TYPES][MAX_CONTACT_SOLVER_TYPES];
+	
+	/** The friction dispatch. */
 	protected final ContactSolverFunc[][] frictionDispatch =
 			new ContactSolverFunc[MAX_CONTACT_SOLVER_TYPES][MAX_CONTACT_SOLVER_TYPES];
 
+	/** The bt seed 2. */
 	// btSeed2 is used for re-arranging the constraint rows. improves convergence/quality of friction
 	protected long btSeed2 = 0L;
 
+	/**
+	 * Instantiates a new sequential impulse constraint solver.
+	 */
 	public SequentialImpulseConstraintSolver() {
 
 		// initialize default friction/contact funcs
@@ -106,11 +125,22 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		}
 	}
 
+	/**
+	 * Rand 2.
+	 *
+	 * @return the long
+	 */
 	public long rand2() {
 		btSeed2 = 1664525L * btSeed2 + 1013904223L & 0xffffffff;
 		return btSeed2;
 	}
 
+	/**
+	 * Rand int 2.
+	 *
+	 * @param n the n
+	 * @return the int
+	 */
 	// See ODE: adam's all-int straightforward(?) dRandInt (0..n-1)
 	public int randInt2(final int n) {
 		// seems good; xor-fold and modulus
@@ -137,6 +167,12 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		return (int) Math.abs(r % un);
 	}
 
+	/**
+	 * Inits the solver body.
+	 *
+	 * @param solverBody the solver body
+	 * @param collisionObject the collision object
+	 */
 	private void initSolverBody(final SolverBody solverBody, final CollisionObject collisionObject) {
 		RigidBody rb = RigidBody.upcast(collisionObject);
 		// Transform tmp = TRANSFORMS.get();
@@ -164,11 +200,26 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		// TRANSFORMS.release(tmp);
 	}
 
+	/**
+	 * Restitution curve.
+	 *
+	 * @param rel_vel the rel vel
+	 * @param restitution the restitution
+	 * @return the float
+	 */
 	private float restitutionCurve(final float rel_vel, final float restitution) {
 		float rest = restitution * -rel_vel;
 		return rest;
 	}
 
+	/**
+	 * Resolve split penetration impulse cache friendly.
+	 *
+	 * @param body1 the body 1
+	 * @param body2 the body 2
+	 * @param contactConstraint the contact constraint
+	 * @param solverInfo the solver info
+	 */
 	private void resolveSplitPenetrationImpulseCacheFriendly(final SolverBody body1, final SolverBody body2,
 			final SolverConstraint contactConstraint, final ContactSolverInfo solverInfo) {
 
@@ -267,6 +318,16 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		return normalImpulse;
 	}
 
+	/**
+	 * Resolve single friction cache friendly.
+	 *
+	 * @param body1 the body 1
+	 * @param body2 the body 2
+	 * @param contactConstraint the contact constraint
+	 * @param solverInfo the solver info
+	 * @param appliedNormalImpulse the applied normal impulse
+	 * @return the float
+	 */
 	private float resolveSingleFrictionCacheFriendly(final SolverBody body1, final SolverBody body2,
 			final SolverConstraint contactConstraint, final ContactSolverInfo solverInfo,
 			final float appliedNormalImpulse) {
@@ -312,6 +373,20 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		return 0f;
 	}
 
+	/**
+	 * Adds the friction constraint.
+	 *
+	 * @param normalAxis the normal axis
+	 * @param solverBodyIdA the solver body id A
+	 * @param solverBodyIdB the solver body id B
+	 * @param frictionIndex the friction index
+	 * @param cp the cp
+	 * @param rel_pos1 the rel pos 1
+	 * @param rel_pos2 the rel pos 2
+	 * @param colObj0 the col obj 0
+	 * @param colObj1 the col obj 1
+	 * @param relaxation the relaxation
+	 */
 	protected void addFrictionConstraint(final Vector3f normalAxis, final int solverBodyIdA, final int solverBodyIdB,
 			final int frictionIndex, final ManifoldPoint cp, final Vector3f rel_pos1, final Vector3f rel_pos2,
 			final CollisionObject colObj0, final CollisionObject colObj1, final float relaxation) {
@@ -377,6 +452,20 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		// MATRICES.release(tmpMat);
 	}
 
+	/**
+	 * Solve group cache friendly setup.
+	 *
+	 * @param bodies the bodies
+	 * @param numBodies the num bodies
+	 * @param manifoldPtr the manifold ptr
+	 * @param manifold_offset the manifold offset
+	 * @param numManifolds the num manifolds
+	 * @param constraints the constraints
+	 * @param constraints_offset the constraints offset
+	 * @param numConstraints the num constraints
+	 * @param infoGlobal the info global
+	 * @return the float
+	 */
 	public float solveGroupCacheFriendlySetup(final ArrayList<CollisionObject> bodies, final int numBodies,
 			final ArrayList<PersistentManifold> manifoldPtr, final int manifold_offset, final int numManifolds,
 			final ArrayList<TypedConstraint> constraints, final int constraints_offset, final int numConstraints,
@@ -710,6 +799,20 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		}
 	}
 
+	/**
+	 * Solve group cache friendly iterations.
+	 *
+	 * @param bodies the bodies
+	 * @param numBodies the num bodies
+	 * @param manifoldPtr the manifold ptr
+	 * @param manifold_offset the manifold offset
+	 * @param numManifolds the num manifolds
+	 * @param constraints the constraints
+	 * @param constraints_offset the constraints offset
+	 * @param numConstraints the num constraints
+	 * @param infoGlobal the info global
+	 * @return the float
+	 */
 	public float solveGroupCacheFriendlyIterations(final ArrayList<CollisionObject> bodies, final int numBodies,
 			final ArrayList<PersistentManifold> manifoldPtr, final int manifold_offset, final int numManifolds,
 			final ArrayList<TypedConstraint> constraints, final int constraints_offset, final int numConstraints,
@@ -816,6 +919,20 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		// }
 	}
 
+	/**
+	 * Solve group cache friendly.
+	 *
+	 * @param bodies the bodies
+	 * @param numBodies the num bodies
+	 * @param manifoldPtr the manifold ptr
+	 * @param manifold_offset the manifold offset
+	 * @param numManifolds the num manifolds
+	 * @param constraints the constraints
+	 * @param constraints_offset the constraints offset
+	 * @param numConstraints the num constraints
+	 * @param infoGlobal the info global
+	 * @return the float
+	 */
 	public float solveGroupCacheFriendly(final ArrayList<CollisionObject> bodies, final int numBodies,
 			final ArrayList<PersistentManifold> manifoldPtr, final int manifold_offset, final int numManifolds,
 			final ArrayList<TypedConstraint> constraints, final int constraints_offset, final int numConstraints,
@@ -956,6 +1073,12 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		// }
 	}
 
+	/**
+	 * Prepare constraints.
+	 *
+	 * @param manifoldPtr the manifold ptr
+	 * @param info the info
+	 */
 	protected void prepareConstraints(final PersistentManifold manifoldPtr, final ContactSolverInfo info) {
 		RigidBody body0 = (RigidBody) manifoldPtr.getBody0();
 		RigidBody body1 = (RigidBody) manifoldPtr.getBody1();
@@ -1122,6 +1245,16 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 
 	}
 
+	/**
+	 * Solve combined contact friction.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param cp the cp
+	 * @param info the info
+	 * @param iter the iter
+	 * @return the float
+	 */
 	public float solveCombinedContactFriction(final RigidBody body0, final RigidBody body1, final ManifoldPoint cp,
 			final ContactSolverInfo info, final int iter) {
 		float maxImpulse = 0f;
@@ -1139,6 +1272,16 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		return maxImpulse;
 	}
 
+	/**
+	 * Solve.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param cp the cp
+	 * @param info the info
+	 * @param iter the iter
+	 * @return the float
+	 */
 	protected float solve(final RigidBody body0, final RigidBody body1, final ManifoldPoint cp,
 			final ContactSolverInfo info, final int iter) {
 		float maxImpulse = 0f;
@@ -1157,6 +1300,16 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		return maxImpulse;
 	}
 
+	/**
+	 * Solve friction.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param cp the cp
+	 * @param info the info
+	 * @param iter the iter
+	 * @return the float
+	 */
 	protected float solveFriction(final RigidBody body0, final RigidBody body1, final ManifoldPoint cp,
 			final ContactSolverInfo info, final int iter) {
 		{
@@ -1189,18 +1342,35 @@ public class SequentialImpulseConstraintSolver implements ConstraintSolver {
 		frictionDispatch[type0][type1] = func;
 	}
 
+	/**
+	 * Sets the rand seed.
+	 *
+	 * @param seed the new rand seed
+	 */
 	public void setRandSeed(final long seed) {
 		btSeed2 = seed;
 	}
 
+	/**
+	 * Gets the rand seed.
+	 *
+	 * @return the rand seed
+	 */
 	public long getRandSeed() {
 		return btSeed2;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class OrderIndex.
+	 */
 	private static class OrderIndex {
+		
+		/** The manifold index. */
 		public int manifoldIndex;
+		
+		/** The point index. */
 		public int pointIndex;
 	}
 

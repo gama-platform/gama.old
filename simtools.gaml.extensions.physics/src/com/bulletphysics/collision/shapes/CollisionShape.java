@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * CollisionShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -35,9 +28,24 @@ import com.bulletphysics.linearmath.Transform;
  */
 public interface CollisionShape {
 
+	/**
+	 * Gets the aabb.
+	 *
+	 * @param t the t
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @return the aabb
+	 */
 	/// getAabb returns the axis aligned bounding box in the coordinate frame of the given transform t.
 	void getAabb(Transform t, Vector3f aabbMin, Vector3f aabbMax);
 
+	/**
+	 * Gets the bounding sphere.
+	 *
+	 * @param center the center
+	 * @param radius the radius
+	 * @return the bounding sphere
+	 */
 	default void getBoundingSphere(final Vector3f center, final float[] radius) {
 		Vector3f tmp = VECTORS.get();
 
@@ -57,6 +65,11 @@ public interface CollisionShape {
 	}
 
 	/// getAngularMotionDisc returns the maximus radius needed for Conservative Advancement to handle time-of-impact
+	/**
+	 * Gets the angular motion disc.
+	 *
+	 * @return the angular motion disc
+	 */
 	/// with rotations.
 	default float getAngularMotionDisc() {
 		Vector3f center = VECTORS.get();
@@ -68,6 +81,16 @@ public interface CollisionShape {
 	}
 
 	/// calculateTemporalAabb calculates the enclosing aabb for the moving object over interval [0..timeStep)
+	/**
+	 * Calculate temporal aabb.
+	 *
+	 * @param curTrans the cur trans
+	 * @param linvel the linvel
+	 * @param angvel the angvel
+	 * @param timeStep the time step
+	 * @param temporalAabbMin the temporal aabb min
+	 * @param temporalAabbMax the temporal aabb max
+	 */
 	/// result is conservative
 	default void calculateTemporalAabb(final Transform curTrans, final Vector3f linvel, final Vector3f angvel,
 			final float timeStep, final Vector3f temporalAabbMin, final Vector3f temporalAabbMax) {
@@ -114,43 +137,105 @@ public interface CollisionShape {
 		VECTORS.release(angularMotion3d, linMotion);
 	}
 
+	/**
+	 * Checks if is polyhedral.
+	 *
+	 * @return true, if is polyhedral
+	 */
 	// #ifndef __SPU__
 	default boolean isPolyhedral() {
 		return getShapeType().isPolyhedral();
 	}
 
+	/**
+	 * Checks if is convex.
+	 *
+	 * @return true, if is convex
+	 */
 	default boolean isConvex() {
 		return getShapeType().isConvex();
 	}
 
+	/**
+	 * Checks if is concave.
+	 *
+	 * @return true, if is concave
+	 */
 	default boolean isConcave() {
 		return getShapeType().isConcave();
 	}
 
+	/**
+	 * Checks if is compound.
+	 *
+	 * @return true, if is compound
+	 */
 	default boolean isCompound() {
 		return getShapeType().isCompound();
 	}
 
+	/**
+	 * Checks if is infinite.
+	 *
+	 * @return true, if is infinite
+	 */
 	/// isInfinite is used to catch simulation error (aabb check)
 	default boolean isInfinite() {
 		return getShapeType().isInfinite();
 	}
 
+	/**
+	 * Gets the shape type.
+	 *
+	 * @return the shape type
+	 */
 	BroadphaseNativeType getShapeType();
 
+	/**
+	 * Sets the local scaling.
+	 *
+	 * @param scaling the new local scaling
+	 */
 	void setLocalScaling( Vector3f scaling);
 
+	/**
+	 * Gets the local scaling.
+	 *
+	 * @param out the out
+	 * @return the local scaling
+	 */
 	// TODO: returns const
 	Vector3f getLocalScaling(Vector3f out);
 
+	/**
+	 * Calculate local inertia.
+	 *
+	 * @param mass the mass
+	 * @param inertia the inertia
+	 */
 	void calculateLocalInertia(float mass, Vector3f inertia);
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	// debugging support
 	String getName();
 
+	/**
+	 * Sets the margin.
+	 *
+	 * @param margin the new margin
+	 */
 	// #endif //__SPU__
 	void setMargin(float margin);
 
+	/**
+	 * Gets the margin.
+	 *
+	 * @return the margin
+	 */
 	float getMargin();
 
 }

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * StridingMeshInterface.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -33,8 +26,16 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public abstract class StridingMeshInterface {
 
+	/** The scaling. */
 	protected final Vector3f scaling = new Vector3f(1f, 1f, 1f);
 
+	/**
+	 * Internal process all triangles.
+	 *
+	 * @param callback the callback
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void internalProcessAllTriangles( final InternalTriangleIndexCallback callback,
 			final Vector3f aabbMin, final Vector3f aabbMax) {
 		int graphicssubparts = getNumSubParts();
@@ -55,8 +56,15 @@ public abstract class StridingMeshInterface {
 		VECTORS.release(triangle[0], triangle[1], triangle[2], meshScaling);
 	}
 
+	/**
+	 * The Class AabbCalculationCallback.
+	 */
 	private static class AabbCalculationCallback implements InternalTriangleIndexCallback {
+		
+		/** The aabb min. */
 		public final Vector3f aabbMin = new Vector3f(1e30f, 1e30f, 1e30f);
+		
+		/** The aabb max. */
 		public final Vector3f aabbMax = new Vector3f(-1e30f, -1e30f, -1e30f);
 
 		@Override
@@ -71,6 +79,12 @@ public abstract class StridingMeshInterface {
 		}
 	}
 
+	/**
+	 * Calculate aabb brute force.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void calculateAabbBruteForce( final Vector3f aabbMin, final Vector3f aabbMax) {
 		// first calculate the total aabb for all triangles
 		AabbCalculationCallback aabbCallback = new AabbCalculationCallback();
@@ -89,6 +103,12 @@ public abstract class StridingMeshInterface {
 	 */
 	public abstract VertexData getLockedVertexIndexBase(int subpart/* =0 */);
 
+	/**
+	 * Gets the locked read only vertex index base.
+	 *
+	 * @param subpart the subpart
+	 * @return the locked read only vertex index base
+	 */
 	public abstract VertexData getLockedReadOnlyVertexIndexBase(int subpart/* =0 */);
 
 	/**
@@ -97,6 +117,11 @@ public abstract class StridingMeshInterface {
 	 */
 	public abstract void unLockVertexBase(int subpart);
 
+	/**
+	 * Un lock read only vertex base.
+	 *
+	 * @param subpart the subpart
+	 */
 	public abstract void unLockReadOnlyVertexBase(int subpart);
 
 	/**
@@ -105,15 +130,36 @@ public abstract class StridingMeshInterface {
 	 */
 	public abstract int getNumSubParts();
 
+	/**
+	 * Preallocate vertices.
+	 *
+	 * @param numverts the numverts
+	 */
 	public abstract void preallocateVertices(int numverts);
 
+	/**
+	 * Preallocate indices.
+	 *
+	 * @param numindices the numindices
+	 */
 	public abstract void preallocateIndices(int numindices);
 
+	/**
+	 * Gets the scaling.
+	 *
+	 * @param out the out
+	 * @return the scaling
+	 */
 	public Vector3f getScaling(final Vector3f out) {
 		out.set(scaling);
 		return out;
 	}
 
+	/**
+	 * Sets the scaling.
+	 *
+	 * @param scaling the new scaling
+	 */
 	public void setScaling(final Vector3f scaling) {
 		this.scaling.set(scaling);
 	}

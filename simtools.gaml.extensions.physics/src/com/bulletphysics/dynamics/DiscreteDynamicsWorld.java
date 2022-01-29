@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * DiscreteDynamicsWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics;
 
@@ -57,26 +50,49 @@ import com.bulletphysics.linearmath.TransformUtil;
  */
 public class DiscreteDynamicsWorld extends DynamicsWorld {
 
+	/** The constraint solver. */
 	protected ConstraintSolver constraintSolver;
+	
+	/** The island manager. */
 	protected SimulationIslandManager islandManager;
+	
+	/** The constraints. */
 	protected final ArrayList<TypedConstraint> constraints = new ArrayList<>();
+	
+	/** The gravity. */
 	protected final Vector3f gravity = new Vector3f(0f, -10f, 0f);
 
+	/** The local time. */
 	// for variable timesteps
 	protected float localTime = 1f / 60f;
 	// for variable timesteps
 
+	/** The owns island manager. */
 	protected boolean ownsIslandManager;
+	
+	/** The owns constraint solver. */
 	protected boolean ownsConstraintSolver;
 
+	/** The vehicles. */
 	protected ArrayList<RaycastVehicle> vehicles = new ArrayList<>();
 
+	/** The actions. */
 	protected ArrayList<ActionInterface> actions = new ArrayList<>();
 
+	/** The profile timings. */
 	protected int profileTimings = 0;
 
+	/** The pre tick callback. */
 	protected InternalTickCallback preTickCallback;
 
+	/**
+	 * Instantiates a new discrete dynamics world.
+	 *
+	 * @param dispatcher the dispatcher
+	 * @param pairCache the pair cache
+	 * @param constraintSolver the constraint solver
+	 * @param collisionConfiguration the collision configuration
+	 */
 	public DiscreteDynamicsWorld(final Dispatcher dispatcher, final BroadphaseInterface pairCache,
 			final ConstraintSolver constraintSolver, final CollisionConfiguration collisionConfiguration) {
 		super(dispatcher, pairCache, collisionConfiguration);
@@ -96,6 +112,11 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		ownsIslandManager = true;
 	}
 
+	/**
+	 * Save kinematic state.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void saveKinematicState(final float timeStep) {
 		for (CollisionObject colObj : collisionObjects) {
 			RigidBody body = RigidBody.upcast(colObj);
@@ -131,6 +152,9 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		}
 	}
 
+	/**
+	 * Synchronize motion states.
+	 */
 	protected void synchronizeMotionStates() {
 		Transform interpolatedTransform = TRANSFORMS.get();
 
@@ -199,6 +223,11 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		return numSimulationSubSteps;
 	}
 
+	/**
+	 * Internal single step simulation.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void internalSingleStepSimulation(final float timeStep) {
 		// BulletStats.pushProfile("internalSingleStepSimulation");
 		try {
@@ -276,24 +305,46 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		}
 	}
 
+	/**
+	 * Adds the rigid body.
+	 *
+	 * @param body the body
+	 * @param group the group
+	 * @param mask the mask
+	 */
 	public void addRigidBody(final RigidBody body, final short group, final short mask) {
 		if (!body.isStaticOrKinematicObject()) { body.setGravity(gravity); }
 
 		if (body.getCollisionShape() != null) { addCollisionObject(body, group, mask); }
 	}
 
+	/**
+	 * Update actions.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateActions(final float timeStep) {
 		for (ActionInterface action : actions) {
 			action.updateAction(this, timeStep);
 		}
 	}
 
+	/**
+	 * Update vehicles.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void updateVehicles(final float timeStep) {
 		for (RaycastVehicle vehicle : vehicles) {
 			vehicle.updateVehicle(timeStep);
 		}
 	}
 
+	/**
+	 * Update activation state.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void updateActivationState(final float timeStep) {
 		Vector3f tmp = VECTORS.get();
 		try {
@@ -365,6 +416,12 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		vehicles.remove(vehicle);
 	}
 
+	/**
+	 * Gets the constraint island id.
+	 *
+	 * @param lhs the lhs
+	 * @return the constraint island id
+	 */
 	private static int getConstraintIslandId(final TypedConstraint lhs) {
 		int islandId;
 
@@ -374,14 +431,36 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		return islandId;
 	}
 
+	/**
+	 * The Class InplaceSolverIslandCallback.
+	 */
 	private static class InplaceSolverIslandCallback extends SimulationIslandManager.IslandCallback {
+		
+		/** The solver info. */
 		public ContactSolverInfo solverInfo;
+		
+		/** The solver. */
 		public ConstraintSolver solver;
+		
+		/** The sorted constraints. */
 		public ArrayList<TypedConstraint> sortedConstraints;
+		
+		/** The num constraints. */
 		public int numConstraints;
+		
+		/** The dispatcher. */
 		// public StackAlloc* m_stackAlloc;
 		public Dispatcher dispatcher;
 
+		/**
+		 * Inits the.
+		 *
+		 * @param solverInfo the solver info
+		 * @param solver the solver
+		 * @param sortedConstraints the sorted constraints
+		 * @param numConstraints the num constraints
+		 * @param dispatcher the dispatcher
+		 */
 		public void init(final ContactSolverInfo solverInfo, final ConstraintSolver solver,
 				final ArrayList<TypedConstraint> sortedConstraints, final int numConstraints,
 				final Dispatcher dispatcher) {
@@ -432,9 +511,17 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		}
 	}
 
+	/** The sorted constraints. */
 	private final ArrayList<TypedConstraint> sortedConstraints = new ArrayList<>();
+	
+	/** The solver callback. */
 	private final InplaceSolverIslandCallback solverCallback = new InplaceSolverIslandCallback();
 
+	/**
+	 * Solve constraints.
+	 *
+	 * @param solverInfo the solver info
+	 */
 	protected void solveConstraints(final ContactSolverInfo solverInfo) {
 		// sorted version of all btTypedConstraint, based on islandId
 		sortedConstraints.clear();
@@ -457,6 +544,9 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		constraintSolver.allSolved(solverInfo);
 	}
 
+	/**
+	 * Calculate simulation islands.
+	 */
 	protected void calculateSimulationIslands() {
 		getSimulationIslandManager().updateActivationState(getCollisionWorld(), getCollisionWorld().getDispatcher());
 
@@ -483,6 +573,11 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		getSimulationIslandManager().storeIslandActivationState(getCollisionWorld());
 	}
 
+	/**
+	 * Integrate transforms.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void integrateTransforms(final float timeStep) {
 		// BulletStats.pushProfile("integrateTransforms");
 		Vector3f tmp = VECTORS.get();
@@ -535,6 +630,11 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		}
 	}
 
+	/**
+	 * Predict unconstraint motion.
+	 *
+	 * @param timeStep the time step
+	 */
 	protected void predictUnconstraintMotion(final float timeStep) {
 		Transform tmpTrans = TRANSFORMS.get();
 		try {
@@ -592,10 +692,20 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		return actions.get(index);
 	}
 
+	/**
+	 * Gets the simulation island manager.
+	 *
+	 * @return the simulation island manager
+	 */
 	public SimulationIslandManager getSimulationIslandManager() {
 		return islandManager;
 	}
 
+	/**
+	 * Gets the collision world.
+	 *
+	 * @return the collision world
+	 */
 	public CollisionWorld getCollisionWorld() {
 		return this;
 	}
@@ -605,14 +715,25 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		return DynamicsWorldType.DISCRETE_DYNAMICS_WORLD;
 	}
 
+	/**
+	 * Sets the num tasks.
+	 *
+	 * @param numTasks the new num tasks
+	 */
 	public void setNumTasks(final int numTasks) {}
 
+	/**
+	 * Sets the pre tick callback.
+	 *
+	 * @param callback the new pre tick callback
+	 */
 	public void setPreTickCallback(final InternalTickCallback callback) {
 		preTickCallback = callback;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The Constant sortConstraintOnIslandPredicate. */
 	private static final Comparator<TypedConstraint> sortConstraintOnIslandPredicate = (lhs, rhs) -> {
 		int rIslandId0, lIslandId0;
 		rIslandId0 = getConstraintIslandId(rhs);
@@ -620,12 +741,32 @@ public class DiscreteDynamicsWorld extends DynamicsWorld {
 		return lIslandId0 < rIslandId0 ? -1 : +1;
 	};
 
+	/**
+	 * The Class ClosestNotMeConvexResultCallback.
+	 */
 	private static class ClosestNotMeConvexResultCallback extends ClosestConvexResultCallback {
+		
+		/** The me. */
 		private final CollisionObject me;
+		
+		/** The allowed penetration. */
 		private final float allowedPenetration = 0f;
+		
+		/** The pair cache. */
 		private final OverlappingPairCache pairCache;
+		
+		/** The dispatcher. */
 		private final Dispatcher dispatcher;
 
+		/**
+		 * Instantiates a new closest not me convex result callback.
+		 *
+		 * @param me the me
+		 * @param fromA the from A
+		 * @param toA the to A
+		 * @param pairCache the pair cache
+		 * @param dispatcher the dispatcher
+		 */
 		public ClosestNotMeConvexResultCallback(final CollisionObject me, final Vector3f fromA, final Vector3f toA,
 				final OverlappingPairCache pairCache, final Dispatcher dispatcher) {
 			super(fromA, toA);

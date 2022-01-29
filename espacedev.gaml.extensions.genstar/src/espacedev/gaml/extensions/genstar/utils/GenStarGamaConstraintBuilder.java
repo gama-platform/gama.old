@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GenStarGamaConstraintBuilder.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.utils;
 
 import java.util.Collection;
@@ -21,36 +31,84 @@ import spll.localizer.constraint.SpatialConstraintMaxNumber;
  */
 public class GenStarGamaConstraintBuilder {
 
+	/** The constraints. */
 	private Collection<SpatialConstraint> constraints; 
 	
+	/** The localizer. */
 	boolean localizer = false;
+	
+	/** The Constant LOCALISAZATION_DEFAULT_STEP. */
 	static final double LOCALISAZATION_DEFAULT_STEP = 10d;
+	
+	/** The localization feature. */
 	String localizationFeature;
+	
+	/** The localization attribute. */
 	String localizationAttribute;
+	
+	/** The localization limit. */
 	double localizationLimit;
+	
+	/** The localization step. */
 	double localizationStep;
+	
+	/** The localization priority. */
 	int localizationPriority;
 	
+	/** The Constant DENSITY_DEFAULT_STEP. */
 	static final double DENSITY_DEFAULT_STEP =  0.1;
+	
+	/** The density feature. */
 	String densityFeature;
+	
+	/** The density constant. */
 	double densityConstant;
+	
+	/** The density limit. */
 	double densityLimit;
+	
+	/** The density step. */
 	double densityStep;
+	
+	/** The density priority. */
 	int densityPriority;
 
+	/** The Constant CAPACITY_DEFAULT_STEP. */
 	static final int CAPACITY_DEFAULT_STEP = 1;
+	
+	/** The capacity feature. */
 	String capacityFeature;
+	
+	/** The capacity constant. */
 	int capacityConstant;
+	
+	/** The capacity limit. */
 	int capacityLimit;
+	
+	/** The capacity step. */
 	int capacityStep;
+	
+	/** The capacity priority. */
 	int capacityPriority;
 	
+	/** The Constant DISTANCE_DEFAULT_STEP. */
 	static final double DISTANCE_DEFAULT_STEP = 1d;
+	
+	/** The distance constant. */
 	private double distanceConstant;
+	
+	/** The distance limit. */
 	private double distanceLimit;
+	
+	/** The distance step. */
 	private double distanceStep;
+	
+	/** The distance priority. */
 	private int distancePriority;
 	
+	/**
+	 * Instantiates a new gen star gama constraint builder.
+	 */
 	public GenStarGamaConstraintBuilder() { this.constraints = new LinkedHashSet<>(); }
 	
 	/**

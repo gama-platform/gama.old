@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MOBIL.java, in simtools.gaml.extensions.traffic, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving.carfollowing;
 
 import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getAccBias;
@@ -36,6 +46,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import simtools.gaml.extensions.traffic.driving.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
+/**
+ * The Class MOBIL.
+ */
 public class MOBIL {
 	/**
 	 * Choose a new lane according to the lane change model MOBIL

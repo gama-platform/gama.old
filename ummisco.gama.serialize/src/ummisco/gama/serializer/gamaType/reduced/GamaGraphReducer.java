@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaGraphReducer.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaGraphReducer.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -25,17 +24,37 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.gamaType.reference.ReferenceGraph;
 
+/**
+ * The Class GamaGraphReducer.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class GamaGraphReducer {
+	
+	/** The node type graph reducer. */
 	private final IType nodeTypeGraphReducer;
+	
+	/** The edge type graph reducer. */
 	private final IType edgeTypeGraphReducer;
 
+	/** The edges graph reducer. */
 	// private GamaMap valuesGraphReducer;
 	private IList edgesGraphReducer;
+	
+	/** The edges weights graph reducer. */
 	private IMap edgesWeightsGraphReducer;
+	
+	/** The spatial. */
 	private final boolean spatial;
+	
+	/** The directed. */
 	private final boolean directed;
 
+	/**
+	 * Instantiates a new gama graph reducer.
+	 *
+	 * @param scope the scope
+	 * @param g the g
+	 */
 	@SuppressWarnings ("unchecked")
 	public GamaGraphReducer(final IScope scope, final GamaGraph<?, ?> g) {
 		spatial = g instanceof GamaSpatialGraph;
@@ -60,24 +79,50 @@ public class GamaGraphReducer {
 
 	}
 
+	/**
+	 * Gets the edges graph reducer.
+	 *
+	 * @return the edges graph reducer
+	 */
 	// public GamaMap getValuesGraphReducer() {return valuesGraphReducer; }
 	public IList getEdgesGraphReducer() {
 		return edgesGraphReducer;
 	}
 
+	/**
+	 * Gets the weights graph reducer.
+	 *
+	 * @return the weights graph reducer
+	 */
 	public IMap getWeightsGraphReducer() {
 		return edgesWeightsGraphReducer;
 	}
 
+	/**
+	 * Sets the edges graph reducer.
+	 *
+	 * @param m the new edges graph reducer
+	 */
 	// public void setValuesGraphReducer(GamaMap m) { valuesGraphReducer = m; }
 	public void setEdgesGraphReducer(final IList m) {
 		edgesGraphReducer = m;
 	}
 
+	/**
+	 * Sets the edges weights graph reducer.
+	 *
+	 * @param w the w
+	 */
 	public void setEdgesWeightsGraphReducer(final IMap<Object, Object> w) {
 		edgesWeightsGraphReducer = w;
 	}
 
+	/**
+	 * Construct object.
+	 *
+	 * @param scope the scope
+	 * @return the gama graph
+	 */
 	public GamaGraph constructObject(final IScope scope) {
 		// GamaGraph graph = (GamaGraph) GamaGraphType.from(scope, valuesGraphReducer, spatial);
 		GamaGraph graph;
@@ -98,6 +143,11 @@ public class GamaGraphReducer {
 		return graph;
 	}
 
+	/**
+	 * Unreference reducer.
+	 *
+	 * @param sim the sim
+	 */
 	@SuppressWarnings ("unchecked")
 	public void unreferenceReducer(final SimulationAgent sim) {
 		// valuesGraphReducer = (GamaMap)IReference.getObjectWithoutReference(valuesGraphReducer,sim);

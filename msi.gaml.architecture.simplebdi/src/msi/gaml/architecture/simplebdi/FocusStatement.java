@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * FocusStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'FocusStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package msi.gaml.architecture.simplebdi;
 
@@ -37,6 +35,9 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class FocusStatement.
+ */
 @symbol (
 		name = FocusStatement.FOCUS,
 		kind = ISymbolKind.SINGLE_STATEMENT,
@@ -121,35 +122,92 @@ import msi.gaml.types.Types;
 				@example ("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
 public class FocusStatement extends AbstractStatement {
 
+	/** The Constant FOCUS. */
 	public static final String FOCUS = "focus";
+	
+	/** The Constant STRENGTH. */
 	public static final String STRENGTH = "strength";
+	
+	/** The Constant EXPRESSION. */
 	public static final String EXPRESSION = "expression";
+	
+	/** The Constant VAR. */
 	public static final String VAR = "var";
+	
+	/** The Constant BELIEF. */
 	public static final String BELIEF = "belief";
+	
+	/** The Constant DESIRE. */
 	public static final String DESIRE = "desire";
+	
+	/** The Constant UNCERTAINTY. */
 	public static final String UNCERTAINTY = "uncertainty";
+	
+	/** The Constant IDEAL. */
 	public static final String IDEAL = "ideal";
+	
+	/** The Constant EMOTION. */
 	public static final String EMOTION = "emotion";
+	
+	/** The Constant LIFETIME. */
 	public static final String LIFETIME = "lifetime";
+	
+	/** The Constant TRUTH. */
 	public static final String TRUTH = "truth";
+	
+	/** The Constant AGENTCAUSE. */
 	public static final String AGENTCAUSE = "agent_cause";
+	
+	/** The Constant ISUNCERTAIN. */
 	public static final String ISUNCERTAIN = "is_uncertain";
 
+	/** The name expression. */
 	final IExpression nameExpression;
+	
+	/** The variable. */
 	final IExpression variable;
+	
+	/** The expression. */
 	final IExpression expression;
+	
+	/** The belief. */
 	final IExpression belief;
+	
+	/** The desire. */
 	final IExpression desire;
+	
+	/** The uncertainty. */
 	final IExpression uncertainty;
+	
+	/** The ideal. */
 	final IExpression ideal;
+	
+	/** The emotion. */
 	final IExpression emotion;
+	
+	/** The when. */
 	final IExpression when;
+	
+	/** The strength. */
 	final IExpression strength;
+	
+	/** The lifetime. */
 	final IExpression lifetime;
+	
+	/** The truth. */
 	final IExpression truth;
+	
+	/** The agent cause. */
 	final IExpression agentCause;
+	
+	/** The is uncertain. */
 	final IExpression isUncertain;
 
+	/**
+	 * Instantiates a new focus statement.
+	 *
+	 * @param desc the desc
+	 */
 	public FocusStatement(final IDescription desc) {
 		super(desc);
 		nameExpression = getFacet(IKeyword.ID);

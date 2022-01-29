@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * IDebugDraw.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -41,13 +34,41 @@ public abstract class IDebugDraw {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/**
+	 * Draw line.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @param color the color
+	 */
 	public abstract void drawLine(Vector3f from, Vector3f to, Vector3f color);
 
+	/**
+	 * Draw triangle.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @param n0 the n 0
+	 * @param n1 the n 1
+	 * @param n2 the n 2
+	 * @param color the color
+	 * @param alpha the alpha
+	 */
 	public void drawTriangle(final Vector3f v0, final Vector3f v1, final Vector3f v2, final Vector3f n0,
 			final Vector3f n1, final Vector3f n2, final Vector3f color, final float alpha) {
 		drawTriangle(v0, v1, v2, color, alpha);
 	}
 
+	/**
+	 * Draw triangle.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @param color the color
+	 * @param alpha the alpha
+	 */
 	public void drawTriangle(final Vector3f v0, final Vector3f v1, final Vector3f v2, final Vector3f color,
 			final float alpha) {
 		drawLine(v0, v1, color);
@@ -55,17 +76,54 @@ public abstract class IDebugDraw {
 		drawLine(v2, v0, color);
 	}
 
+	/**
+	 * Draw contact point.
+	 *
+	 * @param PointOnB the point on B
+	 * @param normalOnB the normal on B
+	 * @param distance the distance
+	 * @param lifeTime the life time
+	 * @param color the color
+	 */
 	public abstract void drawContactPoint(Vector3f PointOnB, Vector3f normalOnB, float distance, int lifeTime,
 			Vector3f color);
 
+	/**
+	 * Report error warning.
+	 *
+	 * @param warningString the warning string
+	 */
 	public abstract void reportErrorWarning(String warningString);
 
+	/**
+	 * Draw 3 d text.
+	 *
+	 * @param location the location
+	 * @param textString the text string
+	 */
 	public abstract void draw3dText(Vector3f location, String textString);
 
+	/**
+	 * Sets the debug mode.
+	 *
+	 * @param debugMode the new debug mode
+	 */
 	public abstract void setDebugMode(int debugMode);
 
+	/**
+	 * Gets the debug mode.
+	 *
+	 * @return the debug mode
+	 */
 	public abstract int getDebugMode();
 
+	/**
+	 * Draw aabb.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @param color the color
+	 */
 	public void drawAabb(final Vector3f from, final Vector3f to, final Vector3f color) {
 		Vector3f halfExtents = VECTORS.get(to);
 		halfExtents.sub(from);

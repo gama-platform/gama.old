@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ClientServiceThread.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ClientServiceThread.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.tcp;
 
 import java.io.BufferedReader;
@@ -25,15 +24,33 @@ import msi.gaml.types.Types;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.MessageFactory;
 
+/**
+ * The Class ClientServiceThread.
+ */
 public class ClientServiceThread extends Thread {
+	
+	/** The my client socket. */
 	private Socket myClientSocket;
+	
+	/** The closed. */
 	private boolean closed = false;
+	
+	/** The my agent. */
 	private IAgent myAgent;
 
+	/**
+	 * Instantiates a new client service thread.
+	 */
 	public ClientServiceThread() {
 		super();
 	}
 
+	/**
+	 * Instantiates a new client service thread.
+	 *
+	 * @param a the a
+	 * @param s the s
+	 */
 	@SuppressWarnings ("unchecked")
 	public ClientServiceThread(final IAgent a, final Socket s) {
 
@@ -49,6 +66,11 @@ public class ClientServiceThread extends Thread {
 
 	}
 
+	/**
+	 * Gets the my client socket.
+	 *
+	 * @return the my client socket
+	 */
 	public Socket getMyClientSocket() {
 		return myClientSocket;
 	}

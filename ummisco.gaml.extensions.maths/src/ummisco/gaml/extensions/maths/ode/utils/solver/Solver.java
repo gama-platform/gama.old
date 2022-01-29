@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Solver.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * Solver.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import java.util.Map;
@@ -31,12 +30,25 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
+/**
+ * The Class Solver.
+ */
 public abstract class Solver {
 
+	/** The integrator. */
 	final FirstOrderIntegrator integrator;
+	
+	/** The count. */
 	int count;
 	// final double step;
 
+	/**
+	 * Instantiates a new solver.
+	 *
+	 * @param step the step
+	 * @param integrator the integrator
+	 * @param integrated_val the integrated val
+	 */
 	Solver(final double step, final FirstOrderIntegrator integrator, final IMap<String, IList<Double>> integrated_val) {
 		// this.step = step;
 		this.integrator = integrator;
@@ -58,6 +70,15 @@ public abstract class Solver {
 	}
 
 	// Call the integrator, which should call computeDerivatives on the system
+	/**
+	 * Solve.
+	 *
+	 * @param scope the scope
+	 * @param seq the seq
+	 * @param initialTime the initial time
+	 * @param finalTime the final time
+	 * @param integrationValues the integration values
+	 */
 	// of equations;
 	public void solve(final IScope scope, final SystemOfEquationsStatement seq, final double initialTime,
 			final double finalTime, final IMap<String, IList<Double>> integrationValues) {
@@ -121,6 +142,13 @@ public abstract class Solver {
 
 	}
 
+	/**
+	 * Store values.
+	 *
+	 * @param time the time
+	 * @param y the y
+	 * @param integrationValues the integration values
+	 */
 	void storeValues(final double time, final double[] y, final IMap<String, IList<Double>> integrationValues) {
 		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {

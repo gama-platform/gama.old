@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * PolyhedralConvexShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -34,14 +27,21 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public abstract class PolyhedralConvexShape extends ConvexInternalShape {
 
+	/** The directions. */
 	private static Vector3f[] _directions = new Vector3f[] { new Vector3f(1f, 0f, 0f), new Vector3f(0f, 1f, 0f),
 			new Vector3f(0f, 0f, 1f), new Vector3f(-1f, 0f, 0f), new Vector3f(0f, -1f, 0f), new Vector3f(0f, 0f, -1f) };
 
+	/** The supporting. */
 	private static Vector3f[] _supporting = new Vector3f[] { new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f),
 			new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(0f, 0f, 0f) };
 
+	/** The local aabb min. */
 	protected final Vector3f localAabbMin = new Vector3f(1f, 1f, 1f);
+	
+	/** The local aabb max. */
 	protected final Vector3f localAabbMax = new Vector3f(-1f, -1f, -1f);
+	
+	/** The is local aabb valid. */
 	protected boolean isLocalAabbValid = false;
 
 	// /** optional Hull is for optional Separating Axis Test Hull collision detection, see Hull.cpp */
@@ -144,6 +144,15 @@ public abstract class PolyhedralConvexShape extends ConvexInternalShape {
 		VECTORS.release(aabbMin, aabbMax, halfExtents);
 	}
 
+	/**
+	 * Gets the nonvirtual aabb.
+	 *
+	 * @param trans the trans
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param margin the margin
+	 * @return the nonvirtual aabb
+	 */
 	private void getNonvirtualAabb(final Transform trans, final Vector3f aabbMin, final Vector3f aabbMax,
 			final float margin) {
 		// lazy evaluation of local aabb
@@ -157,11 +166,21 @@ public abstract class PolyhedralConvexShape extends ConvexInternalShape {
 		getNonvirtualAabb(trans, aabbMin, aabbMax, getMargin());
 	}
 
+	/**
+	 * Polyhedral convex shape get aabb.
+	 *
+	 * @param trans the trans
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	protected final void _PolyhedralConvexShape_getAabb(final Transform trans, final Vector3f aabbMin,
 			final Vector3f aabbMax) {
 		getNonvirtualAabb(trans, aabbMin, aabbMax, getMargin());
 	}
 
+	/**
+	 * Recalc local aabb.
+	 */
 	public void recalcLocalAabb() {
 		isLocalAabbValid = true;
 
@@ -181,20 +200,65 @@ public abstract class PolyhedralConvexShape extends ConvexInternalShape {
 		recalcLocalAabb();
 	}
 
+	/**
+	 * Gets the num vertices.
+	 *
+	 * @return the num vertices
+	 */
 	public abstract int getNumVertices();
 
+	/**
+	 * Gets the num edges.
+	 *
+	 * @return the num edges
+	 */
 	public abstract int getNumEdges();
 
+	/**
+	 * Gets the edge.
+	 *
+	 * @param i the i
+	 * @param pa the pa
+	 * @param pb the pb
+	 * @return the edge
+	 */
 	public abstract void getEdge(int i, Vector3f pa, Vector3f pb);
 
+	/**
+	 * Gets the vertex.
+	 *
+	 * @param i the i
+	 * @param vtx the vtx
+	 * @return the vertex
+	 */
 	public abstract void getVertex(int i, Vector3f vtx);
 
+	/**
+	 * Gets the num planes.
+	 *
+	 * @return the num planes
+	 */
 	public abstract int getNumPlanes();
 
+	/**
+	 * Gets the plane.
+	 *
+	 * @param planeNormal the plane normal
+	 * @param planeSupport the plane support
+	 * @param i the i
+	 * @return the plane
+	 */
 	public abstract void getPlane(Vector3f planeNormal, Vector3f planeSupport, int i);
 
 	// public abstract int getIndex(int i) const = 0 ;
 
+	/**
+	 * Checks if is inside.
+	 *
+	 * @param pt the pt
+	 * @param tolerance the tolerance
+	 * @return true, if is inside
+	 */
 	public abstract boolean isInside(Vector3f pt, float tolerance);
 
 }

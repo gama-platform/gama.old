@@ -1,20 +1,13 @@
-/*
- * BasicPlayer.
+/*******************************************************************************************************
  *
- * JavaZOOM : jlgui@javazoom.net http://www.javazoom.net
+ * BasicPlayer.java, in ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * ----------------------------------------------------------------------- This program is free software; you can
- * redistribute it and/or modify it under the terms of the GNU Library General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
- * details.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- * You should have received a copy of the GNU Library General Public License along with this program; if not, write to
- * the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * ----------------------------------------------------------------------
- */
+ ********************************************************************************************************/
 package javazoom.jlgui.basicplayer;
 
 import java.io.File;
@@ -53,33 +46,79 @@ import ummisco.gama.dev.utils.DEBUG;
  * 1.3.x, 1.4.x and 1.5.x.
  */
 public class BasicPlayer implements BasicController, Runnable {
+
+	/** The external buffer size. */
 	public static int EXTERNAL_BUFFER_SIZE = 4000 * 4;
+
+	/** The skip inaccuracy size. */
 	public static int SKIP_INACCURACY_SIZE = 1200;
+
+	/** The m thread. */
 	protected Thread m_thread = null;
+
+	/** The m data source. */
 	protected Object m_dataSource;
+
+	/** The m encodedaudio input stream. */
 	protected AudioInputStream m_encodedaudioInputStream;
+
+	/** The encoded length. */
 	protected int encodedLength = -1;
+
+	/** The m audio input stream. */
 	protected AudioInputStream m_audioInputStream;
+
+	/** The m audio file format. */
 	protected AudioFileFormat m_audioFileFormat;
+
+	/** The m line. */
 	protected SourceDataLine m_line;
+
+	/** The m gain control. */
 	protected FloatControl m_gainControl;
+
+	/** The m pan control. */
 	protected FloatControl m_panControl;
+
+	/** The m mixer name. */
 	protected String m_mixerName = null;
+
+	/** The m line current buffer size. */
 	private int m_lineCurrentBufferSize = -1;
+
+	/** The line buffer size. */
 	private int lineBufferSize = -1;
+
+	/** The thread sleep. */
 	private long threadSleep = -1;
 	/**
 	 * These variables are used to distinguish stopped, paused, playing states. We need them to control Thread.
 	 */
 	public static final int UNKNOWN = -1;
+
+	/** The Constant PLAYING. */
 	public static final int PLAYING = 0;
+
+	/** The Constant PAUSED. */
 	public static final int PAUSED = 1;
+
+	/** The Constant STOPPED. */
 	public static final int STOPPED = 2;
+
+	/** The Constant OPENED. */
 	public static final int OPENED = 3;
+
+	/** The Constant SEEKING. */
 	public static final int SEEKING = 4;
+
+	/** The m status. */
 	private int m_status = UNKNOWN;
+
+	/** The m listeners. */
 	// Listeners to be notified.
 	private Collection<BasicPlayerListener> m_listeners = null;
+
+	/** The empty map. */
 	private final Map<?, ?> empty_map = new HashMap<>();
 
 	/**
@@ -91,6 +130,9 @@ public class BasicPlayer implements BasicController, Runnable {
 		reset();
 	}
 
+	/**
+	 * Reset.
+	 */
 	protected void reset() {
 		m_status = UNKNOWN;
 		if (m_audioInputStream != null) {
@@ -125,9 +167,7 @@ public class BasicPlayer implements BasicController, Runnable {
 	 *
 	 * @return
 	 */
-	public Collection<BasicPlayerListener> getListeners() {
-		return m_listeners;
-	}
+	public Collection<BasicPlayerListener> getListeners() { return m_listeners; }
 
 	/**
 	 * Remove registered listener.
@@ -145,27 +185,21 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * @param size
 	 *            -1 means maximum buffer size available.
 	 */
-	public void setLineBufferSize(final int size) {
-		lineBufferSize = size;
-	}
+	public void setLineBufferSize(final int size) { lineBufferSize = size; }
 
 	/**
 	 * Return SourceDataLine buffer size.
 	 *
 	 * @return -1 maximum buffer size.
 	 */
-	public int getLineBufferSize() {
-		return lineBufferSize;
-	}
+	public int getLineBufferSize() { return lineBufferSize; }
 
 	/**
 	 * Return SourceDataLine current buffer size.
 	 *
 	 * @return
 	 */
-	public int getLineCurrentBufferSize() {
-		return m_lineCurrentBufferSize;
-	}
+	public int getLineCurrentBufferSize() { return m_lineCurrentBufferSize; }
 
 	/**
 	 * Set thread sleep time. Default is -1 (no sleep time).
@@ -173,27 +207,21 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * @param time
 	 *            in milliseconds.
 	 */
-	public void setSleepTime(final long time) {
-		threadSleep = time;
-	}
+	public void setSleepTime(final long time) { threadSleep = time; }
 
 	/**
 	 * Return thread sleep time in milliseconds.
 	 *
 	 * @return -1 means no sleep time.
 	 */
-	public long getSleepTime() {
-		return threadSleep;
-	}
+	public long getSleepTime() { return threadSleep; }
 
 	/**
 	 * Returns BasicPlayer status.
 	 *
 	 * @return status
 	 */
-	public int getStatus() {
-		return m_status;
-	}
+	public int getStatus() { return m_status; }
 
 	/**
 	 * Open file to play.
@@ -258,10 +286,10 @@ public class BasicPlayer implements BasicController, Runnable {
 			}
 			// Add JavaSound properties.
 			if (m_audioFileFormat.getByteLength() > 0) {
-				properties.put("audio.length.bytes", new Integer(m_audioFileFormat.getByteLength()));
+				properties.put("audio.length.bytes", Integer.valueOf(m_audioFileFormat.getByteLength()));
 			}
 			if (m_audioFileFormat.getFrameLength() > 0) {
-				properties.put("audio.length.frames", new Integer(m_audioFileFormat.getFrameLength()));
+				properties.put("audio.length.frames", Integer.valueOf(m_audioFileFormat.getFrameLength()));
 			}
 			if (m_audioFileFormat.getType() != null) {
 				properties.put("audio.type", m_audioFileFormat.getType().toString());
@@ -269,19 +297,19 @@ public class BasicPlayer implements BasicController, Runnable {
 			// Audio format.
 			final AudioFormat audioFormat = m_audioFileFormat.getFormat();
 			if (audioFormat.getFrameRate() > 0) {
-				properties.put("audio.framerate.fps", new Float(audioFormat.getFrameRate()));
+				properties.put("audio.framerate.fps", Float.valueOf(audioFormat.getFrameRate()));
 			}
 			if (audioFormat.getFrameSize() > 0) {
-				properties.put("audio.framesize.bytes", new Integer(audioFormat.getFrameSize()));
+				properties.put("audio.framesize.bytes", Integer.valueOf(audioFormat.getFrameSize()));
 			}
 			if (audioFormat.getSampleRate() > 0) {
-				properties.put("audio.samplerate.hz", new Float(audioFormat.getSampleRate()));
+				properties.put("audio.samplerate.hz", Float.valueOf(audioFormat.getSampleRate()));
 			}
 			if (audioFormat.getSampleSizeInBits() > 0) {
-				properties.put("audio.samplesize.bits", new Integer(audioFormat.getSampleSizeInBits()));
+				properties.put("audio.samplesize.bits", Integer.valueOf(audioFormat.getSampleSizeInBits()));
 			}
 			if (audioFormat.getChannels() > 0) {
-				properties.put("audio.channels", new Integer(audioFormat.getChannels()));
+				properties.put("audio.channels", Integer.valueOf(audioFormat.getChannels()));
 			}
 			if (audioFormat instanceof TAudioFormat) {
 				// Tritonus SPI compliant audio format.
@@ -297,11 +325,7 @@ public class BasicPlayer implements BasicController, Runnable {
 			}
 			m_status = OPENED;
 			notifyEvent(BasicPlayerEvent.OPENED, getEncodedStreamPosition(), -1, null);
-		} catch (final LineUnavailableException e) {
-			throw new BasicPlayerException(e);
-		} catch (final UnsupportedAudioFileException e) {
-			throw new BasicPlayerException(e);
-		} catch (final IOException e) {
+		} catch (final LineUnavailableException | UnsupportedAudioFileException | IOException e) {
 			throw new BasicPlayerException(e);
 		}
 	}
@@ -417,9 +441,7 @@ public class BasicPlayer implements BasicController, Runnable {
 			DEBUG.OUT("Open Line : BufferSize=" + buffersize);
 			/*-- Display supported controls --*/
 			final Control[] c = m_line.getControls();
-			for (final Control element : c) {
-				DEBUG.OUT("Controls : " + element.toString());
-			}
+			for (final Control element : c) { DEBUG.OUT("Controls : " + element.toString()); }
 			/*-- Is Gain Control supported ? --*/
 			if (m_line.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
 				m_gainControl = (FloatControl) m_line.getControl(FloatControl.Type.MASTER_GAIN);
@@ -462,14 +484,12 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * Player Status = PAUSED.
 	 */
 	protected void pausePlayback() {
-		if (m_line != null) {
-			if (m_status == PLAYING) {
-				m_line.flush();
-				m_line.stop();
-				m_status = PAUSED;
-				DEBUG.OUT("pausePlayback() completed");
-				notifyEvent(BasicPlayerEvent.PAUSED, getEncodedStreamPosition(), -1, null);
-			}
+		if ((m_line != null) && (m_status == PLAYING)) {
+			m_line.flush();
+			m_line.stop();
+			m_status = PAUSED;
+			DEBUG.OUT("pausePlayback() completed");
+			notifyEvent(BasicPlayerEvent.PAUSED, getEncodedStreamPosition(), -1, null);
 		}
 	}
 
@@ -479,13 +499,11 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * Player Status = PLAYING.
 	 */
 	protected void resumePlayback() {
-		if (m_line != null) {
-			if (m_status == PAUSED) {
-				m_line.start();
-				m_status = PLAYING;
-				DEBUG.OUT("resumePlayback() completed");
-				notifyEvent(BasicPlayerEvent.RESUMED, getEncodedStreamPosition(), -1, null);
-			}
+		if ((m_line != null) && (m_status == PAUSED)) {
+			m_line.start();
+			m_status = PLAYING;
+			DEBUG.OUT("resumePlayback() completed");
+			notifyEvent(BasicPlayerEvent.RESUMED, getEncodedStreamPosition(), -1, null);
 		}
 	}
 
@@ -496,7 +514,7 @@ public class BasicPlayer implements BasicController, Runnable {
 		if (m_status == STOPPED) { initAudioInputStream(); }
 		if (m_status == OPENED) {
 			DEBUG.OUT("startPlayback called");
-			if (!(m_thread == null || !m_thread.isAlive())) {
+			if (((m_thread != null) && m_thread.isAlive())) {
 				DEBUG.OUT("WARNING: old thread still running!!");
 				int cnt = 0;
 				while (m_status != OPENED) {
@@ -672,6 +690,11 @@ public class BasicPlayer implements BasicController, Runnable {
 		trigger.start();
 	}
 
+	/**
+	 * Gets the encoded stream position.
+	 *
+	 * @return the encoded stream position
+	 */
 	protected int getEncodedStreamPosition() {
 		int nEncodedBytes = -1;
 		if (m_dataSource instanceof File) {
@@ -686,6 +709,9 @@ public class BasicPlayer implements BasicController, Runnable {
 		return nEncodedBytes;
 	}
 
+	/**
+	 * Close stream.
+	 */
 	protected void closeStream() {
 		// Close stream.
 		try {
@@ -702,11 +728,9 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * Returns true if Gain control is supported.
 	 */
 	public boolean hasGainControl() {
-		if (m_gainControl == null) {
-			// Try to get Gain control again (to support J2SE 1.5)
-			if (m_line != null && m_line.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
-				m_gainControl = (FloatControl) m_line.getControl(FloatControl.Type.MASTER_GAIN);
-			}
+		// Try to get Gain control again (to support J2SE 1.5)
+		if ((m_gainControl == null) && (m_line != null && m_line.isControlSupported(FloatControl.Type.MASTER_GAIN))) {
+			m_gainControl = (FloatControl) m_line.getControl(FloatControl.Type.MASTER_GAIN);
 		}
 		return m_gainControl != null;
 	}
@@ -715,41 +739,33 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * Returns Gain value.
 	 */
 	public float getGainValue() {
-		if (hasGainControl())
-			return m_gainControl.getValue();
-		else
-			return 0.0F;
+		if (hasGainControl()) return m_gainControl.getValue();
+		return 0.0F;
 	}
 
 	/**
 	 * Gets max Gain value.
 	 */
 	public float getMaximumGain() {
-		if (hasGainControl())
-			return m_gainControl.getMaximum();
-		else
-			return 0.0F;
+		if (hasGainControl()) return m_gainControl.getMaximum();
+		return 0.0F;
 	}
 
 	/**
 	 * Gets min Gain value.
 	 */
 	public float getMinimumGain() {
-		if (hasGainControl())
-			return m_gainControl.getMinimum();
-		else
-			return 0.0F;
+		if (hasGainControl()) return m_gainControl.getMinimum();
+		return 0.0F;
 	}
 
 	/**
 	 * Returns true if Pan control is supported.
 	 */
 	public boolean hasPanControl() {
-		if (m_panControl == null) {
-			// Try to get Pan control again (to support J2SE 1.5)
-			if (m_line != null && m_line.isControlSupported(FloatControl.Type.PAN)) {
-				m_panControl = (FloatControl) m_line.getControl(FloatControl.Type.PAN);
-			}
+		// Try to get Pan control again (to support J2SE 1.5)
+		if ((m_panControl == null) && (m_line != null && m_line.isControlSupported(FloatControl.Type.PAN))) {
+			m_panControl = (FloatControl) m_line.getControl(FloatControl.Type.PAN);
 		}
 		return m_panControl != null;
 	}
@@ -758,20 +774,16 @@ public class BasicPlayer implements BasicController, Runnable {
 	 * Returns Pan precision.
 	 */
 	public float getPrecision() {
-		if (hasPanControl())
-			return m_panControl.getPrecision();
-		else
-			return 0.0F;
+		if (hasPanControl()) return m_panControl.getPrecision();
+		return 0.0F;
 	}
 
 	/**
 	 * Returns Pan value.
 	 */
 	public float getPan() {
-		if (hasPanControl())
-			return m_panControl.getValue();
-		else
-			return 0.0F;
+		if (hasPanControl()) return m_panControl.getValue();
+		return 0.0F;
 	}
 
 	/**
@@ -838,12 +850,10 @@ public class BasicPlayer implements BasicController, Runnable {
 	 */
 	@Override
 	public void setPan(final double fPan) throws BasicPlayerException {
-		if (hasPanControl()) {
-			DEBUG.OUT("Pan : " + fPan);
-			m_panControl.setValue((float) fPan);
-			notifyEvent(BasicPlayerEvent.PAN, getEncodedStreamPosition(), fPan, null);
-		} else
-			throw new BasicPlayerException(BasicPlayerException.PANCONTROLNOTSUPPORTED);
+		if (!hasPanControl()) throw new BasicPlayerException(BasicPlayerException.PANCONTROLNOTSUPPORTED);
+		DEBUG.OUT("Pan : " + fPan);
+		m_panControl.setValue((float) fPan);
+		notifyEvent(BasicPlayerEvent.PAN, getEncodedStreamPosition(), fPan, null);
 	}
 
 	/**
@@ -852,18 +862,21 @@ public class BasicPlayer implements BasicController, Runnable {
 	 */
 	@Override
 	public void setGain(final double fGain) throws BasicPlayerException {
-		if (hasGainControl()) {
-			final double minGainDB = getMinimumGain();
-			final double ampGainDB = 10.0f / 20.0f * getMaximumGain() - getMinimumGain();
-			final double cste = Math.log(10.0) / 20;
-			final double valueDB = minGainDB + 1 / cste * Math.log(1 + (Math.exp(cste * ampGainDB) - 1) * fGain);
-			DEBUG.OUT("Gain : " + valueDB);
-			m_gainControl.setValue((float) valueDB);
-			notifyEvent(BasicPlayerEvent.GAIN, getEncodedStreamPosition(), fGain, null);
-		} else
-			throw new BasicPlayerException(BasicPlayerException.GAINCONTROLNOTSUPPORTED);
+		if (!hasGainControl()) throw new BasicPlayerException(BasicPlayerException.GAINCONTROLNOTSUPPORTED);
+		final double minGainDB = getMinimumGain();
+		final double ampGainDB = 10.0f / 20.0f * getMaximumGain() - getMinimumGain();
+		final double cste = Math.log(10.0) / 20;
+		final double valueDB = minGainDB + 1 / cste * Math.log(1 + (Math.exp(cste * ampGainDB) - 1) * fGain);
+		DEBUG.OUT("Gain : " + valueDB);
+		m_gainControl.setValue((float) valueDB);
+		notifyEvent(BasicPlayerEvent.GAIN, getEncodedStreamPosition(), fGain, null);
 	}
 
+	/**
+	 * Gets the mixers.
+	 *
+	 * @return the mixers
+	 */
 	public List<String> getMixers() {
 		final ArrayList<String> mixers = new ArrayList<>();
 		final Mixer.Info[] mInfos = AudioSystem.getMixerInfo();
@@ -877,6 +890,13 @@ public class BasicPlayer implements BasicController, Runnable {
 		return mixers;
 	}
 
+	/**
+	 * Gets the mixer.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the mixer
+	 */
 	public Mixer getMixer(final String name) {
 		Mixer mixer = null;
 		if (name != null) {
@@ -893,11 +913,18 @@ public class BasicPlayer implements BasicController, Runnable {
 		return mixer;
 	}
 
-	public String getMixerName() {
-		return m_mixerName;
-	}
+	/**
+	 * Gets the mixer name.
+	 *
+	 * @return the mixer name
+	 */
+	public String getMixerName() { return m_mixerName; }
 
-	public void setMixerName(final String name) {
-		m_mixerName = name;
-	}
+	/**
+	 * Sets the mixer name.
+	 *
+	 * @param name
+	 *            the new mixer name
+	 */
+	public void setMixerName(final String name) { m_mixerName = name; }
 }

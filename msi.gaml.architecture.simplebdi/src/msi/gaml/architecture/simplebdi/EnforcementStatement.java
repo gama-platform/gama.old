@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * EnforcementStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -19,6 +29,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class EnforcementStatement.
+ */
 @symbol (
 		name = EnforcementStatement.ENFORCEMENT,
 		kind = ISymbolKind.SINGLE_STATEMENT,
@@ -70,21 +83,50 @@ import msi.gaml.types.IType;
 // statement servant à controler les normes pour appliquer des sanctions, sur le moodèle du focus
 public class EnforcementStatement extends AbstractStatement {
 
+	/** The Constant ENFORCEMENT. */
 	public static final String ENFORCEMENT = "enforcement";
+	
+	/** The Constant NORM. */
 	public static final String NORM = "norm";
+	
+	/** The Constant SANCTION. */
 	public static final String SANCTION = "sanction";
+	
+	/** The Constant REWARD. */
 	public static final String REWARD = "reward";
+	
+	/** The Constant OBLIGATION. */
 	public static final String OBLIGATION = "obligation";
+	
+	/** The Constant LAW. */
 	public static final String LAW = "law";
 
+	/** The name expr. */
 	final IExpression nameExpr;
+	
+	/** The when. */
 	final IExpression when;
+	
+	/** The norm. */
 	final IExpression norm;
+	
+	/** The sanction. */
 	final IExpression sanction;
+	
+	/** The reward. */
 	final IExpression reward;
+	
+	/** The obligation. */
 	final IExpression obligation;
+	
+	/** The law. */
 	final IExpression law;
 
+	/**
+	 * Instantiates a new enforcement statement.
+	 *
+	 * @param desc the desc
+	 */
 	public EnforcementStatement(final IDescription desc) {
 		super(desc);
 		nameExpr = getFacet(IKeyword.NAME);

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SocializeStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -20,6 +30,9 @@ import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
 
+/**
+ * The Class SocializeStatement.
+ */
 @symbol(name = SocializeStatement.SOCIALIZE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
 		IConcept.BDI })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
@@ -37,23 +50,57 @@ import msi.gaml.types.IType;
 		@example("socialize;") })
 
 public class SocializeStatement extends AbstractStatement{
+	
+	/** The Constant SOCIALIZE. */
 	public static final String SOCIALIZE = "socialize";
+	
+	/** The Constant LIKING. */
 	public static final String LIKING = "liking";
+	
+	/** The Constant DOMINANCE. */
 	public static final String DOMINANCE = "dominance";
+	
+	/** The Constant SOLIDARITY. */
 	public static final String SOLIDARITY = "solidarity";
+	
+	/** The Constant FAMILIARITY. */
 	public static final String FAMILIARITY = "familiarity";
+	
+	/** The Constant TRUST. */
 	public static final String TRUST = "trust";
+	
+	/** The Constant AGENT. */
 	public static final String AGENT = "agent";
 	
+	/** The name. */
 	final IExpression name;
+	
+	/** The appreciation. */
 	final IExpression appreciation;
+	
+	/** The dominance. */
 	final IExpression dominance;
+	
+	/** The when. */
 	final IExpression when;
+	
+	/** The solidarity. */
 	final IExpression solidarity;
+	
+	/** The familiarity. */
 	final IExpression familiarity;
+	
+	/** The trust. */
 	final IExpression trust;
+	
+	/** The agent. */
 	final IExpression agent;
 	
+	/**
+	 * Instantiates a new socialize statement.
+	 *
+	 * @param desc the desc
+	 */
 	public SocializeStatement(IDescription desc) {
 		super(desc);
 		name = getFacet(IKeyword.NAME);

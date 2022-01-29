@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SimpleBdiArchitectureParallel.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SimpleBdiArchitecture.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import java.util.List;
@@ -30,6 +28,9 @@ import msi.gaml.operators.Maths;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.statements.IStatement;
 
+/**
+ * The Class SimpleBdiArchitectureParallel.
+ */
 @skill (
 		name = SimpleBdiArchitectureParallel.PARALLEL_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
@@ -37,11 +38,22 @@ import msi.gaml.statements.IStatement;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
+	/** The Constant PARALLEL_BDI. */
 	public static final String PARALLEL_BDI = "parallel_bdi";
+	
+	/** The parallel. */
 	IExpression parallel = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
 
+	/**
+	 * The Class UpdateEmotions.
+	 */
 	public class UpdateEmotions extends AbstractStatement {
 
+		/**
+		 * Instantiates a new update emotions.
+		 *
+		 * @param desc the desc
+		 */
 		public UpdateEmotions(IDescription desc) {
 			super(desc);
 		}
@@ -54,8 +66,16 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
 	}
 
+	/**
+	 * The Class UpdateSocialLinks.
+	 */
 	public class UpdateSocialLinks extends AbstractStatement {
 
+		/**
+		 * Instantiates a new update social links.
+		 *
+		 * @param desc the desc
+		 */
 		public UpdateSocialLinks(IDescription desc) {
 			super(desc);
 		}
@@ -68,8 +88,16 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
 	}
 
+	/**
+	 * The Class UpdateEmotionsIntensity.
+	 */
 	public class UpdateEmotionsIntensity extends AbstractStatement {
 
+		/**
+		 * Instantiates a new update emotions intensity.
+		 *
+		 * @param desc the desc
+		 */
 		public UpdateEmotionsIntensity(IDescription desc) {
 			super(desc);
 		}
@@ -82,8 +110,16 @@ public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 
 	}
 
+	/**
+	 * The Class UpdateLifeTimePredicates.
+	 */
 	public class UpdateLifeTimePredicates extends AbstractStatement {
 
+		/**
+		 * Instantiates a new update life time predicates.
+		 *
+		 * @param desc the desc
+		 */
 		public UpdateLifeTimePredicates(IDescription desc) {
 			super(desc);
 		}

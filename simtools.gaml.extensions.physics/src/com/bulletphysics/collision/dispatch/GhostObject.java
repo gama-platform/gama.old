@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * GhostObject.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -43,8 +36,12 @@ import com.bulletphysics.linearmath.TransformUtil;
  */
 public class GhostObject extends CollisionObject {
 
+	/** The overlapping objects. */
 	protected ArrayList<CollisionObject> overlappingObjects = new ArrayList<>();
 
+	/**
+	 * Instantiates a new ghost object.
+	 */
 	public GhostObject() {
 		this.internalType = CollisionObjectType.GHOST_OBJECT;
 	}
@@ -80,6 +77,15 @@ public class GhostObject extends CollisionObject {
 		}
 	}
 
+	/**
+	 * Convex sweep test.
+	 *
+	 * @param castShape the cast shape
+	 * @param convexFromWorld the convex from world
+	 * @param convexToWorld the convex to world
+	 * @param resultCallback the result callback
+	 * @param allowedCcdPenetration the allowed ccd penetration
+	 */
 	public void convexSweepTest( final ConvexShape castShape, final Transform convexFromWorld,
 			final Transform convexToWorld, final CollisionWorld.ConvexResultCallback resultCallback,
 			final float allowedCcdPenetration) {
@@ -138,6 +144,13 @@ public class GhostObject extends CollisionObject {
 
 	}
 
+	/**
+	 * Ray test.
+	 *
+	 * @param rayFromWorld the ray from world
+	 * @param rayToWorld the ray to world
+	 * @param resultCallback the result callback
+	 */
 	public void rayTest( final Vector3f rayFromWorld, final Vector3f rayToWorld,
 			final CollisionWorld.RayResultCallback resultCallback) {
 		Transform rayFromTrans = TRANSFORMS.get();
@@ -160,14 +173,30 @@ public class GhostObject extends CollisionObject {
 		TRANSFORMS.release(tmpTrans, rayFromTrans, rayToTrans);
 	}
 
+	/**
+	 * Gets the num overlapping objects.
+	 *
+	 * @return the num overlapping objects
+	 */
 	public int getNumOverlappingObjects() {
 		return overlappingObjects.size();
 	}
 
+	/**
+	 * Gets the overlapping object.
+	 *
+	 * @param index the index
+	 * @return the overlapping object
+	 */
 	public CollisionObject getOverlappingObject(final int index) {
 		return overlappingObjects.get(index);
 	}
 
+	/**
+	 * Gets the overlapping pairs.
+	 *
+	 * @return the overlapping pairs
+	 */
 	public ArrayList<CollisionObject> getOverlappingPairs() {
 		return overlappingObjects;
 	}
@@ -176,6 +205,12 @@ public class GhostObject extends CollisionObject {
 	// internal cast
 	//
 
+	/**
+	 * Upcast.
+	 *
+	 * @param colObj the col obj
+	 * @return the ghost object
+	 */
 	public static GhostObject upcast(final CollisionObject colObj) {
 		if (colObj.getInternalType() == CollisionObjectType.GHOST_OBJECT) return (GhostObject) colObj;
 

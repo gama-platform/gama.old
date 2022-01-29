@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MatrixOperators.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.matrix;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
@@ -27,8 +37,20 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class MatrixOperators.
+ */
 public class MatrixOperators {
 
+	/**
+	 * Matrix multiplication.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = ".",
 			can_be_const = true,
@@ -53,6 +75,14 @@ public class MatrixOperators {
 		}
 	}
 
+	/**
+	 * Gets the determinant.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the determinant
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "determinant", "det" },
 			category = { IOperatorCategory.MATRIX },
@@ -67,6 +97,14 @@ public class MatrixOperators {
 		return new LUDecomposition(getRealMatrix(m)).getDeterminant();
 	}
 
+	/**
+	 * Gets the trace.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the trace
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "trace",
 			category = { IOperatorCategory.MATRIX },
@@ -81,6 +119,14 @@ public class MatrixOperators {
 		return getRealMatrix(m).getTrace();
 	}
 
+	/**
+	 * Gets the eigen.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the eigen
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "eigenvalues",
 			content_type = IType.FLOAT,
@@ -96,6 +142,14 @@ public class MatrixOperators {
 		return fromApacheMatrixtoDiagList(scope, new EigenDecomposition(getRealMatrix(m)).getD());
 	}
 
+	/**
+	 * Transpose.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "transpose",
 			can_be_const = true,
@@ -112,6 +166,14 @@ public class MatrixOperators {
 		return m.reverse(scope);
 	}
 
+	/**
+	 * Inverse.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "inverse",
 			can_be_const = true,
@@ -129,6 +191,14 @@ public class MatrixOperators {
 		return toGamaFloatMatrix(new LUDecomposition(getRealMatrix(m)).getSolver().getInverse());
 	}
 
+	/**
+	 * Op append vertically.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.APPEND_VERTICALLY,
 			content_type = ITypeProvider.BOTH,
@@ -191,6 +261,12 @@ public class MatrixOperators {
 		return a;
 	}
 
+	/**
+	 * Gets the real matrix.
+	 *
+	 * @param m the m
+	 * @return the real matrix
+	 */
 	public static RealMatrix getRealMatrix(final IMatrix m) {
 		var rows = m.getRows(null);
 		var cols = m.getCols(null);
@@ -203,6 +279,12 @@ public class MatrixOperators {
 		return realMatrix;
 	}
 
+	/**
+	 * Update matrix.
+	 *
+	 * @param m the m
+	 * @param realMatrix the real matrix
+	 */
 	public static void updateMatrix(final IMatrix m, final RealMatrix realMatrix) {
 		var rows = m.getRows(null);
 		var cols = m.getCols(null);
@@ -213,18 +295,37 @@ public class MatrixOperators {
 		}
 	}
 
+	/**
+	 * To gama int matrix.
+	 *
+	 * @param m the m
+	 * @return the gama int matrix
+	 */
 	public static GamaIntMatrix toGamaIntMatrix(final RealMatrix m) {
 		GamaIntMatrix result = new GamaIntMatrix(m.getColumnDimension(), m.getRowDimension());
 		updateMatrix(result, m);
 		return result;
 	}
 
+	/**
+	 * To gama float matrix.
+	 *
+	 * @param m the m
+	 * @return the gama float matrix
+	 */
 	public static GamaFloatMatrix toGamaFloatMatrix(final RealMatrix m) {
 		GamaFloatMatrix result = new GamaFloatMatrix(m.getColumnDimension(), m.getRowDimension());
 		updateMatrix(result, m);
 		return result;
 	}
 
+	/**
+	 * From apache matrixto diag list.
+	 *
+	 * @param scope the scope
+	 * @param rm the rm
+	 * @return the i list
+	 */
 	public static IList<Double> fromApacheMatrixtoDiagList(final IScope scope, final RealMatrix rm) {
 		final IList<Double> vals = GamaListFactory.create(Types.FLOAT);
 		for (int i = 0; i < rm.getColumnDimension(); i++) {

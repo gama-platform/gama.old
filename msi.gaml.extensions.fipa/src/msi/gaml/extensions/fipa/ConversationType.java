@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * ConversationType.java, in msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'ConversationType.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,6 +23,9 @@ import msi.gaml.types.GamaContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class ConversationType.
+ */
 @type (
 		name = ConversationType.CONVERSATION_STR,
 		id = ConversationType.CONV_ID,
@@ -34,9 +35,15 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents a list of the messages exchanged by agents"))
 public class ConversationType extends GamaContainerType<Conversation> {
 
+	/** The Constant CONVERSATION_STR. */
 	public final static String CONVERSATION_STR = "conversation";
+	
+	/** The Constant CONV_ID. */
 	public final static int CONV_ID = 98;
 
+	/**
+	 * Instantiates a new conversation type.
+	 */
 	public ConversationType() {}
 
 	@Override
@@ -53,6 +60,14 @@ public class ConversationType extends GamaContainerType<Conversation> {
 		return Types.get(FIPAMessage.class);
 	}
 
+	/**
+	 * As message.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @return the conversation
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = ConversationType.CONVERSATION_STR,
 			can_be_const = true,
@@ -66,6 +81,14 @@ public class ConversationType extends GamaContainerType<Conversation> {
 		return ConversationType.staticCast(scope, val, null);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param object the object
+	 * @return the conversation
+	 */
 	public static Conversation staticCast(final IScope scope, final Object val, final Object object) {
 		if (val instanceof Conversation) { return (Conversation) val; }
 		if (val instanceof FIPAMessage) { return ((FIPAMessage) val).getConversation(); }

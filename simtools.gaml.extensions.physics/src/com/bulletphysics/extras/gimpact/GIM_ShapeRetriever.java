@@ -1,29 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * GIM_ShapeRetriever.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371.
- * email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -35,15 +19,32 @@ import com.bulletphysics.collision.shapes.CollisionShape;
  */
 class GIM_ShapeRetriever {
 
+	/** The gim shape. */
 	public GImpactShapeInterface gim_shape;
+	
+	/** The trishape. */
 	public TriangleShapeEx trishape = new TriangleShapeEx();
+	
+	/** The tetrashape. */
 	public TetrahedronShapeEx tetrashape = new TetrahedronShapeEx();
 
+	/** The child retriever. */
 	public ChildShapeRetriever child_retriever = new ChildShapeRetriever();
+	
+	/** The tri retriever. */
 	public TriangleShapeRetriever tri_retriever = new TriangleShapeRetriever();
+	
+	/** The tetra retriever. */
 	public TetraShapeRetriever tetra_retriever = new TetraShapeRetriever();
+	
+	/** The current retriever. */
 	public ChildShapeRetriever current_retriever;
 
+	/**
+	 * Instantiates a new GI M shape retriever.
+	 *
+	 * @param gim_shape the gim shape
+	 */
 	public GIM_ShapeRetriever(GImpactShapeInterface gim_shape) {
 		this.gim_shape = gim_shape;
 		
@@ -61,20 +62,40 @@ class GIM_ShapeRetriever {
 		current_retriever.parent = this;
 	}
 
+	/**
+	 * Gets the child shape.
+	 *
+	 * @param index the index
+	 * @return the child shape
+	 */
 	public CollisionShape getChildShape(int index) {
 		return current_retriever.getChildShape(index);
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * The Class ChildShapeRetriever.
+	 */
 	public static class ChildShapeRetriever {
+		
+		/** The parent. */
 		public GIM_ShapeRetriever parent;
 
+		/**
+		 * Gets the child shape.
+		 *
+		 * @param index the index
+		 * @return the child shape
+		 */
 		public CollisionShape getChildShape(int index) {
 			return parent.gim_shape.getChildShape(index);
 		}
 	}
 
+	/**
+	 * The Class TriangleShapeRetriever.
+	 */
 	public static class TriangleShapeRetriever extends ChildShapeRetriever {
 		@Override
 		public CollisionShape getChildShape(int index) {
@@ -83,6 +104,9 @@ class GIM_ShapeRetriever {
 		}
 	}
 
+	/**
+	 * The Class TetraShapeRetriever.
+	 */
 	public static class TetraShapeRetriever extends ChildShapeRetriever {
 		@Override
 		public CollisionShape getChildShape(int index) {

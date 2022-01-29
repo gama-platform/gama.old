@@ -1,22 +1,13 @@
-/*
- * Port of btHeightfieldTerrainShape by Dominic Browne <dominic.browne@hotmail.co.uk>
+/*******************************************************************************************************
  *
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+ * HeightfieldTerrainShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dom;
 
@@ -34,31 +25,81 @@ import com.bulletphysics.collision.shapes.TriangleCallback;
 import com.bulletphysics.linearmath.MatrixUtil;
 import com.bulletphysics.linearmath.Transform;
 
+/**
+ * The Class HeightfieldTerrainShape.
+ */
 public class HeightfieldTerrainShape extends ConcaveShape {
 
+	/** The Constant XAXIS. */
 	public static final int XAXIS = 0;
+	
+	/** The Constant YAXIS. */
 	public static final int YAXIS = 1;
+	
+	/** The Constant ZAXIS. */
 	public static final int ZAXIS = 2;
 
+	/** The m local aabb min. */
 	protected Vector3f m_localAabbMin = new Vector3f();
+	
+	/** The m local aabb max. */
 	protected Vector3f m_localAabbMax = new Vector3f();
+	
+	/** The m local origin. */
 	protected Vector3f m_localOrigin = new Vector3f();
 
+	/** The m height stick width. */
 	// /terrain data
 	protected int m_heightStickWidth;
+	
+	/** The m height stick length. */
 	protected int m_heightStickLength;
+	
+	/** The m min height. */
 	protected float m_minHeight;
+	
+	/** The m max height. */
 	protected float m_maxHeight;
+	
+	/** The m width. */
 	protected float m_width;
+	
+	/** The m length. */
 	protected float m_length;
+	
+	/** The m height scale. */
 	protected float m_heightScale;
+	
+	/** The m heightfield data float. */
 	protected float[] m_heightfieldDataFloat;
+	
+	/** The m height data type. */
 	protected ScalarType m_heightDataType;
+	
+	/** The m flip quad edges. */
 	protected boolean m_flipQuadEdges;
+	
+	/** The m use diamond subdivision. */
 	protected boolean m_useDiamondSubdivision;
+	
+	/** The m up axis. */
 	protected int m_upAxis;
+	
+	/** The m local scaling. */
 	protected Vector3f m_localScaling = new Vector3f();
 
+	/**
+	 * Instantiates a new heightfield terrain shape.
+	 *
+	 * @param heightStickWidth the height stick width
+	 * @param heightStickLength the height stick length
+	 * @param heightfieldData the heightfield data
+	 * @param heightScale the height scale
+	 * @param minHeight the min height
+	 * @param maxHeight the max height
+	 * @param upAxis the up axis
+	 * @param flipQuadEdges the flip quad edges
+	 */
 	public HeightfieldTerrainShape(final int heightStickWidth, final int heightStickLength,
 			final float[] heightfieldData, final float heightScale, final float minHeight, final float maxHeight,
 			final int upAxis, final boolean flipQuadEdges) {
@@ -67,6 +108,19 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 				ScalarType.FLOAT, flipQuadEdges);
 	}
 
+	/**
+	 * Initialize.
+	 *
+	 * @param heightStickWidth the height stick width
+	 * @param heightStickLength the height stick length
+	 * @param heightfieldData the heightfield data
+	 * @param heightScale the height scale
+	 * @param minHeight the min height
+	 * @param maxHeight the max height
+	 * @param upAxis the up axis
+	 * @param f the f
+	 * @param flipQuadEdges the flip quad edges
+	 */
 	private void initialize(final int heightStickWidth, final int heightStickLength, final float[] heightfieldData,
 			final float heightScale, final float minHeight, final float maxHeight, final int upAxis, final ScalarType f,
 			final boolean flipQuadEdges) {
@@ -215,6 +269,14 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 
 	}
 
+	/**
+	 * Gets the vertex.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param vertex the vertex
+	 * @return the vertex
+	 */
 	// / this returns the vertex in bullet-local coordinates
 	private void getVertex(final int x, final int y, final Vector3f vertex) {
 		float height = getRawHeightFieldValue(x, y);
@@ -306,10 +368,23 @@ public class HeightfieldTerrainShape extends ConcaveShape {
 	// / The actual height needs to be adjusted to be relative to the center
 	// / of the heightfield's AABB.
 
+	/**
+	 * Gets the raw height field value.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @return the raw height field value
+	 */
 	private float getRawHeightFieldValue(final int x, final int y) {
 		return m_heightfieldDataFloat[y * m_heightStickWidth + x] * m_heightScale;
 	}
 
+	/**
+	 * Gets the quantized.
+	 *
+	 * @param x the x
+	 * @return the quantized
+	 */
 	public static int getQuantized(final float x) {
 		if (x < 0.0) return (int) (x - 0.5);
 		return (int) (x + 0.5);

@@ -1,22 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library btConeTwistConstraint is Copyright (c) 2007 Starbreeze
- * Studios
+ * ConeTwistConstraint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- *
- * Written by: Marcus Hennix
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -42,43 +33,87 @@ import com.bulletphysics.linearmath.TransformUtil;
  */
 public class ConeTwistConstraint extends TypedConstraint {
 
+	/** The jac. */
 	private final JacobianEntry[] jac/* [3] */ =
 			new JacobianEntry[] { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // 3 orthogonal
 																									// linear
 																									// constraints
 
-	private final Transform rbAFrame = new Transform();
+	/** The rb A frame. */
+																									private final Transform rbAFrame = new Transform();
+	
+	/** The rb B frame. */
 	private final Transform rbBFrame = new Transform();
 
+	/** The limit softness. */
 	private float limitSoftness;
+	
+	/** The bias factor. */
 	private float biasFactor;
+	
+	/** The relaxation factor. */
 	private float relaxationFactor;
 
+	/** The swing span 1. */
 	private float swingSpan1;
+	
+	/** The swing span 2. */
 	private float swingSpan2;
+	
+	/** The twist span. */
 	private float twistSpan;
 
+	/** The swing axis. */
 	private final Vector3f swingAxis = new Vector3f();
+	
+	/** The twist axis. */
 	private final Vector3f twistAxis = new Vector3f();
 
+	/** The k swing. */
 	private float kSwing;
+	
+	/** The k twist. */
 	private float kTwist;
 
+	/** The twist limit sign. */
 	private float twistLimitSign;
+	
+	/** The swing correction. */
 	private float swingCorrection;
+	
+	/** The twist correction. */
 	private float twistCorrection;
 
+	/** The acc swing limit impulse. */
 	private float accSwingLimitImpulse;
+	
+	/** The acc twist limit impulse. */
 	private float accTwistLimitImpulse;
 
+	/** The angular only. */
 	private boolean angularOnly = false;
+	
+	/** The solve twist limit. */
 	private boolean solveTwistLimit;
+	
+	/** The solve swing limit. */
 	private boolean solveSwingLimit;
 
+	/**
+	 * Instantiates a new cone twist constraint.
+	 */
 	public ConeTwistConstraint() {
 		super(TypedConstraintType.CONETWIST_CONSTRAINT_TYPE);
 	}
 
+	/**
+	 * Instantiates a new cone twist constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 * @param rbAFrame the rb A frame
+	 * @param rbBFrame the rb B frame
+	 */
 	public ConeTwistConstraint(final RigidBody rbA, final RigidBody rbB, final Transform rbAFrame,
 			final Transform rbBFrame) {
 		super(TypedConstraintType.CONETWIST_CONSTRAINT_TYPE, rbA, rbB);
@@ -95,6 +130,12 @@ public class ConeTwistConstraint extends TypedConstraint {
 		solveSwingLimit = false;
 	}
 
+	/**
+	 * Instantiates a new cone twist constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbAFrame the rb A frame
+	 */
 	public ConeTwistConstraint(final RigidBody rbA, final Transform rbAFrame) {
 		super(TypedConstraintType.CONETWIST_CONSTRAINT_TYPE, rbA);
 		this.rbAFrame.set(rbAFrame);
@@ -378,16 +419,43 @@ public class ConeTwistConstraint extends TypedConstraint {
 		TRANSFORMS.release(tmpTrans);
 	}
 
+	/**
+	 * Update RHS.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateRHS(final float timeStep) {}
 
+	/**
+	 * Sets the angular only.
+	 *
+	 * @param angularOnly the new angular only
+	 */
 	public void setAngularOnly(final boolean angularOnly) {
 		this.angularOnly = angularOnly;
 	}
 
+	/**
+	 * Sets the limit.
+	 *
+	 * @param _swingSpan1 the swing span 1
+	 * @param _swingSpan2 the swing span 2
+	 * @param _twistSpan the twist span
+	 */
 	public void setLimit(final float _swingSpan1, final float _swingSpan2, final float _twistSpan) {
 		setLimit(_swingSpan1, _swingSpan2, _twistSpan, 0.8f, 0.3f, 1.0f);
 	}
 
+	/**
+	 * Sets the limit.
+	 *
+	 * @param _swingSpan1 the swing span 1
+	 * @param _swingSpan2 the swing span 2
+	 * @param _twistSpan the twist span
+	 * @param _softness the softness
+	 * @param _biasFactor the bias factor
+	 * @param _relaxationFactor the relaxation factor
+	 */
 	public void setLimit(final float _swingSpan1, final float _swingSpan2, final float _twistSpan,
 			final float _softness, final float _biasFactor, final float _relaxationFactor) {
 		swingSpan1 = _swingSpan1;
@@ -399,24 +467,51 @@ public class ConeTwistConstraint extends TypedConstraint {
 		relaxationFactor = _relaxationFactor;
 	}
 
+	/**
+	 * Gets the a frame.
+	 *
+	 * @param out the out
+	 * @return the a frame
+	 */
 	public Transform getAFrame(final Transform out) {
 		out.set(rbAFrame);
 		return out;
 	}
 
+	/**
+	 * Gets the b frame.
+	 *
+	 * @param out the out
+	 * @return the b frame
+	 */
 	public Transform getBFrame(final Transform out) {
 		out.set(rbBFrame);
 		return out;
 	}
 
+	/**
+	 * Gets the solve twist limit.
+	 *
+	 * @return the solve twist limit
+	 */
 	public boolean getSolveTwistLimit() {
 		return solveTwistLimit;
 	}
 
+	/**
+	 * Gets the solve swing limit.
+	 *
+	 * @return the solve swing limit
+	 */
 	public boolean getSolveSwingLimit() {
 		return solveTwistLimit;
 	}
 
+	/**
+	 * Gets the twist limit sign.
+	 *
+	 * @return the twist limit sign
+	 */
 	public float getTwistLimitSign() {
 		return twistLimitSign;
 	}

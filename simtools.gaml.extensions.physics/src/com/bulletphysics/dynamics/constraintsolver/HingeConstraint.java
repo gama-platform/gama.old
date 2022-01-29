@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * HingeConstraint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 /* Hinge Constraint by Dirk Gregorius. Limits added by Marcus Hennix at Starbreeze Studios */
 
@@ -44,9 +37,11 @@ import com.bulletphysics.linearmath.TransformUtil;
  */
 public class HingeConstraint extends TypedConstraint {
 
+	/** The jac. */
 	private final JacobianEntry[] jac/* [3] */ =
 			new JacobianEntry[] { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // 3 orthogonal
 																									// linear
+																									/** The jac ang. */
 																									// constraints
 	private final JacobianEntry[] jacAng/* [3] */ =
 			new JacobianEntry[] { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // 2 orthogonal
@@ -54,35 +49,72 @@ public class HingeConstraint extends TypedConstraint {
 																									// constraints+ 1
 																									// for limit/motor
 
-	private final Transform rbAFrame = new Transform(); // constraint axii. Assumes z is hinge axis.
+	/** The rb A frame. */
+																									private final Transform rbAFrame = new Transform(); // constraint axii. Assumes z is hinge axis.
+	
+	/** The rb B frame. */
 	private final Transform rbBFrame = new Transform();
 
+	/** The motor target velocity. */
 	private float motorTargetVelocity;
+	
+	/** The max motor impulse. */
 	private float maxMotorImpulse;
 
+	/** The limit softness. */
 	private float limitSoftness;
+	
+	/** The bias factor. */
 	private float biasFactor;
+	
+	/** The relaxation factor. */
 	private float relaxationFactor;
 
+	/** The lower limit. */
 	private float lowerLimit;
+	
+	/** The upper limit. */
 	private float upperLimit;
 
+	/** The k hinge. */
 	private float kHinge;
 
+	/** The limit sign. */
 	private float limitSign;
+	
+	/** The correction. */
 	private float correction;
 
+	/** The acc limit impulse. */
 	private float accLimitImpulse;
 
+	/** The angular only. */
 	private boolean angularOnly;
+	
+	/** The enable angular motor. */
 	private boolean enableAngularMotor;
+	
+	/** The solve limit. */
 	private boolean solveLimit;
 
+	/**
+	 * Instantiates a new hinge constraint.
+	 */
 	public HingeConstraint() {
 		super(TypedConstraintType.HINGE_CONSTRAINT_TYPE);
 		enableAngularMotor = false;
 	}
 
+	/**
+	 * Instantiates a new hinge constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 * @param pivotInA the pivot in A
+	 * @param pivotInB the pivot in B
+	 * @param axisInA the axis in A
+	 * @param axisInB the axis in B
+	 */
 	public HingeConstraint(final RigidBody rbA, final RigidBody rbB, final Vector3f pivotInA, final Vector3f pivotInB,
 			final Vector3f axisInA, final Vector3f axisInB) {
 		super(TypedConstraintType.HINGE_CONSTRAINT_TYPE, rbA, rbB);
@@ -137,6 +169,13 @@ public class HingeConstraint extends TypedConstraint {
 		solveLimit = false;
 	}
 
+	/**
+	 * Instantiates a new hinge constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param pivotInA the pivot in A
+	 * @param axisInA the axis in A
+	 */
 	public HingeConstraint(final RigidBody rbA, final Vector3f pivotInA, final Vector3f axisInA) {
 		super(TypedConstraintType.HINGE_CONSTRAINT_TYPE, rbA);
 		angularOnly = false;
@@ -192,6 +231,14 @@ public class HingeConstraint extends TypedConstraint {
 		solveLimit = false;
 	}
 
+	/**
+	 * Instantiates a new hinge constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 * @param rbAFrame the rb A frame
+	 * @param rbBFrame the rb B frame
+	 */
 	public HingeConstraint(final RigidBody rbA, final RigidBody rbB, final Transform rbAFrame,
 			final Transform rbBFrame) {
 		super(TypedConstraintType.HINGE_CONSTRAINT_TYPE, rbA, rbB);
@@ -214,6 +261,12 @@ public class HingeConstraint extends TypedConstraint {
 		solveLimit = false;
 	}
 
+	/**
+	 * Instantiates a new hinge constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbAFrame the rb A frame
+	 */
 	public HingeConstraint(final RigidBody rbA, final Transform rbAFrame) {
 		super(TypedConstraintType.HINGE_CONSTRAINT_TYPE, rbA);
 		this.rbAFrame.set(rbAFrame);
@@ -542,8 +595,18 @@ public class HingeConstraint extends TypedConstraint {
 		TRANSFORMS.release(centerOfMassA, centerOfMassB);
 	}
 
+	/**
+	 * Update RHS.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateRHS(final float timeStep) {}
 
+	/**
+	 * Gets the hinge angle.
+	 *
+	 * @return the hinge angle
+	 */
 	public float getHingeAngle() {
 		Transform centerOfMassA = rbA.getCenterOfMassTransform(TRANSFORMS.get());
 		Transform centerOfMassB = rbB.getCenterOfMassTransform(TRANSFORMS.get());
@@ -565,20 +628,47 @@ public class HingeConstraint extends TypedConstraint {
 		return ScalarUtil.atan2Fast(swingAxis.dot(refAxis0), swingAxis.dot(refAxis1));
 	}
 
+	/**
+	 * Sets the angular only.
+	 *
+	 * @param angularOnly the new angular only
+	 */
 	public void setAngularOnly(final boolean angularOnly) {
 		this.angularOnly = angularOnly;
 	}
 
+	/**
+	 * Enable angular motor.
+	 *
+	 * @param enableMotor the enable motor
+	 * @param targetVelocity the target velocity
+	 * @param maxMotorImpulse the max motor impulse
+	 */
 	public void enableAngularMotor(final boolean enableMotor, final float targetVelocity, final float maxMotorImpulse) {
 		this.enableAngularMotor = enableMotor;
 		this.motorTargetVelocity = targetVelocity;
 		this.maxMotorImpulse = maxMotorImpulse;
 	}
 
+	/**
+	 * Sets the limit.
+	 *
+	 * @param low the low
+	 * @param high the high
+	 */
 	public void setLimit(final float low, final float high) {
 		setLimit(low, high, 0.9f, 0.3f, 1.0f);
 	}
 
+	/**
+	 * Sets the limit.
+	 *
+	 * @param low the low
+	 * @param high the high
+	 * @param _softness the softness
+	 * @param _biasFactor the bias factor
+	 * @param _relaxationFactor the relaxation factor
+	 */
 	public void setLimit(final float low, final float high, final float _softness, final float _biasFactor,
 			final float _relaxationFactor) {
 		lowerLimit = low;
@@ -589,44 +679,96 @@ public class HingeConstraint extends TypedConstraint {
 		relaxationFactor = _relaxationFactor;
 	}
 
+	/**
+	 * Gets the lower limit.
+	 *
+	 * @return the lower limit
+	 */
 	public float getLowerLimit() {
 		return lowerLimit;
 	}
 
+	/**
+	 * Gets the upper limit.
+	 *
+	 * @return the upper limit
+	 */
 	public float getUpperLimit() {
 		return upperLimit;
 	}
 
+	/**
+	 * Gets the a frame.
+	 *
+	 * @param out the out
+	 * @return the a frame
+	 */
 	public Transform getAFrame(final Transform out) {
 		out.set(rbAFrame);
 		return out;
 	}
 
+	/**
+	 * Gets the b frame.
+	 *
+	 * @param out the out
+	 * @return the b frame
+	 */
 	public Transform getBFrame(final Transform out) {
 		out.set(rbBFrame);
 		return out;
 	}
 
+	/**
+	 * Gets the solve limit.
+	 *
+	 * @return the solve limit
+	 */
 	public boolean getSolveLimit() {
 		return solveLimit;
 	}
 
+	/**
+	 * Gets the limit sign.
+	 *
+	 * @return the limit sign
+	 */
 	public float getLimitSign() {
 		return limitSign;
 	}
 
+	/**
+	 * Gets the angular only.
+	 *
+	 * @return the angular only
+	 */
 	public boolean getAngularOnly() {
 		return angularOnly;
 	}
 
+	/**
+	 * Gets the enable angular motor.
+	 *
+	 * @return the enable angular motor
+	 */
 	public boolean getEnableAngularMotor() {
 		return enableAngularMotor;
 	}
 
+	/**
+	 * Gets the motor target velosity.
+	 *
+	 * @return the motor target velosity
+	 */
 	public float getMotorTargetVelosity() {
 		return motorTargetVelocity;
 	}
 
+	/**
+	 * Gets the max motor impulse.
+	 *
+	 * @return the max motor impulse
+	 */
 	public float getMaxMotorImpulse() {
 		return maxMotorImpulse;
 	}

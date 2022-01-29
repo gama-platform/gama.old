@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'UDPConnector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * UDPConnector.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.udp;
 
 import java.net.BindException;
@@ -29,12 +28,23 @@ import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
 
+/**
+ * The Class UDPConnector.
+ */
 public class UDPConnector extends Connector {
 
+	/** The  udp server. */
 	public static String _UDP_SERVER = "__udp_server";
 
+	/** The is server. */
 	private boolean is_server = false;
 	
+	/**
+	 * Instantiates a new UDP connector.
+	 *
+	 * @param scope the scope
+	 * @param as_server the as server
+	 */
 	public UDPConnector(final IScope scope, final boolean as_server) {
 		is_server = as_server;
 	}
@@ -60,6 +70,11 @@ public class UDPConnector extends Connector {
 		return super.fetchAllMessages();
 	}
 
+	/**
+	 * Open server socket.
+	 *
+	 * @param agent the agent
+	 */
 	public void openServerSocket(final IAgent agent) {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 

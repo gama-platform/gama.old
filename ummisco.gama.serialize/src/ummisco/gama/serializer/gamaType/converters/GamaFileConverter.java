@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaFileConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaFileConverter.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
 import java.util.List;
@@ -25,13 +24,22 @@ import msi.gama.util.file.IGamaFile;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaFileReducer;
 
+/**
+ * The Class GamaFileConverter.
+ */
 public class GamaFileConverter implements Converter {
 	// private final static String TAG = "GamaFile";
 	// private final static String TAG_PATH = "path";
 	// private final static String TAG_ATTRIBUTES = "attributes";
 
+	/** The convert scope. */
 	private final ConverterScope convertScope;
 
+	/**
+	 * Instantiates a new gama file converter.
+	 *
+	 * @param s the s
+	 */
 	public GamaFileConverter(final ConverterScope s) {
 		convertScope = s;
 	}

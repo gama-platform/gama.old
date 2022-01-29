@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * TypedConstraint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -35,9 +23,15 @@ public abstract class TypedConstraint {
 	
 	//protected final BulletStack stack = BulletStack.get();
 	
+	/** The s fixed. */
 	// TODO: stack allocation
 	private static /*final*/ RigidBody s_fixed;// = new RigidBody(0, null, null);
 	
+	/**
+	 * Gets the fixed.
+	 *
+	 * @return the fixed
+	 */
 	private static synchronized RigidBody getFixed() {
 		if (s_fixed == null) {
 			s_fixed = new RigidBody(0, null, null);
@@ -45,23 +39,50 @@ public abstract class TypedConstraint {
 		return s_fixed;
 	}
 
+	/** The user constraint type. */
 	private int userConstraintType = -1;
+	
+	/** The user constraint id. */
 	private int userConstraintId = -1;
 
+	/** The constraint type. */
 	private TypedConstraintType constraintType;
 	
+	/** The rb A. */
 	protected RigidBody rbA;
+	
+	/** The rb B. */
 	protected RigidBody rbB;
+	
+	/** The applied impulse. */
 	protected float appliedImpulse = 0f;
 
+	/**
+	 * Instantiates a new typed constraint.
+	 *
+	 * @param type the type
+	 */
 	public TypedConstraint(TypedConstraintType type) {
 		this(type, getFixed(), getFixed());
 	}
 	
+	/**
+	 * Instantiates a new typed constraint.
+	 *
+	 * @param type the type
+	 * @param rbA the rb A
+	 */
 	public TypedConstraint(TypedConstraintType type, RigidBody rbA) {
 		this(type, rbA, getFixed());
 	}
 	
+	/**
+	 * Instantiates a new typed constraint.
+	 *
+	 * @param type the type
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 */
 	public TypedConstraint(TypedConstraintType type, RigidBody rbA, RigidBody rbB) {
 		this.constraintType = type;
 		this.rbA = rbA;
@@ -69,42 +90,95 @@ public abstract class TypedConstraint {
 		getFixed().setMassProps(0f, new Vector3f(0f, 0f, 0f));
 	}
 	
+	/**
+	 * Builds the jacobian.
+	 */
 	public abstract void buildJacobian();
 
+	/**
+	 * Solve constraint.
+	 *
+	 * @param timeStep the time step
+	 */
 	public abstract void solveConstraint(float timeStep);
 	
+	/**
+	 * Gets the rigid body A.
+	 *
+	 * @return the rigid body A
+	 */
 	public RigidBody getRigidBodyA() {
 		return rbA;
 	}
 
+	/**
+	 * Gets the rigid body B.
+	 *
+	 * @return the rigid body B
+	 */
 	public RigidBody getRigidBodyB() {
 		return rbB;
 	}
 
+	/**
+	 * Gets the user constraint type.
+	 *
+	 * @return the user constraint type
+	 */
 	public int getUserConstraintType() {
 		return userConstraintType;
 	}
 	
+	/**
+	 * Sets the user constraint type.
+	 *
+	 * @param userConstraintType the new user constraint type
+	 */
 	public void setUserConstraintType(int userConstraintType) {
 		this.userConstraintType = userConstraintType;
 	}
 
+	/**
+	 * Gets the user constraint id.
+	 *
+	 * @return the user constraint id
+	 */
 	public int getUserConstraintId() {
 		return userConstraintId;
 	}
 
+	/**
+	 * Gets the uid.
+	 *
+	 * @return the uid
+	 */
 	public int getUid() {
 		return userConstraintId;
 	}
 
+	/**
+	 * Sets the user constraint id.
+	 *
+	 * @param userConstraintId the new user constraint id
+	 */
 	public void setUserConstraintId(int userConstraintId) {
 		this.userConstraintId = userConstraintId;
 	}
 
+	/**
+	 * Gets the applied impulse.
+	 *
+	 * @return the applied impulse
+	 */
 	public float getAppliedImpulse() {
 		return appliedImpulse;
 	}
 
+	/**
+	 * Gets the constraint type.
+	 *
+	 * @return the constraint type
+	 */
 	public TypedConstraintType getConstraintType() {
 		return constraintType;
 	}

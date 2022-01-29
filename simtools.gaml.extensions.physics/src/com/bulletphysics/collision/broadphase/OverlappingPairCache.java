@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * OverlappingPairCache.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -29,22 +22,72 @@ import java.util.List;
 
 public interface OverlappingPairCache extends OverlappingPairCallback {
 
+	/**
+	 * Gets the overlapping pair array.
+	 *
+	 * @return the overlapping pair array
+	 */
 	List<BroadphasePair> getOverlappingPairArray();
 
+	/**
+	 * Clean overlapping pair.
+	 *
+	 * @param pair the pair
+	 * @param dispatcher the dispatcher
+	 */
 	void cleanOverlappingPair( BroadphasePair pair, Dispatcher dispatcher);
 
+	/**
+	 * Gets the num overlapping pairs.
+	 *
+	 * @return the num overlapping pairs
+	 */
 	int getNumOverlappingPairs();
 
+	/**
+	 * Clean proxy from pairs.
+	 *
+	 * @param proxy the proxy
+	 * @param dispatcher the dispatcher
+	 */
 	void cleanProxyFromPairs( BroadphaseProxy proxy, Dispatcher dispatcher);
 
+	/**
+	 * Sets the overlap filter callback.
+	 *
+	 * @param overlapFilterCallback the new overlap filter callback
+	 */
 	void setOverlapFilterCallback(OverlapFilterCallback overlapFilterCallback);
 
+	/**
+	 * Process all overlapping pairs.
+	 *
+	 * @param callback the callback
+	 * @param dispatcher the dispatcher
+	 */
 	void processAllOverlappingPairs( OverlapCallback callback, Dispatcher dispatcher);
 
+	/**
+	 * Find pair.
+	 *
+	 * @param proxy0 the proxy 0
+	 * @param proxy1 the proxy 1
+	 * @return the broadphase pair
+	 */
 	BroadphasePair findPair(BroadphaseProxy proxy0, BroadphaseProxy proxy1);
 
+	/**
+	 * Checks for deferred removal.
+	 *
+	 * @return true, if successful
+	 */
 	boolean hasDeferredRemoval();
 
+	/**
+	 * Sets the internal ghost pair callback.
+	 *
+	 * @param ghostPairCallback the new internal ghost pair callback
+	 */
 	void setInternalGhostPairCallback(OverlappingPairCallback ghostPairCallback);
 
 }

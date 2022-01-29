@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SqlUtils.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SqlUtils.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.sql;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +29,9 @@ import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class SqlUtils.
+ */
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
  * 18-July-2013: Add load extension library for SQLITE case. Last Modified: 18-July-2013
@@ -38,6 +39,14 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SqlUtils {
 
+	/**
+	 * Creates the connection object.
+	 *
+	 * @param scope the scope
+	 * @param params the params
+	 * @return the sql connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static SqlConnection createConnectionObject(final IScope scope, final Map<String, Object> params)
 			throws GamaRuntimeException {
 		final String dbtype = (String) params.get("dbtype");
@@ -76,11 +85,26 @@ public class SqlUtils {
 		return sqlConn;
 	}
 
+	/**
+	 * Creates the connection object.
+	 *
+	 * @param scope the scope
+	 * @return the sql connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static SqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException {
 		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		return createConnectionObject(scope, params);
 	}
 
+	/**
+	 * Read.
+	 *
+	 * @param b the b
+	 * @return the geometry
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParseException the parse exception
+	 */
 	/*
 	 * @Method: read(byte [] b)
 	 *
@@ -98,6 +122,13 @@ public class SqlUtils {
 		return geom;
 	}
 
+	/**
+	 * Input stream 2 geometry.
+	 *
+	 * @param inputStream the input stream
+	 * @return the geometry
+	 * @throws Exception the exception
+	 */
 	/*
 	 * @Method: InputStream2Geometry(InputStream inputStream)
 	 *
@@ -165,6 +196,16 @@ public class SqlUtils {
 	 */
 	// public static IList<Object> transform(final GisUtils gis, final
 	// IList<? extends IList<Object>> dataset,
+	/**
+	 * Transform.
+	 *
+	 * @param scope the scope
+	 * @param gis the gis
+	 * @param dataset the dataset
+	 * @param fromAbsoluteToGis the from absolute to gis
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// final boolean fromAbsoluteToGis) throws GamaRuntimeException {
 	static IList<Object> transform(final IScope scope, final IProjection gis,
 			final IList<? super IList<Object>> dataset, final boolean fromAbsoluteToGis) throws GamaRuntimeException {

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * AabbUtil2.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -31,18 +24,44 @@ import javax.vecmath.Vector3f;
  */
 public class AabbUtil2 {
 
+	/**
+	 * Aabb expand.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param expansionMin the expansion min
+	 * @param expansionMax the expansion max
+	 */
 	public static void aabbExpand(final Vector3f aabbMin, final Vector3f aabbMax, final Vector3f expansionMin,
 			final Vector3f expansionMax) {
 		aabbMin.add(expansionMin);
 		aabbMax.add(expansionMax);
 	}
 
+	/**
+	 * Outcode.
+	 *
+	 * @param p the p
+	 * @param halfExtent the half extent
+	 * @return the int
+	 */
 	public static int outcode(final Vector3f p, final Vector3f halfExtent) {
 		return (p.x < -halfExtent.x ? 0x01 : 0x0) | (p.x > halfExtent.x ? 0x08 : 0x0)
 				| (p.y < -halfExtent.y ? 0x02 : 0x0) | (p.y > halfExtent.y ? 0x10 : 0x0)
 				| (p.z < -halfExtent.z ? 0x4 : 0x0) | (p.z > halfExtent.z ? 0x20 : 0x0);
 	}
 
+	/**
+	 * Ray aabb.
+	 *
+	 * @param rayFrom the ray from
+	 * @param rayTo the ray to
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param param the param
+	 * @param normal the normal
+	 * @return true, if successful
+	 */
 	public static boolean rayAabb(final Vector3f rayFrom, final Vector3f rayTo, final Vector3f aabbMin,
 			final Vector3f aabbMax, final float[] param, final Vector3f normal) {
 		Vector3f aabbHalfExtent = VECTORS.get();
@@ -139,6 +158,15 @@ public class AabbUtil2 {
 		return true;
 	}
 
+	/**
+	 * Transform aabb.
+	 *
+	 * @param halfExtents the half extents
+	 * @param margin the margin
+	 * @param t the t
+	 * @param aabbMinOut the aabb min out
+	 * @param aabbMaxOut the aabb max out
+	 */
 	public static void transformAabb(final Vector3f halfExtents, final float margin, final Transform t,
 			final Vector3f aabbMinOut, final Vector3f aabbMaxOut) {
 		Vector3f halfExtentsWithMargin = VECTORS.get();
@@ -166,6 +194,16 @@ public class AabbUtil2 {
 		VECTORS.release(tmp, center, extent, halfExtentsWithMargin);
 	}
 
+	/**
+	 * Transform aabb.
+	 *
+	 * @param localAabbMin the local aabb min
+	 * @param localAabbMax the local aabb max
+	 * @param margin the margin
+	 * @param trans the trans
+	 * @param aabbMinOut the aabb min out
+	 * @param aabbMaxOut the aabb max out
+	 */
 	public static void transformAabb(final Vector3f localAabbMin, final Vector3f localAabbMax, final float margin,
 			final Transform trans, final Vector3f aabbMinOut, final Vector3f aabbMaxOut) {
 		assert localAabbMin.x <= localAabbMax.x;

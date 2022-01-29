@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * BulletStats.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics;
 
@@ -34,53 +22,102 @@ import javax.vecmath.Vector3f;
  */
 public class BulletStats {
 	
+	/** The g total contact points. */
 	public static int gTotalContactPoints;
 	
 	// GjkPairDetector
+	/** The g num deep penetration checks. */
 	// temp globals, to improve GJK/EPA/penetration calculations
 	public static int gNumDeepPenetrationChecks = 0;
+	
+	/** The g num gjk checks. */
 	public static int gNumGjkChecks = 0;
+	
+	/** The g num split impulse recoveries. */
 	public static int gNumSplitImpulseRecoveries = 0;
 	
+	/** The g num aligned allocs. */
 	public static int gNumAlignedAllocs;
+	
+	/** The g num aligned free. */
 	public static int gNumAlignedFree;
+	
+	/** The g total bytes aligned allocs. */
 	public static int gTotalBytesAlignedAllocs;	
 	
+	/** The g picking constraint id. */
 	public static int gPickingConstraintId = 0;
+	
+	/** The Constant gOldPickingPos. */
 	public static final Vector3f gOldPickingPos = new Vector3f();
+	
+	/** The g old picking dist. */
 	public static float gOldPickingDist = 0.f;
 	
+	/** The g overlapping pairs. */
 	public static int gOverlappingPairs = 0;
+	
+	/** The g remove pairs. */
 	public static int gRemovePairs = 0;
+	
+	/** The g added pairs. */
 	public static int gAddedPairs = 0;
+	
+	/** The g find pairs. */
 	public static int gFindPairs = 0;
 	
+	/** The Constant gProfileClock. */
 	public static final Clock gProfileClock = new Clock();
 
+	/** The g num clamped ccd motions. */
 	// DiscreteDynamicsWorld:
 	public static int gNumClampedCcdMotions = 0;
 
+	/** The step simulation time. */
 	// JAVA NOTE: added for statistics in applet demo
 	public static long stepSimulationTime;
+	
+	/** The update time. */
 	public static long updateTime;
 	
+	/** The enable profile. */
 	private static boolean enableProfile = false;
 	
 	////////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * Checks if is profile enabled.
+	 *
+	 * @return true, if is profile enabled
+	 */
 	public static boolean isProfileEnabled() {
 		return enableProfile;
 	}
 
+	/**
+	 * Sets the profile enabled.
+	 *
+	 * @param b the new profile enabled
+	 */
 	public static void setProfileEnabled(boolean b) {
 		enableProfile = b;
 	}
 	
+	/**
+	 * Profile get ticks.
+	 *
+	 * @return the long
+	 */
 	public static long profileGetTicks() {
 		long ticks = gProfileClock.getTimeMicroseconds();
 		return ticks;
 	}
 
+	/**
+	 * Profile get tick rate.
+	 *
+	 * @return the float
+	 */
 	public static float profileGetTickRate() {
 		//return 1000000f;
 		return 1000f;

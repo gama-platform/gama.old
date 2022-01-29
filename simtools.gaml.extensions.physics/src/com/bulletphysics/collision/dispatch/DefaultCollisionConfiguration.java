@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * DefaultCollisionConfiguration.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -36,26 +29,59 @@ import com.bulletphysics.extras.gimpact.GImpactCollisionAlgorithm;
  */
 public class DefaultCollisionConfiguration implements CollisionConfiguration {
 
+	/** The simplex solver. */
 	// default simplex/penetration depth solvers
 	protected VoronoiSimplexSolver simplexSolver;
+	
+	/** The pd solver. */
 	protected ConvexPenetrationDepthSolver pdSolver;
 
+	/** The convex convex create func. */
 	// default CreationFunctions, filling the m_doubleDispatch table
 	protected CollisionAlgorithmCreateFunc convexConvexCreateFunc;
+	
+	/** The convex concave create func. */
 	protected CollisionAlgorithmCreateFunc convexConcaveCreateFunc;
+	
+	/** The swapped convex concave create func. */
 	protected CollisionAlgorithmCreateFunc swappedConvexConcaveCreateFunc;
+	
+	/** The compound create func. */
 	protected CollisionAlgorithmCreateFunc compoundCreateFunc;
+	
+	/** The swapped compound create func. */
 	protected CollisionAlgorithmCreateFunc swappedCompoundCreateFunc;
+	
+	/** The empty create func. */
 	protected CollisionAlgorithmCreateFunc emptyCreateFunc;
+	
+	/** The sphere sphere CF. */
 	protected CollisionAlgorithmCreateFunc sphereSphereCF;
+	
+	/** The sphere box CF. */
 	protected CollisionAlgorithmCreateFunc sphereBoxCF;
+	
+	/** The box sphere CF. */
 	protected CollisionAlgorithmCreateFunc boxSphereCF;
+	
+	/** The box box CF. */
 	protected CollisionAlgorithmCreateFunc boxBoxCF;
+	
+	/** The sphere triangle CF. */
 	protected CollisionAlgorithmCreateFunc sphereTriangleCF;
+	
+	/** The triangle sphere CF. */
 	protected CollisionAlgorithmCreateFunc triangleSphereCF;
+	
+	/** The plane convex CF. */
 	protected ConvexPlaneCollisionAlgorithm.CreateFunc planeConvexCF;
+	
+	/** The convex plane CF. */
 	protected CollisionAlgorithmCreateFunc convexPlaneCF;
 
+	/**
+	 * Instantiates a new default collision configuration.
+	 */
 	public DefaultCollisionConfiguration() {
 		simplexSolver = new VoronoiSimplexSolver();
 

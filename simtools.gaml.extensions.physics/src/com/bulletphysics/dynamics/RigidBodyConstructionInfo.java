@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * RigidBodyConstructionInfo.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics;
 
@@ -46,6 +34,7 @@ import javax.vecmath.Vector3f;
  */
 public class RigidBodyConstructionInfo {
 
+	/** The mass. */
 	public float mass;
 
 	/**
@@ -53,11 +42,20 @@ public class RigidBodyConstructionInfo {
 	 * from the motion state. In this case, startWorldTransform is ignored.
 	 */
 	public MotionState motionState;
+	
+	/** The start world transform. */
 	public final Transform startWorldTransform = new Transform();
 
+	/** The collision shape. */
 	public CollisionShape collisionShape;
+	
+	/** The local inertia. */
 	public final Vector3f localInertia = new Vector3f();
+	
+	/** The linear damping. */
 	public float linearDamping = 0f;
+	
+	/** The angular damping. */
 	public float angularDamping = 0f;
 
 	/** Best simulation results when friction is non-zero. */
@@ -65,7 +63,10 @@ public class RigidBodyConstructionInfo {
 	/** Best simulation results using zero restitution. */
 	public float restitution = 0f;
 
+	/** The linear sleeping threshold. */
 	public float linearSleepingThreshold = 0.8f;
+	
+	/** The angular sleeping threshold. */
 	public float angularSleepingThreshold = 1.0f;
 
 	/**
@@ -74,15 +75,40 @@ public class RigidBodyConstructionInfo {
 	 * system has improved, this should become obsolete.
 	 */
 	public boolean additionalDamping = false;
+	
+	/** The additional damping factor. */
 	public float additionalDampingFactor = 0.005f;
+	
+	/** The additional linear damping threshold sqr. */
 	public float additionalLinearDampingThresholdSqr = 0.01f;
+	
+	/** The additional angular damping threshold sqr. */
 	public float additionalAngularDampingThresholdSqr = 0.01f;
+	
+	/** The additional angular damping factor. */
 	public float additionalAngularDampingFactor = 0.01f;
 
+	/**
+	 * Instantiates a new rigid body construction info.
+	 *
+	 * @param mass the mass
+	 * @param motionState when a motionState is provided, the rigid body will initialize its world transform
+	 * from the motion state. In this case, startWorldTransform is ignored.
+	 * @param collisionShape the collision shape
+	 */
 	public RigidBodyConstructionInfo(float mass, MotionState motionState, CollisionShape collisionShape) {
 		this(mass, motionState, collisionShape, new Vector3f(0f, 0f, 0f));
 	}
 	
+	/**
+	 * Instantiates a new rigid body construction info.
+	 *
+	 * @param mass the mass
+	 * @param motionState when a motionState is provided, the rigid body will initialize its world transform
+	 * from the motion state. In this case, startWorldTransform is ignored.
+	 * @param collisionShape the collision shape
+	 * @param localInertia the local inertia
+	 */
 	public RigidBodyConstructionInfo(float mass, MotionState motionState, CollisionShape collisionShape, Vector3f localInertia) {
 		this.mass = mass;
 		this.motionState = motionState;

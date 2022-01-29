@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * CollisionAlgorithm.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -34,29 +27,73 @@ public abstract class CollisionAlgorithm {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The create func. */
 	// JAVA NOTE: added
 	private CollisionAlgorithmCreateFunc createFunc;
 
+	/** The dispatcher. */
 	protected Dispatcher dispatcher;
 
+	/**
+	 * Inits the.
+	 */
 	public void init() {}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param ci the ci
+	 */
 	public void init(final CollisionAlgorithmConstructionInfo ci) {
 		dispatcher = ci.dispatcher1;
 	}
 
+	/**
+	 * Destroy.
+	 */
 	public abstract void destroy();
 
+	/**
+	 * Process collision.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param resultOut the result out
+	 */
 	public abstract void processCollision(CollisionObject body0, CollisionObject body1, ManifoldResult resultOut);
 
+	/**
+	 * Calculate time of impact.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param resultOut the result out
+	 * @return the float
+	 */
 	public abstract float calculateTimeOfImpact(CollisionObject body0, CollisionObject body1, ManifoldResult resultOut);
 
+	/**
+	 * Gets the all contact manifolds.
+	 *
+	 * @param manifoldArray the manifold array
+	 * @return the all contact manifolds
+	 */
 	public abstract void getAllContactManifolds(ArrayList<PersistentManifold> manifoldArray);
 
+	/**
+	 * Internal set create func.
+	 *
+	 * @param func the func
+	 */
 	public final void internalSetCreateFunc(final CollisionAlgorithmCreateFunc func) {
 		createFunc = func;
 	}
 
+	/**
+	 * Internal get create func.
+	 *
+	 * @return the collision algorithm create func
+	 */
 	public final CollisionAlgorithmCreateFunc internalGetCreateFunc() {
 		return createFunc;
 	}

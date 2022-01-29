@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * DefaultBroadPhaseBuffer.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.collision.broadphase;
 
 import java.util.Arrays;
@@ -42,20 +29,38 @@ import org.jbox2d.common.Vec2;
  */
 public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
 
+  /** The m tree. */
   private final BroadPhaseStrategy m_tree;
 
+  /** The m proxy count. */
   private int m_proxyCount;
 
+  /** The m move buffer. */
   private int[] m_moveBuffer;
+  
+  /** The m move capacity. */
   private int m_moveCapacity;
+  
+  /** The m move count. */
   private int m_moveCount;
 
+  /** The m pair buffer. */
   private long[] m_pairBuffer;
+  
+  /** The m pair capacity. */
   private int m_pairCapacity;
+  
+  /** The m pair count. */
   private int m_pairCount;
 
+  /** The m query proxy id. */
   private int m_queryProxyId;
 
+  /**
+   * Instantiates a new default broad phase buffer.
+   *
+   * @param strategy the strategy
+   */
   public DefaultBroadPhaseBuffer(BroadPhaseStrategy strategy) {
     m_proxyCount = 0;
 
@@ -214,6 +219,11 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     return m_tree.getAreaRatio();
   }
 
+  /**
+   * Buffer move.
+   *
+   * @param proxyId the proxy id
+   */
   protected final void bufferMove(int proxyId) {
     if (m_moveCount == m_moveCapacity) {
       int[] old = m_moveBuffer;
@@ -226,6 +236,11 @@ public class DefaultBroadPhaseBuffer implements TreeCallback, BroadPhase {
     ++m_moveCount;
   }
 
+  /**
+   * Unbuffer move.
+   *
+   * @param proxyId the proxy id
+   */
   protected final void unbufferMove(int proxyId) {
     for (int i = 0; i < m_moveCount; i++) {
       if (m_moveBuffer[i] == proxyId) {

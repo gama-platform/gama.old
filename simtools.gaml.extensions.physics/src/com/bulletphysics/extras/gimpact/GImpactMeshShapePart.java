@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * GImpactMeshShapePart.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -50,14 +40,25 @@ import com.bulletphysics.util.IntArrayList;
  */
 public class GImpactMeshShapePart extends GImpactShapeInterface {
 
+	/** The primitive manager. */
 	TrimeshPrimitiveManager primitive_manager = new TrimeshPrimitiveManager();
 
+	/** The collided. */
 	private final IntArrayList collided = new IntArrayList();
 
+	/**
+	 * Instantiates a new g impact mesh shape part.
+	 */
 	public GImpactMeshShapePart() {
 		box_set.setPrimitiveManager(primitive_manager);
 	}
 
+	/**
+	 * Instantiates a new g impact mesh shape part.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param part the part
+	 */
 	public GImpactMeshShapePart(final StridingMeshInterface meshInterface, final int part) {
 		primitive_manager.meshInterface = meshInterface;
 		primitive_manager.part = part;
@@ -108,6 +109,11 @@ public class GImpactMeshShapePart extends GImpactShapeInterface {
 		return primitive_manager;
 	}
 
+	/**
+	 * Gets the trimesh primitive manager.
+	 *
+	 * @return the trimesh primitive manager
+	 */
 	TrimeshPrimitiveManager getTrimeshPrimitiveManager() {
 		return primitive_manager;
 	}
@@ -181,10 +187,22 @@ public class GImpactMeshShapePart extends GImpactShapeInterface {
 		assert false;
 	}
 
+	/**
+	 * Gets the vertex count.
+	 *
+	 * @return the vertex count
+	 */
 	public int getVertexCount() {
 		return primitive_manager.get_vertex_count();
 	}
 
+	/**
+	 * Gets the vertex.
+	 *
+	 * @param vertex_index the vertex index
+	 * @param vertex the vertex
+	 * @return the vertex
+	 */
 	public void getVertex(final int vertex_index, final Vector3f vertex) {
 		primitive_manager.get_vertex(vertex_index, vertex);
 	}
@@ -212,6 +230,11 @@ public class GImpactMeshShapePart extends GImpactShapeInterface {
 		return out;
 	}
 
+	/**
+	 * Gets the part.
+	 *
+	 * @return the part
+	 */
 	public int getPart() {
 		return primitive_manager.part;
 	}

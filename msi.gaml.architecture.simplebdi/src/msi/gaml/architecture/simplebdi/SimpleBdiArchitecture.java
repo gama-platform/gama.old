@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SimpleBdiArchitecture.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SimpleBdiArchitecture.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import java.util.ArrayList;
@@ -37,6 +35,9 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class SimpleBdiArchitecture.
+ */
 @vars ({ @variable (
 		name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_PLANS,
 		type = IType.FLOAT,
@@ -209,80 +210,205 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitecture extends ReflexArchitecture {
 
+	/** The Constant SIMPLE_BDI. */
 	public static final String SIMPLE_BDI = "simple_bdi";
+	
+	/** The Constant PLAN. */
 	public static final String PLAN = "plan";
+	
+	/** The Constant PRIORITY. */
 	public static final String PRIORITY = "priority";
+	
+	/** The Constant FINISHEDWHEN. */
 	public static final String FINISHEDWHEN = "finished_when";
+	
+	/** The Constant PERSISTENCE_COEFFICIENT_PLANS. */
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
+	
+	/** The Constant PERSISTENCE_COEFFICIENT_INTENTIONS. */
 	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";
+	
+	/** The Constant USE_EMOTIONS_ARCHITECTURE. */
 	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
+	
+	/** The Constant USE_SOCIAL_ARCHITECTURE. */
 	public static final String USE_SOCIAL_ARCHITECTURE = "use_social_architecture";
+	
+	/** The Constant USE_PERSONALITY. */
 	public static final String USE_PERSONALITY = "use_personality";
+	
+	/** The Constant USE_PERSISTENCE. */
 	public static final String USE_PERSISTENCE = "use_persistence";
+	
+	/** The Constant USE_NORMS. */
 	public static final String USE_NORMS = "use_norms";
+	
+	/** The Constant OBEDIENCE. */
 	public static final String OBEDIENCE = "obedience";
+	
+	/** The Constant CHARISMA. */
 	public static final String CHARISMA = "charisma";
+	
+	/** The Constant RECEPTIVITY. */
 	public static final String RECEPTIVITY = "receptivity";
+	
+	/** The Constant OPENNESS. */
 	public static final String OPENNESS = "openness";
+	
+	/** The Constant CONSCIENTIOUSNESS. */
 	public static final String CONSCIENTIOUSNESS = "conscientiousness";
+	
+	/** The Constant EXTRAVERSION. */
 	public static final String EXTRAVERSION = "extroversion";
+	
+	/** The Constant AGREEABLENESS. */
 	public static final String AGREEABLENESS = "agreeableness";
+	
+	/** The Constant NEUROTISM. */
 	public static final String NEUROTISM = "neurotism";
 
+	/** The Constant PROBABILISTIC_CHOICE. */
 	public static final String PROBABILISTIC_CHOICE = "probabilistic_choice";
+	
+	/** The Constant INSTANTANEAOUS. */
 	public static final String INSTANTANEAOUS = "instantaneous";
 
+	/** The Constant LAST_THOUGHTS. */
 	// INFORMATION THAT CAN BE DISPLAYED
 	public static final String LAST_THOUGHTS = "thinking";
+	
+	/** The Constant LAST_THOUGHTS_SIZE. */
 	public static final Integer LAST_THOUGHTS_SIZE = 5;
 
+	/** The Constant EMOTION. */
 	public static final String EMOTION = "emotion";
+	
+	/** The Constant SOCIALLINK. */
 	public static final String SOCIALLINK = "social_link";
+	
+	/** The Constant PREDICATE. */
 	public static final String PREDICATE = "predicate";
+	
+	/** The Constant PREDICATE_NAME. */
 	public static final String PREDICATE_NAME = "name";
+	
+	/** The Constant PREDICATE_VALUE. */
 	public static final String PREDICATE_VALUE = "value";
+	
+	/** The Constant PREDICATE_PRIORITY. */
 	public static final String PREDICATE_PRIORITY = "priority";
+	
+	/** The Constant PREDICATE_PARAMETERS. */
 	public static final String PREDICATE_PARAMETERS = "parameters";
+	
+	/** The Constant PREDICATE_ONHOLD. */
 	public static final String PREDICATE_ONHOLD = "on_hold_until";
+	
+	/** The Constant PREDICATE_TODO. */
 	public static final String PREDICATE_TODO = "todo";
+	
+	/** The Constant PREDICATE_SUBINTENTIONS. */
 	public static final String PREDICATE_SUBINTENTIONS = "subintentions";
+	
+	/** The Constant PREDICATE_DATE. */
 	public static final String PREDICATE_DATE = "date";
+	
+	/** The Constant BELIEF_BASE. */
 	public static final String BELIEF_BASE = "belief_base";
+	
+	/** The Constant IDEAL_BASE. */
 	public static final String IDEAL_BASE = "ideal_base";
+	
+	/** The Constant REMOVE_DESIRE_AND_INTENTION. */
 	public static final String REMOVE_DESIRE_AND_INTENTION = "desire_also";
+	
+	/** The Constant DESIRE_BASE. */
 	public static final String DESIRE_BASE = "desire_base";
+	
+	/** The Constant OBLIGATION_BASE. */
 	public static final String OBLIGATION_BASE = "obligation_base";
+	
+	/** The Constant INTENTION_BASE. */
 	public static final String INTENTION_BASE = "intention_base";
+	
+	/** The Constant EMOTION_BASE. */
 	public static final String EMOTION_BASE = "emotion_base";
+	
+	/** The Constant SOCIALLINK_BASE. */
 	public static final String SOCIALLINK_BASE = "social_link_base";
+	
+	/** The Constant EVERY_VALUE. */
 	public static final String EVERY_VALUE = "every_possible_value";
+	
+	/** The Constant PLAN_BASE. */
 	public static final String PLAN_BASE = "plan_base";
+	
+	/** The Constant NORM_BASE. */
 	public static final String NORM_BASE = "norm_base";
+	
+	/** The Constant SANCTION_BASE. */
 	public static final String SANCTION_BASE = "sanction_base";
+	
+	/** The Constant CURRENT_PLAN. */
 	public static final String CURRENT_PLAN = "current_plan";
+	
+	/** The Constant CURRENT_NORM. */
 	public static final String CURRENT_NORM = "current_norm";
+	
+	/** The Constant UNCERTAINTY_BASE. */
 	public static final String UNCERTAINTY_BASE = "uncertainty_base";
+	
+	/** The Constant LAW_BASE. */
 	public static final String LAW_BASE = "law_base";
 
 	// WARNING
 	// AD: These values depend on the scope (i.e. the agent)
 	// An architecture should be stateless and stock the scope dependent values
 	// in the
+	/** The plans. */
 	// agent(s).
 	protected final List<BDIPlan> _plans = new ArrayList<>();
+	
+	/** The perceptions. */
 	protected final List<PerceiveStatement> _perceptions = new ArrayList<>();
+	
+	/** The rules. */
 	protected final List<RuleStatement> _rules = new ArrayList<>();
+	
+	/** The coping. */
 	protected final List<CopingStatement> _coping = new ArrayList<>();
+	
+	/** The laws. */
 	protected final List<LawStatement> _laws = new ArrayList<>();
+	
+	/** The norms. */
 	protected final List<Norm> _norms = new ArrayList<>();
+	
+	/** The sanctions. */
 	protected final List<Sanction> _sanctions = new ArrayList<>();
+	
+	/** The plans number. */
 	protected int _plansNumber = 0;
+	
+	/** The perception number. */
 	protected int _perceptionNumber = 0;
+	
+	/** The iscurrentplaninstantaneous. */
 	protected boolean iscurrentplaninstantaneous = false;
+	
+	/** The laws number. */
 	protected int _lawsNumber = 0;
+	
+	/** The rules number. */
 	protected int _rulesNumber = 0;
+	
+	/** The coping number. */
 	protected int _copingNumber = 0;
+	
+	/** The norm number. */
 	protected int _normNumber = 0;
+	
+	/** The sanction number. */
 	protected int _sanctionNumber = 0;
 
 	@Override
@@ -405,6 +531,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return result;
 	}
 
+	/**
+	 * Execute plans.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	protected final Object executePlans(final IScope scope) {
 		Object result = null;
 		if (_plansNumber > 0 || _normNumber > 0) {
@@ -595,6 +727,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return result;
 	}
 
+	/**
+	 * Select desire with highest priority.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	protected final Boolean selectDesireWithHighestPriority(final IScope scope) {
 		// Réduire la liste des désires potentiellement intentionable en fonction des valeurs des plans
 		final IAgent agent = getCurrentAgent(scope);
@@ -757,6 +895,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Select obligation with highest priority.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	protected final Boolean selectObligationWithHighestPriority(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean is_probabilistic_choice = scope.hasArg(PROBABILISTIC_CHOICE)
@@ -904,6 +1048,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Select executable plan with highest priority.
+	 *
+	 * @param scope the scope
+	 * @return the BDI plan
+	 */
 	// Faire la même chose pour choisir la norm à appliquer, en l'appelant avant.
 	protected final BDIPlan selectExecutablePlanWithHighestPriority(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
@@ -975,6 +1125,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return resultStatement;
 	}
 
+	/**
+	 * Select executable norm with highest priority.
+	 *
+	 * @param scope the scope
+	 * @return the norm
+	 */
 	protected final Norm selectExecutableNormWithHighestPriority(final IScope scope) {
 		// Doit sélectionner une norme sociale ou une norme obligatoire
 		final IAgent agent = getCurrentAgent(scope);
@@ -1083,6 +1239,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return resultStatement;
 	}
 
+	/**
+	 * Update life time predicates.
+	 *
+	 * @param scope the scope
+	 */
 	protected void updateLifeTimePredicates(final IScope scope) {
 		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
 			mental.isUpdated = false;
@@ -1131,6 +1292,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * List beliefs life time null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<MentalState> listBeliefsLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<>();
 		for (final MentalState mental : getBase(scope, BELIEF_BASE)) {
@@ -1141,6 +1308,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * List desires life time null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<MentalState> listDesiresLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<>();
 		for (final MentalState mental : getBase(scope, DESIRE_BASE)) {
@@ -1151,6 +1324,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * List intentions life time null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<MentalState> listIntentionsLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<>();
 		for (final MentalState mental : getBase(scope, INTENTION_BASE)) {
@@ -1161,6 +1340,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * List uncertainty life time null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<MentalState> listUncertaintyLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<>();
 		for (final MentalState mental : getBase(scope, UNCERTAINTY_BASE)) {
@@ -1171,6 +1356,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * List obligation life time null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<MentalState> listObligationLifeTimeNull(final IScope scope) {
 		final List<MentalState> tempPred = new ArrayList<>();
 		for (final MentalState mental : getBase(scope, OBLIGATION_BASE)) {
@@ -1181,6 +1372,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * List executable plans.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
 		final List<SimpleBdiPlanStatement> plans = new ArrayList<>();
 		final List<BDIPlan> plansCopy = new ArrayList(_plans);
@@ -1205,6 +1402,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return plans;
 	}
 
+	/**
+	 * List executable norms.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	protected final List<NormStatement> listExecutableNorms(final IScope scope) {
 		final List<NormStatement> norms = new ArrayList<>();
 		final List<Norm> normsCopy = new ArrayList(_norms);
@@ -1247,12 +1450,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * Gets the thoughts.
+	 *
+	 * @param scope the scope
+	 * @return the thoughts
+	 */
 	public IList<String> getThoughts(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final IList<String> thoughts = (IList<String>) agent.getAttribute(LAST_THOUGHTS);
 		return thoughts;
 	}
 
+	/**
+	 * Adds the thoughts.
+	 *
+	 * @param scope the scope
+	 * @param think the think
+	 * @return the i list
+	 */
 	public IList<String> addThoughts(final IScope scope, final String think) {
 		final IAgent agent = getCurrentAgent(scope);
 		final IList<String> thoughts = (IList<String>) agent.getAttribute(LAST_THOUGHTS);
@@ -1265,6 +1481,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return newthoughts;
 	}
 
+	/**
+	 * Test on hold.
+	 *
+	 * @param scope the scope
+	 * @param intention the intention
+	 * @return true, if successful
+	 */
 	public boolean testOnHold(final IScope scope, final MentalState intention) {
 		if (intention == null) { return false; }
 		if (intention.getPredicate() == null) { return false; }
@@ -1364,6 +1587,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the plans.
+	 *
+	 * @param scope the scope
+	 * @return the plans
+	 */
 	@action (
 			name = "get_plans",
 			doc = @doc (
@@ -1375,6 +1604,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the plan.
+	 *
+	 * @param scope the scope
+	 * @return the plan
+	 */
 	// faire des actions get_plan("name") et is_current_plan("name")
 	@action (
 			name = "get_plan",
@@ -1395,6 +1630,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks if is current plan.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "is_current_plan",
 			args = { @arg (
@@ -1414,6 +1655,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Gets the current plans.
+	 *
+	 * @param scope the scope
+	 * @return the current plans
+	 */
 	@action (
 			name = "get_current_plan",
 			doc = @doc (
@@ -1426,75 +1673,184 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return result;
 	}
 
+	/**
+	 * Gets the laws.
+	 *
+	 * @param scope the scope
+	 * @return the laws
+	 */
 	public static List<LawStatement> getLaws(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(LAW_BASE) ? scope.getListArg(LAW_BASE) : (List<LawStatement>) agent.getAttribute(LAW_BASE);
 	}
 
+	/**
+	 * Gets the norms.
+	 *
+	 * @param scope the scope
+	 * @return the norms
+	 */
 	public static List<Norm> getNorms(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(NORM_BASE) ? scope.getListArg(NORM_BASE) : (List<Norm>) agent.getAttribute(NORM_BASE);
 	}
 
+	/**
+	 * Gets the sanctions.
+	 *
+	 * @param scope the scope
+	 * @return the sanctions
+	 */
 	public static List<Sanction> getSanctions(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(SANCTION_BASE) ? scope.getListArg(SANCTION_BASE)
 				: (List<Sanction>) agent.getAttribute(SANCTION_BASE);
 	}
 
+	/**
+	 * Gets the base.
+	 *
+	 * @param scope the scope
+	 * @param basename the basename
+	 * @return the base
+	 */
 	public static IList<MentalState> getBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<MentalState>) agent.getAttribute(basename);
 	}
 
+	/**
+	 * Gets the emotion base.
+	 *
+	 * @param scope the scope
+	 * @param basename the basename
+	 * @return the emotion base
+	 */
 	public static IList<Emotion> getEmotionBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<Emotion>) agent.getAttribute(basename);
 	}
 
+	/**
+	 * Gets the social base.
+	 *
+	 * @param scope the scope
+	 * @param basename the basename
+	 * @return the social base
+	 */
 	public static IList<SocialLink> getSocialBase(final IScope scope, final String basename) {
 		final IAgent agent = scope.getAgent();
 		return scope.hasArg(basename) ? scope.getListArg(basename) : (IList<SocialLink>) agent.getAttribute(basename);
 	}
 
+	/**
+	 * Removes the from base.
+	 *
+	 * @param scope the scope
+	 * @param predicateItem the predicate item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean removeFromBase(final IScope scope, final MentalState predicateItem,
 			final String factBaseName) {
 		final IList<MentalState> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
 	}
 
+	/**
+	 * Removes the from base.
+	 *
+	 * @param scope the scope
+	 * @param emotionItem the emotion item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean removeFromBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
 		final IList<Emotion> factBase = getEmotionBase(scope, factBaseName);
 		return factBase.remove(emotionItem);
 	}
 
+	/**
+	 * Removes the from base.
+	 *
+	 * @param scope the scope
+	 * @param socialItem the social item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean removeFromBase(final IScope scope, final SocialLink socialItem, final String factBaseName) {
 		final IList<SocialLink> factBase = getSocialBase(scope, factBaseName);
 		return factBase.remove(socialItem);
 	}
 
+	/**
+	 * Removes the from base.
+	 *
+	 * @param scope the scope
+	 * @param normItem the norm item
+	 * @return true, if successful
+	 */
 	public static boolean removeFromBase(final IScope scope, final Norm normItem) {
 		final List<Norm> factBase = getNorms(scope);
 		return factBase.remove(normItem);
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param mentalItem the mental item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final MentalState mentalItem, final String factBaseName) {
 		return addToBase(scope, mentalItem, getBase(scope, factBaseName));
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param emotionItem the emotion item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
 		return addToBase(scope, emotionItem, getEmotionBase(scope, factBaseName));
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param socialItem the social item
+	 * @param factBaseName the fact base name
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final SocialLink socialItem, final String factBaseName) {
 		return addToBase(scope, socialItem, getSocialBase(scope, factBaseName));
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param normItem the norm item
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final Norm normItem) {
 		final List<Norm> factBase = getNorms(scope);
 		return factBase.add(normItem);
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param mentalItem the mental item
+	 * @param factBase the fact base
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final MentalState mentalItem,
 			final IList<MentalState> factBase) {
 		if (!factBase.contains(mentalItem)) {
@@ -1506,6 +1862,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param predicateItem the predicate item
+	 * @param factBase the fact base
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final IList<Emotion> factBase) {
 		factBase.remove(predicateItem);
 		// if(!factBase.contains(predicateItem)){
@@ -1514,6 +1878,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		// return false;
 	}
 
+	/**
+	 * Adds the to base.
+	 *
+	 * @param scope the scope
+	 * @param socialItem the social item
+	 * @param factBase the fact base
+	 * @return true, if successful
+	 */
 	public static boolean addToBase(final IScope scope, final SocialLink socialItem, final IList<SocialLink> factBase) {
 		factBase.remove(socialItem);
 		// if(!factBase.contains(socialItem)){
@@ -1523,6 +1895,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	// le add belief crée les émotion joie, sadness, satisfaction, disapointment, relief, fear_confirmed, pride, shame,
+	/**
+	 * Adds the belief.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	// admiration, reproach
 	public static Boolean addBelief(final IScope scope, final MentalState predicateDirect) {
 		final Boolean use_emotion_architecture =
@@ -1595,6 +1974,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim add belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_belief",
 			args = { @arg (
@@ -1642,6 +2028,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add directly belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_directly_belief",
 			args = { @arg (
@@ -1664,6 +2057,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add belief mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_belief_mental_state",
 			args = { @arg (
@@ -1711,6 +2111,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add belief emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// va déclencher les émotions happy_for, sorry_for, resentment et gloating
 	@action (
 			name = "add_belief_emotion",
@@ -1759,15 +2166,36 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Checks for belief.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	public static Boolean hasBelief(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, BELIEF_BASE).contains(predicateDirect);
 
 	}
 
+	/**
+	 * Checks for desire.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	public static Boolean hasDesire(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, DESIRE_BASE).contains(predicateDirect);
 	}
 
+	/**
+	 * Prim test belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_belief",
 			args = { @arg (
@@ -1787,6 +2215,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Checks for belief name.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_belief_with_name",
 			args = { @arg (
@@ -1807,6 +2242,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Prim test belief mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_belief_mental_state",
 			args = { @arg (
@@ -1826,6 +2268,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Gets the belief.
+	 *
+	 * @param scope the scope
+	 * @return the belief
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_belief",
 			args = { @arg (
@@ -1853,6 +2302,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the belief mental state.
+	 *
+	 * @param scope the scope
+	 * @return the belief mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_belief_mental_state",
 			args = { @arg (
@@ -1879,6 +2335,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the belief emotion.
+	 *
+	 * @param scope the scope
+	 * @return the belief emotion
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_belief_emotion",
 			args = { @arg (
@@ -1905,6 +2368,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the belief name.
+	 *
+	 * @param scope the scope
+	 * @return the belief name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_belief_with_name",
 			args = { @arg (
@@ -1928,6 +2398,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the beliefs name.
+	 *
+	 * @param scope the scope
+	 * @return the beliefs name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_beliefs_with_name",
 			args = { @arg (
@@ -1952,6 +2429,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the beliefs.
+	 *
+	 * @param scope the scope
+	 * @return the beliefs
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_beliefs",
 			args = { @arg (
@@ -1982,6 +2466,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the beliefs mental state.
+	 *
+	 * @param scope the scope
+	 * @return the beliefs mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_beliefs_metal_state",
 			args = { @arg (
@@ -2009,6 +2500,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Iscurrent intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "is_current_intention",
 			args = { @arg (
@@ -2035,6 +2533,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Iscurrent intention mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "is_current_intention_mental_state",
 			args = { @arg (
@@ -2056,6 +2561,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Current intention.
+	 *
+	 * @param scope the scope
+	 * @return the mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_current_intention",
 			doc = @doc (
@@ -2069,6 +2581,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Prim test desire.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_desire",
 			args = { @arg (
@@ -2090,6 +2609,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Checks for desire name.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_desire_with_name",
 			args = { @arg (
@@ -2110,6 +2636,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Prim test desire mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_desire_mental_state",
 			args = { @arg (
@@ -2131,6 +2664,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim on hold intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "current_intention_on_hold",
 			args = { @arg (
@@ -2173,6 +2713,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Adds the sub intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_subintention",
 			args = { @arg (
@@ -2225,6 +2772,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Adds the desire.
+	 *
+	 * @param scope the scope
+	 * @param superPredicate the super predicate
+	 * @param predicate the predicate
+	 * @return the boolean
+	 */
 	public static Boolean addDesire(final IScope scope, final MentalState superPredicate, final MentalState predicate) {
 		if (superPredicate != null && superPredicate.getPredicate() != null) {
 			if (superPredicate.getPredicate().getSubintentions() == null) {
@@ -2241,6 +2796,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim add desire.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_desire",
 			args = { @arg (
@@ -2289,6 +2851,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim add directly desire.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_directly_desire",
 			args = { @arg (
@@ -2311,6 +2880,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add desire mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_desire_mental_state",
 			args = { @arg (
@@ -2360,6 +2936,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim add desire emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_desire_emotion",
 			args = { @arg (
@@ -2409,6 +2992,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Gets the desire.
+	 *
+	 * @param scope the scope
+	 * @return the desire
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desire",
 			args = { @arg (
@@ -2431,6 +3021,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the desire mental state.
+	 *
+	 * @param scope the scope
+	 * @return the desire mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desire_mental_state",
 			args = { @arg (
@@ -2455,6 +3052,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the desires.
+	 *
+	 * @param scope the scope
+	 * @return the desires
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desires",
 			args = { @arg (
@@ -2480,6 +3084,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the desires mental state.
+	 *
+	 * @param scope the scope
+	 * @return the desires mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desires_mental_state",
 			args = { @arg (
@@ -2505,6 +3116,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the desire name.
+	 *
+	 * @param scope the scope
+	 * @return the desire name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desire_with_name",
 			args = { @arg (
@@ -2528,6 +3146,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the desires name.
+	 *
+	 * @param scope the scope
+	 * @return the desires name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_desires_with_name",
 			args = { @arg (
@@ -2552,10 +3177,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Removes the belief.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeBelief(final IScope scope, final MentalState pred) {
 		return getBase(scope, BELIEF_BASE).remove(pred);
 	}
 
+	/**
+	 * Prim remove belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_belief",
 			args = { @arg (
@@ -2577,6 +3216,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove belief mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_belief_mental_state",
 			args = { @arg (
@@ -2598,6 +3244,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim place belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "replace_belief",
 			args = { @arg (
@@ -2659,6 +3312,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return ok;
 	}
 
+	/**
+	 * Removes the desire.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeDesire(final IScope scope, final MentalState pred) {
 		getBase(scope, DESIRE_BASE).remove(pred);
 		getBase(scope, INTENTION_BASE).remove(pred);
@@ -2683,6 +3343,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim remove desire.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_desire",
 			args = { @arg (
@@ -2704,6 +3371,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove desire mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_desire_mental_state",
 			args = { @arg (
@@ -2725,6 +3399,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim add intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_intention",
 			args = { @arg (
@@ -2768,6 +3449,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add intention mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_intention_mental_state",
 			args = { @arg (
@@ -2811,6 +3499,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add intention emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_intention_emotion",
 			args = { @arg (
@@ -2854,6 +3549,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the intention.
+	 *
+	 * @param scope the scope
+	 * @return the intention
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intention",
 			args = { @arg (
@@ -2876,6 +3578,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the intention mental state.
+	 *
+	 * @param scope the scope
+	 * @return the intention mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intention_mental_state",
 			args = { @arg (
@@ -2900,6 +3609,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the intentions.
+	 *
+	 * @param scope the scope
+	 * @return the intentions
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intentions",
 			args = { @arg (
@@ -2925,6 +3641,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the intentions mental state.
+	 *
+	 * @param scope the scope
+	 * @return the intentions mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intentions_mental_state",
 			args = { @arg (
@@ -2950,6 +3673,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Gets the intention name.
+	 *
+	 * @param scope the scope
+	 * @return the intention name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intention_with_name",
 			args = { @arg (
@@ -2973,6 +3703,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the intentions name.
+	 *
+	 * @param scope the scope
+	 * @return the intentions name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_intentions_with_name",
 			args = { @arg (
@@ -2997,6 +3734,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return predicates;
 	}
 
+	/**
+	 * Removes the intention.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeIntention(final IScope scope, final MentalState pred) {
 		getBase(scope, INTENTION_BASE).remove(pred);
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
@@ -3018,6 +3762,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim remove intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_intention",
 			args = { @arg (
@@ -3077,6 +3828,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove intention mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_intention_mental_state",
 			args = { @arg (
@@ -3112,6 +3870,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim clear belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_beliefs",
 			doc = @doc (
@@ -3123,6 +3887,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim clear desire.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_desires",
 			doc = @doc (
@@ -3134,6 +3904,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim clear intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_intentions",
 			doc = @doc (
@@ -3146,12 +3922,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Clear intention.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	public static Boolean clearIntention(final IScope scope) {
 		getBase(scope, INTENTION_BASE).clear();
 		scope.getAgent().setAttribute(CURRENT_PLAN, null);
 		return true;
 	}
 
+	/**
+	 * Prim remove all belief.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_all_beliefs",
 			args = { @arg (
@@ -3174,6 +3963,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim clear emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_emotions",
 			doc = @doc (
@@ -3185,6 +3980,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Update emotions intensity.
+	 *
+	 * @param scope the scope
+	 */
 	protected void updateEmotionsIntensity(final IScope scope) {
 		for (final Emotion emo : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)) {
 			emo.decayIntensity();
@@ -3194,6 +3994,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Compute emotions.
+	 *
+	 * @param scope the scope
+	 */
 	protected void computeEmotions(final IScope scope) {
 		// Etape 0, demander à l'utilisateur s'il veut ou non utiliser cette
 		// architecture
@@ -3268,6 +4073,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * Creates the joy from predicate.
+	 *
+	 * @param scope the scope
+	 * @param predTest the pred test
+	 */
 	// va démarrer le calcul de gratification , remorse, anger et gratitude
 	private static void createJoyFromPredicate(final IScope scope, final MentalState predTest) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
@@ -3391,6 +4202,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * Creates the hope from mental state.
+	 *
+	 * @param scope the scope
+	 * @param predTest the pred test
+	 */
 	private static void createHopeFromMentalState(final IScope scope, final MentalState predTest) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -3547,6 +4364,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 	// }
+	/**
+	 * Creates the satisfaction from mental state.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 */
 	//
 	private static void createSatisfactionFromMentalState(final IScope scope, final MentalState predicateDirect) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
@@ -3928,6 +4751,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * Creates the happy for from mental state.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 */
 	private static void createHappyForFromMentalState(final IScope scope, final MentalState predicateDirect) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -4039,6 +4868,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Creates the emotions related to others.
+	 *
+	 * @param scope the scope
+	 */
 	private void createEmotionsRelatedToOthers(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
@@ -4116,6 +4950,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Creates the pride from mental state.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 */
 	private static void createPrideFromMentalState(final IScope scope, final MentalState predicateDirect) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -4308,6 +5148,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * Creates the gratification gratitude from joy.
+	 *
+	 * @param scope the scope
+	 * @param emo the emo
+	 */
 	private static void createGratificationGratitudeFromJoy(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -4362,6 +5208,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Creates the remorse anger from sadness.
+	 *
+	 * @param scope the scope
+	 * @param emo the emo
+	 */
 	private static void createRemorseAngerFromSadness(final IScope scope, final Emotion emo) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -4523,6 +5375,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// }
 	// }
 
+	/**
+	 * List emotions null.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<Emotion> listEmotionsNull(final IScope scope) {
 		final List<Emotion> tempPred = new ArrayList<>();
 		for (final Emotion pred : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)) {
@@ -4533,6 +5391,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * Prim add emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_emotion",
 			args = { @arg (
@@ -4549,6 +5414,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addEmotion(scope, emotionDirect);
 	}
 
+	/**
+	 * Adds the emotion.
+	 *
+	 * @param scope the scope
+	 * @param emo the emo
+	 * @return true, if successful
+	 */
 	public static boolean addEmotion(final IScope scope, final Emotion emo) {
 		Emotion newEmo = emo;
 		if (!emo.getNoIntensity() && hasEmotion(scope, emo)) {
@@ -4570,6 +5442,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addToBase(scope, newEmo, EMOTION_BASE);
 	}
 
+	/**
+	 * Prim test emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_emotion",
 			args = { @arg (
@@ -4587,6 +5466,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Checks for emotion name.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_emotion_with_name",
 			args = { @arg (
@@ -4607,10 +5493,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks for emotion.
+	 *
+	 * @param scope the scope
+	 * @param emo the emo
+	 * @return the boolean
+	 */
 	public static Boolean hasEmotion(final IScope scope, final Emotion emo) {
 		return getEmotionBase(scope, EMOTION_BASE).contains(emo);
 	}
 
+	/**
+	 * Gets the emotion.
+	 *
+	 * @param scope the scope
+	 * @return the emotion
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_emotion",
 			args = { @arg (
@@ -4632,6 +5532,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the emotion name.
+	 *
+	 * @param scope the scope
+	 * @return the emotion name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_emotion_with_name",
 			args = { @arg (
@@ -4653,6 +5560,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the emotion.
+	 *
+	 * @param scope the scope
+	 * @param emotionDirect the emotion direct
+	 * @return the emotion
+	 */
 	public static Emotion getEmotion(final IScope scope, final Emotion emotionDirect) {
 		for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 			if (emotionDirect.equals(emo)) { return emo; }
@@ -4660,10 +5574,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Removes the emotion.
+	 *
+	 * @param scope the scope
+	 * @param emo the emo
+	 * @return the boolean
+	 */
 	public static Boolean removeEmotion(final IScope scope, final Emotion emo) {
 		return getEmotionBase(scope, EMOTION_BASE).remove(emo);
 	}
 
+	/**
+	 * Prim remove emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_emotion",
 			args = { @arg (
@@ -4683,6 +5611,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	// Peut-être mettre un replace emotion.
 
+	/**
+	 * Adds the uncertainty.
+	 *
+	 * @param scope the scope
+	 * @param predicate the predicate
+	 * @return the boolean
+	 */
 	// Déclencher la création des émotions peur et espoir
 	public static Boolean addUncertainty(final IScope scope, final MentalState predicate) {
 		final Boolean use_emotion_architecture =
@@ -4714,6 +5649,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addToBase(scope, predicate, UNCERTAINTY_BASE);
 	}
 
+	/**
+	 * Prim add uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_uncertainty",
 			args = { @arg (
@@ -4757,6 +5699,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add directly uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_directly_uncertainty",
 			args = { @arg (
@@ -4779,6 +5728,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add uncertainty mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_uncertainty_mental_state",
 			args = { @arg (
@@ -4822,6 +5778,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add uncertainty emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_uncertainty_emotion",
 			args = { @arg (
@@ -4865,6 +5828,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Gets the uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the uncertainty
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_uncertainty",
 			args = { @arg (
@@ -4887,6 +5857,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the uncertainty mental state.
+	 *
+	 * @param scope the scope
+	 * @return the uncertainty mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_uncertainty_mental_state",
 			args = { @arg (
@@ -4909,10 +5886,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks for uncertainty.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	public static Boolean hasUncertainty(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, UNCERTAINTY_BASE).contains(predicateDirect);
 	}
 
+	/**
+	 * Prim test uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_uncertainty",
 			args = { @arg (
@@ -4932,6 +5923,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Checks for uncertainty name.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_uncertainty_with_name",
 			args = { @arg (
@@ -4952,6 +5950,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Prim test uncertainty mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_uncertainty_mental_state",
 			args = { @arg (
@@ -4971,10 +5976,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Removes the uncertainty.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeUncertainty(final IScope scope, final MentalState pred) {
 		return getBase(scope, UNCERTAINTY_BASE).remove(pred);
 	}
 
+	/**
+	 * Prim remove uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_uncertainty",
 			args = { @arg (
@@ -4994,6 +6013,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove uncertainty mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_uncertainty_mental_state",
 			args = { @arg (
@@ -5015,6 +6041,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	// Peut-être mettre plus tard un replace Uncertainty
 
+	/**
+	 * Prim clear uncertainty.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_uncertainties",
 			doc = @doc (
@@ -5026,11 +6058,25 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Adds the ideal.
+	 *
+	 * @param scope the scope
+	 * @param predicate the predicate
+	 * @return the boolean
+	 */
 	public static Boolean addIdeal(final IScope scope, final MentalState predicate) {
 		predicate.setOwner(scope.getAgent());
 		return addToBase(scope, predicate, IDEAL_BASE);
 	}
 
+	/**
+	 * Prim add ideal.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_ideal",
 			args = { @arg (
@@ -5074,6 +6120,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addIdeal(scope, temp);
 	}
 
+	/**
+	 * Prim add directly ideal.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_directly_ideal",
 			args = { @arg (
@@ -5096,6 +6149,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	}
 
+	/**
+	 * Prim add ideal mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_ideal_mental_state",
 			args = { @arg (
@@ -5139,6 +6199,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addIdeal(scope, temp);
 	}
 
+	/**
+	 * Prim add ideal emotion.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_ideal_emotion",
 			args = { @arg (
@@ -5182,6 +6249,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addIdeal(scope, temp);
 	}
 
+	/**
+	 * Gets the ideal.
+	 *
+	 * @param scope the scope
+	 * @return the ideal
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_ideal",
 			args = { @arg (
@@ -5204,6 +6278,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the ideal mental state.
+	 *
+	 * @param scope the scope
+	 * @return the ideal mental state
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_ideal_mental_state",
 			args = { @arg (
@@ -5226,10 +6307,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks for ideal.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	public static Boolean hasIdeal(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, IDEAL_BASE).contains(predicateDirect);
 	}
 
+	/**
+	 * Prim test ideal.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_ideal",
 			args = { @arg (
@@ -5249,6 +6344,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Checks for ideal name.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_ideal_with_name",
 			args = { @arg (
@@ -5269,6 +6371,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Prim test ideal mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_ideal_mental_state",
 			args = { @arg (
@@ -5288,10 +6397,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Removes the ideal.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeIdeal(final IScope scope, final MentalState pred) {
 		return getBase(scope, IDEAL_BASE).remove(pred);
 	}
 
+	/**
+	 * Prim remove ideal.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_ideal",
 			args = { @arg (
@@ -5311,6 +6434,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove ideal mental state.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_ideal_mental_state",
 			args = { @arg (
@@ -5330,6 +6460,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim clear ideal.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_ideals",
 			doc = @doc (
@@ -5341,6 +6477,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Adds the obligation.
+	 *
+	 * @param scope the scope
+	 * @param predicate the predicate
+	 * @return the boolean
+	 */
 	public static Boolean addObligation(final IScope scope, final MentalState predicate) {
 		predicate.setOwner(scope.getAgent());
 		clearIntention(scope);
@@ -5349,6 +6492,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addToBase(scope, predicate, OBLIGATION_BASE);
 	}
 
+	/**
+	 * Prim add obligation.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_obligation",
 			args = { @arg (
@@ -5391,6 +6541,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addObligation(scope, temp);
 	}
 
+	/**
+	 * Gets the obligation.
+	 *
+	 * @param scope the scope
+	 * @return the obligation
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_obligation",
 			args = { @arg (
@@ -5413,10 +6570,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks for obligation.
+	 *
+	 * @param scope the scope
+	 * @param predicateDirect the predicate direct
+	 * @return the boolean
+	 */
 	public static Boolean hasObligation(final IScope scope, final MentalState predicateDirect) {
 		return getBase(scope, OBLIGATION_BASE).contains(predicateDirect);
 	}
 
+	/**
+	 * Prim test obligation.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_obligation",
 			args = { @arg (
@@ -5436,10 +6607,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Removes the obligation.
+	 *
+	 * @param scope the scope
+	 * @param pred the pred
+	 * @return the boolean
+	 */
 	public static Boolean removeObligation(final IScope scope, final MentalState pred) {
 		return getBase(scope, OBLIGATION_BASE).remove(pred);
 	}
 
+	/**
+	 * Prim remove obligation.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_obligation",
 			args = { @arg (
@@ -5459,6 +6644,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim clear obligation.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_obligations",
 			doc = @doc (
@@ -5470,6 +6661,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim add social link.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "add_social_link",
 			args = { @arg (
@@ -5487,6 +6685,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return addSocialLink(scope, social);
 	}
 
+	/**
+	 * Adds the social link.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 * @return true, if successful
+	 */
 	public static boolean addSocialLink(final IScope scope, final SocialLink social) {
 		if (social.getLiking() >= -1.0 && social.getLiking() <= 1.0) {
 			if (social.getDominance() >= -1.0 && social.getDominance() <= 1.0) {
@@ -5500,6 +6705,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Gets the social link.
+	 *
+	 * @param scope the scope
+	 * @return the social link
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_social_link",
 			args = { @arg (
@@ -5518,6 +6730,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the social link with agent.
+	 *
+	 * @param scope the scope
+	 * @return the social link with agent
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "get_social_link_with_agent",
 			args = { @arg (
@@ -5535,6 +6754,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Gets the social link.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 * @return the social link
+	 */
 	public static SocialLink getSocialLink(final IScope scope, final SocialLink social) {
 		for (final SocialLink socialLink : getSocialBase(scope, SOCIALLINK_BASE)) {
 			if (socialLink.equals(social)) { return socialLink; }
@@ -5543,10 +6769,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return null;
 	}
 
+	/**
+	 * Checks for social link.
+	 *
+	 * @param scope the scope
+	 * @param socialDirect the social direct
+	 * @return the boolean
+	 */
 	public static Boolean hasSocialLink(final IScope scope, final SocialLink socialDirect) {
 		return getSocialBase(scope, SOCIALLINK_BASE).contains(socialDirect);
 	}
 
+	/**
+	 * Prim test social with agent.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_social_link",
 			args = { @arg (
@@ -5565,6 +6805,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim test social.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "has_social_link_with_agent",
 			args = { @arg (
@@ -5582,10 +6829,24 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Removes the social link.
+	 *
+	 * @param scope the scope
+	 * @param socialDirect the social direct
+	 * @return the boolean
+	 */
 	public static Boolean removeSocialLink(final IScope scope, final SocialLink socialDirect) {
 		return getSocialBase(scope, SOCIALLINK_BASE).remove(socialDirect);
 	}
 
+	/**
+	 * Prim remove social link with agent.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_social_link",
 			args = { @arg (
@@ -5604,6 +6865,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim remove social link.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "remove_social_link_with_agent",
 			args = { @arg (
@@ -5621,6 +6889,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim clear social links.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			name = "clear_social_links",
 			doc = @doc (
@@ -5632,6 +6906,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return true;
 	}
 
+	/**
+	 * Prim change liking.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "change_liking",
 			args = { @arg (
@@ -5667,6 +6948,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim change dominance.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "change_dominance",
 			args = { @arg (
@@ -5703,6 +6991,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim change solidarity.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "change_solidarity",
 			args = { @arg (
@@ -5739,6 +7034,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim change familiarity.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "change_familiarity",
 			args = { @arg (
@@ -5775,6 +7077,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * Prim change trust.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "change_trust",
 			args = { @arg (
@@ -5810,6 +7119,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	/**
+	 * List social agent dead.
+	 *
+	 * @param scope the scope
+	 * @return the list
+	 */
 	private List<SocialLink> listSocialAgentDead(final IScope scope) {
 		final List<SocialLink> tempPred = new ArrayList<>();
 		for (final SocialLink pred : getSocialBase(scope, SimpleBdiArchitecture.SOCIALLINK_BASE)) {
@@ -5820,6 +7135,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return tempPred;
 	}
 
+	/**
+	 * Update social links.
+	 *
+	 * @param scope the scope
+	 */
 	protected void updateSocialLinks(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_social_architecture = scope.hasArg(USE_SOCIAL_ARCHITECTURE)
@@ -5834,6 +7154,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Update social link.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 */
 	static public void updateSocialLink(final IScope scope, final SocialLink social) {
 		updateAppreciation(scope, social);
 		updateDominance(scope, social);
@@ -5843,6 +7169,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	// Lier les coeffiscient à la personnalité
 
+	/**
+	 * Update appreciation.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 */
 	static private void updateAppreciation(final IScope scope, final SocialLink social) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -5891,6 +7223,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		social.setLiking(appreciationModif);
 	}
 
+	/**
+	 * Update dominance.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 */
 	static private void updateDominance(final IScope scope, final SocialLink social) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -5948,6 +7286,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		GAMA.releaseScope(scopeAgentCause);
 	}
 
+	/**
+	 * Update solidarity.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 */
 	static private void updateSolidarity(final IScope scope, final SocialLink social) {
 		final Boolean use_personality = scope.hasArg(USE_PERSONALITY) ? scope.getBoolArg(USE_PERSONALITY)
 				: (Boolean) scope.getAgent().getAttribute(USE_PERSONALITY);
@@ -6069,6 +7413,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		// GAMA.releaseScope(scopeAgentCause);
 	}
 
+	/**
+	 * Update familiarity.
+	 *
+	 * @param scope the scope
+	 * @param social the social
+	 */
 	static private void updateFamiliarity(final IScope scope, final SocialLink social) {
 		Double familiarityModif = social.getFamiliarity();
 		familiarityModif = familiarityModif * (1 + social.getLiking());
@@ -6084,6 +7434,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		social.setFamiliarity(familiarityModif);
 	}
 
+	/**
+	 * Update norm violation.
+	 *
+	 * @param scope the scope
+	 */
 	public void updateNormViolation(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final Norm _persistentNorm = (Norm) agent.getAttribute(CURRENT_NORM);
@@ -6123,6 +7478,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	/**
+	 * Update norm lifetime.
+	 *
+	 * @param scope the scope
+	 */
 	public void updateNormLifetime(final IScope scope) {
 		for (final Norm tempNorm : getNorms(scope)) {
 			if (tempNorm != null) {

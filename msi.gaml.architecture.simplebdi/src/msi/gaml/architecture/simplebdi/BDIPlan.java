@@ -1,15 +1,13 @@
-/*********************************************************************************************
- * 
- * 
- * 'BDIPlan.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+/*******************************************************************************************************
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * BDIPlan.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IValue;
@@ -22,6 +20,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class BDIPlan.
+ */
 @vars ({ @variable (
 		name = "name",
 		type = IType.STRING,
@@ -55,46 +56,91 @@ import msi.gaml.types.Types;
 })
 public class BDIPlan implements IValue {
 
+	/** The planstatement. */
 	private SimpleBdiPlanStatement planstatement;
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	@getter ("name")
 	public String getName() {
 		return this.planstatement.getName();
 	}
 
+	/**
+	 * Gets the when.
+	 *
+	 * @return the when
+	 */
 	@getter ("todo")
 	public String getWhen() {
 		return this.planstatement._when.serialize(true);
 	}
 
+	/**
+	 * Gets the finished when.
+	 *
+	 * @return the finished when
+	 */
 	@getter (SimpleBdiArchitecture.FINISHEDWHEN)
 	public String getFinishedWhen() {
 		return this.planstatement._executedwhen.serialize(true);
 	}
 
+	/**
+	 * Gets the intention.
+	 *
+	 * @param scope the scope
+	 * @return the intention
+	 */
 	@getter (SimpleBdiPlanStatement.INTENTION)
 	public Predicate getIntention(final IScope scope) {
 		return (Predicate) this.planstatement._intention.value(scope);
 	}
 
+	/**
+	 * Gets the instantaneous.
+	 *
+	 * @return the instantaneous
+	 */
 	@getter (SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
 		return this.planstatement._instantaneous.serialize(true);
 	}
 
+	/**
+	 * Gets the plan statement.
+	 *
+	 * @return the plan statement
+	 */
 	public SimpleBdiPlanStatement getPlanStatement() {
 		return this.planstatement;
 	}
 
+	/**
+	 * Instantiates a new BDI plan.
+	 */
 	public BDIPlan() {
 		super();
 	}
 
+	/**
+	 * Instantiates a new BDI plan.
+	 *
+	 * @param statement the statement
+	 */
 	public BDIPlan(final SimpleBdiPlanStatement statement) {
 		super();
 		this.planstatement = statement;
 	}
 
+	/**
+	 * Sets the simple bdi plan statement.
+	 *
+	 * @param statement the new simple bdi plan statement
+	 */
 	public void setSimpleBdiPlanStatement(final SimpleBdiPlanStatement statement) {
 		this.planstatement = statement;
 
@@ -124,6 +170,12 @@ public class BDIPlan implements IValue {
 		return new BDIPlan(planstatement);
 	}
 
+	/**
+	 * Checks if is similar name.
+	 *
+	 * @param other the other
+	 * @return true, if is similar name
+	 */
 	public boolean isSimilarName(final BDIPlan other) {
 		if (this == other) { return true; }
 		if (other == null) { return false; }

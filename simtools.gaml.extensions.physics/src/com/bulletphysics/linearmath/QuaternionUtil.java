@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * QuaternionUtil.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -33,11 +26,24 @@ import com.bulletphysics.BulletGlobals;
  */
 public class QuaternionUtil {
 
+	/**
+	 * Gets the angle.
+	 *
+	 * @param q the q
+	 * @return the angle
+	 */
 	public static float getAngle(final Quat4f q) {
 		float s = 2f * (float) Math.acos(q.w);
 		return s;
 	}
 
+	/**
+	 * Sets the rotation.
+	 *
+	 * @param q the q
+	 * @param axis the axis
+	 * @param angle the angle
+	 */
 	public static void setRotation(final Quat4f q, final Vector3f axis, final float angle) {
 		float d = axis.length();
 		assert d != 0f;
@@ -45,6 +51,14 @@ public class QuaternionUtil {
 		q.set(axis.x * s, axis.y * s, axis.z * s, (float) Math.cos(angle * 0.5f));
 	}
 
+	/**
+	 * Shortest arc quat.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @param out the out
+	 * @return the quat 4 f
+	 */
 	// Game Programming Gems 2.10. make sure v0,v1 are normalized
 	public static Quat4f shortestArcQuat(final Vector3f v0, final Vector3f v1, final Quat4f out) {
 		Vector3f c = VECTORS.get();
@@ -65,6 +79,12 @@ public class QuaternionUtil {
 		return out;
 	}
 
+	/**
+	 * Mul.
+	 *
+	 * @param q the q
+	 * @param w the w
+	 */
 	public static void mul(final Quat4f q, final Vector3f w) {
 		float rx = q.w * w.x + q.y * w.z - q.z * w.y;
 		float ry = q.w * w.y + q.z * w.x - q.x * w.z;
@@ -73,6 +93,14 @@ public class QuaternionUtil {
 		q.set(rx, ry, rz, rw);
 	}
 
+	/**
+	 * Quat rotate.
+	 *
+	 * @param rotation the rotation
+	 * @param v the v
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	public static Vector3f quatRotate(final Quat4f rotation, final Vector3f v, final Vector3f out) {
 		Quat4f q = QUATS.get(rotation);
 		QuaternionUtil.mul(q, v);
@@ -86,12 +114,23 @@ public class QuaternionUtil {
 		return out;
 	}
 
+	/**
+	 * Inverse.
+	 *
+	 * @param q the q
+	 */
 	public static void inverse(final Quat4f q) {
 		q.x = -q.x;
 		q.y = -q.y;
 		q.z = -q.z;
 	}
 
+	/**
+	 * Inverse.
+	 *
+	 * @param q the q
+	 * @param src the src
+	 */
 	public static void inverse(final Quat4f q, final Quat4f src) {
 		q.x = -src.x;
 		q.y = -src.y;
@@ -99,6 +138,14 @@ public class QuaternionUtil {
 		q.w = src.w;
 	}
 
+	/**
+	 * Sets the euler.
+	 *
+	 * @param q the q
+	 * @param yaw the yaw
+	 * @param pitch the pitch
+	 * @param roll the roll
+	 */
 	public static void setEuler(final Quat4f q, final float yaw, final float pitch, final float roll) {
 		float halfYaw = yaw * 0.5f;
 		float halfPitch = pitch * 0.5f;

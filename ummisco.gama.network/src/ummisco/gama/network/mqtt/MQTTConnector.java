@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MQTTConnector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * MQTTConnector.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.network.mqtt;
 
 import java.util.Calendar;
@@ -28,24 +27,48 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 
+/**
+ * The Class MQTTConnector.
+ */
 public final class MQTTConnector extends Connector {
 
 	static {
 		DEBUG.OFF();
 	}
+	
+	/** The default user. */
 	public static String DEFAULT_USER = "gama_demo";
+	
+	/** The default local name. */
 	public static String DEFAULT_LOCAL_NAME = "gama-" + Calendar.getInstance().getTimeInMillis() + "@";
+	
+	/** The default password. */
 	public static String DEFAULT_PASSWORD = "gama_demo";
+	
+	/** The default host. */
 	public static String DEFAULT_HOST = "vmpams.ird.fr";
+	
+	/** The default port. */
 	public static String DEFAULT_PORT = "1935";
 
+	/** The send connection. */
 	protected MqttClient sendConnection = null;
+	
+	/** The simulation scope. */
 	protected IScope simulationScope;
 
+	/**
+	 * Instantiates a new MQTT connector.
+	 *
+	 * @param scope the scope
+	 */
 	public MQTTConnector(final IScope scope) {
 		this.simulationScope = scope;
 	}
 
+	/**
+	 * The Class Callback.
+	 */
 	class Callback implements MqttCallback {
 		@Override
 		public void connectionLost(final Throwable arg0) {

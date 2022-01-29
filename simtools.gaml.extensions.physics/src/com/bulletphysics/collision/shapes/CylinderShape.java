@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * CylinderShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -35,14 +28,26 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class CylinderShape extends BoxShape {
 
+	/** The up axis. */
 	protected int upAxis;
 
+	/**
+	 * Instantiates a new cylinder shape.
+	 *
+	 * @param halfExtents the half extents
+	 */
 	public CylinderShape(final Vector3f halfExtents) {
 		super(halfExtents);
 		upAxis = 1;
 		recalcLocalAabb();
 	}
 
+	/**
+	 * Instantiates a new cylinder shape.
+	 *
+	 * @param halfExtents the half extents
+	 * @param unused the unused
+	 */
 	protected CylinderShape(final Vector3f halfExtents, final boolean unused) {
 		super(halfExtents);
 	}
@@ -52,18 +57,54 @@ public class CylinderShape extends BoxShape {
 		_PolyhedralConvexShape_getAabb(t, aabbMin, aabbMax);
 	}
 
+	/**
+	 * Cylinder local support X.
+	 *
+	 * @param halfExtents the half extents
+	 * @param v the v
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	protected Vector3f cylinderLocalSupportX(final Vector3f halfExtents, final Vector3f v, final Vector3f out) {
 		return cylinderLocalSupport(halfExtents, v, 0, 1, 0, 2, out);
 	}
 
+	/**
+	 * Cylinder local support Y.
+	 *
+	 * @param halfExtents the half extents
+	 * @param v the v
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	protected Vector3f cylinderLocalSupportY(final Vector3f halfExtents, final Vector3f v, final Vector3f out) {
 		return cylinderLocalSupport(halfExtents, v, 1, 0, 1, 2, out);
 	}
 
+	/**
+	 * Cylinder local support Z.
+	 *
+	 * @param halfExtents the half extents
+	 * @param v the v
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	protected Vector3f cylinderLocalSupportZ(final Vector3f halfExtents, final Vector3f v, final Vector3f out) {
 		return cylinderLocalSupport(halfExtents, v, 2, 0, 2, 1, out);
 	}
 
+	/**
+	 * Cylinder local support.
+	 *
+	 * @param halfExtents the half extents
+	 * @param v the v
+	 * @param cylinderUpAxis the cylinder up axis
+	 * @param XX the xx
+	 * @param YY the yy
+	 * @param ZZ the zz
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	private Vector3f cylinderLocalSupport(final Vector3f halfExtents, final Vector3f v, final int cylinderUpAxis,
 			final int XX, final int YY, final int ZZ, final Vector3f out) {
 		// mapping depends on how cylinder local orientation is
@@ -131,10 +172,20 @@ public class CylinderShape extends BoxShape {
 		return BroadphaseNativeType.CYLINDER_SHAPE_PROXYTYPE;
 	}
 
+	/**
+	 * Gets the up axis.
+	 *
+	 * @return the up axis
+	 */
 	public int getUpAxis() {
 		return upAxis;
 	}
 
+	/**
+	 * Gets the radius.
+	 *
+	 * @return the radius
+	 */
 	public float getRadius() {
 		Vector3f tmp = getHalfExtentsWithMargin(VECTORS.get());
 		float result = tmp.x;

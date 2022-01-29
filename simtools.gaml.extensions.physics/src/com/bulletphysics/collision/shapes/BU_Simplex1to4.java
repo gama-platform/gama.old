@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * BU_Simplex1to4.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -34,27 +22,59 @@ import javax.vecmath.Vector3f;
  */
 public class BU_Simplex1to4 extends PolyhedralConvexShape {
 
+	/** The num vertices. */
 	protected int numVertices = 0;
+	
+	/** The vertices. */
 	protected Vector3f[] vertices = new Vector3f[4];
 
+	/**
+	 * Instantiates a new b U simplex 1 to 4.
+	 */
 	public BU_Simplex1to4() {
 	}
 
+	/**
+	 * Instantiates a new b U simplex 1 to 4.
+	 *
+	 * @param pt0 the pt 0
+	 */
 	public BU_Simplex1to4(Vector3f pt0) {
 		addVertex(pt0);
 	}
 
+	/**
+	 * Instantiates a new b U simplex 1 to 4.
+	 *
+	 * @param pt0 the pt 0
+	 * @param pt1 the pt 1
+	 */
 	public BU_Simplex1to4(Vector3f pt0, Vector3f pt1) {
 		addVertex(pt0);
 		addVertex(pt1);
 	}
 
+	/**
+	 * Instantiates a new b U simplex 1 to 4.
+	 *
+	 * @param pt0 the pt 0
+	 * @param pt1 the pt 1
+	 * @param pt2 the pt 2
+	 */
 	public BU_Simplex1to4(Vector3f pt0, Vector3f pt1, Vector3f pt2) {
 		addVertex(pt0);
 		addVertex(pt1);
 		addVertex(pt2);
 	}
 
+	/**
+	 * Instantiates a new b U simplex 1 to 4.
+	 *
+	 * @param pt0 the pt 0
+	 * @param pt1 the pt 1
+	 * @param pt2 the pt 2
+	 * @param pt3 the pt 3
+	 */
 	public BU_Simplex1to4(Vector3f pt0, Vector3f pt1, Vector3f pt2, Vector3f pt3) {
 		addVertex(pt0);
 		addVertex(pt1);
@@ -62,6 +82,9 @@ public class BU_Simplex1to4 extends PolyhedralConvexShape {
 		addVertex(pt3);
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		numVertices = 0;
 	}
@@ -71,6 +94,11 @@ public class BU_Simplex1to4 extends PolyhedralConvexShape {
 		return BroadphaseNativeType.TETRAHEDRAL_SHAPE_PROXYTYPE;
 	}
 	
+	/**
+	 * Adds the vertex.
+	 *
+	 * @param pt the pt
+	 */
 	public void addVertex(Vector3f pt) {
 		if (vertices[numVertices] == null) {
 			vertices[numVertices] = new Vector3f();
@@ -176,6 +204,12 @@ public class BU_Simplex1to4 extends PolyhedralConvexShape {
 	public void getPlane(Vector3f planeNormal, Vector3f planeSupport, int i) {
 	}
 	
+	/**
+	 * Gets the index.
+	 *
+	 * @param i the i
+	 * @return the index
+	 */
 	public int getIndex(int i) {
 		return 0;
 	}

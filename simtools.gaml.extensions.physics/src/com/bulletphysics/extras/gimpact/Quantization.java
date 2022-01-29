@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * Quantization.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -33,6 +23,16 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 class Quantization {
 
+	/**
+	 * Bt calc quantization parameters.
+	 *
+	 * @param outMinBound the out min bound
+	 * @param outMaxBound the out max bound
+	 * @param bvhQuantization the bvh quantization
+	 * @param srcMinBound the src min bound
+	 * @param srcMaxBound the src max bound
+	 * @param quantizationMargin the quantization margin
+	 */
 	public static void bt_calc_quantization_parameters(final Vector3f outMinBound, final Vector3f outMaxBound,
 			final Vector3f bvhQuantization, final Vector3f srcMinBound, final Vector3f srcMaxBound,
 			final float quantizationMargin) {
@@ -49,6 +49,15 @@ class Quantization {
 
 	}
 
+	/**
+	 * Bt quantize clamp.
+	 *
+	 * @param out the out
+	 * @param point the point
+	 * @param min_bound the min bound
+	 * @param max_bound the max bound
+	 * @param bvhQuantization the bvh quantization
+	 */
 	public static void bt_quantize_clamp(final short[] out, final Vector3f point, final Vector3f min_bound,
 			final Vector3f max_bound, final Vector3f bvhQuantization) {
 		Vector3f clampedPoint = VECTORS.get(point);
@@ -65,6 +74,15 @@ class Quantization {
 		VECTORS.release(v, clampedPoint);
 	}
 
+	/**
+	 * Bt unquantize.
+	 *
+	 * @param vecIn the vec in
+	 * @param offset the offset
+	 * @param bvhQuantization the bvh quantization
+	 * @param out the out
+	 * @return the vector 3 f
+	 */
 	public static Vector3f bt_unquantize(final short[] vecIn, final Vector3f offset, final Vector3f bvhQuantization,
 			final Vector3f out) {
 		out.set((vecIn[0] & 0xFFFF) / bvhQuantization.x, (vecIn[1] & 0xFFFF) / bvhQuantization.y,

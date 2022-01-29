@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * FIPAMessage.java, in msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'Message.java', in plugin 'msi.gaml.extensions.fipa', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
 import msi.gama.common.util.StringUtils;
@@ -100,6 +98,11 @@ public class FIPAMessage extends GamaMessage {
 		getData().setConversation(conversation);
 	}
 
+	/**
+	 * Gets the conversation.
+	 *
+	 * @return the conversation
+	 */
 	public Conversation getConversation() {
 		return getData().getConversation();
 	}
@@ -141,6 +144,11 @@ public class FIPAMessage extends GamaMessage {
 		getData().setContent((IList) content);
 	}
 
+	/**
+	 * Gets the message.
+	 *
+	 * @return the message
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -175,6 +183,11 @@ public class FIPAMessage extends GamaMessage {
 			getData().setSender(sender);
 	}
 
+	/**
+	 * Gets the performative.
+	 *
+	 * @return the performative
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -184,6 +197,11 @@ public class FIPAMessage extends GamaMessage {
 		return getData().getPerformative();
 	}
 
+	/**
+	 * Sets the performative.
+	 *
+	 * @param performative the new performative
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -224,14 +242,29 @@ public class FIPAMessage extends GamaMessage {
 		return m;
 	}
 
+	/**
+	 * Sets the receivers.
+	 *
+	 * @param receivers the new receivers
+	 */
 	public void setReceivers(final IList receivers) {
 		getData().setReceivers(receivers);
 	}
 
+	/**
+	 * Gets the performative name.
+	 *
+	 * @return the performative name
+	 */
 	public String getPerformativeName() {
 		return getData().getPerformativeName();
 	}
 
+	/**
+	 * Sets the conversation.
+	 *
+	 * @param conversation2 the new conversation
+	 */
 	public void setConversation(final Conversation conversation2) {
 		getData().setConversation(conversation2);
 

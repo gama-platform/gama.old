@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SingleEquationStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * SingleEquationStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import static msi.gama.common.interfaces.IKeyword.DIF2;
@@ -120,6 +119,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 @SuppressWarnings ({ "rawtypes" })
 public class SingleEquationStatement extends AbstractStatement {
 
+	/** The Constant orderNames. */
 	public static final Map<String, Integer> orderNames = GamaMapFactory.create();
 	static {
 		orderNames.put(ZERO, 0);
@@ -127,6 +127,9 @@ public class SingleEquationStatement extends AbstractStatement {
 		orderNames.put(DIF2, 2);
 	}
 
+	/**
+	 * The Class SIngleEquationSerializer.
+	 */
 	public static class SIngleEquationSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
@@ -136,6 +139,9 @@ public class SingleEquationStatement extends AbstractStatement {
 		}
 	}
 
+	/**
+	 * The Class SingleEquationValidator.
+	 */
 	public static class SingleEquationValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -171,48 +177,102 @@ public class SingleEquationStatement extends AbstractStatement {
 		}
 	}
 
+	/** The expression. */
 	private IExpression function, expression;
+	
+	/** The var. */
 	private final List<IExpression> var = new ArrayList<>();
+	
+	/** The var t. */
 	private IExpression var_t;
 
+	/**
+	 * Gets the function.
+	 *
+	 * @return the function
+	 */
 	public IExpression getFunction() {
 		return function;
 	}
 
+	/**
+	 * Sets the function.
+	 *
+	 * @param function the new function
+	 */
 	public void setFunction(final IExpression function) {
 		this.function = function;
 	}
 
+	/**
+	 * Gets the expression.
+	 *
+	 * @return the expression
+	 */
 	public IExpression getExpression() {
 		return expression;
 	}
 
+	/**
+	 * Sets the expression.
+	 *
+	 * @param expression the new expression
+	 */
 	public void setExpression(final IExpression expression) {
 		this.expression = expression;
 	}
 
+	/**
+	 * Gets the vars.
+	 *
+	 * @return the vars
+	 */
 	public List<IExpression> getVars() {
 		return var;
 	}
 
+	/**
+	 * Gets the var time.
+	 *
+	 * @return the var time
+	 */
 	public IExpression getVarTime() {
 		return var_t;
 	}
 
+	/**
+	 * Gets the var.
+	 *
+	 * @param index the index
+	 * @return the var
+	 */
 	public IExpression getVar(final int index) {
 		return var.get(index);
 	}
 
+	/**
+	 * Sets the var t.
+	 *
+	 * @param vt the new var t
+	 */
 	public void setVar_t(final IVarExpression vt) {
 		this.var_t = vt;
 	}
 
+	/**
+	 * Instantiates a new single equation statement.
+	 *
+	 * @param desc the desc
+	 */
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
 		function = getFacet(EQUATION_LEFT);
 		expression = getFacet(EQUATION_RIGHT);
 	}
 
+	/**
+	 * Establish var.
+	 */
 	public void establishVar() {
 		if (getOrder() == 0) { return; }
 		int i = 0;
@@ -256,6 +316,14 @@ public class SingleEquationStatement extends AbstractStatement {
 	// the var or var_t,
 	// whenever they are called.
 
+	/**
+	 * Diff.
+	 *
+	 * @param scope the scope
+	 * @param var the var
+	 * @param time the time
+	 * @return the double
+	 */
 	@operator (
 			value = DIFF,
 			concept = { IConcept.EQUATION, IConcept.MATH })
@@ -267,6 +335,14 @@ public class SingleEquationStatement extends AbstractStatement {
 		return Double.NaN;
 	}
 
+	/**
+	 * Diff 2.
+	 *
+	 * @param scope the scope
+	 * @param var the var
+	 * @param time the time
+	 * @return the double
+	 */
 	@operator (
 			value = DIF2,
 			concept = { IConcept.EQUATION, IConcept.MATH })

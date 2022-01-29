@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * RevoluteJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Mat22;
@@ -58,36 +45,86 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class RevoluteJoint extends Joint {
 
+  /** The m local anchor A. */
   // Solver shared
   protected final Vec2 m_localAnchorA = new Vec2();
+  
+  /** The m local anchor B. */
   protected final Vec2 m_localAnchorB = new Vec2();
+  
+  /** The m impulse. */
   private final Vec3 m_impulse = new Vec3();
+  
+  /** The m motor impulse. */
   private float m_motorImpulse;
 
+  /** The m enable motor. */
   private boolean m_enableMotor;
+  
+  /** The m max motor torque. */
   private float m_maxMotorTorque;
+  
+  /** The m motor speed. */
   private float m_motorSpeed;
 
+  /** The m enable limit. */
   private boolean m_enableLimit;
+  
+  /** The m reference angle. */
   protected float m_referenceAngle;
+  
+  /** The m lower angle. */
   private float m_lowerAngle;
+  
+  /** The m upper angle. */
   private float m_upperAngle;
 
+  /** The m index A. */
   // Solver temp
   private int m_indexA;
+  
+  /** The m index B. */
   private int m_indexB;
+  
+  /** The m r A. */
   private final Vec2 m_rA = new Vec2();
+  
+  /** The m r B. */
   private final Vec2 m_rB = new Vec2();
+  
+  /** The m local center A. */
   private final Vec2 m_localCenterA = new Vec2();
+  
+  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
+  
+  /** The m inv mass A. */
   private float m_invMassA;
+  
+  /** The m inv mass B. */
   private float m_invMassB;
+  
+  /** The m inv IA. */
   private float m_invIA;
+  
+  /** The m inv IB. */
   private float m_invIB;
+  
+  /** The m mass. */
   private final Mat33 m_mass = new Mat33(); // effective mass for point-to-point constraint.
+  
+  /** The m motor mass. */
   private float m_motorMass; // effective mass for motor/limit angular constraint.
+  
+  /** The m limit state. */
   private LimitState m_limitState;
 
+  /**
+   * Instantiates a new revolute joint.
+   *
+   * @param argWorld the arg world
+   * @param def the def
+   */
   protected RevoluteJoint(IWorldPool argWorld, RevoluteJointDef def) {
     super(argWorld, def);
     m_localAnchorA.set(def.localAnchorA);
@@ -442,14 +479,29 @@ public class RevoluteJoint extends Joint {
     return positionError <= Settings.linearSlop && angularError <= Settings.angularSlop;
   }
   
+  /**
+   * Gets the local anchor A.
+   *
+   * @return the local anchor A
+   */
   public Vec2 getLocalAnchorA() {
     return m_localAnchorA;
   }
   
+  /**
+   * Gets the local anchor B.
+   *
+   * @return the local anchor B
+   */
   public Vec2 getLocalAnchorB() {
     return m_localAnchorB;
   }
   
+  /**
+   * Gets the reference angle.
+   *
+   * @return the reference angle
+   */
   public float getReferenceAngle() {
     return m_referenceAngle;
   }
@@ -474,56 +526,112 @@ public class RevoluteJoint extends Joint {
     return inv_dt * m_impulse.z;
   }
 
+  /**
+   * Gets the joint angle.
+   *
+   * @return the joint angle
+   */
   public float getJointAngle() {
     final Body b1 = m_bodyA;
     final Body b2 = m_bodyB;
     return b2.m_sweep.a - b1.m_sweep.a - m_referenceAngle;
   }
 
+  /**
+   * Gets the joint speed.
+   *
+   * @return the joint speed
+   */
   public float getJointSpeed() {
     final Body b1 = m_bodyA;
     final Body b2 = m_bodyB;
     return b2.m_angularVelocity - b1.m_angularVelocity;
   }
 
+  /**
+   * Checks if is motor enabled.
+   *
+   * @return true, if is motor enabled
+   */
   public boolean isMotorEnabled() {
     return m_enableMotor;
   }
 
+  /**
+   * Enable motor.
+   *
+   * @param flag the flag
+   */
   public void enableMotor(boolean flag) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_enableMotor = flag;
   }
 
+  /**
+   * Gets the motor torque.
+   *
+   * @param inv_dt the inv dt
+   * @return the motor torque
+   */
   public float getMotorTorque(float inv_dt) {
     return m_motorImpulse * inv_dt;
   }
 
+  /**
+   * Sets the motor speed.
+   *
+   * @param speed the new motor speed
+   */
   public void setMotorSpeed(final float speed) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_motorSpeed = speed;
   }
 
+  /**
+   * Sets the max motor torque.
+   *
+   * @param torque the new max motor torque
+   */
   public void setMaxMotorTorque(final float torque) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_maxMotorTorque = torque;
   }
 
+  /**
+   * Gets the motor speed.
+   *
+   * @return the motor speed
+   */
   public float getMotorSpeed() {
     return m_motorSpeed;
   }
 
+  /**
+   * Gets the max motor torque.
+   *
+   * @return the max motor torque
+   */
   public float getMaxMotorTorque() {
     return m_maxMotorTorque;
   }
 
+  /**
+   * Checks if is limit enabled.
+   *
+   * @return true, if is limit enabled
+   */
   public boolean isLimitEnabled() {
     return m_enableLimit;
   }
 
+  /**
+   * Enable limit.
+   *
+   * @param flag the flag
+   */
   public void enableLimit(final boolean flag) {
     if (flag != m_enableLimit) {
       m_bodyA.setAwake(true);
@@ -533,14 +641,30 @@ public class RevoluteJoint extends Joint {
     }
   }
 
+  /**
+   * Gets the lower limit.
+   *
+   * @return the lower limit
+   */
   public float getLowerLimit() {
     return m_lowerAngle;
   }
 
+  /**
+   * Gets the upper limit.
+   *
+   * @return the upper limit
+   */
   public float getUpperLimit() {
     return m_upperAngle;
   }
 
+  /**
+   * Sets the limits.
+   *
+   * @param lower the lower
+   * @param upper the upper
+   */
   public void setLimits(final float lower, final float upper) {
     assert (lower <= upper);
     if (lower != m_lowerAngle || upper != m_upperAngle) {

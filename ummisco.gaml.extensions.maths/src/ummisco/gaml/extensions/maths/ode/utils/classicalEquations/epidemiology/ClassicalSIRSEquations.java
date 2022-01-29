@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ClassicalSIRSEquations.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * ClassicalSIRSEquations.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology;
 
 import java.util.ArrayList;
@@ -29,17 +28,39 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 // It is called using
 // equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu]
 
+/**
+ * The Class ClassicalSIRSEquations.
+ */
 public class ClassicalSIRSEquations {
+	
+	/** The parent desc. */
 	private final IDescription parentDesc;
 
+	/**
+	 * Instantiates a new classical SIRS equations.
+	 *
+	 * @param p the p
+	 */
 	public ClassicalSIRSEquations(final IDescription p) {
 		parentDesc = p;
 	}
 
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
 	public IDescription getDescription() {
 		return parentDesc;
 	}
 
+	/**
+	 * Sirs.
+	 *
+	 * @param with_vars the with vars
+	 * @param with_params the with params
+	 * @return the list
+	 */
 	public List<SingleEquationStatement> SIRS(final ListExpression with_vars, final ListExpression with_params) {
 		if (with_vars == null || with_params == null) return null;
 		final ArrayList<SingleEquationStatement> cmd = new ArrayList<>();

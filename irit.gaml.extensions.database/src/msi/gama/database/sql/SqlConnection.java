@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SqlConnection.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.sql;
 
 import java.sql.Connection;
@@ -36,6 +34,9 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class SqlConnection.
+ */
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
  * 26-Apr-2013: Remove driver msi.gama.ext/sqljdbc4.jar add driver msi.gama.ext/jtds-1.2.6.jar Change driver name for
@@ -45,59 +46,135 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class SqlConnection {
 
+	/** The Constant MYSQL. */
 	static final String MYSQL = "mysql";
+	
+	/** The Constant POSTGRES. */
 	static final String POSTGRES = "postgres";
+	
+	/** The Constant POSTGIS. */
 	static final String POSTGIS = "postgis";
+	
+	/** The Constant MSSQL. */
 	static final String MSSQL = "sqlserver";
+	
+	/** The Constant SQLITE. */
 	public static final String SQLITE = "sqlite";
+	
+	/** The Constant GEOMETRYTYPE. */
 	public static final String GEOMETRYTYPE = "GEOMETRY";
+	
+	/** The Constant CHAR. */
 	static final String CHAR = "CHAR";
+	
+	/** The Constant VARCHAR. */
 	static final String VARCHAR = "VARCHAR";
+	
+	/** The Constant NVARCHAR. */
 	static final String NVARCHAR = "NVARCHAR";
+	
+	/** The Constant TEXT. */
 	static final String TEXT = "TEXT";
+	
+	/** The Constant BLOB. */
 	static final String BLOB = "BLOB";
+	
+	/** The Constant TIMESTAMP. */
 	static final String TIMESTAMP = "TIMESTAMP";
+	
+	/** The Constant DATETIME. */
 	static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL,
 
+	/** The Constant DATE. */
 	static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
+	
+	/** The Constant YEAR. */
 	static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
+	
+	/** The Constant TIME. */
 	static final String TIME = "TIME"; // MySQL ('00:00:00')
+	
+	/** The Constant NULLVALUE. */
 	static final String NULLVALUE = "NULL";
 
+	/** The Constant MYSQLDriver. */
 	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
+	
+	/** The Constant MSSQLDriver. */
 	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
+	
+	/** The Constant SQLITEDriver. */
 	static final String SQLITEDriver = "org.sqlite.JDBC";
+	
+	/** The Constant POSTGRESDriver. */
 	static final String POSTGRESDriver = "org.postgresql.Driver";
 
+	/** The vender. */
 	protected String vender = "";
 
+	/** The url. */
 	protected String url = "";
+	
+	/** The port. */
 	protected String port = "";
+	
+	/** The db name. */
 	protected String dbName = "";
+	
+	/** The user name. */
 	protected String userName = "";
+	
+	/** The password. */
 	protected String password = "";
+	
+	/** The transformed. */
 	protected Boolean transformed = false;
+	
+	/** The extension. */
 	protected String extension = null;
 
 	// AD: Added to be sure that SQL connections use a correct projection when
+	/** The gis. */
 	// they load/save geometries
 	private IProjection gis = null;
 	// AD: Added to be sure to remember the parameters (which can contain other
+	/** The params. */
 	// informations about GIS data
 	private Map<String, Object> params;
 
+	/**
+	 * Sets the gis.
+	 *
+	 * @param gis the new gis
+	 */
 	public void setGis(final Projection gis) {
 		this.gis = gis;
 	}
 
+	/**
+	 * Gets the gis.
+	 *
+	 * @return the gis
+	 */
 	public IProjection getGis() {
 		return this.gis;
 	}
 
+	/**
+	 * Gets the transform.
+	 *
+	 * @return the transform
+	 */
 	public boolean getTransform() {
 		return transformed;
 	}
 
+	/**
+	 * Gets the saving gis projection.
+	 *
+	 * @param scope the scope
+	 * @return the saving gis projection
+	 */
 	protected IProjection getSavingGisProjection(final IScope scope) {
 		final Boolean longitudeFirst =
 				params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
@@ -139,25 +216,58 @@ public abstract class SqlConnection {
 
 	}
 
+	/**
+	 * Sets the params.
+	 *
+	 * @param params the params
+	 */
 	public void setParams(final Map<String, Object> params) {
 		this.params = params;
 	}
 
+	/**
+	 * Instantiates a new sql connection.
+	 *
+	 * @param dbName the db name
+	 */
 	SqlConnection(final String dbName) {
 		this.dbName = dbName;
 	}
 
+	/**
+	 * Instantiates a new sql connection.
+	 *
+	 * @param venderName the vender name
+	 * @param database the database
+	 */
 	SqlConnection(final String venderName, final String database) {
 		this.vender = venderName;
 		this.dbName = database;
 	}
 
+	/**
+	 * Instantiates a new sql connection.
+	 *
+	 * @param venderName the vender name
+	 * @param database the database
+	 * @param transformed the transformed
+	 */
 	SqlConnection(final String venderName, final String database, final Boolean transformed) {
 		this.vender = venderName;
 		this.dbName = database;
 		this.transformed = transformed;
 	}
 
+	/**
+	 * Instantiates a new sql connection.
+	 *
+	 * @param venderName the vender name
+	 * @param url the url
+	 * @param port the port
+	 * @param dbName the db name
+	 * @param userName the user name
+	 * @param password the password
+	 */
 	SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		this.vender = venderName;
@@ -168,6 +278,17 @@ public abstract class SqlConnection {
 		this.password = password;
 	}
 
+	/**
+	 * Instantiates a new sql connection.
+	 *
+	 * @param venderName the vender name
+	 * @param url the url
+	 * @param port the port
+	 * @param dbName the db name
+	 * @param userName the user name
+	 * @param password the password
+	 * @param transformed the transformed
+	 */
 	SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password, final Boolean transformed) {
 		this.vender = venderName;
@@ -179,12 +300,28 @@ public abstract class SqlConnection {
 		this.transformed = transformed;
 	}
 
+	/**
+	 * Connect DB.
+	 *
+	 * @return the connection
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws InstantiationException the instantiation exception
+	 * @throws SQLException the SQL exception
+	 * @throws IllegalAccessException the illegal access exception
+	 */
 	/*
 	 * Make a connection to BDMS
 	 */
 	public abstract Connection connectDB()
 			throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException;
 
+	/**
+	 * Result set 2 gama list.
+	 *
+	 * @param rsmd the rsmd
+	 * @param rs the rs
+	 * @return the i list
+	 */
 	/*
 	 * @Method:resultSet2IList(ResultSetMetaData rsmd, ResultSet rs)
 	 *
@@ -196,6 +333,13 @@ public abstract class SqlConnection {
 	 */
 	protected abstract IList<IList<Object>> resultSet2GamaList(ResultSetMetaData rsmd, ResultSet rs);
 
+	/**
+	 * Gets the geometry columns.
+	 *
+	 * @param rsmd the rsmd
+	 * @return the geometry columns
+	 * @throws SQLException the SQL exception
+	 */
 	/*
 	 * @Meththod: getGeometryColumns(ResultSetMetaData rsmd)
 	 *
@@ -209,6 +353,13 @@ public abstract class SqlConnection {
 	 */
 	protected abstract List<Integer> getGeometryColumns(ResultSetMetaData rsmd) throws SQLException;
 
+	/**
+	 * Gets the column type name.
+	 *
+	 * @param rsmd the rsmd
+	 * @return the column type name
+	 * @throws SQLException the SQL exception
+	 */
 	/*
 	 * @Method: getColumnTypeName
 	 *
@@ -222,18 +373,46 @@ public abstract class SqlConnection {
 	 */
 	protected abstract IList<Object> getColumnTypeName(ResultSetMetaData rsmd) throws SQLException;
 
+	/**
+	 * Gets the insert string.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param table_name the table name
+	 * @param cols the cols
+	 * @param values the values
+	 * @return the insert string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make insert command string with columns and values
 	 */
 	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, IList<Object> cols,
 			IList<Object> values) throws GamaRuntimeException;
 
+	/**
+	 * Gets the insert string.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param table_name the table name
+	 * @param values the values
+	 * @return the insert string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make insert command string for all columns with values
 	 */
 	protected abstract String getInsertString(IScope scope, Connection conn, String table_name, IList<Object> values)
 			throws GamaRuntimeException;
 
+	/**
+	 * Select DB.
+	 *
+	 * @param scope the scope
+	 * @param selectComm the select comm
+	 * @return the i list<? super I list<? super I list>>
+	 */
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
@@ -252,6 +431,14 @@ public abstract class SqlConnection {
 	 * Make a connection to BDMS and execute the select statement
 	 *
 	 * @return IList<IList<Object>>
+	 */
+	/**
+	 * Select DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param selectComm the select comm
+	 * @return the i list<? super I list<? super I list>>
 	 */
 	// public IList<IList<Object>> selectDB(String selectComm)
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final Connection conn,
@@ -332,6 +519,14 @@ public abstract class SqlConnection {
 	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 */
 
+	/**
+	 * Execute update DB.
+	 *
+	 * @param scope the scope
+	 * @param updateComm the update comm
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public int executeUpdateDB(final IScope scope, final String updateComm) throws GamaRuntimeException {
 
 		int n = 0;
@@ -361,6 +556,15 @@ public abstract class SqlConnection {
 
 	}
 
+	/**
+	 * Execute update DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param updateComm the update comm
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * execute the update statement with current connection(update/insert/delete/create/drop)
 	 */
@@ -378,11 +582,25 @@ public abstract class SqlConnection {
 		return n;
 	}
 
+	/**
+	 * Result set 2 gama list.
+	 *
+	 * @param rs the rs
+	 * @return the i list
+	 * @throws SQLException the SQL exception
+	 */
 	private IList<IList<Object>> resultSet2GamaList(final ResultSet rs) throws SQLException {
 		final ResultSetMetaData rsmd = rs.getMetaData();
 		return resultSet2GamaList(rsmd, rs);
 	}
 
+	/**
+	 * Gets the column name.
+	 *
+	 * @param rsmd the rsmd
+	 * @return the column name
+	 * @throws SQLException the SQL exception
+	 */
 	/*
 	 * @Method: getColumnName
 	 *
@@ -403,14 +621,29 @@ public abstract class SqlConnection {
 		return columnType;
 	}
 
+	/**
+	 * Gets the url.
+	 *
+	 * @return the url
+	 */
 	public String getURL() {
 		return url;
 	}
 
+	/**
+	 * Gets the vendor.
+	 *
+	 * @return the vendor
+	 */
 	public String getVendor() {
 		return vender;
 	}
 
+	/**
+	 * Gets the user.
+	 *
+	 * @return the user
+	 */
 	public String getUser() {
 		return userName;
 	}
@@ -428,6 +661,12 @@ public abstract class SqlConnection {
 	 */
 
 	// public static Envelope getBounds(final IList<? extends IList<?
+	/**
+	 * Gets the bounds.
+	 *
+	 * @param IList the i list
+	 * @return the bounds
+	 */
 	// super IList>> IList) {
 	public static Envelope3D getBounds(final IList<? super IList<? super IList>> IList) {
 
@@ -475,6 +714,17 @@ public abstract class SqlConnection {
 		}
 	}
 
+	/**
+	 * Insert DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param table_name the table name
+	 * @param cols the cols
+	 * @param values the values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*-------------------------------------------------------------------------------------------------------------------------
 	 * Make Insert a reccord into table
 	 *
@@ -510,6 +760,16 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
+	/**
+	 * Insert DB.
+	 *
+	 * @param scope the scope
+	 * @param table_name the table name
+	 * @param cols the cols
+	 * @param values the values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*-------------------------------------------------------------------------------------------------------------------------
 	 *  Insert a reccord into table
 	 *
@@ -525,6 +785,16 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
+	/**
+	 * Insert DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param table_name the table name
+	 * @param values the values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Insert a reccord into table
 	 */
@@ -548,6 +818,15 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
+	/**
+	 * Insert DB.
+	 *
+	 * @param scope the scope
+	 * @param table_name the table name
+	 * @param values the values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Insert a reccord into table
 	 */
@@ -562,6 +841,16 @@ public abstract class SqlConnection {
 		return rec_no;
 	}
 
+	/**
+	 * Execute query DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param queryStr the query str
+	 * @param condition_values the condition values
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * @Method: executeQueryDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
@@ -619,6 +908,15 @@ public abstract class SqlConnection {
 
 	}
 
+	/**
+	 * Execute query DB.
+	 *
+	 * @param scope the scope
+	 * @param queryStr the query str
+	 * @param condition_values the condition values
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, IList<Object> condition_values)
 	 *
@@ -649,6 +947,16 @@ public abstract class SqlConnection {
 
 	}
 
+	/**
+	 * Execute update DB.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param queryStr the query str
+	 * @param condition_values the condition values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * @Method: executeUpdateDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
@@ -690,6 +998,15 @@ public abstract class SqlConnection {
 		return row_count;
 	}
 
+	/**
+	 * Execute update DB.
+	 *
+	 * @param scope the scope
+	 * @param queryStr the query str
+	 * @param condition_values the condition values
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * @Method: executeUpdateDB(Connection conn,String queryStr, IList<Object> condition_value)
 	 *
@@ -720,6 +1037,11 @@ public abstract class SqlConnection {
 		return row_count;
 	}
 
+	/**
+	 * Sets the transformed.
+	 *
+	 * @param tranformed the new transformed
+	 */
 	public void setTransformed(final boolean tranformed) {
 		this.transformed = tranformed;
 	}

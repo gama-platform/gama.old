@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Collision.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.collision;
 
 import org.jbox2d.collision.Distance.SimplexCache;
@@ -44,10 +31,18 @@ import org.jbox2d.pooling.IWorldPool;
  * @author Daniel Murphy
  */
 public class Collision {
+  
+  /** The Constant NULL_FEATURE. */
   public static final int NULL_FEATURE = Integer.MAX_VALUE;
 
+  /** The pool. */
   private final IWorldPool pool;
 
+  /**
+   * Instantiates a new collision.
+   *
+   * @param argPool the arg pool
+   */
   public Collision(IWorldPool argPool) {
     incidentEdge[0] = new ClipVertex();
     incidentEdge[1] = new ClipVertex();
@@ -58,8 +53,13 @@ public class Collision {
     pool = argPool;
   }
 
+  /** The input. */
   private final DistanceInput input = new DistanceInput();
+  
+  /** The cache. */
   private final SimplexCache cache = new SimplexCache();
+  
+  /** The output. */
   private final DistanceOutput output = new DistanceOutput();
 
   /**
@@ -187,6 +187,7 @@ public class Collision {
 
   // #### COLLISION STUFF (not from collision.h or collision.cpp) ####
 
+  /** The d. */
   // djm pooling
   private static Vec2 d = new Vec2();
 
@@ -425,10 +426,17 @@ public class Collision {
     }
   }
 
+  /** The temp. */
   // djm pooling, and from above
   private final Vec2 temp = new Vec2();
+  
+  /** The xf. */
   private final Transform xf = new Transform();
+  
+  /** The n. */
   private final Vec2 n = new Vec2();
+  
+  /** The v 1. */
   private final Vec2 v1 = new Vec2();
 
   /**
@@ -479,6 +487,16 @@ public class Collision {
     results.separation = maxSeparation;
   }
 
+  /**
+   * Find incident edge.
+   *
+   * @param c the c
+   * @param poly1 the poly 1
+   * @param xf1 the xf 1
+   * @param edge1 the edge 1
+   * @param poly2 the poly 2
+   * @param xf2 the xf 2
+   */
   public final void findIncidentEdge(final ClipVertex[] c, final PolygonShape poly1,
       final Transform xf1, int edge1, final PolygonShape poly2, final Transform xf2) {
     int count1 = poly1.m_count;
@@ -546,16 +564,37 @@ public class Collision {
     c1.id.typeB = (byte) ContactID.Type.VERTEX.ordinal();
   }
 
+  /** The results 1. */
   private final EdgeResults results1 = new EdgeResults();
+  
+  /** The results 2. */
   private final EdgeResults results2 = new EdgeResults();
+  
+  /** The incident edge. */
   private final ClipVertex[] incidentEdge = new ClipVertex[2];
+  
+  /** The local tangent. */
   private final Vec2 localTangent = new Vec2();
+  
+  /** The local normal. */
   private final Vec2 localNormal = new Vec2();
+  
+  /** The plane point. */
   private final Vec2 planePoint = new Vec2();
+  
+  /** The tangent. */
   private final Vec2 tangent = new Vec2();
+  
+  /** The v 11. */
   private final Vec2 v11 = new Vec2();
+  
+  /** The v 12. */
   private final Vec2 v12 = new Vec2();
+  
+  /** The clip points 1. */
   private final ClipVertex[] clipPoints1 = new ClipVertex[2];
+  
+  /** The clip points 2. */
   private final ClipVertex[] clipPoints2 = new ClipVertex[2];
 
   /**
@@ -712,13 +751,31 @@ public class Collision {
     manifold.pointCount = pointCount;
   }
 
+  /** The q. */
   private final Vec2 Q = new Vec2();
+  
+  /** The e. */
   private final Vec2 e = new Vec2();
+  
+  /** The cf. */
   private final ContactID cf = new ContactID();
+  
+  /** The e 1. */
   private final Vec2 e1 = new Vec2();
+  
+  /** The p. */
   private final Vec2 P = new Vec2();
 
   // Compute contact points for edge versus circle.
+  /**
+   * Collide edge and circle.
+   *
+   * @param manifold the manifold
+   * @param edgeA the edge A
+   * @param xfA the xf A
+   * @param circleB the circle B
+   * @param xfB the xf B
+   */
   // This accounts for edge connectivity.
   public void collideEdgeAndCircle(Manifold manifold, final EdgeShape edgeA, final Transform xfA,
       final CircleShape circleB, final Transform xfB) {
@@ -844,8 +901,18 @@ public class Collision {
     manifold.points[0].localPoint.set(circleB.m_p);
   }
 
+  /** The collider. */
   private final EPCollider collider = new EPCollider();
 
+  /**
+   * Collide edge and polygon.
+   *
+   * @param manifold the manifold
+   * @param edgeA the edge A
+   * @param xfA the xf A
+   * @param polygonB the polygon B
+   * @param xfB the xf B
+   */
   public void collideEdgeAndPolygon(Manifold manifold, final EdgeShape edgeA, final Transform xfA,
       final PolygonShape polygonB, final Transform xfB) {
     collider.collide(manifold, edgeA, xfA, polygonB, xfB);
@@ -857,7 +924,11 @@ public class Collision {
    * Java-specific class for returning edge results
    */
   private static class EdgeResults {
+    
+    /** The separation. */
     public float separation;
+    
+    /** The edge index. */
     public int edgeIndex;
   }
 
@@ -865,14 +936,26 @@ public class Collision {
    * Used for computing contact manifolds.
    */
   public static class ClipVertex {
+    
+    /** The v. */
     public final Vec2 v;
+    
+    /** The id. */
     public final ContactID id;
 
+    /**
+     * Instantiates a new clip vertex.
+     */
     public ClipVertex() {
       v = new Vec2();
       id = new ContactID();
     }
 
+    /**
+     * Sets the.
+     *
+     * @param cv the cv
+     */
     public void set(final ClipVertex cv) {
       Vec2 v1 = cv.v;
       v.x = v1.x;
@@ -913,12 +996,27 @@ public class Collision {
    * This structure is used to keep track of the best separating axis.
    */
   static class EPAxis {
+    
+    /**
+     * The Enum Type.
+     */
     enum Type {
-      UNKNOWN, EDGE_A, EDGE_B
+      
+      /** The unknown. */
+      UNKNOWN, 
+ /** The edge a. */
+ EDGE_A, 
+ /** The edge b. */
+ EDGE_B
     }
 
+    /** The type. */
     Type type;
+    
+    /** The index. */
     int index;
+    
+    /** The separation. */
     float separation;
   }
 
@@ -926,10 +1024,19 @@ public class Collision {
    * This holds polygon B expressed in frame A.
    */
   static class TempPolygon {
+    
+    /** The vertices. */
     final Vec2[] vertices = new Vec2[Settings.maxPolygonVertices];
+    
+    /** The normals. */
     final Vec2[] normals = new Vec2[Settings.maxPolygonVertices];
+    
+    /** The count. */
     int count;
 
+    /**
+     * Instantiates a new temp polygon.
+     */
     public TempPolygon() {
       for (int i = 0; i < vertices.length; i++) {
         vertices[i] = new Vec2();
@@ -942,15 +1049,29 @@ public class Collision {
    * Reference face used for clipping
    */
   static class ReferenceFace {
+    
+    /** The i 2. */
     int i1, i2;
+    
+    /** The v 1. */
     final Vec2 v1 = new Vec2();
+    
+    /** The v 2. */
     final Vec2 v2 = new Vec2();
+    
+    /** The normal. */
     final Vec2 normal = new Vec2();
 
+    /** The side normal 1. */
     final Vec2 sideNormal1 = new Vec2();
+    
+    /** The side offset 1. */
     float sideOffset1;
 
+    /** The side normal 2. */
     final Vec2 sideNormal2 = new Vec2();
+    
+    /** The side offset 2. */
     float sideOffset2;
   }
 
@@ -958,30 +1079,71 @@ public class Collision {
    * This class collides and edge and a polygon, taking into account edge adjacency.
    */
   static class EPCollider {
+    
+    /**
+     * The Enum VertexType.
+     */
     enum VertexType {
-      ISOLATED, CONCAVE, CONVEX
+      
+      /** The isolated. */
+      ISOLATED, 
+ /** The concave. */
+ CONCAVE, 
+ /** The convex. */
+ CONVEX
     }
 
+    /** The m polygon B. */
     final TempPolygon m_polygonB = new TempPolygon();
 
+    /** The m xf. */
     final Transform m_xf = new Transform();
+    
+    /** The m centroid B. */
     final Vec2 m_centroidB = new Vec2();
+    
+    /** The m v 0. */
     Vec2 m_v0 = new Vec2();
+    
+    /** The m v 1. */
     Vec2 m_v1 = new Vec2();
+    
+    /** The m v 2. */
     Vec2 m_v2 = new Vec2();
+    
+    /** The m v 3. */
     Vec2 m_v3 = new Vec2();
+    
+    /** The m normal 0. */
     final Vec2 m_normal0 = new Vec2();
+    
+    /** The m normal 1. */
     final Vec2 m_normal1 = new Vec2();
+    
+    /** The m normal 2. */
     final Vec2 m_normal2 = new Vec2();
+    
+    /** The m normal. */
     final Vec2 m_normal = new Vec2();
 
+    /** The m type 2. */
     VertexType m_type1, m_type2;
 
+    /** The m lower limit. */
     final Vec2 m_lowerLimit = new Vec2();
+    
+    /** The m upper limit. */
     final Vec2 m_upperLimit = new Vec2();
+    
+    /** The m radius. */
     float m_radius;
+    
+    /** The m front. */
     boolean m_front;
 
+    /**
+     * Instantiates a new EP collider.
+     */
     public EPCollider() {
       for (int i = 0; i < 2; i++) {
         ie[i] = new ClipVertex();
@@ -990,17 +1152,45 @@ public class Collision {
       }
     }
 
+    /** The edge 1. */
     private final Vec2 edge1 = new Vec2();
+    
+    /** The temp. */
     private final Vec2 temp = new Vec2();
+    
+    /** The edge 0. */
     private final Vec2 edge0 = new Vec2();
+    
+    /** The edge 2. */
     private final Vec2 edge2 = new Vec2();
+    
+    /** The ie. */
     private final ClipVertex[] ie = new ClipVertex[2];
+    
+    /** The clip points 1. */
     private final ClipVertex[] clipPoints1 = new ClipVertex[2];
+    
+    /** The clip points 2. */
     private final ClipVertex[] clipPoints2 = new ClipVertex[2];
+    
+    /** The rf. */
     private final ReferenceFace rf = new ReferenceFace();
+    
+    /** The edge axis. */
     private final EPAxis edgeAxis = new EPAxis();
+    
+    /** The polygon axis. */
     private final EPAxis polygonAxis = new EPAxis();
 
+    /**
+     * Collide.
+     *
+     * @param manifold the manifold
+     * @param edgeA the edge A
+     * @param xfA the xf A
+     * @param polygonB the polygon B
+     * @param xfB the xf B
+     */
     public void collide(Manifold manifold, final EdgeShape edgeA, final Transform xfA,
         final PolygonShape polygonB, final Transform xfB) {
 
@@ -1369,6 +1559,11 @@ public class Collision {
     }
 
 
+    /**
+     * Compute edge separation.
+     *
+     * @param axis the axis
+     */
     public void computeEdgeSeparation(EPAxis axis) {
       axis.type = EPAxis.Type.EDGE_A;
       axis.index = m_front ? 0 : 1;
@@ -1387,9 +1582,17 @@ public class Collision {
       }
     }
 
+    /** The perp. */
     private final Vec2 perp = new Vec2();
+    
+    /** The n. */
     private final Vec2 n = new Vec2();
 
+    /**
+     * Compute polygon separation.
+     *
+     * @param axis the axis
+     */
     public void computePolygonSeparation(EPAxis axis) {
       axis.type = EPAxis.Type.UNKNOWN;
       axis.index = -1;

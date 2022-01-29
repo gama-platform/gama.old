@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaPointConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * GamaPointConverter.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -20,9 +18,15 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * The Class GamaPointConverter.
+ */
 public class GamaPointConverter implements Converter {
 
+	/** The Constant TAG. */
 	private final static String TAG="GamaPoint";
+	
+	/** The Constant SEPARATOR. */
 	private final static String SEPARATOR=":";
 	@Override
 	public boolean canConvert(Class arg0) {

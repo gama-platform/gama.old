@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * KinematicCharacterController.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.character;
 
@@ -50,66 +43,123 @@ import com.bulletphysics.linearmath.Transform;
  */
 public class KinematicCharacterController extends ActionInterface {
 
+	/** The up axis direction. */
 	private static Vector3f[] upAxisDirection = new Vector3f[] { new Vector3f(1.0f, 0.0f, 0.0f),
 			new Vector3f(0.0f, 1.0f, 0.0f), new Vector3f(0.0f, 0.0f, 1.0f), };
 
+	/** The half height. */
 	protected float halfHeight;
 
+	/** The ghost object. */
 	protected PairCachingGhostObject ghostObject;
 
 	// is also in ghostObject, but it needs to be convex, so we store it here
+	/** The convex shape. */
 	// to avoid upcast
 	protected ConvexShape convexShape;
 
+	/** The vertical velocity. */
 	protected float verticalVelocity;
+	
+	/** The vertical offset. */
 	protected float verticalOffset;
 
+	/** The fall speed. */
 	protected float fallSpeed;
+	
+	/** The jump speed. */
 	protected float jumpSpeed;
+	
+	/** The max jump height. */
 	protected float maxJumpHeight;
 
+	/** The max slope radians. */
 	protected float maxSlopeRadians; // Slope angle that is set (used for returning the exact value)
+	
+	/** The max slope cosine. */
 	protected float maxSlopeCosine; // Cosine equivalent of m_maxSlopeRadians (calculated once when set, for
 									// optimization)
 
-	protected float gravity;
+	/** The gravity. */
+									protected float gravity;
 
+	/** The turn angle. */
 	protected float turnAngle;
 
+	/** The step height. */
 	protected float stepHeight;
 
+	/** The added margin. */
 	protected float addedMargin; // @todo: remove this and fix the code
 
+	/** The walk direction. */
 	// this is the desired walk direction, set by the user
 	protected Vector3f walkDirection = new Vector3f();
+	
+	/** The normalized direction. */
 	protected Vector3f normalizedDirection = new Vector3f();
 
+	/** The current position. */
 	// some internal variables
 	protected Vector3f currentPosition = new Vector3f();
+	
+	/** The current step offset. */
 	protected float currentStepOffset;
+	
+	/** The target position. */
 	protected Vector3f targetPosition = new Vector3f();
 
+	/** The manifold array. */
 	// keep track of the contact manifolds
 	ArrayList<PersistentManifold> manifoldArray = new ArrayList<>();
 
+	/** The touching contact. */
 	protected boolean touchingContact;
+	
+	/** The touching normal. */
 	protected Vector3f touchingNormal = new Vector3f();
 
+	/** The was on ground. */
 	protected boolean wasOnGround;
+	
+	/** The was jumping. */
 	protected boolean wasJumping;
 
+	/** The use ghost object sweep test. */
 	protected boolean useGhostObjectSweepTest;
+	
+	/** The use walk direction. */
 	protected boolean useWalkDirection;
+	
+	/** The velocity time interval. */
 	protected float velocityTimeInterval;
+	
+	/** The up axis. */
 	protected int upAxis;
 
+	/** The me. */
 	protected CollisionObject me;
 
+	/**
+	 * Instantiates a new kinematic character controller.
+	 *
+	 * @param ghostObject the ghost object
+	 * @param convexShape the convex shape
+	 * @param stepHeight the step height
+	 */
 	public KinematicCharacterController(final PairCachingGhostObject ghostObject, final ConvexShape convexShape,
 			final float stepHeight) {
 		this(ghostObject, convexShape, stepHeight, 1);
 	}
 
+	/**
+	 * Instantiates a new kinematic character controller.
+	 *
+	 * @param ghostObject the ghost object
+	 * @param convexShape the convex shape
+	 * @param stepHeight the step height
+	 * @param upAxis the up axis
+	 */
 	public KinematicCharacterController(final PairCachingGhostObject ghostObject, final ConvexShape convexShape,
 			final float stepHeight, final int upAxis) {
 		this.upAxis = upAxis;
@@ -132,6 +182,11 @@ public class KinematicCharacterController extends ActionInterface {
 		setMaxSlope((float) (45.0f / 180.0f * Math.PI));
 	}
 
+	/**
+	 * Gets the ghost object.
+	 *
+	 * @return the ghost object
+	 */
 	private PairCachingGhostObject getGhostObject() {
 		return ghostObject;
 	}
@@ -147,6 +202,11 @@ public class KinematicCharacterController extends ActionInterface {
 	// @Override
 	// public void debugDraw(final IDebugDraw debugDrawer) {}
 
+	/**
+	 * Sets the up axis.
+	 *
+	 * @param axis the new up axis
+	 */
 	public void setUpAxis(int axis) {
 		if (axis < 0) { axis = 0; }
 		if (axis > 2) { axis = 2; }
@@ -178,8 +238,16 @@ public class KinematicCharacterController extends ActionInterface {
 		velocityTimeInterval = timeInterval;
 	}
 
+	/**
+	 * Reset.
+	 */
 	public void reset() {}
 
+	/**
+	 * Warp.
+	 *
+	 * @param origin the origin
+	 */
 	public void warp(final Vector3f origin) {
 		Transform xform = TRANSFORMS.get();
 		xform.setIdentity();
@@ -188,6 +256,11 @@ public class KinematicCharacterController extends ActionInterface {
 		TRANSFORMS.release(xform);
 	}
 
+	/**
+	 * Pre step.
+	 *
+	 * @param collisionWorld the collision world
+	 */
 	public void preStep(final CollisionWorld collisionWorld) {
 		int numPenetrationLoops = 0;
 		touchingContact = false;
@@ -207,6 +280,12 @@ public class KinematicCharacterController extends ActionInterface {
 		// printf("m_targetPosition=%f,%f,%f\n",m_targetPosition[0],m_targetPosition[1],m_targetPosition[2]);
 	}
 
+	/**
+	 * Player step.
+	 *
+	 * @param collisionWorld the collision world
+	 * @param dt the dt
+	 */
 	public void playerStep(final CollisionWorld collisionWorld, final float dt) {
 		// printf("playerStep(): ");
 		// printf(" dt = %f", dt);
@@ -260,22 +339,45 @@ public class KinematicCharacterController extends ActionInterface {
 		TRANSFORMS.release(xform);
 	}
 
+	/**
+	 * Sets the fall speed.
+	 *
+	 * @param fallSpeed the new fall speed
+	 */
 	public void setFallSpeed(final float fallSpeed) {
 		this.fallSpeed = fallSpeed;
 	}
 
+	/**
+	 * Sets the jump speed.
+	 *
+	 * @param jumpSpeed the new jump speed
+	 */
 	public void setJumpSpeed(final float jumpSpeed) {
 		this.jumpSpeed = jumpSpeed;
 	}
 
+	/**
+	 * Sets the max jump height.
+	 *
+	 * @param maxJumpHeight the new max jump height
+	 */
 	public void setMaxJumpHeight(final float maxJumpHeight) {
 		this.maxJumpHeight = maxJumpHeight;
 	}
 
+	/**
+	 * Can jump.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean canJump() {
 		return onGround();
 	}
 
+	/**
+	 * Jump.
+	 */
 	public void jump() {
 		if (!canJump()) return;
 
@@ -293,27 +395,59 @@ public class KinematicCharacterController extends ActionInterface {
 		// #endif
 	}
 
+	/**
+	 * Sets the gravity.
+	 *
+	 * @param gravity the new gravity
+	 */
 	public void setGravity(final float gravity) {
 		this.gravity = gravity;
 	}
 
+	/**
+	 * Gets the gravity.
+	 *
+	 * @return the gravity
+	 */
 	public float getGravity() {
 		return gravity;
 	}
 
+	/**
+	 * Sets the max slope.
+	 *
+	 * @param slopeRadians the new max slope
+	 */
 	public void setMaxSlope(final float slopeRadians) {
 		maxSlopeRadians = slopeRadians;
 		maxSlopeCosine = (float) Math.cos(slopeRadians);
 	}
 
+	/**
+	 * Gets the max slope.
+	 *
+	 * @return the max slope
+	 */
 	public float getMaxSlope() {
 		return maxSlopeRadians;
 	}
 
+	/**
+	 * On ground.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean onGround() {
 		return verticalVelocity == 0.0f && verticalOffset == 0.0f;
 	}
 
+	/**
+	 * Gets the normalized vector.
+	 *
+	 * @param v the v
+	 * @param out the out
+	 * @return the normalized vector
+	 */
 	// static helper method
 	private static Vector3f getNormalizedVector(final Vector3f v, final Vector3f out) {
 		out.set(v);
@@ -358,6 +492,12 @@ public class KinematicCharacterController extends ActionInterface {
 		return perpendicular;
 	}
 
+	/**
+	 * Recover from penetration.
+	 *
+	 * @param collisionWorld the collision world
+	 * @return true, if successful
+	 */
 	protected boolean recoverFromPenetration(final CollisionWorld collisionWorld) {
 		boolean penetration = false;
 
@@ -413,6 +553,11 @@ public class KinematicCharacterController extends ActionInterface {
 		return penetration;
 	}
 
+	/**
+	 * Step up.
+	 *
+	 * @param world the world
+	 */
 	protected void stepUp(final CollisionWorld world) {
 		// phase 1: up
 		Transform start = TRANSFORMS.get();
@@ -459,10 +604,22 @@ public class KinematicCharacterController extends ActionInterface {
 		VECTORS.release(up);
 	}
 
+	/**
+	 * Update target position based on collision.
+	 *
+	 * @param hitNormal the hit normal
+	 */
 	protected void updateTargetPositionBasedOnCollision(final Vector3f hitNormal) {
 		updateTargetPositionBasedOnCollision(hitNormal, 0f, 1f);
 	}
 
+	/**
+	 * Update target position based on collision.
+	 *
+	 * @param hitNormal the hit normal
+	 * @param tangentMag the tangent mag
+	 * @param normalMag the normal mag
+	 */
 	protected void updateTargetPositionBasedOnCollision(final Vector3f hitNormal, final float tangentMag,
 			final float normalMag) {
 		Vector3f movementDirection = VECTORS.get();
@@ -500,6 +657,12 @@ public class KinematicCharacterController extends ActionInterface {
 		VECTORS.release(movementDirection);
 	}
 
+	/**
+	 * Step forward and strafe.
+	 *
+	 * @param world the world
+	 * @param walkMove the walk move
+	 */
 	protected void stepForwardAndStrafe(final CollisionWorld world, final Vector3f walkMove) {
 		// printf("m_normalizedDirection=%f,%f,%f\n",
 		// m_normalizedDirection[0],m_normalizedDirection[1],m_normalizedDirection[2]);
@@ -588,6 +751,12 @@ public class KinematicCharacterController extends ActionInterface {
 		VECTORS.release(currentDir, hitDistanceVec);
 	}
 
+	/**
+	 * Step down.
+	 *
+	 * @param collisionWorld the collision world
+	 * @param dt the dt
+	 */
 	protected void stepDown(final CollisionWorld collisionWorld, final float dt) {
 		Transform start = TRANSFORMS.get();
 		Transform end = TRANSFORMS.get();
@@ -662,11 +831,27 @@ public class KinematicCharacterController extends ActionInterface {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class KinematicClosestNotMeConvexResultCallback.
+	 */
 	private static class KinematicClosestNotMeConvexResultCallback extends CollisionWorld.ClosestConvexResultCallback {
+		
+		/** The me. */
 		protected CollisionObject me;
+		
+		/** The up. */
 		protected final Vector3f up;
+		
+		/** The min slope dot. */
 		protected float minSlopeDot;
 
+		/**
+		 * Instantiates a new kinematic closest not me convex result callback.
+		 *
+		 * @param me the me
+		 * @param up the up
+		 * @param minSlopeDot the min slope dot
+		 */
 		public KinematicClosestNotMeConvexResultCallback(final CollisionObject me, final Vector3f up,
 				final float minSlopeDot) {
 			super(new Vector3f(), new Vector3f());

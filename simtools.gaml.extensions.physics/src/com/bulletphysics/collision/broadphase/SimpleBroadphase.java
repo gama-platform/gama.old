@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * SimpleBroadphase.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -30,19 +23,40 @@ import javax.vecmath.Vector3f;
  */
 public class SimpleBroadphase implements BroadphaseInterface {
 
+	/** The handles. */
 	private final ArrayList<SimpleBroadphaseProxy> handles = new ArrayList<>();
+	
+	/** The max handles. */
 	private int maxHandles; // max number of handles
+	
+	/** The pair cache. */
 	private OverlappingPairCache pairCache;
+	
+	/** The owns pair cache. */
 	private boolean ownsPairCache;
 
+	/**
+	 * Instantiates a new simple broadphase.
+	 */
 	public SimpleBroadphase() {
 		this(16384, null);
 	}
 
+	/**
+	 * Instantiates a new simple broadphase.
+	 *
+	 * @param maxProxies the max proxies
+	 */
 	public SimpleBroadphase(final int maxProxies) {
 		this(maxProxies, null);
 	}
 
+	/**
+	 * Instantiates a new simple broadphase.
+	 *
+	 * @param maxProxies the max proxies
+	 * @param overlappingPairCache the overlapping pair cache
+	 */
 	public SimpleBroadphase(final int maxProxies, final OverlappingPairCache overlappingPairCache) {
 		this.pairCache = overlappingPairCache;
 
@@ -80,6 +94,13 @@ public class SimpleBroadphase implements BroadphaseInterface {
 		sbp.max.set(aabbMax);
 	}
 
+	/**
+	 * Aabb overlap.
+	 *
+	 * @param proxy0 the proxy 0
+	 * @param proxy1 the proxy 1
+	 * @return true, if successful
+	 */
 	private static boolean aabbOverlap(final SimpleBroadphaseProxy proxy0, final SimpleBroadphaseProxy proxy1) {
 		return proxy0.min.x <= proxy1.max.x && proxy1.min.x <= proxy0.max.x && proxy0.min.y <= proxy1.max.y
 				&& proxy1.min.y <= proxy0.max.y && proxy0.min.z <= proxy1.max.z && proxy1.min.z <= proxy0.max.z;

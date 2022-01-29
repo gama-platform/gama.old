@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * GjkEpaSolver.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.narrowphase;
 
@@ -49,83 +42,180 @@ public class GjkEpaSolver {
 
 	// protected final ArrayPool<float[]> floatArrays = ArrayPool.get(float.class);
 
+	/** The stack mkv. */
 	protected final ObjectStackList<Mkv> stackMkv = new ObjectStackList<>(Mkv.class);
+	
+	/** The stack he. */
 	protected final ObjectStackList<He> stackHe = new ObjectStackList<>(He.class);
+	
+	/** The stack face. */
 	protected final ObjectStackList<Face> stackFace = new ObjectStackList<>(Face.class);
 
+	/**
+	 * Push stack.
+	 */
 	protected void pushStack() {
 		stackMkv.push();
 		stackHe.push();
 		stackFace.push();
 	}
 
+	/**
+	 * Pop stack.
+	 */
 	protected void popStack() {
 		stackMkv.pop();
 		stackHe.pop();
 		stackFace.pop();
 	}
 
+	/**
+	 * The Enum ResultsStatus.
+	 */
 	public enum ResultsStatus {
-		Separated, /* Shapes doesnt penetrate */
-		Penetrating, /* Shapes are penetrating */
-		GJK_Failed, /* GJK phase fail, no big issue, shapes are probably just 'touching' */
+		
+		/** The Separated. */
+		Separated, 
+ /** The Penetrating. */
+ /* Shapes doesnt penetrate */
+		Penetrating, 
+ /** The GJ K failed. */
+ /* Shapes are penetrating */
+		GJK_Failed, 
+ /** The EP A failed. */
+ /* GJK phase fail, no big issue, shapes are probably just 'touching' */
 		EPA_Failed, /* EPA phase fail, bigger problem, need to save parameters, and debug */
 	}
 
+	/**
+	 * The Class Results.
+	 */
 	public static class Results {
+		
+		/** The status. */
 		public ResultsStatus status;
+		
+		/** The witnesses. */
 		public final Vector3f[] witnesses/* [2] */ = new Vector3f[] { new Vector3f(), new Vector3f() };
+		
+		/** The normal. */
 		public final Vector3f normal = new Vector3f();
+		
+		/** The depth. */
 		public float depth;
+		
+		/** The epa iterations. */
 		public int epa_iterations;
+		
+		/** The gjk iterations. */
 		public int gjk_iterations;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The Constant cstInf. */
 	private static final float cstInf = BulletGlobals.SIMD_INFINITY;
+	
+	/** The Constant cst2Pi. */
 	// private static final float cstPi = BulletGlobals.SIMD_PI;
 	private static final float cst2Pi = BulletGlobals.SIMD_2_PI;
+	
+	/** The Constant GJK_maxiterations. */
 	private static final int GJK_maxiterations = 128;
+	
+	/** The Constant GJK_hashsize. */
 	private static final int GJK_hashsize = 1 << 6;
+	
+	/** The Constant GJK_hashmask. */
 	private static final int GJK_hashmask = GJK_hashsize - 1;
+	
+	/** The Constant GJK_insimplex_eps. */
 	private static final float GJK_insimplex_eps = 0.0001f;
+	
+	/** The Constant GJK_sqinsimplex_eps. */
 	private static final float GJK_sqinsimplex_eps = GJK_insimplex_eps * GJK_insimplex_eps;
+	
+	/** The Constant EPA_maxiterations. */
 	private static final int EPA_maxiterations = 256;
+	
+	/** The Constant EPA_inface_eps. */
 	private static final float EPA_inface_eps = 0.01f;
+	
+	/** The Constant EPA_accuracy. */
 	private static final float EPA_accuracy = 0.001f;
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class Mkv.
+	 */
 	public static class Mkv {
+		
+		/** The w. */
 		public final Vector3f w = new Vector3f(); // Minkowski vertice
+		
+		/** The r. */
 		public final Vector3f r = new Vector3f(); // Ray
 
+		/**
+		 * Sets the.
+		 *
+		 * @param m the m
+		 */
 		public void set(final Mkv m) {
 			w.set(m.w);
 			r.set(m.r);
 		}
 	}
 
+	/**
+	 * The Class He.
+	 */
 	public static class He {
+		
+		/** The v. */
 		public final Vector3f v = new Vector3f();
+		
+		/** The n. */
 		public He n;
 	}
 
+	/**
+	 * The Class GJK.
+	 */
 	protected class GJK {
 		// protected final BulletStack stack = BulletStack.get();
 
 		// public btStackAlloc sa;
+		/** The table. */
 		// public Block sablock;
 		public final He[] table = new He[GJK_hashsize];
+		
+		/** The wrotations. */
 		public final Matrix3f[] wrotations/* [2] */ = new Matrix3f[] { new Matrix3f(), new Matrix3f() };
+		
+		/** The positions. */
 		public final Vector3f[] positions/* [2] */ = new Vector3f[] { new Vector3f(), new Vector3f() };
+		
+		/** The shapes. */
 		public final ConvexShape[] shapes = new ConvexShape[2];
+		
+		/** The simplex. */
 		public final Mkv[] simplex = new Mkv[5];
+		
+		/** The ray. */
 		public final Vector3f ray = new Vector3f();
+		
+		/** The order. */
 		public /* unsigned */ int order;
+		
+		/** The iterations. */
 		public /* unsigned */ int iterations;
+		
+		/** The margin. */
 		public float margin;
+		
+		/** The failed. */
 		public boolean failed;
 
 		{
@@ -134,20 +224,55 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Instantiates a new gjk.
+		 */
 		public GJK() {}
 
+		/**
+		 * Instantiates a new gjk.
+		 *
+		 * @param wrot0 the wrot 0
+		 * @param pos0 the pos 0
+		 * @param shape0 the shape 0
+		 * @param wrot1 the wrot 1
+		 * @param pos1 the pos 1
+		 * @param shape1 the shape 1
+		 */
 		public GJK(/* StackAlloc psa, */
 				final Matrix3f wrot0, final Vector3f pos0, final ConvexShape shape0, final Matrix3f wrot1,
 				final Vector3f pos1, final ConvexShape shape1) {
 			this(wrot0, pos0, shape0, wrot1, pos1, shape1, 0f);
 		}
 
+		/**
+		 * Instantiates a new gjk.
+		 *
+		 * @param wrot0 the wrot 0
+		 * @param pos0 the pos 0
+		 * @param shape0 the shape 0
+		 * @param wrot1 the wrot 1
+		 * @param pos1 the pos 1
+		 * @param shape1 the shape 1
+		 * @param pmargin the pmargin
+		 */
 		public GJK(/* StackAlloc psa, */
 				final Matrix3f wrot0, final Vector3f pos0, final ConvexShape shape0, final Matrix3f wrot1,
 				final Vector3f pos1, final ConvexShape shape1, final float pmargin) {
 			init(wrot0, pos0, shape0, wrot1, pos1, shape1, pmargin);
 		}
 
+		/**
+		 * Inits the.
+		 *
+		 * @param wrot0 the wrot 0
+		 * @param pos0 the pos 0
+		 * @param shape0 the shape 0
+		 * @param wrot1 the wrot 1
+		 * @param pos1 the pos 1
+		 * @param shape1 the shape 1
+		 * @param pmargin the pmargin
+		 */
 		public void init(/* StackAlloc psa, */
 				final Matrix3f wrot0, final Vector3f pos0, final ConvexShape shape0, final Matrix3f wrot1,
 				final Vector3f pos1, final ConvexShape shape1, final float pmargin) {
@@ -164,16 +289,33 @@ public class GjkEpaSolver {
 			failed = false;
 		}
 
+		/**
+		 * Destroy.
+		 */
 		public void destroy() {
 			popStack();
 		}
 
+		/**
+		 * Hash.
+		 *
+		 * @param v the v
+		 * @return the int
+		 */
 		// vdh: very dummy hash
 		public /* unsigned */ int Hash(final Vector3f v) {
 			int h = (int) (v.x * 15461) ^ (int) (v.y * 83003) ^ (int) (v.z * 15473);
 			return h * 169639 & GJK_hashmask;
 		}
 
+		/**
+		 * Local support.
+		 *
+		 * @param d the d
+		 * @param i the i
+		 * @param out the out
+		 * @return the vector 3 f
+		 */
 		public Vector3f LocalSupport(final Vector3f d, /* unsigned */ final int i, final Vector3f out) {
 			Vector3f tmp = VECTORS.get();
 			MatrixUtil.transposeTransform(tmp, d, wrotations[i]);
@@ -185,6 +327,12 @@ public class GjkEpaSolver {
 			return out;
 		}
 
+		/**
+		 * Support.
+		 *
+		 * @param d the d
+		 * @param v the v
+		 */
 		public void Support(final Vector3f d, final Mkv v) {
 			v.r.set(d);
 
@@ -200,6 +348,11 @@ public class GjkEpaSolver {
 			VECTORS.release(tmp1, tmp2, tmp);
 		}
 
+		/**
+		 * Fetch support.
+		 *
+		 * @return true, if successful
+		 */
 		public boolean FetchSupport() {
 			int h = Hash(ray);
 			He e = table[h];
@@ -221,6 +374,13 @@ public class GjkEpaSolver {
 			return ray.dot(simplex[order].w) > 0;
 		}
 
+		/**
+		 * Solve simplex 2.
+		 *
+		 * @param ao the ao
+		 * @param ab the ab
+		 * @return true, if successful
+		 */
 		public boolean SolveSimplex2(final Vector3f ao, final Vector3f ab) {
 			if (ab.dot(ao) >= 0) {
 				Vector3f cabo = VECTORS.get();
@@ -241,6 +401,14 @@ public class GjkEpaSolver {
 			return false;
 		}
 
+		/**
+		 * Solve simplex 3.
+		 *
+		 * @param ao the ao
+		 * @param ab the ab
+		 * @param ac the ac
+		 * @return true, if successful
+		 */
 		public boolean SolveSimplex3(final Vector3f ao, final Vector3f ab, final Vector3f ac) {
 			Vector3f tmp = VECTORS.get();
 			tmp.cross(ab, ac);
@@ -249,6 +417,15 @@ public class GjkEpaSolver {
 			return result;
 		}
 
+		/**
+		 * Solve simplex 3 a.
+		 *
+		 * @param ao the ao
+		 * @param ab the ab
+		 * @param ac the ac
+		 * @param cabc the cabc
+		 * @return true, if successful
+		 */
 		public boolean SolveSimplex3a(final Vector3f ao, final Vector3f ab, final Vector3f ac, final Vector3f cabc) {
 			// TODO: optimize
 
@@ -289,6 +466,15 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Solve simplex 4.
+		 *
+		 * @param ao the ao
+		 * @param ab the ab
+		 * @param ac the ac
+		 * @param ad the ad
+		 * @return true, if successful
+		 */
 		public boolean SolveSimplex4(final Vector3f ao, final Vector3f ab, final Vector3f ac, final Vector3f ad) {
 			// TODO: optimize
 
@@ -327,6 +513,11 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Search origin.
+		 *
+		 * @return true, if successful
+		 */
 		public boolean SearchOrigin() {
 			Vector3f tmp = VECTORS.get();
 			tmp.set(1f, 0f, 0f);
@@ -335,6 +526,12 @@ public class GjkEpaSolver {
 			return result;
 		}
 
+		/**
+		 * Search origin.
+		 *
+		 * @param initray the initray
+		 * @return true, if successful
+		 */
 		public boolean SearchOrigin(final Vector3f initray) {
 			Vector3f tmp1 = VECTORS.get();
 			Vector3f tmp2 = VECTORS.get();
@@ -389,6 +586,11 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Enclose origin.
+		 *
+		 * @return true, if successful
+		 */
 		public boolean EncloseOrigin() {
 			Vector3f tmp = VECTORS.get();
 			Vector3f tmp1 = VECTORS.get();
@@ -473,42 +675,88 @@ public class GjkEpaSolver {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The mod 3. */
 	private static int[] mod3 = new int[] { 0, 1, 2, 0, 1 };
 
+	/** The Constant tetrahedron_fidx. */
 	private static final int[][] tetrahedron_fidx/* [4][3] */ =
 			new int[][] { { 2, 1, 0 }, { 3, 0, 1 }, { 3, 1, 2 }, { 3, 2, 0 } };
+	
+	/** The Constant tetrahedron_eidx. */
 	private static final int[][] tetrahedron_eidx/* [6][4] */ = new int[][] { { 0, 0, 2, 1 }, { 0, 1, 1, 1 },
 			{ 0, 2, 3, 1 }, { 1, 0, 3, 2 }, { 2, 0, 1, 2 }, { 3, 0, 2, 2 } };
 
+	/** The Constant hexahedron_fidx. */
 	private static final int[][] hexahedron_fidx/* [6][3] */ =
 			new int[][] { { 2, 0, 4 }, { 4, 1, 2 }, { 1, 4, 0 }, { 0, 3, 1 }, { 0, 2, 3 }, { 1, 3, 2 } };
+	
+	/** The Constant hexahedron_eidx. */
 	private static final int[][] hexahedron_eidx/* [9][4] */ =
 			new int[][] { { 0, 0, 4, 0 }, { 0, 1, 2, 1 }, { 0, 2, 1, 2 }, { 1, 1, 5, 2 }, { 1, 0, 2, 0 },
 					{ 2, 2, 3, 2 }, { 3, 1, 5, 0 }, { 3, 0, 4, 2 }, { 5, 1, 4, 1 } };
 
+	/**
+	 * The Class Face.
+	 */
 	public static class Face {
+		
+		/** The v. */
 		public final Mkv[] v = new Mkv[3];
+		
+		/** The f. */
 		public final Face[] f = new Face[3];
+		
+		/** The e. */
 		public final int[] e = new int[3];
+		
+		/** The n. */
 		public final Vector3f n = new Vector3f();
+		
+		/** The d. */
 		public float d;
+		
+		/** The mark. */
 		public int mark;
+		
+		/** The prev. */
 		public Face prev;
+		
+		/** The next. */
 		public Face next;
 	}
 
+	/**
+	 * The Class EPA.
+	 */
 	protected class EPA {
 		// protected final BulletStack stack = BulletStack.get();
 
+		/** The gjk. */
 		public GJK gjk;
+		
+		/** The root. */
 		// public btStackAlloc* sa;
 		public Face root;
+		
+		/** The nfaces. */
 		public int nfaces;
+		
+		/** The iterations. */
 		public int iterations;
+		
+		/** The features. */
 		public final Vector3f[][] features = new Vector3f[2][3];
+		
+		/** The nearest. */
 		public final Vector3f[] nearest/* [2] */ = new Vector3f[] { new Vector3f(), new Vector3f() };
+		
+		/** The normal. */
 		public final Vector3f normal = new Vector3f();
+		
+		/** The depth. */
 		public float depth;
+		
+		/** The failed. */
 		public boolean failed;
 
 		{
@@ -519,11 +767,23 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Instantiates a new epa.
+		 *
+		 * @param pgjk the pgjk
+		 */
 		public EPA(final GJK pgjk) {
 			gjk = pgjk;
 			// sa = pgjk->sa;
 		}
 
+		/**
+		 * Gets the coordinates.
+		 *
+		 * @param face the face
+		 * @param out the out
+		 * @return the vector 3 f
+		 */
 		public Vector3f GetCoordinates(final Face face, final Vector3f out) {
 			Vector3f tmp = VECTORS.get();
 			Vector3f tmp1 = VECTORS.get();
@@ -560,6 +820,11 @@ public class GjkEpaSolver {
 			return out;
 		}
 
+		/**
+		 * Find best.
+		 *
+		 * @return the face
+		 */
 		public Face FindBest() {
 			Face bf = null;
 			if (root != null) {
@@ -575,6 +840,15 @@ public class GjkEpaSolver {
 			return bf;
 		}
 
+		/**
+		 * Sets the.
+		 *
+		 * @param f the f
+		 * @param a the a
+		 * @param b the b
+		 * @param c the c
+		 * @return true, if successful
+		 */
 		public boolean Set(final Face f, final Mkv a, final Mkv b, final Mkv c) {
 			Vector3f tmp1 = VECTORS.get();
 			Vector3f tmp2 = VECTORS.get();
@@ -604,6 +878,14 @@ public class GjkEpaSolver {
 			return valid;
 		}
 
+		/**
+		 * New face.
+		 *
+		 * @param a the a
+		 * @param b the b
+		 * @param c the c
+		 * @return the face
+		 */
 		public Face NewFace(final Mkv a, final Mkv b, final Mkv c) {
 			// Face pf = new Face();
 			Face pf = stackFace.get();
@@ -619,6 +901,11 @@ public class GjkEpaSolver {
 			return pf;
 		}
 
+		/**
+		 * Detach.
+		 *
+		 * @param face the face
+		 */
 		public void Detach(final Face face) {
 			if (face.prev != null || face.next != null) {
 				--nfaces;
@@ -637,6 +924,14 @@ public class GjkEpaSolver {
 			}
 		}
 
+		/**
+		 * Link.
+		 *
+		 * @param f0 the f 0
+		 * @param e0 the e 0
+		 * @param f1 the f 1
+		 * @param e1 the e 1
+		 */
 		public void Link(final Face f0, final int e0, final Face f1, final int e1) {
 			f0.f[e0] = f1;
 			f1.e[e1] = e0;
@@ -644,6 +939,12 @@ public class GjkEpaSolver {
 			f0.e[e0] = e1;
 		}
 
+		/**
+		 * Support.
+		 *
+		 * @param w the w
+		 * @return the mkv
+		 */
 		public Mkv Support(final Vector3f w) {
 			// Mkv v = new Mkv();
 			Mkv v = stackMkv.get();
@@ -651,6 +952,17 @@ public class GjkEpaSolver {
 			return v;
 		}
 
+		/**
+		 * Builds the horizon.
+		 *
+		 * @param markid the markid
+		 * @param w the w
+		 * @param f the f
+		 * @param e the e
+		 * @param cf the cf
+		 * @param ff the ff
+		 * @return the int
+		 */
 		public int BuildHorizon(final int markid, final Mkv w, final Face f, final int e, final Face[] cf,
 				final Face[] ff) {
 			int ne = 0;
@@ -677,10 +989,21 @@ public class GjkEpaSolver {
 			return ne;
 		}
 
+		/**
+		 * Evaluate PD.
+		 *
+		 * @return the float
+		 */
 		public float EvaluatePD() {
 			return EvaluatePD(EPA_accuracy);
 		}
 
+		/**
+		 * Evaluate PD.
+		 *
+		 * @param accuracy the accuracy
+		 * @return the float
+		 */
 		public float EvaluatePD(final float accuracy) {
 			pushStack();
 			Vector3f tmp = VECTORS.get();
@@ -825,8 +1148,20 @@ public class GjkEpaSolver {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The gjk. */
 	private final GJK gjk = new GJK();
 
+	/**
+	 * Collide.
+	 *
+	 * @param shape0 the shape 0
+	 * @param wtrs0 the wtrs 0
+	 * @param shape1 the shape 1
+	 * @param wtrs1 the wtrs 1
+	 * @param radialmargin the radialmargin
+	 * @param results the results
+	 * @return true, if successful
+	 */
 	public boolean collide(final ConvexShape shape0, final Transform wtrs0, final ConvexShape shape1,
 			final Transform wtrs1, final float radialmargin/*
 															 * , btStackAlloc* stackAlloc

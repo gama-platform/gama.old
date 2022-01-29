@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaPathConverter.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
 import java.util.List;
@@ -14,11 +24,20 @@ import msi.gama.util.path.GamaPath;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaPathReducer;
 
+/**
+ * The Class GamaPathConverter.
+ */
 @SuppressWarnings({ "rawtypes" , "unchecked" })
 public class GamaPathConverter implements Converter {
 	
+	/** The convert scope. */
 	ConverterScope convertScope;
 
+	/**
+	 * Instantiates a new gama path converter.
+	 *
+	 * @param s the s
+	 */
 	public GamaPathConverter(final ConverterScope s) {
 		convertScope = s;
 	}

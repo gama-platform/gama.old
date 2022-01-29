@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ReverseOperators.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ReverseOperators.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gaml;
 
 import java.io.File;
@@ -31,12 +30,22 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
+/**
+ * The Class ReverseOperators.
+ */
 public class ReverseOperators {
 
 	static {
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Serialize.
+	 *
+	 * @param scope the scope
+	 * @param o the o
+	 * @return the string
+	 */
 	@operator (
 			value = "serialize")
 	@doc (
@@ -48,6 +57,13 @@ public class ReverseOperators {
 		return StreamConverter.convertObjectToStream(scope, o);
 	}
 
+	/**
+	 * Unserialize.
+	 *
+	 * @param scope the scope
+	 * @param s the s
+	 * @return the object
+	 */
 	@operator (
 			value = "unserialize")
 	@doc (
@@ -58,6 +74,13 @@ public class ReverseOperators {
 		return StreamConverter.convertStreamToObject(scope, s);
 	}
 
+	/**
+	 * Serialize agent.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the string
+	 */
 	@operator (
 			value = "serialize_agent")
 	@doc (
@@ -69,6 +92,13 @@ public class ReverseOperators {
 		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
 	}
 
+	/**
+	 * Un serialize simulation from file.
+	 *
+	 * @param scope the scope
+	 * @param file the file
+	 * @return the int
+	 */
 	@operator (
 			value = "restore_simulation_from_file")
 	@doc (
@@ -80,6 +110,13 @@ public class ReverseOperators {
 		return unSerializeSimulationFromXML(scope, file.getBuffer().get(0));
 	}
 
+	/**
+	 * Un serialize simulation from XML.
+	 *
+	 * @param scope the scope
+	 * @param simul the simul
+	 * @return the int
+	 */
 	@operator (
 			value = "restore_simulation")
 	@doc (
@@ -100,6 +137,14 @@ public class ReverseOperators {
 		return 1;
 	}
 
+	/**
+	 * Save agent.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param pathname the pathname
+	 * @return the int
+	 */
 	// TODO : This should become a part of the save statement 
 	@operator (
 			value = "save_agent")
@@ -149,6 +194,13 @@ public class ReverseOperators {
 		return 0;
 	}
 
+	/**
+	 * Save simulation.
+	 *
+	 * @param scope the scope
+	 * @param pathname the pathname
+	 * @return the int
+	 */
 	@operator (
 			value = "save_simulation")
 	@doc (
@@ -162,6 +214,13 @@ public class ReverseOperators {
 		return saveAgent(scope, simAgt, pathname);
 	}
 
+	/**
+	 * Serialize network.
+	 *
+	 * @param scope the scope
+	 * @param o the o
+	 * @return the string
+	 */
 	// TODO to remove when possible
 	@operator (
 			value = "serialize_network")
@@ -173,6 +232,13 @@ public class ReverseOperators {
 		return StreamConverter.convertNetworkObjectToStream(scope, o);
 	}
 
+	/**
+	 * Unserialize network.
+	 *
+	 * @param scope the scope
+	 * @param s the s
+	 * @return the object
+	 */
 	@operator (
 			value = "unserialize_network")
 	@doc (

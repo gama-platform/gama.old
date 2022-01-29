@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Body.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics;
 
 import org.jbox2d.collision.broadphase.BroadPhase;
@@ -41,18 +28,35 @@ import org.jbox2d.dynamics.joints.JointEdge;
  * @author Daniel Murphy
  */
 public class Body {
+  
+  /** The Constant e_islandFlag. */
   public static final int e_islandFlag = 0x0001;
+  
+  /** The Constant e_awakeFlag. */
   public static final int e_awakeFlag = 0x0002;
+  
+  /** The Constant e_autoSleepFlag. */
   public static final int e_autoSleepFlag = 0x0004;
+  
+  /** The Constant e_bulletFlag. */
   public static final int e_bulletFlag = 0x0008;
+  
+  /** The Constant e_fixedRotationFlag. */
   public static final int e_fixedRotationFlag = 0x0010;
+  
+  /** The Constant e_activeFlag. */
   public static final int e_activeFlag = 0x0020;
+  
+  /** The Constant e_toiFlag. */
   public static final int e_toiFlag = 0x0040;
 
+  /** The m type. */
   public BodyType m_type;
 
+  /** The m flags. */
   public int m_flags;
 
+  /** The m island index. */
   public int m_islandIndex;
 
   /**
@@ -69,36 +73,68 @@ public class Body {
    */
   public final Sweep m_sweep = new Sweep();
 
+  /** The m linear velocity. */
   public final Vec2 m_linearVelocity = new Vec2();
+  
+  /** The m angular velocity. */
   public float m_angularVelocity = 0;
 
+  /** The m force. */
   public final Vec2 m_force = new Vec2();
+  
+  /** The m torque. */
   public float m_torque = 0;
 
+  /** The m world. */
   public World m_world;
+  
+  /** The m prev. */
   public Body m_prev;
+  
+  /** The m next. */
   public Body m_next;
 
+  /** The m fixture list. */
   public Fixture m_fixtureList;
+  
+  /** The m fixture count. */
   public int m_fixtureCount;
 
+  /** The m joint list. */
   public JointEdge m_jointList;
+  
+  /** The m contact list. */
   public ContactEdge m_contactList;
 
+  /** The m inv mass. */
   public float m_mass, m_invMass;
 
+  /** The m inv I. */
   // Rotational inertia about the center of mass.
   public float m_I, m_invI;
 
+  /** The m linear damping. */
   public float m_linearDamping;
+  
+  /** The m angular damping. */
   public float m_angularDamping;
+  
+  /** The m gravity scale. */
   public float m_gravityScale;
 
+  /** The m sleep time. */
   public float m_sleepTime;
 
+  /** The m user data. */
   public Object m_userData;
 
 
+  /**
+   * Instantiates a new body.
+   *
+   * @param bd the bd
+   * @param world the world
+   */
   public Body(final BodyDef bd, World world) {
     assert (bd.position.isValid());
     assert (bd.linearVelocity.isValid());
@@ -214,6 +250,7 @@ public class Body {
     return fixture;
   }
 
+  /** The fix def. */
   private final FixtureDef fixDef = new FixtureDef();
 
   /**
@@ -651,6 +688,7 @@ public class Body {
     m_world.getPool().pushVec2(2);
   }
 
+  /** The pmd. */
   private final MassData pmd = new MassData();
 
   /**
@@ -745,6 +783,13 @@ public class Body {
     return v;
   }
 
+  /**
+   * Gets the world point to out.
+   *
+   * @param localPoint the local point
+   * @param out the out
+   * @return the world point to out
+   */
   public final void getWorldPointToOut(Vec2 localPoint, Vec2 out) {
     Transform.mulToOut(m_xf, localPoint, out);
   }
@@ -761,10 +806,24 @@ public class Body {
     return out;
   }
 
+  /**
+   * Gets the world vector to out.
+   *
+   * @param localVector the local vector
+   * @param out the out
+   * @return the world vector to out
+   */
   public final void getWorldVectorToOut(Vec2 localVector, Vec2 out) {
     Rot.mulToOut(m_xf.q, localVector, out);
   }
 
+  /**
+   * Gets the world vector to out unsafe.
+   *
+   * @param localVector the local vector
+   * @param out the out
+   * @return the world vector to out unsafe
+   */
   public final void getWorldVectorToOutUnsafe(Vec2 localVector, Vec2 out) {
     Rot.mulToOutUnsafe(m_xf.q, localVector, out);
   }
@@ -781,6 +840,13 @@ public class Body {
     return out;
   }
 
+  /**
+   * Gets the local point to out.
+   *
+   * @param worldPoint the world point
+   * @param out the out
+   * @return the local point to out
+   */
   public final void getLocalPointToOut(Vec2 worldPoint, Vec2 out) {
     Transform.mulTransToOut(m_xf, worldPoint, out);
   }
@@ -797,10 +863,24 @@ public class Body {
     return out;
   }
 
+  /**
+   * Gets the local vector to out.
+   *
+   * @param worldVector the world vector
+   * @param out the out
+   * @return the local vector to out
+   */
   public final void getLocalVectorToOut(Vec2 worldVector, Vec2 out) {
     Rot.mulTrans(m_xf.q, worldVector, out);
   }
 
+  /**
+   * Gets the local vector to out unsafe.
+   *
+   * @param worldVector the world vector
+   * @param out the out
+   * @return the local vector to out unsafe
+   */
   public final void getLocalVectorToOutUnsafe(Vec2 worldVector, Vec2 out) {
     Rot.mulTransUnsafe(m_xf.q, worldVector, out);
   }
@@ -817,6 +897,13 @@ public class Body {
     return out;
   }
 
+  /**
+   * Gets the linear velocity from world point to out.
+   *
+   * @param worldPoint the world point
+   * @param out the out
+   * @return the linear velocity from world point to out
+   */
   public final void getLinearVelocityFromWorldPointToOut(Vec2 worldPoint, Vec2 out) {
     final float tempX = worldPoint.x - m_sweep.c.x;
     final float tempY = worldPoint.y - m_sweep.c.y;
@@ -836,6 +923,13 @@ public class Body {
     return out;
   }
 
+  /**
+   * Gets the linear velocity from local point to out.
+   *
+   * @param localPoint the local point
+   * @param out the out
+   * @return the linear velocity from local point to out
+   */
   public final void getLinearVelocityFromLocalPointToOut(Vec2 localPoint, Vec2 out) {
     getWorldPointToOut(localPoint, out);
     getLinearVelocityFromWorldPointToOut(out, out);
@@ -861,6 +955,11 @@ public class Body {
     m_angularDamping = angularDamping;
   }
 
+  /**
+   * Gets the type.
+   *
+   * @return the type
+   */
   public BodyType getType() {
     return m_type;
   }
@@ -1110,9 +1209,13 @@ public class Body {
     return m_world;
   }
 
+  /** The pxf. */
   // djm pooling
   private final Transform pxf = new Transform();
 
+  /**
+   * Synchronize fixtures.
+   */
   protected final void synchronizeFixtures() {
     final Transform xf1 = pxf;
     // xf1.position = m_sweep.c0 - Mul(xf1.R, m_sweep.localCenter);
@@ -1132,6 +1235,9 @@ public class Body {
     }
   }
 
+  /**
+   * Synchronize transform.
+   */
   public final void synchronizeTransform() {
     // m_xf.q.set(m_sweep.a);
     //
@@ -1172,6 +1278,11 @@ public class Body {
     return true;
   }
 
+  /**
+   * Advance.
+   *
+   * @param t the t
+   */
   protected final void advance(float t) {
     // Advance to the new safe time. This doesn't sync the broad-phase.
     m_sweep.advance(t);

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaRegressionType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaRegressionType.java, in ummisco.gaml.extensions.stats, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -20,6 +20,9 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
 
+/**
+ * The Class GamaRegressionType.
+ */
 @type(name = "regression", id = IType.REGRESSION, wraps = {
 		GamaRegression.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE },
 				doc = {@doc(value = "Type of variables that enables to learn a regression function and to use it to predict new values")})

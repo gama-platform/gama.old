@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * OverlappingPairCallback.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -27,11 +20,32 @@ package com.bulletphysics.collision.broadphase;
 
 public interface OverlappingPairCallback {
 
+	/**
+	 * Adds the overlapping pair.
+	 *
+	 * @param proxy0 the proxy 0
+	 * @param proxy1 the proxy 1
+	 * @return the broadphase pair
+	 */
 	BroadphasePair addOverlappingPair(BroadphaseProxy proxy0, BroadphaseProxy proxy1);
 
+	/**
+	 * Removes the overlapping pair.
+	 *
+	 * @param proxy0 the proxy 0
+	 * @param proxy1 the proxy 1
+	 * @param dispatcher the dispatcher
+	 * @return the object
+	 */
 	Object removeOverlappingPair( BroadphaseProxy proxy0, BroadphaseProxy proxy1,
 			Dispatcher dispatcher);
 
+	/**
+	 * Removes the overlapping pairs containing proxy.
+	 *
+	 * @param proxy0 the proxy 0
+	 * @param dispatcher the dispatcher
+	 */
 	void removeOverlappingPairsContainingProxy( BroadphaseProxy proxy0, Dispatcher dispatcher);
 
 }

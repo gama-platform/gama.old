@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * RaycastVehicle.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.vehicle;
 
@@ -46,31 +39,67 @@ import java.util.ArrayList;
  */
 public class RaycastVehicle extends TypedConstraint {
 
+	/** The float arrays. */
 	private final ArrayPool<float[]> floatArrays = ArrayPool.get(float.class);
 
+	/** The s fixed object. */
 	private static RigidBody s_fixedObject = new RigidBody(0, null, null);
+	
+	/** The Constant sideFrictionStiffness2. */
 	private static final float sideFrictionStiffness2 = 1.0f;
 
+	/** The forward WS. */
 	protected ArrayList<Vector3f> forwardWS = new ArrayList<>();
+	
+	/** The axle. */
 	protected ArrayList<Vector3f> axle = new ArrayList<>();
+	
+	/** The forward impulse. */
 	protected FloatArrayList forwardImpulse = new FloatArrayList();
+	
+	/** The side impulse. */
 	protected FloatArrayList sideImpulse = new FloatArrayList();
 
+	/** The tau. */
 	private float tau;
+	
+	/** The damping. */
 	private float damping;
+	
+	/** The vehicle raycaster. */
 	private final VehicleRaycaster vehicleRaycaster;
+	
+	/** The pitch control. */
 	private float pitchControl = 0f;
+	
+	/** The steering value. */
 	private float steeringValue;
+	
+	/** The current vehicle speed km hour. */
 	private float currentVehicleSpeedKmHour;
 
+	/** The chassis body. */
 	private final RigidBody chassisBody;
 
+	/** The index right axis. */
 	private int indexRightAxis = 0;
+	
+	/** The index up axis. */
 	private int indexUpAxis = 2;
+	
+	/** The index forward axis. */
 	private int indexForwardAxis = 1;
 
+	/** The wheel info. */
 	public ArrayList<WheelInfo> wheelInfo = new ArrayList<>();
 
+	/**
+	 * Instantiates a new raycast vehicle.
+	 *
+	 * @param tuning the tuning
+	 * @param chassis the chassis
+	 * @param raycaster the raycaster
+	 */
 	// constructor to create a car from an existing rigidbody
 	public RaycastVehicle(final VehicleTuning tuning, final RigidBody chassis, final VehicleRaycaster raycaster) {
 		super(TypedConstraintType.VEHICLE_CONSTRAINT_TYPE);
@@ -79,6 +108,11 @@ public class RaycastVehicle extends TypedConstraint {
 		defaultInit(tuning);
 	}
 
+	/**
+	 * Default init.
+	 *
+	 * @param tuning the tuning
+	 */
 	private void defaultInit(final VehicleTuning tuning) {
 		currentVehicleSpeedKmHour = 0f;
 		steeringValue = 0f;
@@ -113,6 +147,13 @@ public class RaycastVehicle extends TypedConstraint {
 		return wheel;
 	}
 
+	/**
+	 * Gets the wheel transform WS.
+	 *
+	 * @param wheelIndex the wheel index
+	 * @param out the out
+	 * @return the wheel transform WS
+	 */
 	public Transform getWheelTransformWS(final int wheelIndex, final Transform out) {
 		assert wheelIndex < getNumWheels();
 		WheelInfo wheel = wheelInfo.get(wheelIndex);
@@ -120,10 +161,21 @@ public class RaycastVehicle extends TypedConstraint {
 		return out;
 	}
 
+	/**
+	 * Update wheel transform.
+	 *
+	 * @param wheelIndex the wheel index
+	 */
 	public void updateWheelTransform(final int wheelIndex) {
 		updateWheelTransform(wheelIndex, true);
 	}
 
+	/**
+	 * Update wheel transform.
+	 *
+	 * @param wheelIndex the wheel index
+	 * @param interpolatedTransform the interpolated transform
+	 */
 	public void updateWheelTransform(final int wheelIndex, final boolean interpolatedTransform) {
 		WheelInfo wheel = wheelInfo.get(wheelIndex);
 		updateWheelTransformsWS(wheel, interpolatedTransform);
@@ -165,6 +217,9 @@ public class RaycastVehicle extends TypedConstraint {
 		MATRICES.release(basis2);
 	}
 
+	/**
+	 * Reset suspension.
+	 */
 	public void resetSuspension() {
 		int i;
 		for (i = 0; i < wheelInfo.size(); i++) {
@@ -178,10 +233,21 @@ public class RaycastVehicle extends TypedConstraint {
 		}
 	}
 
+	/**
+	 * Update wheel transforms WS.
+	 *
+	 * @param wheel the wheel
+	 */
 	public void updateWheelTransformsWS(final WheelInfo wheel) {
 		updateWheelTransformsWS(wheel, true);
 	}
 
+	/**
+	 * Update wheel transforms WS.
+	 *
+	 * @param wheel the wheel
+	 * @param interpolatedTransform the interpolated transform
+	 */
 	public void updateWheelTransformsWS(final WheelInfo wheel, final boolean interpolatedTransform) {
 		wheel.raycastInfo.isInContact = false;
 
@@ -201,6 +267,12 @@ public class RaycastVehicle extends TypedConstraint {
 		TRANSFORMS.release(chassisTrans);
 	}
 
+	/**
+	 * Ray cast.
+	 *
+	 * @param wheel the wheel
+	 * @return the float
+	 */
 	public float rayCast(final WheelInfo wheel) {
 		updateWheelTransformsWS(wheel, false);
 
@@ -278,6 +350,12 @@ public class RaycastVehicle extends TypedConstraint {
 		return depth;
 	}
 
+	/**
+	 * Gets the chassis world transform.
+	 *
+	 * @param out the out
+	 * @return the chassis world transform
+	 */
 	public Transform getChassisWorldTransform(final Transform out) {
 		/*
 		 * if (getRigidBody()->getMotionState()) { btTransform chassisWorldTrans;
@@ -287,6 +365,11 @@ public class RaycastVehicle extends TypedConstraint {
 		return getRigidBody().getCenterOfMassTransform(out);
 	}
 
+	/**
+	 * Update vehicle.
+	 *
+	 * @param step the step
+	 */
 	public void updateVehicle(final float step) {
 		for (int i = 0; i < getNumWheels(); i++) {
 			updateWheelTransform(i, false);
@@ -365,6 +448,12 @@ public class RaycastVehicle extends TypedConstraint {
 		TRANSFORMS.release(chassisTrans);
 	}
 
+	/**
+	 * Sets the steering value.
+	 *
+	 * @param steering the steering
+	 * @param wheel the wheel
+	 */
 	public void setSteeringValue(final float steering, final int wheel) {
 		assert wheel >= 0 && wheel < getNumWheels();
 
@@ -372,27 +461,56 @@ public class RaycastVehicle extends TypedConstraint {
 		wheel_info.steering = steering;
 	}
 
+	/**
+	 * Gets the steering value.
+	 *
+	 * @param wheel the wheel
+	 * @return the steering value
+	 */
 	public float getSteeringValue(final int wheel) {
 		return getWheelInfo(wheel).steering;
 	}
 
+	/**
+	 * Apply engine force.
+	 *
+	 * @param force the force
+	 * @param wheel the wheel
+	 */
 	public void applyEngineForce(final float force, final int wheel) {
 		assert wheel >= 0 && wheel < getNumWheels();
 		WheelInfo wheel_info = getWheelInfo(wheel);
 		wheel_info.engineForce = force;
 	}
 
+	/**
+	 * Gets the wheel info.
+	 *
+	 * @param index the index
+	 * @return the wheel info
+	 */
 	public WheelInfo getWheelInfo(final int index) {
 		assert index >= 0 && index < getNumWheels();
 
 		return wheelInfo.get(index);
 	}
 
+	/**
+	 * Sets the brake.
+	 *
+	 * @param brake the brake
+	 * @param wheelIndex the wheel index
+	 */
 	public void setBrake(final float brake, final int wheelIndex) {
 		assert wheelIndex >= 0 && wheelIndex < getNumWheels();
 		getWheelInfo(wheelIndex).brake = brake;
 	}
 
+	/**
+	 * Update suspension.
+	 *
+	 * @param deltaTime the delta time
+	 */
 	public void updateSuspension(final float deltaTime) {
 		float chassisMass = 1f / chassisBody.getInvMass();
 
@@ -434,6 +552,12 @@ public class RaycastVehicle extends TypedConstraint {
 		}
 	}
 
+	/**
+	 * Calc rolling friction.
+	 *
+	 * @param contactPoint the contact point
+	 * @return the float
+	 */
 	private float calcRollingFriction(final WheelContactPoint contactPoint) {
 		Vector3f tmp = VECTORS.get();
 
@@ -463,6 +587,11 @@ public class RaycastVehicle extends TypedConstraint {
 		return j1;
 	}
 
+	/**
+	 * Update friction.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateFriction(final float timeStep) {
 		// calculate the impulse, so that the wheels don't move sidewards
 		int numWheel = getNumWheels();
@@ -633,26 +762,56 @@ public class RaycastVehicle extends TypedConstraint {
 		// not yet
 	}
 
+	/**
+	 * Gets the num wheels.
+	 *
+	 * @return the num wheels
+	 */
 	public int getNumWheels() {
 		return wheelInfo.size();
 	}
 
+	/**
+	 * Sets the pitch control.
+	 *
+	 * @param pitch the new pitch control
+	 */
 	public void setPitchControl(final float pitch) {
 		this.pitchControl = pitch;
 	}
 
+	/**
+	 * Gets the rigid body.
+	 *
+	 * @return the rigid body
+	 */
 	public RigidBody getRigidBody() {
 		return chassisBody;
 	}
 
+	/**
+	 * Gets the right axis.
+	 *
+	 * @return the right axis
+	 */
 	public int getRightAxis() {
 		return indexRightAxis;
 	}
 
+	/**
+	 * Gets the up axis.
+	 *
+	 * @return the up axis
+	 */
 	public int getUpAxis() {
 		return indexUpAxis;
 	}
 
+	/**
+	 * Gets the forward axis.
+	 *
+	 * @return the forward axis
+	 */
 	public int getForwardAxis() {
 		return indexForwardAxis;
 	}
@@ -676,6 +835,13 @@ public class RaycastVehicle extends TypedConstraint {
 		return currentVehicleSpeedKmHour;
 	}
 
+	/**
+	 * Sets the coordinate system.
+	 *
+	 * @param rightIndex the right index
+	 * @param upIndex the up index
+	 * @param forwardIndex the forward index
+	 */
 	public void setCoordinateSystem(final int rightIndex, final int upIndex, final int forwardIndex) {
 		this.indexRightAxis = rightIndex;
 		this.indexUpAxis = upIndex;
@@ -684,14 +850,38 @@ public class RaycastVehicle extends TypedConstraint {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class WheelContactPoint.
+	 */
 	private static class WheelContactPoint {
+		
+		/** The body 0. */
 		public RigidBody body0;
+		
+		/** The body 1. */
 		public RigidBody body1;
+		
+		/** The friction position world. */
 		public final Vector3f frictionPositionWorld = new Vector3f();
+		
+		/** The friction direction world. */
 		public final Vector3f frictionDirectionWorld = new Vector3f();
+		
+		/** The jac diag AB inv. */
 		public float jacDiagABInv;
+		
+		/** The max impulse. */
 		public float maxImpulse;
 
+		/**
+		 * Instantiates a new wheel contact point.
+		 *
+		 * @param body0 the body 0
+		 * @param body1 the body 1
+		 * @param frictionPosWorld the friction pos world
+		 * @param frictionDirectionWorld the friction direction world
+		 * @param maxImpulse the max impulse
+		 */
 		public WheelContactPoint(final RigidBody body0, final RigidBody body1, final Vector3f frictionPosWorld,
 				final Vector3f frictionDirectionWorld, final float maxImpulse) {
 			this.body0 = body0;

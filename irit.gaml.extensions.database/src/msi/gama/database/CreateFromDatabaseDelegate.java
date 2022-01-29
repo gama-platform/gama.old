@@ -1,7 +1,13 @@
-/**
- * Created by drogoul, 27 mai 2015
+/*******************************************************************************************************
  *
- */
+ * CreateFromDatabaseDelegate.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database;
 
 import java.util.List;
@@ -73,6 +79,17 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 
 	}
 
+	/**
+	 * Compute inits.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @param rowList the row list
+	 * @param colTypes the col types
+	 * @param colNames the col names
+	 * @param init the init
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * thai.truongminh@gmail.com Method: GamaList2ListMap Description: created date : 13-09-2012 25-Feb-2013: Add
 	 * transformCRS from GisUtils.transformCRS Last Modified: 25-Feb-2013

@@ -1,25 +1,13 @@
-/*
- * BasicPlayerException.
+/*******************************************************************************************************
+ *
+ * BasicPlayerException.java, in ummisco.gaml.extensions.sound, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * JavaZOOM : jlgui@javazoom.net
- *            http://www.javazoom.net
- *
- *-----------------------------------------------------------------------
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License as published
- *   by the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Library General Public License for more details.
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the Free Software
- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *----------------------------------------------------------------------
- */
+ ********************************************************************************************************/
 package javazoom.jlgui.basicplayer;
 
 import java.io.PrintStream;
@@ -30,29 +18,60 @@ import java.io.PrintWriter;
  */
 public class BasicPlayerException extends Exception
 {
+    
+    /** The Constant GAINCONTROLNOTSUPPORTED. */
     public static final String GAINCONTROLNOTSUPPORTED = "Gain control not supported";
+    
+    /** The Constant PANCONTROLNOTSUPPORTED. */
     public static final String PANCONTROLNOTSUPPORTED = "Pan control not supported";
+    
+    /** The Constant WAITERROR. */
     public static final String WAITERROR = "Wait error";
+    
+    /** The Constant CANNOTINITLINE. */
     public static final String CANNOTINITLINE = "Cannot init line";
+    
+    /** The Constant SKIPNOTSUPPORTED. */
     public static final String SKIPNOTSUPPORTED = "Skip not supported";
+    
+    /** The cause. */
     private Throwable cause = null;
 
+    /**
+     * Instantiates a new basic player exception.
+     */
     public BasicPlayerException()
     {
         super();
     }
 
+    /**
+     * Instantiates a new basic player exception.
+     *
+     * @param msg the msg
+     */
     public BasicPlayerException(String msg)
     {
         super(msg);
     }
 
+    /**
+     * Instantiates a new basic player exception.
+     *
+     * @param cause the cause
+     */
     public BasicPlayerException(Throwable cause)
     {
         super();
         this.cause = cause;
     }
 
+    /**
+     * Instantiates a new basic player exception.
+     *
+     * @param msg the msg
+     * @param cause the cause
+     */
     public BasicPlayerException(String msg, Throwable cause)
     {
         super(msg);

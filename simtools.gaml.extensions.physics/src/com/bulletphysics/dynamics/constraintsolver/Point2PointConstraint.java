@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * Point2PointConstraint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -37,21 +30,37 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class Point2PointConstraint extends TypedConstraint {
 
+	/** The jac. */
 	private final JacobianEntry[] jac =
 			new JacobianEntry[]/* [3] */ { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // 3
 																											// orthogonal
 																											// linear
 																											// constraints
 
-	private final Vector3f pivotInA = new Vector3f();
+	/** The pivot in A. */
+																											private final Vector3f pivotInA = new Vector3f();
+	
+	/** The pivot in B. */
 	private final Vector3f pivotInB = new Vector3f();
 
+	/** The setting. */
 	public ConstraintSetting setting = new ConstraintSetting();
 
+	/**
+	 * Instantiates a new point 2 point constraint.
+	 */
 	public Point2PointConstraint() {
 		super(TypedConstraintType.POINT2POINT_CONSTRAINT_TYPE);
 	}
 
+	/**
+	 * Instantiates a new point 2 point constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 * @param pivotInA the pivot in A
+	 * @param pivotInB the pivot in B
+	 */
 	public Point2PointConstraint(final RigidBody rbA, final RigidBody rbB, final Vector3f pivotInA,
 			final Vector3f pivotInB) {
 		super(TypedConstraintType.POINT2POINT_CONSTRAINT_TYPE, rbA, rbB);
@@ -59,6 +68,12 @@ public class Point2PointConstraint extends TypedConstraint {
 		this.pivotInB.set(pivotInB);
 	}
 
+	/**
+	 * Instantiates a new point 2 point constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param pivotInA the pivot in A
+	 */
 	public Point2PointConstraint(final RigidBody rbA, final Vector3f pivotInA) {
 		super(TypedConstraintType.POINT2POINT_CONSTRAINT_TYPE, rbA);
 		this.pivotInA.set(pivotInA);
@@ -178,21 +193,48 @@ public class Point2PointConstraint extends TypedConstraint {
 		TRANSFORMS.release(centerOfMassA, centerOfMassB);
 	}
 
+	/**
+	 * Update RHS.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateRHS(final float timeStep) {}
 
+	/**
+	 * Sets the pivot A.
+	 *
+	 * @param pivotA the new pivot A
+	 */
 	public void setPivotA(final Vector3f pivotA) {
 		pivotInA.set(pivotA);
 	}
 
+	/**
+	 * Sets the pivot B.
+	 *
+	 * @param pivotB the new pivot B
+	 */
 	public void setPivotB(final Vector3f pivotB) {
 		pivotInB.set(pivotB);
 	}
 
+	/**
+	 * Gets the pivot in A.
+	 *
+	 * @param out the out
+	 * @return the pivot in A
+	 */
 	public Vector3f getPivotInA(final Vector3f out) {
 		out.set(pivotInA);
 		return out;
 	}
 
+	/**
+	 * Gets the pivot in B.
+	 *
+	 * @param out the out
+	 * @return the pivot in B
+	 */
 	public Vector3f getPivotInB(final Vector3f out) {
 		out.set(pivotInB);
 		return out;
@@ -200,9 +242,18 @@ public class Point2PointConstraint extends TypedConstraint {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class ConstraintSetting.
+	 */
 	public static class ConstraintSetting {
+		
+		/** The tau. */
 		public float tau = 0.3f;
+		
+		/** The damping. */
 		public float damping = 1f;
+		
+		/** The impulse clamp. */
 		public float impulseClamp = 0f;
 	}
 

@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * MDXSkill.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MDXSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
 import org.olap4j.OlapConnection;
@@ -27,6 +25,9 @@ import msi.gama.util.IList;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
+/**
+ * The Class MDXSkill.
+ */
 /*
  * @Author TRUONG Minh Thai
  *
@@ -46,6 +47,13 @@ import msi.gaml.types.IType;
 @doc ("This skill allows agents to be provided with actions and attributes in order to connect to MDX databases")
 public class MDXSkill extends Skill {
 
+	/**
+	 * Time stamp.
+	 *
+	 * @param scope the scope
+	 * @return the long
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// Get current time of system
 	@action (
 			name = "timeStamp")
@@ -54,6 +62,12 @@ public class MDXSkill extends Skill {
 		return timeStamp;
 	}
 
+	/**
+	 * Test connection.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	/*
 	 * Make a connection to BDMS
 	 *
@@ -78,6 +92,13 @@ public class MDXSkill extends Skill {
 		return true;
 	}
 
+	/**
+	 * Select QM.
+	 *
+	 * @param scope the scope
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "select",
 			args = { @arg (

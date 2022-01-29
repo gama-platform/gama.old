@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ParticleType.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package org.jbox2d.particle;
 
 /**
@@ -6,6 +16,8 @@ package org.jbox2d.particle;
  * @author dmurph
  */
 public class ParticleType {
+  
+  /** The Constant b2_waterParticle. */
   public static final int b2_waterParticle = 0;
   /** removed after next step */
   public static final int b2_zombieParticle = 1 << 1;

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * StackList.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.util;
 
@@ -46,18 +39,33 @@ import java.util.ArrayList;
  */
 public abstract class StackList<T> {
 
+	/** The list. */
 	private final ArrayList<T> list = new ArrayList<>();
+	
+	/** The return obj. */
 	private T returnObj;
 
+	/** The stack. */
 	private final int[] stack = new int[512];
+	
+	/** The stack count. */
 	private int stackCount = 0;
 
+	/** The pos. */
 	private int pos = 0;
 
+	/**
+	 * Instantiates a new stack list.
+	 */
 	public StackList() {
 		returnObj = create();
 	}
 
+	/**
+	 * Instantiates a new stack list.
+	 *
+	 * @param unused the unused
+	 */
 	protected StackList(final boolean unused) {}
 
 	/**
@@ -122,6 +130,9 @@ public abstract class StackList<T> {
 	 */
 	protected abstract void copy(T dest, T src);
 
+	/**
+	 * Expand.
+	 */
 	private void expand() {
 		list.add(create());
 	}

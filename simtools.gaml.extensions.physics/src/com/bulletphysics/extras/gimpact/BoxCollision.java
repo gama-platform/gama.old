@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * BoxCollision.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -39,20 +29,58 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class BoxCollision {
 
+	/** The Constant BOX_PLANE_EPSILON. */
 	public static final float BOX_PLANE_EPSILON = 0.000001f;
 
+	/**
+	 * Bt greater.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @return true, if successful
+	 */
 	public static boolean BT_GREATER(final float x, final float y) {
 		return Math.abs(x) > y;
 	}
 
+	/**
+	 * Bt max3.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @param c the c
+	 * @return the float
+	 */
 	public static float BT_MAX3(final float a, final float b, final float c) {
 		return Math.max(a, Math.max(b, c));
 	}
 
+	/**
+	 * Bt min3.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @param c the c
+	 * @return the float
+	 */
 	public static float BT_MIN3(final float a, final float b, final float c) {
 		return Math.min(a, Math.min(b, c));
 	}
 
+	/**
+	 * Test cross edge box mcr.
+	 *
+	 * @param edge the edge
+	 * @param absolute_edge the absolute edge
+	 * @param pointa the pointa
+	 * @param pointb the pointb
+	 * @param _extend the extend
+	 * @param i_dir_0 the i dir 0
+	 * @param i_dir_1 the i dir 1
+	 * @param i_comp_0 the i comp 0
+	 * @param i_comp_1 the i comp 1
+	 * @return true, if successful
+	 */
 	public static boolean TEST_CROSS_EDGE_BOX_MCR(final Vector3f edge, final Vector3f absolute_edge,
 			final Vector3f pointa, final Vector3f pointb, final Vector3f _extend, final int i_dir_0, final int i_dir_1,
 			final int i_comp_0, final int i_comp_1) {
@@ -74,16 +102,46 @@ public class BoxCollision {
 		return true;
 	}
 
+	/**
+	 * Test cross edge box x axis mcr.
+	 *
+	 * @param edge the edge
+	 * @param absolute_edge the absolute edge
+	 * @param pointa the pointa
+	 * @param pointb the pointb
+	 * @param _extend the extend
+	 * @return true, if successful
+	 */
 	public static boolean TEST_CROSS_EDGE_BOX_X_AXIS_MCR(final Vector3f edge, final Vector3f absolute_edge,
 			final Vector3f pointa, final Vector3f pointb, final Vector3f _extend) {
 		return TEST_CROSS_EDGE_BOX_MCR(edge, absolute_edge, pointa, pointb, _extend, 2, 1, 1, 2);
 	}
 
+	/**
+	 * Test cross edge box y axis mcr.
+	 *
+	 * @param edge the edge
+	 * @param absolute_edge the absolute edge
+	 * @param pointa the pointa
+	 * @param pointb the pointb
+	 * @param _extend the extend
+	 * @return true, if successful
+	 */
 	public static boolean TEST_CROSS_EDGE_BOX_Y_AXIS_MCR(final Vector3f edge, final Vector3f absolute_edge,
 			final Vector3f pointa, final Vector3f pointb, final Vector3f _extend) {
 		return TEST_CROSS_EDGE_BOX_MCR(edge, absolute_edge, pointa, pointb, _extend, 0, 2, 2, 0);
 	}
 
+	/**
+	 * Test cross edge box z axis mcr.
+	 *
+	 * @param edge the edge
+	 * @param absolute_edge the absolute edge
+	 * @param pointa the pointa
+	 * @param pointb the pointb
+	 * @param _extend the extend
+	 * @return true, if successful
+	 */
 	public static boolean TEST_CROSS_EDGE_BOX_Z_AXIS_MCR(final Vector3f edge, final Vector3f absolute_edge,
 			final Vector3f pointa, final Vector3f pointb, final Vector3f _extend) {
 		return TEST_CROSS_EDGE_BOX_MCR(edge, absolute_edge, pointa, pointb, _extend, 1, 0, 0, 1);
@@ -106,15 +164,32 @@ public class BoxCollision {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class BoxBoxTransformCache.
+	 */
 	public static class BoxBoxTransformCache {
+		
+		/** The T 1 to 0. */
 		public final Vector3f T1to0 = new Vector3f(); // Transforms translation of model1 to model 0
+		
+		/** The R 1 to 0. */
 		public final Matrix3f R1to0 = new Matrix3f(); // Transforms Rotation of model1 to model 0, equal to R0' * R1
+		
+		/** The ar. */
 		public final Matrix3f AR = new Matrix3f(); // Absolute value of m_R1to0
 
+		/**
+		 * Sets the.
+		 *
+		 * @param cache the cache
+		 */
 		public void set(final BoxBoxTransformCache cache) {
 			throw new UnsupportedOperationException();
 		}
 
+		/**
+		 * Calc absolute matrix.
+		 */
 		public void calc_absolute_matrix() {
 			// static const btVector3 vepsi(1e-6f,1e-6f,1e-6f);
 			// m_AR[0] = vepsi + m_R1to0[0].absolute();
@@ -162,6 +237,13 @@ public class BoxCollision {
 			VECTORS.release(tmp);
 		}
 
+		/**
+		 * Transform.
+		 *
+		 * @param point the point
+		 * @param out the out
+		 * @return the vector 3 f
+		 */
 		public Vector3f transform(Vector3f point, final Vector3f out) {
 			if (point == out) { point = VECTORS.get(point); } // AD to release ?
 
@@ -179,24 +261,60 @@ public class BoxCollision {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class AABB.
+	 */
 	public static class AABB {
+		
+		/** The min. */
 		public final Vector3f min = new Vector3f();
+		
+		/** The max. */
 		public final Vector3f max = new Vector3f();
 
+		/**
+		 * Instantiates a new aabb.
+		 */
 		public AABB() {}
 
+		/**
+		 * Instantiates a new aabb.
+		 *
+		 * @param V1 the v1
+		 * @param V2 the v2
+		 * @param V3 the v3
+		 */
 		public AABB(final Vector3f V1, final Vector3f V2, final Vector3f V3) {
 			calc_from_triangle(V1, V2, V3);
 		}
 
+		/**
+		 * Instantiates a new aabb.
+		 *
+		 * @param V1 the v1
+		 * @param V2 the v2
+		 * @param V3 the v3
+		 * @param margin the margin
+		 */
 		public AABB(final Vector3f V1, final Vector3f V2, final Vector3f V3, final float margin) {
 			calc_from_triangle_margin(V1, V2, V3, margin);
 		}
 
+		/**
+		 * Instantiates a new aabb.
+		 *
+		 * @param other the other
+		 */
 		public AABB(final AABB other) {
 			set(other);
 		}
 
+		/**
+		 * Instantiates a new aabb.
+		 *
+		 * @param other the other
+		 * @param margin the margin
+		 */
 		public AABB(final AABB other, final float margin) {
 			this(other);
 			min.x -= margin;
@@ -207,20 +325,41 @@ public class BoxCollision {
 			max.z += margin;
 		}
 
+		/**
+		 * Inits the.
+		 *
+		 * @param V1 the v1
+		 * @param V2 the v2
+		 * @param V3 the v3
+		 * @param margin the margin
+		 */
 		public void init(final Vector3f V1, final Vector3f V2, final Vector3f V3, final float margin) {
 			calc_from_triangle_margin(V1, V2, V3, margin);
 		}
 
+		/**
+		 * Sets the.
+		 *
+		 * @param other the other
+		 */
 		public void set(final AABB other) {
 			min.set(other.min);
 			max.set(other.max);
 		}
 
+		/**
+		 * Invalidate.
+		 */
 		public void invalidate() {
 			min.set(BulletGlobals.SIMD_INFINITY, BulletGlobals.SIMD_INFINITY, BulletGlobals.SIMD_INFINITY);
 			max.set(-BulletGlobals.SIMD_INFINITY, -BulletGlobals.SIMD_INFINITY, -BulletGlobals.SIMD_INFINITY);
 		}
 
+		/**
+		 * Increment margin.
+		 *
+		 * @param margin the margin
+		 */
 		public void increment_margin(final float margin) {
 			min.x -= margin;
 			min.y -= margin;
@@ -230,6 +369,12 @@ public class BoxCollision {
 			max.z += margin;
 		}
 
+		/**
+		 * Copy with margin.
+		 *
+		 * @param other the other
+		 * @param margin the margin
+		 */
 		public void copy_with_margin(final AABB other, final float margin) {
 			min.x = other.min.x - margin;
 			min.y = other.min.y - margin;
@@ -240,6 +385,13 @@ public class BoxCollision {
 			max.z = other.max.z + margin;
 		}
 
+		/**
+		 * Calc from triangle.
+		 *
+		 * @param V1 the v1
+		 * @param V2 the v2
+		 * @param V3 the v3
+		 */
 		public void calc_from_triangle(final Vector3f V1, final Vector3f V2, final Vector3f V3) {
 			min.x = BT_MIN3(V1.x, V2.x, V3.x);
 			min.y = BT_MIN3(V1.y, V2.y, V3.y);
@@ -250,6 +402,14 @@ public class BoxCollision {
 			max.z = BT_MAX3(V1.z, V2.z, V3.z);
 		}
 
+		/**
+		 * Calc from triangle margin.
+		 *
+		 * @param V1 the v1
+		 * @param V2 the v2
+		 * @param V3 the v3
+		 * @param margin the margin
+		 */
 		public void calc_from_triangle_margin(final Vector3f V1, final Vector3f V2, final Vector3f V3,
 				final float margin) {
 			calc_from_triangle(V1, V2, V3);
@@ -380,6 +540,12 @@ public class BoxCollision {
 			intersection.max.z = Math.min(other.max.z, max.z);
 		}
 
+		/**
+		 * Checks for collision.
+		 *
+		 * @param other the other
+		 * @return true, if successful
+		 */
 		public boolean has_collision(final AABB other) {
 			if (min.x > other.max.x || max.x < other.min.x || min.y > other.max.y || max.y < other.min.y
 					|| min.z > other.max.z || max.z < other.min.z)
@@ -424,6 +590,13 @@ public class BoxCollision {
 			return true;
 		}
 
+		/**
+		 * Projection interval.
+		 *
+		 * @param direction the direction
+		 * @param vmin the vmin
+		 * @param vmax the vmax
+		 */
 		public void projection_interval(final Vector3f direction, final float[] vmin, final float[] vmax) {
 			Vector3f tmp = VECTORS.get();
 
@@ -439,6 +612,12 @@ public class BoxCollision {
 			VECTORS.release(tmp, center, extend);
 		}
 
+		/**
+		 * Plane classify.
+		 *
+		 * @param plane the plane
+		 * @return the plane intersection type
+		 */
 		public PlaneIntersectionType plane_classify(final Vector4f plane) {
 			Vector3f tmp = VECTORS.get();
 			try {
@@ -456,6 +635,13 @@ public class BoxCollision {
 			}
 		}
 
+		/**
+		 * Overlapping trans conservative.
+		 *
+		 * @param box the box
+		 * @param trans1_to_0 the trans 1 to 0
+		 * @return true, if successful
+		 */
 		public boolean overlapping_trans_conservative(final AABB box, final Transform trans1_to_0) {
 			AABB tbox = AABBS.get(box);
 			tbox.appy_transform(trans1_to_0);
@@ -463,6 +649,13 @@ public class BoxCollision {
 			return has_collision(tbox);
 		}
 
+		/**
+		 * Overlapping trans conservative 2.
+		 *
+		 * @param box the box
+		 * @param trans1_to_0 the trans 1 to 0
+		 * @return true, if successful
+		 */
 		public boolean overlapping_trans_conservative2(final AABB box, final BoxBoxTransformCache trans1_to_0) {
 			AABB tbox = AABBS.get(box);
 			tbox.appy_transform_trans_cache(trans1_to_0);

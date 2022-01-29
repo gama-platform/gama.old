@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * ContactSolverInfo.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -25,26 +18,62 @@ package com.bulletphysics.dynamics.constraintsolver;
  */
 public class ContactSolverInfo {
 
+	/** The tau. */
 	public float tau = 0.6f;
+	
+	/** The damping. */
 	public float damping = 1f;
+	
+	/** The friction. */
 	public float friction = 0.3f;
+	
+	/** The time step. */
 	public float timeStep;
+	
+	/** The restitution. */
 	public float restitution = 0f;
+	
+	/** The num iterations. */
 	public int numIterations = 10;
+	
+	/** The max error reduction. */
 	public float maxErrorReduction = 20f;
+	
+	/** The sor. */
 	public float sor = 1.3f;
+	
+	/** The erp. */
 	public float erp = 0.2f; // used as Baumgarte factor
+	
+	/** The erp 2. */
 	public float erp2 = 0.1f; // used in Split Impulse
+	
+	/** The split impulse. */
 	public boolean splitImpulse = false;
+	
+	/** The split impulse penetration threshold. */
 	public float splitImpulsePenetrationThreshold = -0.02f;
+	
+	/** The linear slop. */
 	public float linearSlop = 0f;
+	
+	/** The warmstarting factor. */
 	public float warmstartingFactor = 0.85f;
 
+	/** The solver mode. */
 	public int solverMode = /* SolverMode.SOLVER_RANDMIZE_ORDER | */SolverMode.SOLVER_CACHE_FRIENDLY
 	/* | SolverMode.SOLVER_USE_WARMSTARTING */;
 
+	/**
+	 * Instantiates a new contact solver info.
+	 */
 	public ContactSolverInfo() {}
 
+	/**
+	 * Instantiates a new contact solver info.
+	 *
+	 * @param g the g
+	 */
 	public ContactSolverInfo(final ContactSolverInfo g) {
 		tau = g.tau;
 		damping = g.damping;

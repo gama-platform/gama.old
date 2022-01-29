@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * BroadphaseProxy.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -35,24 +23,48 @@ import com.bulletphysics.dynamics.RigidBody;
  */
 public class BroadphaseProxy {
 
+	/** The client object. */
 	// Usually the client CollisionObject or Rigidbody class
 	public Object clientObject;
 	
+	/** The collision filter group. */
 	// TODO: mask
 	public short collisionFilterGroup;
+	
+	/** The collision filter mask. */
 	public short collisionFilterMask;
 	
+	/** The multi sap parent proxy. */
 	public Object multiSapParentProxy;
 	
+	/** The unique id. */
 	public int uniqueId; // uniqueId is introduced for paircache. could get rid of this, by calculating the address offset etc.
 
+	/**
+	 * Instantiates a new broadphase proxy.
+	 */
 	public BroadphaseProxy() {
 	}
 	
+	/**
+	 * Instantiates a new broadphase proxy.
+	 *
+	 * @param userPtr the user ptr
+	 * @param collisionFilterGroup the collision filter group
+	 * @param collisionFilterMask the collision filter mask
+	 */
 	public BroadphaseProxy(Object userPtr, short collisionFilterGroup, short collisionFilterMask) {
 		this(userPtr, collisionFilterGroup, collisionFilterMask, null);
 	}
 	
+	/**
+	 * Instantiates a new broadphase proxy.
+	 *
+	 * @param userPtr the user ptr
+	 * @param collisionFilterGroup the collision filter group
+	 * @param collisionFilterMask the collision filter mask
+	 * @param multiSapParentProxy the multi sap parent proxy
+	 */
 	public BroadphaseProxy(Object userPtr, short collisionFilterGroup, short collisionFilterMask, Object multiSapParentProxy) {
 		this.clientObject = userPtr;
 		this.collisionFilterGroup = collisionFilterGroup;
@@ -60,6 +72,11 @@ public class BroadphaseProxy {
 		this.multiSapParentProxy = multiSapParentProxy;
 	}
 
+	/**
+	 * Gets the uid.
+	 *
+	 * @return the uid
+	 */
 	public int getUid() {
 		return uniqueId;
 	}

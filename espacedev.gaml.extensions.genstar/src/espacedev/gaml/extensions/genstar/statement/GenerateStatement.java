@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GenerateStatement.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.statement;
 
 import static msi.gama.common.interfaces.IKeyword.FROM;
@@ -56,6 +66,9 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class GenerateStatement.
+ */
 @symbol (
 		name = GENERATE,
 		kind = SEQUENCE_STATEMENT,
@@ -136,11 +149,23 @@ import one.util.streamex.StreamEx;
 @validator (GenerateValidator.class)
 public class GenerateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 	
+	/** The init. */
 	private Arguments init;
+	
+	/** The algorithm. */
 	private final IExpression from, number, species, attributes, algorithm;
+	
+	/** The returns. */
 	private final String returns;
+	
+	/** The sequence. */
 	private final RemoteSequence sequence;
 	
+	/**
+	 * Instantiates a new generate statement.
+	 *
+	 * @param desc the desc
+	 */
 	public GenerateStatement(IDescription desc) { 
 		super(desc);
 		returns = getLiteral(RETURNS);
@@ -218,6 +243,12 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 	// ------------------------------------------------------------------------------------------------ //
 	// ------------------------------------------------------------------------------------------------ //
 	
+	/**
+	 * Find population.
+	 *
+	 * @param scope the scope
+	 * @return the i population
+	 */
 	@SuppressWarnings("rawtypes")
 	private IPopulation findPopulation(final IScope scope) {
 		final IAgent executor = scope.getAgent();

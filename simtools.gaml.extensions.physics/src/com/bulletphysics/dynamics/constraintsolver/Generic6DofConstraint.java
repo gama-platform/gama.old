@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * Generic6DofConstraint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 /*
  * 2007-09-09 btGeneric6DofConstraint Refactored by Francisco Le�n email: projectileman@yahoo.com http://gimpact.sf.net
@@ -85,39 +78,69 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class Generic6DofConstraint extends TypedConstraint {
 
+	/** The frame in A. */
 	protected final Transform frameInA = new Transform(); // !< the constraint space w.r.t body A
+	
+	/** The frame in B. */
 	protected final Transform frameInB = new Transform(); // !< the constraint space w.r.t body B
 
+	/** The jac linear. */
 	protected final JacobianEntry[] jacLinear/* [3] */ =
 			new JacobianEntry[] { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // !< 3 orthogonal
 																									// linear
+																									/** The jac ang. */
 																									// constraints
 	protected final JacobianEntry[] jacAng/* [3] */ =
 			new JacobianEntry[] { new JacobianEntry(), new JacobianEntry(), new JacobianEntry() }; // !< 3 orthogonal
 																									// angular
 																									// constraints
 
-	protected final TranslationalLimitMotor linearLimits = new TranslationalLimitMotor();
+	/** The linear limits. */
+																									protected final TranslationalLimitMotor linearLimits = new TranslationalLimitMotor();
 
+	/** The angular limits. */
 	protected final RotationalLimitMotor[] angularLimits/* [3] */ = new RotationalLimitMotor[] {
 			new RotationalLimitMotor(), new RotationalLimitMotor(), new RotationalLimitMotor() };
 
+	/** The time step. */
 	protected float timeStep;
+	
+	/** The calculated transform A. */
 	protected final Transform calculatedTransformA = new Transform();
+	
+	/** The calculated transform B. */
 	protected final Transform calculatedTransformB = new Transform();
+	
+	/** The calculated axis angle diff. */
 	protected final Vector3f calculatedAxisAngleDiff = new Vector3f();
+	
+	/** The calculated axis. */
 	protected final Vector3f[] calculatedAxis/* [3] */ =
 			new Vector3f[] { new Vector3f(), new Vector3f(), new Vector3f() };
 
+	/** The anchor pos. */
 	protected final Vector3f anchorPos = new Vector3f(); // point betwen pivots of bodies A and B to solve linear axes
 
+	/** The use linear reference frame A. */
 	protected boolean useLinearReferenceFrameA;
 
+	/**
+	 * Instantiates a new generic 6 dof constraint.
+	 */
 	public Generic6DofConstraint() {
 		super(TypedConstraintType.D6_CONSTRAINT_TYPE);
 		useLinearReferenceFrameA = true;
 	}
 
+	/**
+	 * Instantiates a new generic 6 dof constraint.
+	 *
+	 * @param rbA the rb A
+	 * @param rbB the rb B
+	 * @param frameInA the frame in A
+	 * @param frameInB the frame in B
+	 * @param useLinearReferenceFrameA the use linear reference frame A
+	 */
 	public Generic6DofConstraint(final RigidBody rbA, final RigidBody rbB, final Transform frameInA,
 			final Transform frameInB, final boolean useLinearReferenceFrameA) {
 		super(TypedConstraintType.D6_CONSTRAINT_TYPE, rbA, rbB);
@@ -126,6 +149,13 @@ public class Generic6DofConstraint extends TypedConstraint {
 		this.useLinearReferenceFrameA = useLinearReferenceFrameA;
 	}
 
+	/**
+	 * Gets the matrix elem.
+	 *
+	 * @param mat the mat
+	 * @param index the index
+	 * @return the matrix elem
+	 */
 	private static float getMatrixElem(final Matrix3f mat, final int index) {
 		int i = index % 3;
 		int j = index / 3;
@@ -235,6 +265,14 @@ public class Generic6DofConstraint extends TypedConstraint {
 		calculateAngleInfo();
 	}
 
+	/**
+	 * Builds the linear jacobian.
+	 *
+	 * @param jacLinear_index the jac linear index
+	 * @param normalWorld the normal world
+	 * @param pivotAInW the pivot A in W
+	 * @param pivotBInW the pivot B in W
+	 */
 	protected void buildLinearJacobian(/* JacobianEntry jacLinear */final int jacLinear_index,
 			final Vector3f normalWorld, final Vector3f pivotAInW, final Vector3f pivotBInW) {
 		Transform tmp = TRANSFORMS.get();
@@ -259,6 +297,12 @@ public class Generic6DofConstraint extends TypedConstraint {
 
 	}
 
+	/**
+	 * Builds the angular jacobian.
+	 *
+	 * @param jacAngular_index the jac angular index
+	 * @param jointAxisW the joint axis W
+	 */
 	protected void buildAngularJacobian(/* JacobianEntry jacAngular */final int jacAngular_index,
 			final Vector3f jointAxisW) {
 		Transform tmp = TRANSFORMS.get();
@@ -384,6 +428,11 @@ public class Generic6DofConstraint extends TypedConstraint {
 		VECTORS.release(pointInA, pointInB, angular_axis, linear_axis);
 	}
 
+	/**
+	 * Update RHS.
+	 *
+	 * @param timeStep the time step
+	 */
 	public void updateRHS(final float timeStep) {}
 
 	/**
@@ -423,30 +472,62 @@ public class Generic6DofConstraint extends TypedConstraint {
 		return out;
 	}
 
+	/**
+	 * Gets the frame offset A.
+	 *
+	 * @param out the out
+	 * @return the frame offset A
+	 */
 	public Transform getFrameOffsetA(final Transform out) {
 		out.set(frameInA);
 		return out;
 	}
 
+	/**
+	 * Gets the frame offset B.
+	 *
+	 * @param out the out
+	 * @return the frame offset B
+	 */
 	public Transform getFrameOffsetB(final Transform out) {
 		out.set(frameInB);
 		return out;
 	}
 
+	/**
+	 * Sets the linear lower limit.
+	 *
+	 * @param linearLower the new linear lower limit
+	 */
 	public void setLinearLowerLimit(final Vector3f linearLower) {
 		linearLimits.lowerLimit.set(linearLower);
 	}
 
+	/**
+	 * Sets the linear upper limit.
+	 *
+	 * @param linearUpper the new linear upper limit
+	 */
 	public void setLinearUpperLimit(final Vector3f linearUpper) {
 		linearLimits.upperLimit.set(linearUpper);
 	}
 
+	/**
+	 * Sets the angular lower limit.
+	 *
+	 * @param angularLower the new angular lower limit
+	 */
 	public void setAngularLowerLimit(final Vector3f angularLower) {
 		angularLimits[0].loLimit = angularLower.x;
 		angularLimits[1].loLimit = angularLower.y;
 		angularLimits[2].loLimit = angularLower.z;
 	}
 
+	/**
+	 * Sets the angular upper limit.
+	 *
+	 * @param angularUpper the new angular upper limit
+	 */
 	public void setAngularUpperLimit(final Vector3f angularUpper) {
 		angularLimits[0].hiLimit = angularUpper.x;
 		angularLimits[1].hiLimit = angularUpper.y;
@@ -493,6 +574,9 @@ public class Generic6DofConstraint extends TypedConstraint {
 		return angularLimits[limitIndex - 3].isLimited();
 	}
 
+	/**
+	 * Calc anchor pos.
+	 */
 	// overridable
 	public void calcAnchorPos() {
 		float imA = rbA.getInvMass();

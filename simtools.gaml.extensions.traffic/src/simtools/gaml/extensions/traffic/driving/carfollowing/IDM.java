@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * IDM.java, in simtools.gaml.extensions.traffic, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving.carfollowing;
 
 import static simtools.gaml.extensions.traffic.driving.DrivingSkill.getDeltaIDM;
@@ -13,6 +23,9 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
+/**
+ * The Class IDM.
+ */
 public class IDM {
 	/**
 	 * Computes the acceleration according to the Intelligent Driver Model

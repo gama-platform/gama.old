@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SQLSkill.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SQLSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package irit.gaml.extensions.database.skills;
 
 import java.sql.Connection;
@@ -35,6 +33,9 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class SQLSkill.
+ */
 /*
  * @Author TRUONG Minh Thai
  *
@@ -60,6 +61,13 @@ import ummisco.gama.dev.utils.DEBUG;
 public class SQLSkill extends Skill {
 
 	// Get current time of system
+	/**
+	 * Time stamp.
+	 *
+	 * @param scope the scope
+	 * @return the long
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// added from MaeliaSkill
 	@action (
 			name = "timeStamp")
@@ -68,6 +76,13 @@ public class SQLSkill extends Skill {
 		return timeStamp;
 	}
 
+	/**
+	 * Gets the current date time.
+	 *
+	 * @param scope the scope
+	 * @return the current date time
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// Get current time of system
 	@action (
 			name = "getCurrentDateTime",
@@ -83,6 +98,13 @@ public class SQLSkill extends Skill {
 		return datef.format(c.getTime());
 	}
 
+	/**
+	 * Gets the date offset.
+	 *
+	 * @param scope the scope
+	 * @return the date offset
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "getDateOffset",
 			args = { @arg (
@@ -119,6 +141,12 @@ public class SQLSkill extends Skill {
 		return datef.format(c.getTime());
 	}
 
+	/**
+	 * Test connection.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	/*
 	 * Make a connection to BDMS
 	 *
@@ -144,6 +172,13 @@ public class SQLSkill extends Skill {
 		return true;
 	}
 
+	/**
+	 * Execute update QM.
+	 *
+	 * @param scope the scope
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * - Make a connection to BDMS - Executes the SQL statement in this PreparedStatement object, which must be an SQL
 	 * INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
@@ -197,6 +232,13 @@ public class SQLSkill extends Skill {
 
 	}
 
+	/**
+	 * Insert.
+	 *
+	 * @param scope the scope
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to BDMS and execute the insert statement
 	 *
@@ -259,6 +301,13 @@ public class SQLSkill extends Skill {
 		// ------------------------------------------------------------------------------------------
 	}
 
+	/**
+	 * Select QM.
+	 *
+	 * @param scope the scope
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
@@ -331,6 +380,13 @@ public class SQLSkill extends Skill {
 
 	}
 
+	/**
+	 * List 2 matrix.
+	 *
+	 * @param scope the scope
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "list2Matrix",
 			args = { @arg (

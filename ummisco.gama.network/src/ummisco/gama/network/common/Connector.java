@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Connector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * Connector.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.common;
 
 import java.util.ArrayList;
@@ -24,6 +23,9 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
 
+/**
+ * The Class Connector.
+ */
 public abstract class Connector implements IConnector {
 
 	// private final static int REGISTER_GROUP_THREAD_SAFE_ACTION = 0;
@@ -32,27 +34,42 @@ public abstract class Connector implements IConnector {
 	// private final static int REGISTER_USER_THREAD_SAFE_ACTION = 3;
 	// private final static int UNSUBSCRIBE_GROUP_THREAD_SAFE_ACTION = 4;
 
+	/** The Constant FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION. */
 	private final static int FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION = 5;
+	
+	/** The Constant PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION. */
 	private final static int PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION = 8;
 
+	/** The connection parameter. */
 	// connector Configuration data
 	protected Map<String, String> connectionParameter;
 
+	/** The box follower. */
 	// Box ordered map
 	protected Map<String, ArrayList<IAgent>> boxFollower;
 
+	/** The received message. */
 	// Received messages
 	protected Map<IAgent, LinkedList<ConnectorMessage>> receivedMessage;
 
+	/** The local member names. */
 	protected Map<String, IAgent> localMemberNames;
 
+	/** The topic suscribing pending. */
 	protected List<String> topicSuscribingPending;
+	
+	/** The is connected. */
 	protected boolean isConnected = false;
 
+	/** The lock group managment. */
 	Object lockGroupManagment = new Object();
 
+	/** The force network use. */
 	boolean forceNetworkUse = false;
 
+	/**
+	 * Instantiates a new connector.
+	 */
 	protected Connector() {
 		super();
 		boxFollower = new HashMap<>();
@@ -73,10 +90,19 @@ public abstract class Connector implements IConnector {
 		this.connectionParameter.put(parameterName, value);
 	}
 
+	/**
+	 * Gets the configuration parameter.
+	 *
+	 * @param name the name
+	 * @return the configuration parameter
+	 */
 	protected String getConfigurationParameter(final String name) {
 		return this.connectionParameter.get(name);
 	}
 
+	/**
+	 * Sets the connected.
+	 */
 	protected void setConnected() {
 		this.isConnected = true;
 	}
@@ -88,6 +114,13 @@ public abstract class Connector implements IConnector {
 		return currentMessage;
 	}
 
+	/**
+	 * Store message.
+	 *
+	 * @param topic the topic
+	 * @param content the content
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	public void storeMessage(final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
 		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(topic, content);
@@ -96,6 +129,14 @@ public abstract class Connector implements IConnector {
 		}
 	}
 
+	/**
+	 * Push and fetchthread safe.
+	 *
+	 * @param action the action
+	 * @param groupName the group name
+	 * @param message the message
+	 * @return the map
+	 */
 	private Map<IAgent, LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(final int action, final String groupName,
 			final ConnectorMessage message) {
 		synchronized (lockGroupManagment) {
@@ -204,16 +245,57 @@ public abstract class Connector implements IConnector {
 		}
 	}
 
+	/**
+	 * Connect to server.
+	 *
+	 * @param agent the agent
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract void connectToServer(IAgent agent) throws GamaNetworkException;
 
+	/**
+	 * Checks if is alive.
+	 *
+	 * @param agent the agent
+	 * @return true, if is alive
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract boolean isAlive(final IAgent agent) throws GamaNetworkException;
 
+	/**
+	 * Subscribe to group.
+	 *
+	 * @param agt the agt
+	 * @param boxName the box name
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException;
 
+	/**
+	 * Unsubscribe group.
+	 *
+	 * @param agt the agt
+	 * @param boxName the box name
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException;
 
+	/**
+	 * Release connection.
+	 *
+	 * @param scope the scope
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract void releaseConnection(final IScope scope) throws GamaNetworkException;
 
+	/**
+	 * Send message.
+	 *
+	 * @param sender the sender
+	 * @param receiver the receiver
+	 * @param content the content
+	 * @throws GamaNetworkException the gama network exception
+	 */
 	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException;
 

@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * ContactID.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 /*
  * JBox2D - A Java Port of Erin Catto's Box2D
  * 
@@ -50,29 +37,67 @@ package org.jbox2d.collision;
  */
 public class ContactID implements Comparable<ContactID> {
 
+  /**
+   * The Enum Type.
+   */
   public static enum Type {
-    VERTEX, FACE
+    
+    /** The vertex. */
+    VERTEX, 
+ /** The face. */
+ FACE
   }
 
+  /** The index A. */
   public byte indexA;
+  
+  /** The index B. */
   public byte indexB;
+  
+  /** The type A. */
   public byte typeA;
+  
+  /** The type B. */
   public byte typeB;
 
+  /**
+   * Gets the key.
+   *
+   * @return the key
+   */
   public int getKey() {
     return (indexA) << 24 | (indexB) << 16 | (typeA) << 8 | (typeB);
   }
 
+  /**
+   * Checks if is equal.
+   *
+   * @param cid the cid
+   * @return true, if is equal
+   */
   public boolean isEqual(final ContactID cid) {
     return getKey() == cid.getKey();
   }
 
+  /**
+   * Instantiates a new contact ID.
+   */
   public ContactID() {}
 
+  /**
+   * Instantiates a new contact ID.
+   *
+   * @param c the c
+   */
   public ContactID(final ContactID c) {
     set(c);
   }
 
+  /**
+   * Sets the.
+   *
+   * @param c the c
+   */
   public void set(final ContactID c) {
     indexA = c.indexA;
     indexB = c.indexB;
@@ -80,6 +105,9 @@ public class ContactID implements Comparable<ContactID> {
     typeB = c.typeB;
   }
 
+  /**
+   * Flip.
+   */
   public void flip() {
     byte tempA = indexA;
     indexA = indexB;

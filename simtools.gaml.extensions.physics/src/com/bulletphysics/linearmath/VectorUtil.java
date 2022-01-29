@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * VectorUtil.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -33,6 +21,12 @@ import javax.vecmath.Vector4f;
  */
 public class VectorUtil {
 
+	/**
+	 * Max axis.
+	 *
+	 * @param v the v
+	 * @return the int
+	 */
 	public static int maxAxis(Vector3f v) {
 		int maxIndex = -1;
 		float maxVal = -1e30f;
@@ -52,6 +46,12 @@ public class VectorUtil {
 		return maxIndex;
 	}
 	
+	/**
+	 * Max axis 4.
+	 *
+	 * @param v the v
+	 * @return the int
+	 */
 	public static int maxAxis4(Vector4f v) {
 		int maxIndex = -1;
 		float maxVal = -1e30f;
@@ -75,12 +75,25 @@ public class VectorUtil {
 		return maxIndex;
 	}
 
+	/**
+	 * Closest axis 4.
+	 *
+	 * @param vec the vec
+	 * @return the int
+	 */
 	public static int closestAxis4(Vector4f vec) {
 		Vector4f tmp = new Vector4f(vec);
 		tmp.absolute();
 		return maxAxis4(tmp);
 	}
 	
+	/**
+	 * Gets the coord.
+	 *
+	 * @param vec the vec
+	 * @param num the num
+	 * @return the coord
+	 */
 	public static float getCoord(Vector3f vec, int num) {
 		switch (num) {
 			case 0: return vec.x;
@@ -90,6 +103,13 @@ public class VectorUtil {
 		}
 	}
 	
+	/**
+	 * Sets the coord.
+	 *
+	 * @param vec the vec
+	 * @param num the num
+	 * @param value the value
+	 */
 	public static void setCoord(Vector3f vec, int num, float value) {
 		switch (num) {
 			case 0: vec.x = value; break;
@@ -99,6 +119,13 @@ public class VectorUtil {
 		}
 	}
 
+	/**
+	 * Mul coord.
+	 *
+	 * @param vec the vec
+	 * @param num the num
+	 * @param value the value
+	 */
 	public static void mulCoord(Vector3f vec, int num, float value) {
 		switch (num) {
 			case 0: vec.x *= value; break;
@@ -108,6 +135,14 @@ public class VectorUtil {
 		}
 	}
 
+	/**
+	 * Sets the interpolate 3.
+	 *
+	 * @param dest the dest
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @param rt the rt
+	 */
 	public static void setInterpolate3(Vector3f dest, Vector3f v0, Vector3f v1, float rt) {
 		float s = 1f - rt;
 		dest.x = s * v0.x + rt * v1.x;
@@ -117,64 +152,146 @@ public class VectorUtil {
 		//		m_co[3] = s * v0[3] + rt * v1[3];
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 */
 	public static void add(Vector3f dest, Vector3f v1, Vector3f v2) {
 		dest.x = v1.x + v2.x;
 		dest.y = v1.y + v2.y;
 		dest.z = v1.z + v2.z;
 	}
 	
+	/**
+	 * Adds the.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @param v3 the v 3
+	 */
 	public static void add(Vector3f dest, Vector3f v1, Vector3f v2, Vector3f v3) {
 		dest.x = v1.x + v2.x + v3.x;
 		dest.y = v1.y + v2.y + v3.y;
 		dest.z = v1.z + v2.z + v3.z;
 	}
 	
+	/**
+	 * Adds the.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @param v3 the v 3
+	 * @param v4 the v 4
+	 */
 	public static void add(Vector3f dest, Vector3f v1, Vector3f v2, Vector3f v3, Vector3f v4) {
 		dest.x = v1.x + v2.x + v3.x + v4.x;
 		dest.y = v1.y + v2.y + v3.y + v4.y;
 		dest.z = v1.z + v2.z + v3.z + v4.z;
 	}
 	
+	/**
+	 * Mul.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 */
 	public static void mul(Vector3f dest, Vector3f v1, Vector3f v2) {
 		dest.x = v1.x * v2.x;
 		dest.y = v1.y * v2.y;
 		dest.z = v1.z * v2.z;
 	}
 	
+	/**
+	 * Div.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 */
 	public static void div(Vector3f dest, Vector3f v1, Vector3f v2) {
 		dest.x = v1.x / v2.x;
 		dest.y = v1.y / v2.y;
 		dest.z = v1.z / v2.z;
 	}
 	
+	/**
+	 * Sets the min.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 */
 	public static void setMin(Vector3f a, Vector3f b) {
 		a.x = Math.min(a.x, b.x);
 		a.y = Math.min(a.y, b.y);
 		a.z = Math.min(a.z, b.z);
 	}
 	
+	/**
+	 * Sets the max.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 */
 	public static void setMax(Vector3f a, Vector3f b) {
 		a.x = Math.max(a.x, b.x);
 		a.y = Math.max(a.y, b.y);
 		a.z = Math.max(a.z, b.z);
 	}
 	
+	/**
+	 * Dot 3.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @return the float
+	 */
 	public static float dot3(Vector4f v0, Vector3f v1) {
 		return (v0.x*v1.x + v0.y*v1.y + v0.z*v1.z);
 	}
 
+	/**
+	 * Dot 3.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @return the float
+	 */
 	public static float dot3(Vector4f v0, Vector4f v1) {
 		return (v0.x*v1.x + v0.y*v1.y + v0.z*v1.z);
 	}
 
+	/**
+	 * Dot 3.
+	 *
+	 * @param v0 the v 0
+	 * @param v1 the v 1
+	 * @return the float
+	 */
 	public static float dot3(Vector3f v0, Vector4f v1) {
 		return (v0.x*v1.x + v0.y*v1.y + v0.z*v1.z);
 	}
 
+	/**
+	 * Length squared 3.
+	 *
+	 * @param v the v
+	 * @return the float
+	 */
 	public static float lengthSquared3(Vector4f v) {
 		return (v.x*v.x + v.y*v.y + v.z*v.z);
 	}
 
+	/**
+	 * Normalize 3.
+	 *
+	 * @param v the v
+	 */
 	public static void normalize3(Vector4f v) {
 		float norm = (float)(1.0/Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z));
 		v.x *= norm;
@@ -182,6 +299,13 @@ public class VectorUtil {
 		v.z *= norm;
 	}
 
+	/**
+	 * Cross 3.
+	 *
+	 * @param dest the dest
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 */
 	public static void cross3(Vector3f dest, Vector4f v1, Vector4f v2) {
         float x,y;
         x = v1.y*v2.z - v1.z*v2.y;

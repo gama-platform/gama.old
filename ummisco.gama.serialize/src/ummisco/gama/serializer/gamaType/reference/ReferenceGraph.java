@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ReferenceGraph.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reference;
 
 import java.util.ArrayList;
@@ -9,13 +19,23 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.gamaType.reduced.GamaGraphReducer;
 
+/**
+ * The Class ReferenceGraph.
+ */
 public class ReferenceGraph extends GamaGraph implements IReference {
 //	IAgent agt;
+/** The agt attr. */
 //	String attributeName;
 	ArrayList<AgentAttribute> agtAttr;
 	
+	/** The graph reducer. */
 	GamaGraphReducer graphReducer;
 
+	/**
+	 * Instantiates a new reference graph.
+	 *
+	 * @param g the g
+	 */
 	public ReferenceGraph(GamaGraphReducer g) {
 		super(null, Types.NO_TYPE, Types.NO_TYPE);
 		agtAttr = new ArrayList<AgentAttribute>();		

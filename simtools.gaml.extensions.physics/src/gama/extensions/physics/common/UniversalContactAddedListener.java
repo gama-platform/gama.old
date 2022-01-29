@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * UniversalContactAddedListener.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.common;
 
 import org.jbox2d.callbacks.ContactImpulse;
@@ -14,10 +24,28 @@ import com.google.common.collect.MultimapBuilder;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 
+/**
+ * The listener interface for receiving universalContactAdded events.
+ * The class that is interested in processing a universalContactAdded
+ * event implements this interface, and the object created
+ * with that class is registered with a component using the
+ * component's <code>addUniversalContactAddedListener<code> method. When
+ * the universalContactAdded event occurs, that object's appropriate
+ * method is invoked.
+ *
+ * @see UniversalContactAddedEvent
+ */
 public class UniversalContactAddedListener implements ContactAddedCallback, PhysicsCollisionListener, ContactListener {
 
+	/** The new contacts. */
 	Multimap<IBody, IBody> newContacts = MultimapBuilder.hashKeys().hashSetValues().build();
 
+	/**
+	 * Adds the contact between.
+	 *
+	 * @param b0 the b 0
+	 * @param b1 the b 1
+	 */
 	private void addContactBetween(final IBody b0, final IBody b1) {
 		if (b0.isNoNotification() && b1.isNoNotification()) return;
 		newContacts.put(b0, b1);
@@ -53,10 +81,18 @@ public class UniversalContactAddedListener implements ContactAddedCallback, Phys
 	@Override
 	public void postSolve(final Contact contact, final ContactImpulse impulse) {}
 
+	/**
+	 * Gets the collected contacts.
+	 *
+	 * @return the collected contacts
+	 */
 	public Multimap<? extends IBody, ? extends IBody> getCollectedContacts() {
 		return newContacts;
 	}
 
+	/**
+	 * Clear.
+	 */
 	public void clear() {
 		newContacts.clear();
 	}

@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * StaticBodySkill.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'Physics3DSkill.java', in plugin 'simtools.gaml.extensions.physics', is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.gaml;
 
 import java.util.HashMap;
@@ -37,6 +35,9 @@ import msi.gama.runtime.IScope;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
+/**
+ * The Class StaticBodySkill.
+ */
 @vars ({
 		// @variable (
 		// name = IKeyword.LOCATION,
@@ -91,6 +92,12 @@ import msi.gaml.types.IType;
  */
 public class StaticBodySkill extends Skill implements IPhysicalConstants {
 
+	/**
+	 * Gets the body.
+	 *
+	 * @param agent the agent
+	 * @return the body
+	 */
 	protected IBody getBody(final IAgent agent) {
 		IBody result = (IBody) agent.getAttribute(BODY);
 		// if it is null, the agent is not yet registered in the physical world
@@ -132,6 +139,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		body.setLocation(loc);
 	}
 
+	/**
+	 * Gets the aabb.
+	 *
+	 * @param a the a
+	 * @return the aabb
+	 */
 	@getter (AABB)
 	public IShape getAABB(final IAgent a) {
 		IBody body = getBody(a);
@@ -139,6 +152,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		return body.getAABB();
 	}
 
+	/**
+	 * Gets the friction.
+	 *
+	 * @param a the a
+	 * @return the friction
+	 */
 	@getter (FRICTION)
 	public Double getFriction(final IAgent a) {
 		IBody body = getBody(a);
@@ -146,6 +165,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		return Double.valueOf(body.getFriction());
 	}
 
+	/**
+	 * Sets the friction.
+	 *
+	 * @param a the a
+	 * @param friction the friction
+	 */
 	@setter (FRICTION)
 	public void setFriction(final IAgent a, final Double friction) {
 		IBody body = getBody(a);
@@ -153,6 +178,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		body.setFriction(friction);
 	}
 
+	/**
+	 * Gets the restitution.
+	 *
+	 * @param a the a
+	 * @return the restitution
+	 */
 	@getter (RESTITUTION)
 	public Double getRestitution(final IAgent a) {
 		IBody body = getBody(a);
@@ -160,6 +191,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		return Double.valueOf(body.getRestitution());
 	}
 
+	/**
+	 * Sets the restitution.
+	 *
+	 * @param a the a
+	 * @param restitution the restitution
+	 */
 	@setter (RESTITUTION)
 	public void setRestitution(final IAgent a, final Double restitution) {
 		IBody body = getBody(a);
@@ -167,6 +204,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		body.setRestitution(restitution);
 	}
 
+	/**
+	 * Prim update geometry.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	@action (
 			doc = @doc ("This action must be called when the geometry of the agent changes in the simulation world and this change must be propagated to the physical world. "
 					+ "The change of location (in either worlds) or the rotation due to physical forces do not count as changes, as they are already taken into account. "
@@ -182,6 +225,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		return null;
 	}
 
+	/**
+	 * Prim contact added.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	@action (
 			doc = @doc ("This action can be redefined in order for the agent to implement a specific behavior when it comes into contact (collision) with another agent. "
 					+ "It is automatically called by the physics simulation engine on both colliding agents. The default built-in behavior does nothing."),
@@ -196,6 +245,12 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		return null;
 	}
 
+	/**
+	 * Prim contact destroyed.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	@action (
 			doc = @doc ("This action can be redefined in order for the agent to implement a specific behavior when a previous contact with another agent is removed. "
 					+ "It is automatically called by the physics simulation engine on both colliding agents. The default built-in behavior does nothing."),
@@ -218,6 +273,8 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	 *
 	 */
 	public class FakeBody implements IBody<Object, Object, Object, GamaPoint> {
+		
+		/** The values. */
 		public final Map<String, Object> values = new HashMap<>();
 
 		@Override

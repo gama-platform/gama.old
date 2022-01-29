@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * DbvtAabbMm.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 // Dbvt implementation by Nathanael Presson
 
@@ -34,20 +27,46 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class DbvtAabbMm {
 
+	/** The mi. */
 	private final Vector3f mi = new Vector3f();
+
+	/** The mx. */
 	private final Vector3f mx = new Vector3f();
 
+	/**
+	 * Instantiates a new dbvt aabb mm.
+	 */
 	public DbvtAabbMm() {}
 
+	/**
+	 * Instantiates a new dbvt aabb mm.
+	 *
+	 * @param o
+	 *            the o
+	 */
 	public DbvtAabbMm(final DbvtAabbMm o) {
 		set(o);
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param o
+	 *            the o
+	 */
 	public void set(final DbvtAabbMm o) {
 		mi.set(o.mi);
 		mx.set(o.mx);
 	}
 
+	/**
+	 * Swap.
+	 *
+	 * @param p1
+	 *            the p 1
+	 * @param p2
+	 *            the p 2
+	 */
 	public static void swap(final DbvtAabbMm p1, final DbvtAabbMm p2) {
 		Vector3f tmp = VECTORS.get();
 
@@ -60,31 +79,73 @@ public class DbvtAabbMm {
 		p2.mx.set(tmp);
 	}
 
+	/**
+	 * Center.
+	 *
+	 * @param out
+	 *            the out
+	 * @return the vector 3 f
+	 */
 	public Vector3f Center(final Vector3f out) {
 		out.add(mi, mx);
 		out.scale(0.5f);
 		return out;
 	}
 
+	/**
+	 * Lengths.
+	 *
+	 * @param out
+	 *            the out
+	 * @return the vector 3 f
+	 */
 	public Vector3f Lengths(final Vector3f out) {
 		out.sub(mx, mi);
 		return out;
 	}
 
+	/**
+	 * Extents.
+	 *
+	 * @param out
+	 *            the out
+	 * @return the vector 3 f
+	 */
 	public Vector3f Extents(final Vector3f out) {
 		out.sub(mx, mi);
 		out.scale(0.5f);
 		return out;
 	}
 
+	/**
+	 * Mins.
+	 *
+	 * @return the vector 3 f
+	 */
 	public Vector3f Mins() {
 		return mi;
 	}
 
+	/**
+	 * Maxs.
+	 *
+	 * @return the vector 3 f
+	 */
 	public Vector3f Maxs() {
 		return mx;
 	}
 
+	/**
+	 * From CE.
+	 *
+	 * @param c
+	 *            the c
+	 * @param e
+	 *            the e
+	 * @param out
+	 *            the out
+	 * @return the dbvt aabb mm
+	 */
 	public static DbvtAabbMm FromCE(final Vector3f c, final Vector3f e, final DbvtAabbMm out) {
 		DbvtAabbMm box = out;
 		box.mi.sub(c, e);
@@ -92,12 +153,34 @@ public class DbvtAabbMm {
 		return box;
 	}
 
+	/**
+	 * From CR.
+	 *
+	 * @param c
+	 *            the c
+	 * @param r
+	 *            the r
+	 * @param out
+	 *            the out
+	 * @return the dbvt aabb mm
+	 */
 	public static DbvtAabbMm FromCR(final Vector3f c, final float r, final DbvtAabbMm out) {
 		Vector3f tmp = VECTORS.get();
 		tmp.set(r, r, r);
 		return FromCE(c, tmp, out);
 	}
 
+	/**
+	 * From MM.
+	 *
+	 * @param mi
+	 *            the mi
+	 * @param mx
+	 *            the mx
+	 * @param out
+	 *            the out
+	 * @return the dbvt aabb mm
+	 */
 	public static DbvtAabbMm FromMM(final Vector3f mi, final Vector3f mx, final DbvtAabbMm out) {
 		DbvtAabbMm box = out;
 		box.mi.set(mi);
@@ -108,11 +191,23 @@ public class DbvtAabbMm {
 	// public static DbvtAabbMm FromPoints( btVector3* pts,int n);
 	// public static DbvtAabbMm FromPoints( btVector3** ppts,int n);
 
+	/**
+	 * Expand.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	public void Expand(final Vector3f e) {
 		mi.sub(e);
 		mx.add(e);
 	}
 
+	/**
+	 * Signed expand.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	public void SignedExpand(final Vector3f e) {
 		if (e.x > 0) {
 			mx.x += e.x;
@@ -133,10 +228,28 @@ public class DbvtAabbMm {
 		}
 	}
 
+	/**
+	 * Contain.
+	 *
+	 * @param a
+	 *            the a
+	 * @return true, if successful
+	 */
 	public boolean Contain(final DbvtAabbMm a) {
 		return mi.x <= a.mi.x && mi.y <= a.mi.y && mi.z <= a.mi.z && mx.x >= a.mx.x && mx.y >= a.mx.y && mx.z >= a.mx.z;
 	}
 
+	/**
+	 * Classify.
+	 *
+	 * @param n
+	 *            the n
+	 * @param o
+	 *            the o
+	 * @param s
+	 *            the s
+	 * @return the int
+	 */
 	public int Classify(final Vector3f n, final float o, final int s) {
 		Vector3f pi = VECTORS.get();
 		Vector3f px = VECTORS.get();
@@ -181,18 +294,47 @@ public class DbvtAabbMm {
 		return 0;
 	}
 
+	/**
+	 * Project minimum.
+	 *
+	 * @param v
+	 *            the v
+	 * @param signs
+	 *            the signs
+	 * @return the float
+	 */
 	public float ProjectMinimum(final Vector3f v, final int signs) {
-		Vector3f[] b = new Vector3f[] { mx, mi };
+		Vector3f[] b = { mx, mi };
 		Vector3f p = VECTORS.get();
 		p.set(b[signs >> 0 & 1].x, b[signs >> 1 & 1].y, b[signs >> 2 & 1].z);
 		return p.dot(v);
 	}
 
+	/**
+	 * Intersect.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return true, if successful
+	 */
 	public static boolean Intersect(final DbvtAabbMm a, final DbvtAabbMm b) {
 		return a.mi.x <= b.mx.x && a.mx.x >= b.mi.x && a.mi.y <= b.mx.y && a.mx.y >= b.mi.y && a.mi.z <= b.mx.z
 				&& a.mx.z >= b.mi.z;
 	}
 
+	/**
+	 * Intersect.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @param xform
+	 *            the xform
+	 * @return true, if successful
+	 */
 	public static boolean Intersect(final DbvtAabbMm a, final DbvtAabbMm b, final Transform xform) {
 		Vector3f d0 = VECTORS.get();
 		Vector3f d1 = VECTORS.get();
@@ -205,24 +347,45 @@ public class DbvtAabbMm {
 
 		MatrixUtil.transposeTransform(d1, d0, xform.basis);
 
-		float[] s0 = new float[] { 0, 0 };
+		float[] s0 = { 0, 0 };
 		float[] s1 = new float[2];
 		s1[0] = xform.origin.dot(d0);
 		s1[1] = s1[0];
 
 		a.AddSpan(d0, s0, 0, s0, 1);
 		b.AddSpan(d1, s1, 0, s1, 1);
-		if (s0[0] > s1[1]) return false;
-		if (s0[1] < s1[0]) return false;
+		if ((s0[0] > s1[1]) || (s0[1] < s1[0])) return false;
 		return true;
 	}
 
+	/**
+	 * Intersect.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return true, if successful
+	 */
 	public static boolean Intersect(final DbvtAabbMm a, final Vector3f b) {
 		return b.x >= a.mi.x && b.y >= a.mi.y && b.z >= a.mi.z && b.x <= a.mx.x && b.y <= a.mx.y && b.z <= a.mx.z;
 	}
 
+	/**
+	 * Intersect.
+	 *
+	 * @param a
+	 *            the a
+	 * @param org
+	 *            the org
+	 * @param invdir
+	 *            the invdir
+	 * @param signs
+	 *            the signs
+	 * @return true, if successful
+	 */
 	public static boolean Intersect(final DbvtAabbMm a, final Vector3f org, final Vector3f invdir, final int[] signs) {
-		Vector3f[] bounds = new Vector3f[] { a.mi, a.mx };
+		Vector3f[] bounds = { a.mi, a.mx };
 		float txmin = (bounds[signs[0]].x - org.x) * invdir.x;
 		float txmax = (bounds[1 - signs[0]].x - org.x) * invdir.x;
 		float tymin = (bounds[signs[1]].y - org.y) * invdir.y;
@@ -240,6 +403,15 @@ public class DbvtAabbMm {
 		return txmax > 0;
 	}
 
+	/**
+	 * Proximity.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return the float
+	 */
 	public static float Proximity(final DbvtAabbMm a, final DbvtAabbMm b) {
 		Vector3f d = VECTORS.get();
 		Vector3f tmp = VECTORS.get();
@@ -250,6 +422,16 @@ public class DbvtAabbMm {
 		return Math.abs(d.x) + Math.abs(d.y) + Math.abs(d.z);
 	}
 
+	/**
+	 * Merge.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @param r
+	 *            the r
+	 */
 	public static void Merge(final DbvtAabbMm a, final DbvtAabbMm b, final DbvtAabbMm r) {
 		for (int i = 0; i < 3; i++) {
 			if (VectorUtil.getCoord(a.mi, i) < VectorUtil.getCoord(b.mi, i)) {
@@ -266,11 +448,34 @@ public class DbvtAabbMm {
 		}
 	}
 
+	/**
+	 * Not equal.
+	 *
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return true, if successful
+	 */
 	public static boolean NotEqual(final DbvtAabbMm a, final DbvtAabbMm b) {
 		return a.mi.x != b.mi.x || a.mi.y != b.mi.y || a.mi.z != b.mi.z || a.mx.x != b.mx.x || a.mx.y != b.mx.y
 				|| a.mx.z != b.mx.z;
 	}
 
+	/**
+	 * Adds the span.
+	 *
+	 * @param d
+	 *            the d
+	 * @param smi
+	 *            the smi
+	 * @param smi_idx
+	 *            the smi idx
+	 * @param smx
+	 *            the smx
+	 * @param smx_idx
+	 *            the smx idx
+	 */
 	private void AddSpan(final Vector3f d, final float[] smi, final int smi_idx, final float[] smx, final int smx_idx) {
 		for (int i = 0; i < 3; i++) {
 			if (VectorUtil.getCoord(d, i) < 0) {

@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Distance.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.collision;
 
 import org.jbox2d.collision.shapes.ChainShape;
@@ -42,23 +29,47 @@ import org.jbox2d.common.Transform;
  * @author Daniel Murphy
  */
 public class Distance {
+  
+  /** The Constant MAX_ITERS. */
   public static final int MAX_ITERS = 20;
 
+  /** The gjk calls. */
   public static int GJK_CALLS = 0;
+  
+  /** The gjk iters. */
   public static int GJK_ITERS = 0;
+  
+  /** The gjk max iters. */
   public static int GJK_MAX_ITERS = 20;
 
   /**
    * GJK using Voronoi regions (Christer Ericson) and Barycentric coordinates.
    */
   private class SimplexVertex {
+    
+    /** The w A. */
     public final Vec2 wA = new Vec2(); // support point in shapeA
+    
+    /** The w B. */
     public final Vec2 wB = new Vec2(); // support point in shapeB
+    
+    /** The w. */
     public final Vec2 w = new Vec2(); // wB - wA
+    
+    /** The a. */
     public float a; // barycentric coordinate for closest point
+    
+    /** The index A. */
     public int indexA; // wA index
+    
+    /** The index B. */
     public int indexB; // wB index
 
+    /**
+     * Sets the.
+     *
+     * @param sv the sv
+     */
     public void set(SimplexVertex sv) {
       wA.set(sv.wA);
       wB.set(sv.wB);
@@ -77,12 +88,17 @@ public class Distance {
   public static class SimplexCache {
     /** length or area */
     public float metric;
+    
+    /** The count. */
     public int count;
     /** vertices on shape A */
     public final int indexA[] = new int[3];
     /** vertices on shape B */
     public final int indexB[] = new int[3];
 
+    /**
+     * Instantiates a new simplex cache.
+     */
     public SimplexCache() {
       metric = 0;
       count = 0;
@@ -94,6 +110,11 @@ public class Distance {
       indexB[2] = Integer.MAX_VALUE;
     }
 
+    /**
+     * Sets the.
+     *
+     * @param sc the sc
+     */
     public void set(SimplexCache sc) {
       System.arraycopy(sc.indexA, 0, indexA, 0, indexA.length);
       System.arraycopy(sc.indexB, 0, indexB, 0, indexB.length);
@@ -102,13 +123,35 @@ public class Distance {
     }
   }
 
+  /**
+   * The Class Simplex.
+   */
   private class Simplex {
+    
+    /** The m v 1. */
     public final SimplexVertex m_v1 = new SimplexVertex();
+    
+    /** The m v 2. */
     public final SimplexVertex m_v2 = new SimplexVertex();
+    
+    /** The m v 3. */
     public final SimplexVertex m_v3 = new SimplexVertex();
+    
+    /** The vertices. */
     public final SimplexVertex vertices[] = {m_v1, m_v2, m_v3};
+    
+    /** The m count. */
     public int m_count;
 
+    /**
+     * Read cache.
+     *
+     * @param cache the cache
+     * @param proxyA the proxy A
+     * @param transformA the transform A
+     * @param proxyB the proxy B
+     * @param transformB the transform B
+     */
     public void readCache(SimplexCache cache, DistanceProxy proxyA, Transform transformA,
         DistanceProxy proxyB, Transform transformB) {
       assert (cache.count <= 3);
@@ -153,6 +196,11 @@ public class Distance {
       }
     }
 
+    /**
+     * Write cache.
+     *
+     * @param cache the cache
+     */
     public void writeCache(SimplexCache cache) {
       cache.metric = getMetric();
       cache.count = m_count;
@@ -163,8 +211,15 @@ public class Distance {
       }
     }
 
+    /** The e 12. */
     private final Vec2 e12 = new Vec2();
 
+    /**
+     * Gets the search direction.
+     *
+     * @param out the out
+     * @return the search direction
+     */
     public final void getSearchDirection(final Vec2 out) {
       switch (m_count) {
         case 1:
@@ -192,8 +247,11 @@ public class Distance {
       }
     }
 
+    /** The case 2. */
     // djm pooled
     private final Vec2 case2 = new Vec2();
+    
+    /** The case 22. */
     private final Vec2 case22 = new Vec2();
 
     /**
@@ -225,10 +283,20 @@ public class Distance {
       }
     }
 
+    /** The case 3. */
     // djm pooled, and from above
     private final Vec2 case3 = new Vec2();
+    
+    /** The case 33. */
     private final Vec2 case33 = new Vec2();
 
+    /**
+     * Gets the witness points.
+     *
+     * @param pA the p A
+     * @param pB the p B
+     * @return the witness points
+     */
     public void getWitnessPoints(Vec2 pA, Vec2 pB) {
       switch (m_count) {
         case 0:
@@ -266,6 +334,11 @@ public class Distance {
       }
     }
 
+    /**
+     * Gets the metric.
+     *
+     * @return the metric
+     */
     // djm pooled, from above
     public float getMetric() {
       switch (m_count) {
@@ -349,11 +422,20 @@ public class Distance {
       m_count = 2;
     }
 
+    /** The e 13. */
     // djm pooled, and from above
     private final Vec2 e13 = new Vec2();
+    
+    /** The e 23. */
     private final Vec2 e23 = new Vec2();
+    
+    /** The w 1. */
     private final Vec2 w1 = new Vec2();
+    
+    /** The w 2. */
     private final Vec2 w2 = new Vec2();
+    
+    /** The w 3. */
     private final Vec2 w3 = new Vec2();
 
     /**
@@ -474,11 +556,22 @@ public class Distance {
    * @author daniel
    */
   public static class DistanceProxy {
+    
+    /** The m vertices. */
     public final Vec2[] m_vertices;
+    
+    /** The m count. */
     public int m_count;
+    
+    /** The m radius. */
     public float m_radius;
+    
+    /** The m buffer. */
     public final Vec2[] m_buffer;
 
+    /**
+     * Instantiates a new distance proxy.
+     */
     public DistanceProxy() {
       m_vertices = new Vec2[Settings.maxPolygonVertices];
       for (int i = 0; i < m_vertices.length; i++) {
@@ -599,12 +692,25 @@ public class Distance {
     }
   }
 
+  /** The simplex. */
   private Simplex simplex = new Simplex();
+  
+  /** The save A. */
   private int[] saveA = new int[3];
+  
+  /** The save B. */
   private int[] saveB = new int[3];
+  
+  /** The closest point. */
   private Vec2 closestPoint = new Vec2();
+  
+  /** The d. */
   private Vec2 d = new Vec2();
+  
+  /** The temp. */
   private Vec2 temp = new Vec2();
+  
+  /** The normal. */
   private Vec2 normal = new Vec2();
 
   /**

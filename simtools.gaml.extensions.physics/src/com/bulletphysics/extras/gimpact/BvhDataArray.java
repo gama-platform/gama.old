@@ -1,29 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * BvhDataArray.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371.
- * email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -36,15 +20,29 @@ import javax.vecmath.Vector3f;
  */
 class BvhDataArray {
 
+	/** The size. */
 	private int size = 0;
 	
+	/** The bound. */
 	float[] bound = new float[0];
+	
+	/** The data. */
 	int[] data = new int[0];
 
+	/**
+	 * Size.
+	 *
+	 * @return the int
+	 */
 	public int size() {
 		return size;
 	}
 
+	/**
+	 * Resize.
+	 *
+	 * @param newSize the new size
+	 */
 	public void resize(int newSize) {
 		float[] newBound = new float[newSize*6];
 		int[] newData = new int[newSize];
@@ -58,6 +56,12 @@ class BvhDataArray {
 		size = newSize;
 	}
 	
+	/**
+	 * Swap.
+	 *
+	 * @param idx1 the idx 1
+	 * @param idx2 the idx 2
+	 */
 	public void swap(int idx1, int idx2) {
 		int pos1 = idx1*6;
 		int pos2 = idx2*6;
@@ -87,6 +91,13 @@ class BvhDataArray {
 		data[idx2] = d;
 	}
 	
+	/**
+	 * Gets the bound.
+	 *
+	 * @param idx the idx
+	 * @param out the out
+	 * @return the bound
+	 */
 	public AABB getBound(int idx, AABB out) {
 		int pos = idx*6;
 		out.min.set(bound[pos+0], bound[pos+1], bound[pos+2]);
@@ -94,18 +105,38 @@ class BvhDataArray {
 		return out;
 	}
 
+	/**
+	 * Gets the bound min.
+	 *
+	 * @param idx the idx
+	 * @param out the out
+	 * @return the bound min
+	 */
 	public Vector3f getBoundMin(int idx, Vector3f out) {
 		int pos = idx*6;
 		out.set(bound[pos+0], bound[pos+1], bound[pos+2]);
 		return out;
 	}
 
+	/**
+	 * Gets the bound max.
+	 *
+	 * @param idx the idx
+	 * @param out the out
+	 * @return the bound max
+	 */
 	public Vector3f getBoundMax(int idx, Vector3f out) {
 		int pos = idx*6;
 		out.set(bound[pos+3], bound[pos+4], bound[pos+5]);
 		return out;
 	}
 	
+	/**
+	 * Sets the bound.
+	 *
+	 * @param idx the idx
+	 * @param aabb the aabb
+	 */
 	public void setBound(int idx, AABB aabb) {
 		int pos = idx*6;
 		bound[pos+0] = aabb.min.x;
@@ -116,10 +147,22 @@ class BvhDataArray {
 		bound[pos+5] = aabb.max.z;
 	}
 	
+	/**
+	 * Gets the data.
+	 *
+	 * @param idx the idx
+	 * @return the data
+	 */
 	public int getData(int idx) {
 		return data[idx];
 	}
 	
+	/**
+	 * Sets the data.
+	 *
+	 * @param idx the idx
+	 * @param value the value
+	 */
 	public void setData(int idx, int value) {
 		data[idx] = value;
 	}

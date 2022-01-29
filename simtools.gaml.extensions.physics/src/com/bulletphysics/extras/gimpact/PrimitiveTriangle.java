@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * PrimitiveTriangle.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -37,8 +27,13 @@ import java.util.ArrayList;
  */
 public class PrimitiveTriangle {
 
+	/** The tmp vec list 1. */
 	private final ArrayList<Vector3f> tmpVecList1 = new ArrayList<>(TriangleContact.MAX_TRI_CLIPPING);
+	
+	/** The tmp vec list 2. */
 	private final ArrayList<Vector3f> tmpVecList2 = new ArrayList<>(TriangleContact.MAX_TRI_CLIPPING);
+	
+	/** The tmp vec list 3. */
 	private final ArrayList<Vector3f> tmpVecList3 = new ArrayList<>(TriangleContact.MAX_TRI_CLIPPING);
 
 	{
@@ -49,20 +44,36 @@ public class PrimitiveTriangle {
 		}
 	}
 
+	/** The vertices. */
 	public final Vector3f[] vertices = new Vector3f[3];
+	
+	/** The plane. */
 	public final Vector4f plane = new Vector4f();
+	
+	/** The margin. */
 	public float margin = 0.01f;
 
+	/**
+	 * Instantiates a new primitive triangle.
+	 */
 	public PrimitiveTriangle() {
 		for (int i = 0; i < vertices.length; i++) {
 			vertices[i] = new Vector3f();
 		}
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param tri the tri
+	 */
 	public void set(final PrimitiveTriangle tri) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Builds the tri plane.
+	 */
 	public void buildTriPlane() {
 		Vector3f tmp1 = VECTORS.get();
 		Vector3f tmp2 = VECTORS.get();
@@ -116,6 +127,11 @@ public class PrimitiveTriangle {
 		VECTORS.release(tmp);
 	}
 
+	/**
+	 * Apply transform.
+	 *
+	 * @param t the t
+	 */
 	public void applyTransform(final Transform t) {
 		t.transform(vertices[0]);
 		t.transform(vertices[1]);

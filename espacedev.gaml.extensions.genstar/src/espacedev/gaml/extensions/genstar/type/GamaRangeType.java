@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaRangeType.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.type;
 
 import java.util.Arrays;
@@ -13,8 +23,13 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GamaRangeType.
+ */
 @type(name = "gen_range", id = GamaRangeType.id, wraps = { GamaRange.class }, concept = { IConcept.TYPE }, doc = @doc("The range type defined in the genstar plugin"))
 public class GamaRangeType extends GamaType<GamaRange>{
+	
+	/** The Constant id. */
 	public static final int id = IType.AVAILABLE_TYPES + 3524246;
 
 	@Override

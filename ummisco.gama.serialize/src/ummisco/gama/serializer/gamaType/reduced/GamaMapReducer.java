@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaMapReducer.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaMapReducer.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.HashMap;
@@ -24,19 +23,39 @@ import msi.gama.util.IReference;
 import msi.gaml.types.IType;
 import ummisco.gama.serializer.gamaType.reference.ReferenceMap;
 
+/**
+ * The Class GamaMapReducer.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMapReducer {
+	
+	/** The keys type. */
 	private final IType keysType;
+	
+	/** The data type. */
 	private final IType dataType;
+	
+	/** The values map reducer. */
 	// private ArrayList<GamaPair> values = new ArrayList<GamaPair>();
 	private Map<Object, Object> valuesMapReducer = new HashMap();
 
+	/**
+	 * Instantiates a new gama map reducer.
+	 *
+	 * @param m the m
+	 */
 	public GamaMapReducer(final IMap m) {
 		keysType = m.getGamlType().getKeyType();
 		dataType = m.getGamlType().getContentType();
 		m.forEach((k, v) -> valuesMapReducer.put(k, v));
 	}
 
+	/**
+	 * Construct object.
+	 *
+	 * @param scope the scope
+	 * @return the i map
+	 */
 	public IMap constructObject(final IScope scope) {
 
 		boolean isReference = false;
@@ -51,6 +70,11 @@ public class GamaMapReducer {
 
 	}
 
+	/**
+	 * Unreference reducer.
+	 *
+	 * @param sim the sim
+	 */
 	public void unreferenceReducer(final SimulationAgent sim) {
 
 		final HashMap<Object, Object> mapWithoutReferences = new HashMap<>();
@@ -63,18 +87,38 @@ public class GamaMapReducer {
 		valuesMapReducer = mapWithoutReferences;
 	}
 
+	/**
+	 * Gets the keys type.
+	 *
+	 * @return the keys type
+	 */
 	public IType getKeysType() {
 		return keysType;
 	}
 
+	/**
+	 * Gets the data type.
+	 *
+	 * @return the data type
+	 */
 	public IType getDataType() {
 		return dataType;
 	}
 
+	/**
+	 * Gets the values.
+	 *
+	 * @return the values
+	 */
 	public Map<Object, Object> getValues() {
 		return valuesMapReducer;
 	}
 
+	/**
+	 * Sets the values.
+	 *
+	 * @param m the new values
+	 */
 	public void setValues(final HashMap m) {
 		valuesMapReducer = m;
 	}

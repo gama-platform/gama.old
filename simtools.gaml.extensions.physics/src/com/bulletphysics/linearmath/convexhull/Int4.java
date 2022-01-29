@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Stan Melax Convex Hull Computation
- * Copyright (c) 2008 Stan Melax http://www.melax.com/
+ * Int4.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath.convexhull;
 
@@ -29,11 +17,23 @@ package com.bulletphysics.linearmath.convexhull;
  */
 class Int4 {
 
+	/** The w. */
 	public int x, y, z, w;
 
+	/**
+	 * Instantiates a new int 4.
+	 */
 	public Int4() {
 	}
 
+	/**
+	 * Instantiates a new int 4.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param z the z
+	 * @param w the w
+	 */
 	public Int4(int x, int y, int z, int w) {
 		this.x = x;
 		this.y = y;
@@ -41,6 +41,14 @@ class Int4 {
 		this.w = w;
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param z the z
+	 * @param w the w
+	 */
 	public void set(int x, int y, int z, int w) {
 		this.x = x;
 		this.y = y;
@@ -48,6 +56,12 @@ class Int4 {
 		this.w = w;
 	}
 	
+	/**
+	 * Gets the coord.
+	 *
+	 * @param coord the coord
+	 * @return the coord
+	 */
 	public int getCoord(int coord) {
 		switch (coord) {
 			case 0: return x;

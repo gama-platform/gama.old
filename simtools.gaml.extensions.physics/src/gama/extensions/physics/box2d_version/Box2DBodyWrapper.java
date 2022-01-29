@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * Box2DBodyWrapper.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.box2d_version;
 
 import static msi.gaml.types.GamaGeometryType.buildRectangle;
@@ -18,12 +28,26 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 
+/**
+ * The Class Box2DBodyWrapper.
+ */
 public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Vec2> implements IBox2DPhysicalEntity {
 
+	/** The def. */
 	BodyDef def;
+	
+	/** The fixture def. */
 	FixtureDef fixtureDef;
+	
+	/** The ms. */
 	MassData ms;
 
+	/**
+	 * Instantiates a new box 2 D body wrapper.
+	 *
+	 * @param agent the agent
+	 * @param world the world
+	 */
 	public Box2DBodyWrapper(final IAgent agent, final Box2DPhysicalWorld world) {
 		super(agent, world);
 	}

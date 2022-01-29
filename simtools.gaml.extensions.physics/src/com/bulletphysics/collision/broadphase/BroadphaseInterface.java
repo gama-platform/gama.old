@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * BroadphaseInterface.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -28,23 +21,70 @@ import javax.vecmath.Vector3f;
 
 public interface BroadphaseInterface {
 
+	/**
+	 * Creates the proxy.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param shapeType the shape type
+	 * @param userPtr the user ptr
+	 * @param collisionFilterGroup the collision filter group
+	 * @param collisionFilterMask the collision filter mask
+	 * @param dispatcher the dispatcher
+	 * @param multiSapProxy the multi sap proxy
+	 * @return the broadphase proxy
+	 */
 	BroadphaseProxy createProxy( Vector3f aabbMin, Vector3f aabbMax, BroadphaseNativeType shapeType,
 			Object userPtr, short collisionFilterGroup, short collisionFilterMask, Dispatcher dispatcher,
 			Object multiSapProxy);
 
+	/**
+	 * Destroy proxy.
+	 *
+	 * @param proxy the proxy
+	 * @param dispatcher the dispatcher
+	 */
 	void destroyProxy( BroadphaseProxy proxy, Dispatcher dispatcher);
 
+	/**
+	 * Sets the aabb.
+	 *
+	 * @param proxy the proxy
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param dispatcher the dispatcher
+	 */
 	void setAabb( BroadphaseProxy proxy, Vector3f aabbMin, Vector3f aabbMax, Dispatcher dispatcher);
 
+	/**
+	 * Calculate overlapping pairs.
+	 *
+	 * @param dispatcher the dispatcher
+	 */
 	/// calculateOverlappingPairs is optional: incremental algorithms (sweep and prune) might do it during the set aabb
 	void calculateOverlappingPairs( Dispatcher dispatcher);
 
+	/**
+	 * Gets the overlapping pair cache.
+	 *
+	 * @return the overlapping pair cache
+	 */
 	OverlappingPairCache getOverlappingPairCache();
 
 	/// getAabb returns the axis aligned bounding box in the 'global' coordinate frame
+	/**
+	 * Gets the broadphase aabb.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @return the broadphase aabb
+	 */
 	/// will add some transform later
 	void getBroadphaseAabb(Vector3f aabbMin, Vector3f aabbMax);
 
+	/**
+	 * Prints the stats.
+	 */
 	void printStats();
 
 }

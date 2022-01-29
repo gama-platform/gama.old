@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * CProfileNode.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 /***************************************************************************************************
 **
@@ -40,16 +28,36 @@ import com.bulletphysics.BulletStats;
  */
 class CProfileNode {
 
+	/** The name. */
 	protected String name;
+	
+	/** The total calls. */
 	protected int totalCalls;
+	
+	/** The total time. */
 	protected float totalTime;
+	
+	/** The start time. */
 	protected long startTime;
+	
+	/** The recursion counter. */
 	protected int recursionCounter;
 	
+	/** The parent. */
 	protected CProfileNode parent;
+	
+	/** The child. */
 	protected CProfileNode child;
+	
+	/** The sibling. */
 	protected CProfileNode sibling;
 
+	/**
+	 * Instantiates a new c profile node.
+	 *
+	 * @param name the name
+	 * @param parent the parent
+	 */
 	public CProfileNode(String name, CProfileNode parent) {
 		this.name = name;
 		this.totalCalls = 0;
@@ -63,6 +71,12 @@ class CProfileNode {
 		reset();
 	}
 
+	/**
+	 * Gets the sub node.
+	 *
+	 * @param name the name
+	 * @return the sub node
+	 */
 	public CProfileNode getSubNode(String name) {
 		// Try to find this sub node
 		CProfileNode child = this.child;
@@ -81,23 +95,44 @@ class CProfileNode {
 		return node;
 	}
 
+	/**
+	 * Gets the parent.
+	 *
+	 * @return the parent
+	 */
 	public CProfileNode getParent() {
 		return parent;
 	}
 
+	/**
+	 * Gets the sibling.
+	 *
+	 * @return the sibling
+	 */
 	public CProfileNode getSibling() {
 		return sibling;
 	}
 
+	/**
+	 * Gets the child.
+	 *
+	 * @return the child
+	 */
 	public CProfileNode getChild() {
 		return child;
 	}
 
+	/**
+	 * Cleanup memory.
+	 */
 	public void cleanupMemory() {
 		child = null;
 		sibling = null;
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 		totalCalls = 0;
 		totalTime = 0.0f;
@@ -111,6 +146,9 @@ class CProfileNode {
 		}
 	}
 	
+	/**
+	 * Call.
+	 */
 	public void call() {
 		totalCalls++;
 		if (recursionCounter++ == 0) {
@@ -118,6 +156,11 @@ class CProfileNode {
 		}
 	}
 	
+	/**
+	 * Return.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean Return() {
 		if (--recursionCounter == 0 && totalCalls != 0) {
 			long time = BulletStats.profileGetTicks();
@@ -127,14 +170,29 @@ class CProfileNode {
 		return (recursionCounter == 0);
 	}
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Gets the total calls.
+	 *
+	 * @return the total calls
+	 */
 	public int getTotalCalls() {
 		return totalCalls;
 	}
 
+	/**
+	 * Gets the total time.
+	 *
+	 * @return the total time
+	 */
 	public float getTotalTime() {
 		return totalTime;
 	}

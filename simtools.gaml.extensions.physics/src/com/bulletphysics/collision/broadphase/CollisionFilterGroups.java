@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * CollisionFilterGroups.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -30,12 +18,25 @@ package com.bulletphysics.collision.broadphase;
  */
 public class CollisionFilterGroups {
 
+	/** The Constant DEFAULT_FILTER. */
 	public static final short DEFAULT_FILTER   = 1;
+	
+	/** The Constant STATIC_FILTER. */
 	public static final short STATIC_FILTER    = 2;
+	
+	/** The Constant KINEMATIC_FILTER. */
 	public static final short KINEMATIC_FILTER = 4;
+	
+	/** The Constant DEBRIS_FILTER. */
 	public static final short DEBRIS_FILTER    = 8;
+	
+	/** The Constant SENSOR_TRIGGER. */
 	public static final short SENSOR_TRIGGER   = 16;
+	
+	/** The Constant CHARACTER_FILTER. */
 	public static final short CHARACTER_FILTER = 32;
+	
+	/** The Constant ALL_FILTER. */
 	public static final short ALL_FILTER       = -1; // all bits sets: DefaultFilter | StaticFilter | KinematicFilter | DebrisFilter | SensorTrigger
 	
 }

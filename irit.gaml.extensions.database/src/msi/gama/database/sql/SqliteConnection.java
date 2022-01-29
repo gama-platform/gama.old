@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * SqliteConnection.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'SqliteConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.sql;
 
 import java.io.File;
@@ -35,6 +33,9 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class SqliteConnection.
+ */
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
  * 18-July-2013: Add load extension library for SQLITE case. Correct error getColumnTypeName when return null value
@@ -47,12 +48,28 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 class SqliteConnection extends SqlConnection {
 
+	/** The Constant WKT2GEO. */
 	private static final String WKT2GEO = "GeomFromText";
 
+	/**
+	 * Instantiates a new sqlite connection.
+	 *
+	 * @param venderName the vender name
+	 * @param database the database
+	 * @param transformed the transformed
+	 */
 	SqliteConnection(final String venderName, final String database, final Boolean transformed) {
 		super(venderName, database, transformed);
 	}
 
+	/**
+	 * Instantiates a new sqlite connection.
+	 *
+	 * @param venderName the vender name
+	 * @param database the database
+	 * @param extension the extension
+	 * @param transformed the transformed
+	 */
 	SqliteConnection(final String venderName, final String database, final String extension,
 			final Boolean transformed) {
 		super(venderName, database, transformed);
@@ -314,6 +331,16 @@ class SqliteConnection extends SqlConnection {
 		return insertStr;
 	}
 
+	/**
+	 * Gets the column type name.
+	 *
+	 * @param scope the scope
+	 * @param conn the conn
+	 * @param tableName the table name
+	 * @param columns the columns
+	 * @return the column type name
+	 * @throws SQLException the SQL exception
+	 */
 	// 18/July/2013
 	private IList<Object> getColumnTypeName(final IScope scope, final Connection conn, final String tableName,
 			final IList<Object> columns) throws SQLException {
@@ -350,6 +377,13 @@ class SqliteConnection extends SqlConnection {
 		return columnType;
 	}
 
+	/**
+	 * Load extension.
+	 *
+	 * @param conn the conn
+	 * @param extension the extension
+	 * @throws SQLException the SQL exception
+	 */
 	// 23-July-2013
 	private void load_extension(final Connection conn, final String extension) throws SQLException {
 		// load Spatialite extension library

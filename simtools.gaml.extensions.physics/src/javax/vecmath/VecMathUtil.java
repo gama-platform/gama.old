@@ -1,28 +1,13 @@
-/*
- * Copyright 2004-2008 Sun Microsystems, Inc.  All Rights Reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+/*******************************************************************************************************
  *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Sun designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Sun in the LICENSE file that accompanied this code.
+ * VecMathUtil.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
- * CA 95054 USA or visit www.sun.com if you need additional information or
- * have any questions.
- *
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package javax.vecmath;
 
@@ -36,11 +21,25 @@ class VecMathUtil {
  */
 private VecMathUtil() {}
 
+	/**
+	 * Hash long bits.
+	 *
+	 * @param hash the hash
+	 * @param l the l
+	 * @return the long
+	 */
 	static final long hashLongBits(long hash, long l) {
 		hash *= 31L;
 		return hash + l;
 	}
 
+	/**
+	 * Hash float bits.
+	 *
+	 * @param hash the hash
+	 * @param f the f
+	 * @return the long
+	 */
 	static final long hashFloatBits(long hash, float f) {
 		hash *= 31L;
 		// Treat 0.0d and -0.0d the same (all zero bits)
@@ -50,6 +49,13 @@ private VecMathUtil() {}
 		return hash + Float.floatToIntBits(f);
 	}
 
+	/**
+	 * Hash double bits.
+	 *
+	 * @param hash the hash
+	 * @param d the d
+	 * @return the long
+	 */
 	static final long hashDoubleBits(long hash, double d) {
 		hash *= 31L;
 		// Treat 0.0d and -0.0d the same (all zero bits)

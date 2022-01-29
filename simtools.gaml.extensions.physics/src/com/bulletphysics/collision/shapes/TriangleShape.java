@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * TriangleShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -33,17 +26,35 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class TriangleShape extends PolyhedralConvexShape {
 
+	/** The vertices 1. */
 	public final Vector3f[] vertices1/* [3] */ = new Vector3f[] { new Vector3f(), new Vector3f(), new Vector3f() };
 
+	/**
+	 * Instantiates a new triangle shape.
+	 */
 	// JAVA NOTE: added
 	public TriangleShape() {}
 
+	/**
+	 * Instantiates a new triangle shape.
+	 *
+	 * @param p0 the p 0
+	 * @param p1 the p 1
+	 * @param p2 the p 2
+	 */
 	public TriangleShape(final Vector3f p0, final Vector3f p1, final Vector3f p2) {
 		vertices1[0].set(p0);
 		vertices1[1].set(p1);
 		vertices1[2].set(p2);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param p0 the p 0
+	 * @param p1 the p 1
+	 * @param p2 the p 2
+	 */
 	// JAVA NOTE: added
 	public void init(final Vector3f p0, final Vector3f p1, final Vector3f p2) {
 		vertices1[0].set(p0);
@@ -56,6 +67,12 @@ public class TriangleShape extends PolyhedralConvexShape {
 		return 3;
 	}
 
+	/**
+	 * Gets the vertex ptr.
+	 *
+	 * @param index the index
+	 * @return the vertex ptr
+	 */
 	public Vector3f getVertexPtr(final int index) {
 		return vertices1[index];
 	}
@@ -120,6 +137,11 @@ public class TriangleShape extends PolyhedralConvexShape {
 		return 1;
 	}
 
+	/**
+	 * Calc normal.
+	 *
+	 * @param normal the normal
+	 */
 	public void calcNormal(final Vector3f normal) {
 		Vector3f tmp1 = VECTORS.get();
 		Vector3f tmp2 = VECTORS.get();
@@ -132,6 +154,14 @@ public class TriangleShape extends PolyhedralConvexShape {
 		VECTORS.release(tmp1, tmp2);
 	}
 
+	/**
+	 * Gets the plane equation.
+	 *
+	 * @param i the i
+	 * @param planeNormal the plane normal
+	 * @param planeSupport the plane support
+	 * @return the plane equation
+	 */
 	public void getPlaneEquation(final int i, final Vector3f planeNormal, final Vector3f planeSupport) {
 		calcNormal(planeNormal);
 		planeSupport.set(vertices1[0]);

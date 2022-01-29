@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaSavedSimulationFile.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gaml;
 
 import java.io.BufferedReader;
@@ -27,6 +37,9 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaSavedSimulationFile.
+ */
 @file (
 		name = "saved_simulation",
 		extensions = { "gsim", "gasim" },
@@ -39,12 +52,26 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked" })
 public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 
+	/**
+	 * The Class SavedSimulationInfo.
+	 */
 	public static class SavedSimulationInfo extends GamaFileMetaData { // NO_UCD (unused code)
 
-		public String savedModel;
+		/** The saved model. */
+ public String savedModel;
+		
+		/** The saved experiment. */
 		public String savedExperiment;
+		
+		/** The saved cycle. */
 		public int savedCycle;
 
+		/**
+		 * Instantiates a new saved simulation info.
+		 *
+		 * @param fileName the file name
+		 * @param modificationStamp the modification stamp
+		 */
 		public SavedSimulationInfo(final String fileName, final long modificationStamp) {
 			super(modificationStamp);
 
@@ -57,6 +84,11 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 			savedCycle = simulationFile.getCycle();
 		}
 
+		/**
+		 * Instantiates a new saved simulation info.
+		 *
+		 * @param propertyString the property string
+		 */
 		public SavedSimulationInfo(final String propertyString) {
 			super(propertyString);
 
@@ -98,16 +130,37 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		}
 	}
 
+	/** The saved cycle. */
 	private int savedCycle;
+	
+	/** The saved experiment. */
 	private String savedExperiment;
+	
+	/** The saved model path. */
 	private String savedModelPath;
+	
+	/** The saved model name. */
 	private String savedModelName;
 
+	/**
+	 * Instantiates a new gama saved simulation file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc ("Constructor for saved simulation files: read the metadata and content.")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		this(scope, pathName, true);
 	}
 
+	/**
+	 * Instantiates a new gama saved simulation file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param contents the contents
+	 */
 	@doc ("Constructor for saved simulation files from a list of agents: it is used with aim of saving a simulation agent.")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName, final IList<IAgent> contents) {
 		super(scope, pathName, null);
@@ -124,6 +177,14 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		setContents(c);
 	}
 
+	/**
+	 * Instantiates a new gama saved simulation file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param fillBuffer the fill buffer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc ("Constructor for saved simulation files: read the metadata. If and only if the boolean operand is true, the content of the file is read.")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName, final boolean fillBuffer)
 			throws GamaRuntimeException {
@@ -136,6 +197,11 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		}
 	}
 
+	/**
+	 * Sets the metadata.
+	 *
+	 * @param scope the new metadata
+	 */
 	private void setMetadata(final IScope scope) {
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgt = expAgt.getSimulation();
@@ -145,6 +211,11 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		savedModelName = new File(savedModelPath).getName();
 	}
 
+	/**
+	 * Metadata only.
+	 *
+	 * @param scope the scope
+	 */
 	private void metadataOnly(final IScope scope) {
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			readMetada(in);
@@ -153,6 +224,12 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		}
 	}
 
+	/**
+	 * Read metada.
+	 *
+	 * @param in the in
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void readMetada(final BufferedReader in) throws IOException {
 		savedModelPath = in.readLine();
 		savedExperiment = in.readLine();
@@ -166,18 +243,38 @@ public class GamaSavedSimulationFile extends GamaFile<IList<String>, String> {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 
+	/**
+	 * Gets the model path.
+	 *
+	 * @return the model path
+	 */
 	public String getModelPath() {
 		return savedModelPath;
 	}
 
+	/**
+	 * Gets the model name.
+	 *
+	 * @return the model name
+	 */
 	public String getModelName() {
 		return savedModelName;
 	}
 
+	/**
+	 * Gets the experiment.
+	 *
+	 * @return the experiment
+	 */
 	public String getExperiment() {
 		return savedExperiment;
 	}
 
+	/**
+	 * Gets the cycle.
+	 *
+	 * @return the cycle
+	 */
 	public int getCycle() {
 		return savedCycle;
 	}

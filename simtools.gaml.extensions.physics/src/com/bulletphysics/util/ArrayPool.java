@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * ArrayPool.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.util;
 
@@ -32,9 +25,16 @@ import java.util.Map;
  */
 public class ArrayPool<T> {
 
+	/** The component type. */
 	private final Class componentType;
+	
+	/** The list. */
 	private final ArrayList list = new ArrayList();
+	
+	/** The comparator. */
 	private Comparator comparator;
+	
+	/** The key. */
 	private final IntValue key = new IntValue();
 
 	/**
@@ -55,6 +55,12 @@ public class ArrayPool<T> {
 			throw new UnsupportedOperationException("unsupported type " + componentType);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param length the length
+	 * @return the t
+	 */
 	@SuppressWarnings ("unchecked")
 	private T create(final int length) {
 		return (T) Array.newInstance(componentType, length);
@@ -118,30 +124,39 @@ public class ArrayPool<T> {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The float comparator. */
 	private static Comparator floatComparator = (o1, o2) -> {
 		int len1 = o1 instanceof IntValue ? ((IntValue) o1).value : ((float[]) o1).length;
 		int len2 = o2 instanceof IntValue ? ((IntValue) o2).value : ((float[]) o2).length;
 		return len1 > len2 ? 1 : len1 < len2 ? -1 : 0;
 	};
 
+	/** The int comparator. */
 	private static Comparator intComparator = (o1, o2) -> {
 		int len1 = o1 instanceof IntValue ? ((IntValue) o1).value : ((int[]) o1).length;
 		int len2 = o2 instanceof IntValue ? ((IntValue) o2).value : ((int[]) o2).length;
 		return len1 > len2 ? 1 : len1 < len2 ? -1 : 0;
 	};
 
+	/** The object comparator. */
 	private static Comparator objectComparator = (o1, o2) -> {
 		int len1 = o1 instanceof IntValue ? ((IntValue) o1).value : ((Object[]) o1).length;
 		int len2 = o2 instanceof IntValue ? ((IntValue) o2).value : ((Object[]) o2).length;
 		return len1 > len2 ? 1 : len1 < len2 ? -1 : 0;
 	};
 
+	/**
+	 * The Class IntValue.
+	 */
 	private static class IntValue {
+		
+		/** The value. */
 		public int value;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The thread local. */
 	private static ThreadLocal<Map> threadLocal = new ThreadLocal<>() {
 		@Override
 		protected Map initialValue() {
@@ -169,6 +184,9 @@ public class ArrayPool<T> {
 		return pool;
 	}
 
+	/**
+	 * Clean current thread.
+	 */
 	public static void cleanCurrentThread() {
 		threadLocal.remove();
 	}

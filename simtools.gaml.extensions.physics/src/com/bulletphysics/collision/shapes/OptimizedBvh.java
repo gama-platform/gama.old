@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * OptimizedBvh.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -39,46 +32,80 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 public class OptimizedBvh implements Serializable {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The Constant DEBUG_TREE_BUILDING. */
 	private static final boolean DEBUG_TREE_BUILDING = false;
+	
+	/** The g stack depth. */
 	private static int gStackDepth = 0;
+	
+	/** The g max stack depth. */
 	private static int gMaxStackDepth = 0;
 
+	/** The max iterations. */
 	private static int maxIterations = 0;
 
+	/** The Constant MAX_SUBTREE_SIZE_IN_BYTES. */
 	// Note: currently we have 16 bytes per quantized node
 	public static final int MAX_SUBTREE_SIZE_IN_BYTES = 2048;
 
 	// 10 gives the potential for 1024 parts, with at most 2^21 (2097152) (minus one
+	/** The Constant MAX_NUM_PARTS_IN_BITS. */
 	// actually) triangles each (since the sign bit is reserved
 	public static final int MAX_NUM_PARTS_IN_BITS = 10;
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/** The leaf nodes. */
 	private final ArrayList<OptimizedBvhNode> leafNodes = new ArrayList<>();
+	
+	/** The contiguous nodes. */
 	private final ArrayList<OptimizedBvhNode> contiguousNodes = new ArrayList<>();
 
+	/** The quantized leaf nodes. */
 	private final QuantizedBvhNodes quantizedLeafNodes = new QuantizedBvhNodes();
+	
+	/** The quantized contiguous nodes. */
 	private final QuantizedBvhNodes quantizedContiguousNodes = new QuantizedBvhNodes();
 
+	/** The cur node index. */
 	private int curNodeIndex;
 
+	/** The use quantization. */
 	// quantization data
 	private boolean useQuantization;
+	
+	/** The bvh aabb min. */
 	private final Vector3f bvhAabbMin = new Vector3f();
+	
+	/** The bvh aabb max. */
 	private final Vector3f bvhAabbMax = new Vector3f();
+	
+	/** The bvh quantization. */
 	private final Vector3f bvhQuantization = new Vector3f();
 
+	/** The traversal mode. */
 	protected TraversalMode traversalMode = TraversalMode.STACKLESS;
+	
+	/** The Subtree headers. */
 	protected final ArrayList<BvhSubtreeInfo> SubtreeHeaders = new ArrayList<>();
+	
+	/** The subtree header count. */
 	// This is only used for serialization so we don't have to add serialization directly to btAlignedObjectArray
 	protected int subtreeHeaderCount;
 
 	// two versions, one for quantized and normal nodes. This allows code-reuse while maintaining readability (no
 	// template/macro!)
+	/**
+	 * Sets the internal node aabb min.
+	 *
+	 * @param nodeIndex the node index
+	 * @param aabbMin the aabb min
+	 */
 	// this might be refactored into a virtual, it is usually not calculated at run-time
 	public void setInternalNodeAabbMin(final int nodeIndex, final Vector3f aabbMin) {
 		if (useQuantization) {
@@ -88,6 +115,12 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Sets the internal node aabb max.
+	 *
+	 * @param nodeIndex the node index
+	 * @param aabbMax the aabb max
+	 */
 	public void setInternalNodeAabbMax(final int nodeIndex, final Vector3f aabbMax) {
 		if (useQuantization) {
 			quantizedContiguousNodes.setQuantizedAabbMax(nodeIndex, quantizeWithClamp(aabbMax));
@@ -96,6 +129,12 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Gets the aabb min.
+	 *
+	 * @param nodeIndex the node index
+	 * @return the aabb min
+	 */
 	public Vector3f getAabbMin(final int nodeIndex) {
 		if (useQuantization) {
 			Vector3f tmp = new Vector3f();
@@ -107,6 +146,12 @@ public class OptimizedBvh implements Serializable {
 		return leafNodes.get(nodeIndex).aabbMinOrg;
 	}
 
+	/**
+	 * Gets the aabb max.
+	 *
+	 * @param nodeIndex the node index
+	 * @return the aabb max
+	 */
 	public Vector3f getAabbMax(final int nodeIndex) {
 		if (useQuantization) {
 			Vector3f tmp = new Vector3f();
@@ -118,10 +163,23 @@ public class OptimizedBvh implements Serializable {
 		return leafNodes.get(nodeIndex).aabbMaxOrg;
 	}
 
+	/**
+	 * Sets the quantization values.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void setQuantizationValues(final Vector3f aabbMin, final Vector3f aabbMax) {
 		setQuantizationValues(aabbMin, aabbMax, 1f);
 	}
 
+	/**
+	 * Sets the quantization values.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param quantizationMargin the quantization margin
+	 */
 	public void setQuantizationValues(final Vector3f aabbMin, final Vector3f aabbMax, final float quantizationMargin) {
 		// enlarge the AABB to avoid division by zero when initializing the quantization values
 		Vector3f clampValue = VECTORS.get();
@@ -134,6 +192,12 @@ public class OptimizedBvh implements Serializable {
 		VectorUtil.div(bvhQuantization, bvhQuantization, aabbSize);
 	}
 
+	/**
+	 * Sets the internal node escape index.
+	 *
+	 * @param nodeIndex the node index
+	 * @param escapeIndex the escape index
+	 */
 	public void setInternalNodeEscapeIndex(final int nodeIndex, final int escapeIndex) {
 		if (useQuantization) {
 			quantizedContiguousNodes.setEscapeIndexOrTriangleIndex(nodeIndex, -escapeIndex);
@@ -142,6 +206,13 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Merge internal node aabb.
+	 *
+	 * @param nodeIndex the node index
+	 * @param newAabbMin the new aabb min
+	 * @param newAabbMax the new aabb max
+	 */
 	public void mergeInternalNodeAabb(final int nodeIndex, final Vector3f newAabbMin, final Vector3f newAabbMax) {
 		if (useQuantization) {
 			long quantizedAabbMin;
@@ -169,6 +240,12 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Swap leaf nodes.
+	 *
+	 * @param i the i
+	 * @param splitIndex the split index
+	 */
 	public void swapLeafNodes(final int i, final int splitIndex) {
 		if (useQuantization) {
 			quantizedLeafNodes.swap(i, splitIndex);
@@ -180,6 +257,12 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Assign internal node from leaf node.
+	 *
+	 * @param internalNode the internal node
+	 * @param leafNodeIndex the leaf node index
+	 */
 	public void assignInternalNodeFromLeafNode(final int internalNode, final int leafNodeIndex) {
 		if (useQuantization) {
 			quantizedContiguousNodes.set(internalNode, quantizedLeafNodes, leafNodeIndex);
@@ -188,13 +271,24 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * The Class NodeTriangleCallback.
+	 */
 	private static class NodeTriangleCallback implements InternalTriangleIndexCallback {
+		
+		/** The triangle nodes. */
 		public ArrayList<OptimizedBvhNode> triangleNodes;
 
+		/**
+		 * Instantiates a new node triangle callback.
+		 *
+		 * @param triangleNodes the triangle nodes
+		 */
 		public NodeTriangleCallback(final ArrayList<OptimizedBvhNode> triangleNodes) {
 			this.triangleNodes = triangleNodes;
 		}
 
+		/** The aabb max. */
 		private final Vector3f aabbMin = new Vector3f(), aabbMax = new Vector3f();
 
 		@Override
@@ -223,12 +317,24 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * The Class QuantizedNodeTriangleCallback.
+	 */
 	private static class QuantizedNodeTriangleCallback implements InternalTriangleIndexCallback {
 		// protected final BulletStack stack = BulletStack.get();
 
+		/** The triangle nodes. */
 		public QuantizedBvhNodes triangleNodes;
+		
+		/** The optimized tree. */
 		public OptimizedBvh optimizedTree; // for quantization
 
+		/**
+		 * Instantiates a new quantized node triangle callback.
+		 *
+		 * @param triangleNodes the triangle nodes
+		 * @param tree the tree
+		 */
 		public QuantizedNodeTriangleCallback(final QuantizedBvhNodes triangleNodes, final OptimizedBvh tree) {
 			this.triangleNodes = triangleNodes;
 			this.optimizedTree = tree;
@@ -277,6 +383,14 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Builds the.
+	 *
+	 * @param triangles the triangles
+	 * @param useQuantizedAabbCompression the use quantized aabb compression
+	 * @param _aabbMin the aabb min
+	 * @param _aabbMax the aabb max
+	 */
 	public void build( final StridingMeshInterface triangles,
 			final boolean useQuantizedAabbCompression, final Vector3f _aabbMin, final Vector3f _aabbMax) {
 		this.useQuantization = useQuantizedAabbCompression;
@@ -338,6 +452,11 @@ public class OptimizedBvh implements Serializable {
 		leafNodes.clear();
 	}
 
+	/**
+	 * Refit.
+	 *
+	 * @param meshInterface the mesh interface
+	 */
 	public void refit( final StridingMeshInterface meshInterface) {
 		if (useQuantization) {
 			// calculate new aabb
@@ -362,6 +481,13 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Refit partial.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void refitPartial(final StridingMeshInterface meshInterface, final Vector3f aabbMin,
 			final Vector3f aabbMax) {
 		throw new UnsupportedOperationException();
@@ -402,6 +528,14 @@ public class OptimizedBvh implements Serializable {
 		// }
 	}
 
+	/**
+	 * Update bvh nodes.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param firstNode the first node
+	 * @param endNode the end node
+	 * @param index the index
+	 */
 	public void updateBvhNodes(final StridingMeshInterface meshInterface, final int firstNode, final int endNode,
 			final int index) {
 		assert useQuantization;
@@ -475,6 +609,12 @@ public class OptimizedBvh implements Serializable {
 		VECTORS.release(triangleVerts[0], triangleVerts[1], triangleVerts[2], aabbMin, aabbMax, meshScaling);
 	}
 
+	/**
+	 * Builds the tree.
+	 *
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 */
 	protected void buildTree(final int startIndex, final int endIndex) {
 		// #ifdef DEBUG_TREE_BUILDING
 		if (DEBUG_TREE_BUILDING) {
@@ -551,6 +691,15 @@ public class OptimizedBvh implements Serializable {
 		VECTORS.release(tmp1, tmp2);
 	}
 
+	/**
+	 * Test quantized aabb against quantized aabb.
+	 *
+	 * @param aabbMin1 the aabb min 1
+	 * @param aabbMax1 the aabb max 1
+	 * @param aabbMin2 the aabb min 2
+	 * @param aabbMax2 the aabb max 2
+	 * @return true, if successful
+	 */
 	protected boolean testQuantizedAabbAgainstQuantizedAabb(final long aabbMin1, final long aabbMax1,
 			final long aabbMin2, final long aabbMax2) {
 		int aabbMin1_0 = QuantizedBvhNodes.getCoord(aabbMin1, 0);
@@ -576,6 +725,12 @@ public class OptimizedBvh implements Serializable {
 		return overlap;
 	}
 
+	/**
+	 * Update subtree headers.
+	 *
+	 * @param leftChildNodexIndex the left child nodex index
+	 * @param rightChildNodexIndex the right child nodex index
+	 */
 	protected void updateSubtreeHeaders(final int leftChildNodexIndex, final int rightChildNodexIndex) {
 		assert useQuantization;
 
@@ -611,6 +766,14 @@ public class OptimizedBvh implements Serializable {
 		subtreeHeaderCount = SubtreeHeaders.size();
 	}
 
+	/**
+	 * Sort and calc splitting index.
+	 *
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 * @param splitAxis the split axis
+	 * @return the int
+	 */
 	protected int sortAndCalcSplittingIndex(final int startIndex, final int endIndex, final int splitAxis) {
 		int i;
 		int splitIndex = startIndex;
@@ -665,6 +828,13 @@ public class OptimizedBvh implements Serializable {
 		return splitIndex;
 	}
 
+	/**
+	 * Calc splitting axis.
+	 *
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 * @return the int
+	 */
 	protected int calcSplittingAxis(final int startIndex, final int endIndex) {
 		int i;
 
@@ -696,6 +866,13 @@ public class OptimizedBvh implements Serializable {
 		return VectorUtil.maxAxis(variance);
 	}
 
+	/**
+	 * Report aabb overlapping nodex.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void reportAabbOverlappingNodex( final NodeOverlapCallback nodeCallback,
 			final Vector3f aabbMin, final Vector3f aabbMax) {
 		// either choose recursive traversal (walkTree) or stackless (walkStacklessTree)
@@ -731,6 +908,13 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Walk stackless tree.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	protected void walkStacklessTree( final NodeOverlapCallback nodeCallback,
 			final Vector3f aabbMin, final Vector3f aabbMax) {
 		assert !useQuantization;
@@ -775,6 +959,15 @@ public class OptimizedBvh implements Serializable {
 		if (maxIterations < walkIterations) { maxIterations = walkIterations; }
 	}
 
+	/**
+	 * Walk recursive quantized tree against query aabb.
+	 *
+	 * @param currentNodes the current nodes
+	 * @param currentNodeId the current node id
+	 * @param nodeCallback the node callback
+	 * @param quantizedQueryAabbMin the quantized query aabb min
+	 * @param quantizedQueryAabbMax the quantized query aabb max
+	 */
 	protected void walkRecursiveQuantizedTreeAgainstQueryAabb(
 			final QuantizedBvhNodes currentNodes, final int currentNodeId, final NodeOverlapCallback nodeCallback,
 			final long quantizedQueryAabbMin, final long quantizedQueryAabbMax) {
@@ -805,6 +998,17 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Walk stackless quantized tree against ray.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param raySource the ray source
+	 * @param rayTarget the ray target
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 * @param startNodeIndex the start node index
+	 * @param endNodeIndex the end node index
+	 */
 	protected void walkStacklessQuantizedTreeAgainstRay(
 			final NodeOverlapCallback nodeCallback, final Vector3f raySource, final Vector3f rayTarget,
 			final Vector3f aabbMin, final Vector3f aabbMax, final int startNodeIndex, final int endNodeIndex) {
@@ -930,6 +1134,15 @@ public class OptimizedBvh implements Serializable {
 		VECTORS.release(normal, bounds_1, bounds_0, rayAabbMin, rayAabbMax, rayDirection, tmp);
 	}
 
+	/**
+	 * Walk stackless quantized tree.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param quantizedQueryAabbMin the quantized query aabb min
+	 * @param quantizedQueryAabbMax the quantized query aabb max
+	 * @param startNodeIndex the start node index
+	 * @param endNodeIndex the end node index
+	 */
 	protected void walkStacklessQuantizedTree( final NodeOverlapCallback nodeCallback,
 			final long quantizedQueryAabbMin, final long quantizedQueryAabbMax, final int startNodeIndex,
 			final int endNodeIndex) {
@@ -989,6 +1202,13 @@ public class OptimizedBvh implements Serializable {
 		if (maxIterations < walkIterations) { maxIterations = walkIterations; }
 	}
 
+	/**
+	 * Report ray overlapping nodex.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param raySource the ray source
+	 * @param rayTarget the ray target
+	 */
 	public void reportRayOverlappingNodex( final NodeOverlapCallback nodeCallback,
 			final Vector3f raySource, final Vector3f rayTarget) {
 		boolean fast_path = useQuantization && traversalMode == TraversalMode.STACKLESS;
@@ -1008,6 +1228,15 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Report box cast overlapping nodex.
+	 *
+	 * @param nodeCallback the node callback
+	 * @param raySource the ray source
+	 * @param rayTarget the ray target
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void reportBoxCastOverlappingNodex( final NodeOverlapCallback nodeCallback,
 			final Vector3f raySource, final Vector3f rayTarget, final Vector3f aabbMin, final Vector3f aabbMax) {
 		boolean fast_path = useQuantization && traversalMode == TraversalMode.STACKLESS;
@@ -1029,6 +1258,12 @@ public class OptimizedBvh implements Serializable {
 		}
 	}
 
+	/**
+	 * Quantize with clamp.
+	 *
+	 * @param point the point
+	 * @return the long
+	 */
 	public long quantizeWithClamp(final Vector3f point) {
 		assert useQuantization;
 
@@ -1048,6 +1283,12 @@ public class OptimizedBvh implements Serializable {
 		return out0 | (long) out1 << 16 | (long) out2 << 32;
 	}
 
+	/**
+	 * Un quantize.
+	 *
+	 * @param vecOut the vec out
+	 * @param vecIn the vec in
+	 */
 	public void unQuantize(final Vector3f vecOut, final long vecIn) {
 		int vecIn0 = (int) (vecIn & 0x00000000FFFFL);
 		int vecIn1 = (int) ((vecIn & 0x0000FFFF0000L) >>> 16);

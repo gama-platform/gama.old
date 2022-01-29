@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MotorJointDef.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Vec2;
@@ -34,6 +44,9 @@ public class MotorJointDef extends JointDef {
    */
   public float correctionFactor;
 
+  /**
+   * Instantiates a new motor joint def.
+   */
   public MotorJointDef() {
     super(JointType.MOTOR);
     angularOffset = 0;
@@ -42,6 +55,12 @@ public class MotorJointDef extends JointDef {
     correctionFactor = 0.3f;
   }
 
+  /**
+   * Initialize.
+   *
+   * @param bA the b A
+   * @param bB the b B
+   */
   public void initialize(Body bA, Body bB) {
     bodyA = bA;
     bodyB = bB;

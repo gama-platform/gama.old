@@ -1,25 +1,13 @@
-/*
- * BasicPlayerEvent.
+/*******************************************************************************************************
+ *
+ * BasicPlayerEvent.java, in ummisco.gaml.extensions.sound, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * JavaZOOM : jlgui@javazoom.net
- *            http://www.javazoom.net
- *
- *-----------------------------------------------------------------------
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License as published
- *   by the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Library General Public License for more details.
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the Free Software
- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *----------------------------------------------------------------------
- */
+ ********************************************************************************************************/
 package javazoom.jlgui.basicplayer;
 
 /**
@@ -27,22 +15,56 @@ package javazoom.jlgui.basicplayer;
  */
 public class BasicPlayerEvent
 {
+    
+    /** The Constant UNKNOWN. */
     public static final int UNKNOWN = -1;
+    
+    /** The Constant OPENING. */
     public static final int OPENING = 0;
+    
+    /** The Constant OPENED. */
     public static final int OPENED = 1;
+    
+    /** The Constant PLAYING. */
     public static final int PLAYING = 2;
+    
+    /** The Constant STOPPED. */
     public static final int STOPPED = 3;
+    
+    /** The Constant PAUSED. */
     public static final int PAUSED = 4;
+    
+    /** The Constant RESUMED. */
     public static final int RESUMED = 5;
+    
+    /** The Constant SEEKING. */
     public static final int SEEKING = 6;
+    
+    /** The Constant SEEKED. */
     public static final int SEEKED = 7;
+    
+    /** The Constant EOM. */
     public static final int EOM = 8;
+    
+    /** The Constant PAN. */
     public static final int PAN = 9;
+    
+    /** The Constant GAIN. */
     public static final int GAIN = 10;
+    
+    /** The code. */
     private int code = UNKNOWN;
+    
+    /** The position. */
     private int position = -1;
+    
+    /** The value. */
     private double value = -1.0;
+    
+    /** The source. */
     private Object source = null;
+    
+    /** The description. */
     private Object description = null;
 
     /**
@@ -98,6 +120,11 @@ public class BasicPlayerEvent
         return description;
     }
 
+    /**
+     * Gets the source.
+     *
+     * @return the source
+     */
     public Object getSource()
     {
         return source;

@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Contact.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.contacts;
 
 
@@ -46,47 +33,84 @@ import org.jbox2d.pooling.IWorldPool;
 public abstract class Contact {
 
   // Flags stored in m_flags
+  /** The Constant ISLAND_FLAG. */
   // Used when crawling contact graph when forming islands.
   public static final int ISLAND_FLAG = 0x0001;
+  
+  /** The Constant TOUCHING_FLAG. */
   // Set when the shapes are touching.
   public static final int TOUCHING_FLAG = 0x0002;
+  
+  /** The Constant ENABLED_FLAG. */
   // This contact can be disabled (by user)
   public static final int ENABLED_FLAG = 0x0004;
+  
+  /** The Constant FILTER_FLAG. */
   // This contact needs filtering because a fixture filter was changed.
   public static final int FILTER_FLAG = 0x0008;
+  
+  /** The Constant BULLET_HIT_FLAG. */
   // This bullet contact had a TOI event
   public static final int BULLET_HIT_FLAG = 0x0010;
 
+  /** The Constant TOI_FLAG. */
   public static final int TOI_FLAG = 0x0020;
 
+  /** The m flags. */
   public int m_flags;
 
+  /** The m prev. */
   // World pool and list pointers.
   public Contact m_prev;
+  
+  /** The m next. */
   public Contact m_next;
 
+  /** The m node A. */
   // Nodes for connecting bodies.
   public ContactEdge m_nodeA = null;
+  
+  /** The m node B. */
   public ContactEdge m_nodeB = null;
 
+  /** The m fixture A. */
   public Fixture m_fixtureA;
+  
+  /** The m fixture B. */
   public Fixture m_fixtureB;
 
+  /** The m index A. */
   public int m_indexA;
+  
+  /** The m index B. */
   public int m_indexB;
 
+  /** The m manifold. */
   public final Manifold m_manifold;
 
+  /** The m toi count. */
   public float m_toiCount;
+  
+  /** The m toi. */
   public float m_toi;
 
+  /** The m friction. */
   public float m_friction;
+  
+  /** The m restitution. */
   public float m_restitution;
 
+  /** The m tangent speed. */
   public float m_tangentSpeed;
 
+  /** The pool. */
   protected final IWorldPool pool;
 
+  /**
+   * Instantiates a new contact.
+   *
+   * @param argPool the arg pool
+   */
   protected Contact(IWorldPool argPool) {
     m_fixtureA = null;
     m_fixtureB = null;
@@ -198,6 +222,11 @@ public abstract class Contact {
     return m_fixtureA;
   }
 
+  /**
+   * Gets the child index A.
+   *
+   * @return the child index A
+   */
   public int getChildIndexA() {
     return m_indexA;
   }
@@ -211,42 +240,90 @@ public abstract class Contact {
     return m_fixtureB;
   }
 
+  /**
+   * Gets the child index B.
+   *
+   * @return the child index B
+   */
   public int getChildIndexB() {
     return m_indexB;
   }
 
+  /**
+   * Sets the friction.
+   *
+   * @param friction the new friction
+   */
   public void setFriction(float friction) {
     m_friction = friction;
   }
 
+  /**
+   * Gets the friction.
+   *
+   * @return the friction
+   */
   public float getFriction() {
     return m_friction;
   }
 
+  /**
+   * Reset friction.
+   */
   public void resetFriction() {
     m_friction = Contact.mixFriction(m_fixtureA.m_friction, m_fixtureB.m_friction);
   }
 
+  /**
+   * Sets the restitution.
+   *
+   * @param restitution the new restitution
+   */
   public void setRestitution(float restitution) {
     m_restitution = restitution;
   }
 
+  /**
+   * Gets the restitution.
+   *
+   * @return the restitution
+   */
   public float getRestitution() {
     return m_restitution;
   }
 
+  /**
+   * Reset restitution.
+   */
   public void resetRestitution() {
     m_restitution = Contact.mixRestitution(m_fixtureA.m_restitution, m_fixtureB.m_restitution);
   }
 
+  /**
+   * Sets the tangent speed.
+   *
+   * @param speed the new tangent speed
+   */
   public void setTangentSpeed(float speed) {
     m_tangentSpeed = speed;
   }
 
+  /**
+   * Gets the tangent speed.
+   *
+   * @return the tangent speed
+   */
   public float getTangentSpeed() {
     return m_tangentSpeed;
   }
 
+  /**
+   * Evaluate.
+   *
+   * @param manifold the manifold
+   * @param xfA the xf A
+   * @param xfB the xf B
+   */
   public abstract void evaluate(Manifold manifold, Transform xfA, Transform xfB);
 
   /**
@@ -256,9 +333,15 @@ public abstract class Contact {
     m_flags |= FILTER_FLAG;
   }
 
+  /** The old manifold. */
   // djm pooling
   private final Manifold oldManifold = new Manifold();
 
+  /**
+   * Update.
+   *
+   * @param listener the listener
+   */
   public void update(ContactListener listener) {
 
     oldManifold.set(m_manifold);

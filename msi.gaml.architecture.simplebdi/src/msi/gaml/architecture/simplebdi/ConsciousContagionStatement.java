@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ConsciousContagionStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -19,6 +29,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class ConsciousContagionStatement.
+ */
 @symbol(name = ConsciousContagionStatement.CONSCIOUSCONTAGION, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
 		IConcept.BDI })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
@@ -38,25 +51,62 @@ import msi.gaml.types.IType;
 
 public class ConsciousContagionStatement extends AbstractStatement {
 
+	/** The Constant CONSCIOUSCONTAGION. */
 	public static final String CONSCIOUSCONTAGION = "conscious_contagion";
+	
+	/** The Constant EMOTIONDETECTED. */
 	public static final String EMOTIONDETECTED = "emotion_detected";
+	
+	/** The Constant EMOTIONCREATED. */
 	public static final String EMOTIONCREATED = "emotion_created";
+	
+	/** The Constant CHARISMA. */
 	public static final String CHARISMA = "charisma";
+	
+	/** The Constant RECEPTIVITY. */
 	public static final String RECEPTIVITY = "receptivity";
+	
+	/** The Constant THRESHOLD. */
 	public static final String THRESHOLD = "threshold";
+	
+	/** The Constant DECAY. */
 	public static final String DECAY = "decay";
+	
+	/** The Constant INTENSITY. */
 	public static final String INTENSITY = "intensity";
 
+	/** The name expr. */
 	final IExpression nameExpr;
+	
+	/** The emotion detected. */
 	final IExpression emotionDetected;
+	
+	/** The emotion created. */
 	final IExpression emotionCreated;
+	
+	/** The charisma. */
 	final IExpression charisma;
+	
+	/** The when. */
 	final IExpression when;
+	
+	/** The receptivity. */
 	final IExpression receptivity;
+	
+	/** The threshold. */
 	final IExpression threshold;
+	
+	/** The decay. */
 	final IExpression decay;
+	
+	/** The intensity. */
 	final IExpression intensity;
 
+	/**
+	 * Instantiates a new conscious contagion statement.
+	 *
+	 * @param desc the desc
+	 */
 	public ConsciousContagionStatement(final IDescription desc) {
 		super(desc);
 		nameExpr = getFacet(IKeyword.NAME);

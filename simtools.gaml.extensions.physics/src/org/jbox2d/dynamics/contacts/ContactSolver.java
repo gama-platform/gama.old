@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * ContactSolver.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.contacts;
 
 import org.jbox2d.collision.Manifold;
@@ -43,7 +30,10 @@ import org.jbox2d.dynamics.contacts.ContactVelocityConstraint.VelocityConstraint
  */
 public class ContactSolver {
 
+  /** The Constant DEBUG_SOLVER. */
   public static final boolean DEBUG_SOLVER = false;
+  
+  /** The Constant k_errorTol. */
   public static final float k_errorTol = 1e-3f;
   /**
    * For each solver, this is the initial number of constraints in the array, which expands as
@@ -56,14 +46,30 @@ public class ContactSolver {
    */
   public static final float k_maxConditionNumber = 100.0f;
 
+  /** The m step. */
   public TimeStep m_step;
+  
+  /** The m positions. */
   public Position[] m_positions;
+  
+  /** The m velocities. */
   public Velocity[] m_velocities;
+  
+  /** The m position constraints. */
   public ContactPositionConstraint[] m_positionConstraints;
+  
+  /** The m velocity constraints. */
   public ContactVelocityConstraint[] m_velocityConstraints;
+  
+  /** The m contacts. */
   public Contact[] m_contacts;
+  
+  /** The m count. */
   public int m_count;
 
+  /**
+   * Instantiates a new contact solver.
+   */
   public ContactSolver() {
     m_positionConstraints = new ContactPositionConstraint[INITIAL_NUM_CONSTRAINTS];
     m_velocityConstraints = new ContactVelocityConstraint[INITIAL_NUM_CONSTRAINTS];
@@ -73,6 +79,11 @@ public class ContactSolver {
     }
   }
 
+  /**
+   * Inits the.
+   *
+   * @param def the def
+   */
   public final void init(ContactSolverDef def) {
     // System.out.println("Initializing contact solver");
     m_step = def.step;
@@ -174,6 +185,9 @@ public class ContactSolver {
     }
   }
 
+  /**
+   * Warm start.
+   */
   public void warmStart() {
     // Warm start.
     for (int i = 0; i < m_count; ++i) {
@@ -213,11 +227,19 @@ public class ContactSolver {
     }
   }
 
+  /** The xf A. */
   // djm pooling, and from above
   private final Transform xfA = new Transform();
+  
+  /** The xf B. */
   private final Transform xfB = new Transform();
+  
+  /** The world manifold. */
   private final WorldManifold worldManifold = new WorldManifold();
 
+  /**
+   * Initialize velocity constraints.
+   */
   public final void initializeVelocityConstraints() {
 
     // Warm start.
@@ -333,6 +355,9 @@ public class ContactSolver {
   }
 
 
+  /**
+   * Solve velocity constraints.
+   */
   public final void solveVelocityConstraints() {
     for (int i = 0; i < m_count; ++i) {
       final ContactVelocityConstraint vc = m_velocityConstraints[i];
@@ -750,6 +775,9 @@ public class ContactSolver {
     }
   }
 
+  /**
+   * Store impulses.
+   */
   public void storeImpulses() {
     for (int i = 0; i < m_count; i++) {
       final ContactVelocityConstraint vc = m_velocityConstraints[i];
@@ -802,6 +830,7 @@ public class ContactSolver {
    * -_linearSlop. return minSeparation >= -1.5f * _linearSlop; }
    */
 
+  /** The psolver. */
   private final PositionSolverManifold psolver = new PositionSolverManifold();
 
   /**
@@ -895,6 +924,13 @@ public class ContactSolver {
     return minSeparation >= -3.0f * Settings.linearSlop;
   }
 
+  /**
+   * Solve TOI position constraints.
+   *
+   * @param toiIndexA the toi index A
+   * @param toiIndexB the toi index B
+   * @return true, if successful
+   */
   // Sequential position solver for position constraints.
   public boolean solveTOIPositionConstraints(int toiIndexA, int toiIndexB) {
     float minSeparation = 0.0f;
@@ -995,11 +1031,24 @@ public class ContactSolver {
     return minSeparation >= -1.5f * Settings.linearSlop;
   }
 
+  /**
+   * The Class ContactSolverDef.
+   */
   public static class ContactSolverDef {
+    
+    /** The step. */
     public TimeStep step;
+    
+    /** The contacts. */
     public Contact[] contacts;
+    
+    /** The count. */
     public int count;
+    
+    /** The positions. */
     public Position[] positions;
+    
+    /** The velocities. */
     public Velocity[] velocities;
   }
 }

@@ -1,28 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
- * 
- * AxisSweep3
- * Copyright (c) 2006 Simon Hobbs
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * AxisSweep3_32.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.broadphase;
 
@@ -37,14 +22,35 @@ import javax.vecmath.Vector3f;
  */
 public class AxisSweep3_32 extends AxisSweep3Internal {
 
+	/**
+	 * Instantiates a new axis sweep 3 32.
+	 *
+	 * @param worldAabbMin the world aabb min
+	 * @param worldAabbMax the world aabb max
+	 */
 	public AxisSweep3_32(Vector3f worldAabbMin, Vector3f worldAabbMax) {
 		this(worldAabbMin, worldAabbMax, 1500000, null);
 	}
 
+	/**
+	 * Instantiates a new axis sweep 3 32.
+	 *
+	 * @param worldAabbMin the world aabb min
+	 * @param worldAabbMax the world aabb max
+	 * @param maxHandles the max handles
+	 */
 	public AxisSweep3_32(Vector3f worldAabbMin, Vector3f worldAabbMax, int maxHandles) {
 		this(worldAabbMin, worldAabbMax, maxHandles, null);
 	}
 	
+	/**
+	 * Instantiates a new axis sweep 3 32.
+	 *
+	 * @param worldAabbMin the world aabb min
+	 * @param worldAabbMax the world aabb max
+	 * @param maxHandles the max handles
+	 * @param pairCache the pair cache
+	 */
 	public AxisSweep3_32(Vector3f worldAabbMin, Vector3f worldAabbMax, int maxHandles/* = 1500000*/, OverlappingPairCache pairCache/* = 0*/) {
 		super(worldAabbMin, worldAabbMax, 0xfffffffe, 0x7fffffff, maxHandles, pairCache);
 		// 1 handle is reserved as sentinel
@@ -65,10 +71,22 @@ public class AxisSweep3_32 extends AxisSweep3Internal {
 		return 0xFFFFFFFF;
 	}
 	
+	/**
+	 * The Class EdgeArrayImpl.
+	 */
 	protected static class EdgeArrayImpl extends EdgeArray {
+		
+		/** The pos. */
 		private int[] pos;
+		
+		/** The handle. */
 		private int[] handle;
 
+		/**
+		 * Instantiates a new edge array impl.
+		 *
+		 * @param size the size
+		 */
 		public EdgeArrayImpl(int size) {
 			pos = new int[size];
 			handle = new int[size];
@@ -113,13 +131,27 @@ public class AxisSweep3_32 extends AxisSweep3Internal {
 		}
 	}
 	
+	/**
+	 * The Class HandleImpl.
+	 */
 	protected static class HandleImpl extends Handle {
+		
+		/** The min edges 0. */
 		private int minEdges0;
+		
+		/** The min edges 1. */
 		private int minEdges1;
+		
+		/** The min edges 2. */
 		private int minEdges2;
 
+		/** The max edges 0. */
 		private int maxEdges0;
+		
+		/** The max edges 1. */
 		private int maxEdges1;
+		
+		/** The max edges 2. */
 		private int maxEdges2;
 		
 		@Override

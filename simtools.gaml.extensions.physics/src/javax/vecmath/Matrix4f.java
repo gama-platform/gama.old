@@ -1,22 +1,13 @@
-/*
- * Copyright 1996-2008 Sun Microsystems, Inc. All Rights Reserved. DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE
- * HEADER.
+/*******************************************************************************************************
  *
- * This code is free software; you can redistribute it and/or modify it under the terms of the GNU General Public
- * License version 2 only, as published by the Free Software Foundation. Sun designates this particular file as subject
- * to the "Classpath" exception as provided by Sun in the LICENSE file that accompanied this code.
+ * Matrix4f.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License version 2 for
- * more details (a copy is included in the LICENSE file that accompanied this code).
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * You should have received a copy of the GNU General Public License version 2 along with this work; if not, write to
- * the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara, CA 95054 USA or visit www.sun.com if you
- * need additional information or have any questions.
- *
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package javax.vecmath;
 
@@ -26,6 +17,7 @@ package javax.vecmath;
  */
 public class Matrix4f implements java.io.Serializable, Cloneable {
 
+	/** The Constant serialVersionUID. */
 	// Compatible with 1.1
 	static final long serialVersionUID = -8405036035410109353L;
 
@@ -108,6 +100,8 @@ public class Matrix4f implements java.io.Serializable, Cloneable {
 	 * The fourth element of the fourth row.
 	 */
 	public float m33;
+	
+	/** The Constant EPS. */
 	/*
 	 * double[] tmp = new double[9]; double[] tmp_scale = new double[3]; double[] tmp_rot = new double[9];
 	 */
@@ -3261,6 +3255,13 @@ public class Matrix4f implements java.io.Serializable, Cloneable {
 		this.m33 = -m1.m33;
 	}
 
+	/**
+	 * Gets the scale rotate.
+	 *
+	 * @param scales the scales
+	 * @param rots the rots
+	 * @return the scale rotate
+	 */
 	private final void getScaleRotate(final double scales[], final double rots[]) {
 
 		double[] tmp = new double[9]; // scratch matrix

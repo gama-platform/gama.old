@@ -1,16 +1,13 @@
-/*********************************************************************************************
- * 
- * 
- * 'DrivingOperators.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+/*******************************************************************************************************
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * Operators.java, in simtools.gaml.extensions.traffic, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving;
 
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
@@ -24,8 +21,20 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
 
+/**
+ * The Class Operators.
+ */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class Operators {
+	
+	/**
+	 * Spatial driving from edges.
+	 *
+	 * @param scope the scope
+	 * @param edges the edges
+	 * @param nodes the nodes
+	 * @return the i graph
+	 */
 	@operator(
 		value = "as_driving_graph",
 		content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,

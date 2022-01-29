@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * Random2.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.random;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
@@ -16,8 +26,20 @@ import msi.gama.precompiler.Reason;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class Random2.
+ */
 public class Random2 {
 
+	/**
+	 * Op gamma dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "gamma_rnd",
 			can_be_const = false,
@@ -39,6 +61,15 @@ public class Random2 {
 		return dist.sample();
 	}
 
+	/**
+	 * Op weibull dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "weibull_rnd",
 			can_be_const = false,
@@ -61,6 +92,15 @@ public class Random2 {
 		return dist.sample();
 	}
 
+	/**
+	 * Op log normal dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "lognormal_rnd",
 			can_be_const = false,
@@ -82,6 +122,17 @@ public class Random2 {
 		return dist.sample();
 	}
 
+	/**
+	 * Op log normal trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param min the min
+	 * @param max the max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "lognormal_trunc_rnd",
 			can_be_const = false,
@@ -107,6 +158,17 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op log normal trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param minmax the minmax
+	 * @param isMax the is max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "lognormal_trunc_rnd",
 			can_be_const = false,
@@ -139,6 +201,17 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op weibull trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param min the min
+	 * @param max the max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "weibull_trunc_rnd",
 			can_be_const = false,
@@ -164,6 +237,17 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op weibull trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param minmax the minmax
+	 * @param isMax the is max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "weibull_trunc_rnd",
 			can_be_const = false,
@@ -196,6 +280,17 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op gamma trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param min the min
+	 * @param max the max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "gamma_trunc_rnd",
 			can_be_const = false,
@@ -221,6 +316,17 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op gamma trunc dist.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @param minmax the minmax
+	 * @param isMax the is max
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "gamma_trunc_rnd",
 			can_be_const = false,
@@ -253,6 +359,16 @@ public class Random2 {
 		return tmpResult;
 	}
 
+	/**
+	 * Op weibull dist density.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "weibull_density",
 			can_be_const = false,
@@ -276,6 +392,16 @@ public class Random2 {
 		return dist.density(x);
 	}
 
+	/**
+	 * Op log normal dist.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "lognormal_density",
 			can_be_const = false,
@@ -298,6 +424,16 @@ public class Random2 {
 		return dist.density(x);
 	}
 
+	/**
+	 * Op gamma dist.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @param shape the shape
+	 * @param scale the scale
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "gamma_density",
 			can_be_const = false,

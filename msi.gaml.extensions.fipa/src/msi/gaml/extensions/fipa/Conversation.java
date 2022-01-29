@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.fipa.Conversation.java, in plugin msi.gaml.extensions.fipa, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * Conversation.java, in msi.gaml.extensions.fipa, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
@@ -64,10 +64,19 @@ public class Conversation extends GamaList<FIPAMessage> {
 	/** The protocol. */
 	private FIPAProtocol protocol;
 
+	/** The Constant PROTOCOL. */
 	public final static String PROTOCOL = "protocol";
+	
+	/** The Constant INITIATOR. */
 	public final static String INITIATOR = "initiator";
+	
+	/** The Constant PARTICIPANTS. */
 	public final static String PARTICIPANTS = "participants";
+	
+	/** The Constant ENDED. */
 	public final static String ENDED = "ended";
+	
+	/** The Constant MESSAGES. */
 	public final static String MESSAGES = "messages";
 
 	/** The owner of this conversation. */
@@ -287,6 +296,11 @@ public class Conversation extends GamaList<FIPAMessage> {
 		return ended || areAllNodeEnded();
 	}
 
+	/**
+	 * Are messages read.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean areMessagesRead() {
 		for (final FIPAMessage m : messages) {
 			if (m.isUnread()) { return false; }
@@ -324,6 +338,9 @@ public class Conversation extends GamaList<FIPAMessage> {
 		ended = true;
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public synchronized void dispose() {
 		end();
 		protocolNodeParticipantMap.clear();

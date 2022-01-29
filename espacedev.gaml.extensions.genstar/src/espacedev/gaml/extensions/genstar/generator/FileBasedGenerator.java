@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * FileBasedGenerator.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.generator;
 
 import java.io.IOException;
@@ -58,13 +68,24 @@ import msi.gaml.variables.IVariable;
  */
 public class FileBasedGenerator implements IGenstarGenerator {
 
+	/** The Constant INSTANCE. */
 	// SINGLETONG
 	private static final FileBasedGenerator INSTANCE = new FileBasedGenerator();
+	
+	/**
+	 * Gets the single instance of FileBasedGenerator.
+	 *
+	 * @return single instance of FileBasedGenerator
+	 */
 	public static FileBasedGenerator getInstance() {return INSTANCE;}
 	
+	/** The type. */
 	@SuppressWarnings("rawtypes")
 	final IType type;
 	
+	/**
+	 * Instantiates a new file based generator.
+	 */
 	@SuppressWarnings("unchecked")
 	private FileBasedGenerator() { this.type = Types.LIST.of(Types.FILE); }
 	

@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * GImpactBvh.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -37,7 +27,10 @@ import com.bulletphysics.util.IntArrayList;
  */
 class GImpactBvh {
 
+	/** The box tree. */
 	protected BvhTree box_tree = new BvhTree();
+	
+	/** The primitive manager. */
 	protected PrimitiveManagerBase primitive_manager;
 
 	/**
@@ -54,19 +47,38 @@ class GImpactBvh {
 		this.primitive_manager = primitive_manager;
 	}
 
+	/**
+	 * Gets the global box.
+	 *
+	 * @param out the out
+	 * @return the global box
+	 */
 	public AABB getGlobalBox(final AABB out) {
 		getNodeBound(0, out);
 		return out;
 	}
 
+	/**
+	 * Sets the primitive manager.
+	 *
+	 * @param primitive_manager the new primitive manager
+	 */
 	public void setPrimitiveManager(final PrimitiveManagerBase primitive_manager) {
 		this.primitive_manager = primitive_manager;
 	}
 
+	/**
+	 * Gets the primitive manager.
+	 *
+	 * @return the primitive manager
+	 */
 	public PrimitiveManagerBase getPrimitiveManager() {
 		return primitive_manager;
 	}
 
+	/**
+	 * Refit.
+	 */
 	// stackless refit
 	protected void refit() {
 		AABB leafbox = AABBS.get();
@@ -213,6 +225,11 @@ class GImpactBvh {
 		return primitive_manager.is_trimesh();
 	}
 
+	/**
+	 * Gets the node count.
+	 *
+	 * @return the node count
+	 */
 	public int getNodeCount() {
 		return box_tree.getNodeCount();
 	}
@@ -224,38 +241,98 @@ class GImpactBvh {
 		return box_tree.isLeafNode(nodeindex);
 	}
 
+	/**
+	 * Gets the node data.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the node data
+	 */
 	public int getNodeData(final int nodeindex) {
 		return box_tree.getNodeData(nodeindex);
 	}
 
+	/**
+	 * Gets the node bound.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @param bound the bound
+	 * @return the node bound
+	 */
 	public void getNodeBound(final int nodeindex, final AABB bound) {
 		box_tree.getNodeBound(nodeindex, bound);
 	}
 
+	/**
+	 * Sets the node bound.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @param bound the bound
+	 */
 	public void setNodeBound(final int nodeindex, final AABB bound) {
 		box_tree.setNodeBound(nodeindex, bound);
 	}
 
+	/**
+	 * Gets the left node.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the left node
+	 */
 	public int getLeftNode(final int nodeindex) {
 		return box_tree.getLeftNode(nodeindex);
 	}
 
+	/**
+	 * Gets the right node.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the right node
+	 */
 	public int getRightNode(final int nodeindex) {
 		return box_tree.getRightNode(nodeindex);
 	}
 
+	/**
+	 * Gets the escape node index.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the escape node index
+	 */
 	public int getEscapeNodeIndex(final int nodeindex) {
 		return box_tree.getEscapeNodeIndex(nodeindex);
 	}
 
+	/**
+	 * Gets the node triangle.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @param triangle the triangle
+	 * @return the node triangle
+	 */
 	public void getNodeTriangle(final int nodeindex, final PrimitiveTriangle triangle) {
 		primitive_manager.get_primitive_triangle(getNodeData(nodeindex), triangle);
 	}
 
+	/**
+	 * Gets the node pointer.
+	 *
+	 * @return the node pointer
+	 */
 	public BvhTreeNodeArray get_node_pointer() {
 		return box_tree.get_node_pointer();
 	}
 
+	/**
+	 * Node collision.
+	 *
+	 * @param boxset0 the boxset 0
+	 * @param boxset1 the boxset 1
+	 * @param trans_cache_1to0 the trans cache 1 to 0
+	 * @param node0 the node 0
+	 * @param node1 the node 1
+	 * @param complete_primitive_tests the complete primitive tests
+	 * @return true, if successful
+	 */
 	private static boolean _node_collision(final GImpactBvh boxset0, final GImpactBvh boxset1,
 			final BoxBoxTransformCache trans_cache_1to0, final int node0, final int node1,
 			final boolean complete_primitive_tests) {
@@ -323,6 +400,15 @@ class GImpactBvh {
 
 	// public static float getAverageTreeCollisionTime();
 
+	/**
+	 * Find collision.
+	 *
+	 * @param boxset0 the boxset 0
+	 * @param trans0 the trans 0
+	 * @param boxset1 the boxset 1
+	 * @param trans1 the trans 1
+	 * @param collision_pairs the collision pairs
+	 */
 	public static void find_collision(final GImpactBvh boxset0, final Transform trans0, final GImpactBvh boxset1,
 			final Transform trans1, final PairSet collision_pairs) {
 		if (boxset0.getNodeCount() == 0 || boxset1.getNodeCount() == 0) return;

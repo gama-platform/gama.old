@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * TrimeshPrimitiveManager.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -36,16 +26,30 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 
+	/** The margin. */
 	public float margin;
+	
+	/** The mesh interface. */
 	public StridingMeshInterface meshInterface;
+	
+	/** The scale. */
 	public final Vector3f scale = new Vector3f();
+	
+	/** The part. */
 	public int part;
+	
+	/** The lock count. */
 	public int lock_count;
 
+	/** The tmp indices. */
 	private final int[] tmpIndices = new int[3];
 
+	/** The vertex data. */
 	private VertexData vertexData;
 
+	/**
+	 * Instantiates a new trimesh primitive manager.
+	 */
 	public TrimeshPrimitiveManager() {
 		meshInterface = null;
 		part = 0;
@@ -54,6 +58,11 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		lock_count = 0;
 	}
 
+	/**
+	 * Instantiates a new trimesh primitive manager.
+	 *
+	 * @param manager the manager
+	 */
 	public TrimeshPrimitiveManager(final TrimeshPrimitiveManager manager) {
 		meshInterface = manager.meshInterface;
 		part = manager.part;
@@ -62,6 +71,12 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		lock_count = 0;
 	}
 
+	/**
+	 * Instantiates a new trimesh primitive manager.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param part the part
+	 */
 	public TrimeshPrimitiveManager(final StridingMeshInterface meshInterface, final int part) {
 		this.meshInterface = meshInterface;
 		this.part = part;
@@ -70,6 +85,9 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		lock_count = 0;
 	}
 
+	/**
+	 * Lock.
+	 */
 	public void lock() {
 		if (lock_count > 0) {
 			lock_count++;
@@ -80,6 +98,9 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		lock_count = 1;
 	}
 
+	/**
+	 * Unlock.
+	 */
 	public void unlock() {
 		if (lock_count == 0) return;
 		if (lock_count > 1) {
@@ -101,16 +122,35 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		return vertexData.getIndexCount() / 3;
 	}
 
+	/**
+	 * Gets the vertex count.
+	 *
+	 * @return the vertex count
+	 */
 	public int get_vertex_count() {
 		return vertexData.getVertexCount();
 	}
 
+	/**
+	 * Gets the indices.
+	 *
+	 * @param face_index the face index
+	 * @param out the out
+	 * @return the indices
+	 */
 	public void get_indices(final int face_index, final int[] out) {
 		out[0] = vertexData.getIndex(face_index * 3 + 0);
 		out[1] = vertexData.getIndex(face_index * 3 + 1);
 		out[2] = vertexData.getIndex(face_index * 3 + 2);
 	}
 
+	/**
+	 * Gets the vertex.
+	 *
+	 * @param vertex_index the vertex index
+	 * @param vertex the vertex
+	 * @return the vertex
+	 */
 	public void get_vertex(final int vertex_index, final Vector3f vertex) {
 		vertexData.getVertex(vertex_index, vertex);
 		VectorUtil.mul(vertex, vertex, scale);
@@ -134,6 +174,13 @@ class TrimeshPrimitiveManager extends PrimitiveManagerBase {
 		triangle.margin = margin;
 	}
 
+	/**
+	 * Gets the bullet triangle.
+	 *
+	 * @param prim_index the prim index
+	 * @param triangle the triangle
+	 * @return the bullet triangle
+	 */
 	public void get_bullet_triangle(final int prim_index, final TriangleShapeEx triangle) {
 		get_indices(prim_index, tmpIndices);
 		get_vertex(tmpIndices[0], triangle.vertices1[0]);

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * PersistentManifold.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.narrowphase;
 
@@ -50,16 +43,24 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The Constant MANIFOLD_CACHE_SIZE. */
 	public static final int MANIFOLD_CACHE_SIZE = 4;
 
+	/** The point cache. */
 	private final ManifoldPoint[] pointCache = new ManifoldPoint[MANIFOLD_CACHE_SIZE];
 	/// this two body pointers can point to the physics rigidbody class.
+	/** The body 0. */
 	/// void* will allow any rigidbody class
 	private CollisionObject body0;
+	
+	/** The body 1. */
 	private CollisionObject body1;
+	
+	/** The cached points. */
 	private int cachedPoints;
 	// int islandId = -1;
 
+	/** The index 1 a. */
 	public int index1a;
 
 	{
@@ -68,12 +69,27 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		}
 	}
 
+	/**
+	 * Instantiates a new persistent manifold.
+	 */
 	public PersistentManifold() {}
 
+	/**
+	 * Instantiates a new persistent manifold.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param bla the bla
+	 */
 	public PersistentManifold(final CollisionObject body0, final CollisionObject body1, final int bla) {
 		init(body0, body1, bla);
 	}
 
+	/**
+	 * Gets the island id.
+	 *
+	 * @return the island id
+	 */
 	public int getIslandId() {
 		// if (islandId == -1) {
 		CollisionObject rcolObj0 = (CollisionObject) getBody0();
@@ -89,6 +105,13 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		return Integer.compare(getIslandId(), o.getIslandId());
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param bla the bla
+	 */
 	public void init(final CollisionObject body0, final CollisionObject body1, final int bla) {
 		this.body0 = body0;
 		this.body1 = body1;
@@ -96,6 +119,12 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		index1a = 0;
 	}
 
+	/**
+	 * Sort cached points.
+	 *
+	 * @param pt the pt
+	 * @return the int
+	 */
 	/// sort cached points so most isolated points come first
 	private int sortCachedPoints(final ManifoldPoint pt) {
 		// calculate 4 possible cases areas, and take biggest area
@@ -175,14 +204,30 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 
 	// private int findContactPoint(ManifoldPoint unUsed, int numUnused, ManifoldPoint pt);
 
+	/**
+	 * Gets the body 0.
+	 *
+	 * @return the body 0
+	 */
 	public Object getBody0() {
 		return body0;
 	}
 
+	/**
+	 * Gets the body 1.
+	 *
+	 * @return the body 1
+	 */
 	public Object getBody1() {
 		return body1;
 	}
 
+	/**
+	 * Sets the bodies.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 */
 	public void setBodies(final CollisionObject body0, final CollisionObject body1) {
 		this.body0 = body0;
 		this.body1 = body1;
@@ -195,19 +240,41 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 	// }
 	// }
 
+	/**
+	 * Gets the num contacts.
+	 *
+	 * @return the num contacts
+	 */
 	public int getNumContacts() {
 		return cachedPoints;
 	}
 
+	/**
+	 * Gets the contact point.
+	 *
+	 * @param index the index
+	 * @return the contact point
+	 */
 	public ManifoldPoint getContactPoint(final int index) {
 		return pointCache[index];
 	}
 
+	/**
+	 * Gets the contact breaking threshold.
+	 *
+	 * @return the contact breaking threshold
+	 */
 	// todo: get this margin from the current physics / collision environment
 	public float getContactBreakingThreshold() {
 		return BulletGlobals.getContactBreakingThreshold();
 	}
 
+	/**
+	 * Gets the cache entry.
+	 *
+	 * @param newPoint the new point
+	 * @return the cache entry
+	 */
 	public int getCacheEntry(final ManifoldPoint newPoint) {
 		float shortestDist = getContactBreakingThreshold() * getContactBreakingThreshold();
 		int size = getNumContacts();
@@ -228,6 +295,12 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		return nearestPoint;
 	}
 
+	/**
+	 * Adds the manifold point.
+	 *
+	 * @param newPoint the new point
+	 * @return the int
+	 */
 	public int addManifoldPoint(final ManifoldPoint newPoint) {
 		assert validContactDistance(newPoint);
 
@@ -252,6 +325,11 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		return insertIndex;
 	}
 
+	/**
+	 * Removes the contact point.
+	 *
+	 * @param index the index
+	 */
 	public void removeContactPoint(final int index) {
 		// clearUserCache( pointCache[index]);
 
@@ -273,6 +351,12 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		cachedPoints--;
 	}
 
+	/**
+	 * Replace contact point.
+	 *
+	 * @param newPoint the new point
+	 * @param insertIndex the insert index
+	 */
 	public void replaceContactPoint(final ManifoldPoint newPoint, final int insertIndex) {
 		assert validContactDistance(newPoint);
 
@@ -294,10 +378,22 @@ public class PersistentManifold implements Comparable<PersistentManifold> {
 		pointCache[insertIndex].lifeTime = lifeTime;
 	}
 
+	/**
+	 * Valid contact distance.
+	 *
+	 * @param pt the pt
+	 * @return true, if successful
+	 */
 	private boolean validContactDistance(final ManifoldPoint pt) {
 		return pt.distance1 <= getContactBreakingThreshold();
 	}
 
+	/**
+	 * Refresh contact points.
+	 *
+	 * @param trA the tr A
+	 * @param trB the tr B
+	 */
 	/// calculated new worldspace coordinates and depth, and reject points that exceed the collision margin
 	public void refreshContactPoints(final Transform trA, final Transform trB) {
 		Vector3f tmp = VECTORS.get();

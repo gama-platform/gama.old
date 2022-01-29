@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaSqlConnection.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.geosql;
 
 import java.io.IOException;
@@ -36,44 +46,95 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class GamaSqlConnection.
+ */
 // DataStore.dispose(); //close connection;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSqlConnection extends GamaGisFile {
 
+	/** The Constant MYSQL. */
 	private static final String MYSQL = "mysql";
+	
+	/** The Constant POSTGRES. */
 	private static final String POSTGRES = "postgres";
+	
+	/** The Constant POSTGIS. */
 	private static final String POSTGIS = "postgis";
+	
+	/** The Constant MSSQL. */
 	private static final String MSSQL = "sqlserver";
+	
+	/** The Constant SQLITE. */
 	private static final String SQLITE = "spatialite";
+	
+	/** The dbtype. */
 	private String dbtype = "";
+	
+	/** The host. */
 	private String host = "";
+	
+	/** The port. */
 	private String port = "";
+	
+	/** The database. */
 	private String database = "";
+	
+	/** The user. */
 	private String user = "";
+	
+	/** The passwd. */
 	private String passwd = "";
 
+	/** The data store. */
 	// Database object/ Database connection
 	private DataStore dataStore;
 
+	/**
+	 * Instantiates a new gama sql connection.
+	 *
+	 * @param scope the scope
+	 */
 	public GamaSqlConnection(final IScope scope) {
 		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
 		setParams(scope);
 	}
 
+	/**
+	 * Instantiates a new gama sql connection.
+	 *
+	 * @param scope the scope
+	 * @param params the params
+	 */
 	private GamaSqlConnection(final IScope scope, final Map<String, Object> params) {
 		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
 
 		setParams(params);
 	}
 
+	/**
+	 * Sets the params.
+	 *
+	 * @param scope the new params
+	 */
 	private void setParams(final IScope scope) {
 		setConnectionParameters(scope);
 	}
 
+	/**
+	 * Sets the params.
+	 *
+	 * @param params the params
+	 */
 	private void setParams(final Map<String, Object> params) {
 		setConnectionParameters(params);
 	}
 
+	/**
+	 * Sets the connection parameters.
+	 *
+	 * @param scope the new connection parameters
+	 */
 	private void setConnectionParameters(final IScope scope) {
 		final Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
 		this.dbtype = (String) params.get("dbtype");
@@ -84,6 +145,11 @@ public class GamaSqlConnection extends GamaGisFile {
 		this.passwd = (String) params.get("passwd");
 	}
 
+	/**
+	 * Sets the connection parameters.
+	 *
+	 * @param params the params
+	 */
 	private void setConnectionParameters(final Map<String, Object> params) {
 		this.dbtype = (String) params.get("dbtype");
 		this.host = (String) params.get("host");
@@ -93,6 +159,12 @@ public class GamaSqlConnection extends GamaGisFile {
 		this.passwd = (String) params.get("passwd");
 	}
 
+	/**
+	 * Creates the connection params.
+	 *
+	 * @param scope the scope
+	 * @return the map
+	 */
 	// Connect connection parameters with connection attributes of the object
 	private Map<String, Object> createConnectionParams(final IScope scope) {
 		final Map<String, Object> connectionParameters = new HashMap<>();
@@ -132,6 +204,13 @@ public class GamaSqlConnection extends GamaGisFile {
 		return connectionParameters;
 	}
 
+	/**
+	 * Connect.
+	 *
+	 * @param scope the scope
+	 * @return the data store
+	 * @throws Exception the exception
+	 */
 	/*
 	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
 	 */
@@ -145,6 +224,12 @@ public class GamaSqlConnection extends GamaGisFile {
 		return dStore;
 	}
 
+	/**
+	 * Close.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Close the current connection of of the GamaSqlConnection object
 	 */
@@ -155,16 +240,33 @@ public class GamaSqlConnection extends GamaGisFile {
 			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ", scope);
 	}
 
+	/**
+	 * Sets the data store.
+	 *
+	 * @param dataStore the new data store
+	 */
 	public void setDataStore(final DataStore dataStore) {
 		this.dataStore = dataStore;
 	}
 
+	/**
+	 * Read table.
+	 *
+	 * @param scope the scope
+	 */
 	private void readTable(final IScope scope) {
 		final String tableName = (String) scope.getArg("table", IType.STRING);
 		final String filterStr = (String) scope.getArg("filter", IType.STRING);
 		readTable(scope, tableName, filterStr);
 	}
 
+	/**
+	 * Read table.
+	 *
+	 * @param scope the scope
+	 * @param tableName the table name
+	 * @param filterStr the filter str
+	 */
 	private void readTable(final IScope scope, final String tableName, final String filterStr) {
 
 		final IList list = getBuffer();
@@ -211,6 +313,11 @@ public class GamaSqlConnection extends GamaGisFile {
 		readTable(scope);
 	}
 
+	/**
+	 * Read.
+	 *
+	 * @param scope the scope
+	 */
 	public void read(final IScope scope) {
 		fillBuffer(scope);
 	}
@@ -220,13 +327,29 @@ public class GamaSqlConnection extends GamaGisFile {
 		return null;
 	}
 
+	/**
+	 * The Class QueryInfo.
+	 */
 	// _________________________________________________________________
 	private static class QueryInfo {
 
+		/** The item number. */
 		private final int itemNumber; // Number of records
+		
+		/** The env. */
 		private final Envelope3D env;
+		
+		/** The features. */
 		private final SimpleFeatureCollection features; // data/recordsets
 
+		/**
+		 * Instantiates a new query info.
+		 *
+		 * @param scope the scope
+		 * @param dStore the d store
+		 * @param tableName the table name
+		 * @param filterStr the filter str
+		 */
 		QueryInfo(final IScope scope, final DataStore dStore, final String tableName, final String filterStr) {
 
 			SimpleFeatureSource source = null;
@@ -276,14 +399,29 @@ public class GamaSqlConnection extends GamaGisFile {
 
 		}
 
+		/**
+		 * Gets the size.
+		 *
+		 * @return the size
+		 */
 		public int getSize() {
 			return itemNumber;
 		}
 
+		/**
+		 * Gets the envelope.
+		 *
+		 * @return the envelope
+		 */
 		public Envelope3D getEnvelope() {
 			return env;
 		}
 
+		/**
+		 * Gets the record set.
+		 *
+		 * @return the record set
+		 */
 		public SimpleFeatureCollection getRecordSet() {
 			return features;
 		}

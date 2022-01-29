@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Joint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Vec2;
@@ -38,6 +25,13 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public abstract class Joint {
 
+  /**
+   * Creates the.
+   *
+   * @param world the world
+   * @param def the def
+   * @return the joint
+   */
   public static Joint create(World world, JointDef def) {
     // Joint joint = null;
     switch (def.type) {
@@ -71,23 +65,46 @@ public abstract class Joint {
     }
   }
 
+  /**
+   * Destroy.
+   *
+   * @param joint the joint
+   */
   public static void destroy(Joint joint) {
     joint.destructor();
   }
 
+  /** The m type. */
   private final JointType m_type;
+  
+  /** The m prev. */
   public Joint m_prev;
+  
+  /** The m next. */
   public Joint m_next;
+  
+  /** The m edge A. */
   public JointEdge m_edgeA;
+  
+  /** The m edge B. */
   public JointEdge m_edgeB;
+  
+  /** The m body A. */
   protected Body m_bodyA;
+  
+  /** The m body B. */
   protected Body m_bodyB;
 
+  /** The m island flag. */
   public boolean m_islandFlag;
+  
+  /** The m collide connected. */
   private boolean m_collideConnected;
 
+  /** The m user data. */
   public Object m_userData;
 
+  /** The pool. */
   protected IWorldPool pool;
 
   // Cache here per time step to reduce cache misses.
@@ -95,6 +112,12 @@ public abstract class Joint {
   // float m_invMassA, m_invIA;
   // float m_invMassB, m_invIB;
 
+  /**
+   * Instantiates a new joint.
+   *
+   * @param worldPool the world pool
+   * @param def the def
+   */
   protected Joint(IWorldPool worldPool, JointDef def) {
     assert (def.bodyA != def.bodyB);
 

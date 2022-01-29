@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * MdxConnection.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MdxConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.mdx;
 
 import java.sql.SQLException;
@@ -30,6 +28,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 
+/**
+ * The Class MdxConnection.
+ */
 /*
  * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC
  *
@@ -45,41 +46,100 @@ import msi.gama.util.IList;
 @SuppressWarnings ({ "unchecked" })
 public abstract class MdxConnection {
 
+	/** The Constant MONDRIAN. */
 	protected static final String MONDRIAN = "mondrian";
+	
+	/** The Constant MONDRIANXMLA. */
 	protected static final String MONDRIANXMLA = "mondrian/xmla";
+	
+	/** The Constant MSAS. */
 	protected static final String MSAS = "ssas/xmla"; // Micrsoft SQL Server
+														
+														/** The Constant MYSQL. */
 														// Analysis Services
 	protected static final String MYSQL = "mysql";
+	
+	/** The Constant POSTGRES. */
 	protected static final String POSTGRES = "postgres";
+	
+	/** The Constant POSTGIS. */
 	protected static final String POSTGIS = "postgis";
+	
+	/** The Constant MSSQL. */
 	protected static final String MSSQL = "sqlserver";
+	
+	/** The Constant SQLITE. */
 	protected static final String SQLITE = "sqlite";
 
+	/** The Constant MYSQLDriver. */
 	protected static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
+	
+	/** The Constant MSSQLDriver. */
 	protected static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
+	
+	/** The Constant SQLITEDriver. */
 	protected static final String SQLITEDriver = new String("org.sqlite.JDBC");
+	
+	/** The Constant POSTGRESDriver. */
 	protected static final String POSTGRESDriver = new String("org.postgresql.Driver");
 
+	/** The vender. */
 	protected String vender = "";
+	
+	/** The dbtype. */
 	protected String dbtype = POSTGRES;
+	
+	/** The url. */
 	protected String url = "";
+	
+	/** The port. */
 	protected String port = "";
+	
+	/** The db name. */
 	protected String dbName = "";
+	
+	/** The catalog. */
 	protected String catalog = "";
+	
+	/** The user name. */
 	protected String userName = "";
+	
+	/** The password. */
 	protected String password = "";
 
+	/** The olap connection. */
 	protected OlapConnection olapConnection;
 
+	/**
+	 * Instantiates a new mdx connection.
+	 *
+	 * @param vender the vender
+	 */
 	MdxConnection(final String vender) {
 		this.vender = vender;
 	}
 
+	/**
+	 * Instantiates a new mdx connection.
+	 *
+	 * @param venderName the vender name
+	 * @param database the database
+	 */
 	MdxConnection(final String venderName, final String database) {
 		this.vender = venderName;
 		this.dbName = database;
 	}
 
+	/**
+	 * Instantiates a new mdx connection.
+	 *
+	 * @param venderName the vender name
+	 * @param url the url
+	 * @param port the port
+	 * @param dbName the db name
+	 * @param userName the user name
+	 * @param password the password
+	 */
 	MdxConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
 		this.vender = venderName;
@@ -90,6 +150,17 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
+	/**
+	 * Instantiates a new mdx connection.
+	 *
+	 * @param venderName the vender name
+	 * @param url the url
+	 * @param port the port
+	 * @param dbName the db name
+	 * @param catalog the catalog
+	 * @param userName the user name
+	 * @param password the password
+	 */
 	MdxConnection(final String venderName, final String url, final String port, final String dbName,
 			final String catalog, final String userName, final String password) {
 		this.vender = venderName;
@@ -101,6 +172,18 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
+	/**
+	 * Instantiates a new mdx connection.
+	 *
+	 * @param venderName the vender name
+	 * @param dbtype the dbtype
+	 * @param url the url
+	 * @param port the port
+	 * @param dbName the db name
+	 * @param catalog the catalog
+	 * @param userName the user name
+	 * @param password the password
+	 */
 	MdxConnection(final String venderName, final String dbtype, final String url, final String port,
 			final String dbName, final String catalog, final String userName, final String password) {
 		this.vender = venderName;
@@ -113,35 +196,79 @@ public abstract class MdxConnection {
 		this.password = password;
 	}
 
+	/**
+	 * Connect MDB.
+	 *
+	 * @param scope the scope
+	 * @return the olap connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
 	public abstract OlapConnection connectMDB(IScope scope) throws GamaRuntimeException;
 
+	/**
+	 * Connect MDB.
+	 *
+	 * @param scope the scope
+	 * @param dbName the db name
+	 * @return the olap connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
 	public abstract OlapConnection connectMDB(IScope scope, String dbName) throws GamaRuntimeException;
 
+	/**
+	 * Connect MDB.
+	 *
+	 * @param scope the scope
+	 * @param dbName the db name
+	 * @param catalog the catalog
+	 * @return the olap connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
 	public abstract OlapConnection connectMDB(IScope scope, String dbName, String catalog) throws GamaRuntimeException;
 
+	/**
+	 * Sets the connection.
+	 *
+	 * @param scope the new connection
+	 */
 	public void setConnection(final IScope scope) {
 		this.olapConnection = this.connectMDB(scope);
 
 	}
 
+	/**
+	 * Sets the connection.
+	 *
+	 * @param oConn the new connection
+	 */
 	public void setConnection(final OlapConnection oConn) {
 		this.olapConnection = oConn;
 
 	}
 
+	/**
+	 * Gets the connection.
+	 *
+	 * @return the connection
+	 */
 	public OlapConnection getConnection() {
 		return this.olapConnection;
 	}
 
+	/**
+	 * Checks if is connected.
+	 *
+	 * @return true, if is connected
+	 */
 	public boolean isConnected() {
 		if (this.olapConnection != null) {
 			return true;
@@ -150,38 +277,83 @@ public abstract class MdxConnection {
 		}
 	}
 
+	/**
+	 * Gets the vender.
+	 *
+	 * @return the vender
+	 */
 	public String getVender() {
 		return this.vender;
 	}
 
+	/**
+	 * Gets the url.
+	 *
+	 * @return the url
+	 */
 	public String getURL() {
 		return this.url;
 	}
 
+	/**
+	 * Gets the catalog.
+	 *
+	 * @return the catalog
+	 */
 	public String getCatalog() {
 		return this.catalog;
 	}
 
+	/**
+	 * Gets the user.
+	 *
+	 * @return the user
+	 */
 	public String getUser() {
 		return this.userName;
 	}
 
+	/**
+	 * Gets the password.
+	 *
+	 * @return the password
+	 */
 	public String getPassword() {
 		return this.password;
 	}
 
+	/**
+	 * Sets the vender.
+	 *
+	 * @param vender the new vender
+	 */
 	public void setVender(final String vender) {
 		this.vender = vender;
 	}
 
+	/**
+	 * Sets the url.
+	 *
+	 * @param url the new url
+	 */
 	public void setURL(final String url) {
 		this.url = url;
 	}
 
+	/**
+	 * Sets the catalog.
+	 *
+	 * @param catalog the new catalog
+	 */
 	public void setCatalog(final String catalog) {
 		this.catalog = catalog;
 	}
 
+	/**
+	 * Sets the user.
+	 *
+	 * @param userName the new user
+	 */
 	public void setUser(final String userName) {
 		this.userName = userName;
 	}
@@ -190,6 +362,13 @@ public abstract class MdxConnection {
 	 * Select data source with connection was established
 	 */
 
+	/**
+	 * Select.
+	 *
+	 * @param scope the scope
+	 * @param selectComm the select comm
+	 * @return the cell set
+	 */
 	private CellSet select(final IScope scope, final String selectComm) {
 		CellSet resultCellSet = null;
 		try (OlapConnection oConn = connectMDB(scope);) {
@@ -200,6 +379,14 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
+	/**
+	 * Select.
+	 *
+	 * @param scope the scope
+	 * @param selectComm the select comm
+	 * @param condition_values the condition values
+	 * @return the cell set
+	 */
 	private CellSet select(final IScope scope, final String selectComm, final IList<Object> condition_values) {
 		CellSet resultCellSet = null;
 		try (OlapConnection oConn = connectMDB(scope);) {
@@ -211,6 +398,15 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
+	/**
+	 * Select.
+	 *
+	 * @param scope the scope
+	 * @param connection the connection
+	 * @param selectComm the select comm
+	 * @return the cell set
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	private CellSet select(final IScope scope, final OlapConnection connection, final String selectComm)
 			throws GamaRuntimeException {
 		CellSet resultCellSet = null;
@@ -227,6 +423,14 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
+	/**
+	 * Select MDB.
+	 *
+	 * @param scope the scope
+	 * @param selectComm the select comm
+	 * @param condition_values the condition values
+	 * @return the i list
+	 */
 	/*
 	 * Select data source with connection was established
 	 */
@@ -235,11 +439,24 @@ public abstract class MdxConnection {
 		return cellSet2List(cellSet);
 	}
 
+	/**
+	 * Select MDB.
+	 *
+	 * @param scope the scope
+	 * @param selectComm the select comm
+	 * @return the i list
+	 */
 	public IList<Object> selectMDB(final IScope scope, final String selectComm) {
 		final CellSet cellSet = select(scope, selectComm);
 		return cellSet2List(cellSet);
 	}
 
+	/**
+	 * Cell set 2 list.
+	 *
+	 * @param cellSet the cell set
+	 * @return the i list
+	 */
 	/*
 	 * Format of Olap query result (GamaList<Object>: Result of OLAP query is transformed to Gamalist<Object> with
 	 * order: (0): GamaList<String>: List of column names. (1): GamaList<Object>: Row data. it contains List of list and
@@ -254,6 +471,12 @@ public abstract class MdxConnection {
 		return olapResult;
 	}
 
+	/**
+	 * Gets the columns name.
+	 *
+	 * @param cellSet the cell set
+	 * @return the columns name
+	 */
 	private IList<Object> getColumnsName(final CellSet cellSet) {
 		final IList<Object> columnsName = GamaListFactory.create();
 		final List<CellSetAxis> cellSetAxes = cellSet.getAxes();
@@ -267,6 +490,12 @@ public abstract class MdxConnection {
 
 	}
 
+	/**
+	 * Gets the rows data.
+	 *
+	 * @param cellSet the cell set
+	 * @return the rows data
+	 */
 	private IList<Object> getRowsData(final CellSet cellSet) {
 		final IList<Object> rowsData = GamaListFactory.create();
 
@@ -312,6 +541,14 @@ public abstract class MdxConnection {
 	 * print all column names
 	 */
 
+	/**
+	 * Parses the mdx.
+	 *
+	 * @param str the str
+	 * @param condition_values the condition values
+	 * @return the string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	private String parseMdx(final String str, final IList<Object> condition_values) throws GamaRuntimeException {
 		String queryStr = str;
 		final int condition_count = condition_values.size();

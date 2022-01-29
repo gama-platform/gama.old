@@ -1,41 +1,109 @@
+/*******************************************************************************************************
+ *
+ * MessageFactory.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.common;
 
 import ummisco.gama.network.common.CommandMessage.CommandType;
 
+/**
+ * A factory for creating Message objects.
+ */
 public final class MessageFactory {
+	
+	/** The Constant keyChain. */
 	private static final byte[] keyChain = { 3, 5, 8, 13 };
+	
+	/** The Constant MAX_HEADER_SIZE. */
 	private static final int MAX_HEADER_SIZE = 1024;
 	
+	/**
+	 * The Enum MessageType.
+	 */
 	public enum MessageType{
+		
+		/** The command message. */
 		COMMAND_MESSAGE,
+		
+		/** The network message. */
 		NETWORK_MESSAGE,
+		
+		/** The plain message. */
 		PLAIN_MESSAGE
 	}
 	
 	
+	/**
+	 * Builds the network message.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @param data the data
+	 * @return the network message
+	 */
 	public static NetworkMessage buildNetworkMessage(final String from, final String to, final String data) {
 		return new NetworkMessage(from, to, data);
 	}
 	
+	/**
+	 * Builds the network message.
+	 *
+	 * @param from the from
+	 * @param data the data
+	 * @return the network message
+	 */
 	public static NetworkMessage buildNetworkMessage(final String from,  final String data) {
 		return new NetworkMessage(from,  data);
 	}
 	
+	/**
+	 * Builds the command message.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @param cmd the cmd
+	 * @param data the data
+	 * @return the command message
+	 */
 	public static CommandMessage buildCommandMessage(final String from, final String to,final CommandType cmd, final String data) {
 		return new CommandMessage(from, to, cmd, data);
 	}
 	
 	
+	/**
+	 * Pack message.
+	 *
+	 * @param msg the msg
+	 * @return the string
+	 */
 	public static String packMessage(final NetworkMessage msg) {
 		final String mKey = new String(keyChain);
 		return mKey + msg.getSender() + mKey + msg.getReceiver() + mKey + msg.getPlainContents();
 	}
 
+	/**
+	 * Pack message.
+	 *
+	 * @param msg the msg
+	 * @return the string
+	 */
 	public static String packMessage(final CommandMessage msg) {
 		final String mKey = new String(keyChain);
 		return mKey + mKey + msg.getSender() + mKey + msg.getReceiver() + mKey+ msg.getCommand().ordinal() + mKey + msg.getPlainContents();
 	}
 	
+	/**
+	 * Identify message type.
+	 *
+	 * @param data the data
+	 * @return the message type
+	 */
 	public static MessageType identifyMessageType(final String data)
 	{
 		final String key = new String(keyChain);
@@ -47,6 +115,13 @@ public final class MessageFactory {
 	}
 	
 	
+	/**
+	 * Un pack network message.
+	 *
+	 * @param reciever the reciever
+	 * @param data the data
+	 * @return the network message
+	 */
 	public static NetworkMessage unPackNetworkMessage(final String reciever, final String data) {
 		final String key = new String(keyChain);
 		MessageType ctype = identifyMessageType(data);
@@ -65,6 +140,13 @@ public final class MessageFactory {
 		return new NetworkMessage(from, to, content);
 	}
 
+	/**
+	 * Un pack command message.
+	 *
+	 * @param sender the sender
+	 * @param data the data
+	 * @return the command message
+	 */
 	public static CommandMessage unPackCommandMessage(final String sender, final String data) {
 		final String key = new String(keyChain);
 		if (identifyMessageType(data) != MessageType.COMMAND_MESSAGE)
@@ -81,6 +163,12 @@ public final class MessageFactory {
 	}
 	
 	
+	/**
+	 * Unpack receiver name.
+	 *
+	 * @param data the data
+	 * @return the string
+	 */
 	public static String unpackReceiverName(final String data)
 	{
 		final String key = new String(keyChain);

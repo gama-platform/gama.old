@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * MdxUtils.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MdxUtils.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.database.mdx;
 
 import java.util.Map;
@@ -19,8 +17,19 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class MdxUtils.
+ */
 public class MdxUtils {
 
+	/**
+	 * Creates the connection object.
+	 *
+	 * @param scope the scope
+	 * @param params the params
+	 * @return the mdx connection
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static MdxConnection createConnectionObject(final IScope scope, final Map<String, Object> params)
 			throws GamaRuntimeException {
 		final String olaptype = (String) params.get("olaptype");

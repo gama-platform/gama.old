@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Stan Melax Convex Hull Computation
- * Copyright (c) 2008 Stan Melax http://www.melax.com/
+ * HullDesc.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath.convexhull;
 
@@ -54,13 +42,31 @@ public class HullDesc {
 	/** Maximum number of faces to be considered for the hull. */
 	public int maxFaces = 4096;
 
+	/**
+	 * Instantiates a new hull desc.
+	 */
 	public HullDesc() {
 	}
 
+	/**
+	 * Instantiates a new hull desc.
+	 *
+	 * @param flag the flag
+	 * @param vcount number of vertices in the input point cloud.
+	 * @param vertices array of vertices.
+	 */
 	public HullDesc(int flag, int vcount, ArrayList<Vector3f> vertices) {
 		this(flag, vcount, vertices, 3*4);
 	}
 	
+	/**
+	 * Instantiates a new hull desc.
+	 *
+	 * @param flag the flag
+	 * @param vcount number of vertices in the input point cloud.
+	 * @param vertices array of vertices.
+	 * @param stride the stride
+	 */
 	public HullDesc(int flag, int vcount, ArrayList<Vector3f> vertices, int stride) {
 		this.flags = flag;
 		this.vcount = vcount;
@@ -70,6 +76,12 @@ public class HullDesc {
 		this.maxVertices = 4096;
 	}
 
+	/**
+	 * Checks for hull flag.
+	 *
+	 * @param flag the flag
+	 * @return true, if successful
+	 */
 	public boolean hasHullFlag(int flag) {
 		if ((flags & flag) != 0) {
 			return true;
@@ -77,10 +89,20 @@ public class HullDesc {
 		return false;
 	}
 
+	/**
+	 * Sets the hull flag.
+	 *
+	 * @param flag the new hull flag
+	 */
 	public void setHullFlag(int flag) {
 		flags |= flag;
 	}
 
+	/**
+	 * Clear hull flag.
+	 *
+	 * @param flag the flag
+	 */
 	public void clearHullFlag(int flag) {
 		flags &= ~flag;
 	}

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * SphereSphereCollisionAlgorithm.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -41,14 +34,35 @@ import com.bulletphysics.linearmath.Transform;
  */
 public class SphereSphereCollisionAlgorithm extends CollisionAlgorithm {
 
+	/** The own manifold. */
 	private boolean ownManifold;
+	
+	/** The manifold ptr. */
 	private PersistentManifold manifoldPtr;
+	
+	/** The tmp trans 1. */
 	private final Transform tmpTrans1 = TRANSFORMS.get();
+	
+	/** The tmp trans 2. */
 	private final Transform tmpTrans2 = TRANSFORMS.get();
+	
+	/** The tmp. */
 	private final Vector3f tmp = VECTORS.get();
+	
+	/** The pos 0. */
 	private final Vector3f pos0 = VECTORS.get();
+	
+	/** The pos 1. */
 	private final Vector3f pos1 = VECTORS.get();
 
+	/**
+	 * Inits the.
+	 *
+	 * @param mf the mf
+	 * @param ci the ci
+	 * @param col0 the col 0
+	 * @param col1 the col 1
+	 */
 	public void init(final PersistentManifold mf, final CollisionAlgorithmConstructionInfo ci,
 			final CollisionObject col0, final CollisionObject col1) {
 		super.init(ci);
@@ -143,6 +157,9 @@ public class SphereSphereCollisionAlgorithm extends CollisionAlgorithm {
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class CreateFunc.
+	 */
 	public static class CreateFunc implements CollisionAlgorithmCreateFunc {
 		@Override
 		public CollisionAlgorithm createCollisionAlgorithm(final CollisionAlgorithmConstructionInfo ci,

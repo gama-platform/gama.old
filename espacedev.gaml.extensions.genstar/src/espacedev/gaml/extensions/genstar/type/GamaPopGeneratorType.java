@@ -1,13 +1,13 @@
- /*********************************************************************************************
+ /*******************************************************************************************************
  *
- * 'GamaRegressionType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * GamaPopGeneratorType.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 
  package espacedev.gaml.extensions.genstar.type;
 
@@ -18,6 +18,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.GamaType;
 
+/**
+ * The Class GamaPopGeneratorType.
+ */
 @type(name = "gen_population_generator", id = 938373948, wraps = {
 		GamaPopGenerator.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE },doc = {
 				@doc("Represents a population generator that can be used to create agents") })
@@ -28,6 +31,9 @@ public class GamaPopGeneratorType extends GamaType<GamaPopGenerator> {
 		return true;
 	}
 	
+	/**
+	 * Inits the.
+	 */
 	public void init(){
 		this.init(104, 938373948, "population_generator", GamaPopGenerator.class);
 	}

@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'StartSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * StartSoundStatement.java, in ummisco.gaml.extensions.sound, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.sound;
 
 import java.io.File;
@@ -34,6 +33,9 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 
+/**
+ * The Class StartSoundStatement.
+ */
 @symbol (
 		name = IKeyword.START_SOUND,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -64,6 +66,9 @@ import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 @doc ("Allows to start the sound output")
 public class StartSoundStatement extends AbstractStatementSequence {
 
+	/**
+	 * The Class StartSoundValidator.
+	 */
 	public static class StartSoundValidator implements IDescriptionValidator {
 
 		/**
@@ -77,12 +82,23 @@ public class StartSoundStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/** The source. */
 	private final IExpression source;
+	
+	/** The mode. */
 	private final IExpression mode;
+	
+	/** The repeat. */
 	private final IExpression repeat;
 
+	/** The sequence. */
 	private AbstractStatementSequence sequence = null;
 
+	/**
+	 * Instantiates a new start sound statement.
+	 *
+	 * @param desc the desc
+	 */
 	public StartSoundStatement(final IDescription desc) {
 		super(desc);
 

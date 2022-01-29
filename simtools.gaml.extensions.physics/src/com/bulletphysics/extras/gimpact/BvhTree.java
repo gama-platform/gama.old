@@ -1,23 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * BvhTree.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371. email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -35,9 +25,20 @@ import com.bulletphysics.linearmath.VectorUtil;
  */
 class BvhTree {
 
+	/** The num nodes. */
 	protected int num_nodes = 0;
+	
+	/** The node array. */
 	protected BvhTreeNodeArray node_array = new BvhTreeNodeArray();
 
+	/**
+	 * Calc splitting axis.
+	 *
+	 * @param primitive_boxes the primitive boxes
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 * @return the int
+	 */
 	protected int _calc_splitting_axis(final BvhDataArray primitive_boxes, final int startIndex, final int endIndex) {
 		Vector3f means = VECTORS.get();
 		means.set(0f, 0f, 0f);
@@ -75,6 +76,15 @@ class BvhTree {
 		return VectorUtil.maxAxis(variance);
 	}
 
+	/**
+	 * Sort and calc splitting index.
+	 *
+	 * @param primitive_boxes the primitive boxes
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 * @param splitAxis the split axis
+	 * @return the int
+	 */
 	protected int _sort_and_calc_splitting_index(final BvhDataArray primitive_boxes, final int startIndex,
 			final int endIndex, final int splitAxis) {
 		int splitIndex = startIndex;
@@ -138,6 +148,13 @@ class BvhTree {
 		return splitIndex;
 	}
 
+	/**
+	 * Builds the sub tree.
+	 *
+	 * @param primitive_boxes the primitive boxes
+	 * @param startIndex the start index
+	 * @param endIndex the end index
+	 */
 	protected void _build_sub_tree(final BvhDataArray primitive_boxes, final int startIndex, final int endIndex) {
 		int curIndex = num_nodes;
 		num_nodes++;
@@ -183,6 +200,11 @@ class BvhTree {
 		node_array.setEscapeIndex(curIndex, num_nodes - curIndex);
 	}
 
+	/**
+	 * Builds the tree.
+	 *
+	 * @param primitive_boxes the primitive boxes
+	 */
 	public void build_tree(final BvhDataArray primitive_boxes) {
 		// initialize node count to 0
 		num_nodes = 0;
@@ -192,11 +214,19 @@ class BvhTree {
 		_build_sub_tree(primitive_boxes, 0, primitive_boxes.size());
 	}
 
+	/**
+	 * Clear nodes.
+	 */
 	public void clearNodes() {
 		node_array.clear();
 		num_nodes = 0;
 	}
 
+	/**
+	 * Gets the node count.
+	 *
+	 * @return the node count
+	 */
 	public int getNodeCount() {
 		return num_nodes;
 	}
@@ -208,31 +238,73 @@ class BvhTree {
 		return node_array.isLeafNode(nodeindex);
 	}
 
+	/**
+	 * Gets the node data.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the node data
+	 */
 	public int getNodeData(final int nodeindex) {
 		return node_array.getDataIndex(nodeindex);
 	}
 
+	/**
+	 * Gets the node bound.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @param bound the bound
+	 * @return the node bound
+	 */
 	public void getNodeBound(final int nodeindex, final AABB bound) {
 		node_array.getBound(nodeindex, bound);
 	}
 
+	/**
+	 * Sets the node bound.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @param bound the bound
+	 */
 	public void setNodeBound(final int nodeindex, final AABB bound) {
 		node_array.setBound(nodeindex, bound);
 	}
 
+	/**
+	 * Gets the left node.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the left node
+	 */
 	public int getLeftNode(final int nodeindex) {
 		return nodeindex + 1;
 	}
 
+	/**
+	 * Gets the right node.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the right node
+	 */
 	public int getRightNode(final int nodeindex) {
 		if (node_array.isLeafNode(nodeindex + 1)) return nodeindex + 2;
 		return nodeindex + 1 + node_array.getEscapeIndex(nodeindex + 1);
 	}
 
+	/**
+	 * Gets the escape node index.
+	 *
+	 * @param nodeindex the nodeindex
+	 * @return the escape node index
+	 */
 	public int getEscapeNodeIndex(final int nodeindex) {
 		return node_array.getEscapeIndex(nodeindex);
 	}
 
+	/**
+	 * Gets the node pointer.
+	 *
+	 * @return the node pointer
+	 */
 	public BvhTreeNodeArray get_node_pointer() {
 		return node_array;
 	}

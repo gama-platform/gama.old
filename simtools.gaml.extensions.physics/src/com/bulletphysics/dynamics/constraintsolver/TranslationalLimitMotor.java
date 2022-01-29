@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * TranslationalLimitMotor.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 /*
  * 2007-09-09 btGeneric6DofConstraint Refactored by Francisco Le�n email: projectileman@yahoo.com http://gimpact.sf.net
@@ -37,14 +30,27 @@ public class TranslationalLimitMotor {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The lower limit. */
 	public final Vector3f lowerLimit = new Vector3f(); // !< the constraint lower limits
+	
+	/** The upper limit. */
 	public final Vector3f upperLimit = new Vector3f(); // !< the constraint upper limits
+	
+	/** The accumulated impulse. */
 	public final Vector3f accumulatedImpulse = new Vector3f();
 
+	/** The limit softness. */
 	public float limitSoftness; // !< Softness for linear limit
+	
+	/** The damping. */
 	public float damping; // !< Damping for linear limit
+	
+	/** The restitution. */
 	public float restitution; // ! Bounce parameter for linear limit
 
+	/**
+	 * Instantiates a new translational limit motor.
+	 */
 	public TranslationalLimitMotor() {
 		lowerLimit.set(0f, 0f, 0f);
 		upperLimit.set(0f, 0f, 0f);
@@ -55,6 +61,11 @@ public class TranslationalLimitMotor {
 		restitution = 0.5f;
 	}
 
+	/**
+	 * Instantiates a new translational limit motor.
+	 *
+	 * @param other the other
+	 */
 	public TranslationalLimitMotor(final TranslationalLimitMotor other) {
 		lowerLimit.set(other.lowerLimit);
 		upperLimit.set(other.upperLimit);
@@ -77,6 +88,20 @@ public class TranslationalLimitMotor {
 		return VectorUtil.getCoord(upperLimit, limitIndex) >= VectorUtil.getCoord(lowerLimit, limitIndex);
 	}
 
+	/**
+	 * Solve linear axis.
+	 *
+	 * @param timeStep the time step
+	 * @param jacDiagABInv the jac diag AB inv
+	 * @param body1 the body 1
+	 * @param pointInA the point in A
+	 * @param body2 the body 2
+	 * @param pointInB the point in B
+	 * @param limit_index the limit index
+	 * @param axis_normal_on_a the axis normal on a
+	 * @param anchorPos the anchor pos
+	 * @return the float
+	 */
 	public float solveLinearAxis(final float timeStep, final float jacDiagABInv, final RigidBody body1,
 			final Vector3f pointInA, final RigidBody body2, final Vector3f pointInB, final int limit_index,
 			final Vector3f axis_normal_on_a, final Vector3f anchorPos) {

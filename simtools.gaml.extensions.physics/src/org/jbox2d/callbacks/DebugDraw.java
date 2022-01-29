@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * DebugDraw.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 /**
  * Created at 4:35:29 AM Jul 15, 2010
  */
@@ -56,34 +43,70 @@ public abstract class DebugDraw {
   public static final int e_wireframeDrawingBit = 1 << 7;
 
 
+  /** The m draw flags. */
   protected int m_drawFlags;
+  
+  /** The viewport transform. */
   protected IViewportTransform viewportTransform;
 
+  /**
+   * Instantiates a new debug draw.
+   */
   public DebugDraw() {
     this(null);
   }
 
+  /**
+   * Instantiates a new debug draw.
+   *
+   * @param viewport the viewport
+   */
   public DebugDraw(IViewportTransform viewport) {
     m_drawFlags = 0;
     viewportTransform = viewport;
   }
 
+  /**
+   * Sets the viewport transform.
+   *
+   * @param viewportTransform the new viewport transform
+   */
   public void setViewportTransform(IViewportTransform viewportTransform) {
     this.viewportTransform = viewportTransform;
   }
 
+  /**
+   * Sets the flags.
+   *
+   * @param flags the new flags
+   */
   public void setFlags(int flags) {
     m_drawFlags = flags;
   }
 
+  /**
+   * Gets the flags.
+   *
+   * @return the flags
+   */
   public int getFlags() {
     return m_drawFlags;
   }
 
+  /**
+   * Append flags.
+   *
+   * @param flags the flags
+   */
   public void appendFlags(int flags) {
     m_drawFlags |= flags;
   }
 
+  /**
+   * Clear flags.
+   *
+   * @param flags the flags
+   */
   public void clearFlags(int flags) {
     m_drawFlags &= ~flags;
   }
@@ -111,6 +134,13 @@ public abstract class DebugDraw {
     }
   }
 
+  /**
+   * Draw point.
+   *
+   * @param argPoint the arg point
+   * @param argRadiusOnScreen the arg radius on screen
+   * @param argColor the arg color
+   */
   public abstract void drawPoint(Vec2 argPoint, float argRadiusOnScreen, Color3f argColor);
 
   /**
@@ -190,10 +220,22 @@ public abstract class DebugDraw {
   /** Called at the end of drawing a world */
   public void flush() {}
 
+  /**
+   * Draw string.
+   *
+   * @param pos the pos
+   * @param s the s
+   * @param color the color
+   */
   public void drawString(Vec2 pos, String s, Color3f color) {
     drawString(pos.x, pos.y, s, color);
   }
 
+  /**
+   * Gets the viewport tranform.
+   *
+   * @return the viewport tranform
+   */
   public IViewportTransform getViewportTranform() {
     return viewportTransform;
   }

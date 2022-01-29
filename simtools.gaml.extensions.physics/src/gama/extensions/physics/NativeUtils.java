@@ -1,21 +1,13 @@
-/*
- * Class NativeUtils is published under the The MIT License:
+/*******************************************************************************************************
  *
- * Copyright (c) 2012 Adam Heinrich <adam@adamh.cz>
+ * NativeUtils.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics;
 
 import java.io.File;
@@ -43,6 +35,8 @@ public class NativeUtils {
 	 * The minimum length a prefix for a file has to have according to {@link File#createTempFile(String, String)}}.
 	 */
 	private static final int MIN_PREFIX_LENGTH = 3;
+	
+	/** The Constant NATIVE_FOLDER_PATH_PREFIX. */
 	public static final String NATIVE_FOLDER_PATH_PREFIX = "nativeutils";
 
 	/**
@@ -117,6 +111,11 @@ public class NativeUtils {
 		}
 	}
 
+	/**
+	 * Checks if is posix compliant.
+	 *
+	 * @return true, if is posix compliant
+	 */
 	private static boolean isPosixCompliant() {
 		try {
 			return FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
@@ -125,6 +124,13 @@ public class NativeUtils {
 		}
 	}
 
+	/**
+	 * Creates the temp directory.
+	 *
+	 * @param prefix the prefix
+	 * @return the file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static File createTempDirectory(final String prefix) throws IOException {
 		String tempDir = System.getProperty("java.io.tmpdir");
 		File generatedDir = new File(tempDir, prefix + System.nanoTime());

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * MatrixUtil.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -34,6 +27,13 @@ import com.bulletphysics.util.ArrayPool;
  */
 public class MatrixUtil {
 
+	/**
+	 * Scale.
+	 *
+	 * @param dest the dest
+	 * @param mat the mat
+	 * @param s the s
+	 */
 	public static void scale(final Matrix3f dest, final Matrix3f mat, final Vector3f s) {
 		dest.m00 = mat.m00 * s.x;
 		dest.m01 = mat.m01 * s.y;
@@ -46,6 +46,11 @@ public class MatrixUtil {
 		dest.m22 = mat.m22 * s.z;
 	}
 
+	/**
+	 * Absolute.
+	 *
+	 * @param mat the mat
+	 */
 	public static void absolute(final Matrix3f mat) {
 		mat.m00 = Math.abs(mat.m00);
 		mat.m01 = Math.abs(mat.m01);
@@ -58,6 +63,12 @@ public class MatrixUtil {
 		mat.m22 = Math.abs(mat.m22);
 	}
 
+	/**
+	 * Sets the from open GL sub matrix.
+	 *
+	 * @param mat the mat
+	 * @param m the m
+	 */
 	public static void setFromOpenGLSubMatrix(final Matrix3f mat, final float[] m) {
 		mat.m00 = m[0];
 		mat.m01 = m[4];
@@ -70,6 +81,13 @@ public class MatrixUtil {
 		mat.m22 = m[10];
 	}
 
+	/**
+	 * Gets the open GL sub matrix.
+	 *
+	 * @param mat the mat
+	 * @param m the m
+	 * @return the open GL sub matrix
+	 */
 	public static void getOpenGLSubMatrix(final Matrix3f mat, final float[] m) {
 		m[0] = mat.m00;
 		m[1] = mat.m10;
@@ -106,18 +124,46 @@ public class MatrixUtil {
 		mat.setRow(2, -sj, cj * si, cj * ci);
 	}
 
+	/**
+	 * Tdotx.
+	 *
+	 * @param mat the mat
+	 * @param vec the vec
+	 * @return the float
+	 */
 	private static float tdotx(final Matrix3f mat, final Vector3f vec) {
 		return mat.m00 * vec.x + mat.m10 * vec.y + mat.m20 * vec.z;
 	}
 
+	/**
+	 * Tdoty.
+	 *
+	 * @param mat the mat
+	 * @param vec the vec
+	 * @return the float
+	 */
 	private static float tdoty(final Matrix3f mat, final Vector3f vec) {
 		return mat.m01 * vec.x + mat.m11 * vec.y + mat.m21 * vec.z;
 	}
 
+	/**
+	 * Tdotz.
+	 *
+	 * @param mat the mat
+	 * @param vec the vec
+	 * @return the float
+	 */
 	private static float tdotz(final Matrix3f mat, final Vector3f vec) {
 		return mat.m02 * vec.x + mat.m12 * vec.y + mat.m22 * vec.z;
 	}
 
+	/**
+	 * Transpose transform.
+	 *
+	 * @param dest the dest
+	 * @param vec the vec
+	 * @param mat the mat
+	 */
 	public static void transposeTransform(final Vector3f dest, final Vector3f vec, final Matrix3f mat) {
 		float x = tdotx(mat, vec);
 		float y = tdoty(mat, vec);
@@ -127,6 +173,12 @@ public class MatrixUtil {
 		dest.z = z;
 	}
 
+	/**
+	 * Sets the rotation.
+	 *
+	 * @param dest the dest
+	 * @param q the q
+	 */
 	public static void setRotation(final Matrix3f dest, final Quat4f q) {
 		float d = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
 		assert d != 0f;
@@ -146,6 +198,13 @@ public class MatrixUtil {
 		dest.m22 = 1f - (xx + yy);
 	}
 
+	/**
+	 * Gets the rotation.
+	 *
+	 * @param mat the mat
+	 * @param dest the dest
+	 * @return the rotation
+	 */
 	public static void getRotation(final Matrix3f mat, final Quat4f dest) {
 		ArrayPool<float[]> floatArrays = ArrayPool.get(float.class);
 
@@ -178,10 +237,25 @@ public class MatrixUtil {
 		floatArrays.release(temp);
 	}
 
+	/**
+	 * Cofac.
+	 *
+	 * @param mat the mat
+	 * @param r1 the r 1
+	 * @param c1 the c 1
+	 * @param r2 the r 2
+	 * @param c2 the c 2
+	 * @return the float
+	 */
 	private static float cofac(final Matrix3f mat, final int r1, final int c1, final int r2, final int c2) {
 		return mat.getElement(r1, c1) * mat.getElement(r2, c2) - mat.getElement(r1, c2) * mat.getElement(r2, c1);
 	}
 
+	/**
+	 * Invert.
+	 *
+	 * @param mat the mat
+	 */
 	public static void invert(final Matrix3f mat) {
 		float co_x = cofac(mat, 1, 1, 2, 2);
 		float co_y = cofac(mat, 1, 2, 2, 0);

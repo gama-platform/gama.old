@@ -1,25 +1,13 @@
-/*
- * BasicPlayerEventLauncher.
+/*******************************************************************************************************
+ *
+ * BasicPlayerEventLauncher.java, in ummisco.gaml.extensions.sound, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * JavaZOOM : jlgui@javazoom.net
- *            http://www.javazoom.net
- *
- *-----------------------------------------------------------------------
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License as published
- *   by the Free Software Foundation; either version 2 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU Library General Public License for more details.
- *
- *   You should have received a copy of the GNU Library General Public
- *   License along with this program; if not, write to the Free Software
- *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *----------------------------------------------------------------------
- */
+ ********************************************************************************************************/
 package javazoom.jlgui.basicplayer;
 
 import java.util.Collection;
@@ -30,11 +18,23 @@ import java.util.Iterator;
  */
 public class BasicPlayerEventLauncher extends Thread
 {
+    
+    /** The code. */
     private int code = -1;
+    
+    /** The position. */
     private int position = -1;
+    
+    /** The value. */
     private double value = 0.0;
+    
+    /** The description. */
     private Object description = null;
+    
+    /** The listeners. */
     private Collection listeners = null;
+    
+    /** The source. */
     private Object source = null;
 
     /**

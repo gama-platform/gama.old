@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MotorJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Mat22;
@@ -27,31 +37,77 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class MotorJoint extends Joint {
 
+  /** The m linear offset. */
   // Solver shared
   private final Vec2 m_linearOffset = new Vec2();
+  
+  /** The m angular offset. */
   private float m_angularOffset;
+  
+  /** The m linear impulse. */
   private final Vec2 m_linearImpulse = new Vec2();
+  
+  /** The m angular impulse. */
   private float m_angularImpulse;
+  
+  /** The m max force. */
   private float m_maxForce;
+  
+  /** The m max torque. */
   private float m_maxTorque;
+  
+  /** The m correction factor. */
   private float m_correctionFactor;
 
+  /** The m index A. */
   // Solver temp
   private int m_indexA;
+  
+  /** The m index B. */
   private int m_indexB;
+  
+  /** The m r A. */
   private final Vec2 m_rA = new Vec2();
+  
+  /** The m r B. */
   private final Vec2 m_rB = new Vec2();
+  
+  /** The m local center A. */
   private final Vec2 m_localCenterA = new Vec2();
+  
+  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
+  
+  /** The m linear error. */
   private final Vec2 m_linearError = new Vec2();
+  
+  /** The m angular error. */
   private float m_angularError;
+  
+  /** The m inv mass A. */
   private float m_invMassA;
+  
+  /** The m inv mass B. */
   private float m_invMassB;
+  
+  /** The m inv IA. */
   private float m_invIA;
+  
+  /** The m inv IB. */
   private float m_invIB;
+  
+  /** The m linear mass. */
   private final Mat22 m_linearMass = new Mat22();
+  
+  /** The m angular mass. */
   private float m_angularMass;
 
+  /**
+   * Instantiates a new motor joint.
+   *
+   * @param pool the pool
+   * @param def the def
+   */
   public MotorJoint(IWorldPool pool, MotorJointDef def) {
     super(pool, def);
     m_linearOffset.set(def.linearOffset);
@@ -82,10 +138,20 @@ public class MotorJoint extends Joint {
     return m_angularImpulse * inv_dt;
   }
 
+  /**
+   * Gets the correction factor.
+   *
+   * @return the correction factor
+   */
   public float getCorrectionFactor() {
     return m_correctionFactor;
   }
 
+  /**
+   * Sets the correction factor.
+   *
+   * @param correctionFactor the new correction factor
+   */
   public void setCorrectionFactor(float correctionFactor) {
     this.m_correctionFactor = correctionFactor;
   }
@@ -128,6 +194,11 @@ public class MotorJoint extends Joint {
     }
   }
 
+  /**
+   * Gets the angular offset.
+   *
+   * @return the angular offset
+   */
   public float getAngularOffset() {
     return m_angularOffset;
   }

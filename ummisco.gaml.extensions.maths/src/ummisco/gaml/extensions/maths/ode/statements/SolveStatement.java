@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SolveStatement.java, in plugin ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * SolveStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.Arrays;
@@ -59,6 +58,9 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 
+/**
+ * The Class SolveStatement.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.EQUATION,
@@ -160,6 +162,9 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SolveStatement extends AbstractStatement implements ISolvers {
 
+	/**
+	 * The Class SolveValidator.
+	 */
 	public static class SolveValidator implements IDescriptionValidator<IDescription> {
 
 		@Override
@@ -202,18 +207,33 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 	}
 
+	/** The Constant Fixed_Step_Integrators. */
 	final static List<String> Fixed_Step_Integrators =
 			Arrays.asList(new String[] { Euler, ThreeEighthes, Midpoint, Gill, Luther, rk4 });
+	
+	/** The Constant Adaptive_Stepsize_Integrators. */
 	final static List<String> Adaptive_Stepsize_Integrators = Arrays.asList(
 			new String[] { dp853, AdamsBashforth, AdamsMoulton, DormandPrince54, GraggBulirschStoer, HighamHall54 });
 
+	/** The equation name. */
 	final String equationName;
+	
+	/** The solver name. */
 	String solverName;
+	
+	/** The system of equations. */
 	SystemOfEquationsStatement systemOfEquations;
+	
+	/** The time final exp. */
 	final IExpression solverExp, stepExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
 			timeFinalExp;// ,discretExp,integrationTimesExp,cycleExp,
 	// integratedValuesExp;
 
+	/**
+	 * Instantiates a new solve statement.
+	 *
+	 * @param desc the desc
+	 */
 	public SolveStatement(final IDescription desc) {
 		super(desc);
 		equationName = getFacet(IKeyword.EQUATION).literalValue();
@@ -231,6 +251,12 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		timeFinalExp = getFacet("tf");
 	}
 
+	/**
+	 * Inits the system of equations.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	private boolean initSystemOfEquations(final IScope scope) {
 		if (solverName == null) {
 			if (solverExp == null) {
@@ -261,6 +287,15 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		return systemOfEquations != null;
 	}
 
+	/**
+	 * Internal integrated value.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param var the var
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "internal_integrated_value" },
 			content_type = IType.FLOAT,
@@ -302,6 +337,13 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		return null;
 	}
 
+	/**
+	 * Creates the solver.
+	 *
+	 * @param scope the scope
+	 * @param step the step
+	 * @return the solver
+	 */
 	private Solver createSolver(final IScope scope, final double step) {
 		final IMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
 		int nSteps = 2;
@@ -365,6 +407,12 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 	}
 
+	/**
+	 * Gets the integrated values.
+	 *
+	 * @param scope the scope
+	 * @return the integrated values
+	 */
 	private IMap<String, IList<Double>> getIntegratedValues(final IScope scope) {
 		IMap<String, IList<Double>> result =
 				(IMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");

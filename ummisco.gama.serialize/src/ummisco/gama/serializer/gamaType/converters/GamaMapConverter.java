@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaMapConverter.java, in plugin ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaMapConverter.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -21,11 +20,20 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.util.IMap;
 import ummisco.gama.serializer.gamaType.reduced.GamaMapReducer;
 
+/**
+ * The Class GamaMapConverter.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class GamaMapConverter implements Converter {
 
+	/** The convert scope. */
 	ConverterScope convertScope;
 
+	/**
+	 * Instantiates a new gama map converter.
+	 *
+	 * @param s the s
+	 */
 	public GamaMapConverter(final ConverterScope s) {
 		convertScope = s;
 	}

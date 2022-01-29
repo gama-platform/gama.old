@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'TCPConnector.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * TCPConnector.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.tcp;
 
 import java.io.OutputStream;
@@ -29,17 +28,39 @@ import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
 
+/**
+ * The Class TCPConnector.
+ */
 @SuppressWarnings ({ "unchecked" })
 public class TCPConnector extends Connector {
+	
+	/** The is server. */
 	private final boolean is_server = false;
+	
+	/** The  tcp server. */
 	public static String _TCP_SERVER = "__tcp_server";
+	
+	/** The  tcp socket. */
 	public static String _TCP_SOCKET = "__tcp_socket";
+	
+	/** The  tcp client. */
 	public static String _TCP_CLIENT = "__tcp_client";
+	
+	/** The  tcp so timeout. */
 	public static Integer _TCP_SO_TIMEOUT = 100;
 
+	/** The default host. */
 	public static String DEFAULT_HOST = "localhost";
+	
+	/** The default port. */
 	public static String DEFAULT_PORT = "1988";
 
+	/**
+	 * Open server socket.
+	 *
+	 * @param agent the agent
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 		if (agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port) == null) {
@@ -59,6 +80,12 @@ public class TCPConnector extends Connector {
 
 	}
 
+	/**
+	 * Connect to server socket.
+	 *
+	 * @param agent the agent
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void connectToServerSocket(final IAgent agent) throws GamaRuntimeException {
 		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_SOCKET);
 		Socket sock = null;
@@ -93,6 +120,14 @@ public class TCPConnector extends Connector {
 		}
 	}
 
+	/**
+	 * Send to client.
+	 *
+	 * @param agent the agent
+	 * @param cli the cli
+	 * @param data the data
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void sendToClient(final IAgent agent, final String cli, final String data) throws GamaRuntimeException {
 		try {
 			final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_CLIENT + cli);
@@ -110,6 +145,13 @@ public class TCPConnector extends Connector {
 		}
 	}
 
+	/**
+	 * Send to server.
+	 *
+	 * @param agent the agent
+	 * @param data the data
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void sendToServer(final IAgent agent, final String data) throws GamaRuntimeException {
 		OutputStream ostream = null;
 		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_SOCKET);

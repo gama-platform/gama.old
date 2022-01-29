@@ -1,29 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * TriangleContact.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371.
- * email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -39,29 +23,56 @@ import javax.vecmath.Vector4f;
  */
 public class TriangleContact {
 	
+	/** The int arrays. */
 	private final ArrayPool<int[]> intArrays = ArrayPool.get(int.class);
 	
+	/** The Constant MAX_TRI_CLIPPING. */
 	public static final int MAX_TRI_CLIPPING = 16;
 
+    /** The penetration depth. */
     public float penetration_depth;
+    
+    /** The point count. */
     public int point_count;
+    
+    /** The separating normal. */
     public final Vector4f separating_normal = new Vector4f();
+    
+    /** The points. */
     public Vector3f[] points = new Vector3f[MAX_TRI_CLIPPING];
 
+	/**
+	 * Instantiates a new triangle contact.
+	 */
 	public TriangleContact() {
 		for (int i=0; i<points.length; i++) {
 			points[i] = new Vector3f();
 		}
 	}
 
+	/**
+	 * Instantiates a new triangle contact.
+	 *
+	 * @param other the other
+	 */
 	public TriangleContact(TriangleContact other) {
 		copy_from(other);
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param other the other
+	 */
 	public void set(TriangleContact other) {
 		copy_from(other);
 	}
 	
+	/**
+	 * Copy from.
+	 *
+	 * @param other the other
+	 */
 	public void copy_from(TriangleContact other) {
 		penetration_depth = other.penetration_depth;
 		separating_normal.set(other.separating_normal);

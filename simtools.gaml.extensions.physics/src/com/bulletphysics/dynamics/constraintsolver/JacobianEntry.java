@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * JacobianEntry.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.dynamics.constraintsolver;
 
@@ -41,14 +34,28 @@ public class JacobianEntry {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The linear joint axis. */
 	public final Vector3f linearJointAxis = new Vector3f();
+	
+	/** The a J. */
 	public final Vector3f aJ = new Vector3f();
+	
+	/** The b J. */
 	public final Vector3f bJ = new Vector3f();
+	
+	/** The m 0 minv jt. */
 	public final Vector3f m_0MinvJt = new Vector3f();
+	
+	/** The m 1 minv jt. */
 	public final Vector3f m_1MinvJt = new Vector3f();
+	
+	/** The Adiag. */
 	// Optimization: can be stored in the w/last component of one of the vectors
 	public float Adiag;
 
+	/**
+	 * Instantiates a new jacobian entry.
+	 */
 	public JacobianEntry() {}
 
 	/**
@@ -135,6 +142,11 @@ public class JacobianEntry {
 		assert Adiag > 0f;
 	}
 
+	/**
+	 * Gets the diagonal.
+	 *
+	 * @return the diagonal
+	 */
 	public float getDiagonal() {
 		return Adiag;
 	}
@@ -176,6 +188,15 @@ public class JacobianEntry {
 		return sum.x + sum.y + sum.z;
 	}
 
+	/**
+	 * Gets the relative velocity.
+	 *
+	 * @param linvelA the linvel A
+	 * @param angvelA the angvel A
+	 * @param linvelB the linvel B
+	 * @param angvelB the angvel B
+	 * @return the relative velocity
+	 */
 	public float getRelativeVelocity(final Vector3f linvelA, final Vector3f angvelA, final Vector3f linvelB,
 			final Vector3f angvelB) {
 		Vector3f linrel = VECTORS.get();

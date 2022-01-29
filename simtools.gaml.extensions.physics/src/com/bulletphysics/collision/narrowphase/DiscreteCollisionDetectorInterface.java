@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * DiscreteCollisionDetectorInterface.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.narrowphase;
 
@@ -36,22 +29,56 @@ import com.bulletphysics.linearmath.Transform;
 @FunctionalInterface
 public interface DiscreteCollisionDetectorInterface {
 
+	/**
+	 * The Interface Result.
+	 */
 	public interface Result {
+		
+		/**
+		 * Sets the shape identifiers.
+		 *
+		 * @param partId0 the part id 0
+		 * @param index0 the index 0
+		 * @param partId1 the part id 1
+		 * @param index1 the index 1
+		 */
 		/// setShapeIdentifiers provides experimental support for per-triangle material / custom material combiner
 		void setShapeIdentifiers(int partId0, int index0, int partId1, int index1);
 
+		/**
+		 * Adds the contact point.
+		 *
+		 * @param normalOnBInWorld the normal on B in world
+		 * @param pointInWorld the point in world
+		 * @param depth the depth
+		 */
 		void addContactPoint(Vector3f normalOnBInWorld, Vector3f pointInWorld, float depth);
 	}
 
+	/**
+	 * The Class ClosestPointInput.
+	 */
 	public static class ClosestPointInput {
+		
+		/** The transform A. */
 		public final Transform transformA = new Transform();
+		
+		/** The transform B. */
 		public final Transform transformB = new Transform();
+		
+		/** The maximum distance squared. */
 		public float maximumDistanceSquared;
 
+		/**
+		 * Instantiates a new closest point input.
+		 */
 		public ClosestPointInput() {
 			init();
 		}
 
+		/**
+		 * Inits the.
+		 */
 		public void init() {
 			maximumDistanceSquared = Float.MAX_VALUE;
 		}

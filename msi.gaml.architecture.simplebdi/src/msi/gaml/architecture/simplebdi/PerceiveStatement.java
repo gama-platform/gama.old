@@ -1,15 +1,13 @@
-/*********************************************************************************************
- * 
+/*******************************************************************************************************
  *
- * 'PerceiveStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the GAMA
- * modeling and simulation platform. (v. 1.8.1)
+ * PerceiveStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 
 package msi.gaml.architecture.simplebdi;
 
@@ -44,6 +42,9 @@ import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class PerceiveStatement.
+ */
 @symbol (
 		name = { PerceiveStatement.PERCEIVE },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -117,26 +118,53 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class PerceiveStatement extends AbstractStatementSequence {
 
+	/** The Constant PERCEIVE. */
 	public static final String PERCEIVE = "perceive";
+	
+	/** The Constant EMOTION. */
 	public static final String EMOTION = "emotion";
+	
+	/** The Constant THRESHOLD. */
 	public static final String THRESHOLD = "threshold";
 
+	/** The sequence. */
 	private RemoteSequence sequence = null;
 
+	/** The when. */
 	final IExpression _when;
+	
+	/** The in. */
 	final IExpression _in;
+	
+	/** The emotion. */
 	final IExpression emotion;
+	
+	/** The threshold. */
 	final IExpression threshold;
+	
+	/** The parallel. */
 	final IExpression parallel;
+	
+	/** The target. */
 	private final IExpression target = getFacet(IKeyword.TARGET);
 	// AD Dangerous as it may still contain a value after the execution. Better
 	// to use temp arrays
 	// private final Object[] result = new Object[1];
 
+	/**
+	 * Gets the when.
+	 *
+	 * @return the when
+	 */
 	public IExpression getWhen() {
 		return _when;
 	}
 
+	/**
+	 * Gets the in.
+	 *
+	 * @return the in
+	 */
 	public IExpression getIn() {
 		return _in;
 	}
@@ -154,6 +182,11 @@ public class PerceiveStatement extends AbstractStatementSequence {
 		super.leaveScope(scope);
 	}
 
+	/**
+	 * Instantiates a new perceive statement.
+	 *
+	 * @param desc the desc
+	 */
 	public PerceiveStatement(final IDescription desc) {
 		super(desc);
 		_when = getFacet(IKeyword.WHEN);
@@ -229,12 +262,24 @@ public class PerceiveStatement extends AbstractStatementSequence {
 
 	}
 
+	/**
+	 * Transform agent to list.
+	 *
+	 * @param temp the temp
+	 * @param scope the scope
+	 * @return the iterator
+	 */
 	Iterator<IAgent> transformAgentToList(final IAgent temp, final IScope scope) {
 		final IList<IAgent> tempList = GamaListFactory.create();
 		tempList.add(temp);
 		return ((IContainer) tempList).iterable(scope).iterator();
 	}
 
+	/**
+	 * Gets the parallel.
+	 *
+	 * @return the parallel
+	 */
 	public IExpression getParallel() {
 		return parallel;
 	}

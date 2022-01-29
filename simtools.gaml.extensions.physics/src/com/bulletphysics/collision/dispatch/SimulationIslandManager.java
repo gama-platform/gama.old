@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * SimulationIslandManager.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -33,19 +26,39 @@ import com.bulletphysics.collision.narrowphase.PersistentManifold;
  */
 public class SimulationIslandManager {
 
+	/** The union find. */
 	private final UnionFind unionFind = new UnionFind();
 
+	/** The islandmanifold. */
 	private final ArrayList<PersistentManifold> islandmanifold = new ArrayList<>();
+	
+	/** The island bodies. */
 	private final ArrayList<CollisionObject> islandBodies = new ArrayList<>();
 
+	/**
+	 * Inits the union find.
+	 *
+	 * @param n the n
+	 */
 	public void initUnionFind(final int n) {
 		unionFind.reset(n);
 	}
 
+	/**
+	 * Gets the union find.
+	 *
+	 * @return the union find
+	 */
 	public UnionFind getUnionFind() {
 		return unionFind;
 	}
 
+	/**
+	 * Find unions.
+	 *
+	 * @param dispatcher the dispatcher
+	 * @param colWorld the col world
+	 */
 	public void findUnions(final Dispatcher dispatcher, final CollisionWorld colWorld) {
 		List<BroadphasePair> pairPtr = colWorld.getPairCache().getOverlappingPairArray();
 		for (BroadphasePair collisionPair : pairPtr) {
@@ -59,6 +72,12 @@ public class SimulationIslandManager {
 		}
 	}
 
+	/**
+	 * Update activation state.
+	 *
+	 * @param colWorld the col world
+	 * @param dispatcher the dispatcher
+	 */
 	public void updateActivationState(final CollisionWorld colWorld, final Dispatcher dispatcher) {
 		initUnionFind(colWorld.getCollisionObjectArray().size());
 
@@ -79,6 +98,11 @@ public class SimulationIslandManager {
 		findUnions(dispatcher, colWorld);
 	}
 
+	/**
+	 * Store island activation state.
+	 *
+	 * @param colWorld the col world
+	 */
 	public void storeIslandActivationState(final CollisionWorld colWorld) {
 		// put the islandId ('find' value) into m_tag
 		{
@@ -98,6 +122,12 @@ public class SimulationIslandManager {
 		}
 	}
 
+	/**
+	 * Builds the islands.
+	 *
+	 * @param dispatcher the dispatcher
+	 * @param collisionObjects the collision objects
+	 */
 	public void buildIslands(final Dispatcher dispatcher, final List<CollisionObject> collisionObjects) {
 		islandmanifold.clear();
 
@@ -200,6 +230,13 @@ public class SimulationIslandManager {
 		}
 	}
 
+	/**
+	 * Builds the and process islands.
+	 *
+	 * @param dispatcher the dispatcher
+	 * @param collisionObjects the collision objects
+	 * @param callback the callback
+	 */
 	public void buildAndProcessIslands(final Dispatcher dispatcher, final List<CollisionObject> collisionObjects,
 			final IslandCallback callback) {
 		buildIslands(dispatcher, collisionObjects);
@@ -265,7 +302,21 @@ public class SimulationIslandManager {
 		}
 	}
 
+	/**
+	 * The Class IslandCallback.
+	 */
 	public static abstract class IslandCallback {
+		
+		/**
+		 * Process island.
+		 *
+		 * @param bodies the bodies
+		 * @param numBodies the num bodies
+		 * @param manifolds the manifolds
+		 * @param manifolds_offset the manifolds offset
+		 * @param numManifolds the num manifolds
+		 * @param islandId the island id
+		 */
 		public abstract void processIsland(ArrayList<CollisionObject> bodies, int numBodies,
 				ArrayList<PersistentManifold> manifolds, int manifolds_offset, int numManifolds, int islandId);
 	}

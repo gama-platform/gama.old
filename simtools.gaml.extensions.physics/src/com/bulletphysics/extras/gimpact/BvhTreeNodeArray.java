@@ -1,29 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * This source file is part of GIMPACT Library.
+ * BvhTreeNodeArray.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * For the latest info, see http://gimpact.sourceforge.net/
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Copyright (c) 2007 Francisco Leon Najera. C.C. 80087371.
- * email: projectileman@yahoo.com
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.extras.gimpact;
 
@@ -35,15 +19,27 @@ import com.bulletphysics.extras.gimpact.BoxCollision.AABB;
  */
 class BvhTreeNodeArray {
 
+	/** The size. */
 	private int size = 0;
 	
+	/** The bound. */
 	private float[] bound = new float[0];
+	
+	/** The escape index or data index. */
 	private int[] escapeIndexOrDataIndex = new int[0];
 
+	/**
+	 * Clear.
+	 */
 	public void clear() {
 		size = 0;
 	}
 
+	/**
+	 * Resize.
+	 *
+	 * @param newSize the new size
+	 */
 	public void resize(int newSize) {
 		float[] newBound = new float[newSize*6];
 		int[] newEIODI = new int[newSize];
@@ -57,6 +53,13 @@ class BvhTreeNodeArray {
 		size = newSize;
 	}
 	
+	/**
+	 * Sets the.
+	 *
+	 * @param destIdx the dest idx
+	 * @param array the array
+	 * @param srcIdx the src idx
+	 */
 	public void set(int destIdx, BvhTreeNodeArray array, int srcIdx) {
 		int dpos = destIdx*6;
 		int spos = srcIdx*6;
@@ -70,6 +73,13 @@ class BvhTreeNodeArray {
 		escapeIndexOrDataIndex[destIdx] = array.escapeIndexOrDataIndex[srcIdx];
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param destIdx the dest idx
+	 * @param array the array
+	 * @param srcIdx the src idx
+	 */
 	public void set(int destIdx, BvhDataArray array, int srcIdx) {
 		int dpos = destIdx*6;
 		int spos = srcIdx*6;
@@ -83,6 +93,13 @@ class BvhTreeNodeArray {
 		escapeIndexOrDataIndex[destIdx] = array.data[srcIdx];
 	}
 	
+	/**
+	 * Gets the bound.
+	 *
+	 * @param nodeIndex the node index
+	 * @param out the out
+	 * @return the bound
+	 */
 	public AABB getBound(int nodeIndex, AABB out) {
 		int pos = nodeIndex*6;
 		out.min.set(bound[pos+0], bound[pos+1], bound[pos+2]);
@@ -90,6 +107,12 @@ class BvhTreeNodeArray {
 		return out;
 	}
 	
+	/**
+	 * Sets the bound.
+	 *
+	 * @param nodeIndex the node index
+	 * @param aabb the aabb
+	 */
 	public void setBound(int nodeIndex, AABB aabb) {
 		int pos = nodeIndex*6;
 		bound[pos+0] = aabb.min.x;
@@ -100,25 +123,55 @@ class BvhTreeNodeArray {
 		bound[pos+5] = aabb.max.z;
 	}
 	
+	/**
+	 * Checks if is leaf node.
+	 *
+	 * @param nodeIndex the node index
+	 * @return true, if is leaf node
+	 */
 	public boolean isLeafNode(int nodeIndex) {
 		// skipindex is negative (internal node), triangleindex >=0 (leafnode)
 		return (escapeIndexOrDataIndex[nodeIndex] >= 0);
 	}
 
+	/**
+	 * Gets the escape index.
+	 *
+	 * @param nodeIndex the node index
+	 * @return the escape index
+	 */
 	public int getEscapeIndex(int nodeIndex) {
 		//btAssert(m_escapeIndexOrDataIndex < 0);
 		return -escapeIndexOrDataIndex[nodeIndex];
 	}
 
+	/**
+	 * Sets the escape index.
+	 *
+	 * @param nodeIndex the node index
+	 * @param index the index
+	 */
 	public void setEscapeIndex(int nodeIndex, int index) {
 		escapeIndexOrDataIndex[nodeIndex] = -index;
 	}
 
+	/**
+	 * Gets the data index.
+	 *
+	 * @param nodeIndex the node index
+	 * @return the data index
+	 */
 	public int getDataIndex(int nodeIndex) {
 		//btAssert(m_escapeIndexOrDataIndex >= 0);
 		return escapeIndexOrDataIndex[nodeIndex];
 	}
 
+	/**
+	 * Sets the data index.
+	 *
+	 * @param nodeIndex the node index
+	 * @param index the index
+	 */
 	public void setDataIndex(int nodeIndex, int index) {
 		escapeIndexOrDataIndex[nodeIndex] = index;
 	}

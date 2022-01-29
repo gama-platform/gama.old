@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * AABB.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.collision;
 
 import org.jbox2d.common.MathUtils;
@@ -103,6 +90,12 @@ public class AABB {
     return center;
   }
 
+  /**
+   * Gets the center to out.
+   *
+   * @param out the out
+   * @return the center to out
+   */
   public final void getCenterToOut(final Vec2 out) {
     out.x = (lowerBound.x + upperBound.x) * .5f;
     out.y = (lowerBound.y + upperBound.y) * .5f;
@@ -120,11 +113,23 @@ public class AABB {
     return center;
   }
 
+  /**
+   * Gets the extents to out.
+   *
+   * @param out the out
+   * @return the extents to out
+   */
   public final void getExtentsToOut(final Vec2 out) {
     out.x = (upperBound.x - lowerBound.x) * .5f;
     out.y = (upperBound.y - lowerBound.y) * .5f; // thanks FDN1
   }
 
+  /**
+   * Gets the vertices.
+   *
+   * @param argRay the arg ray
+   * @return the vertices
+   */
   public final void getVertices(Vec2[] argRay) {
     argRay[0].set(lowerBound);
     argRay[1].set(lowerBound);
@@ -306,6 +311,13 @@ public class AABB {
     return true;
   }
 
+  /**
+   * Test overlap.
+   *
+   * @param a the a
+   * @param b the b
+   * @return true, if successful
+   */
   public static final boolean testOverlap(final AABB a, final AABB b) {
     if (b.lowerBound.x - a.upperBound.x > 0.0f || b.lowerBound.y - a.upperBound.y > 0.0f) {
       return false;

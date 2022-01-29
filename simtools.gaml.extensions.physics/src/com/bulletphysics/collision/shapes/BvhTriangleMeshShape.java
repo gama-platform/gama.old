@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * BvhTriangleMeshShape.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.shapes;
 
@@ -46,24 +39,46 @@ import msi.gama.common.util.PoolUtils.ObjectPool;
  */
 public class BvhTriangleMeshShape extends TriangleMeshShape {
 
+	/** The Constant NODE_OVERLAPS. */
 	public static final ObjectPool<MyNodeOverlapCallback> NODE_OVERLAPS =
 			create("MyNodeOverlapCallbacks", true, () -> new MyNodeOverlapCallback(), null, null);
 
+	/** The bvh. */
 	private OptimizedBvh bvh;
+	
+	/** The use quantized aabb compression. */
 	private boolean useQuantizedAabbCompression;
+	
+	/** The owns bvh. */
 	private boolean ownsBvh;
 
+	/**
+	 * Instantiates a new bvh triangle mesh shape.
+	 */
 	public BvhTriangleMeshShape() {
 		super(null);
 		this.bvh = null;
 		this.ownsBvh = false;
 	}
 
+	/**
+	 * Instantiates a new bvh triangle mesh shape.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param useQuantizedAabbCompression the use quantized aabb compression
+	 */
 	public BvhTriangleMeshShape( final StridingMeshInterface meshInterface,
 			final boolean useQuantizedAabbCompression) {
 		this( meshInterface, useQuantizedAabbCompression, true);
 	}
 
+	/**
+	 * Instantiates a new bvh triangle mesh shape.
+	 *
+	 * @param meshInterface the mesh interface
+	 * @param useQuantizedAabbCompression the use quantized aabb compression
+	 * @param buildBvh the build bvh
+	 */
 	public BvhTriangleMeshShape( final StridingMeshInterface meshInterface,
 			final boolean useQuantizedAabbCompression, final boolean buildBvh) {
 		super(meshInterface);
@@ -124,6 +139,11 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		// #endif //DISABLE_BVH
 	}
 
+	/**
+	 * Gets the owns bvh.
+	 *
+	 * @return the owns bvh
+	 */
 	public boolean getOwnsBvh() {
 		return ownsBvh;
 	}
@@ -133,6 +153,13 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		return BroadphaseNativeType.TRIANGLE_MESH_SHAPE_PROXYTYPE;
 	}
 
+	/**
+	 * Perform raycast.
+	 *
+	 * @param callback the callback
+	 * @param raySource the ray source
+	 * @param rayTarget the ray target
+	 */
 	public void performRaycast( final TriangleCallback callback, final Vector3f raySource,
 			final Vector3f rayTarget) {
 		MyNodeOverlapCallback myNodeCallback = NODE_OVERLAPS.get();
@@ -143,6 +170,15 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		NODE_OVERLAPS.release(myNodeCallback);
 	}
 
+	/**
+	 * Perform convexcast.
+	 *
+	 * @param callback the callback
+	 * @param raySource the ray source
+	 * @param rayTarget the ray target
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void performConvexcast( final TriangleCallback callback, final Vector3f raySource,
 			final Vector3f rayTarget, final Vector3f aabbMin, final Vector3f aabbMax) {
 		MyNodeOverlapCallback myNodeCallback = NODE_OVERLAPS.get();
@@ -174,6 +210,12 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		// #endif//DISABLE_BVH
 	}
 
+	/**
+	 * Refit tree.
+	 *
+	 * @param aabbMin the aabb min
+	 * @param aabbMax the aabb max
+	 */
 	public void refitTree( final Vector3f aabbMin, final Vector3f aabbMax) {
 		// JAVA NOTE: update it for 2.70b1
 		// bvh.refit(meshInterface, aabbMin, aabbMax);
@@ -219,10 +261,20 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		VECTORS.release(tmp, tmp2);
 	}
 
+	/**
+	 * Gets the optimized bvh.
+	 *
+	 * @return the optimized bvh
+	 */
 	public OptimizedBvh getOptimizedBvh() {
 		return bvh;
 	}
 
+	/**
+	 * Sets the optimized bvh.
+	 *
+	 * @param bvh the new optimized bvh
+	 */
 	public void setOptimizedBvh( final OptimizedBvh bvh) {
 		Vector3f scaling = VECTORS.get();
 		scaling.set(1f, 1f, 1f);
@@ -230,6 +282,12 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		VECTORS.release(scaling);
 	}
 
+	/**
+	 * Sets the optimized bvh.
+	 *
+	 * @param bvh the bvh
+	 * @param scaling the scaling
+	 */
 	public void setOptimizedBvh( final OptimizedBvh bvh, final Vector3f scaling) {
 		assert this.bvh == null;
 		assert !ownsBvh;
@@ -246,20 +304,42 @@ public class BvhTriangleMeshShape extends TriangleMeshShape {
 		VECTORS.release(tmp, tmp2);
 	}
 
+	/**
+	 * Uses quantized aabb compression.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean usesQuantizedAabbCompression() {
 		return useQuantizedAabbCompression;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 
+	/**
+	 * The Class MyNodeOverlapCallback.
+	 */
 	protected static class MyNodeOverlapCallback implements NodeOverlapCallback {
+		
+		/** The mesh interface. */
 		public StridingMeshInterface meshInterface;
+		
+		/** The callback. */
 		public TriangleCallback callback;
 
+		/** The triangle. */
 		private final Vector3f[] triangle/* [3] */ = new Vector3f[] { new Vector3f(), new Vector3f(), new Vector3f() };
 
+		/**
+		 * Instantiates a new my node overlap callback.
+		 */
 		public MyNodeOverlapCallback() {}
 
+		/**
+		 * Inits the.
+		 *
+		 * @param callback the callback
+		 * @param meshInterface the mesh interface
+		 */
 		public void init(final TriangleCallback callback, final StridingMeshInterface meshInterface) {
 			this.meshInterface = meshInterface;
 			this.callback = callback;

@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * ConvexTriangleCallback.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -42,21 +35,42 @@ class ConvexTriangleCallback implements TriangleCallback {
 
 	// protected final BulletStack stack = BulletStack.get();
 
+	/** The convex body. */
 	private final CollisionObject convexBody;
+	
+	/** The tri body. */
 	private final CollisionObject triBody;
 
+	/** The aabb min. */
 	private final Vector3f aabbMin = new Vector3f();
+	
+	/** The aabb max. */
 	private final Vector3f aabbMax = new Vector3f();
 
+	/** The result out. */
 	private ManifoldResult resultOut;
 
+	/** The dispatcher. */
 	private final Dispatcher dispatcher;
+	
+	/** The collision margin triangle. */
 	// private DispatcherInfo info;
 	private float collisionMarginTriangle;
 
+	/** The triangle count. */
 	public int triangleCount;
+	
+	/** The manifold ptr. */
 	public PersistentManifold manifoldPtr;
 
+	/**
+	 * Instantiates a new convex triangle callback.
+	 *
+	 * @param dispatcher the dispatcher
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @param isSwapped the is swapped
+	 */
 	public ConvexTriangleCallback(final Dispatcher dispatcher, final CollisionObject body0, final CollisionObject body1,
 			final boolean isSwapped) {
 		this.dispatcher = dispatcher;
@@ -73,11 +87,20 @@ class ConvexTriangleCallback implements TriangleCallback {
 		// clearCache();
 	}
 
+	/**
+	 * Destroy.
+	 */
 	public void destroy() {
 		// clearCache();
 		dispatcher.releaseManifold(manifoldPtr);
 	}
 
+	/**
+	 * Sets the time step and counters.
+	 *
+	 * @param collisionMarginTriangle the collision margin triangle
+	 * @param resultOut the result out
+	 */
 	public void setTimeStepAndCounters(final float collisionMarginTriangle, final ManifoldResult resultOut) {
 		// this.info = dispatchInfo;
 		this.collisionMarginTriangle = collisionMarginTriangle;
@@ -105,7 +128,10 @@ class ConvexTriangleCallback implements TriangleCallback {
 
 	}
 
+	/** The ci. */
 	private final CollisionAlgorithmConstructionInfo ci = new CollisionAlgorithmConstructionInfo();
+	
+	/** The tm. */
 	private final TriangleShape tm = new TriangleShape();
 
 	@Override
@@ -146,11 +172,23 @@ class ConvexTriangleCallback implements TriangleCallback {
 	// dispatcher.clearManifold(manifoldPtr);
 	// }
 
+	/**
+	 * Gets the aabb min.
+	 *
+	 * @param out the out
+	 * @return the aabb min
+	 */
 	public Vector3f getAabbMin(final Vector3f out) {
 		out.set(aabbMin);
 		return out;
 	}
 
+	/**
+	 * Gets the aabb max.
+	 *
+	 * @param out the out
+	 * @return the aabb max
+	 */
 	public Vector3f getAabbMax(final Vector3f out) {
 		out.set(aabbMax);
 		return out;

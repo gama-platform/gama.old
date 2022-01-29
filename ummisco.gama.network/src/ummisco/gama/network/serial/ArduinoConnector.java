@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ArduinoConnector.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.serial;
 
 import arduino.Arduino;
@@ -7,13 +17,28 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 
+/**
+ * The Class ArduinoConnector.
+ */
 public class ArduinoConnector extends Connector {
 
+	/** The arduino. */
 	Arduino arduino;
+	
+	/** The port. */
 	String PORT = "";
+	
+	/** The baud. */
 	int BAUD = 9600;	
+	
+	/** The ss thread. */
 	MultiThreadedArduinoReceiver ssThread;	
 	
+	/**
+	 * Instantiates a new arduino connector.
+	 *
+	 * @param scope the scope
+	 */
 	public ArduinoConnector(final IScope scope) {}	
 	
 	@Override

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * DrivingGraph.java, in simtools.gaml.extensions.traffic, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving;
 
 import java.util.List;
@@ -17,7 +27,18 @@ import msi.gama.util.graph.GraphEvent;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.graph._Edge;
 
+/**
+ * The Class DrivingGraph.
+ */
 public class DrivingGraph extends GamaSpatialGraph {
+	
+	/**
+	 * Instantiates a new driving graph.
+	 *
+	 * @param edges the edges
+	 * @param vertices the vertices
+	 * @param scope the scope
+	 */
 	public DrivingGraph(final IContainer edges, final IContainer vertices, final IScope scope) {
 		super(scope, vertices.getGamlType().getContentType(), edges.getGamlType().getContentType());
 		init(scope, edges, vertices);

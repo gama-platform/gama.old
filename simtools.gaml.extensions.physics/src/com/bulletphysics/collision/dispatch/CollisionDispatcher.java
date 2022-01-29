@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * CollisionDispatcher.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -43,23 +36,39 @@ public class CollisionDispatcher implements Dispatcher {
 
 	// protected final ObjectPool<PersistentManifold> manifoldsPool = ObjectPool.get(s.class);
 
+	/** The Constant MAX_BROADPHASE_COLLISION_TYPES. */
 	private static final int MAX_BROADPHASE_COLLISION_TYPES =
 			BroadphaseNativeType.MAX_BROADPHASE_COLLISION_TYPES.ordinal();
+	
+	/** The manifolds ptr. */
 	// private int count = 0;
 	private final ArrayList<PersistentManifold> manifoldsPtr = new ArrayList<>();
+	
+	/** The static warning reported. */
 	// private boolean useIslands = true;
 	private boolean staticWarningReported = false;
+	
+	/** The near callback. */
 	// private ManifoldResult defaultManifoldResult;
 	private NearCallback nearCallback;
 	// private PoolAllocator* m_collisionAlgorithmPoolAllocator;
+	/** The double dispatch. */
 	// private PoolAllocator* m_persistentManifoldPoolAllocator;
 	private final CollisionAlgorithmCreateFunc[][] doubleDispatch =
 			new CollisionAlgorithmCreateFunc[MAX_BROADPHASE_COLLISION_TYPES][MAX_BROADPHASE_COLLISION_TYPES];
+	
+	/** The collision configuration. */
 	private CollisionConfiguration collisionConfiguration;
 	// private static int gNumManifold = 0;
 
+	/** The tmp CI. */
 	private final CollisionAlgorithmConstructionInfo tmpCI = new CollisionAlgorithmConstructionInfo();
 
+	/**
+	 * Instantiates a new collision dispatcher.
+	 *
+	 * @param collisionConfiguration the collision configuration
+	 */
 	public CollisionDispatcher(final CollisionConfiguration collisionConfiguration) {
 		this.collisionConfiguration = collisionConfiguration;
 
@@ -77,23 +86,50 @@ public class CollisionDispatcher implements Dispatcher {
 		}
 	}
 
+	/**
+	 * Register collision create func.
+	 *
+	 * @param proxyType0 the proxy type 0
+	 * @param proxyType1 the proxy type 1
+	 * @param createFunc the create func
+	 */
 	public void registerCollisionCreateFunc(final int proxyType0, final int proxyType1,
 			final CollisionAlgorithmCreateFunc createFunc) {
 		doubleDispatch[proxyType0][proxyType1] = createFunc;
 	}
 
+	/**
+	 * Gets the near callback.
+	 *
+	 * @return the near callback
+	 */
 	public NearCallback getNearCallback() {
 		return nearCallback;
 	}
 
+	/**
+	 * Sets the near callback.
+	 *
+	 * @param nearCallback the new near callback
+	 */
 	public void setNearCallback(final NearCallback nearCallback) {
 		this.nearCallback = nearCallback;
 	}
 
+	/**
+	 * Gets the collision configuration.
+	 *
+	 * @return the collision configuration
+	 */
 	public CollisionConfiguration getCollisionConfiguration() {
 		return collisionConfiguration;
 	}
 
+	/**
+	 * Sets the collision configuration.
+	 *
+	 * @param collisionConfiguration the new collision configuration
+	 */
 	public void setCollisionConfiguration(final CollisionConfiguration collisionConfiguration) {
 		this.collisionConfiguration = collisionConfiguration;
 	}
@@ -187,10 +223,23 @@ public class CollisionDispatcher implements Dispatcher {
 		return hasResponse;
 	}
 
+	/**
+	 * The Class CollisionPairCallback.
+	 */
 	private static class CollisionPairCallback implements OverlapCallback {
+		
+		/** The dispatch info. */
 		private DispatcherInfo dispatchInfo;
+		
+		/** The dispatcher. */
 		private CollisionDispatcher dispatcher;
 
+		/**
+		 * Inits the.
+		 *
+		 * @param dispatchInfo the dispatch info
+		 * @param dispatcher the dispatcher
+		 */
 		public void init(final DispatcherInfo dispatchInfo, final CollisionDispatcher dispatcher) {
 			this.dispatchInfo = dispatchInfo;
 			this.dispatcher = dispatcher;
@@ -203,6 +252,7 @@ public class CollisionDispatcher implements Dispatcher {
 		}
 	}
 
+	/** The collision pair callback. */
 	private final CollisionPairCallback collisionPairCallback = new CollisionPairCallback();
 
 	@Override

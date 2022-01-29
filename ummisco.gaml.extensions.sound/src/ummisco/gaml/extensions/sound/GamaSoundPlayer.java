@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamaSoundPlayer.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamaSoundPlayer.java, in ummisco.gaml.extensions.sound, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gaml.extensions.sound;
 
 import java.io.File;
@@ -24,8 +23,22 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class GamaSoundPlayer.
+ */
 public class GamaSoundPlayer {
 
+	/**
+	 * The listener interface for receiving myBasicPlayer events.
+	 * The class that is interested in processing a myBasicPlayer
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addMyBasicPlayerListener<code> method. When
+	 * the myBasicPlayer event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see MyBasicPlayerEvent
+	 */
 	class MyBasicPlayerListener implements BasicPlayerListener {
 
 		@Override
@@ -61,24 +74,39 @@ public class GamaSoundPlayer {
 		public void setController(final BasicController controller) {}
 	}
 
+	/** The Constant OVERWRITE_MODE. */
 	public static final String OVERWRITE_MODE = IKeyword.OVERWRITE;
 
+	/** The basic player. */
 	final BasicPlayer basicPlayer;
 	// private File soundFile;
+	/** The repeat. */
 	// private String soundPlayerMode = OVERWRITE_MODE;
 	Boolean repeat = false;
 
+	/** The agent died or sim disposed. */
 	// assure that we don't repeat playing a music file on an already dead agent
 	volatile boolean agentDiedOrSimDisposed = false;
 
+	/** The end of media. */
 	Boolean endOfMedia = false;
+	
+	/** The player stopped. */
 	Boolean playerStopped = false;
 
+	/**
+	 * Instantiates a new gama sound player.
+	 */
 	public GamaSoundPlayer() {
 		basicPlayer = new BasicPlayer();
 		basicPlayer.addBasicPlayerListener(new MyBasicPlayerListener());
 	}
 
+	/**
+	 * Repeat sound.
+	 *
+	 * @param scope the scope
+	 */
 	void repeatSound(final IScope scope) {
 
 		if (!agentDiedOrSimDisposed) {
@@ -90,6 +118,15 @@ public class GamaSoundPlayer {
 		}
 	}
 
+	/**
+	 * Play.
+	 *
+	 * @param scope the scope
+	 * @param soundFile the sound file
+	 * @param playerMode the player mode
+	 * @param repeat the repeat
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void play(final IScope scope, final File soundFile, final String playerMode, final boolean repeat)
 			throws GamaRuntimeException {
 		try {
@@ -116,6 +153,13 @@ public class GamaSoundPlayer {
 		}
 	}
 
+	/**
+	 * Stop.
+	 *
+	 * @param scope the scope
+	 * @param agentDiedOrSimDisposed the agent died or sim disposed
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void stop(final IScope scope, final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
 
 		this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
@@ -130,6 +174,12 @@ public class GamaSoundPlayer {
 
 	}
 
+	/**
+	 * Pause.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void pause(final IScope scope) throws GamaRuntimeException {
 		try {
 			basicPlayer.pause();
@@ -139,6 +189,12 @@ public class GamaSoundPlayer {
 		}
 	}
 
+	/**
+	 * Resume.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void resume(final IScope scope) throws GamaRuntimeException {
 		try {
 			basicPlayer.resume();
@@ -148,10 +204,20 @@ public class GamaSoundPlayer {
 		}
 	}
 
+	/**
+	 * Checks if is repeat.
+	 *
+	 * @return true, if is repeat
+	 */
 	public boolean isRepeat() {
 		return repeat;
 	}
 
+	/**
+	 * Can be reused.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean canBeReused() {
 		return !repeat && playerStopped;
 	}

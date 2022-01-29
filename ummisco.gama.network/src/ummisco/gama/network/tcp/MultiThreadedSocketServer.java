@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'MultiThreadedSocketServer.java, in plugin ummisco.gama.network, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * MultiThreadedSocketServer.java, in ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package ummisco.gama.network.tcp;
 
 import java.net.ServerSocket;
@@ -21,14 +20,22 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.skills.INetworkSkill;
 
+/**
+ * The Class MultiThreadedSocketServer.
+ */
 public class MultiThreadedSocketServer extends Thread {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The my agent. */
 	private final IAgent myAgent;
+	
+	/** The my server socket. */
 	private ServerSocket myServerSocket;
+	
+	/** The closed. */
 	private boolean closed = false;
 
 	/**
@@ -57,6 +64,12 @@ public class MultiThreadedSocketServer extends Thread {
 		super.interrupt();
 	}
 
+	/**
+	 * Instantiates a new multi threaded socket server.
+	 *
+	 * @param a the a
+	 * @param ss the ss
+	 */
 	public MultiThreadedSocketServer(final IAgent a, final ServerSocket ss) {
 		myAgent = a;
 		myServerSocket = ss;

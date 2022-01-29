@@ -1,20 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library Copyright (c) 2003-2008 Erwin Coumans
- * http://www.bulletphysics.com/
+ * ManifoldResult.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held
- * liable for any damages arising from the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter
- * it and redistribute it freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software.
- * If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not
- * required. 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the
- * original software. 3. This notice may not be removed or altered from any source distribution.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 
 package com.bulletphysics.collision.dispatch;
 
@@ -35,24 +28,55 @@ import com.bulletphysics.linearmath.Transform;
  */
 public class ManifoldResult implements DiscreteCollisionDetectorInterface.Result {
 
+	/** The manifold ptr. */
 	private PersistentManifold manifoldPtr;
 
+	/** The root trans A. */
 	// we need this for compounds
 	private final Transform rootTransA = new Transform();
+	
+	/** The root trans B. */
 	private final Transform rootTransB = new Transform();
+	
+	/** The body 0. */
 	private CollisionObject body0;
+	
+	/** The body 1. */
 	private CollisionObject body1;
+	
+	/** The part id 0. */
 	private int partId0;
+	
+	/** The part id 1. */
 	private int partId1;
+	
+	/** The index 0. */
 	private int index0;
+	
+	/** The index 1. */
 	private int index1;
 
+	/**
+	 * Instantiates a new manifold result.
+	 */
 	public ManifoldResult() {}
 
+	/**
+	 * Instantiates a new manifold result.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 */
 	public ManifoldResult(final CollisionObject body0, final CollisionObject body1) {
 		init(body0, body1);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 */
 	public void init(final CollisionObject body0, final CollisionObject body1) {
 		this.body0 = body0;
 		this.body1 = body1;
@@ -60,10 +84,20 @@ public class ManifoldResult implements DiscreteCollisionDetectorInterface.Result
 		body1.getWorldTransform(this.rootTransB);
 	}
 
+	/**
+	 * Gets the persistent manifold.
+	 *
+	 * @return the persistent manifold
+	 */
 	public PersistentManifold getPersistentManifold() {
 		return manifoldPtr;
 	}
 
+	/**
+	 * Sets the persistent manifold.
+	 *
+	 * @param manifoldPtr the new persistent manifold
+	 */
 	public void setPersistentManifold(final PersistentManifold manifoldPtr) {
 		this.manifoldPtr = manifoldPtr;
 	}
@@ -140,6 +174,13 @@ public class ManifoldResult implements DiscreteCollisionDetectorInterface.Result
 	}
 
 	/// User can override this material combiner by implementing gContactAddedCallback and setting
+	/**
+	 * Calculate combined friction.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @return the float
+	 */
 	/// body0->m_collisionFlags |= btCollisionObject::customMaterialCallback;
 	private static float calculateCombinedFriction(final CollisionObject body0, final CollisionObject body1) {
 		float friction = body0.getFriction() * body1.getFriction();
@@ -150,10 +191,20 @@ public class ManifoldResult implements DiscreteCollisionDetectorInterface.Result
 		return friction;
 	}
 
+	/**
+	 * Calculate combined restitution.
+	 *
+	 * @param body0 the body 0
+	 * @param body1 the body 1
+	 * @return the float
+	 */
 	private static float calculateCombinedRestitution(final CollisionObject body0, final CollisionObject body1) {
 		return body0.getRestitution() * body1.getRestitution();
 	}
 
+	/**
+	 * Refresh contact points.
+	 */
 	public void refreshContactPoints() {
 		assert manifoldPtr != null;
 		if (manifoldPtr.getNumContacts() == 0) return;

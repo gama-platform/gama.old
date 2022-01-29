@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * BroadPhase.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package org.jbox2d.collision.broadphase;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -9,8 +19,12 @@ import org.jbox2d.collision.RayCastInput;
 import org.jbox2d.common.Vec2;
 
 
+/**
+ * The Interface BroadPhase.
+ */
 public interface BroadPhase {
 
+  /** The Constant NULL_PROXY. */
   public static final int NULL_PROXY = -1;
 
   /**
@@ -35,12 +49,36 @@ public interface BroadPhase {
    */
   void moveProxy(int proxyId, AABB aabb, Vec2 displacement);
 
+  /**
+   * Touch proxy.
+   *
+   * @param proxyId the proxy id
+   */
   void touchProxy(int proxyId);
 
+  /**
+   * Gets the user data.
+   *
+   * @param proxyId the proxy id
+   * @return the user data
+   */
   Object getUserData(int proxyId);
 
+  /**
+   * Gets the fat AABB.
+   *
+   * @param proxyId the proxy id
+   * @return the fat AABB
+   */
   AABB getFatAABB(int proxyId);
 
+  /**
+   * Test overlap.
+   *
+   * @param proxyIdA the proxy id A
+   * @param proxyIdB the proxy id B
+   * @return true, if successful
+   */
   boolean testOverlap(int proxyIdA, int proxyIdB);
 
   /**
@@ -50,6 +88,11 @@ public interface BroadPhase {
    */
   int getProxyCount();
 
+  /**
+   * Draw tree.
+   *
+   * @param argDraw the arg draw
+   */
   void drawTree(DebugDraw argDraw);
 
   /**
@@ -86,7 +129,17 @@ public interface BroadPhase {
    */
   int getTreeHeight();
 
+  /**
+   * Gets the tree balance.
+   *
+   * @return the tree balance
+   */
   int getTreeBalance();
 
+  /**
+   * Gets the tree quality.
+   *
+   * @return the tree quality
+   */
   float getTreeQuality();
 }

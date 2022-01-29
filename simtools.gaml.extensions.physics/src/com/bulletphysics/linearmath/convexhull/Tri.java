@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Stan Melax Convex Hull Computation
- * Copyright (c) 2008 Stan Melax http://www.melax.com/
+ * Tri.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath.convexhull;
 
@@ -29,11 +17,25 @@ package com.bulletphysics.linearmath.convexhull;
  */
 class Tri extends Int3 {
 	
+	/** The n. */
 	public Int3 n = new Int3();
+	
+	/** The id. */
 	public int id;
+	
+	/** The vmax. */
 	public int vmax;
+	
+	/** The rise. */
 	public float rise;
 
+	/**
+	 * Instantiates a new tri.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @param c the c
+	 */
 	public Tri(int a, int b, int c) {
 		super(a, b, c);
 		n.set(-1, -1, -1);
@@ -41,8 +43,10 @@ class Tri extends Int3 {
 		rise = 0f;
 	}
 
+	/** The er. */
 	private static int er = -1;
 	
+	/** The er ref. */
 	private static IntRef erRef = new IntRef() {
 		@Override
 		public int get() {
@@ -55,6 +59,13 @@ class Tri extends Int3 {
 		}
 	};
 	
+	/**
+	 * Neib.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the int ref
+	 */
 	public IntRef neib(int a, int b) {
 		for (int i = 0; i < 3; i++) {
 			int i1 = (i + 1) % 3;

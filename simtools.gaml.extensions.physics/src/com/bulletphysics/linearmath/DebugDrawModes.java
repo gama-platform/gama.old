@@ -1,25 +1,13 @@
-/*
- * Java port of Bullet (c) 2008 Martin Dvorak <jezek2@advel.cz>
+/*******************************************************************************************************
  *
- * Bullet Continuous Collision Detection and Physics Library
- * Copyright (c) 2003-2008 Erwin Coumans  http://www.bulletphysics.com/
+ * DebugDrawModes.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the authors be held liable for any damages arising from
- * the use of this software.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Permission is granted to anyone to use this software for any purpose, 
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
+ ********************************************************************************************************/
 
 package com.bulletphysics.linearmath;
 
@@ -30,18 +18,43 @@ package com.bulletphysics.linearmath;
  */
 public class DebugDrawModes {
 	
+	/** The Constant NO_DEBUG. */
 	public static final int NO_DEBUG              = 0;
+	
+	/** The Constant DRAW_WIREFRAME. */
 	public static final int DRAW_WIREFRAME        = 1;
+	
+	/** The Constant DRAW_AABB. */
 	public static final int DRAW_AABB             = 2;
+	
+	/** The Constant DRAW_FEATURES_TEXT. */
 	public static final int DRAW_FEATURES_TEXT    = 4;
+	
+	/** The Constant DRAW_CONTACT_POINTS. */
 	public static final int DRAW_CONTACT_POINTS   = 8;
+	
+	/** The Constant NO_DEACTIVATION. */
 	public static final int NO_DEACTIVATION       = 16;
+	
+	/** The Constant NO_HELP_TEXT. */
 	public static final int NO_HELP_TEXT          = 32;
+	
+	/** The Constant DRAW_TEXT. */
 	public static final int DRAW_TEXT             = 64;
+	
+	/** The Constant PROFILE_TIMINGS. */
 	public static final int PROFILE_TIMINGS       = 128;
+	
+	/** The Constant ENABLE_SAT_COMPARISON. */
 	public static final int ENABLE_SAT_COMPARISON = 256;
+	
+	/** The Constant DISABLE_BULLET_LCP. */
 	public static final int DISABLE_BULLET_LCP    = 512;
+	
+	/** The Constant ENABLE_CCD. */
 	public static final int ENABLE_CCD            = 1024;
+	
+	/** The Constant MAX_DEBUG_DRAW_MODE. */
 	public static final int MAX_DEBUG_DRAW_MODE   = 1025;
 	
 }

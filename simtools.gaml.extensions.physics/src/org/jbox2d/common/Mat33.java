@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * Mat33.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.common;
 
 import java.io.Serializable;
@@ -31,19 +18,39 @@ import java.io.Serializable;
  * @author Daniel Murphy
  */
 public class Mat33 implements Serializable {
+  
+  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 2L;
 
+  /** The Constant IDENTITY. */
   public static final Mat33 IDENTITY = new Mat33(new Vec3(1, 0, 0), new Vec3(0, 1, 0), new Vec3(0,
       0, 1));
 
+  /** The ez. */
   public final Vec3 ex, ey, ez;
 
+  /**
+   * Instantiates a new mat 33.
+   */
   public Mat33() {
     ex = new Vec3();
     ey = new Vec3();
     ez = new Vec3();
   }
 
+  /**
+   * Instantiates a new mat 33.
+   *
+   * @param exx the exx
+   * @param exy the exy
+   * @param exz the exz
+   * @param eyx the eyx
+   * @param eyy the eyy
+   * @param eyz the eyz
+   * @param ezx the ezx
+   * @param ezy the ezy
+   * @param ezz the ezz
+   */
   public Mat33(float exx, float exy, float exz, float eyx, float eyy, float eyz, float ezx,
       float ezy, float ezz) {
     ex = new Vec3(exx, exy, exz);
@@ -51,18 +58,41 @@ public class Mat33 implements Serializable {
     ez = new Vec3(ezx, ezy, ezz);
   }
 
+  /**
+   * Instantiates a new mat 33.
+   *
+   * @param argCol1 the arg col 1
+   * @param argCol2 the arg col 2
+   * @param argCol3 the arg col 3
+   */
   public Mat33(Vec3 argCol1, Vec3 argCol2, Vec3 argCol3) {
     ex = argCol1.clone();
     ey = argCol2.clone();
     ez = argCol3.clone();
   }
 
+  /**
+   * Sets the zero.
+   */
   public void setZero() {
     ex.setZero();
     ey.setZero();
     ez.setZero();
   }
 
+  /**
+   * Sets the.
+   *
+   * @param exx the exx
+   * @param exy the exy
+   * @param exz the exz
+   * @param eyx the eyx
+   * @param eyy the eyy
+   * @param eyz the eyz
+   * @param ezx the ezx
+   * @param ezy the ezy
+   * @param ezz the ezz
+   */
   public void set(float exx, float exy, float exz, float eyx, float eyy, float eyz, float ezx,
       float ezy, float ezz) {
     ex.x = exx;
@@ -76,6 +106,11 @@ public class Mat33 implements Serializable {
     ez.z = eyz;
   }
 
+  /**
+   * Sets the.
+   *
+   * @param mat the mat
+   */
   public void set(Mat33 mat) {
     Vec3 vec = mat.ex;
     ex.x = vec.x;
@@ -91,6 +126,9 @@ public class Mat33 implements Serializable {
     ez.z = vec2.z;
   }
 
+  /**
+   * Sets the identity.
+   */
   public void setIdentity() {
     ex.x = 1;
     ex.y = 0;
@@ -103,28 +141,63 @@ public class Mat33 implements Serializable {
     ez.z = 1;
   }
 
+  /**
+   * Mul.
+   *
+   * @param A the a
+   * @param v the v
+   * @return the vec 3
+   */
   // / Multiply a matrix times a vector.
   public static final Vec3 mul(Mat33 A, Vec3 v) {
     return new Vec3(v.x * A.ex.x + v.y * A.ey.x + v.z + A.ez.x, v.x * A.ex.y + v.y * A.ey.y + v.z
         * A.ez.y, v.x * A.ex.z + v.y * A.ey.z + v.z * A.ez.z);
   }
 
+  /**
+   * Mul 22.
+   *
+   * @param A the a
+   * @param v the v
+   * @return the vec 2
+   */
   public static final Vec2 mul22(Mat33 A, Vec2 v) {
     return new Vec2(A.ex.x * v.x + A.ey.x * v.y, A.ex.y * v.x + A.ey.y * v.y);
   }
 
+  /**
+   * Mul 22 to out.
+   *
+   * @param A the a
+   * @param v the v
+   * @param out the out
+   */
   public static final void mul22ToOut(Mat33 A, Vec2 v, Vec2 out) {
     final float tempx = A.ex.x * v.x + A.ey.x * v.y;
     out.y = A.ex.y * v.x + A.ey.y * v.y;
     out.x = tempx;
   }
 
+  /**
+   * Mul 22 to out unsafe.
+   *
+   * @param A the a
+   * @param v the v
+   * @param out the out
+   */
   public static final void mul22ToOutUnsafe(Mat33 A, Vec2 v, Vec2 out) {
     assert (v != out);
     out.y = A.ex.y * v.x + A.ey.y * v.y;
     out.x = A.ex.x * v.x + A.ey.x * v.y;
   }
 
+  /**
+   * Mul to out.
+   *
+   * @param A the a
+   * @param v the v
+   * @param out the out
+   */
   public static final void mulToOut(Mat33 A, Vec3 v, Vec3 out) {
     final float tempy = v.x * A.ex.y + v.y * A.ey.y + v.z * A.ez.y;
     final float tempz = v.x * A.ex.z + v.y * A.ey.z + v.z * A.ez.z;
@@ -133,6 +206,13 @@ public class Mat33 implements Serializable {
     out.z = tempz;
   }
 
+  /**
+   * Mul to out unsafe.
+   *
+   * @param A the a
+   * @param v the v
+   * @param out the out
+   */
   public static final void mulToOutUnsafe(Mat33 A, Vec3 v, Vec3 out) {
     assert (out != v);
     out.x = v.x * A.ex.x + v.y * A.ey.x + v.z * A.ez.x;
@@ -209,6 +289,12 @@ public class Mat33 implements Serializable {
     out.z = z;
   }
 
+  /**
+   * Gets the inverse 22.
+   *
+   * @param M the m
+   * @return the inverse 22
+   */
   public void getInverse22(Mat33 M) {
     float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
     float det = a * d - b * c;
@@ -227,6 +313,12 @@ public class Mat33 implements Serializable {
     M.ez.z = 0.0f;
   }
 
+  /**
+   * Gets the sym inverse 33.
+   *
+   * @param M the m
+   * @return the sym inverse 33
+   */
   // / Returns the zero matrix if singular.
   public void getSymInverse33(Mat33 M) {
     float bx = ey.y * ez.z - ey.z * ez.y;
@@ -255,6 +347,12 @@ public class Mat33 implements Serializable {
   }
 
 
+  /**
+   * Sets the scale transform.
+   *
+   * @param scale the scale
+   * @param out the out
+   */
   public final static void setScaleTransform(float scale, Mat33 out) {
     out.ex.x = scale;
     out.ey.y = scale;

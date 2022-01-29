@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GenStarGamaUtils.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.utils;
 
 import java.io.FileNotFoundException;
@@ -27,6 +37,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GenStarGamaUtils.
+ */
 public class GenStarGamaUtils {
 	
 	/**
@@ -180,6 +193,15 @@ public class GenStarGamaUtils {
 		return new GamaRange(rVal.getBottomBound().doubleValue(), rVal.getTopBound().doubleValue());
 	}
 
+	/**
+	 * To GAMA value.
+	 *
+	 * @param scope the scope
+	 * @param valueForAttribute the value for attribute
+	 * @param checkEmpty the check empty
+	 * @param type the type
+	 * @return the object
+	 */
 	@SuppressWarnings("rawtypes")
 	public static Object toGAMAValue(IScope scope, IValue valueForAttribute, boolean checkEmpty, IType type) {
 		Object gamaValue = toGAMAValue(scope, valueForAttribute, checkEmpty);
@@ -189,6 +211,11 @@ public class GenStarGamaUtils {
 		return gamaValue;
 	}
 
+	/**
+	 * Gets the gama generator.
+	 *
+	 * @return the gama generator
+	 */
 	public static IGenstarGenerator[] getGamaGenerator() {
 		
 		return new IGenstarGenerator[] {

@@ -1,26 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2013, Daniel Murphy
- * All rights reserved.
+/*******************************************************************************************************
+ *
+ * ConstantVolumeJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.MathUtils;
@@ -32,31 +19,65 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Position;
 import org.jbox2d.dynamics.contacts.Velocity;
 
+/**
+ * The Class ConstantVolumeJoint.
+ */
 public class ConstantVolumeJoint extends Joint {
 
+  /** The bodies. */
   private final Body[] bodies;
+  
+  /** The target lengths. */
   private float[] targetLengths;
+  
+  /** The target volume. */
   private float targetVolume;
 
+  /** The normals. */
   private Vec2[] normals;
+  
+  /** The m impulse. */
   private float m_impulse = 0.0f;
 
+  /** The world. */
   private World world;
 
+  /** The distance joints. */
   private DistanceJoint[] distanceJoints;
 
+  /**
+   * Gets the bodies.
+   *
+   * @return the bodies
+   */
   public Body[] getBodies() {
     return bodies;
   }
 
+  /**
+   * Gets the joints.
+   *
+   * @return the joints
+   */
   public DistanceJoint[] getJoints() {
     return distanceJoints;
   }
 
+  /**
+   * Inflate.
+   *
+   * @param factor the factor
+   */
   public void inflate(float factor) {
     targetVolume *= factor;
   }
 
+  /**
+   * Instantiates a new constant volume joint.
+   *
+   * @param argWorld the arg world
+   * @param def the def
+   */
   public ConstantVolumeJoint(World argWorld, ConstantVolumeJointDef def) {
     super(argWorld.getPool(), def);
     world = argWorld;
@@ -107,6 +128,11 @@ public class ConstantVolumeJoint extends Joint {
     }
   }
 
+  /**
+   * Gets the body area.
+   *
+   * @return the body area
+   */
   private float getBodyArea() {
     float area = 0.0f;
     for (int i = 0; i < bodies.length; ++i) {
@@ -119,6 +145,12 @@ public class ConstantVolumeJoint extends Joint {
     return area;
   }
 
+  /**
+   * Gets the solver area.
+   *
+   * @param positions the positions
+   * @return the solver area
+   */
   private float getSolverArea(Position[] positions) {
     float area = 0.0f;
     for (int i = 0; i < bodies.length; ++i) {
@@ -131,6 +163,12 @@ public class ConstantVolumeJoint extends Joint {
     return area;
   }
 
+  /**
+   * Constrain edges.
+   *
+   * @param positions the positions
+   * @return true, if successful
+   */
   private boolean constrainEdges(Position[] positions) {
     float perimeter = 0.0f;
     for (int i = 0; i < bodies.length; ++i) {
