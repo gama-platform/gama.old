@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ExpressionDescriptionBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * ExpressionDescriptionBuilder.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
 import java.util.Set;
@@ -31,10 +30,18 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 
+/**
+ * The Class ExpressionDescriptionBuilder.
+ */
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
 
 	// private Set<Diagnostic> currentErrors;
 
+	/**
+	 * Sets the errors.
+	 *
+	 * @param errors the new errors
+	 */
 	void setErrors(final Set<Diagnostic> errors) {
 		// currentErrors = errors;
 	}
@@ -93,6 +100,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		return ed;
 	}
 
+	/** The count. */
 	static int count;
 
 	@Override
@@ -114,10 +122,23 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		return new EcoreBasedExpressionDescription(object);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param e the e
+	 * @param errors the errors
+	 * @return the i expression description
+	 */
 	public static IExpressionDescription create(final ISyntacticElement e, final Set<Diagnostic> errors) {
 		return new BlockExpressionDescription(e);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param expr the expr
+	 * @return the i expression description
+	 */
 	public IExpressionDescription create(final EObject expr/* , final Set<Diagnostic> errors */) {
 		try {
 			// setErrors(errors);

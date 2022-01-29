@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlResource.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlResource.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
@@ -49,6 +48,9 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.factories.ModelFactory;
 
+/**
+ * The Class GamlResource.
+ */
 /*
  *
  * The class GamlResource.
@@ -59,14 +61,29 @@ import msi.gaml.factories.ModelFactory;
  */
 public class GamlResource extends LazyLinkingResource {
 
+	/** The memoize description. */
 	private static boolean MEMOIZE_DESCRIPTION = false;
+	
+	/** The description. */
 	ModelDescription description;
+	
+	/** The element. */
 	ISyntacticElement element;
 
+	/**
+	 * Gets the validation context.
+	 *
+	 * @return the validation context
+	 */
 	public ValidationContext getValidationContext() {
 		return GamlResourceServices.getValidationContext(this);
 	}
 
+	/**
+	 * Checks for semantic errors.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasSemanticErrors() {
 		return getValidationContext().hasErrors();
 	}
@@ -81,10 +98,21 @@ public class GamlResource extends LazyLinkingResource {
 		return "GamlResource[" + getURI().lastSegment() + "]";
 	}
 
+	/**
+	 * Update with.
+	 *
+	 * @param model the model
+	 * @param newState the new state
+	 */
 	public void updateWith(final ModelDescription model, final boolean newState) {
 		GamlResourceServices.updateState(getURI(), model, newState, GamlResourceServices.getValidationContext(this));
 	}
 
+	/**
+	 * Gets the syntactic contents.
+	 *
+	 * @return the syntactic contents
+	 */
 	public ISyntacticElement getSyntacticContents() {
 		if (element == null) {
 			setElement(GamlResourceServices.buildSyntacticContents(this));
@@ -92,11 +120,18 @@ public class GamlResource extends LazyLinkingResource {
 		return element;
 	}
 
+	/** The Constant TO_SYNTACTIC_CONTENTS. */
 	private final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = input -> {
 		input.getResourceSet().getResource(input.getURI(), true);
 		return input.getSyntacticContents();
 	};
 
+	/**
+	 * Builds the model description.
+	 *
+	 * @param resources the resources
+	 * @return the model description
+	 */
 	private ModelDescription buildModelDescription(final LinkedHashMultimap<String, GamlResource> resources) {
 
 		// Initializations
@@ -134,6 +169,12 @@ public class GamlResource extends LazyLinkingResource {
 		return f.createModelDescription(projectPath, modelPath, ownImports, context, isEdited, compiledMicroModels);
 	}
 
+	/**
+	 * Invalidate.
+	 *
+	 * @param r the r
+	 * @param s the s
+	 */
 	public void invalidate(final GamlResource r, final String s) {
 		GamlCompilationError error = null;
 		if (GamlResourceServices.equals(r.getURI(), getURI())) {
@@ -145,6 +186,11 @@ public class GamlResource extends LazyLinkingResource {
 		updateWith(null, true);
 	}
 
+	/**
+	 * Builds the complete description.
+	 *
+	 * @return the model description
+	 */
 	public ModelDescription buildCompleteDescription() {
 		if (MEMOIZE_DESCRIPTION && description != null) { return description; }
 		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
@@ -218,6 +264,11 @@ public class GamlResource extends LazyLinkingResource {
 		setDescription(null);
 	}
 
+	/**
+	 * Sets the description.
+	 *
+	 * @param model the new description
+	 */
 	private void setDescription(final ModelDescription model) {
 		if (!MEMOIZE_DESCRIPTION) { return; }
 		if (model == description) { return; }
@@ -227,6 +278,11 @@ public class GamlResource extends LazyLinkingResource {
 		description = model;
 	}
 
+	/**
+	 * Sets the element.
+	 *
+	 * @param model the new element
+	 */
 	private void setElement(final ISyntacticElement model) {
 		if (model == element) { return; }
 		if (element != null) {
@@ -276,6 +332,11 @@ public class GamlResource extends LazyLinkingResource {
 		super.doLinking();
 	}
 
+	/**
+	 * Checks for errors.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasErrors() {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
 	}

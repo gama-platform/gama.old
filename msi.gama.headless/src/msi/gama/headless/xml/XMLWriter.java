@@ -1,16 +1,13 @@
-/*********************************************************************************************
- * 
- * 
- * 'XMLWriter.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+/*******************************************************************************************************
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * XMLWriter.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
- * 
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.headless.xml;
 
 import java.io.*;
@@ -18,10 +15,19 @@ import msi.gama.headless.core.*;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.ListenedVariable;
 
+/**
+ * The Class XMLWriter.
+ */
 public class XMLWriter implements Writer {
 
+	/** The file. */
 	private BufferedWriter file;
 
+	/**
+	 * Instantiates a new XML writer.
+	 *
+	 * @param f the f
+	 */
 	public XMLWriter(final String f) {
 		try {
 			this.file = new BufferedWriter(new FileWriter(f));
@@ -32,6 +38,11 @@ public class XMLWriter implements Writer {
 		}
 	}
 
+	/**
+	 * Instantiates a new XML writer.
+	 *
+	 * @param f the f
+	 */
 	public XMLWriter(final BufferedWriter f) {
 			this.file = f;
 		

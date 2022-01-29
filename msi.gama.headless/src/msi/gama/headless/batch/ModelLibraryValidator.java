@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ModelLibraryValidator.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.batch;
 
 import java.io.IOException;
@@ -18,10 +28,17 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ModelLibraryValidator.
+ */
 public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
+	/** The instance. */
 	private static ModelLibraryValidator instance;
 
+	/**
+	 * Instantiates a new model library validator.
+	 */
 	private ModelLibraryValidator() {
 		DEBUG.ON();
 	}
@@ -51,6 +68,15 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		return code[0] + code[1];
 	}
 	
+	/**
+	 * Validate plugins from UR ls.
+	 *
+	 * @param pluginsURLs the plugins UR ls
+	 * @param builder the builder
+	 * @param count the count
+	 * @param code the code
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void validatePluginsFromURLs(final Multimap<Bundle, String> pluginsURLs, final GamlModelBuilder builder, 
 			final int[] count, final int[] code) throws IOException {
 		List<URL> allURLs = new ArrayList<>();
@@ -72,6 +98,14 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		allURLs.forEach(u -> validate(builder, count, code, u));
 	}
 
+	/**
+	 * Validate.
+	 *
+	 * @param builder the builder
+	 * @param countOfModelsValidated the count of models validated
+	 * @param returnCode the return code
+	 * @param pathToModel the path to model
+	 */
 	private void validate(final GamlModelBuilder builder, final int[] countOfModelsValidated, final int[] returnCode,
 			final URL pathToModel) {
 		final List<GamlCompilationError> errors = new ArrayList<>();
@@ -85,6 +119,11 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		});
 	}
 
+	/**
+	 * Gets the single instance of ModelLibraryValidator.
+	 *
+	 * @return single instance of ModelLibraryValidator
+	 */
 	public static ModelLibraryValidator getInstance() {
 		if (instance == null) { instance = new ModelLibraryValidator(); }
 		return instance;

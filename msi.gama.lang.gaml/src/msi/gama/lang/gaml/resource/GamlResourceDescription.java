@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlResourceDescription.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlResourceDescription.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,6 +40,14 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	 */
 	final BuiltinGlobalScopeProvider provider;
 
+	/**
+	 * Instantiates a new gaml resource description.
+	 *
+	 * @param resource the resource
+	 * @param strategy the strategy
+	 * @param cache the cache
+	 * @param provider default constructor
+	 */
 	@Inject
 	public GamlResourceDescription(final Resource resource, final IDefaultResourceDescriptionStrategy strategy,
 			final IResourceScopeCache cache, final BuiltinGlobalScopeProvider provider) {

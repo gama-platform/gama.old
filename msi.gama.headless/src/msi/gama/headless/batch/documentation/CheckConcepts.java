@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * CheckConcepts.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.batch.documentation;
 
 import java.io.BufferedReader;
@@ -16,9 +26,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * The Class CheckConcepts.
+ */
 @SuppressWarnings ("unused")
 public class CheckConcepts {
 
+	/**
+	 * Execute for A website part.
+	 *
+	 * @param path the path
+	 * @param websitePart the website part
+	 */
 	private static void executeForAWebsitePart(final String path, final String websitePart) {
 		final ArrayList<File> listFiles = new ArrayList<>();
 		Utils.getFilesFromFolder(path, listFiles);
@@ -42,6 +61,11 @@ public class CheckConcepts {
 		}
 	}
 
+	/**
+	 * Browse keywords.
+	 *
+	 * @param path the path
+	 */
 	private static void browseKeywords(final String path) {
 		try {
 			final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -71,6 +95,12 @@ public class CheckConcepts {
 		}
 	}
 
+	/**
+	 * Write report.
+	 *
+	 * @param file the file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void writeReport(final String file) throws IOException {
 		String result = "";
 

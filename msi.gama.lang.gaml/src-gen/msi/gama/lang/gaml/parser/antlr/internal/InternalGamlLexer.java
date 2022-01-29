@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * InternalGamlLexer.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.parser.antlr.internal;
 
 // Hack: Use our own Lexer superclass by means of import. 
@@ -10,177 +20,511 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * The Class InternalGamlLexer.
+ */
 @SuppressWarnings("all")
 public class InternalGamlLexer extends Lexer {
+    
+    /** The Constant T__144. */
     public static final int T__144=144;
+    
+    /** The Constant T__143. */
     public static final int T__143=143;
+    
+    /** The Constant T__146. */
     public static final int T__146=146;
+    
+    /** The Constant T__50. */
     public static final int T__50=50;
+    
+    /** The Constant T__145. */
     public static final int T__145=145;
+    
+    /** The Constant T__140. */
     public static final int T__140=140;
+    
+    /** The Constant T__142. */
     public static final int T__142=142;
+    
+    /** The Constant T__141. */
     public static final int T__141=141;
+    
+    /** The Constant T__59. */
     public static final int T__59=59;
+    
+    /** The Constant T__55. */
     public static final int T__55=55;
+    
+    /** The Constant T__56. */
     public static final int T__56=56;
+    
+    /** The Constant T__57. */
     public static final int T__57=57;
+    
+    /** The Constant T__58. */
     public static final int T__58=58;
+    
+    /** The Constant T__51. */
     public static final int T__51=51;
+    
+    /** The Constant T__137. */
     public static final int T__137=137;
+    
+    /** The Constant T__52. */
     public static final int T__52=52;
+    
+    /** The Constant T__136. */
     public static final int T__136=136;
+    
+    /** The Constant T__53. */
     public static final int T__53=53;
+    
+    /** The Constant T__139. */
     public static final int T__139=139;
+    
+    /** The Constant T__54. */
     public static final int T__54=54;
+    
+    /** The Constant T__138. */
     public static final int T__138=138;
+    
+    /** The Constant T__133. */
     public static final int T__133=133;
+    
+    /** The Constant T__132. */
     public static final int T__132=132;
+    
+    /** The Constant T__60. */
     public static final int T__60=60;
+    
+    /** The Constant T__135. */
     public static final int T__135=135;
+    
+    /** The Constant T__61. */
     public static final int T__61=61;
+    
+    /** The Constant T__134. */
     public static final int T__134=134;
+    
+    /** The Constant RULE_ID. */
     public static final int RULE_ID=4;
+    
+    /** The Constant T__131. */
     public static final int T__131=131;
+    
+    /** The Constant T__130. */
     public static final int T__130=130;
+    
+    /** The Constant T__66. */
     public static final int T__66=66;
+    
+    /** The Constant RULE_ML_COMMENT. */
     public static final int RULE_ML_COMMENT=10;
+    
+    /** The Constant T__67. */
     public static final int T__67=67;
+    
+    /** The Constant T__129. */
     public static final int T__129=129;
+    
+    /** The Constant T__68. */
     public static final int T__68=68;
+    
+    /** The Constant T__69. */
     public static final int T__69=69;
+    
+    /** The Constant T__62. */
     public static final int T__62=62;
+    
+    /** The Constant T__126. */
     public static final int T__126=126;
+    
+    /** The Constant T__63. */
     public static final int T__63=63;
+    
+    /** The Constant T__125. */
     public static final int T__125=125;
+    
+    /** The Constant T__64. */
     public static final int T__64=64;
+    
+    /** The Constant T__128. */
     public static final int T__128=128;
+    
+    /** The Constant T__65. */
     public static final int T__65=65;
+    
+    /** The Constant T__127. */
     public static final int T__127=127;
+    
+    /** The Constant T__37. */
     public static final int T__37=37;
+    
+    /** The Constant T__38. */
     public static final int T__38=38;
+    
+    /** The Constant T__39. */
     public static final int T__39=39;
+    
+    /** The Constant T__33. */
     public static final int T__33=33;
+    
+    /** The Constant T__34. */
     public static final int T__34=34;
+    
+    /** The Constant T__35. */
     public static final int T__35=35;
+    
+    /** The Constant T__36. */
     public static final int T__36=36;
+    
+    /** The Constant T__30. */
     public static final int T__30=30;
+    
+    /** The Constant T__31. */
     public static final int T__31=31;
+    
+    /** The Constant T__32. */
     public static final int T__32=32;
+    
+    /** The Constant T__155. */
     public static final int T__155=155;
+    
+    /** The Constant RULE_KEYWORD. */
     public static final int RULE_KEYWORD=9;
+    
+    /** The Constant T__154. */
     public static final int T__154=154;
+    
+    /** The Constant T__157. */
     public static final int T__157=157;
+    
+    /** The Constant T__156. */
     public static final int T__156=156;
+    
+    /** The Constant T__151. */
     public static final int T__151=151;
+    
+    /** The Constant T__150. */
     public static final int T__150=150;
+    
+    /** The Constant T__153. */
     public static final int T__153=153;
+    
+    /** The Constant T__152. */
     public static final int T__152=152;
+    
+    /** The Constant T__48. */
     public static final int T__48=48;
+    
+    /** The Constant T__49. */
     public static final int T__49=49;
+    
+    /** The Constant T__44. */
     public static final int T__44=44;
+    
+    /** The Constant T__45. */
     public static final int T__45=45;
+    
+    /** The Constant T__46. */
     public static final int T__46=46;
+    
+    /** The Constant T__47. */
     public static final int T__47=47;
+    
+    /** The Constant T__40. */
     public static final int T__40=40;
+    
+    /** The Constant T__148. */
     public static final int T__148=148;
+    
+    /** The Constant T__41. */
     public static final int T__41=41;
+    
+    /** The Constant T__147. */
     public static final int T__147=147;
+    
+    /** The Constant T__42. */
     public static final int T__42=42;
+    
+    /** The Constant T__43. */
     public static final int T__43=43;
+    
+    /** The Constant T__149. */
     public static final int T__149=149;
+    
+    /** The Constant T__91. */
     public static final int T__91=91;
+    
+    /** The Constant T__100. */
     public static final int T__100=100;
+    
+    /** The Constant T__92. */
     public static final int T__92=92;
+    
+    /** The Constant T__93. */
     public static final int T__93=93;
+    
+    /** The Constant T__102. */
     public static final int T__102=102;
+    
+    /** The Constant T__94. */
     public static final int T__94=94;
+    
+    /** The Constant T__101. */
     public static final int T__101=101;
+    
+    /** The Constant T__90. */
     public static final int T__90=90;
+    
+    /** The Constant RULE_BOOLEAN. */
     public static final int RULE_BOOLEAN=8;
+    
+    /** The Constant T__19. */
     public static final int T__19=19;
+    
+    /** The Constant T__15. */
     public static final int T__15=15;
+    
+    /** The Constant T__16. */
     public static final int T__16=16;
+    
+    /** The Constant T__17. */
     public static final int T__17=17;
+    
+    /** The Constant T__18. */
     public static final int T__18=18;
+    
+    /** The Constant T__99. */
     public static final int T__99=99;
+    
+    /** The Constant T__14. */
     public static final int T__14=14;
+    
+    /** The Constant T__95. */
     public static final int T__95=95;
+    
+    /** The Constant T__96. */
     public static final int T__96=96;
+    
+    /** The Constant T__97. */
     public static final int T__97=97;
+    
+    /** The Constant T__98. */
     public static final int T__98=98;
+    
+    /** The Constant T__26. */
     public static final int T__26=26;
+    
+    /** The Constant T__27. */
     public static final int T__27=27;
+    
+    /** The Constant T__28. */
     public static final int T__28=28;
+    
+    /** The Constant T__29. */
     public static final int T__29=29;
+    
+    /** The Constant T__22. */
     public static final int T__22=22;
+    
+    /** The Constant T__23. */
     public static final int T__23=23;
+    
+    /** The Constant T__24. */
     public static final int T__24=24;
+    
+    /** The Constant T__25. */
     public static final int T__25=25;
+    
+    /** The Constant T__20. */
     public static final int T__20=20;
+    
+    /** The Constant T__21. */
     public static final int T__21=21;
+    
+    /** The Constant T__122. */
     public static final int T__122=122;
+    
+    /** The Constant T__70. */
     public static final int T__70=70;
+    
+    /** The Constant T__121. */
     public static final int T__121=121;
+    
+    /** The Constant T__71. */
     public static final int T__71=71;
+    
+    /** The Constant T__124. */
     public static final int T__124=124;
+    
+    /** The Constant T__72. */
     public static final int T__72=72;
+    
+    /** The Constant T__123. */
     public static final int T__123=123;
+    
+    /** The Constant T__120. */
     public static final int T__120=120;
+    
+    /** The Constant RULE_STRING. */
     public static final int RULE_STRING=5;
+    
+    /** The Constant RULE_SL_COMMENT. */
     public static final int RULE_SL_COMMENT=11;
+    
+    /** The Constant RULE_DOUBLE. */
     public static final int RULE_DOUBLE=7;
+    
+    /** The Constant T__77. */
     public static final int T__77=77;
+    
+    /** The Constant T__119. */
     public static final int T__119=119;
+    
+    /** The Constant T__78. */
     public static final int T__78=78;
+    
+    /** The Constant T__118. */
     public static final int T__118=118;
+    
+    /** The Constant T__79. */
     public static final int T__79=79;
+    
+    /** The Constant T__73. */
     public static final int T__73=73;
+    
+    /** The Constant T__115. */
     public static final int T__115=115;
+    
+    /** The Constant EOF. */
     public static final int EOF=-1;
+    
+    /** The Constant T__74. */
     public static final int T__74=74;
+    
+    /** The Constant T__114. */
     public static final int T__114=114;
+    
+    /** The Constant T__75. */
     public static final int T__75=75;
+    
+    /** The Constant T__117. */
     public static final int T__117=117;
+    
+    /** The Constant T__76. */
     public static final int T__76=76;
+    
+    /** The Constant T__116. */
     public static final int T__116=116;
+    
+    /** The Constant T__80. */
     public static final int T__80=80;
+    
+    /** The Constant T__111. */
     public static final int T__111=111;
+    
+    /** The Constant T__81. */
     public static final int T__81=81;
+    
+    /** The Constant T__110. */
     public static final int T__110=110;
+    
+    /** The Constant T__82. */
     public static final int T__82=82;
+    
+    /** The Constant T__113. */
     public static final int T__113=113;
+    
+    /** The Constant T__83. */
     public static final int T__83=83;
+    
+    /** The Constant T__112. */
     public static final int T__112=112;
+    
+    /** The Constant RULE_WS. */
     public static final int RULE_WS=12;
+    
+    /** The Constant RULE_ANY_OTHER. */
     public static final int RULE_ANY_OTHER=13;
+    
+    /** The Constant T__88. */
     public static final int T__88=88;
+    
+    /** The Constant T__108. */
     public static final int T__108=108;
+    
+    /** The Constant T__89. */
     public static final int T__89=89;
+    
+    /** The Constant T__107. */
     public static final int T__107=107;
+    
+    /** The Constant T__109. */
     public static final int T__109=109;
+    
+    /** The Constant T__84. */
     public static final int T__84=84;
+    
+    /** The Constant T__104. */
     public static final int T__104=104;
+    
+    /** The Constant T__85. */
     public static final int T__85=85;
+    
+    /** The Constant T__103. */
     public static final int T__103=103;
+    
+    /** The Constant RULE_INTEGER. */
     public static final int RULE_INTEGER=6;
+    
+    /** The Constant T__86. */
     public static final int T__86=86;
+    
+    /** The Constant T__106. */
     public static final int T__106=106;
+    
+    /** The Constant T__87. */
     public static final int T__87=87;
+    
+    /** The Constant T__105. */
     public static final int T__105=105;
 
     // delegates
     // delegators
 
+    /**
+     * Instantiates a new internal gaml lexer.
+     */
     public InternalGamlLexer() {;} 
+    
+    /**
+     * Instantiates a new internal gaml lexer.
+     *
+     * @param input the input
+     */
     public InternalGamlLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }
+    
+    /**
+     * Instantiates a new internal gaml lexer.
+     *
+     * @param input the input
+     * @param state the state
+     */
     public InternalGamlLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
 
     }
     public String getGrammarFileName() { return "InternalGaml.g"; }
 
+    /**
+     * M T 14.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__14"
     public final void mT__14() throws RecognitionException {
         try {
@@ -202,6 +546,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__14"
 
+    /**
+     * M T 15.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__15"
     public final void mT__15() throws RecognitionException {
         try {
@@ -223,6 +572,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__15"
 
+    /**
+     * M T 16.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__16"
     public final void mT__16() throws RecognitionException {
         try {
@@ -244,6 +598,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__16"
 
+    /**
+     * M T 17.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__17"
     public final void mT__17() throws RecognitionException {
         try {
@@ -265,6 +624,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__17"
 
+    /**
+     * M T 18.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__18"
     public final void mT__18() throws RecognitionException {
         try {
@@ -286,6 +650,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__18"
 
+    /**
+     * M T 19.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__19"
     public final void mT__19() throws RecognitionException {
         try {
@@ -306,6 +675,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__19"
 
+    /**
+     * M T 20.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__20"
     public final void mT__20() throws RecognitionException {
         try {
@@ -327,6 +701,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__20"
 
+    /**
+     * M T 21.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__21"
     public final void mT__21() throws RecognitionException {
         try {
@@ -348,6 +727,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__21"
 
+    /**
+     * M T 22.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__22"
     public final void mT__22() throws RecognitionException {
         try {
@@ -368,6 +752,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__22"
 
+    /**
+     * M T 23.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__23"
     public final void mT__23() throws RecognitionException {
         try {
@@ -389,6 +778,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__23"
 
+    /**
+     * M T 24.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__24"
     public final void mT__24() throws RecognitionException {
         try {
@@ -410,6 +804,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__24"
 
+    /**
+     * M T 25.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__25"
     public final void mT__25() throws RecognitionException {
         try {
@@ -431,6 +830,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__25"
 
+    /**
+     * M T 26.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__26"
     public final void mT__26() throws RecognitionException {
         try {
@@ -452,6 +856,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__26"
 
+    /**
+     * M T 27.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__27"
     public final void mT__27() throws RecognitionException {
         try {
@@ -473,6 +882,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__27"
 
+    /**
+     * M T 28.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__28"
     public final void mT__28() throws RecognitionException {
         try {
@@ -494,6 +908,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__28"
 
+    /**
+     * M T 29.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__29"
     public final void mT__29() throws RecognitionException {
         try {
@@ -515,6 +934,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__29"
 
+    /**
+     * M T 30.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__30"
     public final void mT__30() throws RecognitionException {
         try {
@@ -536,6 +960,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__30"
 
+    /**
+     * M T 31.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__31"
     public final void mT__31() throws RecognitionException {
         try {
@@ -557,6 +986,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__31"
 
+    /**
+     * M T 32.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__32"
     public final void mT__32() throws RecognitionException {
         try {
@@ -578,6 +1012,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__32"
 
+    /**
+     * M T 33.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__33"
     public final void mT__33() throws RecognitionException {
         try {
@@ -599,6 +1038,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__33"
 
+    /**
+     * M T 34.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__34"
     public final void mT__34() throws RecognitionException {
         try {
@@ -619,6 +1063,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__34"
 
+    /**
+     * M T 35.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__35"
     public final void mT__35() throws RecognitionException {
         try {
@@ -639,6 +1088,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__35"
 
+    /**
+     * M T 36.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__36"
     public final void mT__36() throws RecognitionException {
         try {
@@ -659,6 +1113,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__36"
 
+    /**
+     * M T 37.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__37"
     public final void mT__37() throws RecognitionException {
         try {
@@ -680,6 +1139,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__37"
 
+    /**
+     * M T 38.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__38"
     public final void mT__38() throws RecognitionException {
         try {
@@ -701,6 +1165,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__38"
 
+    /**
+     * M T 39.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__39"
     public final void mT__39() throws RecognitionException {
         try {
@@ -721,6 +1190,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__39"
 
+    /**
+     * M T 40.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__40"
     public final void mT__40() throws RecognitionException {
         try {
@@ -741,6 +1215,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__40"
 
+    /**
+     * M T 41.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__41"
     public final void mT__41() throws RecognitionException {
         try {
@@ -761,6 +1240,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__41"
 
+    /**
+     * M T 42.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__42"
     public final void mT__42() throws RecognitionException {
         try {
@@ -782,6 +1266,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__42"
 
+    /**
+     * M T 43.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__43"
     public final void mT__43() throws RecognitionException {
         try {
@@ -803,6 +1292,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__43"
 
+    /**
+     * M T 44.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__44"
     public final void mT__44() throws RecognitionException {
         try {
@@ -824,6 +1318,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__44"
 
+    /**
+     * M T 45.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__45"
     public final void mT__45() throws RecognitionException {
         try {
@@ -845,6 +1344,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__45"
 
+    /**
+     * M T 46.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__46"
     public final void mT__46() throws RecognitionException {
         try {
@@ -866,6 +1370,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__46"
 
+    /**
+     * M T 47.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__47"
     public final void mT__47() throws RecognitionException {
         try {
@@ -887,6 +1396,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__47"
 
+    /**
+     * M T 48.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__48"
     public final void mT__48() throws RecognitionException {
         try {
@@ -908,6 +1422,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__48"
 
+    /**
+     * M T 49.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__49"
     public final void mT__49() throws RecognitionException {
         try {
@@ -929,6 +1448,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__49"
 
+    /**
+     * M T 50.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__50"
     public final void mT__50() throws RecognitionException {
         try {
@@ -950,6 +1474,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__50"
 
+    /**
+     * M T 51.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__51"
     public final void mT__51() throws RecognitionException {
         try {
@@ -971,6 +1500,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__51"
 
+    /**
+     * M T 52.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__52"
     public final void mT__52() throws RecognitionException {
         try {
@@ -992,6 +1526,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__52"
 
+    /**
+     * M T 53.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__53"
     public final void mT__53() throws RecognitionException {
         try {
@@ -1013,6 +1552,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__53"
 
+    /**
+     * M T 54.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__54"
     public final void mT__54() throws RecognitionException {
         try {
@@ -1034,6 +1578,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__54"
 
+    /**
+     * M T 55.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__55"
     public final void mT__55() throws RecognitionException {
         try {
@@ -1055,6 +1604,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__55"
 
+    /**
+     * M T 56.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__56"
     public final void mT__56() throws RecognitionException {
         try {
@@ -1076,6 +1630,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__56"
 
+    /**
+     * M T 57.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__57"
     public final void mT__57() throws RecognitionException {
         try {
@@ -1097,6 +1656,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__57"
 
+    /**
+     * M T 58.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__58"
     public final void mT__58() throws RecognitionException {
         try {
@@ -1118,6 +1682,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__58"
 
+    /**
+     * M T 59.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__59"
     public final void mT__59() throws RecognitionException {
         try {
@@ -1139,6 +1708,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__59"
 
+    /**
+     * M T 60.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__60"
     public final void mT__60() throws RecognitionException {
         try {
@@ -1160,6 +1734,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__60"
 
+    /**
+     * M T 61.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__61"
     public final void mT__61() throws RecognitionException {
         try {
@@ -1181,6 +1760,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__61"
 
+    /**
+     * M T 62.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__62"
     public final void mT__62() throws RecognitionException {
         try {
@@ -1202,6 +1786,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__62"
 
+    /**
+     * M T 63.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__63"
     public final void mT__63() throws RecognitionException {
         try {
@@ -1223,6 +1812,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__63"
 
+    /**
+     * M T 64.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__64"
     public final void mT__64() throws RecognitionException {
         try {
@@ -1244,6 +1838,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__64"
 
+    /**
+     * M T 65.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__65"
     public final void mT__65() throws RecognitionException {
         try {
@@ -1265,6 +1864,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__65"
 
+    /**
+     * M T 66.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__66"
     public final void mT__66() throws RecognitionException {
         try {
@@ -1286,6 +1890,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__66"
 
+    /**
+     * M T 67.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__67"
     public final void mT__67() throws RecognitionException {
         try {
@@ -1307,6 +1916,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__67"
 
+    /**
+     * M T 68.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__68"
     public final void mT__68() throws RecognitionException {
         try {
@@ -1328,6 +1942,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__68"
 
+    /**
+     * M T 69.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__69"
     public final void mT__69() throws RecognitionException {
         try {
@@ -1349,6 +1968,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__69"
 
+    /**
+     * M T 70.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__70"
     public final void mT__70() throws RecognitionException {
         try {
@@ -1370,6 +1994,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__70"
 
+    /**
+     * M T 71.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__71"
     public final void mT__71() throws RecognitionException {
         try {
@@ -1391,6 +2020,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__71"
 
+    /**
+     * M T 72.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__72"
     public final void mT__72() throws RecognitionException {
         try {
@@ -1412,6 +2046,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__72"
 
+    /**
+     * M T 73.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__73"
     public final void mT__73() throws RecognitionException {
         try {
@@ -1433,6 +2072,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__73"
 
+    /**
+     * M T 74.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__74"
     public final void mT__74() throws RecognitionException {
         try {
@@ -1454,6 +2098,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__74"
 
+    /**
+     * M T 75.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__75"
     public final void mT__75() throws RecognitionException {
         try {
@@ -1475,6 +2124,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__75"
 
+    /**
+     * M T 76.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__76"
     public final void mT__76() throws RecognitionException {
         try {
@@ -1496,6 +2150,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__76"
 
+    /**
+     * M T 77.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__77"
     public final void mT__77() throws RecognitionException {
         try {
@@ -1517,6 +2176,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__77"
 
+    /**
+     * M T 78.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__78"
     public final void mT__78() throws RecognitionException {
         try {
@@ -1538,6 +2202,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__78"
 
+    /**
+     * M T 79.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__79"
     public final void mT__79() throws RecognitionException {
         try {
@@ -1559,6 +2228,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__79"
 
+    /**
+     * M T 80.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__80"
     public final void mT__80() throws RecognitionException {
         try {
@@ -1580,6 +2254,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__80"
 
+    /**
+     * M T 81.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__81"
     public final void mT__81() throws RecognitionException {
         try {
@@ -1601,6 +2280,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__81"
 
+    /**
+     * M T 82.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__82"
     public final void mT__82() throws RecognitionException {
         try {
@@ -1622,6 +2306,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__82"
 
+    /**
+     * M T 83.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__83"
     public final void mT__83() throws RecognitionException {
         try {
@@ -1643,6 +2332,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__83"
 
+    /**
+     * M T 84.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__84"
     public final void mT__84() throws RecognitionException {
         try {
@@ -1664,6 +2358,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__84"
 
+    /**
+     * M T 85.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__85"
     public final void mT__85() throws RecognitionException {
         try {
@@ -1685,6 +2384,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__85"
 
+    /**
+     * M T 86.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__86"
     public final void mT__86() throws RecognitionException {
         try {
@@ -1706,6 +2410,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__86"
 
+    /**
+     * M T 87.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__87"
     public final void mT__87() throws RecognitionException {
         try {
@@ -1727,6 +2436,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__87"
 
+    /**
+     * M T 88.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__88"
     public final void mT__88() throws RecognitionException {
         try {
@@ -1748,6 +2462,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__88"
 
+    /**
+     * M T 89.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__89"
     public final void mT__89() throws RecognitionException {
         try {
@@ -1769,6 +2488,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__89"
 
+    /**
+     * M T 90.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__90"
     public final void mT__90() throws RecognitionException {
         try {
@@ -1790,6 +2514,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__90"
 
+    /**
+     * M T 91.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__91"
     public final void mT__91() throws RecognitionException {
         try {
@@ -1811,6 +2540,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__91"
 
+    /**
+     * M T 92.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__92"
     public final void mT__92() throws RecognitionException {
         try {
@@ -1832,6 +2566,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__92"
 
+    /**
+     * M T 93.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__93"
     public final void mT__93() throws RecognitionException {
         try {
@@ -1853,6 +2592,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__93"
 
+    /**
+     * M T 94.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__94"
     public final void mT__94() throws RecognitionException {
         try {
@@ -1874,6 +2618,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__94"
 
+    /**
+     * M T 95.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__95"
     public final void mT__95() throws RecognitionException {
         try {
@@ -1895,6 +2644,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__95"
 
+    /**
+     * M T 96.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__96"
     public final void mT__96() throws RecognitionException {
         try {
@@ -1916,6 +2670,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__96"
 
+    /**
+     * M T 97.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__97"
     public final void mT__97() throws RecognitionException {
         try {
@@ -1937,6 +2696,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__97"
 
+    /**
+     * M T 98.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__98"
     public final void mT__98() throws RecognitionException {
         try {
@@ -1958,6 +2722,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__98"
 
+    /**
+     * M T 99.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__99"
     public final void mT__99() throws RecognitionException {
         try {
@@ -1979,6 +2748,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__99"
 
+    /**
+     * M T 100.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__100"
     public final void mT__100() throws RecognitionException {
         try {
@@ -1999,6 +2773,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__100"
 
+    /**
+     * M T 101.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__101"
     public final void mT__101() throws RecognitionException {
         try {
@@ -2020,6 +2799,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__101"
 
+    /**
+     * M T 102.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__102"
     public final void mT__102() throws RecognitionException {
         try {
@@ -2041,6 +2825,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__102"
 
+    /**
+     * M T 103.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__103"
     public final void mT__103() throws RecognitionException {
         try {
@@ -2062,6 +2851,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__103"
 
+    /**
+     * M T 104.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__104"
     public final void mT__104() throws RecognitionException {
         try {
@@ -2083,6 +2877,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__104"
 
+    /**
+     * M T 105.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__105"
     public final void mT__105() throws RecognitionException {
         try {
@@ -2103,6 +2902,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__105"
 
+    /**
+     * M T 106.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__106"
     public final void mT__106() throws RecognitionException {
         try {
@@ -2124,6 +2928,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__106"
 
+    /**
+     * M T 107.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__107"
     public final void mT__107() throws RecognitionException {
         try {
@@ -2145,6 +2954,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__107"
 
+    /**
+     * M T 108.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__108"
     public final void mT__108() throws RecognitionException {
         try {
@@ -2166,6 +2980,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__108"
 
+    /**
+     * M T 109.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__109"
     public final void mT__109() throws RecognitionException {
         try {
@@ -2187,6 +3006,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__109"
 
+    /**
+     * M T 110.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__110"
     public final void mT__110() throws RecognitionException {
         try {
@@ -2208,6 +3032,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__110"
 
+    /**
+     * M T 111.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__111"
     public final void mT__111() throws RecognitionException {
         try {
@@ -2229,6 +3058,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__111"
 
+    /**
+     * M T 112.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__112"
     public final void mT__112() throws RecognitionException {
         try {
@@ -2250,6 +3084,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__112"
 
+    /**
+     * M T 113.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__113"
     public final void mT__113() throws RecognitionException {
         try {
@@ -2271,6 +3110,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__113"
 
+    /**
+     * M T 114.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__114"
     public final void mT__114() throws RecognitionException {
         try {
@@ -2292,6 +3136,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__114"
 
+    /**
+     * M T 115.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__115"
     public final void mT__115() throws RecognitionException {
         try {
@@ -2313,6 +3162,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__115"
 
+    /**
+     * M T 116.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__116"
     public final void mT__116() throws RecognitionException {
         try {
@@ -2334,6 +3188,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__116"
 
+    /**
+     * M T 117.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__117"
     public final void mT__117() throws RecognitionException {
         try {
@@ -2355,6 +3214,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__117"
 
+    /**
+     * M T 118.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__118"
     public final void mT__118() throws RecognitionException {
         try {
@@ -2376,6 +3240,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__118"
 
+    /**
+     * M T 119.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__119"
     public final void mT__119() throws RecognitionException {
         try {
@@ -2397,6 +3266,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__119"
 
+    /**
+     * M T 120.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__120"
     public final void mT__120() throws RecognitionException {
         try {
@@ -2418,6 +3292,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__120"
 
+    /**
+     * M T 121.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__121"
     public final void mT__121() throws RecognitionException {
         try {
@@ -2439,6 +3318,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__121"
 
+    /**
+     * M T 122.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__122"
     public final void mT__122() throws RecognitionException {
         try {
@@ -2460,6 +3344,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__122"
 
+    /**
+     * M T 123.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__123"
     public final void mT__123() throws RecognitionException {
         try {
@@ -2481,6 +3370,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__123"
 
+    /**
+     * M T 124.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__124"
     public final void mT__124() throws RecognitionException {
         try {
@@ -2502,6 +3396,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__124"
 
+    /**
+     * M T 125.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__125"
     public final void mT__125() throws RecognitionException {
         try {
@@ -2523,6 +3422,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__125"
 
+    /**
+     * M T 126.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__126"
     public final void mT__126() throws RecognitionException {
         try {
@@ -2544,6 +3448,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__126"
 
+    /**
+     * M T 127.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__127"
     public final void mT__127() throws RecognitionException {
         try {
@@ -2565,6 +3474,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__127"
 
+    /**
+     * M T 128.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__128"
     public final void mT__128() throws RecognitionException {
         try {
@@ -2586,6 +3500,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__128"
 
+    /**
+     * M T 129.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__129"
     public final void mT__129() throws RecognitionException {
         try {
@@ -2607,6 +3526,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__129"
 
+    /**
+     * M T 130.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__130"
     public final void mT__130() throws RecognitionException {
         try {
@@ -2628,6 +3552,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__130"
 
+    /**
+     * M T 131.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__131"
     public final void mT__131() throws RecognitionException {
         try {
@@ -2648,6 +3577,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__131"
 
+    /**
+     * M T 132.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__132"
     public final void mT__132() throws RecognitionException {
         try {
@@ -2669,6 +3603,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__132"
 
+    /**
+     * M T 133.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__133"
     public final void mT__133() throws RecognitionException {
         try {
@@ -2690,6 +3629,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__133"
 
+    /**
+     * M T 134.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__134"
     public final void mT__134() throws RecognitionException {
         try {
@@ -2711,6 +3655,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__134"
 
+    /**
+     * M T 135.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__135"
     public final void mT__135() throws RecognitionException {
         try {
@@ -2732,6 +3681,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__135"
 
+    /**
+     * M T 136.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__136"
     public final void mT__136() throws RecognitionException {
         try {
@@ -2753,6 +3707,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__136"
 
+    /**
+     * M T 137.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__137"
     public final void mT__137() throws RecognitionException {
         try {
@@ -2773,6 +3732,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__137"
 
+    /**
+     * M T 138.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__138"
     public final void mT__138() throws RecognitionException {
         try {
@@ -2793,6 +3757,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__138"
 
+    /**
+     * M T 139.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__139"
     public final void mT__139() throws RecognitionException {
         try {
@@ -2813,6 +3782,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__139"
 
+    /**
+     * M T 140.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__140"
     public final void mT__140() throws RecognitionException {
         try {
@@ -2833,6 +3807,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__140"
 
+    /**
+     * M T 141.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__141"
     public final void mT__141() throws RecognitionException {
         try {
@@ -2853,6 +3832,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__141"
 
+    /**
+     * M T 142.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__142"
     public final void mT__142() throws RecognitionException {
         try {
@@ -2873,6 +3857,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__142"
 
+    /**
+     * M T 143.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__143"
     public final void mT__143() throws RecognitionException {
         try {
@@ -2893,6 +3882,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__143"
 
+    /**
+     * M T 144.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__144"
     public final void mT__144() throws RecognitionException {
         try {
@@ -2913,6 +3907,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__144"
 
+    /**
+     * M T 145.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__145"
     public final void mT__145() throws RecognitionException {
         try {
@@ -2933,6 +3932,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__145"
 
+    /**
+     * M T 146.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__146"
     public final void mT__146() throws RecognitionException {
         try {
@@ -2954,6 +3958,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__146"
 
+    /**
+     * M T 147.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__147"
     public final void mT__147() throws RecognitionException {
         try {
@@ -2975,6 +3984,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__147"
 
+    /**
+     * M T 148.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__148"
     public final void mT__148() throws RecognitionException {
         try {
@@ -2996,6 +4010,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__148"
 
+    /**
+     * M T 149.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__149"
     public final void mT__149() throws RecognitionException {
         try {
@@ -3016,6 +4035,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__149"
 
+    /**
+     * M T 150.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__150"
     public final void mT__150() throws RecognitionException {
         try {
@@ -3036,6 +4060,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__150"
 
+    /**
+     * M T 151.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__151"
     public final void mT__151() throws RecognitionException {
         try {
@@ -3056,6 +4085,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__151"
 
+    /**
+     * M T 152.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__152"
     public final void mT__152() throws RecognitionException {
         try {
@@ -3077,6 +4111,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__152"
 
+    /**
+     * M T 153.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__153"
     public final void mT__153() throws RecognitionException {
         try {
@@ -3098,6 +4137,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__153"
 
+    /**
+     * M T 154.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__154"
     public final void mT__154() throws RecognitionException {
         try {
@@ -3119,6 +4163,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__154"
 
+    /**
+     * M T 155.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__155"
     public final void mT__155() throws RecognitionException {
         try {
@@ -3140,6 +4189,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__155"
 
+    /**
+     * M T 156.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__156"
     public final void mT__156() throws RecognitionException {
         try {
@@ -3161,6 +4215,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__156"
 
+    /**
+     * M T 157.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "T__157"
     public final void mT__157() throws RecognitionException {
         try {
@@ -3182,6 +4241,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "T__157"
 
+    /**
+     * M RUL E KEYWORD.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_KEYWORD"
     public final void mRULE_KEYWORD() throws RecognitionException {
         try {
@@ -3288,6 +4352,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_KEYWORD"
 
+    /**
+     * M RUL E INTEGER.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_INTEGER"
     public final void mRULE_INTEGER() throws RecognitionException {
         try {
@@ -3366,6 +4435,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_INTEGER"
 
+    /**
+     * M RUL E BOOLEAN.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_BOOLEAN"
     public final void mRULE_BOOLEAN() throws RecognitionException {
         try {
@@ -3421,6 +4495,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_BOOLEAN"
 
+    /**
+     * M RUL E ID.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_ID"
     public final void mRULE_ID() throws RecognitionException {
         try {
@@ -3482,6 +4561,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_ID"
 
+    /**
+     * M RUL E DOUBLE.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_DOUBLE"
     public final void mRULE_DOUBLE() throws RecognitionException {
         try {
@@ -3820,6 +4904,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_DOUBLE"
 
+    /**
+     * M RUL E STRING.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_STRING"
     public final void mRULE_STRING() throws RecognitionException {
         try {
@@ -3979,6 +5068,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_STRING"
 
+    /**
+     * M RUL E M L COMMENT.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_ML_COMMENT"
     public final void mRULE_ML_COMMENT() throws RecognitionException {
         try {
@@ -4039,6 +5133,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_ML_COMMENT"
 
+    /**
+     * M RUL E S L COMMENT.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_SL_COMMENT"
     public final void mRULE_SL_COMMENT() throws RecognitionException {
         try {
@@ -4129,6 +5228,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_SL_COMMENT"
 
+    /**
+     * M RUL E WS.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_WS"
     public final void mRULE_WS() throws RecognitionException {
         try {
@@ -4186,6 +5290,11 @@ public class InternalGamlLexer extends Lexer {
     }
     // $ANTLR end "RULE_WS"
 
+    /**
+     * M RUL E AN Y OTHER.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start "RULE_ANY_OTHER"
     public final void mRULE_ANY_OTHER() throws RecognitionException {
         try {
@@ -5295,19 +6404,34 @@ public class InternalGamlLexer extends Lexer {
     }
 
 
+    /** The dfa 26. */
     protected DFA26 dfa26 = new DFA26(this);
+    
+    /** The Constant DFA26_eotS. */
     static final String DFA26_eotS =
         "\1\uffff\1\66\1\73\3\66\1\uffff\1\66\1\uffff\10\66\1\153\2\uffff\1\66\3\uffff\10\66\1\u008a\1\u008c\1\uffff\1\u008f\1\uffff\1\u0092\1\u0094\1\u0097\6\uffff\2\u009e\1\uffff\2\64\2\uffff\1\66\2\uffff\1\u00a5\3\uffff\3\66\1\u00aa\1\66\1\u00ad\2\66\1\u00b6\5\66\1\uffff\3\66\1\uffff\33\66\4\uffff\7\66\3\uffff\3\66\1\u00ee\13\66\1\u00fa\30\uffff\1\u009e\2\uffff\1\66\2\uffff\4\66\1\uffff\2\66\1\uffff\4\66\1\u010d\2\66\2\uffff\1\66\1\u0111\1\66\1\u0113\1\u0114\1\66\1\u0116\1\u0117\6\66\1\u011e\16\66\1\u012f\4\66\1\u0134\5\66\1\u013b\3\66\1\u013f\12\66\1\uffff\2\66\1\u014c\6\66\1\uffff\1\66\7\uffff\3\66\1\u0158\6\66\1\u0160\1\66\1\uffff\3\66\1\uffff\1\66\2\uffff\1\66\2\uffff\1\66\1\u0168\1\66\1\u016a\2\66\1\uffff\10\66\1\u0175\6\66\1\u0117\1\uffff\1\u017c\1\u017e\2\66\1\uffff\5\66\2\uffff\1\u0186\1\66\1\u0188\1\uffff\1\u0117\2\66\1\u018b\4\66\1\u0190\1\u0193\2\66\1\uffff\11\66\1\u01a0\1\u01a2\1\uffff\3\66\1\u01a7\2\66\3\uffff\4\66\1\uffff\1\66\1\uffff\1\66\1\uffff\1\66\1\u01b2\1\66\1\u01b5\1\66\1\u01b7\3\66\1\u01bb\1\uffff\3\66\1\u01bf\1\u01c0\1\66\4\uffff\6\66\1\uffff\1\u01c8\1\uffff\1\u01c9\1\66\1\uffff\2\66\1\u0117\1\66\1\uffff\1\66\2\uffff\1\66\1\u01d1\4\66\1\u017c\4\66\2\uffff\1\66\1\uffff\1\66\1\u0117\1\u01dd\2\uffff\1\66\1\u01df\1\u01e0\1\u01e2\1\u01e4\1\u01e5\1\u01e6\1\66\1\u01e9\2\uffff\1\66\2\uffff\1\66\1\uffff\1\66\1\u01ed\1\u01ee\1\uffff\3\66\2\uffff\2\66\1\u01f5\1\66\1\u01f7\1\u01f8\3\uffff\1\66\1\u01fa\1\u01fb\2\66\1\u01fe\2\uffff\13\66\1\uffff\1\u020a\10\uffff\1\66\2\uffff\2\66\1\u020e\2\uffff\6\66\1\uffff\1\u0215\2\uffff\1\u0217\2\uffff\1\u0219\1\66\1\uffff\1\66\1\uffff\3\66\1\u021f\4\66\2\uffff\1\u0224\1\66\2\uffff\1\u0227\4\66\4\uffff\1\66\1\uffff\1\u022e\2\66\1\u0231\1\u0232\1\uffff\3\66\1\u0236\1\uffff\1\66\2\uffff\1\66\1\u0239\1\66\1\uffff\2\66\1\uffff\1\u023e\1\u023f\2\uffff\3\66\2\uffff\1\u0243\1\uffff\3\66\4\uffff\2\66\1\uffff\5\66\1\uffff\1\66\1\u024f\1\u0250\1\u0251\1\66\3\uffff\4\66\1\u0257\1\uffff";
+    
+    /** The Constant DFA26_eofS. */
     static final String DFA26_eofS =
         "\u0258\uffff";
+    
+    /** The Constant DFA26_minS. */
     static final String DFA26_minS =
         "\1\0\1\137\1\53\1\141\1\146\1\143\1\uffff\1\141\1\uffff\1\154\3\141\2\145\2\141\1\72\2\uffff\1\141\3\uffff\1\141\1\162\1\163\1\141\1\151\1\141\1\165\1\146\1\55\1\74\1\uffff\1\76\1\uffff\1\75\2\52\6\uffff\2\56\1\uffff\2\0\2\uffff\1\163\2\uffff\1\53\3\uffff\1\144\1\164\1\163\1\44\1\141\1\44\1\151\1\145\1\44\1\164\1\144\1\145\1\147\1\144\1\uffff\1\155\1\164\1\154\1\uffff\1\157\1\141\1\157\1\171\1\147\1\164\1\156\1\155\1\145\1\141\1\163\1\165\1\143\1\162\1\145\1\166\1\143\1\165\1\170\2\160\1\145\1\146\1\154\1\145\1\151\1\162\4\uffff\2\154\1\145\1\166\1\151\1\141\1\160\3\uffff\1\163\1\141\1\164\1\44\1\157\1\151\1\164\1\162\1\147\1\143\1\154\1\141\1\145\1\72\1\137\1\44\13\uffff\1\141\14\uffff\1\56\2\uffff\1\171\2\uffff\1\145\1\143\1\150\1\145\1\uffff\1\157\1\147\1\uffff\1\160\1\157\1\164\1\155\1\44\2\145\2\uffff\1\151\1\44\1\156\2\44\1\145\2\44\1\142\1\144\2\160\1\157\1\150\1\44\1\144\1\143\1\164\1\145\1\141\1\162\1\145\1\141\2\145\1\157\1\156\1\151\1\150\1\44\1\145\1\164\1\145\1\157\1\44\1\165\1\145\1\157\1\154\1\165\1\44\1\156\1\164\1\156\1\44\1\146\1\166\1\143\1\145\2\164\1\145\1\160\1\167\1\141\1\uffff\1\167\1\156\1\44\1\141\1\150\1\165\1\163\1\144\1\162\1\uffff\1\143\7\uffff\1\156\1\154\1\150\1\44\1\141\1\154\1\162\2\145\1\153\1\44\1\72\1\uffff\1\162\1\143\1\157\1\uffff\1\164\2\uffff\1\72\2\uffff\1\141\1\44\1\150\1\44\1\165\1\164\1\uffff\1\151\1\164\1\162\1\150\1\165\1\162\2\164\1\44\1\164\1\162\1\160\1\162\1\164\1\162\1\44\1\uffff\2\44\1\72\1\154\1\uffff\1\162\1\141\1\166\2\145\2\uffff\1\44\1\145\1\44\1\uffff\1\44\1\145\1\151\1\44\1\143\1\165\1\162\1\154\2\44\1\163\1\147\1\uffff\1\155\1\156\1\154\1\163\1\145\1\164\1\154\1\150\1\164\2\44\1\uffff\1\147\1\146\1\164\1\44\1\143\1\145\3\uffff\2\164\1\156\1\163\1\uffff\1\154\1\uffff\1\151\1\uffff\1\164\1\44\1\164\1\44\1\157\1\44\1\162\1\141\1\145\1\44\1\uffff\2\151\1\164\2\44\1\157\4\uffff\1\157\1\156\1\163\1\145\1\170\1\72\1\uffff\1\44\1\uffff\1\44\1\145\1\uffff\1\150\1\163\1\44\1\141\1\uffff\1\151\2\uffff\1\145\1\44\1\145\1\164\1\151\1\137\1\44\1\162\2\141\1\150\2\uffff\1\142\1\uffff\1\145\2\44\2\uffff\1\164\6\44\1\143\1\44\2\uffff\1\151\2\uffff\1\154\1\uffff\1\145\2\44\1\uffff\1\157\1\155\1\151\2\uffff\1\156\1\147\1\44\1\145\2\44\3\uffff\1\163\2\44\1\171\1\163\1\44\2\uffff\1\164\1\72\1\147\1\157\1\145\1\171\1\156\2\145\1\156\1\72\1\uffff\1\44\10\uffff\1\163\2\uffff\1\157\1\72\1\44\2\uffff\1\156\1\145\1\157\1\155\1\171\1\72\1\uffff\1\44\2\uffff\1\44\2\uffff\1\44\1\164\1\uffff\1\145\1\uffff\1\150\1\156\1\145\1\44\1\147\2\164\1\145\2\uffff\1\44\1\156\2\uffff\1\44\2\156\1\145\1\72\4\uffff\1\147\1\uffff\1\44\1\162\1\164\2\44\1\uffff\1\145\1\151\1\167\1\44\1\uffff\1\72\2\uffff\1\164\1\44\1\156\1\uffff\1\157\1\162\1\uffff\2\44\2\uffff\1\72\1\143\1\145\2\uffff\1\44\1\uffff\1\164\1\160\1\151\4\uffff\1\137\1\145\1\uffff\1\72\1\165\1\144\1\137\1\156\1\uffff\1\154\3\44\1\141\3\uffff\1\164\1\151\1\157\1\156\1\44\1\uffff";
+    
+    /** The Constant DFA26_maxS. */
     static final String DFA26_maxS =
         "\1\uffff\1\137\1\75\1\171\1\164\1\163\1\uffff\1\157\1\uffff\1\162\1\157\1\162\1\170\1\171\1\145\1\141\1\162\1\72\2\uffff\1\167\3\uffff\2\162\1\163\1\165\1\151\1\157\1\165\1\166\1\75\1\74\1\uffff\1\76\1\uffff\1\75\1\52\1\57\6\uffff\2\145\1\uffff\2\uffff\2\uffff\1\163\2\uffff\1\53\3\uffff\1\144\1\164\1\163\1\172\1\160\1\172\1\166\1\145\1\172\1\164\1\144\1\145\1\147\1\144\1\uffff\1\155\1\164\1\154\1\uffff\1\157\1\151\1\157\1\171\1\147\1\164\1\156\1\164\1\145\1\141\1\163\1\165\1\160\1\162\1\145\1\166\1\143\1\171\1\170\2\160\1\145\1\164\1\162\1\145\1\151\1\162\4\uffff\1\164\1\154\1\145\1\166\1\151\1\141\1\160\3\uffff\1\163\1\141\1\164\1\172\1\157\1\151\1\164\1\162\1\147\1\143\1\154\1\141\1\145\1\72\1\137\1\172\13\uffff\1\166\14\uffff\1\145\2\uffff\1\171\2\uffff\1\145\1\143\1\163\1\145\1\uffff\1\157\1\147\1\uffff\1\160\1\157\1\164\1\155\1\172\2\145\2\uffff\1\151\1\172\1\156\2\172\1\145\2\172\1\142\1\144\2\160\1\157\1\150\1\172\1\164\1\143\1\164\1\145\1\141\1\162\1\145\1\141\2\145\1\157\1\156\1\151\1\150\1\172\1\145\1\164\1\145\1\157\1\172\1\165\1\145\1\157\1\154\1\165\1\172\1\156\1\164\1\156\1\172\1\146\1\166\1\143\1\145\2\164\1\145\1\160\1\167\1\141\1\uffff\1\167\1\156\1\172\1\145\1\150\1\165\1\163\1\144\1\162\1\uffff\1\143\7\uffff\1\156\1\154\1\150\1\172\1\141\1\154\1\162\2\145\1\153\1\172\1\72\1\uffff\1\162\1\143\1\157\1\uffff\1\164\2\uffff\1\72\2\uffff\1\141\1\172\1\150\1\172\1\165\1\164\1\uffff\1\151\1\164\1\162\1\150\1\165\1\162\2\164\1\172\1\164\1\162\1\160\1\162\1\164\1\162\1\172\1\uffff\2\172\1\72\1\154\1\uffff\1\162\1\141\1\166\2\145\2\uffff\1\172\1\145\1\172\1\uffff\1\172\1\145\1\151\1\172\1\143\1\165\1\162\1\154\2\172\1\163\1\147\1\uffff\1\155\1\156\1\154\1\163\1\145\1\164\1\154\1\150\1\164\2\172\1\uffff\1\147\1\146\1\164\1\172\1\143\1\145\3\uffff\2\164\1\156\1\163\1\uffff\1\154\1\uffff\1\151\1\uffff\1\164\1\172\1\164\1\172\1\157\1\172\1\162\1\141\1\145\1\172\1\uffff\2\151\1\164\2\172\1\157\4\uffff\1\157\1\156\1\163\1\145\1\170\1\72\1\uffff\1\172\1\uffff\1\172\1\145\1\uffff\1\150\1\163\1\172\1\141\1\uffff\1\151\2\uffff\1\145\1\172\1\145\1\164\1\151\1\137\1\172\1\162\2\141\1\150\2\uffff\1\157\1\uffff\1\145\2\172\2\uffff\1\164\6\172\1\143\1\172\2\uffff\1\151\2\uffff\1\154\1\uffff\1\145\2\172\1\uffff\1\157\1\155\1\151\2\uffff\1\156\1\147\1\172\1\145\2\172\3\uffff\1\163\2\172\1\171\1\163\1\172\2\uffff\1\164\1\72\1\147\1\157\1\145\1\171\1\156\2\145\1\156\1\72\1\uffff\1\172\10\uffff\1\163\2\uffff\1\157\1\72\1\172\2\uffff\1\156\1\145\1\157\1\155\1\171\1\72\1\uffff\1\172\2\uffff\1\172\2\uffff\1\172\1\164\1\uffff\1\145\1\uffff\1\150\1\156\1\145\1\172\1\147\2\164\1\145\2\uffff\1\172\1\156\2\uffff\1\172\2\156\1\145\1\72\4\uffff\1\160\1\uffff\1\172\1\162\1\164\2\172\1\uffff\1\145\1\151\1\167\1\172\1\uffff\1\72\2\uffff\1\164\1\172\1\156\1\uffff\1\157\1\162\1\uffff\2\172\2\uffff\1\72\1\143\1\145\2\uffff\1\172\1\uffff\1\164\1\160\1\151\4\uffff\1\137\1\145\1\uffff\1\72\1\165\1\144\1\137\1\156\1\uffff\1\154\3\172\1\141\3\uffff\1\164\1\151\1\157\1\156\1\172\1\uffff";
+    
+    /** The Constant DFA26_acceptS. */
     static final String DFA26_acceptS =
         "\6\uffff\1\6\1\uffff\1\11\11\uffff\1\26\1\27\1\uffff\1\32\1\33\1\34\12\uffff\1\134\1\uffff\1\166\3\uffff\1\u0081\1\u0082\1\u0083\1\u0088\1\u0089\1\u008a\2\uffff\1\u0094\2\uffff\1\u0099\1\u009a\1\uffff\1\u0094\1\2\1\uffff\1\133\1\173\1\174\16\uffff\1\6\3\uffff\1\11\33\uffff\1\165\1\25\1\26\1\27\7\uffff\1\32\1\33\1\34\20\uffff\1\131\1\172\1\127\1\132\1\175\1\134\1\164\1\176\1\166\1\171\1\u0084\1\uffff\1\177\1\u0097\1\u0098\1\u0080\1\u0081\1\u0082\1\u0083\1\u0088\1\u0089\1\u008a\1\u0092\1\u0095\1\uffff\1\u0096\1\u0099\1\uffff\1\130\1\126\4\uffff\1\u0085\2\uffff\1\15\7\uffff\1\136\1\5\67\uffff\1\115\11\uffff\1\137\1\uffff\1\167\1\u008b\1\u008c\1\u008d\1\u008e\1\u008f\1\u0090\14\uffff\1\44\3\uffff\1\64\1\uffff\1\122\1\170\1\uffff\1\u0087\1\u0091\6\uffff\1\121\20\uffff\1\20\4\uffff\1\u0086\5\uffff\1\163\1\117\3\uffff\1\31\14\uffff\1\63\13\uffff\1\114\6\uffff\1\147\1\123\1\146\4\uffff\1\7\1\uffff\1\42\1\uffff\1\14\12\uffff\1\17\6\uffff\1\u0093\1\154\1\100\1\142\6\uffff\1\24\1\uffff\1\52\2\uffff\1\54\4\uffff\1\60\1\uffff\1\143\1\102\13\uffff\1\10\1\3\1\uffff\1\66\3\uffff\1\155\1\101\11\uffff\1\161\1\76\1\uffff\1\144\1\120\1\uffff\1\21\3\uffff\1\103\3\uffff\1\51\1\111\6\uffff\1\23\1\50\1\40\6\uffff\1\156\1\61\13\uffff\1\4\1\uffff\1\116\1\55\1\160\1\125\1\13\1\30\1\104\1\12\1\uffff\1\152\1\75\3\uffff\1\77\1\47\6\uffff\1\22\1\uffff\1\65\1\124\1\uffff\1\62\1\72\2\uffff\1\57\1\uffff\1\140\10\uffff\1\150\1\56\2\uffff\1\151\1\46\5\uffff\1\135\1\45\1\141\1\41\1\uffff\1\36\5\uffff\1\112\4\uffff\1\105\1\uffff\1\35\1\37\3\uffff\1\145\2\uffff\1\113\2\uffff\1\74\1\110\3\uffff\1\70\1\16\1\uffff\1\53\3\uffff\1\157\1\71\1\73\1\162\2\uffff\1\43\5\uffff\1\153\5\uffff\1\107\1\1\1\67\5\uffff\1\106";
+    
+    /** The Constant DFA26_specialS. */
     static final String DFA26_specialS =
         "\1\0\60\uffff\1\1\1\2\u0225\uffff}>";
+    
+    /** The Constant DFA26_transitionS. */
     static final String[] DFA26_transitionS = {
             "\11\64\2\63\2\64\1\63\22\64\1\63\1\45\1\61\1\52\1\60\2\64\1\62\1\22\1\23\1\46\1\41\1\42\1\43\1\55\1\47\1\56\11\57\1\21\1\10\1\2\1\27\1\40\1\44\1\6\32\60\1\53\1\64\1\54\1\50\1\1\1\64\1\5\1\31\1\13\1\30\1\14\1\35\1\11\1\34\1\4\2\60\1\12\1\3\1\7\1\37\1\33\1\36\1\16\1\24\1\15\1\32\1\17\1\20\3\60\1\25\1\64\1\26\62\64\1\51\uff4f\64",
             "\1\65",
@@ -5911,12 +7035,25 @@ public class InternalGamlLexer extends Lexer {
             ""
     };
 
+    /** The Constant DFA26_eot. */
     static final short[] DFA26_eot = DFA.unpackEncodedString(DFA26_eotS);
+    
+    /** The Constant DFA26_eof. */
     static final short[] DFA26_eof = DFA.unpackEncodedString(DFA26_eofS);
+    
+    /** The Constant DFA26_min. */
     static final char[] DFA26_min = DFA.unpackEncodedStringToUnsignedChars(DFA26_minS);
+    
+    /** The Constant DFA26_max. */
     static final char[] DFA26_max = DFA.unpackEncodedStringToUnsignedChars(DFA26_maxS);
+    
+    /** The Constant DFA26_accept. */
     static final short[] DFA26_accept = DFA.unpackEncodedString(DFA26_acceptS);
+    
+    /** The Constant DFA26_special. */
     static final short[] DFA26_special = DFA.unpackEncodedString(DFA26_specialS);
+    
+    /** The Constant DFA26_transition. */
     static final short[][] DFA26_transition;
 
     static {
@@ -5927,8 +7064,16 @@ public class InternalGamlLexer extends Lexer {
         }
     }
 
+    /**
+     * The Class DFA26.
+     */
     class DFA26 extends DFA {
 
+        /**
+         * Instantiates a new dfa26.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA26(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 26;

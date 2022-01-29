@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ModelLibraryTester.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.batch;
 
 import java.io.IOException;
@@ -29,13 +39,23 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestState;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ModelLibraryTester.
+ */
 public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
+	/** The instance. */
 	private static ModelLibraryTester instance;
 
+	/** The original. */
 	PrintStream original;
+	
+	/** The null stream. */
 	PrintStream nullStream;
 
+	/**
+	 * Instantiates a new model library tester.
+	 */
 	private ModelLibraryTester() {
 		DEBUG.ON();
 	}
@@ -80,6 +100,14 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		return code[0];
 	}
 
+	/**
+	 * Test.
+	 *
+	 * @param builder the builder
+	 * @param count the count
+	 * @param code the code
+	 * @param p the p
+	 */
 	public void test(final GamlModelBuilder builder, final int[] count, final int[] code, final URL p) {
 		// DEBUG.OUT(p);
 		final List<GamlCompilationError> errors = new ArrayList<>();
@@ -116,6 +144,11 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	}
 
+	/**
+	 * Gets the single instance of ModelLibraryTester.
+	 *
+	 * @return single instance of ModelLibraryTester
+	 */
 	public static ModelLibraryTester getInstance() {
 		if (instance == null) { instance = new ModelLibraryTester(); }
 		return instance;

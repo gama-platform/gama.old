@@ -1,16 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * MoleExperiment.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MoleExperiment.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.openmole;
 
 
@@ -22,7 +19,16 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
 
+/**
+ * The Class MoleExperiment.
+ */
 public class MoleExperiment extends Experiment implements IMoleExperiment {
+	
+	/**
+	 * Instantiates a new mole experiment.
+	 *
+	 * @param mdl the mdl
+	 */
 	MoleExperiment(final IModel mdl) {
 		super(mdl);
 	}
@@ -32,6 +38,11 @@ public class MoleExperiment extends Experiment implements IMoleExperiment {
 		while(finalStep<this.step());
 	}
 
+	/**
+	 * Play.
+	 *
+	 * @param finalCondition the final condition
+	 */
 	public void play(String finalCondition) {
 		play(finalCondition,-1);
 	}

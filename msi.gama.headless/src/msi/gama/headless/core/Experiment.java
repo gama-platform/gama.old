@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * Experiment.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MoleExperiment.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.core;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -25,18 +23,38 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class Experiment.
+ */
 public class Experiment implements IExperiment {
 
+	/** The Constant DEFAULT_SEED_VALUE. */
 	public static final double DEFAULT_SEED_VALUE = 0;
 
+	/** The current experiment. */
 	protected IExperimentPlan currentExperiment;
+	
+	/** The current simulation. */
 	protected SimulationAgent currentSimulation;
+	
+	/** The params. */
 	protected ParametersSet params;
+	
+	/** The model. */
 	protected IModel model;
+	
+	/** The experiment name. */
 	protected String experimentName;
+	
+	/** The seed. */
 	protected double seed;
+	
+	/** The current step. */
 	protected long currentStep;
 
+	/**
+	 * Instantiates a new experiment.
+	 */
 	protected Experiment() {
 		super();
 		currentExperiment = null;
@@ -46,6 +64,11 @@ public class Experiment implements IExperiment {
 		seed = DEFAULT_SEED_VALUE;
 	}
 
+	/**
+	 * Instantiates a new experiment.
+	 *
+	 * @param mdl the mdl
+	 */
 	public Experiment(final IModel mdl) {
 		this();
 		this.model = mdl;
@@ -56,6 +79,11 @@ public class Experiment implements IExperiment {
 		return currentSimulation;
 	}
 
+	/**
+	 * Gets the scope.
+	 *
+	 * @return the scope
+	 */
 	protected IScope getScope() {
 		return this.currentExperiment.getCurrentSimulation().getScope();
 	}
@@ -72,6 +100,11 @@ public class Experiment implements IExperiment {
 		this.loadCurrentExperiment(expName);
 	}
 
+	/**
+	 * Load current experiment.
+	 *
+	 * @param expName the exp name
+	 */
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;

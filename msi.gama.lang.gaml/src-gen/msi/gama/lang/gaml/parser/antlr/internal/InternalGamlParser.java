@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * InternalGamlParser.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.parser.antlr.internal;
 
 import org.eclipse.xtext.*;
@@ -19,174 +29,502 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+
+/**
+ * The Class InternalGamlParser.
+ */
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalAntlrParser {
+    
+    /** The Constant tokenNames. */
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'__synthetic__'", "'<-'", "'model'", "'import'", "'as'", "'@'", "'name:'", "'model:'", "';'", "'global'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'try'", "'catch'", "'return'", "'value:'", "'when'", "':'", "'('", "')'", "'action'", "'set'", "'{'", "'}'", "'='", "'equation:'", "'display'", "'equation'", "'solve'", "'species'", "'grid'", "'experiment'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'inspect'", "'browse'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'parameter'", "'status'", "'highlight'", "'focus_on'", "'layout'", "'light'", "'camera'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'overlay'", "'datalist'", "'mesh'", "'do'", "'invoke'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'aspect'", "'<<'", "'>'", "'<<+'", "'>-'", "'+<-'", "'<+'", "','", "'returns:'", "'as:'", "'of:'", "'parent:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'layout:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'parameter:'", "'aspect:'", "'light:'", "'on_change:'", "'var:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00B0'", "'#'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
     };
+    
+    /** The Constant T__144. */
     public static final int T__144=144;
+    
+    /** The Constant T__143. */
     public static final int T__143=143;
+    
+    /** The Constant T__146. */
     public static final int T__146=146;
+    
+    /** The Constant T__50. */
     public static final int T__50=50;
+    
+    /** The Constant T__145. */
     public static final int T__145=145;
+    
+    /** The Constant T__140. */
     public static final int T__140=140;
+    
+    /** The Constant T__142. */
     public static final int T__142=142;
+    
+    /** The Constant T__141. */
     public static final int T__141=141;
+    
+    /** The Constant T__59. */
     public static final int T__59=59;
+    
+    /** The Constant T__55. */
     public static final int T__55=55;
+    
+    /** The Constant T__56. */
     public static final int T__56=56;
+    
+    /** The Constant T__57. */
     public static final int T__57=57;
+    
+    /** The Constant T__58. */
     public static final int T__58=58;
+    
+    /** The Constant T__51. */
     public static final int T__51=51;
+    
+    /** The Constant T__137. */
     public static final int T__137=137;
+    
+    /** The Constant T__52. */
     public static final int T__52=52;
+    
+    /** The Constant T__136. */
     public static final int T__136=136;
+    
+    /** The Constant T__53. */
     public static final int T__53=53;
+    
+    /** The Constant T__139. */
     public static final int T__139=139;
+    
+    /** The Constant T__54. */
     public static final int T__54=54;
+    
+    /** The Constant T__138. */
     public static final int T__138=138;
+    
+    /** The Constant T__133. */
     public static final int T__133=133;
+    
+    /** The Constant T__132. */
     public static final int T__132=132;
+    
+    /** The Constant T__60. */
     public static final int T__60=60;
+    
+    /** The Constant T__135. */
     public static final int T__135=135;
+    
+    /** The Constant T__61. */
     public static final int T__61=61;
+    
+    /** The Constant T__134. */
     public static final int T__134=134;
+    
+    /** The Constant RULE_ID. */
     public static final int RULE_ID=4;
+    
+    /** The Constant T__131. */
     public static final int T__131=131;
+    
+    /** The Constant T__130. */
     public static final int T__130=130;
+    
+    /** The Constant T__66. */
     public static final int T__66=66;
+    
+    /** The Constant RULE_ML_COMMENT. */
     public static final int RULE_ML_COMMENT=10;
+    
+    /** The Constant T__67. */
     public static final int T__67=67;
+    
+    /** The Constant T__129. */
     public static final int T__129=129;
+    
+    /** The Constant T__68. */
     public static final int T__68=68;
+    
+    /** The Constant T__69. */
     public static final int T__69=69;
+    
+    /** The Constant T__62. */
     public static final int T__62=62;
+    
+    /** The Constant T__126. */
     public static final int T__126=126;
+    
+    /** The Constant T__63. */
     public static final int T__63=63;
+    
+    /** The Constant T__125. */
     public static final int T__125=125;
+    
+    /** The Constant T__64. */
     public static final int T__64=64;
+    
+    /** The Constant T__128. */
     public static final int T__128=128;
+    
+    /** The Constant T__65. */
     public static final int T__65=65;
+    
+    /** The Constant T__127. */
     public static final int T__127=127;
+    
+    /** The Constant T__37. */
     public static final int T__37=37;
+    
+    /** The Constant T__38. */
     public static final int T__38=38;
+    
+    /** The Constant T__39. */
     public static final int T__39=39;
+    
+    /** The Constant T__33. */
     public static final int T__33=33;
+    
+    /** The Constant T__34. */
     public static final int T__34=34;
+    
+    /** The Constant T__35. */
     public static final int T__35=35;
+    
+    /** The Constant T__36. */
     public static final int T__36=36;
+    
+    /** The Constant T__30. */
     public static final int T__30=30;
+    
+    /** The Constant T__31. */
     public static final int T__31=31;
+    
+    /** The Constant T__32. */
     public static final int T__32=32;
+    
+    /** The Constant T__155. */
     public static final int T__155=155;
+    
+    /** The Constant RULE_KEYWORD. */
     public static final int RULE_KEYWORD=9;
+    
+    /** The Constant T__154. */
     public static final int T__154=154;
+    
+    /** The Constant T__157. */
     public static final int T__157=157;
+    
+    /** The Constant T__156. */
     public static final int T__156=156;
+    
+    /** The Constant T__151. */
     public static final int T__151=151;
+    
+    /** The Constant T__150. */
     public static final int T__150=150;
+    
+    /** The Constant T__153. */
     public static final int T__153=153;
+    
+    /** The Constant T__152. */
     public static final int T__152=152;
+    
+    /** The Constant T__48. */
     public static final int T__48=48;
+    
+    /** The Constant T__49. */
     public static final int T__49=49;
+    
+    /** The Constant T__44. */
     public static final int T__44=44;
+    
+    /** The Constant T__45. */
     public static final int T__45=45;
+    
+    /** The Constant T__46. */
     public static final int T__46=46;
+    
+    /** The Constant T__47. */
     public static final int T__47=47;
+    
+    /** The Constant T__40. */
     public static final int T__40=40;
+    
+    /** The Constant T__148. */
     public static final int T__148=148;
+    
+    /** The Constant T__41. */
     public static final int T__41=41;
+    
+    /** The Constant T__147. */
     public static final int T__147=147;
+    
+    /** The Constant T__42. */
     public static final int T__42=42;
+    
+    /** The Constant T__43. */
     public static final int T__43=43;
+    
+    /** The Constant T__149. */
     public static final int T__149=149;
+    
+    /** The Constant T__91. */
     public static final int T__91=91;
+    
+    /** The Constant T__100. */
     public static final int T__100=100;
+    
+    /** The Constant T__92. */
     public static final int T__92=92;
+    
+    /** The Constant T__93. */
     public static final int T__93=93;
+    
+    /** The Constant T__102. */
     public static final int T__102=102;
+    
+    /** The Constant T__94. */
     public static final int T__94=94;
+    
+    /** The Constant T__101. */
     public static final int T__101=101;
+    
+    /** The Constant T__90. */
     public static final int T__90=90;
+    
+    /** The Constant RULE_BOOLEAN. */
     public static final int RULE_BOOLEAN=8;
+    
+    /** The Constant T__19. */
     public static final int T__19=19;
+    
+    /** The Constant T__15. */
     public static final int T__15=15;
+    
+    /** The Constant T__16. */
     public static final int T__16=16;
+    
+    /** The Constant T__17. */
     public static final int T__17=17;
+    
+    /** The Constant T__18. */
     public static final int T__18=18;
+    
+    /** The Constant T__99. */
     public static final int T__99=99;
+    
+    /** The Constant T__14. */
     public static final int T__14=14;
+    
+    /** The Constant T__95. */
     public static final int T__95=95;
+    
+    /** The Constant T__96. */
     public static final int T__96=96;
+    
+    /** The Constant T__97. */
     public static final int T__97=97;
+    
+    /** The Constant T__98. */
     public static final int T__98=98;
+    
+    /** The Constant T__26. */
     public static final int T__26=26;
+    
+    /** The Constant T__27. */
     public static final int T__27=27;
+    
+    /** The Constant T__28. */
     public static final int T__28=28;
+    
+    /** The Constant T__29. */
     public static final int T__29=29;
+    
+    /** The Constant T__22. */
     public static final int T__22=22;
+    
+    /** The Constant T__23. */
     public static final int T__23=23;
+    
+    /** The Constant T__24. */
     public static final int T__24=24;
+    
+    /** The Constant T__25. */
     public static final int T__25=25;
+    
+    /** The Constant T__20. */
     public static final int T__20=20;
+    
+    /** The Constant T__21. */
     public static final int T__21=21;
+    
+    /** The Constant T__122. */
     public static final int T__122=122;
+    
+    /** The Constant T__70. */
     public static final int T__70=70;
+    
+    /** The Constant T__121. */
     public static final int T__121=121;
+    
+    /** The Constant T__71. */
     public static final int T__71=71;
+    
+    /** The Constant T__124. */
     public static final int T__124=124;
+    
+    /** The Constant T__72. */
     public static final int T__72=72;
+    
+    /** The Constant T__123. */
     public static final int T__123=123;
+    
+    /** The Constant T__120. */
     public static final int T__120=120;
+    
+    /** The Constant RULE_STRING. */
     public static final int RULE_STRING=5;
+    
+    /** The Constant RULE_SL_COMMENT. */
     public static final int RULE_SL_COMMENT=11;
+    
+    /** The Constant RULE_DOUBLE. */
     public static final int RULE_DOUBLE=7;
+    
+    /** The Constant T__77. */
     public static final int T__77=77;
+    
+    /** The Constant T__119. */
     public static final int T__119=119;
+    
+    /** The Constant T__78. */
     public static final int T__78=78;
+    
+    /** The Constant T__118. */
     public static final int T__118=118;
+    
+    /** The Constant T__79. */
     public static final int T__79=79;
+    
+    /** The Constant T__73. */
     public static final int T__73=73;
+    
+    /** The Constant T__115. */
     public static final int T__115=115;
+    
+    /** The Constant EOF. */
     public static final int EOF=-1;
+    
+    /** The Constant T__74. */
     public static final int T__74=74;
+    
+    /** The Constant T__114. */
     public static final int T__114=114;
+    
+    /** The Constant T__75. */
     public static final int T__75=75;
+    
+    /** The Constant T__117. */
     public static final int T__117=117;
+    
+    /** The Constant T__76. */
     public static final int T__76=76;
+    
+    /** The Constant T__116. */
     public static final int T__116=116;
+    
+    /** The Constant T__80. */
     public static final int T__80=80;
+    
+    /** The Constant T__111. */
     public static final int T__111=111;
+    
+    /** The Constant T__81. */
     public static final int T__81=81;
+    
+    /** The Constant T__110. */
     public static final int T__110=110;
+    
+    /** The Constant T__82. */
     public static final int T__82=82;
+    
+    /** The Constant T__113. */
     public static final int T__113=113;
+    
+    /** The Constant T__83. */
     public static final int T__83=83;
+    
+    /** The Constant T__112. */
     public static final int T__112=112;
+    
+    /** The Constant RULE_WS. */
     public static final int RULE_WS=12;
+    
+    /** The Constant RULE_ANY_OTHER. */
     public static final int RULE_ANY_OTHER=13;
+    
+    /** The Constant T__88. */
     public static final int T__88=88;
+    
+    /** The Constant T__108. */
     public static final int T__108=108;
+    
+    /** The Constant T__89. */
     public static final int T__89=89;
+    
+    /** The Constant T__107. */
     public static final int T__107=107;
+    
+    /** The Constant T__109. */
     public static final int T__109=109;
+    
+    /** The Constant T__84. */
     public static final int T__84=84;
+    
+    /** The Constant T__104. */
     public static final int T__104=104;
+    
+    /** The Constant T__85. */
     public static final int T__85=85;
+    
+    /** The Constant T__103. */
     public static final int T__103=103;
+    
+    /** The Constant RULE_INTEGER. */
     public static final int RULE_INTEGER=6;
+    
+    /** The Constant T__86. */
     public static final int T__86=86;
+    
+    /** The Constant T__106. */
     public static final int T__106=106;
+    
+    /** The Constant T__87. */
     public static final int T__87=87;
+    
+    /** The Constant T__105. */
     public static final int T__105=105;
 
     // delegates
     // delegators
 
 
-        public InternalGamlParser(TokenStream input) {
+        /**
+     * Instantiates a new internal gaml parser.
+     *
+     * @param input the input
+     */
+    public InternalGamlParser(TokenStream input) {
             this(input, new RecognizerSharedState());
         }
+        
+        /**
+         * Instantiates a new internal gaml parser.
+         *
+         * @param input the input
+         * @param state the state
+         */
         public InternalGamlParser(TokenStream input, RecognizerSharedState state) {
             super(input, state);
              
@@ -198,8 +536,15 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
 
-     	private GamlGrammarAccess grammarAccess;
+     	/** The grammar access. */
+	     private GamlGrammarAccess grammarAccess;
 
+        /**
+         * Instantiates a new internal gaml parser.
+         *
+         * @param input the input
+         * @param grammarAccess the grammar access
+         */
         public InternalGamlParser(TokenStream input, GamlGrammarAccess grammarAccess) {
             this(input);
             this.grammarAccess = grammarAccess;
@@ -220,6 +565,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEntry"
+    /**
+     * Entry rule entry.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:64:1: entryRuleEntry returns [EObject current=null] : iv_ruleEntry= ruleEntry EOF ;
     public final EObject entryRuleEntry() throws RecognitionException {
         EObject current = null;
@@ -260,6 +611,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEntry"
+    /**
+     * Rule entry.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:71:1: ruleEntry returns [EObject current=null] : ( ( ( '@' | 'model' )=>this_Model_0= ruleModel ) | this_StringEvaluator_1= ruleStringEvaluator | this_StandaloneBlock_2= ruleStandaloneBlock | this_ExperimentFileStructure_3= ruleExperimentFileStructure ) ;
     public final EObject ruleEntry() throws RecognitionException {
         EObject current = null;
@@ -426,6 +783,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStandaloneBlock"
+    /**
+     * Entry rule standalone block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:121:1: entryRuleStandaloneBlock returns [EObject current=null] : iv_ruleStandaloneBlock= ruleStandaloneBlock EOF ;
     public final EObject entryRuleStandaloneBlock() throws RecognitionException {
         EObject current = null;
@@ -466,6 +829,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStandaloneBlock"
+    /**
+     * Rule standalone block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:128:1: ruleStandaloneBlock returns [EObject current=null] : (otherlv_0= '__synthetic__' ( (lv_block_1_0= ruleBlock ) ) ) ;
     public final EObject ruleStandaloneBlock() throws RecognitionException {
         EObject current = null;
@@ -550,6 +919,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStringEvaluator"
+    /**
+     * Entry rule string evaluator.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:163:1: entryRuleStringEvaluator returns [EObject current=null] : iv_ruleStringEvaluator= ruleStringEvaluator EOF ;
     public final EObject entryRuleStringEvaluator() throws RecognitionException {
         EObject current = null;
@@ -590,6 +965,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStringEvaluator"
+    /**
+     * Rule string evaluator.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:170:1: ruleStringEvaluator returns [EObject current=null] : ( ( (lv_toto_0_0= RULE_ID ) ) otherlv_1= '<-' ( (lv_expr_2_0= ruleExpression ) ) ) ;
     public final EObject ruleStringEvaluator() throws RecognitionException {
         EObject current = null;
@@ -705,6 +1086,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleModel"
+    /**
+     * Entry rule model.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:223:1: entryRuleModel returns [EObject current=null] : iv_ruleModel= ruleModel EOF ;
     public final EObject entryRuleModel() throws RecognitionException {
         EObject current = null;
@@ -745,6 +1132,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleModel"
+    /**
+     * Rule model.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:230:1: ruleModel returns [EObject current=null] : ( ( (lv_pragmas_0_0= rulePragma ) )* otherlv_1= 'model' ( (lv_name_2_0= RULE_ID ) ) ( (lv_imports_3_0= ruleImport ) )* ( (lv_block_4_0= ruleModelBlock ) ) ) ;
     public final EObject ruleModel() throws RecognitionException {
         EObject current = null;
@@ -970,6 +1363,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleModelBlock"
+    /**
+     * Entry rule model block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:321:1: entryRuleModelBlock returns [EObject current=null] : iv_ruleModelBlock= ruleModelBlock EOF ;
     public final EObject entryRuleModelBlock() throws RecognitionException {
         EObject current = null;
@@ -1010,6 +1409,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleModelBlock"
+    /**
+     * Rule model block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:328:1: ruleModelBlock returns [EObject current=null] : ( () ( (lv_statements_1_0= ruleS_Section ) )* ) ;
     public final EObject ruleModelBlock() throws RecognitionException {
         EObject current = null;
@@ -1118,6 +1523,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleImport"
+    /**
+     * Entry rule import.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:366:1: entryRuleImport returns [EObject current=null] : iv_ruleImport= ruleImport EOF ;
     public final EObject entryRuleImport() throws RecognitionException {
         EObject current = null;
@@ -1158,6 +1569,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleImport"
+    /**
+     * Rule import.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:373:1: ruleImport returns [EObject current=null] : (otherlv_0= 'import' ( (lv_importURI_1_0= RULE_STRING ) ) (otherlv_2= 'as' ( (lv_name_3_0= ruleValid_ID ) ) )? ) ;
     public final EObject ruleImport() throws RecognitionException {
         EObject current = null;
@@ -1297,6 +1714,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePragma"
+    /**
+     * Entry rule pragma.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:432:1: entryRulePragma returns [EObject current=null] : iv_rulePragma= rulePragma EOF ;
     public final EObject entryRulePragma() throws RecognitionException {
         EObject current = null;
@@ -1337,6 +1760,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePragma"
+    /**
+     * Rule pragma.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:439:1: rulePragma returns [EObject current=null] : (otherlv_0= '@' ( (lv_name_1_0= RULE_ID ) ) ) ;
     public final EObject rulePragma() throws RecognitionException {
         EObject current = null;
@@ -1415,6 +1844,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExperimentFileStructure"
+    /**
+     * Entry rule experiment file structure.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:473:1: entryRuleExperimentFileStructure returns [EObject current=null] : iv_ruleExperimentFileStructure= ruleExperimentFileStructure EOF ;
     public final EObject entryRuleExperimentFileStructure() throws RecognitionException {
         EObject current = null;
@@ -1455,6 +1890,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExperimentFileStructure"
+    /**
+     * Rule experiment file structure.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:480:1: ruleExperimentFileStructure returns [EObject current=null] : ( (lv_exp_0_0= ruleHeadlessExperiment ) ) ;
     public final EObject ruleExperimentFileStructure() throws RecognitionException {
         EObject current = null;
@@ -1526,6 +1967,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleHeadlessExperiment"
+    /**
+     * Entry rule headless experiment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:509:1: entryRuleHeadlessExperiment returns [EObject current=null] : iv_ruleHeadlessExperiment= ruleHeadlessExperiment EOF ;
     public final EObject entryRuleHeadlessExperiment() throws RecognitionException {
         EObject current = null;
@@ -1566,6 +2013,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleHeadlessExperiment"
+    /**
+     * Rule headless experiment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:516:1: ruleHeadlessExperiment returns [EObject current=null] : ( ( (lv_key_0_0= rule_ExperimentKey ) ) ( (lv_firstFacet_1_0= 'name:' ) )? ( ( (lv_name_2_1= ruleValid_ID | lv_name_2_2= RULE_STRING ) ) ) (otherlv_3= 'model:' ( (lv_importURI_4_0= RULE_STRING ) ) )? ( (lv_facets_5_0= ruleFacet ) )* ( ( (lv_block_6_0= ruleBlock ) ) | otherlv_7= ';' ) ) ;
     public final EObject ruleHeadlessExperiment() throws RecognitionException {
         EObject current = null;
@@ -1957,6 +2410,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Section"
+    /**
+     * Entry rule S section.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:666:1: entryRuleS_Section returns [EObject current=null] : iv_ruleS_Section= ruleS_Section EOF ;
     public final EObject entryRuleS_Section() throws RecognitionException {
         EObject current = null;
@@ -1997,6 +2456,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Section"
+    /**
+     * Rule S section.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:673:1: ruleS_Section returns [EObject current=null] : (this_S_Global_0= ruleS_Global | this_S_Species_1= ruleS_Species | this_S_Experiment_2= ruleS_Experiment ) ;
     public final EObject ruleS_Section() throws RecognitionException {
         EObject current = null;
@@ -2134,6 +2599,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Global"
+    /**
+     * Entry rule S global.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:711:1: entryRuleS_Global returns [EObject current=null] : iv_ruleS_Global= ruleS_Global EOF ;
     public final EObject entryRuleS_Global() throws RecognitionException {
         EObject current = null;
@@ -2174,6 +2645,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Global"
+    /**
+     * Rule S global.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:718:1: ruleS_Global returns [EObject current=null] : ( ( (lv_key_0_0= 'global' ) ) ( (lv_facets_1_0= ruleFacet ) )* ( ( (lv_block_2_0= ruleBlock ) ) | otherlv_3= ';' ) ) ;
     public final EObject ruleS_Global() throws RecognitionException {
         EObject current = null;
@@ -2373,6 +2850,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Species"
+    /**
+     * Entry rule S species.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:789:1: entryRuleS_Species returns [EObject current=null] : iv_ruleS_Species= ruleS_Species EOF ;
     public final EObject entryRuleS_Species() throws RecognitionException {
         EObject current = null;
@@ -2413,6 +2896,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Species"
+    /**
+     * Rule S species.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:796:1: ruleS_Species returns [EObject current=null] : ( ( (lv_key_0_0= rule_SpeciesKey ) ) ( (lv_firstFacet_1_0= 'name:' ) )? ( (lv_name_2_0= RULE_ID ) ) ( (lv_facets_3_0= ruleFacet ) )* ( ( (lv_block_4_0= ruleBlock ) ) | otherlv_5= ';' ) ) ;
     public final EObject ruleS_Species() throws RecognitionException {
         EObject current = null;
@@ -2691,6 +3180,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Experiment"
+    /**
+     * Entry rule S experiment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:904:1: entryRuleS_Experiment returns [EObject current=null] : iv_ruleS_Experiment= ruleS_Experiment EOF ;
     public final EObject entryRuleS_Experiment() throws RecognitionException {
         EObject current = null;
@@ -2731,6 +3226,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Experiment"
+    /**
+     * Rule S experiment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:911:1: ruleS_Experiment returns [EObject current=null] : ( ( (lv_key_0_0= rule_ExperimentKey ) ) ( (lv_firstFacet_1_0= 'name:' ) )? ( ( (lv_name_2_1= ruleValid_ID | lv_name_2_2= RULE_STRING ) ) ) ( (lv_facets_3_0= ruleFacet ) )* ( ( (lv_block_4_0= ruleBlock ) ) | otherlv_5= ';' ) ) ;
     public final EObject ruleS_Experiment() throws RecognitionException {
         EObject current = null;
@@ -3067,6 +3568,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStatement"
+    /**
+     * Entry rule statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1037:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
     public final EObject entryRuleStatement() throws RecognitionException {
         EObject current = null;
@@ -3107,6 +3614,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStatement"
+    /**
+     * Rule statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1044:1: ruleStatement returns [EObject current=null] : ( ( ( ( ruleS_Declaration )=>this_S_Declaration_0= ruleS_Declaration ) | ( ( ( ruleS_Assignment )=>this_S_Assignment_1= ruleS_Assignment ) | this_S_1Expr_Facets_BlockOrEnd_2= ruleS_1Expr_Facets_BlockOrEnd | this_S_Other_3= ruleS_Other | this_S_Do_4= ruleS_Do | this_S_Return_5= ruleS_Return | this_S_Solve_6= ruleS_Solve | this_S_If_7= ruleS_If | this_S_Try_8= ruleS_Try | this_S_Equations_9= ruleS_Equations ) ) | this_S_Display_10= ruleS_Display ) ;
     public final EObject ruleStatement() throws RecognitionException {
         EObject current = null;
@@ -3464,6 +3977,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_1Expr_Facets_BlockOrEnd"
+    /**
+     * Entry rule S 1 expr facets block or end.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1164:1: entryRuleS_1Expr_Facets_BlockOrEnd returns [EObject current=null] : iv_ruleS_1Expr_Facets_BlockOrEnd= ruleS_1Expr_Facets_BlockOrEnd EOF ;
     public final EObject entryRuleS_1Expr_Facets_BlockOrEnd() throws RecognitionException {
         EObject current = null;
@@ -3504,6 +4023,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_1Expr_Facets_BlockOrEnd"
+    /**
+     * Rule S 1 expr facets block or end.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1171:1: ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null] : ( ( (lv_key_0_0= rule_1Expr_Facets_BlockOrEnd_Key ) ) ( (lv_firstFacet_1_0= ruleFirstFacetKey ) )? ( (lv_expr_2_0= ruleExpression ) ) ( (lv_facets_3_0= ruleFacet ) )* ( ( (lv_block_4_0= ruleBlock ) ) | otherlv_5= ';' ) ) ;
     public final EObject ruleS_1Expr_Facets_BlockOrEnd() throws RecognitionException {
         EObject current = null;
@@ -3794,6 +4319,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Do"
+    /**
+     * Entry rule S do.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1285:1: entryRuleS_Do returns [EObject current=null] : iv_ruleS_Do= ruleS_Do EOF ;
     public final EObject entryRuleS_Do() throws RecognitionException {
         EObject current = null;
@@ -3834,6 +4365,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Do"
+    /**
+     * Rule S do.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1292:1: ruleS_Do returns [EObject current=null] : ( ( (lv_key_0_0= rule_DoKey ) ) ( (lv_firstFacet_1_0= 'action:' ) )? ( (lv_expr_2_0= ruleAbstractRef ) ) ( (lv_facets_3_0= ruleFacet ) )* ( ( (lv_block_4_0= ruleBlock ) ) | otherlv_5= ';' ) ) ;
     public final EObject ruleS_Do() throws RecognitionException {
         EObject current = null;
@@ -4118,6 +4655,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Loop"
+    /**
+     * Entry rule S loop.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1401:1: entryRuleS_Loop returns [EObject current=null] : iv_ruleS_Loop= ruleS_Loop EOF ;
     public final EObject entryRuleS_Loop() throws RecognitionException {
         EObject current = null;
@@ -4158,6 +4701,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Loop"
+    /**
+     * Rule S loop.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1408:1: ruleS_Loop returns [EObject current=null] : ( ( (lv_key_0_0= 'loop' ) ) ( (lv_name_1_0= RULE_ID ) )? ( (lv_facets_2_0= ruleFacet ) )* ( (lv_block_3_0= ruleBlock ) ) ) ;
     public final EObject ruleS_Loop() throws RecognitionException {
         EObject current = null;
@@ -4363,6 +4912,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_If"
+    /**
+     * Entry rule S if.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1490:1: entryRuleS_If returns [EObject current=null] : iv_ruleS_If= ruleS_If EOF ;
     public final EObject entryRuleS_If() throws RecognitionException {
         EObject current = null;
@@ -4403,6 +4958,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_If"
+    /**
+     * Rule S if.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1497:1: ruleS_If returns [EObject current=null] : ( ( (lv_key_0_0= 'if' ) ) ( (lv_firstFacet_1_0= 'condition:' ) )? ( (lv_expr_2_0= ruleExpression ) ) ( (lv_block_3_0= ruleBlock ) ) ( ( ( 'else' )=>otherlv_4= 'else' ) ( ( (lv_else_5_1= ruleS_If | lv_else_5_2= ruleBlock ) ) ) )? ) ;
     public final EObject ruleS_If() throws RecognitionException {
         EObject current = null;
@@ -4707,6 +5268,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Try"
+    /**
+     * Entry rule S try.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1621:1: entryRuleS_Try returns [EObject current=null] : iv_ruleS_Try= ruleS_Try EOF ;
     public final EObject entryRuleS_Try() throws RecognitionException {
         EObject current = null;
@@ -4747,6 +5314,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Try"
+    /**
+     * Rule S try.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1628:1: ruleS_Try returns [EObject current=null] : ( ( (lv_key_0_0= 'try' ) ) ( (lv_block_1_0= ruleBlock ) ) ( ( ( 'catch' )=>otherlv_2= 'catch' ) ( (lv_catch_3_0= ruleBlock ) ) )? ) ;
     public final EObject ruleS_Try() throws RecognitionException {
         EObject current = null;
@@ -4918,6 +5491,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Other"
+    /**
+     * Entry rule S other.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1701:1: entryRuleS_Other returns [EObject current=null] : iv_ruleS_Other= ruleS_Other EOF ;
     public final EObject entryRuleS_Other() throws RecognitionException {
         EObject current = null;
@@ -4958,6 +5537,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Other"
+    /**
+     * Rule S other.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1708:1: ruleS_Other returns [EObject current=null] : ( ( (lv_key_0_0= RULE_ID ) ) ( (lv_facets_1_0= ruleFacet ) )* ( ( (lv_block_2_0= ruleBlock ) ) | otherlv_3= ';' ) ) ;
     public final EObject ruleS_Other() throws RecognitionException {
         EObject current = null;
@@ -5161,6 +5746,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Return"
+    /**
+     * Entry rule S return.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1783:1: entryRuleS_Return returns [EObject current=null] : iv_ruleS_Return= ruleS_Return EOF ;
     public final EObject entryRuleS_Return() throws RecognitionException {
         EObject current = null;
@@ -5201,6 +5792,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Return"
+    /**
+     * Rule S return.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1790:1: ruleS_Return returns [EObject current=null] : ( ( (lv_key_0_0= 'return' ) ) ( (lv_firstFacet_1_0= 'value:' ) )? ( (lv_expr_2_0= ruleExpression ) )? otherlv_3= ';' ) ;
     public final EObject ruleS_Return() throws RecognitionException {
         EObject current = null;
@@ -5365,6 +5962,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Declaration"
+    /**
+     * Entry rule S declaration.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1853:1: entryRuleS_Declaration returns [EObject current=null] : iv_ruleS_Declaration= ruleS_Declaration EOF ;
     public final EObject entryRuleS_Declaration() throws RecognitionException {
         EObject current = null;
@@ -5405,6 +6008,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Declaration"
+    /**
+     * Rule S declaration.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1860:1: ruleS_Declaration returns [EObject current=null] : ( ( ( 'species' | RULE_ID )=>this_S_Definition_0= ruleS_Definition ) | this_S_Species_1= ruleS_Species | this_S_Reflex_2= ruleS_Reflex | this_S_Action_3= ruleS_Action | this_S_Var_4= ruleS_Var | this_S_Loop_5= ruleS_Loop ) ;
     public final EObject ruleS_Declaration() throws RecognitionException {
         EObject current = null;
@@ -5639,6 +6248,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Reflex"
+    /**
+     * Entry rule S reflex.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1928:1: entryRuleS_Reflex returns [EObject current=null] : iv_ruleS_Reflex= ruleS_Reflex EOF ;
     public final EObject entryRuleS_Reflex() throws RecognitionException {
         EObject current = null;
@@ -5679,6 +6294,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Reflex"
+    /**
+     * Rule S reflex.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:1935:1: ruleS_Reflex returns [EObject current=null] : ( ( (lv_key_0_0= rule_ReflexKey ) ) ( ( (lv_firstFacet_1_0= 'name:' ) )? ( (lv_name_2_0= ruleValid_ID ) ) )? (otherlv_3= 'when' otherlv_4= ':' ( (lv_expr_5_0= ruleExpression ) ) )? ( (lv_block_6_0= ruleBlock ) ) ) ;
     public final EObject ruleS_Reflex() throws RecognitionException {
         EObject current = null;
@@ -5953,6 +6574,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Definition"
+    /**
+     * Entry rule S definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2049:1: entryRuleS_Definition returns [EObject current=null] : iv_ruleS_Definition= ruleS_Definition EOF ;
     public final EObject entryRuleS_Definition() throws RecognitionException {
         EObject current = null;
@@ -5993,6 +6620,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Definition"
+    /**
+     * Rule S definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2056:1: ruleS_Definition returns [EObject current=null] : ( ( (lv_tkey_0_0= ruleTypeRef ) ) ( (lv_firstFacet_1_0= 'name:' ) )? ( ( (lv_name_2_1= ruleValid_ID | lv_name_2_2= RULE_STRING ) ) ) (otherlv_3= '(' ( (lv_args_4_0= ruleActionArguments ) ) otherlv_5= ')' )? ( (lv_facets_6_0= ruleFacet ) )* ( ( (lv_block_7_0= ruleBlock ) ) | otherlv_8= ';' ) ) ;
     public final EObject ruleS_Definition() throws RecognitionException {
         EObject current = null;
@@ -6397,6 +7030,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Action"
+    /**
+     * Entry rule S action.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2211:1: entryRuleS_Action returns [EObject current=null] : iv_ruleS_Action= ruleS_Action EOF ;
     public final EObject entryRuleS_Action() throws RecognitionException {
         EObject current = null;
@@ -6437,6 +7076,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Action"
+    /**
+     * Rule S action.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2218:1: ruleS_Action returns [EObject current=null] : ( () ( (lv_key_1_0= 'action' ) ) ( (lv_firstFacet_2_0= 'name:' ) )? ( (lv_name_3_0= ruleValid_ID ) ) (otherlv_4= '(' ( (lv_args_5_0= ruleActionArguments ) ) otherlv_6= ')' )? ( (lv_facets_7_0= ruleFacet ) )* ( ( (lv_block_8_0= ruleBlock ) ) | otherlv_9= ';' ) ) ;
     public final EObject ruleS_Action() throws RecognitionException {
         EObject current = null;
@@ -6792,6 +7437,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Var"
+    /**
+     * Entry rule S var.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2358:1: entryRuleS_Var returns [EObject current=null] : iv_ruleS_Var= ruleS_Var EOF ;
     public final EObject entryRuleS_Var() throws RecognitionException {
         EObject current = null;
@@ -6832,6 +7483,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Var"
+    /**
+     * Rule S var.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2365:1: ruleS_Var returns [EObject current=null] : ( () ( (lv_key_1_0= rule_VarOrConstKey ) ) ( (lv_firstFacet_2_0= 'name:' ) )? ( (lv_name_3_0= ruleValid_ID ) ) ( (lv_facets_4_0= ruleFacet ) )* otherlv_5= ';' ) ;
     public final EObject ruleS_Var() throws RecognitionException {
         EObject current = null;
@@ -7059,6 +7716,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Assignment"
+    /**
+     * Entry rule S assignment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2459:1: entryRuleS_Assignment returns [EObject current=null] : iv_ruleS_Assignment= ruleS_Assignment EOF ;
     public final EObject entryRuleS_Assignment() throws RecognitionException {
         EObject current = null;
@@ -7099,6 +7762,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Assignment"
+    /**
+     * Rule S assignment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2466:1: ruleS_Assignment returns [EObject current=null] : (this_S_DirectAssignment_0= ruleS_DirectAssignment | this_S_Set_1= ruleS_Set ) ;
     public final EObject ruleS_Assignment() throws RecognitionException {
         EObject current = null;
@@ -7202,6 +7871,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_DirectAssignment"
+    /**
+     * Entry rule S direct assignment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2495:1: entryRuleS_DirectAssignment returns [EObject current=null] : iv_ruleS_DirectAssignment= ruleS_DirectAssignment EOF ;
     public final EObject entryRuleS_DirectAssignment() throws RecognitionException {
         EObject current = null;
@@ -7242,6 +7917,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_DirectAssignment"
+    /**
+     * Rule S direct assignment.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2502:1: ruleS_DirectAssignment returns [EObject current=null] : ( ( ( (lv_expr_0_0= ruleExpression ) ) ( (lv_key_1_0= rule_AssignmentKey ) ) ( (lv_value_2_0= ruleExpression ) ) ( (lv_facets_3_0= ruleFacet ) )* ) otherlv_4= ';' ) ;
     public final EObject ruleS_DirectAssignment() throws RecognitionException {
         EObject current = null;
@@ -7461,6 +8142,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Set"
+    /**
+     * Entry rule S set.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2596:1: entryRuleS_Set returns [EObject current=null] : iv_ruleS_Set= ruleS_Set EOF ;
     public final EObject entryRuleS_Set() throws RecognitionException {
         EObject current = null;
@@ -7501,6 +8188,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Set"
+    /**
+     * Rule S set.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2603:1: ruleS_Set returns [EObject current=null] : ( ( (lv_key_0_0= 'set' ) ) ( (lv_expr_1_0= ruleExpression ) ) (otherlv_2= 'value:' | otherlv_3= '<-' ) ( (lv_value_4_0= ruleExpression ) ) otherlv_5= ';' ) ;
     public final EObject ruleS_Set() throws RecognitionException {
         EObject current = null;
@@ -7696,6 +8389,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Equations"
+    /**
+     * Entry rule S equations.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2682:1: entryRuleS_Equations returns [EObject current=null] : iv_ruleS_Equations= ruleS_Equations EOF ;
     public final EObject entryRuleS_Equations() throws RecognitionException {
         EObject current = null;
@@ -7736,6 +8435,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Equations"
+    /**
+     * Rule S equations.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2689:1: ruleS_Equations returns [EObject current=null] : ( ( (lv_key_0_0= rule_EquationsKey ) ) ( (lv_name_1_0= ruleValid_ID ) ) ( (lv_facets_2_0= ruleFacet ) )* ( (otherlv_3= '{' ( ( (lv_equations_4_0= ruleS_Equation ) ) otherlv_5= ';' )* otherlv_6= '}' ) | otherlv_7= ';' ) ) ;
     public final EObject ruleS_Equations() throws RecognitionException {
         EObject current = null;
@@ -8033,6 +8738,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Equation"
+    /**
+     * Entry rule S equation.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2800:1: entryRuleS_Equation returns [EObject current=null] : iv_ruleS_Equation= ruleS_Equation EOF ;
     public final EObject entryRuleS_Equation() throws RecognitionException {
         EObject current = null;
@@ -8073,6 +8784,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Equation"
+    /**
+     * Rule S equation.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2807:1: ruleS_Equation returns [EObject current=null] : ( ( ( (lv_expr_0_1= ruleFunction | lv_expr_0_2= ruleVariableRef ) ) ) ( (lv_key_1_0= '=' ) ) ( (lv_value_2_0= ruleExpression ) ) ) ;
     public final EObject ruleS_Equation() throws RecognitionException {
         EObject current = null;
@@ -8258,6 +8975,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Solve"
+    /**
+     * Entry rule S solve.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2889:1: entryRuleS_Solve returns [EObject current=null] : iv_ruleS_Solve= ruleS_Solve EOF ;
     public final EObject entryRuleS_Solve() throws RecognitionException {
         EObject current = null;
@@ -8298,6 +9021,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Solve"
+    /**
+     * Rule S solve.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:2896:1: ruleS_Solve returns [EObject current=null] : ( ( (lv_key_0_0= rule_SolveKey ) ) ( (lv_firstFacet_1_0= 'equation:' ) )? ( (lv_expr_2_0= ruleEquationRef ) ) ( (lv_facets_3_0= ruleFacet ) )* ( ( (lv_block_4_0= ruleBlock ) ) | otherlv_5= ';' ) ) ;
     public final EObject ruleS_Solve() throws RecognitionException {
         EObject current = null;
@@ -8582,6 +9311,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleS_Display"
+    /**
+     * Entry rule S display.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3005:1: entryRuleS_Display returns [EObject current=null] : iv_ruleS_Display= ruleS_Display EOF ;
     public final EObject entryRuleS_Display() throws RecognitionException {
         EObject current = null;
@@ -8622,6 +9357,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleS_Display"
+    /**
+     * Rule S display.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3012:1: ruleS_Display returns [EObject current=null] : ( ( (lv_key_0_0= 'display' ) ) ( (lv_firstFacet_1_0= 'name:' ) )? ( ( (lv_name_2_1= ruleValid_ID | lv_name_2_2= RULE_STRING ) ) ) ( (lv_facets_3_0= ruleFacet ) )* ( (lv_block_4_0= ruledisplayBlock ) ) ) ;
     public final EObject ruleS_Display() throws RecognitionException {
         EObject current = null;
@@ -8908,6 +9649,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuledisplayBlock"
+    /**
+     * Entry ruledisplay block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3126:1: entryRuledisplayBlock returns [EObject current=null] : iv_ruledisplayBlock= ruledisplayBlock EOF ;
     public final EObject entryRuledisplayBlock() throws RecognitionException {
         EObject current = null;
@@ -8948,6 +9695,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruledisplayBlock"
+    /**
+     * Ruledisplay block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3133:1: ruledisplayBlock returns [EObject current=null] : ( () otherlv_1= '{' ( (lv_statements_2_0= ruledisplayStatement ) )* otherlv_3= '}' ) ;
     public final EObject ruledisplayBlock() throws RecognitionException {
         EObject current = null;
@@ -9070,6 +9823,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuledisplayStatement"
+    /**
+     * Entry ruledisplay statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3179:1: entryRuledisplayStatement returns [EObject current=null] : iv_ruledisplayStatement= ruledisplayStatement EOF ;
     public final EObject entryRuledisplayStatement() throws RecognitionException {
         EObject current = null;
@@ -9110,6 +9869,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruledisplayStatement"
+    /**
+     * Ruledisplay statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3186:1: ruledisplayStatement returns [EObject current=null] : ( ( ( rulespeciesOrGridDisplayStatement )=>this_speciesOrGridDisplayStatement_0= rulespeciesOrGridDisplayStatement ) | this_Statement_1= ruleStatement ) ;
     public final EObject ruledisplayStatement() throws RecognitionException {
         EObject current = null;
@@ -9205,6 +9970,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulespeciesOrGridDisplayStatement"
+    /**
+     * Entry rulespecies or grid display statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3218:1: entryRulespeciesOrGridDisplayStatement returns [EObject current=null] : iv_rulespeciesOrGridDisplayStatement= rulespeciesOrGridDisplayStatement EOF ;
     public final EObject entryRulespeciesOrGridDisplayStatement() throws RecognitionException {
         EObject current = null;
@@ -9245,6 +10016,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulespeciesOrGridDisplayStatement"
+    /**
+     * Rulespecies or grid display statement.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3225:1: rulespeciesOrGridDisplayStatement returns [EObject current=null] : ( ( (lv_key_0_0= rule_SpeciesKey ) ) ( (lv_expr_1_0= ruleExpression ) ) ( (lv_facets_2_0= ruleFacet ) )* ( ( (lv_block_3_0= ruledisplayBlock ) ) | otherlv_4= ';' ) ) ;
     public final EObject rulespeciesOrGridDisplayStatement() throws RecognitionException {
         EObject current = null;
@@ -9491,6 +10268,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_EquationsKey"
+    /**
+     * Entry rule equations key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3320:1: entryRule_EquationsKey returns [String current=null] : iv_rule_EquationsKey= rule_EquationsKey EOF ;
     public final String entryRule_EquationsKey() throws RecognitionException {
         String current = null;
@@ -9531,6 +10314,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_EquationsKey"
+    /**
+     * Rule equations key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3327:1: rule_EquationsKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= 'equation' ;
     public final AntlrDatatypeRuleToken rule_EquationsKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -9573,6 +10362,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_SolveKey"
+    /**
+     * Entry rule solve key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3342:1: entryRule_SolveKey returns [String current=null] : iv_rule_SolveKey= rule_SolveKey EOF ;
     public final String entryRule_SolveKey() throws RecognitionException {
         String current = null;
@@ -9613,6 +10408,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_SolveKey"
+    /**
+     * Rule solve key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3349:1: rule_SolveKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= 'solve' ;
     public final AntlrDatatypeRuleToken rule_SolveKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -9655,6 +10456,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_SpeciesKey"
+    /**
+     * Entry rule species key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3364:1: entryRule_SpeciesKey returns [String current=null] : iv_rule_SpeciesKey= rule_SpeciesKey EOF ;
     public final String entryRule_SpeciesKey() throws RecognitionException {
         String current = null;
@@ -9695,6 +10502,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_SpeciesKey"
+    /**
+     * Rule species key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3371:1: rule_SpeciesKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'species' | kw= 'grid' ) ;
     public final AntlrDatatypeRuleToken rule_SpeciesKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -9777,6 +10590,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_ExperimentKey"
+    /**
+     * Entry rule experiment key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3394:1: entryRule_ExperimentKey returns [String current=null] : iv_rule_ExperimentKey= rule_ExperimentKey EOF ;
     public final String entryRule_ExperimentKey() throws RecognitionException {
         String current = null;
@@ -9817,6 +10636,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_ExperimentKey"
+    /**
+     * Rule experiment key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3401:1: rule_ExperimentKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= 'experiment' ;
     public final AntlrDatatypeRuleToken rule_ExperimentKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -9859,6 +10684,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_1Expr_Facets_BlockOrEnd_Key"
+    /**
+     * Entry rule 1 expr facets block or end key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3416:1: entryRule_1Expr_Facets_BlockOrEnd_Key returns [String current=null] : iv_rule_1Expr_Facets_BlockOrEnd_Key= rule_1Expr_Facets_BlockOrEnd_Key EOF ;
     public final String entryRule_1Expr_Facets_BlockOrEnd_Key() throws RecognitionException {
         String current = null;
@@ -9899,6 +10730,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_1Expr_Facets_BlockOrEnd_Key"
+    /**
+     * Rule 1 expr facets block or end key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3423:1: rule_1Expr_Facets_BlockOrEnd_Key returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this__LayerKey_0= rule_LayerKey | kw= 'ask' | kw= 'release' | kw= 'capture' | kw= 'create' | kw= 'write' | kw= 'error' | kw= 'warn' | kw= 'exception' | kw= 'save' | kw= 'assert' | kw= 'inspect' | kw= 'browse' | kw= 'draw' | kw= 'using' | kw= 'switch' | kw= 'put' | kw= 'add' | kw= 'remove' | kw= 'match' | kw= 'match_between' | kw= 'match_one' | kw= 'parameter' | kw= 'status' | kw= 'highlight' | kw= 'focus_on' | kw= 'layout' ) ;
     public final AntlrDatatypeRuleToken rule_1Expr_Facets_BlockOrEnd_Key() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -10464,6 +11301,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_LayerKey"
+    /**
+     * Entry rule layer key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3601:1: entryRule_LayerKey returns [String current=null] : iv_rule_LayerKey= rule_LayerKey EOF ;
     public final String entryRule_LayerKey() throws RecognitionException {
         String current = null;
@@ -10504,6 +11347,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_LayerKey"
+    /**
+     * Rule layer key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3608:1: rule_LayerKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'light' | kw= 'camera' | kw= 'text' | kw= 'image' | kw= 'data' | kw= 'chart' | kw= 'agents' | kw= 'graphics' | kw= 'display_population' | kw= 'display_grid' | kw= 'quadtree' | kw= 'event' | kw= 'overlay' | kw= 'datalist' | kw= 'mesh' ) ;
     public final AntlrDatatypeRuleToken rule_LayerKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -10824,6 +11673,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_DoKey"
+    /**
+     * Entry rule do key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3709:1: entryRule_DoKey returns [String current=null] : iv_rule_DoKey= rule_DoKey EOF ;
     public final String entryRule_DoKey() throws RecognitionException {
         String current = null;
@@ -10864,6 +11719,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_DoKey"
+    /**
+     * Rule do key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3716:1: rule_DoKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'do' | kw= 'invoke' ) ;
     public final AntlrDatatypeRuleToken rule_DoKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -10946,6 +11807,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_VarOrConstKey"
+    /**
+     * Entry rule var or const key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3739:1: entryRule_VarOrConstKey returns [String current=null] : iv_rule_VarOrConstKey= rule_VarOrConstKey EOF ;
     public final String entryRule_VarOrConstKey() throws RecognitionException {
         String current = null;
@@ -10986,6 +11853,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_VarOrConstKey"
+    /**
+     * Rule var or const key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3746:1: rule_VarOrConstKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'var' | kw= 'const' | kw= 'let' | kw= 'arg' ) ;
     public final AntlrDatatypeRuleToken rule_VarOrConstKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -11108,6 +11981,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_ReflexKey"
+    /**
+     * Entry rule reflex key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3781:1: entryRule_ReflexKey returns [String current=null] : iv_rule_ReflexKey= rule_ReflexKey EOF ;
     public final String entryRule_ReflexKey() throws RecognitionException {
         String current = null;
@@ -11148,6 +12027,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_ReflexKey"
+    /**
+     * Rule reflex key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3788:1: rule_ReflexKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'init' | kw= 'reflex' | kw= 'aspect' ) ;
     public final AntlrDatatypeRuleToken rule_ReflexKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -11252,6 +12137,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRule_AssignmentKey"
+    /**
+     * Entry rule assignment key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3817:1: entryRule_AssignmentKey returns [String current=null] : iv_rule_AssignmentKey= rule_AssignmentKey EOF ;
     public final String entryRule_AssignmentKey() throws RecognitionException {
         String current = null;
@@ -11292,6 +12183,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rule_AssignmentKey"
+    /**
+     * Rule assignment key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3824:1: rule_AssignmentKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= '<-' | kw= '<<' | (kw= '>' kw= '>' ) | kw= '<<+' | (kw= '>' kw= '>-' ) | kw= '+<-' | kw= '<+' | kw= '>-' ) ;
     public final AntlrDatatypeRuleToken rule_AssignmentKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -11464,6 +12361,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionArguments"
+    /**
+     * Entry rule action arguments.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3897:1: entryRuleActionArguments returns [EObject current=null] : iv_ruleActionArguments= ruleActionArguments EOF ;
     public final EObject entryRuleActionArguments() throws RecognitionException {
         EObject current = null;
@@ -11504,6 +12407,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionArguments"
+    /**
+     * Rule action arguments.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3904:1: ruleActionArguments returns [EObject current=null] : ( ( (lv_args_0_0= ruleArgumentDefinition ) ) (otherlv_1= ',' ( (lv_args_2_0= ruleArgumentDefinition ) ) )* ) ;
     public final EObject ruleActionArguments() throws RecognitionException {
         EObject current = null;
@@ -11649,6 +12558,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleArgumentDefinition"
+    /**
+     * Entry rule argument definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3960:1: entryRuleArgumentDefinition returns [EObject current=null] : iv_ruleArgumentDefinition= ruleArgumentDefinition EOF ;
     public final EObject entryRuleArgumentDefinition() throws RecognitionException {
         EObject current = null;
@@ -11689,6 +12604,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleArgumentDefinition"
+    /**
+     * Rule argument definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:3967:1: ruleArgumentDefinition returns [EObject current=null] : ( ( (lv_type_0_0= ruleTypeRef ) ) ( (lv_name_1_0= ruleValid_ID ) ) (otherlv_2= '<-' ( (lv_default_3_0= ruleExpression ) ) )? ) ;
     public final EObject ruleArgumentDefinition() throws RecognitionException {
         EObject current = null;
@@ -11864,6 +12785,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFacet"
+    /**
+     * Entry rule facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4042:1: entryRuleFacet returns [EObject current=null] : iv_ruleFacet= ruleFacet EOF ;
     public final EObject entryRuleFacet() throws RecognitionException {
         EObject current = null;
@@ -11904,6 +12831,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFacet"
+    /**
+     * Rule facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4049:1: ruleFacet returns [EObject current=null] : (this_ActionFacet_0= ruleActionFacet | this_DefinitionFacet_1= ruleDefinitionFacet | this_ClassicFacet_2= ruleClassicFacet | this_TypeFacet_3= ruleTypeFacet | this_VarFacet_4= ruleVarFacet | this_FunctionFacet_5= ruleFunctionFacet ) ;
     public final EObject ruleFacet() throws RecognitionException {
         EObject current = null;
@@ -12151,6 +13084,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFirstFacetKey"
+    /**
+     * Entry rule first facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4114:1: entryRuleFirstFacetKey returns [String current=null] : iv_ruleFirstFacetKey= ruleFirstFacetKey EOF ;
     public final String entryRuleFirstFacetKey() throws RecognitionException {
         String current = null;
@@ -12191,6 +13130,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFirstFacetKey"
+    /**
+     * Rule first facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4121:1: ruleFirstFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_DefinitionFacetKey_0= ruleDefinitionFacetKey | this_TypeFacetKey_1= ruleTypeFacetKey | this_SpecialFacetKey_2= ruleSpecialFacetKey | this_VarFacetKey_3= ruleVarFacetKey | this_ActionFacetKey_4= ruleActionFacetKey | this_ClassicFacetKey_5= ruleClassicFacetKey ) ;
     public final AntlrDatatypeRuleToken ruleFirstFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -12460,6 +13405,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleClassicFacetKey"
+    /**
+     * Entry rule classic facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4198:1: entryRuleClassicFacetKey returns [String current=null] : iv_ruleClassicFacetKey= ruleClassicFacetKey EOF ;
     public final String entryRuleClassicFacetKey() throws RecognitionException {
         String current = null;
@@ -12500,6 +13451,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleClassicFacetKey"
+    /**
+     * Rule classic facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4205:1: ruleClassicFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID kw= ':' ) ;
     public final AntlrDatatypeRuleToken ruleClassicFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -12560,6 +13517,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDefinitionFacetKey"
+    /**
+     * Entry rule definition facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4229:1: entryRuleDefinitionFacetKey returns [String current=null] : iv_ruleDefinitionFacetKey= ruleDefinitionFacetKey EOF ;
     public final String entryRuleDefinitionFacetKey() throws RecognitionException {
         String current = null;
@@ -12600,6 +13563,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDefinitionFacetKey"
+    /**
+     * Rule definition facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4236:1: ruleDefinitionFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'name:' | kw= 'returns:' ) ;
     public final AntlrDatatypeRuleToken ruleDefinitionFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -12682,6 +13651,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeFacetKey"
+    /**
+     * Entry rule type facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4259:1: entryRuleTypeFacetKey returns [String current=null] : iv_ruleTypeFacetKey= ruleTypeFacetKey EOF ;
     public final String entryRuleTypeFacetKey() throws RecognitionException {
         String current = null;
@@ -12722,6 +13697,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeFacetKey"
+    /**
+     * Rule type facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4266:1: ruleTypeFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'as:' | kw= 'of:' | kw= 'parent:' | kw= 'species:' | kw= 'type:' ) ;
     public final AntlrDatatypeRuleToken ruleTypeFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -12862,6 +13843,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSpecialFacetKey"
+    /**
+     * Entry rule special facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4307:1: entryRuleSpecialFacetKey returns [String current=null] : iv_ruleSpecialFacetKey= ruleSpecialFacetKey EOF ;
     public final String entryRuleSpecialFacetKey() throws RecognitionException {
         String current = null;
@@ -12902,6 +13889,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSpecialFacetKey"
+    /**
+     * Rule special facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4314:1: ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'data:' | (kw= 'when' kw= ':' ) | kw= 'const:' | kw= 'value:' | kw= 'topology:' | kw= 'item:' | kw= 'init:' | kw= 'message:' | kw= 'control:' | kw= 'layout:' | kw= 'environment:' | kw= 'text:' | kw= 'image:' | kw= 'using:' | kw= 'parameter:' | kw= 'aspect:' | kw= 'light:' ) ;
     public final AntlrDatatypeRuleToken ruleSpecialFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -13271,6 +14264,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionFacetKey"
+    /**
+     * Entry rule action facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4434:1: entryRuleActionFacetKey returns [String current=null] : iv_ruleActionFacetKey= ruleActionFacetKey EOF ;
     public final String entryRuleActionFacetKey() throws RecognitionException {
         String current = null;
@@ -13311,6 +14310,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionFacetKey"
+    /**
+     * Rule action facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4441:1: ruleActionFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'action:' | kw= 'on_change:' ) ;
     public final AntlrDatatypeRuleToken ruleActionFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -13393,6 +14398,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVarFacetKey"
+    /**
+     * Entry rule var facet key.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4464:1: entryRuleVarFacetKey returns [String current=null] : iv_ruleVarFacetKey= ruleVarFacetKey EOF ;
     public final String entryRuleVarFacetKey() throws RecognitionException {
         String current = null;
@@ -13433,6 +14444,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVarFacetKey"
+    /**
+     * Rule var facet key.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4471:1: ruleVarFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= 'var:' ;
     public final AntlrDatatypeRuleToken ruleVarFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -13475,6 +14492,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleClassicFacet"
+    /**
+     * Entry rule classic facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4486:1: entryRuleClassicFacet returns [EObject current=null] : iv_ruleClassicFacet= ruleClassicFacet EOF ;
     public final EObject entryRuleClassicFacet() throws RecognitionException {
         EObject current = null;
@@ -13515,6 +14538,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleClassicFacet"
+    /**
+     * Rule classic facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4493:1: ruleClassicFacet returns [EObject current=null] : ( ( ( (lv_key_0_0= ruleClassicFacetKey ) ) | ( (lv_key_1_0= '<-' ) ) | ( (lv_key_2_0= ruleSpecialFacetKey ) ) ) ( (lv_expr_3_0= ruleExpression ) ) ) ;
     public final EObject ruleClassicFacet() throws RecognitionException {
         EObject current = null;
@@ -13757,6 +14786,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDefinitionFacet"
+    /**
+     * Entry rule definition facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4580:1: entryRuleDefinitionFacet returns [EObject current=null] : iv_ruleDefinitionFacet= ruleDefinitionFacet EOF ;
     public final EObject entryRuleDefinitionFacet() throws RecognitionException {
         EObject current = null;
@@ -13797,6 +14832,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDefinitionFacet"
+    /**
+     * Rule definition facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4587:1: ruleDefinitionFacet returns [EObject current=null] : ( ( ( 'name:' | 'returns:' )=> (lv_key_0_0= ruleDefinitionFacetKey ) ) ( ( (lv_name_1_1= ruleValid_ID | lv_name_1_2= RULE_STRING ) ) ) ) ;
     public final EObject ruleDefinitionFacet() throws RecognitionException {
         EObject current = null;
@@ -13963,6 +15004,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFunctionFacet"
+    /**
+     * Entry rule function facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4655:1: entryRuleFunctionFacet returns [EObject current=null] : iv_ruleFunctionFacet= ruleFunctionFacet EOF ;
     public final EObject entryRuleFunctionFacet() throws RecognitionException {
         EObject current = null;
@@ -14003,6 +15050,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFunctionFacet"
+    /**
+     * Rule function facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4662:1: ruleFunctionFacet returns [EObject current=null] : ( ( (lv_key_0_0= '->' ) ) ( ( ( ( ( ruleExpression ) ) )=> ( (lv_expr_1_0= ruleExpression ) ) ) | (otherlv_2= '{' ( (lv_expr_3_0= ruleExpression ) ) otherlv_4= '}' ) ) ) ;
     public final EObject ruleFunctionFacet() throws RecognitionException {
         EObject current = null;
@@ -14189,6 +15242,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeFacet"
+    /**
+     * Entry rule type facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4747:1: entryRuleTypeFacet returns [EObject current=null] : iv_ruleTypeFacet= ruleTypeFacet EOF ;
     public final EObject entryRuleTypeFacet() throws RecognitionException {
         EObject current = null;
@@ -14229,6 +15288,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeFacet"
+    /**
+     * Rule type facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4754:1: ruleTypeFacet returns [EObject current=null] : ( ( (lv_key_0_0= ruleTypeFacetKey ) ) ( ( ( 'species' | RULE_ID )=> ( (lv_expr_1_0= ruleTypeRef ) ) ) | ( (lv_expr_2_0= ruleExpression ) ) ) ) ;
     public final EObject ruleTypeFacet() throws RecognitionException {
         EObject current = null;
@@ -14405,6 +15470,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionFacet"
+    /**
+     * Entry rule action facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4829:1: entryRuleActionFacet returns [EObject current=null] : iv_ruleActionFacet= ruleActionFacet EOF ;
     public final EObject entryRuleActionFacet() throws RecognitionException {
         EObject current = null;
@@ -14445,6 +15516,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionFacet"
+    /**
+     * Rule action facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4836:1: ruleActionFacet returns [EObject current=null] : ( ( (lv_key_0_0= ruleActionFacetKey ) ) ( ( (lv_expr_1_0= ruleActionRef ) ) | ( (lv_block_2_0= ruleBlock ) ) ) ) ;
     public final EObject ruleActionFacet() throws RecognitionException {
         EObject current = null;
@@ -14629,6 +15706,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVarFacet"
+    /**
+     * Entry rule var facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4908:1: entryRuleVarFacet returns [EObject current=null] : iv_ruleVarFacet= ruleVarFacet EOF ;
     public final EObject entryRuleVarFacet() throws RecognitionException {
         EObject current = null;
@@ -14669,6 +15752,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVarFacet"
+    /**
+     * Rule var facet.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4915:1: ruleVarFacet returns [EObject current=null] : ( ( (lv_key_0_0= ruleVarFacetKey ) ) ( (lv_expr_1_0= ruleVariableRef ) ) ) ;
     public final EObject ruleVarFacet() throws RecognitionException {
         EObject current = null;
@@ -14783,6 +15872,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBlock"
+    /**
+     * Entry rule block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4965:1: entryRuleBlock returns [EObject current=null] : iv_ruleBlock= ruleBlock EOF ;
     public final EObject entryRuleBlock() throws RecognitionException {
         EObject current = null;
@@ -14823,6 +15918,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBlock"
+    /**
+     * Rule block.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:4972:1: ruleBlock returns [EObject current=null] : ( () otherlv_1= '{' ( ( (lv_statements_2_0= ruleStatement ) )* otherlv_3= '}' ) ) ;
     public final EObject ruleBlock() throws RecognitionException {
         EObject current = null;
@@ -14951,6 +16052,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpression"
+    /**
+     * Entry rule expression.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5020:1: entryRuleExpression returns [EObject current=null] : iv_ruleExpression= ruleExpression EOF ;
     public final EObject entryRuleExpression() throws RecognitionException {
         EObject current = null;
@@ -14991,6 +16098,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpression"
+    /**
+     * Rule expression.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5027:1: ruleExpression returns [EObject current=null] : ( ( ( ( ( ( ( ruleValid_ID ) ) '::' ) | ( ( ( ( ruleDefinitionFacetKey | ruleTypeFacetKey | ruleSpecialFacetKey | ruleActionFacetKey | ruleVarFacetKey ) ) ) ':' ) ) )=>this_ArgumentPair_0= ruleArgumentPair ) | this_Pair_1= rulePair ) ;
     public final EObject ruleExpression() throws RecognitionException {
         EObject current = null;
@@ -15086,6 +16199,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleArgumentPair"
+    /**
+     * Entry rule argument pair.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5084:1: entryRuleArgumentPair returns [EObject current=null] : iv_ruleArgumentPair= ruleArgumentPair EOF ;
     public final EObject entryRuleArgumentPair() throws RecognitionException {
         EObject current = null;
@@ -15126,6 +16245,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleArgumentPair"
+    /**
+     * Rule argument pair.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5091:1: ruleArgumentPair returns [EObject current=null] : ( ( ( ( ( ( ( ruleValid_ID ) ) '::' ) | ( ( ( ( ruleDefinitionFacetKey | ruleTypeFacetKey | ruleSpecialFacetKey | ruleActionFacetKey | ruleVarFacetKey ) ) ) ':' ) ) )=> ( ( ( (lv_op_0_0= ruleValid_ID ) ) otherlv_1= '::' ) | ( ( ( (lv_op_2_1= ruleDefinitionFacetKey | lv_op_2_2= ruleTypeFacetKey | lv_op_2_3= ruleSpecialFacetKey | lv_op_2_4= ruleActionFacetKey | lv_op_2_5= ruleVarFacetKey ) ) ) otherlv_3= ':' ) ) )? ( (lv_right_4_0= rulePair ) ) ) ;
     public final EObject ruleArgumentPair() throws RecognitionException {
         EObject current = null;
@@ -15541,6 +16666,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePair"
+    /**
+     * Entry rule pair.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5269:1: entryRulePair returns [EObject current=null] : iv_rulePair= rulePair EOF ;
     public final EObject entryRulePair() throws RecognitionException {
         EObject current = null;
@@ -15581,6 +16712,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePair"
+    /**
+     * Rule pair.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5276:1: rulePair returns [EObject current=null] : (this_If_0= ruleIf ( () ( (lv_op_2_0= '::' ) ) ( (lv_right_3_0= ruleIf ) ) )? ) ;
     public final EObject rulePair() throws RecognitionException {
         EObject current = null;
@@ -15733,6 +16870,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleIf"
+    /**
+     * Entry rule if.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5338:1: entryRuleIf returns [EObject current=null] : iv_ruleIf= ruleIf EOF ;
     public final EObject entryRuleIf() throws RecognitionException {
         EObject current = null;
@@ -15773,6 +16916,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleIf"
+    /**
+     * Rule if.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5345:1: ruleIf returns [EObject current=null] : (this_Or_0= ruleOr ( () ( (lv_op_2_0= '?' ) ) ( (lv_right_3_0= ruleOr ) ) (otherlv_4= ':' ( (lv_ifFalse_5_0= ruleOr ) ) ) )? ) ;
     public final EObject ruleIf() throws RecognitionException {
         EObject current = null;
@@ -15975,6 +17124,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOr"
+    /**
+     * Entry rule or.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5432:1: entryRuleOr returns [EObject current=null] : iv_ruleOr= ruleOr EOF ;
     public final EObject entryRuleOr() throws RecognitionException {
         EObject current = null;
@@ -16015,6 +17170,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOr"
+    /**
+     * Rule or.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5439:1: ruleOr returns [EObject current=null] : (this_And_0= ruleAnd ( () ( (lv_op_2_0= 'or' ) ) ( (lv_right_3_0= ruleAnd ) ) )* ) ;
     public final EObject ruleOr() throws RecognitionException {
         EObject current = null;
@@ -16174,6 +17335,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAnd"
+    /**
+     * Entry rule and.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5501:1: entryRuleAnd returns [EObject current=null] : iv_ruleAnd= ruleAnd EOF ;
     public final EObject entryRuleAnd() throws RecognitionException {
         EObject current = null;
@@ -16214,6 +17381,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAnd"
+    /**
+     * Rule and.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5508:1: ruleAnd returns [EObject current=null] : (this_Cast_0= ruleCast ( () ( (lv_op_2_0= 'and' ) ) ( (lv_right_3_0= ruleCast ) ) )* ) ;
     public final EObject ruleAnd() throws RecognitionException {
         EObject current = null;
@@ -16373,6 +17546,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCast"
+    /**
+     * Entry rule cast.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5570:1: entryRuleCast returns [EObject current=null] : iv_ruleCast= ruleCast EOF ;
     public final EObject entryRuleCast() throws RecognitionException {
         EObject current = null;
@@ -16413,6 +17592,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCast"
+    /**
+     * Rule cast.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5577:1: ruleCast returns [EObject current=null] : (this_Comparison_0= ruleComparison ( ( () ( (lv_op_2_0= 'as' ) ) ) ( ( (lv_right_3_0= ruleTypeRef ) ) | (otherlv_4= '(' ( (lv_right_5_0= ruleTypeRef ) ) otherlv_6= ')' ) ) )? ) ;
     public final EObject ruleCast() throws RecognitionException {
         EObject current = null;
@@ -16661,6 +17846,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComparison"
+    /**
+     * Entry rule comparison.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5673:1: entryRuleComparison returns [EObject current=null] : iv_ruleComparison= ruleComparison EOF ;
     public final EObject entryRuleComparison() throws RecognitionException {
         EObject current = null;
@@ -16701,6 +17892,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComparison"
+    /**
+     * Rule comparison.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5680:1: ruleComparison returns [EObject current=null] : (this_Addition_0= ruleAddition ( ( () ( ( (lv_op_2_1= '!=' | lv_op_2_2= '=' | lv_op_2_3= '>=' | lv_op_2_4= '<=' | lv_op_2_5= '<' | lv_op_2_6= '>' ) ) ) ) ( (lv_right_3_0= ruleAddition ) ) )? ) ;
     public final EObject ruleComparison() throws RecognitionException {
         EObject current = null;
@@ -17022,6 +18219,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAddition"
+    /**
+     * Entry rule addition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5801:1: entryRuleAddition returns [EObject current=null] : iv_ruleAddition= ruleAddition EOF ;
     public final EObject entryRuleAddition() throws RecognitionException {
         EObject current = null;
@@ -17062,6 +18265,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAddition"
+    /**
+     * Rule addition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5808:1: ruleAddition returns [EObject current=null] : (this_Multiplication_0= ruleMultiplication ( ( () ( ( (lv_op_2_1= '+' | lv_op_2_2= '-' ) ) ) ) ( (lv_right_3_0= ruleMultiplication ) ) )* ) ;
     public final EObject ruleAddition() throws RecognitionException {
         EObject current = null;
@@ -17275,6 +18484,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMultiplication"
+    /**
+     * Entry rule multiplication.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5885:1: entryRuleMultiplication returns [EObject current=null] : iv_ruleMultiplication= ruleMultiplication EOF ;
     public final EObject entryRuleMultiplication() throws RecognitionException {
         EObject current = null;
@@ -17315,6 +18530,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMultiplication"
+    /**
+     * Rule multiplication.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5892:1: ruleMultiplication returns [EObject current=null] : (this_Exponentiation_0= ruleExponentiation ( ( () ( ( (lv_op_2_1= '*' | lv_op_2_2= '/' ) ) ) ) ( (lv_right_3_0= ruleExponentiation ) ) )* ) ;
     public final EObject ruleMultiplication() throws RecognitionException {
         EObject current = null;
@@ -17528,6 +18749,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExponentiation"
+    /**
+     * Entry rule exponentiation.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5969:1: entryRuleExponentiation returns [EObject current=null] : iv_ruleExponentiation= ruleExponentiation EOF ;
     public final EObject entryRuleExponentiation() throws RecognitionException {
         EObject current = null;
@@ -17568,6 +18795,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExponentiation"
+    /**
+     * Rule exponentiation.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:5976:1: ruleExponentiation returns [EObject current=null] : (this_Binary_0= ruleBinary ( ( () ( (lv_op_2_0= '^' ) ) ) ( (lv_right_3_0= ruleBinary ) ) )* ) ;
     public final EObject ruleExponentiation() throws RecognitionException {
         EObject current = null;
@@ -17733,6 +18966,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBinary"
+    /**
+     * Entry rule binary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6040:1: entryRuleBinary returns [EObject current=null] : iv_ruleBinary= ruleBinary EOF ;
     public final EObject entryRuleBinary() throws RecognitionException {
         EObject current = null;
@@ -17773,6 +19012,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBinary"
+    /**
+     * Rule binary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6047:1: ruleBinary returns [EObject current=null] : (this_Unit_0= ruleUnit ( ( () ( (lv_op_2_0= ruleValid_ID ) ) ) ( (lv_right_3_0= ruleUnit ) ) )* ) ;
     public final EObject ruleBinary() throws RecognitionException {
         EObject current = null;
@@ -17957,6 +19202,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnit"
+    /**
+     * Entry rule unit.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6116:1: entryRuleUnit returns [EObject current=null] : iv_ruleUnit= ruleUnit EOF ;
     public final EObject entryRuleUnit() throws RecognitionException {
         EObject current = null;
@@ -17997,6 +19248,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnit"
+    /**
+     * Rule unit.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6123:1: ruleUnit returns [EObject current=null] : (this_Unary_0= ruleUnary ( ( () ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) ;
     public final EObject ruleUnit() throws RecognitionException {
         EObject current = null;
@@ -18203,6 +19460,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnary"
+    /**
+     * Entry rule unary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6200:1: entryRuleUnary returns [EObject current=null] : iv_ruleUnary= ruleUnary EOF ;
     public final EObject entryRuleUnary() throws RecognitionException {
         EObject current = null;
@@ -18243,6 +19506,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnary"
+    /**
+     * Rule unary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6207:1: ruleUnary returns [EObject current=null] : (this_Access_0= ruleAccess | ( () ( ( ( ( (lv_op_2_1= '\\u00B0' | lv_op_2_2= '#' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) ;
     public final EObject ruleUnary() throws RecognitionException {
         EObject current = null;
@@ -18698,6 +19967,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAccess"
+    /**
+     * Entry rule access.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6369:1: entryRuleAccess returns [EObject current=null] : iv_ruleAccess= ruleAccess EOF ;
     public final EObject entryRuleAccess() throws RecognitionException {
         EObject current = null;
@@ -18738,6 +20013,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAccess"
+    /**
+     * Rule access.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6376:1: ruleAccess returns [EObject current=null] : (this_Primary_0= rulePrimary ( () ( ( ( (lv_op_2_0= '[' ) ) ( (lv_right_3_0= ruleExpressionList ) )? otherlv_4= ']' ) | ( ( (lv_op_5_0= '.' ) ) ( ( (lv_right_6_1= ruleAbstractRef | lv_right_6_2= ruleStringLiteral ) ) ) ) ) )* ) ;
     public final EObject ruleAccess() throws RecognitionException {
         EObject current = null;
@@ -19082,6 +20363,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePrimary"
+    /**
+     * Entry rule primary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6500:1: entryRulePrimary returns [EObject current=null] : iv_rulePrimary= rulePrimary EOF ;
     public final EObject entryRulePrimary() throws RecognitionException {
         EObject current = null;
@@ -19122,6 +20409,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePrimary"
+    /**
+     * Rule primary.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6507:1: rulePrimary returns [EObject current=null] : (this_TerminalExpression_0= ruleTerminalExpression | this_AbstractRef_1= ruleAbstractRef | (otherlv_2= '(' this_ExpressionList_3= ruleExpressionList otherlv_4= ')' ) | (otherlv_5= '[' () ( (lv_exprs_7_0= ruleExpressionList ) )? otherlv_8= ']' ) | (otherlv_9= '{' () ( (lv_left_11_0= ruleExpression ) ) ( (lv_op_12_0= ',' ) ) ( (lv_right_13_0= ruleExpression ) ) (otherlv_14= ',' ( (lv_z_15_0= ruleExpression ) ) )? otherlv_16= '}' ) ) ;
     public final EObject rulePrimary() throws RecognitionException {
         EObject current = null;
@@ -19634,6 +20927,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAbstractRef"
+    /**
+     * Entry rule abstract ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6687:1: entryRuleAbstractRef returns [EObject current=null] : iv_ruleAbstractRef= ruleAbstractRef EOF ;
     public final EObject entryRuleAbstractRef() throws RecognitionException {
         EObject current = null;
@@ -19674,6 +20973,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAbstractRef"
+    /**
+     * Rule abstract ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6694:1: ruleAbstractRef returns [EObject current=null] : ( ( ( ruleFunction )=>this_Function_0= ruleFunction ) | this_VariableRef_1= ruleVariableRef ) ;
     public final EObject ruleAbstractRef() throws RecognitionException {
         EObject current = null;
@@ -19769,6 +21074,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFunction"
+    /**
+     * Entry rule function.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6726:1: entryRuleFunction returns [EObject current=null] : iv_ruleFunction= ruleFunction EOF ;
     public final EObject entryRuleFunction() throws RecognitionException {
         EObject current = null;
@@ -19809,6 +21120,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFunction"
+    /**
+     * Rule function.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6733:1: ruleFunction returns [EObject current=null] : ( () ( (lv_left_1_0= ruleActionRef ) ) ( (lv_type_2_0= ruleTypeInfo ) )? otherlv_3= '(' ( (lv_right_4_0= ruleExpressionList ) )? otherlv_5= ')' ) ;
     public final EObject ruleFunction() throws RecognitionException {
         EObject current = null;
@@ -20009,6 +21326,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpressionList"
+    /**
+     * Entry rule expression list.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6817:1: entryRuleExpressionList returns [EObject current=null] : iv_ruleExpressionList= ruleExpressionList EOF ;
     public final EObject entryRuleExpressionList() throws RecognitionException {
         EObject current = null;
@@ -20049,6 +21372,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpressionList"
+    /**
+     * Rule expression list.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6824:1: ruleExpressionList returns [EObject current=null] : ( ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) | ( ( (lv_exprs_3_0= ruleParameter ) ) (otherlv_4= ',' ( (lv_exprs_5_0= ruleParameter ) ) )* ) ) ;
     public final EObject ruleExpressionList() throws RecognitionException {
         EObject current = null;
@@ -20324,6 +21653,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleParameter"
+    /**
+     * Entry rule parameter.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6929:1: entryRuleParameter returns [EObject current=null] : iv_ruleParameter= ruleParameter EOF ;
     public final EObject entryRuleParameter() throws RecognitionException {
         EObject current = null;
@@ -20364,6 +21699,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleParameter"
+    /**
+     * Rule parameter.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:6936:1: ruleParameter returns [EObject current=null] : ( () ( ( ( (lv_builtInFacetKey_1_1= ruleDefinitionFacetKey | lv_builtInFacetKey_1_2= ruleTypeFacetKey | lv_builtInFacetKey_1_3= ruleSpecialFacetKey | lv_builtInFacetKey_1_4= ruleActionFacetKey | lv_builtInFacetKey_1_5= ruleVarFacetKey ) ) ) | ( ( (lv_left_2_0= ruleVariableRef ) ) otherlv_3= ':' ) ) ( (lv_right_4_0= ruleExpression ) ) ) ;
     public final EObject ruleParameter() throws RecognitionException {
         EObject current = null;
@@ -20766,6 +22107,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnitRef"
+    /**
+     * Entry rule unit ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7087:1: entryRuleUnitRef returns [EObject current=null] : iv_ruleUnitRef= ruleUnitRef EOF ;
     public final EObject entryRuleUnitRef() throws RecognitionException {
         EObject current = null;
@@ -20806,6 +22153,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnitRef"
+    /**
+     * Rule unit ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7094:1: ruleUnitRef returns [EObject current=null] : ( () ( (otherlv_1= RULE_ID ) ) ) ;
     public final EObject ruleUnitRef() throws RecognitionException {
         EObject current = null;
@@ -20885,6 +22238,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVariableRef"
+    /**
+     * Entry rule variable ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7126:1: entryRuleVariableRef returns [EObject current=null] : iv_ruleVariableRef= ruleVariableRef EOF ;
     public final EObject entryRuleVariableRef() throws RecognitionException {
         EObject current = null;
@@ -20925,6 +22284,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVariableRef"
+    /**
+     * Rule variable ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7133:1: ruleVariableRef returns [EObject current=null] : ( () ( ( ruleValid_ID ) ) ) ;
     public final EObject ruleVariableRef() throws RecognitionException {
         EObject current = null;
@@ -21011,6 +22376,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeRef"
+    /**
+     * Entry rule type ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7168:1: entryRuleTypeRef returns [EObject current=null] : iv_ruleTypeRef= ruleTypeRef EOF ;
     public final EObject entryRuleTypeRef() throws RecognitionException {
         EObject current = null;
@@ -21051,6 +22422,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeRef"
+    /**
+     * Rule type ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7175:1: ruleTypeRef returns [EObject current=null] : ( ( () ( ( (otherlv_1= RULE_ID ) ) ( (lv_parameter_2_0= ruleTypeInfo ) )? ) ) | ( () (otherlv_4= 'species' ( (lv_parameter_5_0= ruleTypeInfo ) ) ) ) ) ;
     public final EObject ruleTypeRef() throws RecognitionException {
         EObject current = null;
@@ -21286,6 +22663,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeInfo"
+    /**
+     * Entry rule type info.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7265:1: entryRuleTypeInfo returns [EObject current=null] : iv_ruleTypeInfo= ruleTypeInfo EOF ;
     public final EObject entryRuleTypeInfo() throws RecognitionException {
         EObject current = null;
@@ -21326,6 +22709,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeInfo"
+    /**
+     * Rule type info.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7272:1: ruleTypeInfo returns [EObject current=null] : (otherlv_0= '<' ( (lv_first_1_0= ruleTypeRef ) ) (otherlv_2= ',' ( (lv_second_3_0= ruleTypeRef ) ) )? ( ( '>' )=>otherlv_4= '>' ) ) ;
     public final EObject ruleTypeInfo() throws RecognitionException {
         EObject current = null;
@@ -21484,6 +22873,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionRef"
+    /**
+     * Entry rule action ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7339:1: entryRuleActionRef returns [EObject current=null] : iv_ruleActionRef= ruleActionRef EOF ;
     public final EObject entryRuleActionRef() throws RecognitionException {
         EObject current = null;
@@ -21524,6 +22919,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionRef"
+    /**
+     * Rule action ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7346:1: ruleActionRef returns [EObject current=null] : ( () ( ( ruleValid_ID ) ) ) ;
     public final EObject ruleActionRef() throws RecognitionException {
         EObject current = null;
@@ -21610,6 +23011,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEquationRef"
+    /**
+     * Entry rule equation ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7381:1: entryRuleEquationRef returns [EObject current=null] : iv_ruleEquationRef= ruleEquationRef EOF ;
     public final EObject entryRuleEquationRef() throws RecognitionException {
         EObject current = null;
@@ -21650,6 +23057,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEquationRef"
+    /**
+     * Rule equation ref.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7388:1: ruleEquationRef returns [EObject current=null] : ( () ( ( ruleValid_ID ) ) ) ;
     public final EObject ruleEquationRef() throws RecognitionException {
         EObject current = null;
@@ -21736,6 +23149,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEquationDefinition"
+    /**
+     * Entry rule equation definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7423:1: entryRuleEquationDefinition returns [EObject current=null] : iv_ruleEquationDefinition= ruleEquationDefinition EOF ;
     public final EObject entryRuleEquationDefinition() throws RecognitionException {
         EObject current = null;
@@ -21776,6 +23195,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEquationDefinition"
+    /**
+     * Rule equation definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7430:1: ruleEquationDefinition returns [EObject current=null] : (this_S_Equations_0= ruleS_Equations | this_EquationFakeDefinition_1= ruleEquationFakeDefinition ) ;
     public final EObject ruleEquationDefinition() throws RecognitionException {
         EObject current = null;
@@ -21879,6 +23304,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeDefinition"
+    /**
+     * Entry rule type definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7459:1: entryRuleTypeDefinition returns [EObject current=null] : iv_ruleTypeDefinition= ruleTypeDefinition EOF ;
     public final EObject entryRuleTypeDefinition() throws RecognitionException {
         EObject current = null;
@@ -21919,6 +23350,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeDefinition"
+    /**
+     * Rule type definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7466:1: ruleTypeDefinition returns [EObject current=null] : (this_S_Species_0= ruleS_Species | this_TypeFakeDefinition_1= ruleTypeFakeDefinition ) ;
     public final EObject ruleTypeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22022,6 +23459,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVarDefinition"
+    /**
+     * Entry rule var definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7495:1: entryRuleVarDefinition returns [EObject current=null] : iv_ruleVarDefinition= ruleVarDefinition EOF ;
     public final EObject entryRuleVarDefinition() throws RecognitionException {
         EObject current = null;
@@ -22062,6 +23505,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVarDefinition"
+    /**
+     * Rule var definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7502:1: ruleVarDefinition returns [EObject current=null] : ( ( ( ruleS_Declaration )=>this_S_Declaration_0= ruleS_Declaration ) | (this_Model_1= ruleModel | this_ArgumentDefinition_2= ruleArgumentDefinition | this_DefinitionFacet_3= ruleDefinitionFacet | this_VarFakeDefinition_4= ruleVarFakeDefinition | this_Import_5= ruleImport | this_S_Experiment_6= ruleS_Experiment ) ) ;
     public final EObject ruleVarDefinition() throws RecognitionException {
         EObject current = null;
@@ -22331,6 +23780,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionDefinition"
+    /**
+     * Entry rule action definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7581:1: entryRuleActionDefinition returns [EObject current=null] : iv_ruleActionDefinition= ruleActionDefinition EOF ;
     public final EObject entryRuleActionDefinition() throws RecognitionException {
         EObject current = null;
@@ -22371,6 +23826,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionDefinition"
+    /**
+     * Rule action definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7588:1: ruleActionDefinition returns [EObject current=null] : (this_S_Action_0= ruleS_Action | this_ActionFakeDefinition_1= ruleActionFakeDefinition | this_S_Definition_2= ruleS_Definition | this_TypeDefinition_3= ruleTypeDefinition ) ;
     public final EObject ruleActionDefinition() throws RecognitionException {
         EObject current = null;
@@ -22556,6 +24017,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnitFakeDefinition"
+    /**
+     * Entry rule unit fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7635:1: entryRuleUnitFakeDefinition returns [EObject current=null] : iv_ruleUnitFakeDefinition= ruleUnitFakeDefinition EOF ;
     public final EObject entryRuleUnitFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22596,6 +24063,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnitFakeDefinition"
+    /**
+     * Rule unit fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7642:1: ruleUnitFakeDefinition returns [EObject current=null] : (otherlv_0= '**unit*' ( (lv_name_1_0= RULE_ID ) ) ) ;
     public final EObject ruleUnitFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22674,6 +24147,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTypeFakeDefinition"
+    /**
+     * Entry rule type fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7676:1: entryRuleTypeFakeDefinition returns [EObject current=null] : iv_ruleTypeFakeDefinition= ruleTypeFakeDefinition EOF ;
     public final EObject entryRuleTypeFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22714,6 +24193,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeFakeDefinition"
+    /**
+     * Rule type fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7683:1: ruleTypeFakeDefinition returns [EObject current=null] : (otherlv_0= '**type*' ( (lv_name_1_0= RULE_ID ) ) ) ;
     public final EObject ruleTypeFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22792,6 +24277,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleActionFakeDefinition"
+    /**
+     * Entry rule action fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7717:1: entryRuleActionFakeDefinition returns [EObject current=null] : iv_ruleActionFakeDefinition= ruleActionFakeDefinition EOF ;
     public final EObject entryRuleActionFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22832,6 +24323,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionFakeDefinition"
+    /**
+     * Rule action fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7724:1: ruleActionFakeDefinition returns [EObject current=null] : (otherlv_0= '**action*' ( (lv_name_1_0= ruleValid_ID ) ) ) ;
     public final EObject ruleActionFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22916,6 +24413,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSkillFakeDefinition"
+    /**
+     * Entry rule skill fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7759:1: entryRuleSkillFakeDefinition returns [EObject current=null] : iv_ruleSkillFakeDefinition= ruleSkillFakeDefinition EOF ;
     public final EObject entryRuleSkillFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -22956,6 +24459,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSkillFakeDefinition"
+    /**
+     * Rule skill fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7766:1: ruleSkillFakeDefinition returns [EObject current=null] : (otherlv_0= '**skill*' ( (lv_name_1_0= RULE_ID ) ) ) ;
     public final EObject ruleSkillFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -23034,6 +24543,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleVarFakeDefinition"
+    /**
+     * Entry rule var fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7800:1: entryRuleVarFakeDefinition returns [EObject current=null] : iv_ruleVarFakeDefinition= ruleVarFakeDefinition EOF ;
     public final EObject entryRuleVarFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -23074,6 +24589,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleVarFakeDefinition"
+    /**
+     * Rule var fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7807:1: ruleVarFakeDefinition returns [EObject current=null] : (otherlv_0= '**var*' ( (lv_name_1_0= ruleValid_ID ) ) ) ;
     public final EObject ruleVarFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -23158,6 +24679,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEquationFakeDefinition"
+    /**
+     * Entry rule equation fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7842:1: entryRuleEquationFakeDefinition returns [EObject current=null] : iv_ruleEquationFakeDefinition= ruleEquationFakeDefinition EOF ;
     public final EObject entryRuleEquationFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -23198,6 +24725,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEquationFakeDefinition"
+    /**
+     * Rule equation fake definition.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7849:1: ruleEquationFakeDefinition returns [EObject current=null] : (otherlv_0= '**equation*' ( (lv_name_1_0= ruleValid_ID ) ) ) ;
     public final EObject ruleEquationFakeDefinition() throws RecognitionException {
         EObject current = null;
@@ -23282,6 +24815,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleValid_ID"
+    /**
+     * Entry rule valid ID.
+     *
+     * @return the string
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7884:1: entryRuleValid_ID returns [String current=null] : iv_ruleValid_ID= ruleValid_ID EOF ;
     public final String entryRuleValid_ID() throws RecognitionException {
         String current = null;
@@ -23322,6 +24861,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleValid_ID"
+    /**
+     * Rule valid ID.
+     *
+     * @return the antlr datatype rule token
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7891:1: ruleValid_ID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this__SpeciesKey_0= rule_SpeciesKey | this__DoKey_1= rule_DoKey | this__ReflexKey_2= rule_ReflexKey | this__VarOrConstKey_3= rule_VarOrConstKey | this__1Expr_Facets_BlockOrEnd_Key_4= rule_1Expr_Facets_BlockOrEnd_Key | this__EquationsKey_5= rule_EquationsKey | this_ID_6= RULE_ID | this__ExperimentKey_7= rule_ExperimentKey ) ;
     public final AntlrDatatypeRuleToken ruleValid_ID() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
@@ -23672,6 +25217,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTerminalExpression"
+    /**
+     * Entry rule terminal expression.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7987:1: entryRuleTerminalExpression returns [EObject current=null] : iv_ruleTerminalExpression= ruleTerminalExpression EOF ;
     public final EObject entryRuleTerminalExpression() throws RecognitionException {
         EObject current = null;
@@ -23712,6 +25263,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTerminalExpression"
+    /**
+     * Rule terminal expression.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:7994:1: ruleTerminalExpression returns [EObject current=null] : (this_StringLiteral_0= ruleStringLiteral | ( () ( (lv_op_2_0= RULE_INTEGER ) ) ) | ( () ( (lv_op_4_0= RULE_DOUBLE ) ) ) | ( () ( (lv_op_6_0= RULE_BOOLEAN ) ) ) | ( () ( (lv_op_8_0= RULE_KEYWORD ) ) ) ) ;
     public final EObject ruleTerminalExpression() throws RecognitionException {
         EObject current = null;
@@ -24034,6 +25591,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStringLiteral"
+    /**
+     * Entry rule string literal.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8126:1: entryRuleStringLiteral returns [EObject current=null] : iv_ruleStringLiteral= ruleStringLiteral EOF ;
     public final EObject entryRuleStringLiteral() throws RecognitionException {
         EObject current = null;
@@ -24074,6 +25637,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStringLiteral"
+    /**
+     * Rule string literal.
+     *
+     * @return the e object
+     * @throws RecognitionException the recognition exception
+     */
     // InternalGaml.g:8133:1: ruleStringLiteral returns [EObject current=null] : ( (lv_op_0_0= RULE_STRING ) ) ;
     public final EObject ruleStringLiteral() throws RecognitionException {
         EObject current = null;
@@ -24137,6 +25706,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end "ruleStringLiteral"
 
+    /**
+     * Synpred 1 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred1_InternalGaml
     public final void synpred1_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:80:4: ( '@' | 'model' )
@@ -24157,6 +25731,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred1_InternalGaml
 
+    /**
+     * Synpred 2 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred2_InternalGaml
     public final void synpred2_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:1054:5: ( ruleS_Declaration )
@@ -24172,6 +25751,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred2_InternalGaml
 
+    /**
+     * Synpred 3 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred3_InternalGaml
     public final void synpred3_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:1067:6: ( ruleS_Assignment )
@@ -24187,6 +25771,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred3_InternalGaml
 
+    /**
+     * Synpred 4 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred4_InternalGaml
     public final void synpred4_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:1573:5: ( 'else' )
@@ -24198,6 +25787,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred4_InternalGaml
 
+    /**
+     * Synpred 5 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred5_InternalGaml
     public final void synpred5_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:1671:5: ( 'catch' )
@@ -24209,6 +25803,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred5_InternalGaml
 
+    /**
+     * Synpred 6 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred6_InternalGaml
     public final void synpred6_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:1869:4: ( 'species' | RULE_ID )
@@ -24229,6 +25828,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred6_InternalGaml
 
+    /**
+     * Synpred 7 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred7_InternalGaml
     public final void synpred7_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:3195:4: ( rulespeciesOrGridDisplayStatement )
@@ -24244,6 +25848,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred7_InternalGaml
 
+    /**
+     * Synpred 9 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred9_InternalGaml
     public final void synpred9_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4686:5: ( ( ( ruleExpression ) ) )
@@ -24271,6 +25880,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred9_InternalGaml
 
+    /**
+     * Synpred 10 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred10_InternalGaml
     public final void synpred10_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:4783:5: ( 'species' | RULE_ID )
@@ -24291,6 +25905,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred10_InternalGaml
 
+    /**
+     * Synpred 11 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred11_InternalGaml
     public final void synpred11_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:5036:4: ( ( ( ( ( ruleValid_ID ) ) '::' ) | ( ( ( ( ruleDefinitionFacetKey | ruleTypeFacetKey | ruleSpecialFacetKey | ruleActionFacetKey | ruleVarFacetKey ) ) ) ':' ) ) )
@@ -24494,6 +26113,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred11_InternalGaml
 
+    /**
+     * Synpred 12 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred12_InternalGaml
     public final void synpred12_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:5100:4: ( ( ( ( ( ruleValid_ID ) ) '::' ) | ( ( ( ( ruleDefinitionFacetKey | ruleTypeFacetKey | ruleSpecialFacetKey | ruleActionFacetKey | ruleVarFacetKey ) ) ) ':' ) ) )
@@ -24697,6 +26321,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred12_InternalGaml
 
+    /**
+     * Synpred 13 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred13_InternalGaml
     public final void synpred13_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:6703:4: ( ruleFunction )
@@ -24712,6 +26341,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred13_InternalGaml
 
+    /**
+     * Synpred 14 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred14_InternalGaml
     public final void synpred14_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:7329:4: ( '>' )
@@ -24723,6 +26357,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred14_InternalGaml
 
+    /**
+     * Synpred 15 internal gaml fragment.
+     *
+     * @throws RecognitionException the recognition exception
+     */
     // $ANTLR start synpred15_InternalGaml
     public final void synpred15_InternalGaml_fragment() throws RecognitionException {   
         // InternalGaml.g:7511:4: ( ruleS_Declaration )
@@ -24740,6 +26379,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
     // Delegated rules
 
+    /**
+     * Synpred 9 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred9_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24754,6 +26398,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 6 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred6_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24768,6 +26418,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 5 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred5_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24782,6 +26438,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 7 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred7_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24796,6 +26458,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 12 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred12_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24810,6 +26478,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 11 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred11_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24824,6 +26498,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 10 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred10_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24838,6 +26518,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 13 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred13_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24852,6 +26538,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 1 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred1_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24866,6 +26558,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 4 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred4_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24880,6 +26578,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 2 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred2_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24894,6 +26598,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 15 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred15_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24908,6 +26618,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 3 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred3_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24922,6 +26638,12 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    
+    /**
+     * Synpred 14 internal gaml.
+     *
+     * @return true, if successful
+     */
     public final boolean synpred14_InternalGaml() {
         state.backtracking++;
         int start = input.mark();
@@ -24938,24 +26660,61 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
 
 
+    /** The dfa 22. */
     protected DFA22 dfa22 = new DFA22(this);
+    
+    /** The dfa 21. */
     protected DFA21 dfa21 = new DFA21(this);
+    
+    /** The dfa 24. */
     protected DFA24 dfa24 = new DFA24(this);
+    
+    /** The dfa 61. */
     protected DFA61 dfa61 = new DFA61(this);
+    
+    /** The dfa 69. */
     protected DFA69 dfa69 = new DFA69(this);
+    
+    /** The dfa 78. */
     protected DFA78 dfa78 = new DFA78(this);
+    
+    /** The dfa 89. */
     protected DFA89 dfa89 = new DFA89(this);
+    
+    /** The dfa 90. */
     protected DFA90 dfa90 = new DFA90(this);
+    
+    /** The dfa 93. */
     protected DFA93 dfa93 = new DFA93(this);
+    
+    /** The dfa 96. */
     protected DFA96 dfa96 = new DFA96(this);
+    
+    /** The dfa 124. */
     protected DFA124 dfa124 = new DFA124(this);
+    
+    /** The dfa 129. */
     protected DFA129 dfa129 = new DFA129(this);
+    
+    /** The dfa 138. */
     protected DFA138 dfa138 = new DFA138(this);
+    
+    /** The Constant dfa_1s. */
     static final String dfa_1s = "\151\uffff";
+    
+    /** The Constant dfa_2s. */
     static final String dfa_2s = "\1\4\6\0\1\uffff\4\0\135\uffff";
+    
+    /** The Constant dfa_3s. */
     static final String dfa_3s = "\1\u0095\6\0\1\uffff\4\0\135\uffff";
+    
+    /** The Constant dfa_4s. */
     static final String dfa_4s = "\7\uffff\1\1\4\uffff\1\1\1\2\133\uffff";
+    
+    /** The Constant dfa_5s. */
     static final String dfa_5s = "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\uffff\1\7\1\10\1\11\1\12\135\uffff}>";
+    
+    /** The Constant dfa_6s. */
     static final String[] dfa_6s = {
             "\1\1\5\15\12\uffff\1\15\3\uffff\1\15\1\14\1\15\2\uffff\1\15\1\uffff\3\15\1\uffff\1\15\1\uffff\1\7\2\15\4\uffff\2\15\1\2\1\3\54\15\1\10\1\11\1\12\1\13\1\4\1\5\1\6\7\uffff\27\15\12\uffff\1\15\3\uffff\7\15",
             "\1\uffff",
@@ -25064,15 +26823,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_1. */
     static final short[] dfa_1 = DFA.unpackEncodedString(dfa_1s);
+    
+    /** The Constant dfa_2. */
     static final char[] dfa_2 = DFA.unpackEncodedStringToUnsignedChars(dfa_2s);
+    
+    /** The Constant dfa_3. */
     static final char[] dfa_3 = DFA.unpackEncodedStringToUnsignedChars(dfa_3s);
+    
+    /** The Constant dfa_4. */
     static final short[] dfa_4 = DFA.unpackEncodedString(dfa_4s);
+    
+    /** The Constant dfa_5. */
     static final short[] dfa_5 = DFA.unpackEncodedString(dfa_5s);
+    
+    /** The Constant dfa_6. */
     static final short[][] dfa_6 = unpackEncodedStringArray(dfa_6s);
 
+    /**
+     * The Class DFA22.
+     */
     class DFA22 extends DFA {
 
+        /**
+         * Instantiates a new dfa22.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA22(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 22;
@@ -25286,11 +27064,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_7s. */
     static final String dfa_7s = "\153\uffff";
+    
+    /** The Constant dfa_8s. */
     static final String dfa_8s = "\1\4\2\uffff\2\0\7\uffff\53\0\64\uffff";
+    
+    /** The Constant dfa_9s. */
     static final String dfa_9s = "\1\u0095\2\uffff\2\0\7\uffff\53\0\64\uffff";
+    
+    /** The Constant dfa_10s. */
     static final String dfa_10s = "\1\uffff\2\1\2\uffff\7\1\53\uffff\54\1\1\5\1\6\1\7\1\10\1\4\1\2\1\11\1\3";
+    
+    /** The Constant dfa_11s. */
     static final String dfa_11s = "\1\0\2\uffff\1\1\1\2\7\uffff\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\64\uffff}>";
+    
+    /** The Constant dfa_12s. */
     static final String[] dfa_12s = {
             "\1\66\1\123\1\124\1\125\1\126\1\127\12\uffff\1\70\3\uffff\1\120\1\uffff\1\145\2\uffff\1\146\1\uffff\1\143\1\102\1\100\1\uffff\1\130\2\uffff\1\142\1\132\4\uffff\1\65\1\144\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\7\uffff\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\121\1\122\12\uffff\1\135\3\uffff\1\133\1\134\1\136\1\137\1\140\1\141\1\131",
             "",
@@ -25401,15 +27191,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_7. */
     static final short[] dfa_7 = DFA.unpackEncodedString(dfa_7s);
+    
+    /** The Constant dfa_8. */
     static final char[] dfa_8 = DFA.unpackEncodedStringToUnsignedChars(dfa_8s);
+    
+    /** The Constant dfa_9. */
     static final char[] dfa_9 = DFA.unpackEncodedStringToUnsignedChars(dfa_9s);
+    
+    /** The Constant dfa_10. */
     static final short[] dfa_10 = DFA.unpackEncodedString(dfa_10s);
+    
+    /** The Constant dfa_11. */
     static final short[] dfa_11 = DFA.unpackEncodedString(dfa_11s);
+    
+    /** The Constant dfa_12. */
     static final short[][] dfa_12 = unpackEncodedStringArray(dfa_12s);
 
+    /**
+     * The Class DFA21.
+     */
     class DFA21 extends DFA {
 
+        /**
+         * Instantiates a new dfa21.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA21(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 21;
@@ -26326,11 +28135,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_13s. */
     static final String dfa_13s = "\40\uffff";
+    
+    /** The Constant dfa_14s. */
     static final String dfa_14s = "\11\4\1\42\23\4\2\uffff\1\4";
+    
+    /** The Constant dfa_15s. */
     static final String dfa_15s = "\11\u0095\1\42\22\u0095\1\u0097\2\uffff\1\u0095";
+    
+    /** The Constant dfa_16s. */
     static final String dfa_16s = "\35\uffff\1\2\1\1\1\uffff";
+    
+    /** The Constant dfa_17s. */
     static final String dfa_17s = "\40\uffff}>";
+    
+    /** The Constant dfa_18s. */
     static final String[] dfa_18s = {
             "\1\34\5\35\12\uffff\1\1\3\uffff\1\32\7\uffff\1\13\1\11\1\uffff\1\35\3\uffff\1\35\4\uffff\1\35\1\uffff\65\35\7\uffff\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\12\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\33\1\31\12\uffff\1\35\3\uffff\7\35",
             "\6\36\12\uffff\1\36\3\uffff\1\36\7\uffff\2\36\1\35\1\36\3\uffff\1\36\4\uffff\1\36\1\uffff\65\36\7\uffff\27\36\12\uffff\1\36\3\uffff\7\36",
@@ -26366,15 +28187,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "\6\36\12\uffff\1\36\3\uffff\1\36\7\uffff\2\36\1\35\1\36\3\uffff\1\36\4\uffff\1\36\1\uffff\65\36\7\uffff\27\36\12\uffff\1\36\3\uffff\7\36"
     };
 
+    /** The Constant dfa_13. */
     static final short[] dfa_13 = DFA.unpackEncodedString(dfa_13s);
+    
+    /** The Constant dfa_14. */
     static final char[] dfa_14 = DFA.unpackEncodedStringToUnsignedChars(dfa_14s);
+    
+    /** The Constant dfa_15. */
     static final char[] dfa_15 = DFA.unpackEncodedStringToUnsignedChars(dfa_15s);
+    
+    /** The Constant dfa_16. */
     static final short[] dfa_16 = DFA.unpackEncodedString(dfa_16s);
+    
+    /** The Constant dfa_17. */
     static final short[] dfa_17 = DFA.unpackEncodedString(dfa_17s);
+    
+    /** The Constant dfa_18. */
     static final short[][] dfa_18 = unpackEncodedStringArray(dfa_18s);
 
+    /**
+     * The Class DFA24.
+     */
     class DFA24 extends DFA {
 
+        /**
+         * Instantiates a new dfa24.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA24(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 24;
@@ -26390,11 +28230,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             return "1198:3: ( (lv_firstFacet_1_0= ruleFirstFacetKey ) )?";
         }
     }
+    
+    /** The Constant dfa_19s. */
     static final String dfa_19s = "\72\uffff";
+    
+    /** The Constant dfa_20s. */
     static final String dfa_20s = "\1\4\67\43\2\uffff";
+    
+    /** The Constant dfa_21s. */
     static final String dfa_21s = "\1\142\67\u0089\2\uffff";
+    
+    /** The Constant dfa_22s. */
     static final String dfa_22s = "\70\uffff\1\2\1\1";
+    
+    /** The Constant dfa_23s. */
     static final String dfa_23s = "\72\uffff}>";
+    
+    /** The Constant dfa_24s. */
     static final String[] dfa_24s = {
             "\1\66\47\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7",
             "\1\71\5\uffff\1\70\137\uffff\1\71",
@@ -26456,15 +28308,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_19. */
     static final short[] dfa_19 = DFA.unpackEncodedString(dfa_19s);
+    
+    /** The Constant dfa_20. */
     static final char[] dfa_20 = DFA.unpackEncodedStringToUnsignedChars(dfa_20s);
+    
+    /** The Constant dfa_21. */
     static final char[] dfa_21 = DFA.unpackEncodedStringToUnsignedChars(dfa_21s);
+    
+    /** The Constant dfa_22. */
     static final short[] dfa_22 = DFA.unpackEncodedString(dfa_22s);
+    
+    /** The Constant dfa_23. */
     static final short[] dfa_23 = DFA.unpackEncodedString(dfa_23s);
+    
+    /** The Constant dfa_24. */
     static final short[][] dfa_24 = unpackEncodedStringArray(dfa_24s);
 
+    /**
+     * The Class DFA61.
+     */
     class DFA61 extends DFA {
 
+        /**
+         * Instantiates a new dfa61.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA61(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 61;
@@ -26480,10 +28351,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             return "2817:5: (lv_expr_0_1= ruleFunction | lv_expr_0_2= ruleVariableRef )";
         }
     }
+    
+    /** The Constant dfa_25s. */
     static final String dfa_25s = "\1\4\2\0\150\uffff";
+    
+    /** The Constant dfa_26s. */
     static final String dfa_26s = "\1\u0095\2\0\150\uffff";
+    
+    /** The Constant dfa_27s. */
     static final String dfa_27s = "\3\uffff\1\2\146\uffff\1\1";
+    
+    /** The Constant dfa_28s. */
     static final String dfa_28s = "\1\uffff\1\0\1\1\150\uffff}>";
+    
+    /** The Constant dfa_29s. */
     static final String[] dfa_29s = {
             "\6\3\12\uffff\1\3\3\uffff\3\3\2\uffff\1\3\1\uffff\3\3\1\uffff\1\3\1\uffff\3\3\3\uffff\3\3\1\1\1\2\63\3\7\uffff\27\3\12\uffff\1\3\3\uffff\7\3",
             "\1\uffff",
@@ -26593,14 +28474,32 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_25. */
     static final char[] dfa_25 = DFA.unpackEncodedStringToUnsignedChars(dfa_25s);
+    
+    /** The Constant dfa_26. */
     static final char[] dfa_26 = DFA.unpackEncodedStringToUnsignedChars(dfa_26s);
+    
+    /** The Constant dfa_27. */
     static final short[] dfa_27 = DFA.unpackEncodedString(dfa_27s);
+    
+    /** The Constant dfa_28. */
     static final short[] dfa_28 = DFA.unpackEncodedString(dfa_28s);
+    
+    /** The Constant dfa_29. */
     static final short[][] dfa_29 = unpackEncodedStringArray(dfa_29s);
 
+    /**
+     * The Class DFA69.
+     */
     class DFA69 extends DFA {
 
+        /**
+         * Instantiates a new dfa69.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA69(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 69;
@@ -26657,11 +28556,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_30s. */
     static final String dfa_30s = "\12\uffff";
+    
+    /** The Constant dfa_31s. */
     static final String dfa_31s = "\1\17\2\uffff\1\144\6\uffff";
+    
+    /** The Constant dfa_32s. */
     static final String dfa_32s = "\1\150\2\uffff\1\146\6\uffff";
+    
+    /** The Constant dfa_33s. */
     static final String dfa_33s = "\1\uffff\1\1\1\2\1\uffff\1\4\1\6\1\7\1\10\1\5\1\3";
+    
+    /** The Constant dfa_34s. */
     static final String dfa_34s = "\12\uffff}>";
+    
+    /** The Constant dfa_35s. */
     static final String[] dfa_35s = {
             "\1\1\123\uffff\1\2\1\3\1\4\1\7\1\5\1\6",
             "",
@@ -26675,15 +28586,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_30. */
     static final short[] dfa_30 = DFA.unpackEncodedString(dfa_30s);
+    
+    /** The Constant dfa_31. */
     static final char[] dfa_31 = DFA.unpackEncodedStringToUnsignedChars(dfa_31s);
+    
+    /** The Constant dfa_32. */
     static final char[] dfa_32 = DFA.unpackEncodedStringToUnsignedChars(dfa_32s);
+    
+    /** The Constant dfa_33. */
     static final short[] dfa_33 = DFA.unpackEncodedString(dfa_33s);
+    
+    /** The Constant dfa_34. */
     static final short[] dfa_34 = DFA.unpackEncodedString(dfa_34s);
+    
+    /** The Constant dfa_35. */
     static final short[][] dfa_35 = unpackEncodedStringArray(dfa_35s);
 
+    /**
+     * The Class DFA78.
+     */
     class DFA78 extends DFA {
 
+        /**
+         * Instantiates a new dfa78.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA78(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 78;
@@ -26699,11 +28629,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             return "3831:2: (kw= '<-' | kw= '<<' | (kw= '>' kw= '>' ) | kw= '<<+' | (kw= '>' kw= '>-' ) | kw= '+<-' | kw= '<+' | kw= '>-' )";
         }
     }
+    
+    /** The Constant dfa_36s. */
     static final String dfa_36s = "\143\uffff";
+    
+    /** The Constant dfa_37s. */
     static final String dfa_37s = "\1\4\131\uffff\1\0\10\uffff";
+    
+    /** The Constant dfa_38s. */
     static final String dfa_38s = "\1\u0095\131\uffff\1\0\10\uffff";
+    
+    /** The Constant dfa_39s. */
     static final String dfa_39s = "\1\uffff\131\1\1\uffff\7\1\1\2";
+    
+    /** The Constant dfa_40s. */
     static final String dfa_40s = "\1\0\131\uffff\1\1\10\uffff}>";
+    
+    /** The Constant dfa_41s. */
     static final String[] dfa_41s = {
             "\1\66\1\123\1\124\1\125\1\126\1\127\12\uffff\1\70\3\uffff\1\120\7\uffff\1\102\1\100\1\uffff\1\130\3\uffff\1\132\4\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\7\uffff\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\121\1\122\12\uffff\1\135\3\uffff\1\133\1\134\1\136\1\137\1\140\1\141\1\131",
             "",
@@ -26806,15 +28748,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_36. */
     static final short[] dfa_36 = DFA.unpackEncodedString(dfa_36s);
+    
+    /** The Constant dfa_37. */
     static final char[] dfa_37 = DFA.unpackEncodedStringToUnsignedChars(dfa_37s);
+    
+    /** The Constant dfa_38. */
     static final char[] dfa_38 = DFA.unpackEncodedStringToUnsignedChars(dfa_38s);
+    
+    /** The Constant dfa_39. */
     static final short[] dfa_39 = DFA.unpackEncodedString(dfa_39s);
+    
+    /** The Constant dfa_40. */
     static final short[] dfa_40 = DFA.unpackEncodedString(dfa_40s);
+    
+    /** The Constant dfa_41. */
     static final short[][] dfa_41 = unpackEncodedStringArray(dfa_41s);
 
+    /**
+     * The Class DFA89.
+     */
     class DFA89 extends DFA {
 
+        /**
+         * Instantiates a new dfa89.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA89(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 89;
@@ -27061,10 +29022,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_42s. */
     static final String dfa_42s = "\1\4\2\0\140\uffff";
+    
+    /** The Constant dfa_43s. */
     static final String dfa_43s = "\1\u0095\2\0\140\uffff";
+    
+    /** The Constant dfa_44s. */
     static final String dfa_44s = "\3\uffff\1\2\136\uffff\1\1";
+    
+    /** The Constant dfa_45s. */
     static final String dfa_45s = "\1\uffff\1\0\1\1\140\uffff}>";
+    
+    /** The Constant dfa_46s. */
     static final String[] dfa_46s = {
             "\1\1\5\3\12\uffff\1\3\3\uffff\1\3\7\uffff\2\3\1\uffff\1\3\3\uffff\1\3\4\uffff\1\3\1\uffff\1\2\64\3\7\uffff\27\3\12\uffff\1\3\3\uffff\7\3",
             "\1\uffff",
@@ -27166,14 +29137,32 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_42. */
     static final char[] dfa_42 = DFA.unpackEncodedStringToUnsignedChars(dfa_42s);
+    
+    /** The Constant dfa_43. */
     static final char[] dfa_43 = DFA.unpackEncodedStringToUnsignedChars(dfa_43s);
+    
+    /** The Constant dfa_44. */
     static final short[] dfa_44 = DFA.unpackEncodedString(dfa_44s);
+    
+    /** The Constant dfa_45. */
     static final short[] dfa_45 = DFA.unpackEncodedString(dfa_45s);
+    
+    /** The Constant dfa_46. */
     static final short[][] dfa_46 = unpackEncodedStringArray(dfa_46s);
 
+    /**
+     * The Class DFA90.
+     */
     class DFA90 extends DFA {
 
+        /**
+         * Instantiates a new dfa90.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA90(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 90;
@@ -27230,10 +29219,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_47s. */
     static final String dfa_47s = "\1\4\67\0\33\uffff\17\0\1\uffff";
+    
+    /** The Constant dfa_48s. */
     static final String dfa_48s = "\1\u0095\67\0\33\uffff\17\0\1\uffff";
+    
+    /** The Constant dfa_49s. */
     static final String dfa_49s = "\70\uffff\33\1\17\uffff\1\2";
+    
+    /** The Constant dfa_50s. */
     static final String dfa_50s = "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\1\67\33\uffff\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\100\1\101\1\102\1\103\1\104\1\105\1\106\1\uffff}>";
+    
+    /** The Constant dfa_51s. */
     static final String[] dfa_51s = {
             "\1\66\1\123\1\124\1\125\1\126\1\127\12\uffff\1\70\3\uffff\1\120\7\uffff\1\102\1\100\1\uffff\1\130\3\uffff\1\132\4\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\7\uffff\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\121\1\122\12\uffff\1\135\3\uffff\1\133\1\134\1\136\1\137\1\140\1\141\1\131",
             "\1\uffff",
@@ -27335,14 +29334,32 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "\1\uffff",
             ""
     };
+    
+    /** The Constant dfa_47. */
     static final char[] dfa_47 = DFA.unpackEncodedStringToUnsignedChars(dfa_47s);
+    
+    /** The Constant dfa_48. */
     static final char[] dfa_48 = DFA.unpackEncodedStringToUnsignedChars(dfa_48s);
+    
+    /** The Constant dfa_49. */
     static final short[] dfa_49 = DFA.unpackEncodedString(dfa_49s);
+    
+    /** The Constant dfa_50. */
     static final short[] dfa_50 = DFA.unpackEncodedString(dfa_50s);
+    
+    /** The Constant dfa_51. */
     static final short[][] dfa_51 = unpackEncodedStringArray(dfa_51s);
 
+    /**
+     * The Class DFA93.
+     */
     class DFA93 extends DFA {
 
+        /**
+         * Instantiates a new dfa93.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA93(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 93;
@@ -28624,11 +30641,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_52s. */
     static final String dfa_52s = "\142\uffff";
+    
+    /** The Constant dfa_53s. */
     static final String dfa_53s = "\1\4\67\0\52\uffff";
+    
+    /** The Constant dfa_54s. */
     static final String dfa_54s = "\1\u0095\67\0\52\uffff";
+    
+    /** The Constant dfa_55s. */
     static final String dfa_55s = "\70\uffff\33\1\1\2\16\uffff";
+    
+    /** The Constant dfa_56s. */
     static final String dfa_56s = "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\1\67\52\uffff}>";
+    
+    /** The Constant dfa_57s. */
     static final String[] dfa_57s = {
             "\1\66\5\123\12\uffff\1\70\3\uffff\1\120\7\uffff\1\102\1\100\1\uffff\1\123\3\uffff\1\123\4\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\7\uffff\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\121\1\122\12\uffff\1\123\3\uffff\7\123",
             "\1\uffff",
@@ -28730,15 +30759,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_52. */
     static final short[] dfa_52 = DFA.unpackEncodedString(dfa_52s);
+    
+    /** The Constant dfa_53. */
     static final char[] dfa_53 = DFA.unpackEncodedStringToUnsignedChars(dfa_53s);
+    
+    /** The Constant dfa_54. */
     static final char[] dfa_54 = DFA.unpackEncodedStringToUnsignedChars(dfa_54s);
+    
+    /** The Constant dfa_55. */
     static final short[] dfa_55 = DFA.unpackEncodedString(dfa_55s);
+    
+    /** The Constant dfa_56. */
     static final short[] dfa_56 = DFA.unpackEncodedString(dfa_56s);
+    
+    /** The Constant dfa_57. */
     static final short[][] dfa_57 = unpackEncodedStringArray(dfa_57s);
 
+    /**
+     * The Class DFA96.
+     */
     class DFA96 extends DFA {
 
+        /**
+         * Instantiates a new dfa96.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA96(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 96;
@@ -29767,10 +31815,20 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_58s. */
     static final String dfa_58s = "\1\4\67\0\2\uffff";
+    
+    /** The Constant dfa_59s. */
     static final String dfa_59s = "\1\142\67\0\2\uffff";
+    
+    /** The Constant dfa_60s. */
     static final String dfa_60s = "\70\uffff\1\1\1\2";
+    
+    /** The Constant dfa_61s. */
     static final String dfa_61s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\2\uffff}>";
+    
+    /** The Constant dfa_62s. */
     static final String[] dfa_62s = {
             "\1\66\47\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7",
             "\1\uffff",
@@ -29831,14 +31889,32 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "",
             ""
     };
+    
+    /** The Constant dfa_58. */
     static final char[] dfa_58 = DFA.unpackEncodedStringToUnsignedChars(dfa_58s);
+    
+    /** The Constant dfa_59. */
     static final char[] dfa_59 = DFA.unpackEncodedStringToUnsignedChars(dfa_59s);
+    
+    /** The Constant dfa_60. */
     static final short[] dfa_60 = DFA.unpackEncodedString(dfa_60s);
+    
+    /** The Constant dfa_61. */
     static final short[] dfa_61 = DFA.unpackEncodedString(dfa_61s);
+    
+    /** The Constant dfa_62. */
     static final short[][] dfa_62 = unpackEncodedStringArray(dfa_62s);
 
+    /**
+     * The Class DFA124.
+     */
     class DFA124 extends DFA {
 
+        /**
+         * Instantiates a new dfa124.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA124(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 124;
@@ -30690,12 +32766,26 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
+    
+    /** The Constant dfa_63s. */
     static final String dfa_63s = "\126\uffff";
+    
+    /** The Constant dfa_64s. */
     static final String dfa_64s = "\1\uffff\67\123\36\uffff";
+    
+    /** The Constant dfa_65s. */
     static final String dfa_65s = "\100\4\1\42\22\4\2\uffff\1\4";
+    
+    /** The Constant dfa_66s. */
     static final String dfa_66s = "\1\u0095\67\u0097\10\u0095\1\42\22\u0095\2\uffff\1\u0095";
+    
+    /** The Constant dfa_67s. */
     static final String dfa_67s = "\123\uffff\1\1\1\2\1\uffff";
+    
+    /** The Constant dfa_68s. */
     static final String dfa_68s = "\126\uffff}>";
+    
+    /** The Constant dfa_69s. */
     static final String[] dfa_69s = {
             "\1\66\5\123\12\uffff\1\70\3\uffff\1\120\7\uffff\1\102\1\100\1\uffff\1\123\3\uffff\1\123\4\uffff\1\65\1\uffff\1\1\1\2\1\67\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\3\1\4\1\10\1\11\1\12\1\13\1\5\1\6\1\7\7\uffff\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\101\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\121\1\122\12\uffff\1\123\3\uffff\7\123",
             "\1\123\15\uffff\1\123\17\uffff\1\124\2\123\4\uffff\1\123\2\uffff\1\123\1\uffff\65\123\1\uffff\1\123\4\uffff\1\123\30\uffff\17\123\4\uffff\3\123",
@@ -30785,16 +32875,37 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             "\6\124\12\uffff\1\124\3\uffff\1\124\7\uffff\2\124\1\123\1\124\3\uffff\1\124\4\uffff\1\124\1\uffff\65\124\7\uffff\27\124\12\uffff\1\124\3\uffff\7\124"
     };
 
+    /** The Constant dfa_63. */
     static final short[] dfa_63 = DFA.unpackEncodedString(dfa_63s);
+    
+    /** The Constant dfa_64. */
     static final short[] dfa_64 = DFA.unpackEncodedString(dfa_64s);
+    
+    /** The Constant dfa_65. */
     static final char[] dfa_65 = DFA.unpackEncodedStringToUnsignedChars(dfa_65s);
+    
+    /** The Constant dfa_66. */
     static final char[] dfa_66 = DFA.unpackEncodedStringToUnsignedChars(dfa_66s);
+    
+    /** The Constant dfa_67. */
     static final short[] dfa_67 = DFA.unpackEncodedString(dfa_67s);
+    
+    /** The Constant dfa_68. */
     static final short[] dfa_68 = DFA.unpackEncodedString(dfa_68s);
+    
+    /** The Constant dfa_69. */
     static final short[][] dfa_69 = unpackEncodedStringArray(dfa_69s);
 
+    /**
+     * The Class DFA129.
+     */
     class DFA129 extends DFA {
 
+        /**
+         * Instantiates a new dfa129.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA129(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 129;
@@ -30810,11 +32921,23 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             return "6831:2: ( ( ( (lv_exprs_0_0= ruleExpression ) ) (otherlv_1= ',' ( (lv_exprs_2_0= ruleExpression ) ) )* ) | ( ( (lv_exprs_3_0= ruleParameter ) ) (otherlv_4= ',' ( (lv_exprs_5_0= ruleParameter ) ) )* ) )";
         }
     }
+    
+    /** The Constant dfa_70s. */
     static final String dfa_70s = "\24\uffff";
+    
+    /** The Constant dfa_71s. */
     static final String dfa_71s = "\1\4\2\0\21\uffff";
+    
+    /** The Constant dfa_72s. */
     static final String dfa_72s = "\1\u009c\2\0\21\uffff";
+    
+    /** The Constant dfa_73s. */
     static final String dfa_73s = "\3\uffff\12\1\1\2\6\uffff";
+    
+    /** The Constant dfa_74s. */
     static final String dfa_74s = "\1\0\1\1\1\2\21\uffff}>";
+    
+    /** The Constant dfa_75s. */
     static final String[] dfa_75s = {
             "\1\1\13\uffff\2\15\1\uffff\2\15\4\uffff\1\14\13\uffff\1\7\10\uffff\1\2\1\3\1\15\53\uffff\1\10\1\11\1\12\1\13\1\4\1\5\1\6\7\uffff\1\15\61\uffff\1\15",
             "\1\uffff",
@@ -30838,15 +32961,34 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             ""
     };
 
+    /** The Constant dfa_70. */
     static final short[] dfa_70 = DFA.unpackEncodedString(dfa_70s);
+    
+    /** The Constant dfa_71. */
     static final char[] dfa_71 = DFA.unpackEncodedStringToUnsignedChars(dfa_71s);
+    
+    /** The Constant dfa_72. */
     static final char[] dfa_72 = DFA.unpackEncodedStringToUnsignedChars(dfa_72s);
+    
+    /** The Constant dfa_73. */
     static final short[] dfa_73 = DFA.unpackEncodedString(dfa_73s);
+    
+    /** The Constant dfa_74. */
     static final short[] dfa_74 = DFA.unpackEncodedString(dfa_74s);
+    
+    /** The Constant dfa_75. */
     static final short[][] dfa_75 = unpackEncodedStringArray(dfa_75s);
 
+    /**
+     * The Class DFA138.
+     */
     class DFA138 extends DFA {
 
+        /**
+         * Instantiates a new dfa138.
+         *
+         * @param recognizer the recognizer
+         */
         public DFA138(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 138;
@@ -30942,73 +33084,208 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     }
  
 
+    /** The Constant FOLLOW_1. */
     public static final BitSet FOLLOW_1 = new BitSet(new long[]{0x0000000000000000L});
+    
+    /** The Constant FOLLOW_2. */
     public static final BitSet FOLLOW_2 = new BitSet(new long[]{0x0000000000000002L});
+    
+    /** The Constant FOLLOW_3. */
     public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0000008000000000L});
+    
+    /** The Constant FOLLOW_4. */
     public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000008000L});
+    
+    /** The Constant FOLLOW_5. */
     public static final BitSet FOLLOW_5 = new BitSet(new long[]{0xFFFFD08B011003F0L,0xFFFFFC07FFFFFFFFL,0x00000000003F8801L});
+    
+    /** The Constant FOLLOW_6. */
     public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000090000L});
+    
+    /** The Constant FOLLOW_7. */
     public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000000010L});
+    
+    /** The Constant FOLLOW_8. */
     public static final BitSet FOLLOW_8 = new BitSet(new long[]{0xFFFFD00000820010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_9. */
     public static final BitSet FOLLOW_9 = new BitSet(new long[]{0xFFFFD00000800012L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_10. */
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000000020L});
+    
+    /** The Constant FOLLOW_11. */
     public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000040002L});
+    
+    /** The Constant FOLLOW_12. */
     public static final BitSet FOLLOW_12 = new BitSet(new long[]{0xFFFFD00000000010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_13. */
     public static final BitSet FOLLOW_13 = new BitSet(new long[]{0xFFFFD00000100030L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_14. */
     public static final BitSet FOLLOW_14 = new BitSet(new long[]{0xFFFFD00000000030L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_15. */
     public static final BitSet FOLLOW_15 = new BitSet(new long[]{0xFFFFD08301708010L,0xFFFFFC07FFFFFFFFL,0x0000000000000003L});
+    
+    /** The Constant FOLLOW_16. */
     public static final BitSet FOLLOW_16 = new BitSet(new long[]{0xFFFFD08301508010L,0xFFFFFC07FFFFFFFFL,0x0000000000000003L});
+    
+    /** The Constant FOLLOW_17. */
     public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000000100010L});
+    
+    /** The Constant FOLLOW_18. */
     public static final BitSet FOLLOW_18 = new BitSet(new long[]{0xFFFFD00001000010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_19. */
     public static final BitSet FOLLOW_19 = new BitSet(new long[]{0xFFFFD08301108010L,0xFFFFFC07FFFFFFFFL,0x0000000000000003L});
+    
+    /** The Constant FOLLOW_20. */
     public static final BitSet FOLLOW_20 = new BitSet(new long[]{0xFFFFD08B091003F0L,0xFFFFFC07FFFFFFFFL,0x00000000003F8801L});
+    
+    /** The Constant FOLLOW_21. */
     public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000000010000002L});
+    
+    /** The Constant FOLLOW_22. */
     public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x0000008004000000L});
+    
+    /** The Constant FOLLOW_23. */
     public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000000040000002L});
+    
+    /** The Constant FOLLOW_24. */
     public static final BitSet FOLLOW_24 = new BitSet(new long[]{0xFFFFD08B015003F0L,0xFFFFFC07FFFFFFFFL,0x00000000003F8801L});
+    
+    /** The Constant FOLLOW_25. */
     public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000400000L});
+    
+    /** The Constant FOLLOW_26. */
     public static final BitSet FOLLOW_26 = new BitSet(new long[]{0xFFFFD08200100010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_27. */
     public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000008200000000L});
+    
+    /** The Constant FOLLOW_28. */
     public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000400000000L});
+    
+    /** The Constant FOLLOW_29. */
     public static final BitSet FOLLOW_29 = new BitSet(new long[]{0xFFFFD08B01508010L,0xFFFFFC07FFFFFFFFL,0x0000000000000003L});
+    
+    /** The Constant FOLLOW_30. */
     public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000400000000010L});
+    
+    /** The Constant FOLLOW_31. */
     public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000001000000000L});
+    
+    /** The Constant FOLLOW_32. */
     public static final BitSet FOLLOW_32 = new BitSet(new long[]{0xFFFFD00000100010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_33. */
     public static final BitSet FOLLOW_33 = new BitSet(new long[]{0xFFFFD00301508010L,0xFFFFFC07FFFFFFFFL,0x0000000000000003L});
+    
+    /** The Constant FOLLOW_34. */
     public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000008000L,0x000001F800000000L});
+    
+    /** The Constant FOLLOW_35. */
     public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000000100008000L});
+    
+    /** The Constant FOLLOW_36. */
     public static final BitSet FOLLOW_36 = new BitSet(new long[]{0xFFFFD10000000010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_37. */
     public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000020000000000L});
+    
+    /** The Constant FOLLOW_38. */
     public static final BitSet FOLLOW_38 = new BitSet(new long[]{0xFFFFD40000000010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_39. */
     public static final BitSet FOLLOW_39 = new BitSet(new long[]{0xFFFFF9EBA71003F0L,0xFFFFFC07FFFFFFFFL,0x00000000003F8801L});
+    
+    /** The Constant FOLLOW_40. */
     public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
+    
+    /** The Constant FOLLOW_41. */
     public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
+    
+    /** The Constant FOLLOW_42. */
     public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000000000000002L,0x0000020000000000L});
+    
+    /** The Constant FOLLOW_43. */
     public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000000000008002L});
+    
+    /** The Constant FOLLOW_44. */
     public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0000010000000000L});
+    
+    /** The Constant FOLLOW_45. */
     public static final BitSet FOLLOW_45 = new BitSet(new long[]{0xFFFFD08000000010L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_46. */
     public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000004L});
+    
+    /** The Constant FOLLOW_47. */
     public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000004L});
+    
+    /** The Constant FOLLOW_48. */
     public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000008L});
+    
+    /** The Constant FOLLOW_49. */
     public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000010L});
+    
+    /** The Constant FOLLOW_50. */
     public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000020L});
+    
+    /** The Constant FOLLOW_51. */
     public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0000400800000010L});
+    
+    /** The Constant FOLLOW_52. */
     public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x0000020000000002L,0x0000001000000000L,0x00000000000003C0L});
+    
+    /** The Constant FOLLOW_53. */
     public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000C00L});
+    
+    /** The Constant FOLLOW_54. */
     public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000003000L});
+    
+    /** The Constant FOLLOW_55. */
     public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000004000L});
+    
+    /** The Constant FOLLOW_56. */
     public static final BitSet FOLLOW_56 = new BitSet(new long[]{0xFFFFD00000000012L,0x00000007FFFFFFFFL});
+    
+    /** The Constant FOLLOW_57. */
     public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000018000L});
+    
+    /** The Constant FOLLOW_58. */
     public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000A00000L});
+    
+    /** The Constant FOLLOW_59. */
     public static final BitSet FOLLOW_59 = new BitSet(new long[]{0xFFFFD08B011003F0L,0xFFFFFC07FFFFFFFFL,0x00000000007F8801L});
+    
+    /** The Constant FOLLOW_60. */
     public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000400000L});
+    
+    /** The Constant FOLLOW_61. */
     public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000000000000000L,0x0000020000000000L});
+    
+    /** The Constant FOLLOW_62. */
     public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000010000000000L,0x0000020000000000L});
+    
+    /** The Constant FOLLOW_63. */
     public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000800000000L,0x0000000000000000L,0x0000000000000200L});
+    
+    /** The Constant FOLLOW_64. */
     public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x0000000800000000L});
+    
+    /** The Constant FOLLOW_65. */
     public static final BitSet FOLLOW_65 = new BitSet(new long[]{0xFFFFD09B011003F0L,0xFFFFFC07FFFFFFFFL,0x00000000003F8801L});
+    
+    /** The Constant FOLLOW_66. */
     public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000000L,0x0000000000000200L});
+    
+    /** The Constant FOLLOW_67. */
     public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000000000000200L});
+    
+    /** The Constant FOLLOW_68. */
     public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000000000000000L,0x0000021000000000L});
 
 }

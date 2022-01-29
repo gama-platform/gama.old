@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlRuntimeModule.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlRuntimeModule.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml;
 
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
@@ -48,6 +47,7 @@ import msi.gaml.expressions.IExpressionCompiler;
  */
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
+	/** The initialized. */
 	private static boolean initialized;
 
 	// Disabled for the moment
@@ -56,6 +56,9 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	//// "Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
 	//// .in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).hidden();
 
+	/**
+	 * Static initialize.
+	 */
 	public static void staticInitialize() {
 		if (!initialized) {
 			GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
@@ -89,6 +92,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlQualifiedNameProvider.class;
 	}
 
+	/**
+	 * Bind I gaml expression compiler.
+	 *
+	 * @return the class<? extends I expression compiler>
+	 */
 	@SuppressWarnings ("rawtypes")
 	public Class<? extends IExpressionCompiler> bindIGamlExpressionCompiler() {
 		return GamlExpressionCompiler.class;
@@ -101,6 +109,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
 
+	/**
+	 * Bind I syntax error message provider.
+	 *
+	 * @return the class<? extends I syntax error message provider>
+	 */
 	public Class<? extends ISyntaxErrorMessageProvider> bindISyntaxErrorMessageProvider() {
 		return GamlSyntaxErrorMessageProvider.class;
 	}
@@ -110,6 +123,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlLinkingService.class;
 	}
 
+	/**
+	 * Bind I linking diagnostic message provider.
+	 *
+	 * @return the class<? extends I linking diagnostic message provider. extended>
+	 */
 	public Class<? extends ILinkingDiagnosticMessageProvider.Extended> bindILinkingDiagnosticMessageProvider() {
 		return GamlLinkingErrorMessageProvider.class;
 	}

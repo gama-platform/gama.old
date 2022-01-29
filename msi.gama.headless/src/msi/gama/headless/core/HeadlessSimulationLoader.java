@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * HeadlessSimulationLoader.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'HeadlessSimulationLoader.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.core;
 
 import java.io.File;
@@ -31,28 +29,49 @@ import msi.gaml.compilation.GamlCompilationError;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class HeadlessSimulationLoader.
+ */
 public class HeadlessSimulationLoader {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The injector. */
 	// The injector to use in headless mode
 	Injector injector;
 
+	/** The instance. */
 	private static HeadlessSimulationLoader INSTANCE = new HeadlessSimulationLoader();
 
+	/**
+	 * Instantiates a new headless simulation loader.
+	 */
 	// Singleton
 	private HeadlessSimulationLoader() {}
 
+	/**
+	 * Gets the injector.
+	 *
+	 * @return the injector
+	 */
 	public static Injector getInjector() {
 		return INSTANCE.configureInjector();
 	}
 
+	/**
+	 * Preload GAMA.
+	 */
 	public static void preloadGAMA() {
 		INSTANCE.configureInjector();
 	}
 
+	/**
+	 * Configure injector.
+	 *
+	 * @return the injector
+	 */
 	private Injector configureInjector() {
 		if (injector != null) return injector;
 		DEBUG.LOG("GAMA configuring and loading...");

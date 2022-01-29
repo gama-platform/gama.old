@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * RichExperiment.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'MoleExperiment.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.core;
 
 import msi.gama.headless.common.DataType;
@@ -25,7 +23,16 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class RichExperiment.
+ */
 public class RichExperiment extends Experiment implements IRichExperiment {
+	
+	/**
+	 * Instantiates a new rich experiment.
+	 *
+	 * @param mdl the mdl
+	 */
 	public RichExperiment(final IModel mdl) {
 		super(mdl);
 	}

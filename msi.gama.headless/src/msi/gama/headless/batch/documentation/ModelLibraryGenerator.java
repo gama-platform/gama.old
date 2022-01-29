@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ModelLibraryGenerator.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.batch.documentation;
 
 import java.io.BufferedReader;
@@ -29,11 +39,22 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.runtime.Application;
 
+/**
+ * The Class ModelLibraryGenerator.
+ */
 public class ModelLibraryGenerator {
+	
+	/** The wiki folder. */
 	// inputs / outputs
 	static String wikiFolder = "F:/Gama/GamaWiki/";
+	
+	/** The source folder. */
 	static String sourceFolder = "F:/Gama/GamaSource/";
+	
+	/** The wiki folder on OVH. */
 	static String wikiFolderOnOVH = "http://vps226121.ovh.net/gm_wiki/";
+	
+	/** The input path to model library. */
 	static String[] inputPathToModelLibrary =
 			{ sourceFolder + "msi.gama.models/models/", sourceFolder + "ummisco.gaml.extensions.maths/models",
 			/* sourceFolder+"msi.gaml.extensions.fipa/models", */ // commented
@@ -55,13 +76,23 @@ public class ModelLibraryGenerator {
 																			// to
 																			// find
 																			// statements
+																			/** The output path to model library. */
 																			// otherwise.
 	static String outputPathToModelLibrary = wikiFolder + "References/ModelLibrary";
+	
+	/** The model library images path. */
 	static String modelLibraryImagesPath = wikiFolder + "resources/images/modelLibraryScreenshots";
+	
+	/** The input file for headless execution. */
 	static String inputFileForHeadlessExecution = wikiFolder + "tempInputForHeadless.xml";
+	
+	/** The input model screenshot. */
 	static String inputModelScreenshot = wikiFolder + "modelScreenshot.xml";
+	
+	/** The headless bat path. */
 	static String headlessBatPath = wikiFolder + "headless.bat";
 
+	/** The list no screenshot. */
 	static String[] listNoScreenshot = { "msi.gama.models/models/Syntax", // no
 																			// need
 																			// to
@@ -88,12 +119,16 @@ public class ModelLibraryGenerator {
 			// "msi.gama.models/models/Toy Models/Co-model Example"
 	};
 
+	/** The map model screenshot. */
 	static HashMap<String, ScreenshotStructure> mapModelScreenshot;
+	
+	/** The main keywords map. */
 	static HashMap<String, String> mainKeywordsMap; // the key is the name of
 													// the model, the value is
 													// the metadata formated
 													// which contains all the
 													// important keywords of the
+													/** The expe used from the XML. */
 													// model.
 	static List<String> expeUsedFromTheXML = new ArrayList<>(); // this
 																// variable
@@ -111,9 +146,13 @@ public class ModelLibraryGenerator {
 																// and
 																// if
 																// all
-	// the experiments have been used.
+	/** The images created path. */
+																// the experiments have been used.
 	static List<Path> imagesCreatedPath = new ArrayList<>();
 
+	/**
+	 * Update path.
+	 */
 	private static void updatePath() {
 		outputPathToModelLibrary = wikiFolder + "/References/ModelLibrary";
 		modelLibraryImagesPath = wikiFolder + "/resources/images/modelLibraryScreenshots";
@@ -122,6 +161,14 @@ public class ModelLibraryGenerator {
 		headlessBatPath = wikiFolder + "/headless.bat";
 	}
 
+	/**
+	 * Start.
+	 *
+	 * @param headlessApplication the headless application
+	 * @param args the args
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformerException the transformer exception
+	 */
 	public static void start(final Application headlessApplication, final List<String> args)
 			throws IOException, TransformerException {
 
@@ -212,6 +259,12 @@ public class ModelLibraryGenerator {
 
 	}
 
+	/**
+	 * Prepare input file for headless.
+	 *
+	 * @param gamlFiles the gaml files
+	 * @param headlessApplication the headless application
+	 */
 	public static void prepareInputFileForHeadless(final ArrayList<File> gamlFiles,
 			final Application headlessApplication) {
 		// set the output (which will not be used, we just need to specify one.
@@ -242,6 +295,12 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Delete directory and its content.
+	 *
+	 * @param file the file
+	 * @return true, if successful
+	 */
 	public static boolean deleteDirectoryAndItsContent(final File file) {
 
 		File[] flist = null;
@@ -262,6 +321,12 @@ public class ModelLibraryGenerator {
 		return file.delete();
 	}
 
+	/**
+	 * Prepare main keyword map.
+	 *
+	 * @param files the files
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void prepareMainKeywordMap(final ArrayList<File> files) throws IOException {
 		// read all the metadatas of the model files, and extract only the
 		// "important" GAML keywords.
@@ -349,6 +414,13 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Gets the GAML words.
+	 *
+	 * @param file the file
+	 * @return the GAML words
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static ArrayList<String> getGAMLWords(final File file) throws IOException {
 		// returns the list of experiments
 		final ArrayList<String> result = new ArrayList<>();
@@ -379,6 +451,9 @@ public class ModelLibraryGenerator {
 		return result;
 	}
 
+	/**
+	 * Load model screenshot.
+	 */
 	private static void loadModelScreenshot() {
 		// read modelScreenshot.xml, and load it to mapModelScreenshot.
 		// the extended name of the experiment is the key, the pair
@@ -515,6 +590,11 @@ public class ModelLibraryGenerator {
 	// }
 	// }
 
+	/**
+	 * Gets the section name.
+	 *
+	 * @return the section name
+	 */
 	private static ArrayList<String> getSectionName() {
 		final ArrayList<String> result = new ArrayList<>();
 		for (final String path : inputPathToModelLibrary) {
@@ -568,6 +648,12 @@ public class ModelLibraryGenerator {
 	// return result;
 	// }
 
+	/**
+	 * Write md content.
+	 *
+	 * @param gamlFiles the gaml files
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void writeMdContent(final ArrayList<File> gamlFiles) throws IOException {
 		// load the concepts
 		try {
@@ -706,6 +792,12 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Creates the section file.
+	 *
+	 * @param pathToSectionFile the path to section file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void createSectionFile(final String pathToSectionFile) throws IOException {
 		final File outputFile = new File(pathToSectionFile);
 		Utils.CreateFolder(outputFile.getParentFile());
@@ -720,6 +812,12 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Creates the sub section file.
+	 *
+	 * @param pathToSubSectionFile the path to sub section file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void createSubSectionFile(final String pathToSubSectionFile) throws IOException {
 		final File outputFile = new File(pathToSubSectionFile);
 		Utils.CreateFolder(outputFile.getParentFile());
@@ -734,6 +832,13 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Adds the sub section.
+	 *
+	 * @param pathToSectionFile the path to section file
+	 * @param subSectionName the sub section name
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void addSubSection(final String pathToSectionFile, final String subSectionName) throws IOException {
 		final String urlToSubSection = subSectionName.replace(" ", "");
 		Files.write(Paths.get(pathToSectionFile),
@@ -741,6 +846,15 @@ public class ModelLibraryGenerator {
 				StandardOpenOption.APPEND);
 	}
 
+	/**
+	 * Adds the model.
+	 *
+	 * @param pathToSubSectionFile the path to sub section file
+	 * @param modelName the model name
+	 * @param modelFileName the model file name
+	 * @param screenshotPathList the screenshot path list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static void addModel(final String pathToSubSectionFile, final String modelName, final String modelFileName,
 			final List<String> screenshotPathList) throws IOException {
 		final String urlToModel = modelFileName.replace(" ", "");
@@ -756,6 +870,13 @@ public class ModelLibraryGenerator {
 		}
 	}
 
+	/**
+	 * Extract header.
+	 *
+	 * @param file the file
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static String extractHeader(final File file) throws IOException {
 		// returns the header
 		String result = "";
@@ -781,6 +902,14 @@ public class ModelLibraryGenerator {
 		return result;
 	}
 
+	/**
+	 * Search input list recursive.
+	 *
+	 * @param file the file
+	 * @param results the results
+	 * @return the array list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static ArrayList<String> searchInputListRecursive(final File file, final ArrayList<String> results)
 			throws IOException {
 
@@ -806,6 +935,13 @@ public class ModelLibraryGenerator {
 		return results2;
 	}
 
+	/**
+	 * Gets the model code.
+	 *
+	 * @param gamlFile the gaml file
+	 * @return the model code
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private static String getModelCode(final File gamlFile) throws IOException {
 		// write the code
 		String result = "";
@@ -832,6 +968,12 @@ public class ModelLibraryGenerator {
 		return result;
 	}
 
+	/**
+	 * Gets the HTML code for image.
+	 *
+	 * @param api the api
+	 * @return the HTML code for image
+	 */
 	private static String getHTMLCodeForImage(final String api) {
 		final String absolutePathForImage = api.replace("\\", "/");
 		final String realPath = "gm_wiki/" + absolutePathForImage.split(wikiFolder)[1];

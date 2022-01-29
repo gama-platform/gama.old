@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlModelBuilder.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlModelBuilder.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
 import java.net.URISyntaxException;
@@ -37,12 +36,19 @@ import msi.gaml.descriptions.ModelDescription;
  */
 public class GamlModelBuilder {
 
+	/** The default instance. */
 	private static GamlModelBuilder defaultInstance = new GamlModelBuilder();
 
+	/**
+	 * Gets the default instance.
+	 *
+	 * @return the default instance
+	 */
 	public static GamlModelBuilder getDefaultInstance() {
 		return defaultInstance;
 	}
 
+	/** The build resource set. */
 	private final ResourceSet buildResourceSet;
 
 	/**
@@ -54,10 +60,20 @@ public class GamlModelBuilder {
 		buildResourceSet = injector.getInstance(ResourceSet.class);
 	}
 
+	/**
+	 * Instantiates a new gaml model builder.
+	 */
 	private GamlModelBuilder() {
 		buildResourceSet = new SynchronizedXtextResourceSet();
 	}
 
+	/**
+	 * Compile.
+	 *
+	 * @param url the url
+	 * @param errors the errors
+	 * @return the i model
+	 */
 	public IModel compile(final URL url, final List<GamlCompilationError> errors) {
 		try {
 			final java.net.URI uri = new java.net.URI(url.getProtocol(), url.getPath(), null).normalize();
@@ -69,6 +85,13 @@ public class GamlModelBuilder {
 		return null;
 	}
 
+	/**
+	 * Compile.
+	 *
+	 * @param uri the uri
+	 * @param errors the errors
+	 * @return the i model
+	 */
 	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
 		// We build the description and fill the errors list
 		final ModelDescription model = buildModelDescription(uri, errors);
@@ -76,6 +99,13 @@ public class GamlModelBuilder {
 		return model == null ? null : (IModel) model.compile();
 	}
 
+	/**
+	 * Builds the model description.
+	 *
+	 * @param uri the uri
+	 * @param errors the errors
+	 * @return the model description
+	 */
 	private ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
 		try {
 			final GamlResource r = (GamlResource) buildResourceSet.getResource(uri, true);
@@ -111,6 +141,11 @@ public class GamlModelBuilder {
 		}
 	}
 
+	/**
+	 * Load UR ls.
+	 *
+	 * @param URLs the UR ls
+	 */
 	public void loadURLs(final List<URL> URLs) {
 		for (final URL url : URLs) {
 			java.net.URI uri;

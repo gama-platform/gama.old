@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlSyntaxErrorMessageProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
+ * GamlSyntaxErrorMessageProvider.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
 import org.antlr.runtime.RecognitionException;
@@ -134,6 +133,14 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 		return new SyntaxErrorMessage(msg, Diagnostic.SYNTAX_DIAGNOSTIC);
 	}
 
+	/**
+	 * Translate message.
+	 *
+	 * @param contextobj the contextobj
+	 * @param message the message
+	 * @param node the node
+	 * @return the string
+	 */
 	private String translateMessage(final EObject contextobj, final String message, final INode node) {
 		String msg = message;
 		if (msg.startsWith("mismatched ch")) {

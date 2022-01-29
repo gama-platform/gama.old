@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * ExperimentJob.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'Simulation.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.job;
 
 import java.awt.image.BufferedImage;
@@ -51,28 +49,55 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ExperimentJob.
+ */
 public class ExperimentJob implements IExperimentJob {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The global id generator. */
 	private static long GLOBAL_ID_GENERATOR = 0;
 
+	/**
+	 * The Enum OutputType.
+	 */
 	public enum OutputType {
-		OUTPUT, EXPERIMENT_ATTRIBUTE, SIMULATION_ATTRIBUTE
+		
+		/** The output. */
+		OUTPUT, 
+ /** The experiment attribute. */
+ EXPERIMENT_ATTRIBUTE, 
+ /** The simulation attribute. */
+ SIMULATION_ATTRIBUTE
 	}
 
 	/**
 	 * Variable listeners
 	 */
 	private ListenedVariable[] listenedVariables;
+	
+	/** The parameters. */
 	private List<Parameter> parameters;
+	
+	/** The outputs. */
 	private List<Output> outputs;
+	
+	/** The output file. */
 	private Writer outputFile;
+	
+	/** The source path. */
 	private String sourcePath;
+	
+	/** The experiment name. */
 	private String experimentName;
+	
+	/** The model name. */
 	private String modelName;
+	
+	/** The seed. */
 	private double seed;
 	/**
 	 * current step
@@ -83,8 +108,14 @@ public class ExperimentJob implements IExperimentJob {
 	 * id of current experiment
 	 */
 	private String experimentID;
+	
+	/** The final step. */
 	public long finalStep;
+	
+	/** The until cond. */
 	private String untilCond;
+	
+	/** The end condition. */
 	IExpression endCondition;
 
 	/**
@@ -92,18 +123,38 @@ public class ExperimentJob implements IExperimentJob {
 	 */
 	public IRichExperiment simulator;
 
+	/**
+	 * Gets the simulation.
+	 *
+	 * @return the simulation
+	 */
 	public IRichExperiment getSimulation() {
 		return simulator;
 	}
 
+	/**
+	 * Gets the source path.
+	 *
+	 * @return the source path
+	 */
 	public String getSourcePath() {
 		return sourcePath;
 	}
 
+	/**
+	 * Generate ID.
+	 *
+	 * @return the long
+	 */
 	private static long generateID() {
 		return ExperimentJob.GLOBAL_ID_GENERATOR++;
 	}
 
+	/**
+	 * Sets the buffered writer.
+	 *
+	 * @param w the new buffered writer
+	 */
 	public void setBufferedWriter(final Writer w) {
 		this.outputFile = w;
 	}
@@ -119,11 +170,19 @@ public class ExperimentJob implements IExperimentJob {
 		this.outputs.add(p);
 	}
 
+	/**
+	 * Instantiates a new experiment job.
+	 */
 	private ExperimentJob() {
 		initialize();
 
 	}
 
+	/**
+	 * Instantiates a new experiment job.
+	 *
+	 * @param clone the clone
+	 */
 	public ExperimentJob(final ExperimentJob clone) {
 		this();
 		this.experimentID = clone.experimentID != null ? clone.experimentID : "" + ExperimentJob.generateID();
@@ -145,11 +204,30 @@ public class ExperimentJob implements IExperimentJob {
 
 	}
 
+	/**
+	 * Instantiates a new experiment job.
+	 *
+	 * @param sourcePath the source path
+	 * @param exp the exp
+	 * @param max the max
+	 * @param untilCond the until cond
+	 * @param s the s
+	 */
 	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond,
 			final double s) {
 		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, untilCond, s);
 	}
 
+	/**
+	 * Instantiates a new experiment job.
+	 *
+	 * @param sourcePath the source path
+	 * @param expId the exp id
+	 * @param exp the exp
+	 * @param max the max
+	 * @param untilCond the until cond
+	 * @param s the s
+	 */
 	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max,
 			final String untilCond, final double s) {
 		this();
@@ -197,6 +275,15 @@ public class ExperimentJob implements IExperimentJob {
 					simulator.getSimulation().getScope());
 	}
 
+	/**
+	 * Load.
+	 *
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
+	 */
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
 			GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
@@ -206,6 +293,9 @@ public class ExperimentJob implements IExperimentJob {
 		this.simulator = new RichExperiment(mdl);
 	}
 
+	/**
+	 * Setup.
+	 */
 	public void setup() {
 		this.step = 0;
 
@@ -259,10 +349,18 @@ public class ExperimentJob implements IExperimentJob {
 		return experimentID;
 	}
 
+	/**
+	 * Sets the id of current experiment.
+	 *
+	 * @param experimentID the new id of current experiment
+	 */
 	public void setExperimentID(final String experimentID) {
 		this.experimentID = experimentID;
 	}
 
+	/**
+	 * Export variables.
+	 */
 	private void exportVariables() {
 		final int size = this.listenedVariables.length;
 		if (size == 0) return;
@@ -284,6 +382,9 @@ public class ExperimentJob implements IExperimentJob {
 
 	}
 
+	/**
+	 * Initialize.
+	 */
 	public void initialize() {
 		parameters = new Vector<>();
 		outputs = new Vector<>();
@@ -299,6 +400,14 @@ public class ExperimentJob implements IExperimentJob {
 		return step;
 	}
 
+	/**
+	 * Write image in file.
+	 *
+	 * @param img the img
+	 * @param name the name
+	 * @param outputPath the output path
+	 * @return the display 2 D
+	 */
 	private Display2D writeImageInFile(final BufferedImage img, final String name, final String outputPath) {
 		final String fileName = name + this.getExperimentID() + "-" + step + ".png";
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
@@ -398,6 +507,14 @@ public class ExperimentJob implements IExperimentJob {
 		return simulation;
 	}
 
+	/**
+	 * Load and build job.
+	 *
+	 * @param expD the exp D
+	 * @param path the path
+	 * @param model the model
+	 * @return the experiment job
+	 */
 	public static ExperimentJob loadAndBuildJob(final ExperimentDescription expD, final String path,
 			final IModel model) {
 		final String expName = expD.getName();
@@ -438,6 +555,12 @@ public class ExperimentJob implements IExperimentJob {
 		return this.experimentName;
 	}
 
+	/**
+	 * Gets the parameter.
+	 *
+	 * @param name the name
+	 * @return the parameter
+	 */
 	private Parameter getParameter(final String name) {
 		for (final Parameter p : parameters) {
 			if (p.getName().equals(name)) return p;
@@ -450,6 +573,12 @@ public class ExperimentJob implements IExperimentJob {
 		return this.parameters;
 	}
 
+	/**
+	 * Gets the output.
+	 *
+	 * @param name the name
+	 * @return the output
+	 */
 	private Output getOutput(final String name) {
 		for (final Output p : outputs) {
 			if (p.getName().equals(name)) return p;
@@ -486,6 +615,11 @@ public class ExperimentJob implements IExperimentJob {
 		return res;
 	}
 
+	/**
+	 * Gets the final step.
+	 *
+	 * @return the final step
+	 */
 	public long getFinalStep() {
 		return finalStep;
 	}

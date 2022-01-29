@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Main.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * Main.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.generator;
 
 import java.util.List;
@@ -29,8 +28,16 @@ import com.google.inject.Provider;
 
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class Main.
+ */
 public class Main {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(final String[] args) {
 		if (args.length == 0) {
 			System.err.println("Aborting: no path to EMF resource provided!");
@@ -42,14 +49,23 @@ public class Main {
 		main.runGenerator(args[0]);
 	}
 
+	/** The resource set provider. */
 	@Inject private Provider<ResourceSet> resourceSetProvider;
 
+	/** The validator. */
 	@Inject private IResourceValidator validator;
 
+	/** The generator. */
 	@Inject private IGenerator generator;
 
+	/** The file access. */
 	@Inject private JavaIoFileSystemAccess fileAccess;
 
+	/**
+	 * Run generator.
+	 *
+	 * @param string the string
+	 */
 	protected void runGenerator(final String string) {
 		// load the resource
 		final ResourceSet set = resourceSetProvider.get();

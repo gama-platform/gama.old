@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlResourceValidator.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * GamlResourceValidator.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
 import java.util.List;
@@ -30,9 +29,15 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.Collector;
 
+/**
+ * The Class GamlResourceValidator.
+ */
 public class GamlResourceValidator implements IResourceValidator {
 
+	/** The converter. */
 	@Inject IDiagnosticConverter converter;
+	
+	/** The error translator. */
 	private static ErrorToDiagnoticTranslator errorTranslator = new ErrorToDiagnoticTranslator();
 
 	@Override

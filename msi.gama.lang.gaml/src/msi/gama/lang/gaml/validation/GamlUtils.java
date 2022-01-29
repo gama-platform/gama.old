@@ -1,8 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2009 itemis AG (http://www.itemis.eu) and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this
- * distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
- *******************************************************************************/
+/*******************************************************************************************************
+ *
+ * GamlUtils.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,12 +25,29 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
 
+/**
+ * The Class GamlUtils.
+ */
 public class GamlUtils {
 
+	/**
+	 * Root.
+	 *
+	 * @return the i workspace root
+	 */
 	public static IWorkspaceRoot root() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
+	/**
+	 * Creates the project.
+	 *
+	 * @param name the name
+	 * @return the i project
+	 * @throws CoreException the core exception
+	 * @throws InvocationTargetException the invocation target exception
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public static IProject createProject(final String name)
 			throws CoreException, InvocationTargetException, InterruptedException {
 		final IProject project = root().getProject(name);
@@ -33,6 +55,13 @@ public class GamlUtils {
 		return project;
 	}
 
+	/**
+	 * Creates the project.
+	 *
+	 * @param project the project
+	 * @return the i project
+	 * @throws CoreException the core exception
+	 */
 	public static IProject createProject(final IProject project) throws CoreException {
 		if (!project.exists()) {
 			project.create(monitor());
@@ -54,6 +83,13 @@ public class GamlUtils {
 	// Assert.fail("Workspace contained errors: "+msg);
 	// }
 
+	/**
+	 * Adds the nature.
+	 *
+	 * @param project the project
+	 * @param nature the nature
+	 * @throws CoreException the core exception
+	 */
 	public static void addNature(final IProject project, final String nature) throws CoreException {
 		final IProjectDescription description = project.getDescription();
 		final String[] natures = description.getNatureIds();
@@ -66,6 +102,13 @@ public class GamlUtils {
 		project.setDescription(description, null);
 	}
 
+	/**
+	 * Adds the builder.
+	 *
+	 * @param project the project
+	 * @param builderId the builder id
+	 * @throws CoreException the core exception
+	 */
 	public static void addBuilder(final IProject project, final String builderId) throws CoreException {
 		final IProjectDescription description = project.getDescription();
 		final ICommand[] specs = description.getBuildSpec();
@@ -79,6 +122,13 @@ public class GamlUtils {
 		project.setDescription(description, monitor());
 	}
 
+	/**
+	 * Removes the nature.
+	 *
+	 * @param project the project
+	 * @param nature the nature
+	 * @throws CoreException the core exception
+	 */
 	public static void removeNature(final IProject project, final String nature) throws CoreException {
 		final IProjectDescription description = project.getDescription();
 		final String[] natures = description.getNatureIds();
@@ -97,6 +147,13 @@ public class GamlUtils {
 
 	}
 
+	/**
+	 * Removes the builder.
+	 *
+	 * @param project the project
+	 * @param builderId the builder id
+	 * @throws CoreException the core exception
+	 */
 	public static void removeBuilder(final IProject project, final String builderId) throws CoreException {
 		final IProjectDescription description = project.getDescription();
 		final ICommand[] builderSpecs = description.getBuildSpec();
@@ -253,14 +310,29 @@ public class GamlUtils {
 	// }.run(monitor());
 	// }
 
+	/**
+	 * Monitor.
+	 *
+	 * @return the i progress monitor
+	 */
 	public static IProgressMonitor monitor() {
 		return new NullProgressMonitor();
 	}
 
+	/**
+	 * Full build.
+	 *
+	 * @throws CoreException the core exception
+	 */
 	public static void fullBuild() throws CoreException {
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor());
 	}
 
+	/**
+	 * Clean build.
+	 *
+	 * @throws CoreException the core exception
+	 */
 	public static void cleanBuild() throws CoreException {
 		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor());
 	}
@@ -292,10 +364,18 @@ public class GamlUtils {
 		} while (wasInterrupted);
 	}
 
+	/**
+	 * Wait for build.
+	 */
 	public static void waitForBuild() {
 		waitForBuild(null);
 	}
 
+	/**
+	 * Wait for build.
+	 *
+	 * @param monitor the monitor
+	 */
 	public static void waitForBuild(final IProgressMonitor monitor) {
 		try {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
@@ -324,6 +404,12 @@ public class GamlUtils {
 	// }
 	// }
 
+	/**
+	 * Delete projects.
+	 *
+	 * @param projects the projects
+	 * @throws CoreException the core exception
+	 */
 	protected static void deleteProjects(final IProject[] projects) throws CoreException {
 		for (final IProject iProject : projects) {
 			if (iProject.exists()) {
@@ -332,6 +418,13 @@ public class GamlUtils {
 		}
 	}
 
+	/**
+	 * Prints the marker.
+	 *
+	 * @param markers the markers
+	 * @return the string
+	 * @throws CoreException the core exception
+	 */
 	public static String printMarker(final IMarker[] markers) throws CoreException {
 		final StringBuilder result = new StringBuilder();
 		for (final IMarker marker : markers) {

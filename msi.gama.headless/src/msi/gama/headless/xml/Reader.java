@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * Reader.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'Reader.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.xml;
 
 import java.io.File;
@@ -38,16 +36,27 @@ import msi.gama.headless.job.Output;
 import msi.gama.headless.job.Parameter;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class Reader.
+ */
 public class Reader {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The file name. */
 	public String fileName;
+	
+	/** The my stream. */
 	public InputStream myStream;
+	
+	/** The sims. */
 	ArrayList<ExperimentJob> sims;
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		this.fileName = null;
 		try {
@@ -61,19 +70,41 @@ public class Reader {
 
 	}
 
+	/**
+	 * Instantiates a new reader.
+	 *
+	 * @param file the file
+	 * @throws FileNotFoundException the file not found exception
+	 */
 	public Reader(final String file) throws FileNotFoundException {
 		fileName = file;
 		myStream = new FileInputStream(new File(file));
 	}
 
+	/**
+	 * Instantiates a new reader.
+	 *
+	 * @param inp the inp
+	 */
 	public Reader(final InputStream inp) {
 		myStream = inp;
 	}
 
+	/**
+	 * Gets the simulation.
+	 *
+	 * @return the simulation
+	 */
 	public Collection<ExperimentJob> getSimulation() {
 		return this.sims;
 	}
 
+	/**
+	 * Read parameter.
+	 *
+	 * @param e the e
+	 * @return the parameter
+	 */
 	private Parameter readParameter(final Node e) {
 		final String name = getAttributeWithoutCase(e, XmlTAG.NAME_TAG);
 		final String value = getAttributeWithoutCase(e, XmlTAG.VALUE_TAG);
@@ -83,6 +114,12 @@ public class Reader {
 		return new Parameter(name, var, DataTypeFactory.getObjectFromText(value, dtype), dtype);
 	}
 
+	/**
+	 * Read output.
+	 *
+	 * @param e the e
+	 * @return the output
+	 */
 	private Output readOutput(final Node e) {
 		final String name = getAttributeWithoutCase(e, XmlTAG.NAME_TAG);
 		final String id = getAttributeWithoutCase(e, XmlTAG.ID_TAG);
@@ -96,6 +133,13 @@ public class Reader {
 		return new Output(name, width, height, framerate, id, path);
 	}
 
+	/**
+	 * Find element by name without case.
+	 *
+	 * @param e the e
+	 * @param name the name
+	 * @return the list
+	 */
 	private List<Node> findElementByNameWithoutCase(final Node e, final String name) {
 		final String lname = name.toLowerCase();
 		final ArrayList<Node> res = new ArrayList<>();
@@ -113,6 +157,12 @@ public class Reader {
 		return res;
 	}
 
+	/**
+	 * Read parameter.
+	 *
+	 * @param s the s
+	 * @param docEle the doc ele
+	 */
 	private void readParameter(final ExperimentJob s, final Node docEle) {
 		final List<Node> nl = findElementByNameWithoutCase(docEle, XmlTAG.PARAMETER_TAG);
 		if (nl != null && nl.size() > 0) {
@@ -129,6 +179,12 @@ public class Reader {
 		}
 	}
 
+	/**
+	 * Read output.
+	 *
+	 * @param s the s
+	 * @param docEle the doc ele
+	 */
 	private void readOutput(final ExperimentJob s, final Node docEle) {
 		// NodeList nl = docEle.getElementsByTagName(XmlTAG.OUTPUT_TAG);
 		final List<Node> nl = findElementByNameWithoutCase(docEle, XmlTAG.OUTPUT_TAG);
@@ -146,6 +202,13 @@ public class Reader {
 		}
 	}
 
+	/**
+	 * Gets the attribute without case.
+	 *
+	 * @param e the e
+	 * @param flag the flag
+	 * @return the attribute without case
+	 */
 	private String getAttributeWithoutCase(final Node e, final String flag) {
 		final NamedNodeMap mp = e.getAttributes();
 		final String lflag = flag.toLowerCase();
@@ -156,6 +219,12 @@ public class Reader {
 		return null;
 	}
 
+	/**
+	 * Read simulation.
+	 *
+	 * @param e the e
+	 * @return the experiment job
+	 */
 	private ExperimentJob readSimulation(final Node e) {
 
 		final String expId = getAttributeWithoutCase(e, XmlTAG.EXPERIMENT_ID_TAG);
@@ -200,6 +269,12 @@ public class Reader {
 		return res;
 	}
 
+	/**
+	 * Read simulation.
+	 *
+	 * @param dom the dom
+	 * @return the array list
+	 */
 	private ArrayList<ExperimentJob> readSimulation(final Document dom) {
 		final ArrayList<ExperimentJob> res = new ArrayList<>();
 		// Element docEle = dom.getDocumentElement();
@@ -222,6 +297,9 @@ public class Reader {
 		return res;
 	}
 
+	/**
+	 * Parses the xml file.
+	 */
 	public void parseXmlFile() {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {

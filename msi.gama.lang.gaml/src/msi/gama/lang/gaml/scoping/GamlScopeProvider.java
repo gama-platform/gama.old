@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlScopeProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlScopeProvider.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.scoping;
 
 import java.util.ArrayList;
@@ -40,8 +39,15 @@ import com.google.common.collect.Multimap;
 // @Singleton
 public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider {
 
+	/**
+	 * The Class GamlMultimapBasedSelectable.
+	 */
 	private class GamlMultimapBasedSelectable implements ISelectable {
+		
+		/** The descriptions. */
 		List<IEObjectDescription> descriptions;
+		
+		/** The name to objects. */
 		private Multimap<QualifiedName, IEObjectDescription> nameToObjects;
 
 		@Override
@@ -83,6 +89,12 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 			return descriptions == null ? Collections.EMPTY_LIST : descriptions;
 		}
 
+		/**
+		 * Adds the.
+		 *
+		 * @param name the name
+		 * @param e the e
+		 */
 		private void add(final QualifiedName name, final EObjectDescription e) {
 			if (descriptions == null) {
 				descriptions = new ArrayList<>();

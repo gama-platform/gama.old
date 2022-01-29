@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SimulateStatement.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * SimulateStatement.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -28,6 +26,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
+/**
+ * The Class SimulateStatement.
+ */
 @symbol(name = "simulate", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {})
 @facets(value = { @facet(name = "comodel", type = { IType.FILE }, optional = false),
 		@facet(name = "with_experiment", type = { IType.STRING }, optional = true),
@@ -46,22 +47,44 @@ import msi.gaml.types.IType;
 				@example(value = "}", isExecutable = false) })
 public class SimulateStatement extends AbstractStatementSequence {
 
+	/** The sequence. */
 	private AbstractStatementSequence sequence = null;
+	
+	/** The comodel. */
 	private final IExpression comodel;
+	
+	/** The with exp. */
 	// private IExperimentPlan exp;
 	private IExpression with_exp;
+	
+	/** The param input. */
 	// private IModel mm = null;
 	private IExpression param_input = null;
+	
+	/** The param output. */
 	private IExpression param_output = null;
+	
+	/** The reset. */
 	private IExpression reset = null;
+	
+	/** The repeat. */
 	// private final IOutput exp_output = null;
 	private IExpression repeat = null;
+	
+	/** The stop condition. */
 	private IExpression stopCondition = null;
+	
+	/** The shared resource. */
 	private IExpression sharedResource = null;
 
 	// private final Map in = new TOrderedHashMap();
 	// private final Map out = new TOrderedHashMap();
 
+	/**
+	 * Instantiates a new simulate statement.
+	 *
+	 * @param desc the desc
+	 */
 	public SimulateStatement(final IDescription desc) {
 		super(desc);
 		comodel = getFacet("comodel");

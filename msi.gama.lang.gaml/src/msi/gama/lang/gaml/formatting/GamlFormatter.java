@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlFormatter.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlFormatter.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.formatting;
 
 import java.util.HashSet;
@@ -42,10 +41,17 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		return super.createFormatterStream(context, indent, out, preserveWhitespaces);
 	}
 
+	/** The keywords 1 space around. */
 	static String[] keywords1SpaceAround =
 			new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-", "/", "*" };
+	
+	/** The keyword no space after. */
 	static String[] keywordNoSpaceAfter = new String[] { ".", "[", "(", "::", "°", "#", "!", "{" };
+	
+	/** The keyword no space before. */
 	static String[] keywordNoSpaceBefore = new String[] { "]", ".", ")", ",", ":", "::", "}" };
+	
+	/** The keyword 1 space after. */
 	static String[] keyword1SpaceAfter = new String[] { ",", ":" };
 
 	/**
@@ -156,12 +162,25 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 
 	}
 
+	/**
+	 * Handle block opening.
+	 *
+	 * @param c the c
+	 * @param opening the opening
+	 */
 	private void handleBlockOpening(final FormattingConfig c, final Keyword opening) {
 		// c.setLinewrap().before(opening);
 		c.setLinewrap().after(opening);
 		c.setIndentationIncrement().after(opening);
 	}
 
+	/**
+	 * Handle block termination.
+	 *
+	 * @param c the c
+	 * @param closing the closing
+	 * @param lineWrapAfter the line wrap after
+	 */
 	private void handleBlockTermination(final FormattingConfig c, final Keyword closing, final int lineWrapAfter) {
 
 		// c.setSpace("\n/*closing*/").before(closing);
@@ -176,6 +195,12 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		return (GamlGrammarAccess) super.getGrammarAccess();
 	}
 
+	/**
+	 * Handle comments.
+	 *
+	 * @param c the c
+	 * @param f the f
+	 */
 	private void handleComments(final FormattingConfig c, final GamlGrammarAccess f) {
 		c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule());
 		c.setLinewrap(0, 1, 2).before(f.getML_COMMENTRule());

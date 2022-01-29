@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlFile.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * GamlFile.java, in msi.gama.lang.gaml, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import org.eclipse.emf.common.util.URI;
@@ -53,6 +52,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 
+	/** The mymodel. */
 	private final IModel mymodel;
 	/**
 	 * @throws GamaRuntimeException
@@ -61,8 +61,16 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 	 */
 	private final String experimentName;
 
+	/** The alias name. */
 	private final String aliasName;
 
+	/**
+	 * Instantiates a new gaml file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a gaml file (.gaml)",
 			examples = { @example (
@@ -80,6 +88,15 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		return Types.FILE.of(Types.INT, Types.SPECIES);
 	}
 
+	/**
+	 * Instantiates a new gaml file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param expName the exp name
+	 * @param cName the c name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to compile a gaml file and run an experiment",
 			examples = { @example (
@@ -99,6 +116,12 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		return GamaListFactory.EMPTY_LIST;
 	}
 
+	/**
+	 * Creates the experiment.
+	 *
+	 * @param expName the exp name
+	 * @return the i experiment plan
+	 */
 	public IExperimentPlan createExperiment(final String expName) {
 		final IExperimentPlan exp = mymodel.getExperiment("Experiment " + expName);
 		for (final IOutput o : exp.getOriginalSimulationOutputs()) {
@@ -113,6 +136,18 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		return exp;
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param scope the scope
+	 * @param with_exp the with exp
+	 * @param param_input the param input
+	 * @param param_output the param output
+	 * @param reset the reset
+	 * @param repeat the repeat
+	 * @param stopCondition the stop condition
+	 * @param share the share
+	 */
 	public void execute(final IScope scope, final IExpression with_exp, final IExpression param_input,
 			final IExpression param_output, final IExpression reset, final IExpression repeat,
 			final IExpression stopCondition, final IExpression share) {
