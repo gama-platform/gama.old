@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.GamaCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaCoordinateSequence.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -34,6 +34,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class GamaCoordinateSequence implements ICoordinates {
 
+	/** The dimension. */
 	final int dimension;
 
 	/**
@@ -275,6 +276,12 @@ public class GamaCoordinateSequence implements ICoordinates {
 		}
 	}
 
+	/**
+	 * Visit.
+	 *
+	 * @param v the v
+	 * @param max the max
+	 */
 	private void visit(final IndexedVisitor v, final int max) {
 		for (int i = 0; i < max; i++) {
 			final GamaPoint p = points[i];
@@ -282,6 +289,12 @@ public class GamaCoordinateSequence implements ICoordinates {
 		}
 	}
 
+	/**
+	 * Reverse visit.
+	 *
+	 * @param v the v
+	 * @param max the max
+	 */
 	private void reverseVisit(final IndexedVisitor v, final int max) {
 		for (int i = max - 1, j = 0; i >= 0; i--, j++) {
 			final GamaPoint p = points[i];

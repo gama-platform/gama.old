@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.fastmaths.NumbersUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * NumbersUtils.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -39,7 +39,10 @@ public final class NumbersUtils {
 	 */
 	public static final float FLOAT_MIN_NORMAL = Float.intBitsToFloat(0x00800000); // 1.17549435E-38f
 
+	/** The Constant MIN_DOUBLE_EXPONENT. */
 	private static final int MIN_DOUBLE_EXPONENT = -1074;
+	
+	/** The Constant MAX_DOUBLE_EXPONENT. */
 	private static final int MAX_DOUBLE_EXPONENT = 1023;
 
 	/**
@@ -75,7 +78,10 @@ public final class NumbersUtils {
 		}
 	}
 
+	/** The Constant MAX_NBR_OF_NEG_INT_DIGITS_BY_RADIX. */
 	private final static int[] MAX_NBR_OF_NEG_INT_DIGITS_BY_RADIX = new int[Character.MAX_RADIX + 1];
+	
+	/** The Constant MAX_NBR_OF_NEG_LONG_DIGITS_BY_RADIX. */
 	private final static int[] MAX_NBR_OF_NEG_LONG_DIGITS_BY_RADIX = new int[Character.MAX_RADIX + 1];
 	static {
 		for (int radix = Character.MIN_RADIX; radix <= Character.MAX_RADIX; radix++) {
@@ -87,16 +93,30 @@ public final class NumbersUtils {
 		}
 	}
 
+	/** The Constant NO_CSN_MIN_BOUND_INCL. */
 	static final double NO_CSN_MIN_BOUND_INCL = 1e-3;
+	
+	/** The Constant NO_CSN_MAX_BOUND_EXCL. */
 	static final double NO_CSN_MAX_BOUND_EXCL = 1e7;
 
+	/** The Constant PIO2_HI. */
 	private static final double PIO2_HI = Double.longBitsToDouble(0x3FF921FB54400000L); // 1.57079632673412561417e+00
+																						
+																						/** The Constant PIO2_LO. */
 																						// first 33 bits of pi/2
 	private static final double PIO2_LO = Double.longBitsToDouble(0x3DD0B4611A626331L); // 6.07710050650619224932e-11
+																						
+																						/** The Constant PI_HI. */
 																						// pi/2 - PIO2_HI
 	private static final double PI_HI = 2 * PIO2_HI;
+	
+	/** The Constant PI_LO. */
 	private static final double PI_LO = 2 * PIO2_LO;
+	
+	/** The Constant TWOPI_HI. */
 	private static final double TWOPI_HI = 4 * PIO2_HI;
+	
+	/** The Constant TWOPI_LO. */
 	private static final double TWOPI_LO = 4 * PIO2_LO;
 
 	// --------------------------------------------------------------------------
@@ -2140,23 +2160,50 @@ public final class NumbersUtils {
 		return checkBitPositions(firstBitPos, lastBitPosExcl, 64);
 	}
 
+	/**
+	 * Instantiates a new numbers utils.
+	 */
 	private NumbersUtils() {}
 
+	/**
+	 * Min signed int for bit size no check.
+	 *
+	 * @param bitSize the bit size
+	 * @return the int
+	 */
 	private static int minSignedIntForBitSize_noCheck(final int bitSize) {
 		// i.e. (-1<<(bitSize-1))
 		return Integer.MIN_VALUE >> 32 - bitSize;
 	}
 
+	/**
+	 * Min signed long for bit size no check.
+	 *
+	 * @param bitSize the bit size
+	 * @return the long
+	 */
 	private static long minSignedLongForBitSize_noCheck(final int bitSize) {
 		// i.e. (-1L<<(bitSize-1))
 		return Long.MIN_VALUE >> 64 - bitSize;
 	}
 
+	/**
+	 * Max signed int for bit size no check.
+	 *
+	 * @param bitSize the bit size
+	 * @return the int
+	 */
 	private static int maxSignedIntForBitSize_noCheck(final int bitSize) {
 		// i.e. (1<<(bitSize-1))-1
 		return Integer.MAX_VALUE >> 32 - bitSize;
 	}
 
+	/**
+	 * Max signed long for bit size no check.
+	 *
+	 * @param bitSize the bit size
+	 * @return the long
+	 */
 	private static long maxSignedLongForBitSize_noCheck(final int bitSize) {
 		// i.e. (1L<<(bitSize-1))-1
 		return Long.MAX_VALUE >> 64 - bitSize;
@@ -2200,6 +2247,14 @@ public final class NumbersUtils {
 	 *
 	 */
 
+	/**
+	 * Check bit positions.
+	 *
+	 * @param firstBitPos the first bit pos
+	 * @param lastBitPosExcl the last bit pos excl
+	 * @param bitSize the bit size
+	 * @return true, if successful
+	 */
 	private static boolean checkBitPositions(final int firstBitPos, final int lastBitPosExcl, final int bitSize) {
 		if (firstBitPos < 0 || firstBitPos > lastBitPosExcl || lastBitPosExcl > bitSize) {
 			throw new IllegalArgumentException("bit positions (first=" + firstBitPos + ",lastExcl=" + lastBitPosExcl

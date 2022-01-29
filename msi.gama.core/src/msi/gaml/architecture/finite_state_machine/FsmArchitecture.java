@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmArchitecture.java, in plugin msi.gama.core, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * FsmArchitecture.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -53,7 +53,10 @@ import msi.gaml.types.Types;
 		doc = @doc ("The Finite State Machine architecture allows to program agents using a finite set of states and conditional transitions between them"))
 public class FsmArchitecture extends ReflexArchitecture {
 
+	/** The states. */
 	protected final Map<String, FsmStateStatement> states = GamaMapFactory.createUnordered();
+	
+	/** The initial state. */
 	protected FsmStateStatement initialState;
 
 	@Override
@@ -71,6 +74,12 @@ public class FsmArchitecture extends ReflexArchitecture {
 		if (initialState != null) { context.getVar(IKeyword.STATE).setValue(null, initialState.getName()); }
 	}
 
+	/**
+	 * Gets the state names.
+	 *
+	 * @param agent the agent
+	 * @return the state names
+	 */
 	@getter (
 			value = IKeyword.STATES,
 			initializer = true)
@@ -78,9 +87,21 @@ public class FsmArchitecture extends ReflexArchitecture {
 		return GamaListFactory.wrap(Types.STRING, states.keySet());
 	}
 
+	/**
+	 * Sets the state names.
+	 *
+	 * @param agent the agent
+	 * @param list the list
+	 */
 	@setter (IKeyword.STATES)
 	public void setStateNames(final IAgent agent, final IList<String> list) {}
 
+	/**
+	 * Gets the state name.
+	 *
+	 * @param agent the agent
+	 * @return the state name
+	 */
 	@getter (IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
@@ -88,10 +109,22 @@ public class FsmArchitecture extends ReflexArchitecture {
 		return currentState.getName();
 	}
 
+	/**
+	 * Gets the state.
+	 *
+	 * @param stateName the state name
+	 * @return the state
+	 */
 	public FsmStateStatement getState(final String stateName) {
 		return states.get(stateName);
 	}
 
+	/**
+	 * Sets the state name.
+	 *
+	 * @param agent the agent
+	 * @param stateName the state name
+	 */
 	@setter (IKeyword.STATE)
 	public void setStateName(final IAgent agent, final String stateName) {
 		if (stateName != null && states.containsKey(stateName)) { setCurrentState(agent, states.get(stateName)); }
@@ -113,6 +146,13 @@ public class FsmArchitecture extends ReflexArchitecture {
 		return executeCurrentState(scope);
 	}
 
+	/**
+	 * Execute current state.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		if (scope.interrupted()) return null;
@@ -121,6 +161,12 @@ public class FsmArchitecture extends ReflexArchitecture {
 		return scope.execute(currentState).getValue();
 	}
 
+	/**
+	 * Sets the current state.
+	 *
+	 * @param agent the agent
+	 * @param state the state
+	 */
 	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
 		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if (currentState == state) return;

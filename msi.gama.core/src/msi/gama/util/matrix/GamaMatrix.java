@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaMatrix.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -39,6 +39,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class GamaMatrix<T> implements IMatrix<T> {
 
+	/** The type. */
 	private final IContainerType<IMatrix> type;
 
 	@Override
@@ -46,14 +47,35 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return type;
 	}
 
+	/**
+	 * Builds the value.
+	 *
+	 * @param scope the scope
+	 * @param object the object
+	 * @return the t
+	 */
 	protected T buildValue(final IScope scope, final Object object) {
 		return (T) type.getContentType().cast(scope, object, null, false);
 	}
 
+	/**
+	 * Builds the values.
+	 *
+	 * @param scope the scope
+	 * @param objects the objects
+	 * @return the i container
+	 */
 	protected IContainer<?, T> buildValues(final IScope scope, final IContainer objects) {
 		return type.cast(scope, objects, null, false);
 	}
 
+	/**
+	 * Builds the index.
+	 *
+	 * @param scope the scope
+	 * @param object the object
+	 * @return the gama point
+	 */
 	protected GamaPoint buildIndex(final IScope scope, final Object object) {
 		return GamaPointType.staticCast(scope, object, false);
 	}
@@ -63,23 +85,52 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return this.getGamlType().serialize(true) + "(" + getColumnsList().serialize(includingBuiltIn) + ")";
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix opPlus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment",
 				scope);
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix opMinus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix subtractions not implemented. Returns nil for the moment",
 				scope);
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix opTimes(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException
 				.error("ATTENTION : Matrix multiplications not implemented. Returns nil for the moment", scope);
 	}
 
+	/** The num rows. */
 	public int numRows;
 
+	/** The num cols. */
 	public int numCols;
 
 	/**
@@ -101,6 +152,13 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return numCols;
 	}
 
+	/**
+	 * Instantiates a new gama matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param contentsType the contents type
+	 */
 	protected GamaMatrix(final int cols, final int rows, final IType contentsType) {
 		numRows = rows;
 		numCols = cols;
@@ -238,6 +296,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return copy(scope, getDimensions(), true);
 	}
 
+	/**
+	 * Checks if is flat.
+	 *
+	 * @param val the val
+	 * @return true, if is flat
+	 */
 	public static boolean isFlat(final List val) {
 		for (final Object element : val) {
 			if (element instanceof List) return false;
@@ -267,6 +331,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// return false;
 	// }
 
+	/**
+	 * Fill with.
+	 *
+	 * @param scope the scope
+	 * @param expr the expr
+	 */
 	public void fillWith(final IScope scope, final IExpression expr) {
 
 	}
@@ -394,6 +464,13 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	}
 
+	/**
+	 * Sets the nth element.
+	 *
+	 * @param scope the scope
+	 * @param index the index
+	 * @param value the value
+	 */
 	protected abstract void setNthElement(IScope scope, int index, Object value);
 
 	// Then, methods for "all" operations
@@ -563,28 +640,109 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// POLYMORPHISM IS NOT REALLY SUPPORTED BY THE GAML COMPILER AND IS TAKEN
 	// IN CHARGE BY JAVA THROUGH THIS TRICK.
 
+	/**
+	 * List value.
+	 *
+	 * @param scope the scope
+	 * @param contentsType the contents type
+	 * @param cast the cast
+	 * @return the i list
+	 */
 	protected abstract IList<T> _listValue(IScope scope, IType contentsType, boolean cast);
 
+	/**
+	 * Matrix value.
+	 *
+	 * @param scope the scope
+	 * @param size the size
+	 * @param type the type
+	 * @param copy the copy
+	 * @return the i matrix
+	 */
 	protected abstract IMatrix<T> _matrixValue(IScope scope, GamaPoint size, IType type, boolean copy);
 
+	/**
+	 * Clear.
+	 */
 	protected abstract void _clear();
 
+	/**
+	 * Removes the first.
+	 *
+	 * @param scope the scope
+	 * @param value the value
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected abstract boolean _removeFirst(IScope scope, T value) throws GamaRuntimeException;
 
+	/**
+	 * Removes the all.
+	 *
+	 * @param scope the scope
+	 * @param value the value
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected abstract boolean _removeAll(IScope scope, IContainer<?, T> value) throws GamaRuntimeException;
 
+	/**
+	 * Put all.
+	 *
+	 * @param scope the scope
+	 * @param value the value
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected abstract void _putAll(IScope scope, Object value) throws GamaRuntimeException;
 
+	/**
+	 * Reverse.
+	 *
+	 * @param scope the scope
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected abstract IMatrix<T> _reverse(IScope scope) throws GamaRuntimeException;
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	protected abstract boolean _isEmpty(IScope scope);
 
+	/**
+	 * Contains.
+	 *
+	 * @param scope the scope
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	protected abstract boolean _contains(IScope scope, Object o);
 
+	/**
+	 * Length.
+	 *
+	 * @param scope the scope
+	 * @return the integer
+	 */
 	protected abstract Integer _length(IScope scope);
 
+	/**
+	 * Last.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	protected abstract Object _last(IScope scope);
 
+	/**
+	 * First.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	protected abstract Object _first(IScope scope);
 
 	@Override

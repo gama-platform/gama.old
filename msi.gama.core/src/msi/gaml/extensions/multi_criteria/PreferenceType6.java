@@ -1,18 +1,24 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.PreferenceType6.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * PreferenceType6.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
+/**
+ * The Class PreferenceType6.
+ */
 public class PreferenceType6 implements FonctionPreference {
 
+	/** The s. */
 	private final double s;
+	
+	/** The val square. */
 	private final double valSquare;
 
 	@Override
@@ -22,6 +28,11 @@ public class PreferenceType6 implements FonctionPreference {
 		return 1 - Math.exp(diff * diff / valSquare);
 	}
 
+	/**
+	 * Instantiates a new preference type 6.
+	 *
+	 * @param s the s
+	 */
 	public PreferenceType6(final double s) {
 		super();
 		this.s = s;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartJFreeChartOutput.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -35,8 +35,18 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class ChartJFreeChartOutput.
+ */
 public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressListener {
 
+	/**
+	 * Creates the compatible image.
+	 *
+	 * @param sizeX the size X
+	 * @param sizeY the size Y
+	 * @return the buffered image
+	 */
 	private BufferedImage createCompatibleImage(final int sizeX, final int sizeY) {
 		if ((int) r.getWidth() != sizeX || (int) r.getHeight() != sizeY) {
 			r.setRect(0, 0, sizeX, sizeY);
@@ -48,37 +58,71 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		return cache;
 	}
 
+	/** The Constant defaultmarkers. */
 	public static final Shape[] defaultmarkers =
 			org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
+	
+	/** The old anti alias. */
 	boolean oldAntiAlias;
 
+	/** The info. */
 	public ChartRenderingInfo info;
+	
+	/** The jfreedataset. */
 	ArrayList<Dataset> jfreedataset = new ArrayList<>();
+	
+	/** The chart. */
 	JFreeChart chart = null;
+	
+	/** The r. */
 	Rectangle2D r = new Rectangle2D.Double();
+	
+	/** The cache. */
 	BufferedImage cache;
+	
+	/** The defaultrenderer. */
 	AbstractRenderer defaultrenderer;
+	
+	/** The Id position. */
 	HashMap<String, Integer> IdPosition = new HashMap<>(); // serie
 															// id-nb
 															// for
 															// arraylists/table
+															/** The Renderer set. */
 															// requirements
 	HashMap<String, AbstractRenderer> RendererSet = new HashMap<>(); // one
 																		// renderer
 																		// for
 																		// each
+																		/** The nbseries. */
 																		// serie
 	int nbseries = 0; // because there is always one dataset, so it is difficult
 	// A filed aiming at controlling the rate at which charts can be produced. Directly controlled by the
+	/** The ready. */
 	// ChartProgressListener
 	private volatile boolean ready = true;
 	// to count...
 
+	/**
+	 * Instantiates a new chart J free chart output.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param typeexp the typeexp
+	 */
 	public ChartJFreeChartOutput(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		info = new ChartRenderingInfo();
 	}
 
+	/**
+	 * Creates the chart output.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param typeexp the typeexp
+	 * @return the chart J free chart output
+	 */
 	public static ChartJFreeChartOutput createChartOutput(final IScope scope, final String name,
 			final IExpression typeexp) {
 		ChartJFreeChartOutput newChart;
@@ -121,6 +165,13 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		return newChart;
 	}
 
+	/**
+	 * Gets the graphics.
+	 *
+	 * @param sizeX the size X
+	 * @param sizeY the size Y
+	 * @return the graphics
+	 */
 	private Graphics2D getGraphics(final int sizeX, final int sizeY) {
 		return createCompatibleImage(sizeX, sizeY).createGraphics();
 	}
@@ -169,6 +220,11 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		updateOutput(scope);
 	}
 
+	/**
+	 * Inits the renderer.
+	 *
+	 * @param scope the scope
+	 */
 	protected void initRenderer(final IScope scope) {
 		// TODO Auto-generated method stub
 
@@ -221,6 +277,13 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	}
 
+	/**
+	 * Gets the or create renderer.
+	 *
+	 * @param scope the scope
+	 * @param serieid the serieid
+	 * @return the or create renderer
+	 */
 	AbstractRenderer getOrCreateRenderer(final IScope scope, final String serieid) {
 		if (RendererSet.containsKey(serieid)) { return RendererSet.get(serieid); }
 		final AbstractRenderer newrenderer = createRenderer(scope, serieid);
@@ -229,24 +292,51 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	}
 
+	/**
+	 * Creates the renderer.
+	 *
+	 * @param scope the scope
+	 * @param serieid the serieid
+	 * @return the abstract renderer
+	 */
 	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
 		// TODO Auto-generated method stub
 		return new XYErrorRenderer();
 
 	}
 
+	/**
+	 * Gets the label font.
+	 *
+	 * @return the label font
+	 */
 	Font getLabelFont() {
 		return new Font(labelFontFace, labelFontStyle, labelFontSize);
 	}
 
+	/**
+	 * Gets the tick font.
+	 *
+	 * @return the tick font
+	 */
 	Font getTickFont() {
 		return new Font(tickFontFace, tickFontStyle, tickFontSize);
 	}
 
+	/**
+	 * Gets the legend font.
+	 *
+	 * @return the legend font
+	 */
 	Font getLegendFont() {
 		return new Font(legendFontFace, legendFontStyle, legendFontSize);
 	}
 
+	/**
+	 * Gets the title font.
+	 *
+	 * @return the title font
+	 */
 	Font getTitleFont() {
 		return new Font(titleFontFace, titleFontStyle, titleFontSize);
 	}

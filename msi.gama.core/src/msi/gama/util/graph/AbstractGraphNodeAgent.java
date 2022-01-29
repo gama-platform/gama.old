@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.AbstractGraphNodeAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractGraphNodeAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -33,6 +33,9 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class AbstractGraphNodeAgent.
+ */
 // FIXME: Add all the necessary variables (degree, neighbors, edges)
 @species (
 		name = "graph_node",
@@ -45,10 +48,15 @@ import ummisco.gama.dev.utils.DEBUG;
 @doc ("A base species to use as a parent for species representing agents that are nodes of a graph")
 public class AbstractGraphNodeAgent extends GamlAgent {
 
+	/** The Constant args. */
 	final static Arguments args = new Arguments();
 
+	/**
+	 * The Class NodeRelation.
+	 */
 	public static class NodeRelation implements VertexRelationship<AbstractGraphNodeAgent> {
 
+		/** The action. */
 		IStatement.WithArgs action;
 
 		@Override
@@ -64,6 +72,12 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 			return p1 == p2;
 		}
 
+		/**
+		 * Gets the action.
+		 *
+		 * @param a1 the a 1
+		 * @return the action
+		 */
 		IStatement.WithArgs getAction(final AbstractGraphNodeAgent a1) {
 			if (action == null) {
 				action = a1.getAction();
@@ -73,14 +87,32 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 
 	}
 
+	/**
+	 * Instantiates a new abstract graph node agent.
+	 *
+	 * @param s the s
+	 * @param index the index
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public AbstractGraphNodeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
 	}
 
+	/**
+	 * Gets the action.
+	 *
+	 * @return the action
+	 */
 	IStatement.WithArgs getAction() {
 		return getSpecies().getAction("related_to");
 	}
 
+	/**
+	 * Related to.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@action (
 			doc = @doc ("This operator should never be called"),
 			name = "related_to",
@@ -95,6 +127,11 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		return false;
 	}
 
+	/**
+	 * Gets the graph.
+	 *
+	 * @return the graph
+	 */
 	@SuppressWarnings ("rawtypes")
 	@getter (IKeyword.MYGRAPH)
 	public GamaGraph getGraph() {

@@ -1,11 +1,13 @@
-/*
- * Copyright 2016-2017 Clifton Labs Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language governing permissions and limitations under the
- * License.
- */
+/*******************************************************************************************************
+ *
+ * DeserializationException.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.util.file.json;
 
 /**
@@ -16,21 +18,36 @@ package msi.gama.util.file.json;
 public class DeserializationException extends Exception {
 	/** The kinds of exceptions that can trigger a DeserializationException. */
 	public enum Problems {
+		
+		/** The disallowed token. */
 		@SuppressWarnings ("javadoc")
 		DISALLOWED_TOKEN,
 		/** @since 2.3.0 to consolidate exceptions that occur during deserialization. */
 		IOEXCEPTION,
+		
+		/** The unexpected character. */
 		@SuppressWarnings ("javadoc")
 		UNEXPECTED_CHARACTER,
+		
+		/** The unexpected exception. */
 		@SuppressWarnings ("javadoc")
 		UNEXPECTED_EXCEPTION,
+		
+		/** The unexpected token. */
 		@SuppressWarnings ("javadoc")
 		UNEXPECTED_TOKEN;
 	}
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The position. */
 	private final int position;
+	
+	/** The problem type. */
 	private final Problems problemType;
+	
+	/** The unexpected object. */
 	private final Object unexpectedObject;
 
 	/**

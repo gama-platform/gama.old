@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmStateStatement.java, in plugin msi.gama.core, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * FsmStateStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -154,9 +154,13 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class FsmStateStatement extends AbstractStatementSequence {
 
+	/** The Allowed architectures. */
 	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,
 			IKeyword.USER_INIT, IKeyword.USER_LAST, IKeyword.USER_ONLY);
 
+	/**
+	 * The Class StateValidator.
+	 */
 	public static class StateValidator implements IDescriptionValidator {
 
 		/**
@@ -199,6 +203,12 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 		}
 
+		/**
+		 * Assert no other.
+		 *
+		 * @param desc the desc
+		 * @param facet the facet
+		 */
 		private void assertNoOther(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
 			if (!(sd instanceof SpeciesDescription)) { return; }
@@ -214,6 +224,12 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			}
 		}
 
+		/**
+		 * Assert at least one.
+		 *
+		 * @param desc the desc
+		 * @param facet the facet
+		 */
 		private void assertAtLeastOne(final IDescription desc, final String facet) {
 			final IDescription sd = desc.getEnclosingDescription();
 			if (!(sd instanceof SpeciesDescription)) { return; }
@@ -232,20 +248,47 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/** The Constant STATE_MEMORY. */
 	public static final String STATE_MEMORY = "state_memory";
 
+	/** The Constant INITIAL. */
 	public static final String INITIAL = "initial";
+	
+	/** The Constant FINAL. */
 	public static final String FINAL = "final";
+	
+	/** The Constant STATE. */
 	protected static final String STATE = "state";
+	
+	/** The Constant ENTER. */
 	public static final String ENTER = "enter";
+	
+	/** The Constant EXIT. */
 	public static final String EXIT = "exit";
+	
+	/** The enter actions. */
 	private FsmEnterStatement enterActions = null;
+	
+	/** The exit actions. */
 	private FsmExitStatement exitActions = null;
+	
+	/** The transitions. */
 	List<FsmTransitionStatement> transitions = new ArrayList<>();
+	
+	/** The transitions size. */
 	private int transitionsSize;
+	
+	/** The is initial. */
 	boolean isInitial;
+	
+	/** The is final. */
 	boolean isFinal;
 
+	/**
+	 * Instantiates a new fsm state statement.
+	 *
+	 * @param desc the desc
+	 */
 	public FsmStateStatement(final IDescription desc) {
 		super(desc);
 		setName(getLiteral(IKeyword.NAME)); // A VOIR
@@ -270,6 +313,13 @@ public class FsmStateStatement extends AbstractStatementSequence {
 				.filter(each -> (each != enterActions && each != exitActions && !transitions.contains(each))));
 	}
 
+	/**
+	 * Begin execution.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgent();
 		if (scope.interrupted()) { return false; }
@@ -291,10 +341,24 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		return true;
 	}
 
+	/**
+	 * Body execution.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected Object bodyExecution(final IScope scope) throws GamaRuntimeException {
 		return super.privateExecuteIn(scope);
 	}
 
+	/**
+	 * Evaluate transitions.
+	 *
+	 * @param scope the scope
+	 * @return the string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgent();
 		for (int i = 0; i < transitionsSize; i++) {
@@ -322,24 +386,50 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		return evaluateTransitions(scope);
 	}
 
+	/**
+	 * Halt on.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void haltOn(final IScope scope) throws GamaRuntimeException {
 		if (exitActions != null) {
 			scope.execute(exitActions);
 		}
 	}
 
+	/**
+	 * Gets the exit statement.
+	 *
+	 * @return the exit statement
+	 */
 	public FsmExitStatement getExitStatement() {
 		return exitActions;
 	}
 
+	/**
+	 * Checks for exit actions.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasExitActions() {
 		return exitActions != null;
 	}
 
+	/**
+	 * Checks if is initial.
+	 *
+	 * @return true, if is initial
+	 */
 	public boolean isInitial() {
 		return isInitial;
 	}
 
+	/**
+	 * Checks if is final.
+	 *
+	 * @return true, if is final
+	 */
 	public boolean isFinal() {
 		return isFinal;
 	}

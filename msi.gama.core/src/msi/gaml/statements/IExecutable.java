@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.IExecutable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IExecutable.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -23,12 +23,30 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface IExecutable {
 
+	/**
+	 * Execute on.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	Object executeOn(final IScope scope) throws GamaRuntimeException;
 
+	/**
+	 * Sets the runtime args.
+	 *
+	 * @param executionScope the execution scope
+	 * @param args the args
+	 */
 	default void setRuntimeArgs(final IScope executionScope, final Arguments args) {
 		// Do nothing
 	}
 
+	/**
+	 * Sets the myself.
+	 *
+	 * @param caller the new myself
+	 */
 	default void setMyself(final IAgent caller) {
 		// Do nothing
 	}

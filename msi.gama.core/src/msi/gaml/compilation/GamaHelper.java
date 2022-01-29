@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.GamaHelper.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaHelper.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -25,14 +25,32 @@ import msi.gama.runtime.IScope;
 @SuppressWarnings ({ "rawtypes" })
 public class GamaHelper<T> implements IGamaHelper<T>, INamed {
 
+	/** The name. */
 	final String name;
+	
+	/** The skill class. */
 	final Class skillClass;
+	
+	/** The delegate. */
 	final IGamaHelper<T> delegate;
 
+	/**
+	 * Instantiates a new gama helper.
+	 *
+	 * @param clazz the clazz
+	 * @param delegate the delegate
+	 */
 	public GamaHelper(final Class clazz, final IGamaHelper<T> delegate) {
 		this(null, clazz, delegate);
 	}
 
+	/**
+	 * Instantiates a new gama helper.
+	 *
+	 * @param name the name
+	 * @param clazz the clazz
+	 * @param delegate the delegate
+	 */
 	public GamaHelper(final String name, final Class clazz, final IGamaHelper<T> delegate) {
 		this.name = name;
 		skillClass = clazz;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.IVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IVariable.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -21,14 +21,42 @@ import msi.gaml.compilation.ISymbol;
  */
 public interface IVariable extends ISymbol, IParameter {
 
+	/**
+	 * Checks if is updatable.
+	 *
+	 * @return true, if is updatable
+	 */
 	boolean isUpdatable();
 
+	/**
+	 * Checks if is parameter.
+	 *
+	 * @return true, if is parameter
+	 */
 	boolean isParameter();
 
+	/**
+	 * Checks if is function.
+	 *
+	 * @return true, if is function
+	 */
 	boolean isFunction();
 
+	/**
+	 * Checks if is micro population.
+	 *
+	 * @return true, if is micro population
+	 */
 	boolean isMicroPopulation();
 
+	/**
+	 * Initialize with.
+	 *
+	 * @param scope the scope
+	 * @param gamaObject the gama object
+	 * @param object the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	void initializeWith(IScope scope, IAgent gamaObject, Object object) throws GamaRuntimeException;
 
 	/**
@@ -53,12 +81,39 @@ public interface IVariable extends ISymbol, IParameter {
 	 */
 	void notifyOfValueChange(final IScope scope, final IAgent agent, final Object oldValue, final Object newValue);
 
+	/**
+	 * Sets the val.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param v the v
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	void setVal(IScope scope, IAgent agent, Object v) throws GamaRuntimeException;
 
+	/**
+	 * Value.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	Object value(IScope scope, IAgent agent) throws GamaRuntimeException;
 
+	/**
+	 * Gets the updated value.
+	 *
+	 * @param scope the scope
+	 * @return the updated value
+	 */
 	Object getUpdatedValue(final IScope scope);
 
+	/**
+	 * Checks if is not modifiable.
+	 *
+	 * @return true, if is not modifiable
+	 */
 	boolean isNotModifiable();
 
 }

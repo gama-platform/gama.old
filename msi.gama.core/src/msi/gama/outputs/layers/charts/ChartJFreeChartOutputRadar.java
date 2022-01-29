@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputRadar.java, in plugin msi.gama.core, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartJFreeChartOutputRadar.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -26,8 +26,18 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class ChartJFreeChartOutputRadar.
+ */
 public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
+	/**
+	 * Instantiates a new chart J free chart output radar.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param typeexp the typeexp
+	 */
 	public ChartJFreeChartOutputRadar(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stub
@@ -69,6 +79,12 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	}
 
+	/**
+	 * Creates the dataset.
+	 *
+	 * @param scope the scope
+	 * @return the dataset
+	 */
 	Dataset createDataset(final IScope scope) {
 		return new DefaultCategoryDataset();
 	}
@@ -78,6 +94,12 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		return null;
 	}
 
+	/**
+	 * Reset renderer.
+	 *
+	 * @param scope the scope
+	 * @param serieid the serieid
+	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
 
@@ -208,6 +230,11 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	}
 
+	/**
+	 * Reset domain axis.
+	 *
+	 * @param scope the scope
+	 */
 	private void resetDomainAxis(final IScope scope) {
 		// TODO Auto-generated method stub
 		chart.getPlot();

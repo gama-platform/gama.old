@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.GamaCoordinateSequenceFactory.java, in plugin msi.gama.core, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaCoordinateSequenceFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -16,6 +16,9 @@ import org.locationtech.jts.geom.CoordinateSequenceFactory;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * A factory for creating GamaCoordinateSequence objects.
+ */
 public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory {
 
 	/**
@@ -29,6 +32,13 @@ public class GamaCoordinateSequenceFactory implements CoordinateSequenceFactory 
 		return new GamaCoordinateSequence(3, coordinates);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param coordinates the coordinates
+	 * @param copy the copy
+	 * @return the i coordinates
+	 */
 	public ICoordinates create(final GamaPoint[] coordinates, final boolean copy) {
 		if (coordinates.length == 1) return new UniqueCoordinateSequence(3, coordinates[0]);
 		return new GamaCoordinateSequence(3, copy, coordinates);

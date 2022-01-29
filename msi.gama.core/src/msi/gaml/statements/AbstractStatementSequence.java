@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractStatementSequence.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractStatementSequence.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -20,11 +20,22 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class AbstractStatementSequence.
+ */
 public class AbstractStatementSequence extends AbstractStatement {
 
+	/** The commands. */
 	protected IStatement[] commands;
+	
+	/** The is top level. */
 	final boolean isTopLevel;
 
+	/**
+	 * Instantiates a new abstract statement sequence.
+	 *
+	 * @param desc the desc
+	 */
 	public AbstractStatementSequence(final IDescription desc) {
 		super(desc);
 		isTopLevel = desc != null && desc.getMeta().isTopLevel();
@@ -35,6 +46,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 		this.commands = FluentIterable.from(commands).filter(IStatement.class).toArray(IStatement.class);
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 		return commands.length == 0;
 	}
@@ -60,6 +76,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 		return lastResult;
 	}
 
+	/**
+	 * Leave scope.
+	 *
+	 * @param scope the scope
+	 */
 	public void leaveScope(final IScope scope) {
 		// Clears any action_halted status in case we are a top-level behavior
 		// (reflex, init, state, etc.)
@@ -69,10 +90,20 @@ public class AbstractStatementSequence extends AbstractStatement {
 		scope.pop(this);
 	}
 
+	/**
+	 * Enter scope.
+	 *
+	 * @param scope the scope
+	 */
 	public void enterScope(final IScope scope) {
 		scope.push(this);
 	}
 
+	/**
+	 * Gets the commands.
+	 *
+	 * @return the commands
+	 */
 	public IStatement[] getCommands() {
 		return commands;
 	}

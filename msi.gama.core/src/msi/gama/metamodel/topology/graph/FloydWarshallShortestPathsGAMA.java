@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA.java, in plugin msi.gama.core, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * FloydWarshallShortestPathsGAMA.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.graph;
 
@@ -26,6 +26,12 @@ import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.matrix.GamaIntMatrix;
 
+/**
+ * The Class FloydWarshallShortestPathsGAMA.
+ *
+ * @param <V> the value type
+ * @param <E> the element type
+ */
 // Copy of the jgrapht algorithm: just make it usable with GAMA undirected graph
 public class FloydWarshallShortestPathsGAMA<V, E> {
 
@@ -33,17 +39,37 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	// ~ Instance fields --------------------------------------------------------
 
+	/** The graph. */
 	private final GamaGraph<V, E> graph;
+	
+	/** The vertices. */
 	private final List<V> vertices;
+	
+	/** The n shortest paths. */
 	private int nShortestPaths = 0;
+	
+	/** The diameter. */
 	private double diameter = 0.0;
+	
+	/** The d. */
 	private double[][] d = null;
+	
+	/** The backtrace. */
 	private int[][] backtrace = null;
+	
+	/** The matrix. */
 	private GamaIntMatrix matrix = null;
+	
+	/** The paths. */
 	private IMap<Pair<V, V>, GraphPath<V, E>> paths = null;
 
 	// ~ Constructors -----------------------------------------------------------
 
+	/**
+	 * Instantiates a new floyd warshall shortest paths GAMA.
+	 *
+	 * @param graph the graph
+	 */
 	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph) {
 		this.graph = graph;
 		this.vertices = new ArrayList<>(graph.getVertexMap().keySet());
@@ -52,6 +78,12 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	// ~ Methods ----------------------------------------------------------------
 
+	/**
+	 * Instantiates a new floyd warshall shortest paths GAMA.
+	 *
+	 * @param graph the graph
+	 * @param matrix the matrix
+	 */
 	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph, final GamaIntMatrix matrix) {
 		this.graph = graph;
 		this.vertices = new ArrayList<>(graph.getVertexMap().keySet());
@@ -75,10 +107,20 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		return nShortestPaths;
 	}
 
+	/**
+	 * Gets the d.
+	 *
+	 * @return the d
+	 */
 	public double[][] getD() {
 		return d;
 	}
 
+	/**
+	 * Gets the backtrace.
+	 *
+	 * @return the backtrace
+	 */
 	public int[][] getBacktrace() {
 		return backtrace;
 	}
@@ -152,6 +194,13 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		return diameter;
 	}
 
+	/**
+	 * Shortest path recur.
+	 *
+	 * @param edges the edges
+	 * @param v_a the v a
+	 * @param v_b the v b
+	 */
 	public void shortestPathRecur(final List<E> edges, final int v_a, final int v_b) {
 		final int k = backtrace[v_a][v_b];
 
@@ -175,6 +224,13 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		}
 	}
 
+	/**
+	 * Succ recur.
+	 *
+	 * @param v_a the v a
+	 * @param v_b the v b
+	 * @return the int
+	 */
 	public int succRecur(final int v_a, final int v_b) {
 		final int k = backtrace[v_a][v_b];
 		if (k == -1) {
@@ -201,6 +257,13 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		return getShortestPathImpl(a, b);
 	}
 
+	/**
+	 * Gets the shortest path impl.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the shortest path impl
+	 */
 	private GraphPath<V, E> getShortestPathImpl(final V a, final V b) {
 		int v_a = vertices.indexOf(a);
 		final int v_b = vertices.indexOf(b);

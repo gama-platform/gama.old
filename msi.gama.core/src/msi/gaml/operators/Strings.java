@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Strings.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Strings.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -44,9 +44,19 @@ public class Strings {
 	// DEBUG.ON();
 	// }
 
+	/** The Constant LN. */
 	public static final String LN = java.lang.System.lineSeparator();
+	
+	/** The Constant TAB. */
 	public static final String TAB = "\t";
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the string
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -67,6 +77,15 @@ public class Strings {
 		return a + b;
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -82,6 +101,13 @@ public class Strings {
 		return a + Cast.asString(scope, b);
 	}
 
+	/**
+	 * Op in.
+	 *
+	 * @param pattern the pattern
+	 * @param target the target
+	 * @return the boolean
+	 */
 	@operator (
 			value = "in",
 			can_be_const = true,
@@ -97,6 +123,13 @@ public class Strings {
 		return target.contains(pattern);
 	}
 
+	/**
+	 * Op contains.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @return the boolean
+	 */
 	@operator (
 			value = "contains",
 			can_be_const = true,
@@ -112,6 +145,13 @@ public class Strings {
 		return opIn(pattern, target);
 	}
 
+	/**
+	 * Op contains any.
+	 *
+	 * @param target the target
+	 * @param l the l
+	 * @return the boolean
+	 */
 	@operator (
 			value = "contains_any",
 			can_be_const = true,
@@ -128,6 +168,13 @@ public class Strings {
 		return false;
 	}
 
+	/**
+	 * Op contains all.
+	 *
+	 * @param target the target
+	 * @param l the l
+	 * @return the boolean
+	 */
 	@operator (
 			value = "contains_all",
 			can_be_const = true,
@@ -146,6 +193,13 @@ public class Strings {
 		return true;
 	}
 
+	/**
+	 * Op index of.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @return the integer
+	 */
 	@operator (
 			value = "index_of",
 			can_be_const = true,
@@ -161,6 +215,13 @@ public class Strings {
 		return target.indexOf(pattern);
 	}
 
+	/**
+	 * Op last index of.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @return the integer
+	 */
 	@operator (
 			value = "last_index_of",
 			can_be_const = true,
@@ -176,6 +237,14 @@ public class Strings {
 		return target.lastIndexOf(pattern);
 	}
 
+	/**
+	 * Op copy.
+	 *
+	 * @param target the target
+	 * @param beginIndex the begin index
+	 * @param endIndex the end index
+	 * @return the string
+	 */
 	@operator (
 			value = { "copy_between" /* , "copy" */ },
 			can_be_const = true,
@@ -192,6 +261,14 @@ public class Strings {
 		return target.substring(bIndex, eIndex);
 	}
 
+	/**
+	 * Op tokenize.
+	 *
+	 * @param scope the scope
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @return the i list
+	 */
 	@operator (
 			value = { "split_with", "tokenize" },
 			content_type = IType.STRING,
@@ -209,6 +286,15 @@ public class Strings {
 		return opTokenize(scope, target, pattern, false);
 	}
 
+	/**
+	 * Op tokenize.
+	 *
+	 * @param scope the scope
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param completeSep the complete sep
+	 * @return the i list
+	 */
 	@operator (
 			value = { "split_with", "tokenize" },
 			content_type = IType.STRING,
@@ -232,6 +318,14 @@ public class Strings {
 		return GamaListFactory.create(scope, Types.STRING, st);
 	}
 
+	/**
+	 * Op replace.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param replacement the replacement
+	 * @return the string
+	 */
 	@operator (
 			value = { "replace" },
 			can_be_const = true,
@@ -247,6 +341,14 @@ public class Strings {
 		return target.replace(pattern, replacement);
 	}
 
+	/**
+	 * Op replace regex.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param replacement the replacement
+	 * @return the string
+	 */
 	@operator (
 			value = { "replace_regex" },
 			can_be_const = true,
@@ -263,6 +365,13 @@ public class Strings {
 		return target.replaceAll(pattern, replacement);
 	}
 
+	/**
+	 * Op regex matches.
+	 *
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @return the i list
+	 */
 	@operator (
 			value = { "regex_matches" },
 			can_be_const = true,
@@ -287,6 +396,12 @@ public class Strings {
 				p.matcher(target).results().map(MatchResult::group).collect(Collectors.toList()));
 	}
 
+	/**
+	 * Checks if is gama number.
+	 *
+	 * @param s the s
+	 * @return the boolean
+	 */
 	@operator (
 			value = "is_number",
 			can_be_const = true,
@@ -391,6 +506,12 @@ public class Strings {
 		return !allowSigns && foundDigit;
 	}
 
+	/**
+	 * Reverse.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "reverse",
 			can_be_const = true,
@@ -408,6 +529,12 @@ public class Strings {
 		return buf.toString();
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @param s the s
+	 * @return the boolean
+	 */
 	@operator (
 			value = "empty",
 			can_be_const = true,
@@ -423,6 +550,12 @@ public class Strings {
 		return s != null && s.isEmpty();
 	}
 
+	/**
+	 * First.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "first",
 			can_be_const = true,
@@ -439,6 +572,12 @@ public class Strings {
 		return String.valueOf(s.charAt(0));
 	}
 
+	/**
+	 * Last.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "last",
 			can_be_const = true,
@@ -455,6 +594,12 @@ public class Strings {
 		return String.valueOf(s.charAt(s.length() - 1));
 	}
 
+	/**
+	 * Length.
+	 *
+	 * @param s the s
+	 * @return the integer
+	 */
 	@operator (
 			value = "length",
 			can_be_const = true,
@@ -471,6 +616,13 @@ public class Strings {
 		return s.length();
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @param lv the lv
+	 * @param rv the rv
+	 * @return the string
+	 */
 	@operator (
 			value = { IKeyword.AT, "@" },
 			can_be_const = true,
@@ -484,6 +636,12 @@ public class Strings {
 		return rv < lv.length() && rv >= 0 ? lv.substring(rv, rv + 1) : "";
 	}
 
+	/**
+	 * As char.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "char",
 			can_be_const = true,
@@ -500,6 +658,13 @@ public class Strings {
 		return Character.toString((char) s.byteValue());
 	}
 
+	/**
+	 * Indent.
+	 *
+	 * @param s the s
+	 * @param nb the nb
+	 * @return the string
+	 */
 	@operator (
 			value = "indented_by",
 			can_be_const = true,
@@ -520,6 +685,12 @@ public class Strings {
 		return s.replaceAll("(?m)^", t);
 	}
 
+	/**
+	 * To lower case.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "lower_case",
 			can_be_const = true,
@@ -536,6 +707,12 @@ public class Strings {
 		return s.toLowerCase();
 	}
 
+	/**
+	 * To upper case.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	@operator (
 			value = "upper_case",
 			can_be_const = true,

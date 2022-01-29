@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputHistogram.java, in plugin msi.gama.core, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartJFreeChartOutputHistogram.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -58,11 +58,22 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class ChartJFreeChartOutputHistogram.
+ */
 public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
+	/** The use sub axis. */
 	boolean useSubAxis = false;
+	
+	/** The use main axis label. */
 	boolean useMainAxisLabel = true;
 
+	/**
+	 * Enable flat look.
+	 *
+	 * @param flat the flat
+	 */
 	public static void enableFlatLook(final boolean flat) {
 		if (flat) {
 			BarRenderer.setDefaultBarPainter(new StandardBarPainter());
@@ -86,6 +97,13 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		GamaPreferences.Displays.CHART_FLAT.onChange(newValue -> enableFlatLook(newValue));
 	}
 
+	/**
+	 * Instantiates a new chart J free chart output histogram.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param typeexp the typeexp
+	 */
 	public ChartJFreeChartOutputHistogram(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stub
@@ -145,6 +163,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	}
 
+	/**
+	 * The Class LabelGenerator.
+	 */
 	static class LabelGenerator extends StandardCategoryItemLabelGenerator {
 		/**
 		 * Generates an item label.
@@ -203,6 +224,12 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		return newr;
 	}
 
+	/**
+	 * Reset renderer.
+	 *
+	 * @param scope the scope
+	 * @param serieid the serieid
+	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		// AbstractCategoryItemRenderer
 		// newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope,
@@ -432,6 +459,11 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	}
 
+	/**
+	 * Reset domain axis.
+	 *
+	 * @param scope the scope
+	 */
 	public void resetDomainAxis(final IScope scope) {
 		// TODO Auto-generated method stub
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();

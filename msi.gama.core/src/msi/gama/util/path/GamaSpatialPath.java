@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.GamaSpatialPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaSpatialPath.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -47,33 +47,80 @@ import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaSpatialPath.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
+	/** The segments. */
 	IList<IShape> segments;
+	
+	/** The shape. */
 	IShape shape = null;
+	
+	/** The three D. */
 	boolean threeD = false;
+	
+	/** The real objects. */
 	IMap<IShape, IShape> realObjects; // key = part of the geometry
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param _edges the edges
+	 */
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
 			final IList<? extends IShape> _edges) {
 		super(g, start, target, _edges);
 	}
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param _edges the edges
+	 * @param modify_edges the modify edges
+	 */
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
 			final IList<? extends IShape> _edges, final boolean modify_edges) {
 		super(g, start, target, _edges, modify_edges);
 	}
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 */
 	public GamaSpatialPath(final IShape start, final IShape target, final IList<? extends IShape> edges) {
 		super(null, start, target, edges, false);
 	}
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 * @param modify_edges the modify edges
+	 */
 	public GamaSpatialPath(final IShape start, final IShape target, final IList<? extends IShape> edges,
 			final boolean modify_edges) {
 		super(null, start, target, edges, modify_edges);
 	}
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param nodes the nodes
+	 */
 	public GamaSpatialPath(final IList<? extends IShape> nodes) {
 		super(nodes);
 	}
@@ -240,6 +287,13 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 	}
 
+	/**
+	 * Z val.
+	 *
+	 * @param point the point
+	 * @param edge the edge
+	 * @return the double
+	 */
 	protected double zVal(final GamaPoint point, final IShape edge) {
 		double z = 0.0;
 		final int nbSp = getPointsOf(edge).length;
@@ -262,6 +316,12 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		return z;
 	}
 
+	/**
+	 * Instantiates a new gama spatial path.
+	 *
+	 * @param g the g
+	 * @param nodes the nodes
+	 */
 	public GamaSpatialPath(final GamaSpatialGraph g, final IList<? extends IShape> nodes) {
 		// FIXME call super super(param...);
 		// DEBUG.OUT("GamaSpatialPath nodes: " + nodes);
@@ -381,6 +441,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		return getDistanceComplex(scope, keepSource, keepTarget);
 	}
 
+	/**
+	 * Gets the distance complex.
+	 *
+	 * @param scope the scope
+	 * @param keepSource the keep source
+	 * @param keepTarget the keep target
+	 * @return the distance complex
+	 */
 	private double getDistanceComplex(final IScope scope, final boolean keepSource, final boolean keepTarget) {
 		double distance = 0;
 		int index = 0;
@@ -543,6 +611,11 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		return getPathVertexList();
 	}
 
+	/**
+	 * Gets the path vertex list.
+	 *
+	 * @return the path vertex list
+	 */
 	public IList<IShape> getPathVertexList() {
 		final Graph<IShape, IShape> g = getGraph();
 		try (final Collector.AsList<IShape> list = Collector.getList()) {
@@ -558,6 +631,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		}
 	}
 
+	/**
+	 * Gets the opposite vertex.
+	 *
+	 * @param g the g
+	 * @param e the e
+	 * @param v the v
+	 * @return the opposite vertex
+	 */
 	public static IShape getOppositeVertex(final Graph<IShape, IShape> g, final IShape e, final IShape v) {
 		final IShape source = g.getEdgeSource(e);
 		final IShape target = g.getEdgeTarget(e);
@@ -569,6 +650,11 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			return v.euclidianDistanceTo(source) > v.euclidianDistanceTo(target) ? target : source;
 	}
 
+	/**
+	 * Checks if is three D.
+	 *
+	 * @return true, if is three D
+	 */
 	public boolean isThreeD() {
 		return threeD;
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.Distribution.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * Distribution.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -31,9 +31,26 @@ import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class Distribution.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class Distribution {
 
+	/**
+	 * Compute distrib 2 d.
+	 *
+	 * @param scope the scope
+	 * @param lvaluex the lvaluex
+	 * @param lvaluey the lvaluey
+	 * @param nbBarresx the nb barresx
+	 * @param vminx the vminx
+	 * @param vmaxx the vmaxx
+	 * @param nbBarresy the nb barresy
+	 * @param vminy the vminy
+	 * @param vmaxy the vmaxy
+	 * @return the i map
+	 */
 	public static IMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
 			final int nbBarresx, final double vminx, final double vmaxx, final int nbBarresy, final double vminy,
 			final double vmaxy) {
@@ -146,6 +163,16 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Compute distrib 2 d.
+	 *
+	 * @param scope the scope
+	 * @param lvaluex the lvaluex
+	 * @param lvaluey the lvaluey
+	 * @param nbBarresx the nb barresx
+	 * @param nbBarresy the nb barresy
+	 * @return the i map
+	 */
 	public static IMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
 			final int nbBarresx, final int nbBarresy) {
 		int len = lvaluex.length(scope);
@@ -340,6 +367,17 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution 2 d of.
+	 *
+	 * @param scope the scope
+	 * @param valuesx the valuesx
+	 * @param valuesy the valuesy
+	 * @param nbbarsx the nbbarsx
+	 * @param nbbarsy the nbbarsy
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
@@ -377,6 +415,21 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution 2 d of.
+	 *
+	 * @param scope the scope
+	 * @param valuesx the valuesx
+	 * @param valuesy the valuesy
+	 * @param nbbarsx the nbbarsx
+	 * @param startvaluex the startvaluex
+	 * @param endvaluex the endvaluex
+	 * @param nbbarsy the nbbarsy
+	 * @param startvaluey the startvaluey
+	 * @param endvaluey the endvaluey
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
@@ -423,6 +476,15 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution 2 d of.
+	 *
+	 * @param scope the scope
+	 * @param valuesx the valuesx
+	 * @param valuesy the valuesy
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution2d_of" },
 			can_be_const = false,
@@ -456,6 +518,14 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Compute distrib.
+	 *
+	 * @param scope the scope
+	 * @param lvalue the lvalue
+	 * @param nbBarres the nb barres
+	 * @return the i map
+	 */
 	public static IMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres) {
 		final int len = lvalue.length(scope);
 		final double[] doublelist = new double[lvalue.length(scope)];
@@ -555,6 +625,16 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Compute distrib.
+	 *
+	 * @param scope the scope
+	 * @param lvalue the lvalue
+	 * @param nbBarres the nb barres
+	 * @param vmin the vmin
+	 * @param vmax the vmax
+	 * @return the i map
+	 */
 	public static IMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres, final double vmin,
 			final double vmax) {
 		final int len = lvalue.length(scope);
@@ -608,6 +688,15 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution of.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @param nbbars the nbbars
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,
@@ -639,6 +728,14 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution of.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,
@@ -669,6 +766,17 @@ public class Distribution {
 
 	}
 
+	/**
+	 * Distribution of.
+	 *
+	 * @param scope the scope
+	 * @param values the values
+	 * @param nbbars the nbbars
+	 * @param startvalue the startvalue
+	 * @param endvalue the endvalue
+	 * @return the i map
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = { "distribution_of" },
 			can_be_const = false,

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IExperimentAgentCreator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * IExperimentAgentCreator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -14,14 +14,30 @@ import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 
+/**
+ * The Interface IExperimentAgentCreator.
+ */
 @FunctionalInterface
 public interface IExperimentAgentCreator {
 
+	/**
+	 * The Class ExperimentAgentDescription.
+	 */
 	public static class ExperimentAgentDescription implements IExperimentAgentCreator, IGamlDescription {
 
+		/** The original. */
 		private final IExperimentAgentCreator original;
+		
+		/** The plugin. */
 		private final String name, plugin;
 
+		/**
+		 * Instantiates a new experiment agent description.
+		 *
+		 * @param original the original
+		 * @param name the name
+		 * @param plugin the plugin
+		 */
 		public ExperimentAgentDescription(final IExperimentAgentCreator original, final String name,
 				final String plugin) {
 			this.original = original;
@@ -108,6 +124,13 @@ public interface IExperimentAgentCreator {
 		// }
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param pop the pop
+	 * @param index the index
+	 * @return the i experiment agent
+	 */
 	IExperimentAgent create(IPopulation<? extends IAgent> pop, int index);
 
 }

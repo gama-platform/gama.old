@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.RemoveStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * RemoveStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -232,6 +232,9 @@ import msi.gaml.types.IType;
 @validator (ContainerValidator.class)
 public class RemoveStatement extends AbstractContainerStatement {
 
+	/**
+	 * The Class RemoveSerializer.
+	 */
 	public static class RemoveSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
@@ -251,6 +254,11 @@ public class RemoveStatement extends AbstractContainerStatement {
 		}
 	}
 
+	/**
+	 * Instantiates a new removes the statement.
+	 *
+	 * @param desc the desc
+	 */
 	public RemoveStatement(final IDescription desc) {
 		super(desc);
 		setName("remove from " + list.serialize(false));

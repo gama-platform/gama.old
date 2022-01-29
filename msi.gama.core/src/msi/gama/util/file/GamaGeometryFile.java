@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGeometryFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GamaGeometryFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -30,12 +30,27 @@ import msi.gaml.types.Types;
  */
 public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 
+	/** The geometry. */
 	protected IShape geometry;
 
+	/**
+	 * Instantiates a new gama geometry file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	/**
+	 * Instantiates a new gama geometry file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param b the b
+	 */
 	public GamaGeometryFile(final IScope scope, final String pathName, final boolean b) {
 		super(scope, pathName, b);
 	}
@@ -55,12 +70,24 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 		return getGeometry(scope).getEnvelope();
 	}
 
+	/**
+	 * Gets the geometry.
+	 *
+	 * @param scope the scope
+	 * @return the geometry
+	 */
 	public IShape getGeometry(final IScope scope) {
 		fillBuffer(scope);
 		if (geometry == null) { geometry = buildGeometry(scope); }
 		return geometry;
 	}
 
+	/**
+	 * Builds the geometry.
+	 *
+	 * @param scope the scope
+	 * @return the i shape
+	 */
 	protected abstract IShape buildGeometry(IScope scope);
 
 	@Override
@@ -69,10 +96,20 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 		geometry = null;
 	}
 
+	/**
+	 * Gets the inits the rotation.
+	 *
+	 * @return the inits the rotation
+	 */
 	public AxisAngle getInitRotation() {
 		return null;
 	}
 
+	/**
+	 * Checks if is 2d.
+	 *
+	 * @return true, if is 2d
+	 */
 	public boolean is2D() {
 		return true;
 	}

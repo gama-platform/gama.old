@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.Promethee.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * Promethee.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -17,17 +17,34 @@ import java.util.Map;
 
 import msi.gama.runtime.GAMA;
 
+/**
+ * The Class Promethee.
+ */
 public class Promethee {
 
+	/** The poids crit. */
 	private Map<String, Double> poidsCrit;
+	
+	/** The fct pref crit. */
 	private Map<String, FonctionPreference> fctPrefCrit;
 
+	/**
+	 * Instantiates a new promethee.
+	 *
+	 * @param poidsCrit the poids crit
+	 * @param fctPrefCrit the fct pref crit
+	 */
 	public Promethee(final Map<String, Double> poidsCrit, final Map<String, FonctionPreference> fctPrefCrit) {
 		super();
 		this.poidsCrit = poidsCrit;
 		this.fctPrefCrit = fctPrefCrit;
 	}
 
+	/**
+	 * Instantiates a new promethee.
+	 *
+	 * @param criteres the criteres
+	 */
 	public Promethee(final Collection<String> criteres) {
 		poidsCrit = new Hashtable<>();
 		fctPrefCrit = new Hashtable<>();
@@ -37,6 +54,11 @@ public class Promethee {
 		}
 	}
 
+	/**
+	 * Instantiates a new promethee.
+	 *
+	 * @param promethee the promethee
+	 */
 	public Promethee(final Promethee promethee) {
 		poidsCrit = new Hashtable<>();
 		for (final String crit : promethee.poidsCrit.keySet()) {
@@ -48,6 +70,12 @@ public class Promethee {
 		}
 	}
 
+	/**
+	 * Decision.
+	 *
+	 * @param locations the locations
+	 * @return the candidate
+	 */
 	public Candidate decision(final LinkedList<Candidate> locations) {
 		Candidate meilleureLoc = null;
 		double outRankingMax = -Double.MAX_VALUE;
@@ -90,18 +118,38 @@ public class Promethee {
 		return "Poids : " + poidsCrit;
 	}
 
+	/**
+	 * Gets the fct pref crit.
+	 *
+	 * @return the fct pref crit
+	 */
 	public Map<String, FonctionPreference> getFctPrefCrit() {
 		return fctPrefCrit;
 	}
 
+	/**
+	 * Sets the fct pref crit.
+	 *
+	 * @param fctPrefCrit the fct pref crit
+	 */
 	public void setFctPrefCrit(final Map<String, FonctionPreference> fctPrefCrit) {
 		this.fctPrefCrit = fctPrefCrit;
 	}
 
+	/**
+	 * Gets the poids crit.
+	 *
+	 * @return the poids crit
+	 */
 	public Map<String, Double> getPoidsCrit() {
 		return poidsCrit;
 	}
 
+	/**
+	 * Sets the poids crit.
+	 *
+	 * @param poidsCrit the poids crit
+	 */
 	public void setPoidsCrit(final Map<String, Double> poidsCrit) {
 		this.poidsCrit = poidsCrit;
 	}

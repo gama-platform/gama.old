@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ExperimentDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ExperimentDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -32,25 +32,59 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.statements.Facets;
 
+/**
+ * The Class ExperimentDescription.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 
 public class ExperimentDescription extends SpeciesDescription {
 
+	/** The parameters. */
 	private IMap<String, VariableDescription> parameters;
+	
+	/** The output. */
 	private StatementDescription output;
+	
+	/** The permanent. */
 	private StatementDescription permanent;
 
+	/**
+	 * Instantiates a new experiment description.
+	 *
+	 * @param keyword the keyword
+	 * @param enclosing the enclosing
+	 * @param cp the cp
+	 * @param source the source
+	 * @param facets the facets
+	 */
 	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing,
 			final Iterable<IDescription> cp, final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
 	}
 
+	/**
+	 * Instantiates a new experiment description.
+	 *
+	 * @param name the name
+	 * @param clazz the clazz
+	 * @param superDesc the super desc
+	 * @param parent the parent
+	 * @param helper the helper
+	 * @param skills2 the skills 2
+	 * @param ff the ff
+	 * @param plugin the plugin
+	 */
 	public ExperimentDescription(final String name, final Class<?> clazz, final SpeciesDescription superDesc,
 			final SpeciesDescription parent, final IAgentConstructor<? extends IAgent> helper,
 			final Set<String> skills2, final Facets ff, final String plugin) {
 		super(name, clazz, superDesc, parent, helper, skills2, ff, plugin);
 	}
 
+	/**
+	 * Adds the parameter.
+	 *
+	 * @param var the var
+	 */
 	private void addParameter(final VariableDescription var) {
 		if (parameters == null) { parameters = GamaMapFactory.create(); }
 		String vName = var.getName();
@@ -85,16 +119,33 @@ public class ExperimentDescription extends SpeciesDescription {
 		parameters.put(var.getName(), var);
 	}
 
+	/**
+	 * Checks for parameter.
+	 *
+	 * @param name the name
+	 * @return true, if successful
+	 */
 	public boolean hasParameter(final String name) {
 		if (parameters == null) return false;
 		return parameters.containsKey(name);
 	}
 
+	/**
+	 * Gets the parameter.
+	 *
+	 * @param name the name
+	 * @return the parameter
+	 */
 	public VariableDescription getParameter(final String name) {
 		if (parameters == null) return null;
 		return parameters.get(name);
 	}
 
+	/**
+	 * Inherit parameters from.
+	 *
+	 * @param p the p
+	 */
 	public void inheritParametersFrom(final ExperimentDescription p) {
 		if (p.parameters != null) {
 			for (final VariableDescription v : p.parameters.values()) {
@@ -103,6 +154,11 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 	}
 
+	/**
+	 * Adds the inherited parameter.
+	 *
+	 * @param vd the vd
+	 */
 	public void addInheritedParameter(final VariableDescription vd) {
 
 		final String inheritedVarName = vd.getName();
@@ -143,6 +199,11 @@ public class ExperimentDescription extends SpeciesDescription {
 		return "experiment " + getName();
 	}
 
+	/**
+	 * Gets the experiment title facet.
+	 *
+	 * @return the experiment title facet
+	 */
 	public String getExperimentTitleFacet() {
 		return getLitteral(TITLE);
 	}
@@ -209,6 +270,11 @@ public class ExperimentDescription extends SpeciesDescription {
 		return IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE));
 	}
 
+	/**
+	 * Gets the experiment type.
+	 *
+	 * @return the experiment type
+	 */
 	public String getExperimentType() {
 		if (isBatch()) return IKeyword.BATCH;
 		if (isMemorize()) return IKeyword.MEMORIZE;
@@ -230,6 +296,11 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 	}
 
+	/**
+	 * Inherit outputs from.
+	 *
+	 * @param parent the parent
+	 */
 	private void inheritOutputsFrom(final ExperimentDescription parent) {
 		if (parent.output != null) {
 			if (output == null) {
@@ -247,6 +318,12 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 	}
 
+	/**
+	 * Merge outputs.
+	 *
+	 * @param inherited the inherited
+	 * @param defined the defined
+	 */
 	private void mergeOutputs(final StatementDescription inherited, final StatementDescription defined) {
 		inherited.visitChildren(in -> {
 			final IDescription redefined = getSimilarChild(defined, in);

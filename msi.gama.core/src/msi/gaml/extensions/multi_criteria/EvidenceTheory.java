@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.EvidenceTheory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * EvidenceTheory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -82,6 +82,12 @@ public class EvidenceTheory {
 		return fusion;
 	}
 
+	/**
+	 * Builds the propositions.
+	 *
+	 * @param candidats the candidats
+	 * @return the propositions
+	 */
 	private Propositions buildPropositions(final Map<Candidate, MassesCroyances> candidats) {
 		return new Propositions(candidats, true);
 	}
@@ -168,6 +174,13 @@ public class EvidenceTheory {
 		return bestCand;
 	}
 
+	/**
+	 * Proba pignistic.
+	 *
+	 * @param cand the cand
+	 * @param propositions the propositions
+	 * @return the double
+	 */
 	private/**
 			 * Calcul la probabilit� pignistic qu'un candidat soit le bon
 			 *
@@ -204,16 +217,21 @@ public class EvidenceTheory {
 
 		// masse de croyance repr�sentant le fait qu'un crit�re (source) ou un ensemble de
 		// crit�res
+		/** The pour. */
 		// pense qu'il faut apparier le jeu de K courant avec l'intervalle
 		double pour;
 		// masse de croyance repr�sentant le fait qu'un crit�re (source) ou un ensemble de
 		// crit�res
+		/** The contre. */
 		// pense qu'il ne faut pas apparier le jeu de K courant avec l'intervalle
 		double contre;
 		// masse de croyance repr�sentant le fait qu'un crit�re (source) ou un ensemble de
 		// crit�res
+		/** The ignorance. */
 		// ne sait pas s'il faut apparier le jeu de K courant avec l'intervalle
 		double ignorance;
+		
+		/** The conflit. */
 		// masse de croyance repr�sentant le conflit
 		double conflit;
 
@@ -242,18 +260,38 @@ public class EvidenceTheory {
 					+ conflit;
 		}
 
+		/**
+		 * Sets the contre.
+		 *
+		 * @param contre the new contre
+		 */
 		public void setContre(final double contre) {
 			this.contre = contre;
 		}
 
+		/**
+		 * Sets the ignorance.
+		 *
+		 * @param ignorance the new ignorance
+		 */
 		public void setIgnorance(final double ignorance) {
 			this.ignorance = ignorance;
 		}
 
+		/**
+		 * Sets the pour.
+		 *
+		 * @param pour the new pour
+		 */
 		public void setPour(final double pour) {
 			this.pour = pour;
 		}
 
+		/**
+		 * Sets the conflit.
+		 *
+		 * @param conflit the new conflit
+		 */
 		public void setConflit(final double conflit) {
 			this.conflit = conflit;
 		}
@@ -269,11 +307,15 @@ public class EvidenceTheory {
 
 		// Ensemble de Candidate : les hypoth�ses repr�sente les candidats
 		// une proposition peut avoir comme hypoth�se {bon, moyen}, c'est � dire que le jeu de K
+		/** The hypothese. */
 		// courant est pour cette proposition soit bon, soit mauvais
 		final LinkedList<Candidate> hypothese;
+		
+		/** The masse croyance. */
 		// valeur de la masse de croyance associ�e � cette proposition
 		double masseCroyance;
 
+		/** The id. */
 		final int id;
 
 		/**
@@ -298,10 +340,20 @@ public class EvidenceTheory {
 			return this.hypothese.toString() + " : " + masseCroyance;
 		}
 
+		/**
+		 * Gets the masse croyance.
+		 *
+		 * @return the masse croyance
+		 */
 		public double getMasseCroyance() {
 			return masseCroyance;
 		}
 
+		/**
+		 * Gets the hypothese.
+		 *
+		 * @return the hypothese
+		 */
 		public LinkedList<Candidate> getHypothese() {
 			return hypothese;
 		}
@@ -326,6 +378,11 @@ public class EvidenceTheory {
 			return true;
 		}
 
+		/**
+		 * Gets the outer type.
+		 *
+		 * @return the outer type
+		 */
 		private EvidenceTheory getOuterType() {
 			return EvidenceTheory.this;
 		}
@@ -340,8 +397,11 @@ public class EvidenceTheory {
 	 */
 	private class Propositions {
 
+		/** The propositions. */
 		// L'ensemble des Proposition
 		LinkedList<Proposition> propositions;
+		
+		/** The coeff norm. */
 		private double coeffNorm;
 
 		/**
@@ -357,12 +417,24 @@ public class EvidenceTheory {
 			init(candidats, false);
 		}
 
+		/**
+		 * Instantiates a new propositions.
+		 *
+		 * @param candidats the candidats
+		 * @param simple the simple
+		 */
 		public Propositions(final Map<Candidate, MassesCroyances> candidats, final boolean simple) {
 			this.propositions = new LinkedList<>();
 			coeffNorm = 1;
 			init(candidats, simple);
 		}
 
+		/**
+		 * Inits the.
+		 *
+		 * @param candidats the candidats
+		 * @param simple the simple
+		 */
 		private void init(final Map<Candidate, MassesCroyances> candidats, final boolean simple) {
 			for (final Candidate cand : candidats.keySet()) {
 				final MassesCroyances mc1 = candidats.get(cand);
@@ -517,6 +589,9 @@ public class EvidenceTheory {
 			propositions.add(propConflit);
 		}
 
+		/**
+		 * Compute coeff norm.
+		 */
 		public void computeCoeffNorm() {
 			for (final Proposition prop : propositions) {
 				if (prop.hypothese.isEmpty()) {
@@ -526,6 +601,11 @@ public class EvidenceTheory {
 			}
 		}
 
+		/**
+		 * Gets the coeff norm.
+		 *
+		 * @return the coeff norm
+		 */
 		public double getCoeffNorm() {
 			return coeffNorm;
 		}

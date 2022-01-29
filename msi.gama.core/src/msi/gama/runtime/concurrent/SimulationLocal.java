@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SimulationLocal.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
 import java.util.HashMap;
@@ -17,10 +27,21 @@ import msi.gama.runtime.IScope;
  */
 public class SimulationLocal<T> {
 
+	/**
+	 * The Class SuppliedSimulationLocal.
+	 *
+	 * @param <T> the generic type
+	 */
 	static final class SuppliedSimulationLocal<T> extends SimulationLocal<T> {
 
+		/** The supplier. */
 		private final GAMA.InScope<? extends T> supplier;
 
+		/**
+		 * Instantiates a new supplied simulation local.
+		 *
+		 * @param supplier the supplier
+		 */
 		SuppliedSimulationLocal(final GAMA.InScope<? extends T> supplier) {
 			this.supplier = Objects.requireNonNull(supplier);
 		}
@@ -31,6 +52,7 @@ public class SimulationLocal<T> {
 		}
 	}
 
+	/** The Constant SIMULATION_LOCAL_MAP. */
 	private static final String SIMULATION_LOCAL_MAP = "**simulation_local_map**";
 
 	/**
@@ -51,6 +73,12 @@ public class SimulationLocal<T> {
 		return null;
 	}
 
+	/**
+	 * Gets the root of.
+	 *
+	 * @param scope the scope
+	 * @return the root of
+	 */
 	private ITopLevelAgent getRootOf(final IScope scope) {
 		if (scope == null) return null;
 		return scope.getRoot();
@@ -87,6 +115,12 @@ public class SimulationLocal<T> {
 		return setInitialValue(scope);
 	}
 
+	/**
+	 * Gets the map.
+	 *
+	 * @param sim the sim
+	 * @return the map
+	 */
 	@SuppressWarnings ("unchecked")
 	private Map<SimulationLocal<T>, T> getMap(final ITopLevelAgent sim) {
 		return (Map<SimulationLocal<T>, T>) sim.getAttribute(SIMULATION_LOCAL_MAP);
@@ -129,6 +163,12 @@ public class SimulationLocal<T> {
 		}
 	}
 
+	/**
+	 * Creates the map.
+	 *
+	 * @param sim the sim
+	 * @param value the value
+	 */
 	private void createMap(final ITopLevelAgent sim, final T value) {
 		Map<SimulationLocal<T>, T> map = new HashMap<>();
 		sim.setAttribute(SIMULATION_LOCAL_MAP, map);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.EventLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * EventLayerStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -142,6 +142,9 @@ import msi.gaml.types.IType;
 				IKeyword.OVERLAY, IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
+	/**
+	 * The Class EventLayerValidator.
+	 */
 	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
@@ -187,10 +190,19 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		}
 	}
 
+	/** The executes in simulation. */
 	private boolean executesInSimulation;
+	
+	/** The type. */
 	private final IExpression type;
+	
+	/** The delegates. */
 	public static List<IEventLayerDelegate> delegates = new ArrayList<>();
+	
+	/** The action name. */
 	private String actionName;
+	
+	/** The action. */
 	private ActionStatement action;
 
 	/**
@@ -200,6 +212,12 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		delegates.add(delegate);
 	}
 
+	/**
+	 * Instantiates a new event layer statement.
+	 *
+	 * @param desc the desc
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 		executesInSimulation = false;
@@ -212,14 +230,31 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		type = getFacet(IKeyword.TYPE);
 	}
 
+	/**
+	 * Gets the executer.
+	 *
+	 * @param scope the scope
+	 * @return the executer
+	 */
 	public IAgent getExecuter(final IScope scope) {
 		return executesInSimulation ? scope.getSimulation() : scope.getExperiment();
 	}
 
+	/**
+	 * Executes in simulation.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean executesInSimulation() {
 		return executesInSimulation;
 	}
 
+	/**
+	 * Gets the executable.
+	 *
+	 * @param scope the scope
+	 * @return the executable
+	 */
 	public IExecutable getExecutable(final IScope scope) {
 		if (action != null) return action;
 		IAgent agent = getExecuter(scope);
@@ -257,6 +292,12 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
+	/**
+	 * Gets the source.
+	 *
+	 * @param scope the scope
+	 * @return the source
+	 */
 	private Object getSource(final IScope scope) {
 		return type == null ? IKeyword.DEFAULT : type.value(scope);
 	}

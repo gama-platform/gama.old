@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaPropertyFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GamaPropertyFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -31,6 +31,9 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaPropertyFile.
+ */
 @file (
 		name = "property",
 		extensions = { "properties" },
@@ -41,6 +44,13 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents property files"))
 public class GamaPropertyFile extends GamaFile<IMap<String, String>, String> {
 
+	/**
+	 * Instantiates a new gama property file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a property file (.properties)",
 			examples = { @example (
@@ -50,6 +60,14 @@ public class GamaPropertyFile extends GamaFile<IMap<String, String>, String> {
 		super(scope, pathName);
 	}
 
+	/**
+	 * Instantiates a new gama property file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param buffer the buffer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to store a map in a property file (it does not save it - just store it in memory)",
 			examples = { @example (

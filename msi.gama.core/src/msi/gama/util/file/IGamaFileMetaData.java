@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.IGamaFileMetaData.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * IGamaFileMetaData.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -25,10 +25,21 @@ public interface IGamaFileMetaData {
 	 * A delimiter character for separating attributes in the property string
 	 */
 	final static public String DELIMITER = "_!_";
+	
+	/** The Constant SUB_DELIMITER. */
 	final static public String SUB_DELIMITER = "@%@";
+	
+	/** The Constant FAILED. */
 	public final static String FAILED = "failed";
+	
+	/** The Constant SUFFIX_DEL. */
 	public final static String SUFFIX_DEL = " | ";
 
+	/**
+	 * Gets the modification stamp.
+	 *
+	 * @return the modification stamp
+	 */
 	long getModificationStamp();
 
 	/**
@@ -45,6 +56,11 @@ public interface IGamaFileMetaData {
 	 */
 	String getSuffix();
 
+	/**
+	 * Append suffix.
+	 *
+	 * @param sb the sb
+	 */
 	void appendSuffix(StringBuilder sb);
 
 	/**

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.CurrentErrorUnitExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * CurrentErrorUnitExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -14,8 +14,16 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.Types;
 
+/**
+ * The Class CurrentErrorUnitExpression.
+ */
 public class CurrentErrorUnitExpression extends UnitConstantExpression {
 
+	/**
+	 * Instantiates a new current error unit expression.
+	 *
+	 * @param doc the doc
+	 */
 	public CurrentErrorUnitExpression(final String doc) {
 		super("", Types.STRING, "current_error", doc, null);
 	}

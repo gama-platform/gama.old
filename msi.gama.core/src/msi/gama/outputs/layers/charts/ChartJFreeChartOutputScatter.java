@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputScatter.java, in plugin msi.gama.core, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartJFreeChartOutputScatter.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -59,30 +59,65 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class ChartJFreeChartOutputScatter.
+ */
 public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
+	/**
+	 * The Class myXYErrorRenderer.
+	 */
 	public class myXYErrorRenderer extends XYErrorRenderer {
 
+		/** The myoutput. */
 		ChartJFreeChartOutputScatter myoutput;
+		
+		/** The myid. */
 		String myid;
+		
+		/** The use size. */
 		boolean useSize;
+		
+		/** The transform. */
 		AffineTransform transform = new AffineTransform();
 
+		/**
+		 * Checks if is use size.
+		 *
+		 * @return true, if is use size
+		 */
 		public boolean isUseSize() {
 			return useSize;
 		}
 
+		/**
+		 * Sets the use size.
+		 *
+		 * @param scope the scope
+		 * @param useSize the use size
+		 */
 		public void setUseSize(final IScope scope, final boolean useSize) {
 			this.useSize = useSize;
 
 		}
 
+		/**
+		 * Sets the myid.
+		 *
+		 * @param myid the new myid
+		 */
 		public void setMyid(final String myid) {
 			this.myid = myid;
 		}
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Sets the output.
+		 *
+		 * @param output the new output
+		 */
 		public void setOutput(final ChartJFreeChartOutput output) {
 			myoutput = (ChartJFreeChartOutputScatter) output;
 		}
@@ -97,13 +132,28 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 	}
 
+	/**
+	 * Gets the scale.
+	 *
+	 * @param serie the serie
+	 * @param col the col
+	 * @return the scale
+	 */
 	double getScale(final String serie, final int col) {
 		if (MarkerScale.containsKey(serie)) { return MarkerScale.get(serie).get(col); }
 		return 1;
 	}
 
+	/** The Marker scale. */
 	HashMap<String, ArrayList<Double>> MarkerScale = new HashMap<>();
 
+	/**
+	 * Instantiates a new chart J free chart output scatter.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param typeexp the typeexp
+	 */
 	public ChartJFreeChartOutputScatter(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stub
@@ -238,6 +288,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		return newr;
 	}
 
+	/**
+	 * Reset renderer.
+	 *
+	 * @param scope the scope
+	 * @param serieid the serieid
+	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, serieid);
 		// newr.setSeriesStroke(0, new BasicStroke(0));
@@ -415,6 +471,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	}
 
+	/**
+	 * Format Y axis.
+	 *
+	 * @param scope the scope
+	 * @param axis the axis
+	 * @return the number axis
+	 */
 	public NumberAxis formatYAxis(final IScope scope, final NumberAxis axis) {
 		axis.setAxisLinePaint(axesColor);
 		axis.setTickLabelFont(getTickFont());

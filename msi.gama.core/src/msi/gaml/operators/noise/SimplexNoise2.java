@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SimplexNoise2.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.operators.noise;
 
 import msi.gama.common.util.RandomUtils;
@@ -18,13 +28,20 @@ import msi.gama.runtime.IScope;
  *
  */
 
+/**
+ * The Class SimplexNoise2.
+ */
 public class SimplexNoise2 {
+	
+	/** The numberofswaps. */
 	private static int NUMBEROFSWAPS = 400;
 
+	/** The grad 3. */
 	private static Grad grad3[] = { new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
 			new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1), new Grad(0, 1, 1),
 			new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1) };
 
+	/** The p supply. */
 	// this contains all the numbers between 0 and 255, these are put in a random order depending upon the seed
 	private static short p_supply[] = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36,
 			103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219,
@@ -39,12 +56,21 @@ public class SimplexNoise2 {
 			121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215,
 			61, 156, 180 };
 
+	/** The p. */
 	private short p[] = new short[p_supply.length];
 
+	/** The perm. */
 	// To remove the need for index wrapping, double the permutation table length
 	private final short perm[] = new short[512];
+	
+	/** The perm mod 12. */
 	private final short permMod12[] = new short[512];
 
+	/**
+	 * Instantiates a new simplex noise 2.
+	 *
+	 * @param seed the seed
+	 */
 	public SimplexNoise2(final double seed) {
 		p = p_supply.clone();
 		// Uses its own random generator, governed by the seed in parameter
@@ -65,6 +91,11 @@ public class SimplexNoise2 {
 		}
 	}
 
+	/**
+	 * Instantiates a new simplex noise 2.
+	 *
+	 * @param scope the scope
+	 */
 	public SimplexNoise2(final IScope scope) {
 		p = p_supply.clone();
 		scope.getRandom().shuffleInPlace(p);
@@ -75,20 +106,44 @@ public class SimplexNoise2 {
 		}
 	}
 
+	/** The Constant F2. */
 	// Skewing and unskewing factors for 2, 3, and 4 dimensions
 	private static final double F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+	
+	/** The Constant G2. */
 	private static final double G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
 
+	/**
+	 * Fastfloor.
+	 *
+	 * @param x the x
+	 * @return the int
+	 */
 	// This method is a *lot* faster than using (int)Math.floor(x)
 	private static int fastfloor(final double x) {
 		int xi = (int) x;
 		return x < xi ? xi - 1 : xi;
 	}
 
+	/**
+	 * Dot.
+	 *
+	 * @param g the g
+	 * @param x the x
+	 * @param y the y
+	 * @return the double
+	 */
 	private static double dot(final Grad g, final double x, final double y) {
 		return g.x * x + g.y * y;
 	}
 
+	/**
+	 * Noise.
+	 *
+	 * @param xin the xin
+	 * @param yin the yin
+	 * @return the double
+	 */
 	// 2D simplex noise
 	public double noise(final double xin, final double yin) {
 		double n0, n1, n2; // Noise contributions from the three corners
@@ -153,10 +208,22 @@ public class SimplexNoise2 {
 	}
 
 	// Inner class to speed upp gradient computations
+	/**
+	 * The Class Grad.
+	 */
 	// (array access is a lot slower than member access)
 	private static class Grad {
+		
+		/** The y. */
 		double x, y;
 
+		/**
+		 * Instantiates a new grad.
+		 *
+		 * @param x the x
+		 * @param y the y
+		 * @param z the z
+		 */
 		Grad(final double x, final double y, final double z) {
 			this.x = x;
 			this.y = y;

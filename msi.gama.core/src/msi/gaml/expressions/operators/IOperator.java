@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.IOperator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * IOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -22,17 +22,47 @@ import msi.gaml.expressions.IExpression;
  */
 public interface IOperator extends IExpression, IBenchmarkable {
 
+	/**
+	 * The Interface IOperatorVisitor.
+	 */
 	@FunctionalInterface
 	public static interface IOperatorVisitor {
+		
+		/**
+		 * Visit.
+		 *
+		 * @param operator the operator
+		 */
 		void visit(IOperator operator);
 	}
 
+	/**
+	 * Visit suboperators.
+	 *
+	 * @param visitor the visitor
+	 */
 	public abstract void visitSuboperators(IOperatorVisitor visitor);
 
+	/**
+	 * Arg.
+	 *
+	 * @param i the i
+	 * @return the i expression
+	 */
 	public abstract IExpression arg(int i);
 
+	/**
+	 * Gets the prototype.
+	 *
+	 * @return the prototype
+	 */
 	public abstract OperatorProto getPrototype();
 
+	/**
+	 * Gets the name for benchmarks.
+	 *
+	 * @return the name for benchmarks
+	 */
 	@Override
 	default String getNameForBenchmarks() {
 		return serialize(true);

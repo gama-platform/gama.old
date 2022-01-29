@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GraphAndPopulationsSynchronizer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GraphAndPopulationsSynchronizer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -41,8 +41,13 @@ import msi.gaml.types.GamaGeometryType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IGraphEventListener {
 
+	/** The pop vertices. */
 	private final IPopulation popVertices;
+	
+	/** The pop edges. */
 	private final IPopulation popEdges;
+	
+	/** The graph. */
 	private final IGraph graph;
 
 	/**
@@ -50,12 +55,22 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 	 * populations
 	 */
 	private Object currentEventVertex = null;
+	
+	/** The current event edge. */
 	private Object currentEventEdge = null;
 
 	// private boolean ignoreNextEvent = false;
 
+	/** The initial values. */
 	private final List<Map> initialValues = Collections.EMPTY_LIST;
 
+	/**
+	 * Instantiates a new graph and populations synchronizer.
+	 *
+	 * @param popVertices the pop vertices
+	 * @param popEdges the pop edges
+	 * @param graph the graph
+	 */
 	public GraphAndPopulationsSynchronizer(final IPopulation popVertices, final IPopulation popEdges,
 			final IGraph graph) {
 		this.popVertices = popVertices;

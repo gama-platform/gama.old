@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.MatchStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * MatchStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -104,10 +104,20 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class MatchStatement extends AbstractStatementSequence {
 
+	/** The value. */
 	final IExpression value;
+	
+	/** The constant value. */
 	Object constantValue;
+	
+	/** The executer. */
 	final MatchExecuter executer;
 
+	/**
+	 * Instantiates a new match statement.
+	 *
+	 * @param desc the desc
+	 */
 	public MatchStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
@@ -119,24 +129,56 @@ public class MatchStatement extends AbstractStatementSequence {
 		if (executer != null) { executer.acceptValue(); }
 	}
 
+	/**
+	 * Matches.
+	 *
+	 * @param scope the scope
+	 * @param switchValue the switch value
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 		if (executer == null) return false;
 		return executer.matches(scope, switchValue);
 	}
 
+	/**
+	 * The Class MatchExecuter.
+	 */
 	abstract class MatchExecuter {
 
+		/**
+		 * Matches.
+		 *
+		 * @param scope the scope
+		 * @param switchValue the switch value
+		 * @return true, if successful
+		 * @throws GamaRuntimeException the gama runtime exception
+		 */
 		abstract boolean matches(IScope scope, Object switchValue) throws GamaRuntimeException;
 
+		/**
+		 * Accept value.
+		 */
 		void acceptValue() {
 			if (value.isConst()) { constantValue = value.getConstValue(); }
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @param scope the scope
+		 * @return the value
+		 * @throws GamaRuntimeException the gama runtime exception
+		 */
 		Object getValue(final IScope scope) throws GamaRuntimeException {
 			return constantValue == null ? value.value(scope) : constantValue;
 		}
 	}
 
+	/**
+	 * The Class SimpleMatch.
+	 */
 	class SimpleMatch extends MatchExecuter {
 
 		@Override
@@ -147,6 +189,9 @@ public class MatchStatement extends AbstractStatementSequence {
 
 	}
 
+	/**
+	 * The Class MatchOne.
+	 */
 	class MatchOne extends MatchExecuter {
 
 		@Override
@@ -166,6 +211,9 @@ public class MatchStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/**
+	 * The Class MatchRegex.
+	 */
 	class MatchRegex extends MatchExecuter {
 
 		@Override
@@ -197,6 +245,9 @@ public class MatchStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/**
+	 * The Class MatchBetween.
+	 */
 	class MatchBetween extends MatchExecuter {
 
 		@Override

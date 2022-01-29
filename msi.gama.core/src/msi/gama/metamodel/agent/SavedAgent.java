@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.SavedAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * SavedAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -37,7 +37,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
 			IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
 
+	/** The index. */
 	int index;
+	
+	/** The inner populations. */
 	Map<String, List<SavedAgent>> innerPopulations;
 
 	@Override
@@ -49,10 +52,20 @@ public class SavedAgent extends GamaMap<String, Object> {
 		return result;
 	}
 
+	/**
+	 * Instantiates a new saved agent.
+	 */
 	private SavedAgent() {
 		super(11, Types.STRING, Types.NO_TYPE);
 	}
 
+	/**
+	 * Instantiates a new saved agent.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		this();
 		index = agent.getIndex();
@@ -62,34 +75,73 @@ public class SavedAgent extends GamaMap<String, Object> {
 		}
 	}
 
+	/**
+	 * Instantiates a new saved agent.
+	 *
+	 * @param ind the ind
+	 * @param v the v
+	 * @param inPop the in pop
+	 */
 	public SavedAgent(final int ind, final Map<String, Object> v, final Map<String, List<SavedAgent>> inPop) {
 		this(v, inPop);
 		index = ind;
 	}
 
+	/**
+	 * Instantiates a new saved agent.
+	 *
+	 * @param v the v
+	 * @param inPop the in pop
+	 */
 	public SavedAgent(final Map<String, Object> v, final Map<String, List<SavedAgent>> inPop) {
 		super(v.size(), Types.STRING, Types.NO_TYPE);
 		putAll(v);
 		innerPopulations = inPop;
 	}
 
+	/**
+	 * Instantiates a new saved agent.
+	 *
+	 * @param map the map
+	 */
 	public SavedAgent(final IMap<String, Object> map) {
 		this();
 		putAll(map);
 	}
 
+	/**
+	 * Gets the attribute value.
+	 *
+	 * @param attrName the attr name
+	 * @return the attribute value
+	 */
 	public Object getAttributeValue(final String attrName) {
 		return get(attrName);
 	}
 
+	/**
+	 * Gets the variables.
+	 *
+	 * @return the variables
+	 */
 	public Map<String, Object> getVariables() {
 		return this;
 	}
 
+	/**
+	 * Gets the inner populations.
+	 *
+	 * @return the inner populations
+	 */
 	public Map<String, List<SavedAgent>> getInnerPopulations() {
 		return innerPopulations;
 	}
 
+	/**
+	 * Gets the index.
+	 *
+	 * @return the index
+	 */
 	public int getIndex() {
 		return index;
 	}

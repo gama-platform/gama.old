@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.TestAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * TestAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -33,14 +33,25 @@ import msi.gaml.statements.test.TestStatement;
 import msi.gaml.statements.test.WithTestSummary;
 import msi.gaml.types.IType;
 
+/**
+ * The Class TestAgent.
+ */
 @experiment (IKeyword.TEST)
 @doc ("Experiments supporting the collection of success or failure of tests. Can be used in GUI or headless")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class TestAgent extends BatchAgent implements WithTestSummary<TestExperimentSummary> {
 
+	/** The summary. */
 	// int failedModels = 0;
 	TestExperimentSummary summary;
 
+	/**
+	 * Instantiates a new test agent.
+	 *
+	 * @param p the p
+	 * @param index the index
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public TestAgent(final IPopulation p, final int index) throws GamaRuntimeException {
 		super(p, index);
 	}

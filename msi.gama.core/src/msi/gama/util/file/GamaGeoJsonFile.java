@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGeoJsonFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaGeoJsonFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -32,6 +32,9 @@ import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaGeoJsonFile.
+ */
 @file (
 		name = "geojson",
 		extensions = { "json", "geojson", "geo.json" },
@@ -41,6 +44,14 @@ import msi.gaml.types.Types;
 		concept = { IConcept.GIS, IConcept.FILE },
 		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
 public class GamaGeoJsonFile extends GamaGisFile {
+	
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file (https://geojson.org/)",
 			examples = { @example (
@@ -50,6 +61,13 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		super(scope, pathName, (Integer) null);
 	}
 
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param code the code
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int",
 			examples = { @example (
@@ -60,6 +78,13 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param code the code
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string",
 			examples = { @example (
@@ -70,6 +95,13 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param withZ the with Z
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file and take a potential z value (not taken in account by default)",
 			examples = { @example (
@@ -80,6 +112,14 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param code the code
+	 * @param withZ the with Z
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
 			examples = { @example (
@@ -90,6 +130,14 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Instantiates a new gama geo json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param code the code
+	 * @param withZ the with Z
+	 */
 	@doc (
 			value = "This file constructor allows to read a geojson file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default",
 			examples = { @example (

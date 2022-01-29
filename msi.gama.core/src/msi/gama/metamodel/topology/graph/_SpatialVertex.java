@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph._SpatialVertex.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * _SpatialVertex.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -15,8 +15,18 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph._Vertex;
 
+/**
+ * The Class _SpatialVertex.
+ */
 public class _SpatialVertex extends _Vertex<IShape, IShape> {
 
+	/**
+	 * Instantiates a new spatial vertex.
+	 *
+	 * @param graph the graph
+	 * @param vertex the vertex
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public _SpatialVertex(final GamaSpatialGraph graph, final Object vertex) throws GamaRuntimeException {
 		super(graph);
 		if (!(vertex instanceof IShape)) { throw GamaRuntimeException

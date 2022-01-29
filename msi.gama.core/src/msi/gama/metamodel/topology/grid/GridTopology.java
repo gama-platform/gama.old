@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GridTopology.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -37,8 +37,17 @@ import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GridTopology.
+ */
 public class GridTopology extends AbstractTopology {
 
+	/**
+	 * Instantiates a new grid topology.
+	 *
+	 * @param scope the scope
+	 * @param matrix the matrix
+	 */
 	public GridTopology(final IScope scope, final IGrid matrix) {
 		super(scope, matrix.getEnvironmentFrame(), null);
 		places = matrix;
@@ -64,6 +73,22 @@ public class GridTopology extends AbstractTopology {
 		return false;
 	}
 
+	/**
+	 * Instantiates a new grid topology.
+	 *
+	 * @param scope the scope
+	 * @param environment the environment
+	 * @param rows the rows
+	 * @param columns the columns
+	 * @param isTorus the is torus
+	 * @param usesVN the uses VN
+	 * @param isHexagon the is hexagon
+	 * @param horizontalOrientation the horizontal orientation
+	 * @param useIndividualShapes the use individual shapes
+	 * @param useNeighborsCache the use neighbors cache
+	 * @param optimizer the optimizer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
 			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation,
 			final boolean useIndividualShapes, final boolean useNeighborsCache, final String optimizer)
@@ -81,6 +106,19 @@ public class GridTopology extends AbstractTopology {
 
 	}
 
+	/**
+	 * Instantiates a new grid topology.
+	 *
+	 * @param scope the scope
+	 * @param environment the environment
+	 * @param file the file
+	 * @param isTorus the is torus
+	 * @param usesVN the uses VN
+	 * @param useIndividualShapes the use individual shapes
+	 * @param useNeighborsCache the use neighbors cache
+	 * @param optimizer the optimizer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
 			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,
 			final String optimizer) throws GamaRuntimeException {
@@ -91,6 +129,19 @@ public class GridTopology extends AbstractTopology {
 		// root.setTorus(isTorus);
 	}
 
+	/**
+	 * Instantiates a new grid topology.
+	 *
+	 * @param scope the scope
+	 * @param environment the environment
+	 * @param files the files
+	 * @param isTorus the is torus
+	 * @param usesVN the uses VN
+	 * @param useIndividualShapes the use individual shapes
+	 * @param useNeighborsCache the use neighbors cache
+	 * @param optimizer the optimizer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GridTopology(final IScope scope, final IShape environment, final IList<GamaGridFile> files,
 			final boolean isTorus, final boolean usesVN, final boolean useIndividualShapes,
 			final boolean useNeighborsCache, final String optimizer) throws GamaRuntimeException {
@@ -151,6 +202,16 @@ public class GridTopology extends AbstractTopology {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
 
+	/**
+	 * Path between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @param on the on
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
 			final Map<IAgent, Object> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetweenWeighted(scope, source, target, this, on);

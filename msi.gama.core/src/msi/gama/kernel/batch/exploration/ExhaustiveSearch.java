@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.ExhaustiveSearch.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ExhaustiveSearch.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
@@ -37,6 +37,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 
+/**
+ * The Class ExhaustiveSearch.
+ */
 @symbol (
 		name = { IKeyword.EXHAUSTIVE },
 		kind = ISymbolKind.BATCH_METHOD,
@@ -67,6 +70,11 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class ExhaustiveSearch extends AExplorationAlgorithm {
 
+	/**
+	 * Instantiates a new exhaustive search.
+	 *
+	 * @param desc the desc
+	 */
 	public ExhaustiveSearch(final IDescription desc) { super(desc); }
 	
 	@Override
@@ -171,6 +179,11 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	// INNER UTILITY METHODS
 	
+	/**
+	 * Test solutions all.
+	 *
+	 * @param scope the scope
+	 */
 	private void testSolutionsAll(final IScope scope) {
 		List<ParametersSet> sets = new ArrayList<>();
 		sets.add(new ParametersSet());
@@ -179,6 +192,14 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		currentExperiment.launchSimulationsWithSolution(solutions);
 	}
 
+	/**
+	 * Test solutions.
+	 *
+	 * @param scope the scope
+	 * @param sol the sol
+	 * @param index the index
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	private void testSolutions(final IScope scope, final ParametersSet sol, final int index)
 			throws GamaRuntimeException {
 		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();

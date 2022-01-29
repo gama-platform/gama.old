@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaMetaType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * GamaMetaType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -17,6 +17,9 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class GamaMetaType.
+ */
 @type (
 		name = "gaml_type",
 		id = IType.TYPE,
@@ -35,6 +38,12 @@ public class GamaMetaType extends GamaType<IType<?>> {
 		return staticCast(obj);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param obj the obj
+	 * @return the i type
+	 */
 	public static IType<?> staticCast(final Object obj) {
 		return GamaType.of(obj);
 	}
@@ -44,6 +53,13 @@ public class GamaMetaType extends GamaType<IType<?>> {
 		return Types.NO_TYPE;
 	}
 
+	/**
+	 * Type of.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @return the i type
+	 */
 	@operator (
 			value = { "type_of" },
 			can_be_const = true,

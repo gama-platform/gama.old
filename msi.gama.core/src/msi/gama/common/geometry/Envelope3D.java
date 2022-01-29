@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.Envelope3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * Envelope3D.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -36,21 +36,40 @@ import msi.gaml.types.GamaGeometryType;
  */
 public class Envelope3D extends Envelope implements IDisposable, IIntersectable {
 
+	/** The Constant POOL. */
 	private final static PoolUtils.ObjectPool<Envelope3D> POOL =
 			PoolUtils.create("Envelope 3D", true, Envelope3D::new, (from, to) -> to.set(from), null);
 
+	/** The Constant EMPTY. */
 	public static final Envelope3D EMPTY = create();
 
+	/**
+	 * Creates the.
+	 *
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D create() {
 		return POOL.get();
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param g the g
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final Geometry g) {
 		if (g instanceof GeometryCollection) return of((GeometryCollection) g);
 		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
 		return sq.getEnvelope();
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param g the g
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final GeometryCollection g) {
 		final int i = g.getNumGeometries();
 		if (i == 0) return EMPTY;
@@ -61,20 +80,44 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 		return result;
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param s the s
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final IShape s) {
 		return of(s.getInnerGeometry());
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param s the s
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final GamaPoint s) {
 		return of((Coordinate) s);
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param e the e
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final Envelope e) {
 		final Envelope3D env = create();
 		env.init(e);
 		return env;
 	}
 
+	/**
+	 * With Y negated.
+	 *
+	 * @param e the e
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D withYNegated(final Envelope e) {
 		final Envelope3D env = create();
 		env.init(e);
@@ -82,12 +125,29 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 		return env;
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param p the p
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final Coordinate p) {
 		final Envelope3D env = create();
 		env.init(p);
 		return env;
 	}
 
+	/**
+	 * Of.
+	 *
+	 * @param x1 the x 1
+	 * @param x2 the x 2
+	 * @param y1 the y 1
+	 * @param y2 the y 2
+	 * @param z1 the z 1
+	 * @param z2 the z 2
+	 * @return the envelope 3 D
+	 */
 	public static Envelope3D of(final double x1, final double x2, final double y1, final double y2, final double z1,
 			final double z2) {
 		final Envelope3D env = create();
@@ -189,6 +249,12 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 		this.maxz = env.maxz;
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param env the env
+	 * @return the envelope 3 D
+	 */
 	private Envelope3D set(final Envelope3D env) {
 		init(env);
 		return this;
@@ -486,6 +552,9 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 
 	// ---------------------------------------------------------------------------------------------------------------
 
+	/**
+	 * Instantiates a new envelope 3 D.
+	 */
 	private Envelope3D() {}
 
 	/**
@@ -573,14 +642,29 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 				&& Comparison.equal(maxz, otherEnvelope.getMaxZ());
 	}
 
+	/**
+	 * Checks if is flat.
+	 *
+	 * @return true, if is flat
+	 */
 	public boolean isFlat() {
 		return minz == maxz;
 	}
 
+	/**
+	 * Checks if is horizontal.
+	 *
+	 * @return true, if is horizontal
+	 */
 	public boolean isHorizontal() {
 		return minz == maxz;
 	}
 
+	/**
+	 * To geometry.
+	 *
+	 * @return the polygon
+	 */
 	public Polygon toGeometry() {
 		if (isFlat())
 			return (Polygon) GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry();
@@ -593,10 +677,21 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 				+ maxz + "]";
 	}
 
+	/**
+	 * Y negated.
+	 *
+	 * @return the envelope 3 D
+	 */
 	public Envelope3D yNegated() {
 		return of(getMinX(), getMaxX(), -getMaxY(), -getMinY(), minz, maxz);
 	}
 
+	/**
+	 * Rotate.
+	 *
+	 * @param rotation the rotation
+	 * @return the envelope 3 D
+	 */
 	public Envelope3D rotate(final AxisAngle rotation) {
 		if (isNull()) return this;
 		GamaShape se = new GamaShape(this);

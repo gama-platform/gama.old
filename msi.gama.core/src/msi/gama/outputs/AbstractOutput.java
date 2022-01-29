@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.AbstractOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * AbstractOutput.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -35,14 +35,29 @@ import msi.gaml.operators.Cast;
 		symbols = IKeyword.OUTPUT)
 public abstract class AbstractOutput extends Symbol implements IOutput {
 
+	/** The output scope. */
 	private IScope outputScope;
+	
+	/** The permanent. */
 	boolean paused, open, permanent = false;
+	
+	/** The is user created. */
 	private boolean isUserCreated = true;
+	
+	/** The refresh. */
 	final IExpression refresh;
+	
+	/** The original name. */
 	final String originalName;
 
+	/** The refresh rate. */
 	private int refreshRate = 1;
 
+	/**
+	 * Instantiates a new abstract output.
+	 *
+	 * @param desc the desc
+	 */
 	public AbstractOutput(final IDescription desc) {
 		super(desc);
 		if (hasFacet(IKeyword.REFRESH)) {
@@ -66,6 +81,11 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return originalName;
 	}
 
+	/**
+	 * Checks if is user created.
+	 *
+	 * @return true, if is user created
+	 */
 	// @Override
 	final boolean isUserCreated() {
 		return isUserCreated;
@@ -133,6 +153,11 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	@Override
 	public abstract boolean step(IScope scope);
 
+	/**
+	 * Sets the open.
+	 *
+	 * @param open the new open
+	 */
 	void setOpen(final boolean open) {
 		this.open = open;
 	}
@@ -147,6 +172,11 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	}
 
+	/**
+	 * Gets the children.
+	 *
+	 * @return the children
+	 */
 	public List<? extends ISymbol> getChildren() {
 		return Collections.EMPTY_LIST;
 	}
@@ -161,6 +191,11 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return getName(); // by default
 	}
 
+	/**
+	 * Sets the scope.
+	 *
+	 * @param scope the new scope
+	 */
 	public void setScope(final IScope scope) {
 		if (this.outputScope != null) {
 			GAMA.releaseScope(this.outputScope);
@@ -187,11 +222,19 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return outputScope;
 	}
 
+	/**
+	 * Sets the permanent.
+	 */
 	// @Override
 	void setPermanent() {
 		permanent = true;
 	}
 
+	/**
+	 * Checks if is permanent.
+	 *
+	 * @return true, if is permanent
+	 */
 	public boolean isPermanent() {
 		return permanent;
 	}

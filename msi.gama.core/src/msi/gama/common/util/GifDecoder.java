@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.GifDecoder.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GifDecoder.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -64,67 +64,146 @@ public class GifDecoder {
 	 */
 	public static final int STATUS_OPEN_ERROR = 2;
 
+	/** The in. */
 	protected BufferedInputStream in;
+	
+	/** The status. */
 	protected int status;
 
+	/** The width. */
 	protected int width; // full image width
+	
+	/** The height. */
 	protected int height; // full image height
+	
+	/** The gct flag. */
 	protected boolean gctFlag; // global color table used
+	
+	/** The gct size. */
 	protected int gctSize; // size of global color table
+	
+	/** The loop count. */
 	protected int loopCount = 1; // iterations; 0 = repeat forever
 
+	/** The gct. */
 	protected int[] gct; // global color table
+	
+	/** The lct. */
 	protected int[] lct; // local color table
+	
+	/** The act. */
 	protected int[] act; // active color table
 
+	/** The bg index. */
 	protected int bgIndex; // background color index
+	
+	/** The bg color. */
 	protected int bgColor; // background color
+	
+	/** The last bg color. */
 	protected int lastBgColor; // previous bg color
 
+	/** The lct flag. */
 	protected boolean lctFlag; // local color table flag
+	
+	/** The interlace. */
 	protected boolean interlace; // interlace flag
+	
+	/** The lct size. */
 	protected int lctSize; // local color table size
 
+	/** The ih. */
 	protected int ix, iy, iw, ih; // current image rectangle
+	
+	/** The last rect. */
 	protected Rectangle lastRect; // last image rect
+	
+	/** The image. */
 	protected BufferedImage image; // current frame
+	
+	/** The last image. */
 	protected BufferedImage lastImage; // previous frame
 
+	/** The block. */
 	protected byte[] block = new byte[256]; // current data block
+	
+	/** The block size. */
 	protected int blockSize = 0; // block size
 
+	/** The dispose. */
 	// last graphic control extension info
 	protected int dispose = 0;
+	
+	/** The last dispose. */
 	// 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
 	protected int lastDispose = 0;
+	
+	/** The transparency. */
 	protected boolean transparency = false; // use transparent color
+	
+	/** The delay. */
 	protected int delay = 0; // delay in milliseconds
+	
+	/** The trans index. */
 	protected int transIndex; // transparent color index
 
+	/** The Constant MaxStackSize. */
 	protected static final int MaxStackSize = 4096;
 	// max decoder pixel stack size
 
+	/** The prefix. */
 	// LZW decoder working arrays
 	protected short[] prefix;
+	
+	/** The suffix. */
 	protected byte[] suffix;
+	
+	/** The pixel stack. */
 	protected byte[] pixelStack;
+	
+	/** The pixels. */
 	protected byte[] pixels;
 
+	/** The frames. */
 	protected ArrayList<GifFrame> frames; // frames read from current file
+	
+	/** The frame count. */
 	protected int frameCount;
+	
+	/** The current frame. */
 	protected int currentFrame;
+	
+	/** The timer. */
 	protected Timer timer;
 
+	/**
+	 * The Class GifFrame.
+	 */
 	static class GifFrame {
+		
+		/**
+		 * Instantiates a new gif frame.
+		 *
+		 * @param im the im
+		 * @param del the del
+		 */
 		public GifFrame(final BufferedImage im, final int del) {
 			image = im;
 			delay = del;
 		}
 
+		/** The image. */
 		public BufferedImage image;
+		
+		/** The delay. */
 		public int delay;
 	}
 
+	/**
+	 * Gets the duration.
+	 *
+	 * @return the duration
+	 */
 	public int getDuration() {
 		int duration = 0;
 		for (final GifFrame f : frames) {
@@ -574,6 +653,7 @@ public class GifDecoder {
 		}
 	}
 
+	/** The task. */
 	private final TimerTask task = new TimerTask() {
 
 		@Override
@@ -740,6 +820,9 @@ public class GifDecoder {
 		} while (blockSize > 0 && !err());
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		if (timer != null) {
 			timer.cancel();

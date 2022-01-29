@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * IGamlEcoreUtils.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.compilation;
 
 import java.util.List;
@@ -6,6 +16,9 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
+/**
+ * The Interface IGamlEcoreUtils.
+ */
 public interface IGamlEcoreUtils {
 
 	/**
@@ -145,8 +158,21 @@ public interface IGamlEcoreUtils {
 	 */
 	boolean isBatch(EObject e);
 
+	/**
+	 * Gets the expr of.
+	 *
+	 * @param element the element
+	 * @return the expr of
+	 */
 	EObject getExprOf(EObject element);
 
+	/**
+	 * Checks for facet.
+	 *
+	 * @param s the s
+	 * @param facet the facet
+	 * @return true, if successful
+	 */
 	boolean hasFacet(EObject s, String facet);
 
 }

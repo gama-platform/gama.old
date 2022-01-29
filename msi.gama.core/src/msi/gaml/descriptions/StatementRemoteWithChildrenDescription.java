@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.StatementRemoteWithChildrenDescription.java, in plugin msi.gama.core, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * StatementRemoteWithChildrenDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -19,11 +19,26 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
+/**
+ * The Class StatementRemoteWithChildrenDescription.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class StatementRemoteWithChildrenDescription extends StatementWithChildrenDescription {
 
+	/** The previous description. */
 	protected IDescription previousDescription;
 
+	/**
+	 * Instantiates a new statement remote with children description.
+	 *
+	 * @param keyword the keyword
+	 * @param superDesc the super desc
+	 * @param cp the cp
+	 * @param hasArgs the has args
+	 * @param source the source
+	 * @param facets the facets
+	 * @param alreadyComputedArgs the already computed args
+	 */
 	public StatementRemoteWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
@@ -107,6 +122,11 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 		return result;
 	}
 
+	/**
+	 * Push remote context.
+	 *
+	 * @return the i description
+	 */
 	public IDescription pushRemoteContext() {
 		final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies();
 		IDescription previousEnclosingDescription = null;
@@ -126,6 +146,11 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 		return previousEnclosingDescription;
 	}
 
+	/**
+	 * Pop remote context.
+	 *
+	 * @param previousEnclosingDescription the previous enclosing description
+	 */
 	public void popRemoteContext(final IDescription previousEnclosingDescription) {
 
 		if (previousEnclosingDescription != null) {

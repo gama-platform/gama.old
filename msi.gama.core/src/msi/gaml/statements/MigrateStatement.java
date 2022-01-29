@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.MigrateStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * MigrateStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -86,6 +86,9 @@ import msi.gaml.types.Types;
 		see = { IKeyword.CAPTURE, IKeyword.RELEASE })
 public class MigrateStatement extends AbstractStatementSequence {
 
+	/**
+	 * The Class MigrateValidator.
+	 */
 	public static class MigrateValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
@@ -108,12 +111,24 @@ public class MigrateStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/** The source. */
 	// private IExpression source;
 	private final String source;
+	
+	/** The target. */
 	private final String target;
+	
+	/** The return string. */
 	private final String returnString;
+	
+	/** The sequence. */
 	private AbstractStatementSequence sequence = null;
 
+	/**
+	 * Instantiates a new migrate statement.
+	 *
+	 * @param desc the desc
+	 */
 	public MigrateStatement(final IDescription desc) {
 		super(desc);
 

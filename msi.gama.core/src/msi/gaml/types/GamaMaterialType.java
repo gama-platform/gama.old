@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaMaterialType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaMaterialType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -34,8 +34,16 @@ import msi.gama.util.GamaMaterial;
 		concept = { /* TODO */ })
 public class GamaMaterialType extends GamaType<GamaMaterial> {
 
+	/** The default material. */
 	public static GamaMaterial DEFAULT_MATERIAL = new GamaMaterial(0, 0);
 
+	/**
+	 * Material.
+	 *
+	 * @param damper the damper
+	 * @param reflectivity the reflectivity
+	 * @return the gama material
+	 */
 	@operator (
 			value = "material",
 			can_be_const = true,
@@ -54,6 +62,14 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 		return staticCast(scope, obj, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param copy the copy
+	 * @return the gama material
+	 */
 	public static GamaMaterial staticCast(final IScope scope, final Object obj, final boolean copy) {
 		if (obj instanceof GamaMaterial) return (GamaMaterial) obj;
 		return null;

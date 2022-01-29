@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.Projection.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * Projection.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
@@ -26,19 +26,46 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class Projection.
+ */
 public class Projection implements IProjection {
 
+	/** The factory. */
 	private final ProjectionFactory factory;
+	
+	/** The inverse transformer. */
 	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
+	
+	/** The initial CRS. */
 	CoordinateReferenceSystem initialCRS;
+	
+	/** The projected env. */
 	Envelope3D projectedEnv;
+	
+	/** The reference projection. */
 	final IProjection referenceProjection;
 
+	/**
+	 * Instantiates a new projection.
+	 *
+	 * @param world the world
+	 * @param fact the fact
+	 */
 	Projection(final IProjection world, final ProjectionFactory fact) {
 		referenceProjection = world;
 		factory = fact;
 	}
 
+	/**
+	 * Instantiates a new projection.
+	 *
+	 * @param scope the scope
+	 * @param world the world
+	 * @param crs the crs
+	 * @param env the env
+	 * @param fact the fact
+	 */
 	Projection(final IScope scope, final IProjection world, final CoordinateReferenceSystem crs, final Envelope3D env,
 			final ProjectionFactory fact) {
 		this.factory = fact;
@@ -78,6 +105,13 @@ public class Projection implements IProjection {
 		return transform(g, true);
 	}
 
+	/**
+	 * Transform.
+	 *
+	 * @param g the g
+	 * @param translate the translate
+	 * @return the geometry
+	 */
 	public Geometry transform(final Geometry g, final boolean translate) {
 		Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
 		if (transformer != null) {
@@ -94,6 +128,12 @@ public class Projection implements IProjection {
 		return geom;
 	}
 
+	/**
+	 * Transform.
+	 *
+	 * @param g the g
+	 * @return the envelope 3 D
+	 */
 	Envelope3D transform(final Envelope3D g) {
 		if (transformer == null) return g;
 		return Envelope3D.of(transform(JTS.toGeometry(g)).getEnvelopeInternal());
@@ -114,6 +154,12 @@ public class Projection implements IProjection {
 		return geom;
 	}
 
+	/**
+	 * Compute projection.
+	 *
+	 * @param scope the scope
+	 * @return the math transform
+	 */
 	MathTransform computeProjection(final IScope scope) {
 		MathTransform crsTransformation = null;
 		if (initialCRS == null) return null;

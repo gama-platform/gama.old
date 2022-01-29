@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.SuperExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * SuperExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -14,8 +14,16 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 
+/**
+ * The Class SuperExpression.
+ */
 public class SuperExpression extends VariableExpression {
 
+	/**
+	 * Instantiates a new super expression.
+	 *
+	 * @param type the type
+	 */
 	public SuperExpression(final IType<?> type) {
 		super(IKeyword.SUPER, type, true, null);
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.weighted_tasks.WeightedTaskStatement.java, in plugin msi.gama.core, is part of the source code
- * of the GAMA modeling and simulation platform (v. 1.8.1)
+ * WeightedTaskStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.architecture.weighted_tasks;
 
@@ -67,9 +67,13 @@ import msi.gaml.types.IType;
 @doc ("As reflex, a task is a sequence of statements that can be executed, at each time step, by the agent. If an agent owns several tasks, the scheduler chooses a task to execute based on its current priority weight value.")
 public class WeightedTaskStatement extends AbstractStatementSequence {
 
+	/** The Allowed architectures. */
 	static List<String> AllowedArchitectures =
 			Arrays.asList(SortedTasksArchitecture.ST, WeightedTasksArchitecture.WT, ProbabilisticTasksArchitecture.PT);
 
+	/**
+	 * The Class TaskValidator.
+	 */
 	public static class TaskValidator extends ValidNameValidator {
 
 		/**
@@ -91,16 +95,33 @@ public class WeightedTaskStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/** The Constant WEIGHT. */
 	protected static final String WEIGHT = "weight";
+	
+	/** The Constant TASK. */
 	protected static final String TASK = "task";
+	
+	/** The weight. */
 	protected IExpression weight;
 
+	/**
+	 * Instantiates a new weighted task statement.
+	 *
+	 * @param desc the desc
+	 */
 	public WeightedTaskStatement(final IDescription desc) {
 		super(desc);
 		setName(desc.getName());
 		weight = getFacet(WEIGHT);
 	}
 
+	/**
+	 * Compute weight.
+	 *
+	 * @param scope the scope
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public Double computeWeight(final IScope scope) throws GamaRuntimeException {
 		return Cast.asFloat(scope, weight.value(scope));
 	}

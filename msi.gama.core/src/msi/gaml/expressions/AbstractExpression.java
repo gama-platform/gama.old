@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.AbstractExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -25,6 +25,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ("rawtypes")
 public abstract class AbstractExpression implements IExpression {
 
+	/** The type. */
 	protected IType type = null;
 
 	@Override
@@ -32,6 +33,12 @@ public abstract class AbstractExpression implements IExpression {
 		return type == null ? Types.NO_TYPE : type;
 	}
 
+	/**
+	 * Parenthesize.
+	 *
+	 * @param sb the sb
+	 * @param exp the exp
+	 */
 	public static void parenthesize(final StringBuilder sb, final IExpression... exp) {
 		if (exp.length == 1 && !exp[0].shouldBeParenthesized()) {
 			sb.append(exp[0].serialize(false));
@@ -40,6 +47,15 @@ public abstract class AbstractExpression implements IExpression {
 		}
 	}
 
+	/**
+	 * Surround.
+	 *
+	 * @param sb the sb
+	 * @param first the first
+	 * @param last the last
+	 * @param exp the exp
+	 * @return the string
+	 */
 	public static String surround(final StringBuilder sb, final char first, final char last, final IExpression... exp) {
 		sb.append(first);
 		for (int i = 0; i < exp.length; i++) {
@@ -69,6 +85,12 @@ public abstract class AbstractExpression implements IExpression {
 		}
 	}
 
+	/**
+	 * Value.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 */
 	protected abstract Object _value(IScope scope);
 
 }

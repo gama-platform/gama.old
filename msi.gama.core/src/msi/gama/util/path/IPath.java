@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.IPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IPath.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -80,66 +80,201 @@ import msi.gaml.types.IType;
 })
 public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 
-	@getter (IKeyword.SOURCE)
+	/**
+ * Gets the start vertex.
+ *
+ * @return the start vertex
+ */
+@getter (IKeyword.SOURCE)
 	V getStartVertex();
 
+	/**
+	 * Gets the end vertex.
+	 *
+	 * @return the end vertex
+	 */
 	@getter (IKeyword.TARGET)
 	V getEndVertex();
 
+	/**
+	 * Gets the graph.
+	 *
+	 * @return the graph
+	 */
 	@getter (IKeyword.GRAPH)
 	G getGraph();
 
+	/**
+	 * Gets the edge geometry.
+	 *
+	 * @return the edge geometry
+	 */
 	@getter (IKeyword.SEGMENTS)
 	IList<IShape> getEdgeGeometry();
 
+	/**
+	 * Gets the vertex list.
+	 *
+	 * @return the vertex list
+	 */
 	@getter ("vertices")
 	IList<V> getVertexList();
 
+	/**
+	 * Gets the edge list.
+	 *
+	 * @return the edge list
+	 */
 	@getter ("edges")
 	IList<E> getEdgeList();
 
+	/**
+	 * Gets the geometry.
+	 *
+	 * @return the geometry
+	 */
 	@getter ("shape")
 	IShape getGeometry();
 
 	// @getter(IKeyword.AGENTS)
 	// public abstract List<IShape> getAgentList();
 
+	/**
+	 * Gets the weight.
+	 *
+	 * @return the weight
+	 */
 	@getter ("weight")
 	double getWeight();
 
+	/**
+	 * Gets the weight.
+	 *
+	 * @param line the line
+	 * @return the weight
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	double getWeight(final IShape line) throws GamaRuntimeException;
 
+	/**
+	 * Accept visitor.
+	 *
+	 * @param agent the agent
+	 */
 	void acceptVisitor(final IAgent agent);
 
+	/**
+	 * Forget visitor.
+	 *
+	 * @param agent the agent
+	 */
 	void forgetVisitor(final IAgent agent);
 
+	/**
+	 * Index of.
+	 *
+	 * @param a the a
+	 * @return the int
+	 */
 	int indexOf(final IAgent a);
 
+	/**
+	 * Index segment of.
+	 *
+	 * @param a the a
+	 * @return the int
+	 */
 	int indexSegmentOf(final IAgent a);
 
+	/**
+	 * Checks if is visitor.
+	 *
+	 * @param a the a
+	 * @return true, if is visitor
+	 */
 	boolean isVisitor(final IAgent a);
 
+	/**
+	 * Sets the index of.
+	 *
+	 * @param a the a
+	 * @param index the index
+	 */
 	void setIndexOf(final IAgent a, final int index);
 
+	/**
+	 * Sets the index segement of.
+	 *
+	 * @param a the a
+	 * @param indexSegement the index segement
+	 */
 	void setIndexSegementOf(final IAgent a, final int indexSegement);
 
+	/**
+	 * Gets the length.
+	 *
+	 * @return the length
+	 */
 	int getLength();
 
+	/**
+	 * Gets the distance.
+	 *
+	 * @param scope the scope
+	 * @return the distance
+	 */
 	@getter ("distance")
 	double getDistance(IScope scope);
 
+	/**
+	 * Gets the topology.
+	 *
+	 * @param scope the scope
+	 * @return the topology
+	 */
 	ITopology getTopology(IScope scope);
 
+	/**
+	 * Sets the real objects.
+	 *
+	 * @param realObjects the real objects
+	 */
 	void setRealObjects(final IMap<IShape, IShape> realObjects);
 
+	/**
+	 * Gets the real object.
+	 *
+	 * @param obj the obj
+	 * @return the real object
+	 */
 	IShape getRealObject(final Object obj);
 
+	/**
+	 * Sets the source.
+	 *
+	 * @param source the new source
+	 */
 	void setSource(V source);
 
+	/**
+	 * Sets the target.
+	 *
+	 * @param target the new target
+	 */
 	void setTarget(V target);
 
+	/**
+	 * Gets the graph version.
+	 *
+	 * @return the graph version
+	 */
 	int getGraphVersion();
 
+	/**
+	 * Sets the graph.
+	 *
+	 * @param graph the new graph
+	 */
 	void setGraph(G graph);
 
 }

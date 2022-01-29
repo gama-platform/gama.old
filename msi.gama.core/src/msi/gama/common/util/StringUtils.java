@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.StringUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * StringUtils.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -41,12 +41,27 @@ public class StringUtils {
 //		DEBUG.ON();
 //	}
 
-	final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
+	/** The Constant strings. */
+final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
+	
+	/** The Constant operators. */
 	final static String operators = "::|<>|!=|>=|<=|//";
+	
+	/** The Constant ponctuation. */
 	public final static String ponctuation = "\\p{Punct}";
+	
+	/** The Constant literals. */
 	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
+	
+	/** The Constant regex. */
 	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
 
+	/**
+	 * To gaml string.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	static public String toGamlString(final String s) {
 		if (s == null) return null;
 		final int length = s.length();
@@ -70,6 +85,12 @@ public class StringUtils {
 		return sb.toString();
 	}
 
+	/**
+	 * To java string.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	static public String toJavaString(final String s) {
 		if (s == null) return null;
 		final String t = s.trim();
@@ -78,6 +99,12 @@ public class StringUtils {
 		return s;
 	}
 
+	/**
+	 * Tokenize.
+	 *
+	 * @param expression the expression
+	 * @return the list
+	 */
 	public static List<String> tokenize(final String expression) {
 		if (expression == null) return Collections.EMPTY_LIST;
 		final Pattern p = Pattern.compile(regex);
@@ -105,6 +132,12 @@ public class StringUtils {
 		return result;
 	}
 
+	/**
+	 * Unescape java hand made 1.
+	 *
+	 * @param str the str
+	 * @return the string
+	 */
 	static private String unescapeJavaHandMade1(final String str) {
 		final int sz = str.length();
 		final StringBuilder writer = new StringBuilder(str.length());
@@ -187,6 +220,12 @@ public class StringUtils {
 	 *
 	 */
 
+	/**
+	 * Unescape java hand made 2.
+	 *
+	 * @param oldstr the oldstr
+	 * @return the string
+	 */
 	public final static String unescapeJavaHandMade2(final String oldstr) {
 		final int sz = oldstr.length();
 		StringBuffer newstr = new StringBuffer(sz);
@@ -413,6 +452,12 @@ public class StringUtils {
 		return newstr.toString();
 	}
 
+	/**
+	 * Uniplus.
+	 *
+	 * @param s the s
+	 * @return the string
+	 */
 	/*
 	 * Return a string "U+XX.XXX.XXXX" etc, where each XX set is the xdigits of the logical Unicode code point. No
 	 * bloody brain-damaged UTF-16 surrogate crap, just true logical characters.
@@ -432,10 +477,21 @@ public class StringUtils {
 		return sb.toString();
 	}
 
+	/**
+	 * Die.
+	 *
+	 * @param foa the foa
+	 */
 	private static final void die(final String foa) {
 		GAMA.reportAndThrowIfNeeded(null, GamaRuntimeException.warning(foa, null), false);
 	}
 
+	/**
+	 * Checks if is gama string.
+	 *
+	 * @param s the s
+	 * @return true, if is gama string
+	 */
 	static public boolean isGamaString(final String s) {
 		if (s == null) return false;
 		final int n = s.length();
@@ -444,7 +500,10 @@ public class StringUtils {
 		return s.charAt(n - 1) == '\'';
 	}
 
+	/** The Constant DEFAULT_DECIMAL_FORMAT. */
 	public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
+	
+	/** The Constant SYMBOLS. */
 	public static final DecimalFormatSymbols SYMBOLS;
 
 	static {
@@ -455,6 +514,13 @@ public class StringUtils {
 		DEFAULT_DECIMAL_FORMAT = new DecimalFormat("##0.0################", SYMBOLS);
 	}
 
+	/**
+	 * To gaml.
+	 *
+	 * @param val the val
+	 * @param includingBuiltIn the including built in
+	 * @return the string
+	 */
 	public static String toGaml(final Object val, final boolean includingBuiltIn) {
 		if (val == null) return "nil";
 		if (val instanceof IGamlable) return ((IGamlable) val).serialize(includingBuiltIn);

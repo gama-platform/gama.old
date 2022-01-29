@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.LoopStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * LoopStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -41,6 +41,9 @@ import msi.gaml.types.Types;
 
 // A group of commands that can be executed repeatedly.
 
+/**
+ * The Class LoopStatement.
+ */
 @symbol (
 		name = IKeyword.LOOP,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -205,6 +208,9 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class LoopStatement extends AbstractStatementSequence implements Breakable {
 
+	/**
+	 * The Class LoopValidator.
+	 */
 	public static class LoopValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -294,6 +300,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	}
 
+	/**
+	 * The Class LoopSerializer.
+	 */
 	public static class LoopSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
@@ -305,10 +314,18 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	}
 
+	/** The executer. */
 	private final LoopExecuter executer;
+	
+	/** The var name. */
 	private final String varName;
 	// private final Object[] result = new Object[1];
 
+	/**
+	 * Instantiates a new loop statement.
+	 *
+	 * @param desc the desc
+	 */
 	public LoopStatement(final IDescription desc) {
 		super(desc);
 		final boolean isWhile = getFacet(IKeyword.WHILE) != null;
@@ -338,6 +355,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		return executer.runIn(scope);
 	}
 
+	/**
+	 * Loop body.
+	 *
+	 * @param scope the scope
+	 * @param var the var
+	 * @param result the result
+	 * @return true, if successful
+	 */
 	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
 		// We set it explicitely to the newly created scope
@@ -347,19 +372,45 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		return !scope.interrupted();
 	}
 
+	/**
+	 * The Interface LoopExecuter.
+	 */
 	interface LoopExecuter {
 
+		/**
+		 * Run in.
+		 *
+		 * @param scope the scope
+		 * @return the object
+		 */
 		Object runIn(final IScope scope);
 	}
 
+	/**
+	 * The Class Bounded.
+	 */
 	class Bounded implements LoopExecuter {
 
+		/** The from. */
 		private final IExpression from = getFacet(IKeyword.FROM);
+		
+		/** The to. */
 		private final IExpression to = getFacet(IKeyword.TO);
+		
+		/** The step. */
 		private final IExpression step = getFacet(IKeyword.STEP);
+		
+		/** The constant step. */
 		private Integer constantFrom, constantTo, constantStep;
+		
+		/** The step defined. */
 		private final boolean stepDefined;
 
+		/**
+		 * Instantiates a new bounded.
+		 *
+		 * @throws GamaRuntimeException the gama runtime exception
+		 */
 		Bounded() throws GamaRuntimeException {
 			final IScope scope = null;
 			// final IScope scope = GAMA.obtainNewScope();
@@ -399,8 +450,12 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		}
 	}
 
+	/**
+	 * The Class Over.
+	 */
 	class Over implements LoopExecuter {
 
+		/** The over. */
 		private final IExpression over = getFacet(IKeyword.OVER);
 
 		@Override
@@ -416,11 +471,22 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		}
 	}
 
+	/**
+	 * The Class Times.
+	 */
 	class Times implements LoopExecuter {
 
+		/** The times. */
 		private final IExpression times = getFacet(IKeyword.TIMES);
+		
+		/** The constant times. */
 		private Integer constantTimes;
 
+		/**
+		 * Instantiates a new times.
+		 *
+		 * @throws GamaRuntimeException the gama runtime exception
+		 */
 		Times() throws GamaRuntimeException {
 			if (times.isConst()) { constantTimes = Types.INT.cast(null, times.getConstValue(), null, false); }
 		}
@@ -435,8 +501,12 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	}
 
+	/**
+	 * The Class While.
+	 */
 	class While implements LoopExecuter {
 
+		/** The cond. */
 		private final IExpression cond = getFacet(IKeyword.WHILE);
 
 		@Override

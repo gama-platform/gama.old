@@ -1,20 +1,29 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.PreferenceType2.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * PreferenceType2.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
+/**
+ * The Class PreferenceType2.
+ */
 public class PreferenceType2 implements FonctionPreference{
 	
+	/** The q. */
 	private double q;
 
 	
+	/**
+	 * Instantiates a new preference type 2.
+	 *
+	 * @param q the q
+	 */
 	public PreferenceType2(double q) {
 		super();
 		this.q = q;

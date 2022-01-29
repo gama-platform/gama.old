@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.GlobalVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GlobalVariableExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -26,8 +26,20 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GlobalVariableExpression.
+ */
 public class GlobalVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param n the n
+	 * @param type the type
+	 * @param notModifiable the not modifiable
+	 * @param world the world
+	 * @return the i expression
+	 */
 	public static IExpression create(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
 		final VariableDescription v = ((SpeciesDescription) world).getAttribute(n);
@@ -41,6 +53,14 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		return new GlobalVariableExpression(n, type, notModifiable, world);
 	}
 
+	/**
+	 * Instantiates a new global variable expression.
+	 *
+	 * @param n the n
+	 * @param type the type
+	 * @param notModifiable the not modifiable
+	 * @param world the world
+	 */
 	protected GlobalVariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
 		super(n, type, notModifiable, world);

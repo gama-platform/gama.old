@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaJsonFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaJsonFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -36,6 +36,9 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaJsonFile.
+ */
 @file (
 		name = "json",
 		extensions = { "json" },
@@ -46,6 +49,13 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 
+	/**
+	 * Instantiates a new gama json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a json file",
 			examples = { @example (
@@ -56,6 +66,13 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 		super(scope, pathName);
 	}
 
+	/**
+	 * Instantiates a new gama json file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param container the container
+	 */
 	@doc (
 			value = "This constructor allows to  store a map in a json file (it does not save it). The file can then be saved later using the `save` statement",
 			examples = { @example (

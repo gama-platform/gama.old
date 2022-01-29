@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartLayerStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartLayerStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -337,55 +337,118 @@ import msi.gaml.types.Types;
 				IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
+	/** The Constant XRANGE. */
 	public static final String XRANGE = "x_range";
+	
+	/** The Constant YRANGE. */
 	public static final String YRANGE = "y_range";
+	
+	/** The Constant Y2RANGE. */
 	public static final String Y2RANGE = "y2_range";
 
+	/** The Constant XLABEL. */
 	public static final String XLABEL = "x_label";
+	
+	/** The Constant YLABEL. */
 	public static final String YLABEL = "y_label";
+	
+	/** The Constant Y2LABEL. */
 	public static final String Y2LABEL = "y2_label";
+	
+	/** The Constant MEMORIZE. */
 	public static final String MEMORIZE = "memorize";
 
+	/** The Constant SERIES_LABEL_POSITION. */
 	public static final String SERIES_LABEL_POSITION = "series_label_position";
 
+	/** The Constant X_LOGSCALE. */
 	public static final String X_LOGSCALE = "x_log_scale";
+	
+	/** The Constant Y_LOGSCALE. */
 	public static final String Y_LOGSCALE = "y_log_scale";
+	
+	/** The Constant Y2_LOGSCALE. */
 	public static final String Y2_LOGSCALE = "y2_log_scale";
 
+	/** The Constant YTICKUNIT. */
 	public static final String YTICKUNIT = "y_tick_unit";
+	
+	/** The Constant Y2TICKUNIT. */
 	public static final String Y2TICKUNIT = "y2_tick_unit";
+	
+	/** The Constant XTICKUNIT. */
 	public static final String XTICKUNIT = "x_tick_unit";
 
+	/** The Constant XTICKLINEVISIBLE. */
 	public static final String XTICKLINEVISIBLE = "x_tick_line_visible";
+	
+	/** The Constant YTICKLINEVISIBLE. */
 	public static final String YTICKLINEVISIBLE = "y_tick_line_visible";
+	
+	/** The Constant TICKLINECOLOR. */
 	public static final String TICKLINECOLOR = "tick_line_color";
 
+	/** The Constant TITLEVISIBLE. */
 	public static final String TITLEVISIBLE = "title_visible";
+	
+	/** The Constant XTICKVALUEVISIBLE. */
 	public static final String XTICKVALUEVISIBLE = "x_tick_values_visible";
+	
+	/** The Constant YTICKVALUEVISIBLE. */
 	public static final String YTICKVALUEVISIBLE = "y_tick_values_visible";
 
+	/** The Constant TICKFONTFACE. */
 	public static final String TICKFONTFACE = "tick_font";
+	
+	/** The Constant TICKFONTSIZE. */
 	public static final String TICKFONTSIZE = "tick_font_size";
+	
+	/** The Constant TICKFONTSTYLE. */
 	public static final String TICKFONTSTYLE = "tick_font_style";
 
+	/** The Constant LABELFONTFACE. */
 	public static final String LABELFONTFACE = "label_font";
+	
+	/** The Constant LABELFONTSIZE. */
 	public static final String LABELFONTSIZE = "label_font_size";
+	
+	/** The Constant LABELFONTSTYLE. */
 	public static final String LABELFONTSTYLE = "label_font_style";
 
+	/** The Constant LEGENDFONTFACE. */
 	public static final String LEGENDFONTFACE = "legend_font";
+	
+	/** The Constant LEGENDFONTSIZE. */
 	public static final String LEGENDFONTSIZE = "legend_font_size";
+	
+	/** The Constant LEGENDFONTSTYLE. */
 	public static final String LEGENDFONTSTYLE = "legend_font_style";
 
+	/** The Constant TITLEFONTFACE. */
 	public static final String TITLEFONTFACE = "title_font";
+	
+	/** The Constant TITLEFONTSIZE. */
 	public static final String TITLEFONTSIZE = "title_font_size";
+	
+	/** The Constant TITLEFONTSTYLE. */
 	public static final String TITLEFONTSTYLE = "title_font_style";
 
+	/** The Constant CHARTDATASET. */
 	public static final String CHARTDATASET = "chart_dataset_transfer";
 
+	/** The chartdataset. */
 	ChartDataSet chartdataset;
 
+	/**
+	 * The Class DataDeclarationSequence.
+	 */
 	public static class DataDeclarationSequence extends AbstractStatementSequence {
 
+		/**
+		 * Instantiates a new data declaration sequence.
+		 *
+		 * @param desc the desc
+		 */
 		public DataDeclarationSequence(final IDescription desc) {
 			super(desc);
 		}
@@ -395,18 +458,33 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	}
 
+	/** The chartoutput. */
 	private ChartOutput chartoutput = null;
 
 	// private HashMap<String,Object> chartParameters=new
 	// HashMap<String,Object>();
 
+	/** The last values. */
 	final Map<String, Double> lastValues;
+	
+	/** The data declaration. */
 	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(getDescription());
 
+	/**
+	 * Gets the output.
+	 *
+	 * @return the output
+	 */
 	public ChartOutput getOutput() {
 		return chartoutput;
 	}
 
+	/**
+	 * Instantiates a new chart layer statement.
+	 *
+	 * @param desc the desc
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public ChartLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		lastValues = new LinkedHashMap<>();
@@ -417,11 +495,21 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		dataDeclaration.setChildren(commands);
 	}
 
+	/**
+	 * Gets the chart.
+	 *
+	 * @return the chart
+	 */
 	public JFreeChart getChart() {
 		// should be changed, used in LayerSideControls to open an editor...
 		return getDataSet().getOutput().getJFChart();
 	}
 
+	/**
+	 * Gets the data set.
+	 *
+	 * @return the data set
+	 */
 	public ChartDataSet getDataSet() {
 		return chartdataset;
 	}
@@ -503,10 +591,22 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
+	/**
+	 * Gets the chart name.
+	 *
+	 * @param scope the scope
+	 * @return the chart name
+	 */
 	private String getChartName(final IScope scope) {
 		return Cast.asString(scope, getFacetValue(scope, IKeyword.NAME));
 	}
 
+	/**
+	 * Update values.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 */
 	// what can be updated at each step
 	public boolean updateValues(final IScope scope) {
 
@@ -703,6 +803,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
+	/**
+	 * To font style.
+	 *
+	 * @param style the style
+	 * @return the int
+	 */
 	int toFontStyle(final String style) {
 		if ("bold".equals(style)) return Font.BOLD;
 		if ("italic".equals(style)) return Font.ITALIC;
@@ -731,6 +837,9 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		super.dispose();
 	}
 
+	/**
+	 * Save history.
+	 */
 	public void saveHistory() {
 		if (!getDataSet().keepsHistory()) return;
 		final IScope scope = this.getDisplayOutput().getScope().copy("in save");

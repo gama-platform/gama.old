@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.user.UserPanelStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * UserPanelStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -34,6 +34,9 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class UserPanelStatement.
+ */
 @symbol (
 		name = IKeyword.USER_PANEL,
 		kind = ISymbolKind.BEHAVIOR,
@@ -91,8 +94,14 @@ import msi.gaml.types.IType;
 		see = { IKeyword.USER_COMMAND, IKeyword.USER_INIT, IKeyword.USER_INPUT })
 public class UserPanelStatement extends FsmStateStatement {
 
+	/** The user commands. */
 	List<IStatement> userCommands = new ArrayList<>();
 
+	/**
+	 * Instantiates a new user panel statement.
+	 *
+	 * @param desc the desc
+	 */
 	public UserPanelStatement(final IDescription desc) {
 		super(desc);
 	}
@@ -107,6 +116,11 @@ public class UserPanelStatement extends FsmStateStatement {
 		super.setChildren(Iterables.filter(children, each -> !userCommands.contains(each)));
 	}
 
+	/**
+	 * Gets the user commands.
+	 *
+	 * @return the user commands
+	 */
 	public List<IStatement> getUserCommands() {
 		return userCommands;
 	}

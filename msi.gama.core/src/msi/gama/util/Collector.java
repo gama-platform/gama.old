@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.Collector.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8.1)
+ * Collector.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -36,30 +36,57 @@ import msi.gaml.types.Types;
 
 public abstract class Collector<E, C extends Collection<E>> implements ICollector<E>, Collection<E> {
 
+	/** The Constant LISTS. */
 	private static final PoolUtils.ObjectPool<ICollector<?>> LISTS =
 			PoolUtils.create("Ordered Collectors", true, AsList::new, (from, to) -> to.set(from), ICollector::clear);
 
+	/** The Constant SETS. */
 	private static final PoolUtils.ObjectPool<ICollector<?>> SETS =
 			PoolUtils.create("Unique Collectors", true, AsSet::new, (from, to) -> to.set(from), ICollector::clear);
 
+	/** The Constant ORDERED_SETS. */
 	private static final PoolUtils.ObjectPool<ICollector<?>> ORDERED_SETS = PoolUtils.create(
 			"Unique Ordered Collectors", true, AsOrderedSet::new, (from, to) -> to.set(from), ICollector::clear);
 
+	/**
+	 * Gets the list.
+	 *
+	 * @param <T> the generic type
+	 * @return the list
+	 */
 	@SuppressWarnings ("unchecked")
 	public static final <T> Collector.AsList<T> getList() {
 		return (AsList<T>) LISTS.get();
 	}
 
+	/**
+	 * Gets the sets the.
+	 *
+	 * @param <T> the generic type
+	 * @return the sets the
+	 */
 	@SuppressWarnings ("unchecked")
 	public static final <T> Collector.AsSet<T> getSet() {
 		return (AsSet<T>) SETS.get();
 	}
 
+	/**
+	 * Gets the ordered set.
+	 *
+	 * @param <T> the generic type
+	 * @return the ordered set
+	 */
 	@SuppressWarnings ("unchecked")
 	public static final <T> Collector.AsOrderedSet<T> getOrderedSet() {
 		return (AsOrderedSet<T>) ORDERED_SETS.get();
 	}
 
+	/**
+	 * Release.
+	 *
+	 * @param <T> the generic type
+	 * @param coll the coll
+	 */
 	public static final <T> void release(final ICollector<T> coll) {
 		if (coll instanceof AsList) {
 			LISTS.release(coll);
@@ -98,10 +125,23 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		return ICollector.super.parallelStream();
 	}
 
+	/**
+	 * The Class AsSet.
+	 *
+	 * @param <E> the element type
+	 */
 	public static class AsSet<E> extends Collector<E, Set<E>> {
 
+		/**
+		 * Instantiates a new as set.
+		 */
 		protected AsSet() {}
 
+		/**
+		 * The Class Concurrent.
+		 *
+		 * @param <E> the element type
+		 */
 		public static class Concurrent<E> extends AsSet<E> {
 			@Override
 			protected void initCollect() {
@@ -133,8 +173,16 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	}
 
+	/**
+	 * The Class AsList.
+	 *
+	 * @param <E> the element type
+	 */
 	public static class AsList<E> extends Collector<E, IList<E>> {
 
+		/**
+		 * Instantiates a new as list.
+		 */
 		protected AsList() {}
 
 		@Override
@@ -147,6 +195,11 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 			return collect == null ? GamaListFactory.EMPTY_LIST : collect;
 		}
 
+		/**
+		 * Sets the size.
+		 *
+		 * @param size the new size
+		 */
 		public void setSize(final int size) {
 			if (size > 0 && collect == null) { collect = GamaListFactory.create(Types.NO_TYPE, size); }
 
@@ -158,8 +211,16 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		}
 	}
 
+	/**
+	 * The Class AsOrderedSet.
+	 *
+	 * @param <E> the element type
+	 */
 	public static class AsOrderedSet<E> extends AsSet<E> {
 
+		/**
+		 * Instantiates a new as ordered set.
+		 */
 		protected AsOrderedSet() {}
 
 		@Override
@@ -217,6 +278,7 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		return collect.retainAll(c);
 	}
 
+	/** The collect. */
 	C collect;
 
 	/*
@@ -230,6 +292,9 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 		return collect.add(vd);
 	}
 
+	/**
+	 * Inits the collect.
+	 */
 	protected abstract void initCollect();
 
 	/*

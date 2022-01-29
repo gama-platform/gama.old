@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.FieldDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * MeshDrawingAttributes.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -22,29 +22,68 @@ import msi.gaml.operators.Colors.GamaGradient;
 import msi.gaml.operators.Colors.GamaPalette;
 import msi.gaml.operators.Colors.GamaScale;
 
+/**
+ * The Class MeshDrawingAttributes.
+ */
 public class MeshDrawingAttributes extends FileDrawingAttributes {
 
+	/** The Constant TRIANGULATED. */
 	public static final int TRIANGULATED = 32;
+	
+	/** The Constant GRAYSCALED. */
 	public static final int GRAYSCALED = 64;
+	
+	/** The Constant WITH_TEXT. */
 	public static final int WITH_TEXT = 128;
+	
+	/** The color. */
 	public IMeshColorProvider color;
+	
+	/** The species name. */
 	public String speciesName;
+	
+	/** The dimensions. */
 	GamaPoint dimensions;
+	
+	/** The cell size. */
 	GamaPoint cellSize;
+	
+	/** The scale. */
 	Double scale;
+	
+	/** The no data. */
 	double noData;
+	
+	/** The smooth. */
 	int smooth;
 
+	/**
+	 * Instantiates a new mesh drawing attributes.
+	 *
+	 * @param name the name
+	 * @param border the border
+	 * @param isImage the is image
+	 */
 	public MeshDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
 		super(null, isImage);
 		setBorder(border);
 		speciesName = name;
 	}
 
+	/**
+	 * Sets the species name.
+	 *
+	 * @param name the new species name
+	 */
 	public void setSpeciesName(final String name) {
 		speciesName = name;
 	}
 
+	/**
+	 * Sets the colors.
+	 *
+	 * @param colors the new colors
+	 */
 	@SuppressWarnings ("unchecked")
 	public void setColors(final Object colors) {
 		if (colors instanceof GamaColor) {
@@ -71,6 +110,11 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 
 	// Rules are a bit different for the fill color for fields.
 
+	/**
+	 * Gets the color provider.
+	 *
+	 * @return the color provider
+	 */
 	public IMeshColorProvider getColorProvider() {
 		if (isSet(SELECTED)) return new ColorBasedMeshColorProvider(SELECTED_COLOR);
 		if (highlight != null) return new ColorBasedMeshColorProvider(highlight);
@@ -92,22 +136,47 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		return speciesName;
 	}
 
+	/**
+	 * Gets the XY dimension.
+	 *
+	 * @return the XY dimension
+	 */
 	public GamaPoint getXYDimension() {
 		return dimensions;
 	}
 
+	/**
+	 * Sets the XY dimension.
+	 *
+	 * @param dim the new XY dimension
+	 */
 	public void setXYDimension(final GamaPoint dim) {
 		dimensions = dim;
 	}
 
+	/**
+	 * Sets the cell size.
+	 *
+	 * @param p the new cell size
+	 */
 	public void setCellSize(final GamaPoint p) {
 		cellSize = p;
 	}
 
+	/**
+	 * Gets the cell size.
+	 *
+	 * @return the cell size
+	 */
 	public GamaPoint getCellSize() {
 		return cellSize;
 	}
 
+	/**
+	 * Sets the scale.
+	 *
+	 * @param s the new scale
+	 */
 	public void setScale(final Double s) {
 		scale = s;
 	}
@@ -134,47 +203,102 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		return getSize().getZ();
 	}
 
+	/**
+	 * Checks if is triangulated.
+	 *
+	 * @return true, if is triangulated
+	 */
 	public boolean isTriangulated() {
 		return isSet(TRIANGULATED);
 	}
 
+	/**
+	 * Checks if is grayscaled.
+	 *
+	 * @return true, if is grayscaled
+	 */
 	public boolean isGrayscaled() {
 		return isSet(GRAYSCALED);
 	}
 
+	/**
+	 * Checks if is with text.
+	 *
+	 * @return true, if is with text
+	 */
 	public boolean isWithText() {
 		return isSet(WITH_TEXT);
 	}
 
+	/**
+	 * Sets the grayscaled.
+	 *
+	 * @param grayScaled2 the new grayscaled
+	 */
 	public void setGrayscaled(final Boolean grayScaled2) {
 		if (color == null) { color = new GrayscaleMeshColorProvider(); }
 		setFlag(GRAYSCALED, grayScaled2);
 	}
 
+	/**
+	 * Sets the triangulated.
+	 *
+	 * @param triangulated2 the new triangulated
+	 */
 	public void setTriangulated(final Boolean triangulated2) {
 		setFlag(TRIANGULATED, triangulated2);
 	}
 
+	/**
+	 * Sets the with text.
+	 *
+	 * @param showText the new with text
+	 */
 	public void setWithText(final Boolean showText) {
 		setFlag(WITH_TEXT, showText);
 	}
 
+	/**
+	 * Sets the smooth.
+	 *
+	 * @param smooth the new smooth
+	 */
 	public void setSmooth(final int smooth) {
 		this.smooth = smooth;
 	}
 
+	/**
+	 * Gets the smooth.
+	 *
+	 * @return the smooth
+	 */
 	public int getSmooth() {
 		return smooth;
 	}
 
+	/**
+	 * Sets the no data.
+	 *
+	 * @param noData the new no data
+	 */
 	public void setNoData(final double noData) {
 		this.noData = noData;
 	}
 
+	/**
+	 * Gets the no data value.
+	 *
+	 * @return the no data value
+	 */
 	public double getNoDataValue() {
 		return noData;
 	}
 
+	/**
+	 * Sets the transparency.
+	 *
+	 * @param transparency the new transparency
+	 */
 	public void setTransparency(final Double transparency) {
 		// TODO Auto-generated method stub
 

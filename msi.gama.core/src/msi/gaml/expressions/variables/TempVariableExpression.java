@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.TempVariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * TempVariableExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -17,8 +17,18 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
+/**
+ * The Class TempVariableExpression.
+ */
 public class TempVariableExpression extends VariableExpression {
 
+	/**
+	 * Instantiates a new temp variable expression.
+	 *
+	 * @param n the n
+	 * @param type the type
+	 * @param definitionDescription the definition description
+	 */
 	public TempVariableExpression(final String n, final IType<?> type, final IDescription definitionDescription) {
 		super(n, type, false, definitionDescription);
 	}

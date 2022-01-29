@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaPathType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaPathType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -29,6 +29,9 @@ import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class GamaPathType.
+ */
 @type (
 		name = IKeyword.PATH,
 		id = IType.PATH,
@@ -59,6 +62,15 @@ public class GamaPathType extends GamaType<IPath> {
 		return null;
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param copy the copy
+	 * @return the i path
+	 */
 	public static IPath staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if (obj instanceof IPath) return (IPath) obj;
 		if (obj instanceof IShape) {

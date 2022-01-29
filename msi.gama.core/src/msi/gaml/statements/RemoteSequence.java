@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.RemoteSequence.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * RemoteSequence.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -16,15 +16,29 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
+/**
+ * The Class RemoteSequence.
+ */
 public class RemoteSequence extends AbstractStatementSequence {
 
+	/** The myself. */
 	// AD: adding ThreadLocal for multi-threaded simulations
 	final ThreadLocal<IAgent> myself = new ThreadLocal<>();
 
+	/**
+	 * Instantiates a new remote sequence.
+	 *
+	 * @param desc the desc
+	 */
 	public RemoteSequence(final IDescription desc) {
 		super(desc);
 	}
 
+	/**
+	 * Gets the myself.
+	 *
+	 * @return the myself
+	 */
 	public IAgent getMyself() {
 		return myself.get();
 	}

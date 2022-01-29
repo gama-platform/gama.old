@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ScaleBasedMeshColorProvider.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
@@ -16,8 +26,14 @@ import msi.gaml.operators.Colors.GamaScale;
  */
 public class ScaleBasedMeshColorProvider implements IMeshColorProvider {
 
+	/** The scale. */
 	GamaScale scale; // should be already sorted
 
+	/**
+	 * Instantiates a new scale based mesh color provider.
+	 *
+	 * @param scale the scale
+	 */
 	public ScaleBasedMeshColorProvider(final GamaScale scale) {
 		this.scale = scale;
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.SimulationOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * SimulationOutputManager.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -60,10 +60,20 @@ import msi.gaml.factories.DescriptionFactory;
 		see = { IKeyword.DISPLAY, IKeyword.MONITOR, IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
 public class SimulationOutputManager extends AbstractOutputManager {
 
+	/**
+	 * Creates the empty.
+	 *
+	 * @return the simulation output manager
+	 */
 	public static SimulationOutputManager createEmpty() {
 		return new SimulationOutputManager(DescriptionFactory.create(IKeyword.OUTPUT, (String[]) null));
 	}
 
+	/**
+	 * Instantiates a new simulation output manager.
+	 *
+	 * @param desc the desc
+	 */
 	public SimulationOutputManager(final IDescription desc) {
 		super(desc);
 	}
@@ -77,6 +87,11 @@ public class SimulationOutputManager extends AbstractOutputManager {
 		return result;
 	}
 
+	/**
+	 * Update display outputs name.
+	 *
+	 * @param agent the agent
+	 */
 	public void updateDisplayOutputsName(final SimulationAgent agent) {
 		for (final IOutput out : this) {
 			if (out instanceof IDisplayOutput) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaIntMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaIntMatrix.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -34,9 +34,19 @@ import msi.gaml.types.Types;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class GamaIntMatrix.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaIntMatrix extends GamaMatrix<Integer> {
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the gama int matrix
+	 */
 	static public GamaIntMatrix from(final IScope scope, final IMatrix m) {
 		if (m instanceof GamaIntMatrix) return (GamaIntMatrix) m;
 		if (m instanceof GamaObjectMatrix)
@@ -46,6 +56,15 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return null;
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param c the c
+	 * @param r the r
+	 * @param m the m
+	 * @return the gama int matrix
+	 */
 	static public GamaIntMatrix from(final IScope scope, final int c, final int r, final IMatrix m) {
 		if (m instanceof GamaIntMatrix) return new GamaIntMatrix(c, r, ((GamaIntMatrix) m).getMatrix());
 		if (m instanceof GamaObjectMatrix) return new GamaIntMatrix(scope, c, r, ((GamaObjectMatrix) m).getMatrix());
@@ -53,11 +72,18 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return null;
 	}
 
+	/** The cell size. */
 	// In case the matrix represents a discretization of an environment
 	private double cellSize;
 
+	/** The matrix. */
 	int[] matrix;
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param p the p
+	 */
 	public GamaIntMatrix(final GamaPoint p) {
 		this((int) p.x, (int) p.y);
 	}
@@ -67,15 +93,33 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return Types.MATRIX.of(Types.INT);
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 */
 	public GamaIntMatrix(final int cols, final int rows) {
 		super(cols, rows, Types.INT);
 		matrix = new int[cols * rows];
 	}
 
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public int[] getMatrix() {
 		return matrix;
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaIntMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
 		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
@@ -83,11 +127,26 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaIntMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param scope the scope
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaIntMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
 		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
@@ -95,11 +154,24 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param scope the scope
+	 * @param mat the mat
+	 */
 	public GamaIntMatrix(final IScope scope, final int[] mat) {
 		super(1, mat.length, Types.INT);
 		matrix = mat;
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param scope the scope
+	 * @param objects the objects
+	 * @param preferredSize the preferred size
+	 */
 	public GamaIntMatrix(final IScope scope, final List objects, final GamaPoint preferredSize) {
 		super(scope, objects, preferredSize, Types.INT);
 		matrix = new int[numRows * numCols];
@@ -120,6 +192,12 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama int matrix.
+	 *
+	 * @param scope the scope
+	 * @param mat the mat
+	 */
 	public GamaIntMatrix(final IScope scope, final Object[] mat) {
 		this(1, mat.length);
 		for (int i = 0; i < mat.length; i++) {
@@ -253,6 +331,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return Arrays.hashCode(matrix);
 	}
 
+	/**
+	 * Fill with.
+	 *
+	 * @param o the o
+	 */
 	public void fillWith(final int o) {
 		Arrays.fill(matrix, o);
 	}
@@ -263,10 +346,23 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return matrix[row * numCols + col];
 	}
 
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
 	public double getSize() {
 		return cellSize;
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @param scope the scope
+	 * @param col the col
+	 * @param row the row
+	 * @param obj the obj
+	 */
 	// @Override
 	public void set(final IScope scope, final int col, final int row, final int obj) {
 		if (col >= numCols || col < 0 || row >= numRows || row < 0) return;
@@ -279,6 +375,12 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		matrix[row * numCols + col] = Cast.asInt(scope, obj);
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	public boolean remove(final int o) {
 		for (int i = 0; i < matrix.length; i++) {
 			if (matrix[i] == o) {
@@ -302,6 +404,12 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return remove(o);
 	}
 
+	/**
+	 * Removes the all.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	public boolean removeAll(final int o) {
 		boolean removed = false;
 		for (int i = 0; i < matrix.length; i++) {
@@ -322,6 +430,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return true;
 	}
 
+	/**
+	 * Sets the cell size.
+	 *
+	 * @param size the new cell size
+	 */
 	public void setCellSize(final double size) {
 		cellSize = size;
 	}

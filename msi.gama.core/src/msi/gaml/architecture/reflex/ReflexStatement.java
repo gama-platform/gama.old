@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.reflex.ReflexStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * ReflexStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -30,6 +30,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
+/**
+ * The Class ReflexStatement.
+ */
 @symbol (
 		name = { IKeyword.REFLEX, IKeyword.INIT, IKeyword.ABORT },
 		kind = ISymbolKind.BEHAVIOR,
@@ -66,8 +69,14 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class ReflexStatement extends AbstractStatementSequence {
 
+	/** The when. */
 	private final IExpression when;
 
+	/**
+	 * Instantiates a new reflex statement.
+	 *
+	 * @param desc the desc
+	 */
 	public ReflexStatement(final IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);

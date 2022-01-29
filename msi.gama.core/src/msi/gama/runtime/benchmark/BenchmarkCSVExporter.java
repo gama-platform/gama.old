@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.benchmark.BenchmarkCSVExporter.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * BenchmarkCSVExporter.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime.benchmark;
 
@@ -28,9 +28,20 @@ import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Files;
 import msi.gaml.types.Types;
 
+/**
+ * The Class BenchmarkCSVExporter.
+ */
 public class BenchmarkCSVExporter {
+	
+	/** The Constant exportFolder. */
 	private static final String exportFolder = "benchmarks";
 
+	/**
+	 * Save.
+	 *
+	 * @param experiment the experiment
+	 * @param records the records
+	 */
 	public void save(final IExperimentPlan experiment, final Benchmark records) {
 		final IScope scope = experiment.getExperimentScope();
 		try {

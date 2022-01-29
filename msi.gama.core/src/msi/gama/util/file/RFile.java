@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.RFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * RFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -38,6 +38,9 @@ import rcaller.RCaller;
 import rcaller.RCode;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class RFile.
+ */
 @file (
 		name = "R",
 		extensions = { "r" },
@@ -49,9 +52,17 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes" })
 public class RFile extends GamaFile<IMap, Object> {
 
+	/** The parameters. */
 	// GamaMap<String, IList>, IList, String, IList
 	private final IContainer parameters;
 
+	/**
+	 * Instantiates a new r file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (
 			value = "This file constructor allows to read a R file",
 			examples = { @example (
@@ -62,6 +73,13 @@ public class RFile extends GamaFile<IMap, Object> {
 		parameters = null;
 	}
 
+	/**
+	 * Instantiates a new r file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param p the p
+	 */
 	@doc (
 			value = "This file constructor allows to store a map in a R file (it does not save it - just store it in memory)",
 			examples = { @example (
@@ -102,6 +120,12 @@ public class RFile extends GamaFile<IMap, Object> {
 
 	}
 
+	/**
+	 * Do R file evaluate.
+	 *
+	 * @param scope the scope
+	 * @param param the param
+	 */
 	public void doRFileEvaluate(final IScope scope, final IContainer param) {
 		// final int size = param.length(scope);
 		// if ( size == 0 ) { throw GamaRuntimeException.error("Missing
@@ -189,6 +213,11 @@ public class RFile extends GamaFile<IMap, Object> {
 		}
 	}
 
+	/**
+	 * Do R file evaluate.
+	 *
+	 * @param scope the scope
+	 */
 	public void doRFileEvaluate(final IScope scope) {
 		final String RFile = getPath(scope);
 		try {
@@ -260,6 +289,12 @@ public class RFile extends GamaFile<IMap, Object> {
 		}
 	}
 
+	/**
+	 * Compute variable.
+	 *
+	 * @param string the string
+	 * @return the string
+	 */
 	private static String computeVariable(final String string) {
 		final String[] tokens = string.split("<-");
 		return tokens[0];

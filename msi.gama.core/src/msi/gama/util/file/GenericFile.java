@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GenericFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GenericFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -25,16 +25,38 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GenericFile.
+ */
 public class GenericFile extends GamaFile<IList<String>, String> {
 
+	/**
+	 * Instantiates a new generic file.
+	 *
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GenericFile(final String pathName) throws GamaRuntimeException {
 		super(GAMA.getRuntimeScope(), pathName);
 	}
 
+	/**
+	 * Instantiates a new generic file.
+	 *
+	 * @param pathName the path name
+	 * @param shouldExist the should exist
+	 */
 	public GenericFile(final String pathName, final boolean shouldExist) {
 		super(GAMA.getRuntimeScope(), pathName, shouldExist);
 	}
 
+	/**
+	 * Instantiates a new generic file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GenericFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, false);
 	}

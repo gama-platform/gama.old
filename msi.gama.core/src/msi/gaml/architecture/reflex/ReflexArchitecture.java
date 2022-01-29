@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.reflex.ReflexArchitecture.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ReflexArchitecture.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -39,8 +39,13 @@ import msi.gaml.statements.IStatement;
 		doc = @doc ("Represents the default behavioral architecture attached to species of agents if none is specified"))
 public class ReflexArchitecture extends AbstractArchitecture {
 
+	/** The inits. */
 	protected List<IStatement> _inits;
+	
+	/** The reflexes. */
 	protected List<IStatement> _reflexes;
+	
+	/** The aborts. */
 	protected List<IStatement> _aborts;
 
 	@Override
@@ -51,6 +56,9 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		}
 	}
 
+	/**
+	 * Clear behaviors.
+	 */
 	protected void clearBehaviors() {
 		if (_inits != null) {
 			_inits.clear();
@@ -66,6 +74,11 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		_reflexes = null;
 	}
 
+	/**
+	 * Adds the behavior.
+	 *
+	 * @param c the c
+	 */
 	public void addBehavior(final IStatement c) {
 		switch (c.getKeyword()) {
 			case IKeyword.INIT:
@@ -99,6 +112,13 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		return executeReflexes(scope);
 	}
 
+	/**
+	 * Execute reflexes.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected final Object executeReflexes(final IScope scope) throws GamaRuntimeException {
 		if (_reflexes == null) { return null; }
 		Object result = null;

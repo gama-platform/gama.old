@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AbstractContainerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractContainerStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -43,6 +43,9 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public abstract class AbstractContainerStatement extends AbstractStatement {
 
+	/**
+	 * The Class ContainerValidator.
+	 */
 	public static class ContainerValidator implements IDescriptionValidator {
 
 		/**
@@ -225,9 +228,13 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		}
 	}
 
+	/** The all. */
 	protected IExpression item, index, list, all;
+	
+	/** The as all indexes. */
 	final boolean asAll, asAllValues, asAllIndexes;
 	// Identifies whether or not the container is directly modified by the
+	/** The is graph. */
 	// statement or if it is a shape or an agent
 	final boolean isDirect, isGraph;
 
@@ -237,6 +244,11 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	// private static final IType attributesType = Types.MAP.of(Types.STRING,
 	// Types.NO_TYPE);
 
+	/**
+	 * Instantiates a new abstract container statement.
+	 *
+	 * @param desc the desc
+	 */
 	public AbstractContainerStatement(final IDescription desc) {
 		super(desc);
 
@@ -272,6 +284,13 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	}
 
+	/**
+	 * Identify value.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @return the object
+	 */
 	protected Object identifyValue(final IScope scope, final IContainer.Modifiable container) {
 		if (item == null) return null;
 		// For the moment, only graphs need to recompute their objects
@@ -281,17 +300,38 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		return item.value(scope);
 	}
 
+	/**
+	 * Identify index.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @return the object
+	 */
 	protected Object identifyIndex(final IScope scope, final IContainer.Modifiable container) {
 		if (index == null) return null;
 		if (isGraph) return buildIndex(scope, (IGraph) container);
 		return index.value(scope);
 	}
 
+	/**
+	 * Builds the value.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @return the object
+	 */
 	protected Object buildValue(final IScope scope, final IGraph container) {
 		if (asAllValues) return container.buildValues(scope, (IContainer) this.item.value(scope));
 		return container.buildValue(scope, this.item.value(scope));
 	}
 
+	/**
+	 * Builds the index.
+	 *
+	 * @param scope the scope
+	 * @param container the container
+	 * @return the object
+	 */
 	protected Object buildIndex(final IScope scope, final IGraph container) {
 		if (asAllIndexes) return container.buildIndexes(scope, (IContainer) this.index.value(scope));
 		return container.buildIndex(scope, this.index.value(scope));

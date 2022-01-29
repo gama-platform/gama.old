@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.UnboundedCoordinateSequence.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * UnboundedCoordinateSequence.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -21,29 +21,59 @@ import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * The Class UnboundedCoordinateSequence.
+ */
 public class UnboundedCoordinateSequence implements ICoordinates {
 
+	/** The dimension. */
 	final int dimension;
+	
+	/** The Constant INITIAL_SIZE. */
 	final static int INITIAL_SIZE = 1000;
+	
+	/** The points. */
 	GamaPoint[] points = null;
+	
+	/** The nb points. */
 	int nbPoints;
+	
+	/** The temp. */
 	final GamaPoint temp = new GamaPoint();
 
+	/**
+	 * Fill from.
+	 *
+	 * @param begin the begin
+	 */
 	private void fillFrom(final int begin) {
 		for (int i = begin; i < points.length; i++) {
 			points[i] = new GamaPoint();
 		}
 	}
 
+	/**
+	 * Instantiates a new unbounded coordinate sequence.
+	 */
 	public UnboundedCoordinateSequence() {
 		this(3);
 	}
 
+	/**
+	 * Instantiates a new unbounded coordinate sequence.
+	 *
+	 * @param dimension the dimension
+	 */
 	public UnboundedCoordinateSequence(final int dimension) {
 		this.dimension = dimension;
 		growTo(INITIAL_SIZE);
 	}
 
+	/**
+	 * Grow to.
+	 *
+	 * @param size the size
+	 */
 	private void growTo(final int size) {
 		int begin = 0;
 		if (points == null) {
@@ -61,6 +91,14 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		return 3;
 	}
 
+	/**
+	 * Instantiates a new unbounded coordinate sequence.
+	 *
+	 * @param dimension the dimension
+	 * @param copy the copy
+	 * @param size the size
+	 * @param points2 the points 2
+	 */
 	UnboundedCoordinateSequence(final int dimension, final boolean copy, final int size, final GamaPoint[] points2) {
 		this.dimension = dimension;
 		growTo(size);
@@ -182,6 +220,12 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		}
 	}
 
+	/**
+	 * Visit.
+	 *
+	 * @param v the v
+	 * @param max the max
+	 */
 	private void visit(final IndexedVisitor v, final int max) {
 		for (int i = 0; i < max; i++) {
 			final GamaPoint p = points[i];
@@ -189,6 +233,12 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		}
 	}
 
+	/**
+	 * Reverse visit.
+	 *
+	 * @param v the v
+	 * @param max the max
+	 */
 	private void reverseVisit(final IndexedVisitor v, final int max) {
 		for (int i = max - 1, j = 0; i >= 0; i--, j++) {
 			final GamaPoint p = points[i];
@@ -366,11 +416,21 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		if (isRing() && signedArea() <= 0) { reverse(); }
 	}
 
+	/**
+	 * Checks if is ring.
+	 *
+	 * @return true, if is ring
+	 */
 	public boolean isRing() {
 		if (nbPoints < 4) return false;
 		return points[0].equals(points[nbPoints - 1]);
 	}
 
+	/**
+	 * Signed area.
+	 *
+	 * @return the double
+	 */
 	public double signedArea() {
 		if (nbPoints < 3) return 0.0;
 		double sum = 0.0;
@@ -387,6 +447,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		return sum / 2.0;
 	}
 
+	/**
+	 * Sets the to Y negated.
+	 *
+	 * @param other the new to Y negated
+	 */
 	public void setToYNegated(final ICoordinates other) {
 		growTo(other.size());
 		nbPoints = other.size();
@@ -397,6 +462,11 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		if (isRing()) { reverse(); }
 	}
 
+	/**
+	 * Sets the to.
+	 *
+	 * @param other the new to
+	 */
 	public void setTo(final ICoordinates other) {
 		growTo(other.size());
 		nbPoints = other.size();
@@ -406,6 +476,9 @@ public class UnboundedCoordinateSequence implements ICoordinates {
 		}
 	}
 
+	/**
+	 * Reverse.
+	 */
 	public void reverse() {
 		for (int i = nbPoints - 1, j = 0; i >= nbPoints / 2; j++, i--) {
 			temp.setLocation(points[i]);

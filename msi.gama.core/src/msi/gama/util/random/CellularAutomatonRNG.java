@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.random.CellularAutomatonRNG.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * CellularAutomatonRNG.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -37,9 +37,13 @@ import msi.gama.common.util.RandomUtils;
  */
 public class CellularAutomatonRNG extends GamaRNG {
 
+	/** The Constant SEED_SIZE_BYTES. */
 	private static final int SEED_SIZE_BYTES = 4;
+	
+	/** The Constant AUTOMATON_LENGTH. */
 	private static final int AUTOMATON_LENGTH = 2056;
 
+	/** The Constant RNG_RULE. */
 	private static final int[] RNG_RULE = { 100, 75, 16, 3, 229, 51, 197, 118, 24, 62, 198, 11, 141, 152, 241, 188, 2,
 			17, 71, 47, 179, 177, 126, 231, 202, 243, 59, 25, 77, 196, 30, 134, 199, 163, 34, 216, 21, 84, 37, 182, 224,
 			186, 64, 79, 225, 45, 143, 20, 48, 147, 209, 221, 125, 29, 99, 12, 46, 190, 102, 220, 80, 215, 242, 105, 15,
@@ -64,12 +68,16 @@ public class CellularAutomatonRNG extends GamaRNG {
 			211, 38, 22, 138, 140, 237, 238, 251, 240, 160, 142, 119, 73, 103, 166, 33, 148, 9, 111, 136, 168, 150,
 			82 };
 
+	/** The seed. */
 	private final byte[] seed;
+	
+	/** The cells. */
 	private final int[] cells = new int[AUTOMATON_LENGTH];
 
 	// Lock to prevent concurrent modification of the RNG's internal state.
 	// private final ReentrantLock lock = new ReentrantLock();
 
+	/** The current cell index. */
 	private int currentCellIndex = AUTOMATON_LENGTH - 1;
 
 	/**
@@ -167,6 +175,13 @@ public class CellularAutomatonRNG extends GamaRNG {
 		return seed;
 	}
 
+	/**
+	 * Convert cells to int.
+	 *
+	 * @param cells the cells
+	 * @param offset the offset
+	 * @return the int
+	 */
 	private static int convertCellsToInt(final int[] cells, final int offset) {
 		return cells[offset] + (cells[offset + 1] << 8) + (cells[offset + 2] << 16) + (cells[offset + 3] << 24);
 	}

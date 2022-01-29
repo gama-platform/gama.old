@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.PrimitiveOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * PrimitiveOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -38,11 +38,27 @@ import msi.gaml.types.IType;
 
 public class PrimitiveOperator implements IExpression, IOperator {
 
+	/** The parameters. */
 	final Arguments parameters;
+	
+	/** The target. */
 	final IExpression target;
+	
+	/** The action. */
 	final StatementDescription action;
+	
+	/** The target species. */
 	final String targetSpecies;
 
+	/**
+	 * Instantiates a new primitive operator.
+	 *
+	 * @param callerContext the caller context
+	 * @param action the action
+	 * @param target the target
+	 * @param args the args
+	 * @param superInvocation the super invocation
+	 */
 	public PrimitiveOperator(final IDescription callerContext, final StatementDescription action,
 			final IExpression target, final Arguments args, final boolean superInvocation) {
 		this.target = target;
@@ -89,6 +105,12 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		return null;
 	}
 
+	/**
+	 * Gets the runtime args.
+	 *
+	 * @param scope the scope
+	 * @return the runtime args
+	 */
 	public Arguments getRuntimeArgs(final IScope scope) {
 		if (parameters == null) { return null; }
 		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
@@ -133,6 +155,13 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		return sb.toString();
 	}
 
+	/**
+	 * Args to gaml.
+	 *
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 * @return the string
+	 */
 	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
 		if (parameters == null || parameters.isEmpty()) { return ""; }
 		parameters.forEachFacet((name, expr) -> {

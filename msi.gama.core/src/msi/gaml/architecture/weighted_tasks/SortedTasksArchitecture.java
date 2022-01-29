@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.weighted_tasks.SortedTasksArchitecture.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * SortedTasksArchitecture.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -37,8 +37,13 @@ import msi.gaml.compilation.ISymbol;
 		doc = @doc ("A control architecture, based on the concept of tasks, which are executed in an order defined by their weight"))
 public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 
+	/** The Constant ST. */
 	public static final String ST = "sorted_tasks";
+	
+	/** The weights. */
 	final Map<WeightedTaskStatement, Double> weights = new HashMap<>();
+	
+	/** The sort block. */
 	Comparator<WeightedTaskStatement> sortBlock = (o1, o2) -> weights.get(o1).compareTo(weights.get(o2));
 
 	@Override

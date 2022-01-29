@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.IOperatorValidator.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * IOperatorValidator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -53,6 +53,13 @@ public interface IOperatorValidator extends IValidator {
 	@Override
 	boolean validate(IDescription context, EObject emfContext, IExpression... arguments);
 
+	/**
+	 * Gets the arg.
+	 *
+	 * @param emfContext the emf context
+	 * @param index the index
+	 * @return the arg
+	 */
 	default EObject getArg(final EObject emfContext, final int index) {
 		if (index < 0) { return emfContext; }
 		final List<? extends EObject> list = GAML.getEcoreUtils().getExprsOf(emfContext);

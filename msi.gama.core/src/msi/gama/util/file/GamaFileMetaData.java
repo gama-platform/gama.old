@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFileMetaData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GamaFileMetaData.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -30,12 +30,29 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 	 * The IResource modification stamp of the corresponding file at the time the cache entry was loaded.
 	 */
 	public long fileModificationStamp;
+	
+	/** The has failed. */
 	boolean hasFailed;
 
+	/**
+	 * Instantiates a new gama file meta data.
+	 *
+	 * @param stamp the stamp
+	 */
 	public GamaFileMetaData(final long stamp) {
 		this.fileModificationStamp = stamp;
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param <T> the generic type
+	 * @param s the s
+	 * @param stamp the stamp
+	 * @param clazz the clazz
+	 * @param includeOutdated the include outdated
+	 * @return the t
+	 */
 	public static <T extends IGamaFileMetaData> T from(final String s, final long stamp, final Class<T> clazz,
 			final boolean includeOutdated) {
 		T result = null;
@@ -54,6 +71,11 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 		return result;
 	}
 
+	/**
+	 * Instantiates a new gama file meta data.
+	 *
+	 * @param propertyString the property string
+	 */
 	public GamaFileMetaData(final String propertyString) {
 		final String s = StringUtils.substringBefore(propertyString, DELIMITER);
 		if (FAILED.equals(s)) {
@@ -70,6 +92,12 @@ public abstract class GamaFileMetaData implements IGamaFileMetaData {
 		return hasFailed;
 	}
 
+	/**
+	 * Split.
+	 *
+	 * @param s the s
+	 * @return the string[]
+	 */
 	protected String[] split(final String s) {
 		return StringUtils.splitByWholeSeparatorPreserveAllTokens(s, DELIMITER);
 	}

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.benchmark.BenchmarkConsolePrinter.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * BenchmarkConsolePrinter.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -14,9 +14,19 @@ import msi.gama.util.tree.GamaTree.Order;
 import msi.gaml.operators.Strings;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class BenchmarkConsolePrinter.
+ */
 public class BenchmarkConsolePrinter {
+	
+	/** The Constant S. */
 	static final String S = "\n------------------------------------------------\n";
 
+	/**
+	 * Prints the.
+	 *
+	 * @param scopes the scopes
+	 */
 	public void print(final Benchmark scopes) {
 		final StringBuilder sb = new StringBuilder();
 		scopes.forEach((s, r) -> {

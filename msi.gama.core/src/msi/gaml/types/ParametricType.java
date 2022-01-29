@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.ParametricType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * ParametricType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -45,14 +45,31 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	// static int savedTypes = 0;
 
+	/** The cache2. */
 	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(30, MINUTES).build();
+	
+	/** The use cache. */
 	static boolean USE_CACHE = true;
 
+	/**
+	 * Use cache for.
+	 *
+	 * @param t the t
+	 * @return true, if successful
+	 */
 	static boolean useCacheFor(final IType<?> t) {
 		final boolean builtIn = builtInTypes.containsType(t.getName());
 		return t.isCompoundType() ? builtIn && useCacheFor(t.getContentType()) && useCacheFor(t.getKeyType()) : builtIn;
 	}
 
+	/**
+	 * Creates the parametric type.
+	 *
+	 * @param t the t
+	 * @param kt the kt
+	 * @param ct the ct
+	 * @return the parametric type
+	 */
 	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
 			final IType<?> ct) {
 		if (USE_CACHE && useCacheFor(t) && useCacheFor(kt) && useCacheFor(ct)) {
@@ -70,10 +87,22 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		return new ParametricType(t, kt, ct);
 	}
 
+	/** The type. */
 	private final IContainerType<IContainer<?, ?>> type;
+	
+	/** The contents type. */
 	private final IType<?> contentsType;
+	
+	/** The key type. */
 	private final IType<?> keyType;
 
+	/**
+	 * Instantiates a new parametric type.
+	 *
+	 * @param t the t
+	 * @param kt the kt
+	 * @param ct the ct
+	 */
 	protected ParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt, final IType<?> ct) {
 		type = t;
 		contentsType = ct;

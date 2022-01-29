@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.MulticriteriaAnalyzeOperator.java, in plugin msi.gama.core, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * MulticriteriaAnalyzeOperator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -34,11 +34,24 @@ import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 
+/**
+ * The Class MulticriteriaAnalyzeOperator.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class MulticriteriaAnalyzeOperator {
 
+	/** The Constant MULTICRITERIA. */
 	final static String MULTICRITERIA = "multicriteria operators";
 
+	/**
+	 * Weighted means decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteriaMap the criteria map
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "weighted_means_DM",
 			category = { MULTICRITERIA },
@@ -87,6 +100,16 @@ public class MulticriteriaAnalyzeOperator {
 		return bestCands.anyValue(scope);
 	}
 
+	/**
+	 * Builds the combination.
+	 *
+	 * @param criteria the criteria
+	 * @param currentSol the current sol
+	 * @param combinations the combinations
+	 * @param start the start
+	 * @param end the end
+	 * @param index the index
+	 */
 	public static void buildCombination(final List<String> criteria, final Set<String> currentSol,
 			final Set<Set<String>> combinations, final int start, final int end, final int index) {
 		if (index == criteria.size()) {
@@ -102,6 +125,16 @@ public class MulticriteriaAnalyzeOperator {
 		}
 	}
 
+	/**
+	 * Fuzzy choquet decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteria the criteria
+	 * @param criteriaWeights the criteria weights
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "fuzzy_choquet_DM",
 			category = { MULTICRITERIA },
@@ -182,6 +215,15 @@ public class MulticriteriaAnalyzeOperator {
 
 	}
 
+	/**
+	 * Promethee decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteriaMap the criteria map
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "promethee_DM",
 			category = { MULTICRITERIA },
@@ -262,6 +304,16 @@ public class MulticriteriaAnalyzeOperator {
 
 	}
 
+	/**
+	 * Electre decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteriaMap the criteria map
+	 * @param cut the cut
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "electre_DM",
 			category = { MULTICRITERIA },
@@ -342,6 +394,15 @@ public class MulticriteriaAnalyzeOperator {
 
 	}
 
+	/**
+	 * Evidence theory decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteriaMap the criteria map
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "evidence_theory_DM",
 			category = { MULTICRITERIA },
@@ -358,6 +419,16 @@ public class MulticriteriaAnalyzeOperator {
 		return evidenceTheoryDecisionMaking(scope, cands, criteriaMap, true);
 	}
 
+	/**
+	 * Evidence theory decision making.
+	 *
+	 * @param scope the scope
+	 * @param cands the cands
+	 * @param criteriaMap the criteria map
+	 * @param isSimple the is simple
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "evidence_theory_DM",
 			category = { MULTICRITERIA },
@@ -442,6 +513,13 @@ public class MulticriteriaAnalyzeOperator {
 
 	}
 
+	/**
+	 * Filtering.
+	 *
+	 * @param candidates the candidates
+	 * @param maximizeCrit the maximize crit
+	 * @return the linked list
+	 */
 	private static LinkedList<Candidate> filtering(final Collection<Candidate> candidates,
 			final Map<String, Boolean> maximizeCrit) {
 		final LinkedList<Candidate> cands = new LinkedList<>();
@@ -465,6 +543,14 @@ public class MulticriteriaAnalyzeOperator {
 		return cands;
 	}
 
+	/**
+	 * Pareto inf.
+	 *
+	 * @param c1 the c 1
+	 * @param c2 the c 2
+	 * @param maximizeCrit the maximize crit
+	 * @return true, if successful
+	 */
 	private static boolean paretoInf(final Candidate c1, final Candidate c2, final Map<String, Boolean> maximizeCrit) {
 		int equals = 0;
 		for (final String crit : c1.getValCriteria().keySet()) {

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.SubTaskMessage.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * SubTaskMessage.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -23,16 +23,32 @@ import msi.gama.util.GamaColor;
  */
 public class SubTaskMessage implements IStatusMessage {
 
+	/** The completion. */
 	Double completion;
+	
+	/** The name. */
 	String name;
+	
+	/** The begin or end. */
 	Boolean beginOrEnd;
 
+	/**
+	 * Instantiates a new sub task message.
+	 *
+	 * @param name the name
+	 * @param begin the begin
+	 */
 	public SubTaskMessage(final String name, final boolean begin) {
 		this.name = name;
 		completion = null;
 		this.beginOrEnd = begin;
 	}
 
+	/**
+	 * Instantiates a new sub task message.
+	 *
+	 * @param completion the completion
+	 */
 	public SubTaskMessage(final Double completion) {
 		this.completion = completion;
 		this.beginOrEnd = null;
@@ -58,10 +74,20 @@ public class SubTaskMessage implements IStatusMessage {
 		return IGui.NEUTRAL;
 	}
 
+	/**
+	 * Gets the completion.
+	 *
+	 * @return the completion
+	 */
 	public Double getCompletion() {
 		return completion;
 	}
 
+	/**
+	 * Gets the begin or end.
+	 *
+	 * @return the begin or end
+	 */
 	public Boolean getBeginOrEnd() {
 		return beginOrEnd;
 	}

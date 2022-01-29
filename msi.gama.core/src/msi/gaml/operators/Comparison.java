@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Comparison.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Comparison.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -39,6 +39,9 @@ import msi.gaml.types.IType;
  */
 public class Comparison {
 
+	/**
+	 * The Class EqualValidator.
+	 */
 	public static class EqualValidator implements IOperatorValidator {
 
 		@Override
@@ -55,11 +58,26 @@ public class Comparison {
 
 	}
 
+	/** The Constant GT. */
 	public final static String GT = ">";
+	
+	/** The Constant LT. */
 	public final static String LT = "<";
+	
+	/** The Constant GTE. */
 	public final static String GTE = ">=";
+	
+	/** The Constant LTE. */
 	public final static String LTE = "<=";
 
+	/**
+	 * Between.
+	 *
+	 * @param a the a
+	 * @param inf the inf
+	 * @param sup the sup
+	 * @return the boolean
+	 */
 	@operator (
 			value = "between",
 			can_be_const = true,
@@ -80,6 +98,14 @@ public class Comparison {
 		return a >= sup ? false : a > inf;
 	}
 
+	/**
+	 * Between.
+	 *
+	 * @param a the a
+	 * @param inf the inf
+	 * @param sup the sup
+	 * @return the boolean
+	 */
 	@operator (
 			value = "between",
 			can_be_const = true,
@@ -99,6 +125,13 @@ public class Comparison {
 		return a >= sup ? false : a > inf;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -121,6 +154,13 @@ public class Comparison {
 		return a > b;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -136,6 +176,13 @@ public class Comparison {
 		return a > b;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -151,6 +198,13 @@ public class Comparison {
 		return a > b;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -166,6 +220,13 @@ public class Comparison {
 		return a > b;
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -184,6 +245,13 @@ public class Comparison {
 		return a < b;
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -199,6 +267,13 @@ public class Comparison {
 		return a < b;
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -214,6 +289,13 @@ public class Comparison {
 		return a < b;
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -229,6 +311,13 @@ public class Comparison {
 		return a < b;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,
@@ -247,6 +336,13 @@ public class Comparison {
 		return a >= b;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,
@@ -262,6 +358,13 @@ public class Comparison {
 		return a >= b;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,
@@ -277,6 +380,13 @@ public class Comparison {
 		return a >= b;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,
@@ -292,6 +402,13 @@ public class Comparison {
 		return !(a < b);
 	}
 
+	/**
+	 * Op less than or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -309,6 +426,13 @@ public class Comparison {
 		return a <= b;
 	}
 
+	/**
+	 * Less or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -325,6 +449,13 @@ public class Comparison {
 		return a <= b;
 	}
 
+	/**
+	 * Less or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -340,6 +471,13 @@ public class Comparison {
 		return a <= b;
 	}
 
+	/**
+	 * Less or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -355,6 +493,13 @@ public class Comparison {
 		return !(a > b);
 	}
 
+	/**
+	 * Equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "=" },
 			can_be_const = true,
@@ -372,6 +517,13 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
+	/**
+	 * Equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "=" },
 			can_be_const = true,
@@ -389,6 +541,13 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
+	/**
+	 * Equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "=" },
 			can_be_const = true,
@@ -408,6 +567,13 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
+	/**
+	 * Equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "=" },
 			can_be_const = true,
@@ -424,6 +590,13 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
+	/**
+	 * Different.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "!=" },
 			can_be_const = true,
@@ -446,6 +619,13 @@ public class Comparison {
 		// return a < b || a > b;
 	}
 
+	/**
+	 * Different.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "!=" },
 			can_be_const = true,
@@ -465,6 +645,13 @@ public class Comparison {
 		// return !(a < b) && !(a > b);
 	}
 
+	/**
+	 * Different.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "!=" },
 			can_be_const = true,
@@ -483,6 +670,13 @@ public class Comparison {
 		return a == null ? b == null : !isZeroWidth(a, b.doubleValue());
 	}
 
+	/**
+	 * Less or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -501,6 +695,13 @@ public class Comparison {
 		return i <= 0;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,
@@ -522,6 +723,13 @@ public class Comparison {
 		return i >= 0;
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -540,6 +748,13 @@ public class Comparison {
 		return i < 0;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -558,6 +773,13 @@ public class Comparison {
 		return i > 0;
 	}
 
+	/**
+	 * Equal.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "=" },
 			can_be_const = true,
@@ -574,6 +796,13 @@ public class Comparison {
 		return a == null ? b == null : a.equals(b);
 	}
 
+	/**
+	 * Different.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "!=" },
 			can_be_const = true,
@@ -591,6 +820,13 @@ public class Comparison {
 		return a == null ? b != null : !a.equals(b);
 	}
 
+	/**
+	 * Less.
+	 *
+	 * @param p1 the p 1
+	 * @param p the p
+	 * @return the boolean
+	 */
 	@operator (
 			value = LT,
 			can_be_const = true,
@@ -610,6 +846,13 @@ public class Comparison {
 		return p1.x < p.x && p1.y < p.y;
 	}
 
+	/**
+	 * Greater.
+	 *
+	 * @param p1 the p 1
+	 * @param p the p
+	 * @return the boolean
+	 */
 	@operator (
 			value = GT,
 			can_be_const = true,
@@ -629,6 +872,13 @@ public class Comparison {
 		return p1.x > p.x && p1.y > p.y;
 	}
 
+	/**
+	 * Less or equal.
+	 *
+	 * @param p1 the p 1
+	 * @param p the p
+	 * @return the boolean
+	 */
 	@operator (
 			value = LTE,
 			can_be_const = true,
@@ -648,6 +898,13 @@ public class Comparison {
 		return p1.x <= p.x && p1.y <= p.y;
 	}
 
+	/**
+	 * Greater or equal.
+	 *
+	 * @param p1 the p 1
+	 * @param p the p
+	 * @return the boolean
+	 */
 	@operator (
 			value = GTE,
 			can_be_const = true,

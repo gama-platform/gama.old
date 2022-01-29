@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.GamaPath.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaPath.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -28,19 +28,36 @@ import msi.gaml.types.Types;
 
 // Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
+/**
+ * The Class GamaPath.
+ *
+ * @param <V> the value type
+ * @param <E> the element type
+ * @param <G> the generic type
+ */
 // Si
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, GraphPath<V, E>, IPath<V, E, G> {
 
+	/** The target. */
 	V source, target;
+	
+	/** The edges. */
 	IList<E> edges;
 
+	/** The weight. */
 	double weight = 0.0;
 
+	/** The graph. */
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
 	G graph;
+	
+	/** The graph version. */
 	int graphVersion;
 
+	/**
+	 * Instantiates a new gama path.
+	 */
 	// FIXME virer le constructeur par d�faut... used for the inheritance...
 	public GamaPath() {}
 
@@ -49,17 +66,39 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		return Types.PATH;
 	}
 
+	/**
+	 * Instantiates a new gama path.
+	 *
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param _edges the edges
+	 */
 	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges) {
 		init(g, start, target, _edges, true);
 		this.graph = g;
 	}
 
+	/**
+	 * Instantiates a new gama path.
+	 *
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param _edges the edges
+	 * @param modify_edges the modify edges
+	 */
 	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges,
 			final boolean modify_edges) {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
 
+	/**
+	 * Instantiates a new gama path.
+	 *
+	 * @param nodes the nodes
+	 */
 	public GamaPath(final IList<? extends V> nodes) {
 		final IList<E> _edges = GamaListFactory.create();
 		for (int i = 0; i < nodes.size() - 1; i++) {
@@ -72,11 +111,27 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		this.graph = null;
 	}
 
+	/**
+	 * Creates the edge.
+	 *
+	 * @param v the v
+	 * @param v2 the v 2
+	 * @return the e
+	 */
 	protected E createEdge(final V v, final V v2) {
 		// TODO to define !
 		return null;
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param _edges the edges
+	 * @param modify_edges the modify edges
+	 */
 	public void init(final G g, final V start, final V target, final IList<? extends E> _edges,
 			final boolean modify_edges) {
 		this.source = start;
@@ -91,6 +146,12 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		}
 	}
 
+	/**
+	 * Instantiates a new gama path.
+	 *
+	 * @param g the g
+	 * @param nodes the nodes
+	 */
 	public GamaPath(final G g, final IList<? extends V> nodes) {
 		if (!(g instanceof GamaSpatialGraph) && nodes.isEmpty()) {
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
@@ -132,6 +193,11 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		return edges;
 	}
 
+	/**
+	 * Sets the weight.
+	 *
+	 * @param weight the new weight
+	 */
 	public void setWeight(final double weight) {
 		this.weight = weight;
 	}

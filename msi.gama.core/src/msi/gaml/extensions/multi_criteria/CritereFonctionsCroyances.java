@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.CritereFonctionsCroyances.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * CritereFonctionsCroyances.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -16,17 +16,33 @@ package msi.gaml.extensions.multi_criteria;
  */
 public abstract class CritereFonctionsCroyances {
 
+	/** The nom. */
 	//nom du crit�re
 	private String nom;
 
+	/**
+	 * Instantiates a new critere fonctions croyances.
+	 *
+	 * @param nom the nom
+	 */
 	protected CritereFonctionsCroyances(final String nom) {
 		this.nom = nom;
 	}
 
+	/**
+	 * Gets the nom.
+	 *
+	 * @return the nom
+	 */
 	public String getNom() {
 		return nom;
 	}
 
+	/**
+	 * Sets the nom.
+	 *
+	 * @param nom the new nom
+	 */
 	public void setNom(final String nom) {
 		this.nom = nom;
 	}

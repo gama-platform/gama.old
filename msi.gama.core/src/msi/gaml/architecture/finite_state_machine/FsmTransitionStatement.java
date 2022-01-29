@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.finite_state_machine.FsmTransitionStatement.java, in plugin msi.gama.core, is part of the
- * source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * FsmTransitionStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.architecture.finite_state_machine;
 
@@ -40,6 +40,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
+/**
+ * The Class FsmTransitionStatement.
+ */
 @symbol (
 		name = FsmTransitionStatement.TRANSITION,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -86,10 +89,15 @@ import msi.gaml.types.IType;
 		see = { FsmStateStatement.ENTER, FsmStateStatement.STATE, FsmStateStatement.EXIT })
 public class FsmTransitionStatement extends AbstractStatementSequence {
 
+	/** The Constant states. */
 	static final List<String> states = Arrays.asList(FsmStateStatement.STATE, IKeyword.USER_PANEL);
 
+	/**
+	 * The Class TransitionSerializer.
+	 */
 	public static class TransitionSerializer extends SymbolSerializer<SymbolDescription> {
 
+		/** The my facets. */
 		static String[] MY_FACETS = new String[] { TO, WHEN };
 
 		@Override
@@ -106,6 +114,9 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/**
+	 * The Class TransitionValidator.
+	 */
 	public static class TransitionValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -137,13 +148,20 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 
 	}
 
+	/** The when. */
 	final IExpression when;
 
 	/** Constant field TRANSITION. */
 	public static final String TRANSITION = "transition";
 
+	/** The Constant TO. */
 	protected static final String TO = "to";
 
+	/**
+	 * Instantiates a new fsm transition statement.
+	 *
+	 * @param desc the desc
+	 */
 	public FsmTransitionStatement(final IDescription desc) {
 		super(desc);
 		final String stateName = getLiteral(TO);
@@ -155,6 +173,13 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		}
 	}
 
+	/**
+	 * Evaluates true on.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public boolean evaluatesTrueOn(final IScope scope) throws GamaRuntimeException {
 		return Cast.asBool(scope, when.value(scope));
 		// Normally, the agent is still in the "currentState" scope.

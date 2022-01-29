@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.tree.GamaNode.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaNode.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.util.tree;
@@ -15,36 +15,82 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The Class GamaNode.
+ *
+ * @param <T> the generic type
+ */
 public class GamaNode<T> {
 
+	/** The default weight. */
 	static Integer DEFAULT_WEIGHT = null;
+	
+	/** The data. */
 	private T data;
+	
+	/** The weight. */
 	private Integer weight;
+	
+	/** The children. */
 	private List<GamaNode<T>> children;
+	
+	/** The parent. */
 	private GamaNode<T> parent;
 
+	/**
+	 * Instantiates a new gama node.
+	 *
+	 * @param data the data
+	 */
 	public GamaNode(final T data) {
 		this(data, DEFAULT_WEIGHT);
 	}
 
+	/**
+	 * Instantiates a new gama node.
+	 *
+	 * @param data the data
+	 * @param weight the weight
+	 */
 	public GamaNode(final T data, final Integer weight) {
 		this.weight = weight;
 		setData(data);
 	}
 
+	/**
+	 * Gets the parent.
+	 *
+	 * @return the parent
+	 */
 	public GamaNode<T> getParent() {
 		return parent;
 	}
 
+	/**
+	 * Gets the children.
+	 *
+	 * @return the children
+	 */
 	public List<GamaNode<T>> getChildren() {
 		if (children == null) { return Collections.EMPTY_LIST; }
 		return children;
 	}
 
+	/**
+	 * Checks for children.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasChildren() {
 		return children != null && children.size() > 0;
 	}
 
+	/**
+	 * Adds the child.
+	 *
+	 * @param child the child
+	 * @return the gama node
+	 */
 	public GamaNode<T> addChild(final GamaNode<T> child) {
 		child.parent = this;
 		if (children == null) {
@@ -54,19 +100,42 @@ public class GamaNode<T> {
 		return child;
 	}
 
+	/**
+	 * Adds the child.
+	 *
+	 * @param child the child
+	 * @return the gama node
+	 */
 	public GamaNode<T> addChild(final T child) {
 		return addChild(child, DEFAULT_WEIGHT);
 	}
 
+	/**
+	 * Adds the child.
+	 *
+	 * @param child the child
+	 * @param w the w
+	 * @return the gama node
+	 */
 	public GamaNode<T> addChild(final T child, final Integer w) {
 		final GamaNode<T> result = new GamaNode<>(child, w);
 		return addChild(result);
 	}
 
+	/**
+	 * Gets the data.
+	 *
+	 * @return the data
+	 */
 	public T getData() {
 		return this.data;
 	}
 
+	/**
+	 * Sets the data.
+	 *
+	 * @param data the new data
+	 */
 	public void setData(final T data) {
 		this.data = data;
 	}
@@ -100,6 +169,12 @@ public class GamaNode<T> {
 		return super.hashCode();
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @param sb the sb
+	 * @param level the level
+	 */
 	private void toString(final StringBuilder sb, final int level) {
 		// sb.append(Strings.LN);
 		// for (int i = 0; i < level; i++) {
@@ -125,6 +200,9 @@ public class GamaNode<T> {
 
 	}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		parent = null;
 		if (children != null) {
@@ -135,14 +213,29 @@ public class GamaNode<T> {
 		}
 	}
 
+	/**
+	 * Gets the weight.
+	 *
+	 * @return the weight
+	 */
 	public Integer getWeight() {
 		return weight;
 	}
 
+	/**
+	 * Sets the weight.
+	 *
+	 * @param w the new weight
+	 */
 	public void setWeight(final Integer w) {
 		weight = w;
 	}
 
+	/**
+	 * Attach to.
+	 *
+	 * @param node the node
+	 */
 	public void attachTo(final GamaNode<T> node) {
 		if (parent != null) {
 			parent.removeChild(this);
@@ -151,6 +244,11 @@ public class GamaNode<T> {
 
 	}
 
+	/**
+	 * Removes the child.
+	 *
+	 * @param gamaTreeNode the gama tree node
+	 */
 	private void removeChild(final GamaNode<T> gamaTreeNode) {
 		children.remove(gamaTreeNode);
 	}

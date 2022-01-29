@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.ReturnStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * ReturnStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -60,8 +60,14 @@ import msi.gaml.types.IType;
 				@example(value = "}", isExecutable = false), }) })
 public class ReturnStatement extends AbstractStatement {
 
+	/** The value. */
 	final IExpression value;
 
+	/**
+	 * Instantiates a new return statement.
+	 *
+	 * @param desc the desc
+	 */
 	public ReturnStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.ISpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * ISpecies.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -87,24 +87,68 @@ import one.util.streamex.StreamEx;
 public interface ISpecies
 		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {
 
+	/** The step action name. */
 	String stepActionName = "_step_";
+	
+	/** The init action name. */
 	String initActionName = "_init_";
+	
+	/** The population. */
 	String POPULATION = "population";
+	
+	/** The subspecies. */
 	String SUBSPECIES = "subspecies";
+	
+	/** The microspecies. */
 	String MICROSPECIES = "microspecies";
+	
+	/** The actions. */
 	String ACTIONS = "actions";
+	
+	/** The aspects. */
 	String ASPECTS = "aspects";
 
+	/**
+	 * Gets the frequency.
+	 *
+	 * @return the frequency
+	 */
 	IExpression getFrequency();
 
+	/**
+	 * Gets the schedule.
+	 *
+	 * @return the schedule
+	 */
 	IExpression getSchedule();
 
+	/**
+	 * Gets the concurrency.
+	 *
+	 * @return the concurrency
+	 */
 	IExpression getConcurrency();
 
+	/**
+	 * Extends species.
+	 *
+	 * @param s the s
+	 * @return true, if successful
+	 */
 	boolean extendsSpecies(final ISpecies s);
 
+	/**
+	 * Checks if is grid.
+	 *
+	 * @return true, if is grid
+	 */
 	boolean isGrid();
 
+	/**
+	 * Checks if is graph.
+	 *
+	 * @return true, if is graph
+	 */
 	boolean isGraph();
 
 	/**
@@ -115,6 +159,12 @@ public interface ISpecies
 
 	IList<ISpecies> getSubSpecies(IScope scope);
 
+	/**
+	 * Gets the sub species names.
+	 *
+	 * @param scope the scope
+	 * @return the sub species names
+	 */
 	@SuppressWarnings ("unchecked")
 	@getter (SUBSPECIES)
 	@doc ("Returns all the direct subspecies names of this species")
@@ -123,6 +173,11 @@ public interface ISpecies
 				.toCollection(Containers.listOf(Types.STRING));
 	}
 
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	@Override
 	@getter (IKeyword.NAME)
 	String getName();
@@ -175,15 +230,45 @@ public interface ISpecies
 	 */
 	boolean isPeer(ISpecies other);
 
+	/**
+	 * Gets the self with parents.
+	 *
+	 * @return the self with parents
+	 */
 	List<ISpecies> getSelfWithParents();
 
+	/**
+	 * Gets the user commands.
+	 *
+	 * @return the user commands
+	 */
 	Collection<UserCommandStatement> getUserCommands();
 
+	/**
+	 * Gets the statement.
+	 *
+	 * @param <T> the generic type
+	 * @param clazz the clazz
+	 * @param name the name
+	 * @return the statement
+	 */
 	// Huynh Quang Nghi 29/01/13
 	<T extends IStatement> T getStatement(Class<T> clazz, String name);
 
+	/**
+	 * Gets the action.
+	 *
+	 * @param name the name
+	 * @return the action
+	 */
 	IStatement.WithArgs getAction(final String name);
 
+	/**
+	 * Gets the action names.
+	 *
+	 * @param scope the scope
+	 * @return the action names
+	 */
 	@getter (ACTIONS)
 	@doc ("retuns the list of actions defined in this species (incl. the ones inherited from its parent)")
 	default IList<String> getActionNames(final IScope scope) {
@@ -191,26 +276,78 @@ public interface ISpecies
 				StreamEx.of(getActions()).map((each) -> each.getName()).toList());
 	}
 
+	/**
+	 * Gets the actions.
+	 *
+	 * @return the actions
+	 */
 	Collection<ActionStatement> getActions();
 
+	/**
+	 * Gets the aspect.
+	 *
+	 * @param n the n
+	 * @return the aspect
+	 */
 	IExecutable getAspect(final String n);
 
+	/**
+	 * Gets the aspects.
+	 *
+	 * @return the aspects
+	 */
 	Collection<? extends IExecutable> getAspects();
 
+	/**
+	 * Gets the aspect names.
+	 *
+	 * @return the aspect names
+	 */
 	@getter (ASPECTS)
 	@doc ("retuns the list of aspects defined in this species")
 	IList<String> getAspectNames();
 
+	/**
+	 * Gets the architecture.
+	 *
+	 * @return the architecture
+	 */
 	IArchitecture getArchitecture();
 
+	/**
+	 * Gets the architecture name.
+	 *
+	 * @return the architecture name
+	 */
 	String getArchitectureName();
 
+	/**
+	 * Gets the macro species.
+	 *
+	 * @return the macro species
+	 */
 	ISpecies getMacroSpecies();
 
+	/**
+	 * Gets the parent name.
+	 *
+	 * @return the parent name
+	 */
 	String getParentName();
 
+	/**
+	 * Gets the var.
+	 *
+	 * @param n the n
+	 * @return the var
+	 */
 	IVariable getVar(final String n);
 
+	/**
+	 * Gets the var names.
+	 *
+	 * @return the var names
+	 */
 	Collection<String> getVarNames();
 
 	/**
@@ -225,18 +362,56 @@ public interface ISpecies
 		return GamaListFactory.create(scope, Types.STRING, getVarNames());
 	}
 
+	/**
+	 * Gets the vars.
+	 *
+	 * @return the vars
+	 */
 	Collection<IVariable> getVars();
 
+	/**
+	 * Checks for aspect.
+	 *
+	 * @param n the n
+	 * @return true, if successful
+	 */
 	boolean hasAspect(final String n);
 
+	/**
+	 * Checks for var.
+	 *
+	 * @param name the name
+	 * @return true, if successful
+	 */
 	boolean hasVar(final String name);
 
+	/**
+	 * Sets the macro species.
+	 *
+	 * @param macroSpecies the new macro species
+	 */
 	void setMacroSpecies(final ISpecies macroSpecies);
 
+	/**
+	 * Checks if is mirror.
+	 *
+	 * @return true, if is mirror
+	 */
 	boolean isMirror();
 
+	/**
+	 * Implements skill.
+	 *
+	 * @param skill the skill
+	 * @return the boolean
+	 */
 	Boolean implementsSkill(String skill);
 
+	/**
+	 * Gets the micro species names.
+	 *
+	 * @return the micro species names
+	 */
 	@getter (MICROSPECIES)
 	@doc ("Returns all the direct microspecies names of this species")
 	Collection<String> getMicroSpeciesNames();
@@ -253,12 +428,30 @@ public interface ISpecies
 	@doc ("Returns the population of agents that belong to this species")
 	IPopulation<? extends IAgent> getPopulation(IScope scope);
 
+	/**
+	 * Adds the temporary action.
+	 *
+	 * @param a the a
+	 */
 	void addTemporaryAction(ActionStatement a);
 
+	/**
+	 * Gets the behaviors.
+	 *
+	 * @return the behaviors
+	 */
 	Collection<IStatement> getBehaviors();
 
+	/**
+	 * Removes the temporary action.
+	 */
 	void removeTemporaryAction();
 
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
 	@Override
 	SpeciesDescription getDescription();
 

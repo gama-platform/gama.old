@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.root.PlatformAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * PlatformAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.root;
 
@@ -53,6 +53,9 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class PlatformAgent.
+ */
 @species (
 		name = IKeyword.PLATFORM,
 		internal = true,
@@ -105,17 +108,35 @@ import one.util.streamex.StreamEx;
 						see = { "workspace_path" })), })
 public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpression {
 
+	/** The Constant WORKSPACE_PATH. */
 	public static final String WORKSPACE_PATH = "workspace_path";
+	
+	/** The Constant MACHINE_TIME. */
 	public static final String MACHINE_TIME = "machine_time";
+	
+	/** The polling. */
 	private final Timer polling = new Timer();
+	
+	/** The basic scope. */
 	final IScope basicScope;
+	
+	/** The current task. */
 	private TimerTask currentTask;
 
+	/**
+	 * Instantiates a new platform agent.
+	 */
 	public PlatformAgent() {
 		this(new GamaPopulation<PlatformAgent>(null,
 				GamaMetaModel.INSTANCE.getAbstractModelSpecies().getMicroSpecies(IKeyword.PLATFORM)), 0);
 	}
 
+	/**
+	 * Instantiates a new platform agent.
+	 *
+	 * @param pop the pop
+	 * @param index the index
+	 */
 	public PlatformAgent(final IPopulation<PlatformAgent> pop, final int index) {
 		super(pop, index);
 		basicScope = new ExecutionScope(this, "Gama platform scope");
@@ -135,6 +156,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		});
 	}
 
+	/**
+	 * Start polling memory.
+	 */
 	private void startPollingMemory() {
 		if (currentTask == null) {
 			currentTask = new TimerTask() {
@@ -157,6 +181,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 				(long) 1000 * GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.getValue());
 	}
 
+	/**
+	 * Stop polling memory.
+	 */
 	private void stopPollingMemory() {
 		if (currentTask != null) {
 			currentTask.cancel();
@@ -255,6 +282,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return null;
 	}
 
+	/**
+	 * Gets the workspace path.
+	 *
+	 * @return the workspace path
+	 */
 	@getter (
 			value = WORKSPACE_PATH,
 			initializer = true)
@@ -265,6 +297,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	//	return url.getPath();
 	}
 
+	/**
+	 * Gets the plugins list.
+	 *
+	 * @return the plugins list
+	 */
 	@SuppressWarnings ("unchecked")
 	@getter (
 			value = "plugins",
@@ -274,6 +311,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return StreamEx.of(bc.getBundles()).map(b -> b.getSymbolicName()).toCollection(Containers.listOf(Types.STRING));
 	}
 
+	/**
+	 * Gets the version.
+	 *
+	 * @return the version
+	 */
 	@getter (
 			value = "version",
 			initializer = true)
@@ -282,6 +324,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return bc.getBundle().getVersion().toString();
 	}
 
+	/**
+	 * Gets the available memory.
+	 *
+	 * @return the available memory
+	 */
 	@getter (
 			value = "free_memory",
 			initializer = true)
@@ -291,6 +338,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return (int) presumableFreeMemory;
 	}
 
+	/**
+	 * Gets the max memory.
+	 *
+	 * @return the max memory
+	 */
 	@getter (
 			value = "max_memory",
 			initializer = true)
@@ -298,6 +350,11 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		return (int) Runtime.getRuntime().maxMemory();
 	}
 
+	/**
+	 * Gets the machine time.
+	 *
+	 * @return the machine time
+	 */
 	@getter (PlatformAgent.MACHINE_TIME)
 	public Double getMachineTime() {
 		return (double) System.currentTimeMillis();

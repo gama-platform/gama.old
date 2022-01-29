@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.Electre.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * Electre.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.extensions.multi_criteria;
 
@@ -15,15 +15,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Class Electre.
+ */
 public class Electre {
 
+	/** The poids. */
 	private Map<String, Double> poids = new HashMap<>();
+	
+	/** The seuil coupe. */
 	private double seuilCoupe = 0.7;
+	
+	/** The preference. */
 	private Map<String, Double> preference = new HashMap<>();
+	
+	/** The indifference. */
 	private Map<String, Double> indifference = new HashMap<>();
+	
+	/** The veto. */
 	private Map<String, Double> veto = new HashMap<>();
+	
+	/** The critere ordonnes. */
 	private final List<String> critereOrdonnes;
 
+	/**
+	 * Instantiates a new electre.
+	 *
+	 * @param critereOrdonnes the critere ordonnes
+	 */
 	public Electre(final List<String> critereOrdonnes) {
 		super();
 		this.critereOrdonnes = critereOrdonnes;
@@ -49,10 +68,20 @@ public class Electre {
 	// critereOrdonnes = electre.critereOrdonnes;
 	// }
 
+	/**
+	 * Gets the poids.
+	 *
+	 * @return the poids
+	 */
 	public Map<String, Double> getPoids() {
 		return poids;
 	}
 
+	/**
+	 * Sets the poids.
+	 *
+	 * @param poids the poids
+	 */
 	public void setPoids(final Map<String, Double> poids) {
 		this.poids = poids;
 		critereOrdonnes.clear();
@@ -60,6 +89,12 @@ public class Electre {
 		Collections.sort(critereOrdonnes);
 	}
 
+	/**
+	 * Decision.
+	 *
+	 * @param locations the locations
+	 * @return the candidate
+	 */
 	public Candidate decision(final List<Candidate> locations) {
 		final int relation[][] = new int[locations.size()][locations.size()];
 
@@ -97,6 +132,14 @@ public class Electre {
 		return candMax;
 	}
 
+	/**
+	 * Concordance.
+	 *
+	 * @param a1 the a 1
+	 * @param a2 the a 2
+	 * @param crit the crit
+	 * @return the double
+	 */
 	private double concordance(final double a1, final double a2, final String crit) {
 		double concordance = 0;
 		final double prefCrit = preference.get(crit).doubleValue();
@@ -110,6 +153,14 @@ public class Electre {
 		return concordance;
 	}
 
+	/**
+	 * Discordance.
+	 *
+	 * @param a1 the a 1
+	 * @param a2 the a 2
+	 * @param crit the crit
+	 * @return the double
+	 */
 	private double discordance(final double a1, final double a2, final String crit) {
 		final double prefCrit = preference.get(crit).doubleValue();
 		final double vetoCrit = veto.get(crit).doubleValue();
@@ -123,6 +174,13 @@ public class Electre {
 		return discordance;
 	}
 
+	/**
+	 * Relation.
+	 *
+	 * @param val1 the val 1
+	 * @param val2 the val 2
+	 * @return the string
+	 */
 	private String relation(final Candidate val1, final Candidate val2) {
 		// On commence par calculer pour chaque crit�re les concordances et les discordances entre
 		// le vecteur courant et le vecteur de ref
@@ -181,38 +239,83 @@ public class Electre {
 		return str;
 	}
 
+	/**
+	 * Gets the seuil coupe.
+	 *
+	 * @return the seuil coupe
+	 */
 	public double getSeuilCoupe() {
 		return seuilCoupe;
 	}
 
+	/**
+	 * Sets the seuil coupe.
+	 *
+	 * @param seuilCoupe the new seuil coupe
+	 */
 	public void setSeuilCoupe(final double seuilCoupe) {
 		this.seuilCoupe = seuilCoupe;
 	}
 
+	/**
+	 * Gets the preference.
+	 *
+	 * @return the preference
+	 */
 	public Map<String, Double> getPreference() {
 		return preference;
 	}
 
+	/**
+	 * Sets the preference.
+	 *
+	 * @param preference the preference
+	 */
 	public void setPreference(final Map<String, Double> preference) {
 		this.preference = preference;
 	}
 
+	/**
+	 * Gets the indifference.
+	 *
+	 * @return the indifference
+	 */
 	public Map<String, Double> getIndifference() {
 		return indifference;
 	}
 
+	/**
+	 * Sets the indifference.
+	 *
+	 * @param indifference the indifference
+	 */
 	public void setIndifference(final Map<String, Double> indifference) {
 		this.indifference = indifference;
 	}
 
+	/**
+	 * Gets the veto.
+	 *
+	 * @return the veto
+	 */
 	public Map<String, Double> getVeto() {
 		return veto;
 	}
 
+	/**
+	 * Sets the veto.
+	 *
+	 * @param veto the veto
+	 */
 	public void setVeto(final Map<String, Double> veto) {
 		this.veto = veto;
 	}
 
+	/**
+	 * Gets the critere ordonnes.
+	 *
+	 * @return the critere ordonnes
+	 */
 	public List<String> getCritereOrdonnes() {
 		return critereOrdonnes;
 	}

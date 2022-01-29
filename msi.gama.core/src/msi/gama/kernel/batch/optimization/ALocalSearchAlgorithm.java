@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.LocalSearchAlgorithm.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * ALocalSearchAlgorithm.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -29,18 +29,38 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class ALocalSearchAlgorithm.
+ */
 public abstract class ALocalSearchAlgorithm extends AOptimizationAlgorithm {
 
+	/** The Constant INIT_SOL. */
 	protected static final String INIT_SOL = "init_solution";
 	
+	/** The neighborhood. */
 	protected Neighborhood neighborhood;
+	
+	/** The solution init. */
 	protected ParametersSet solutionInit;
 
+	/** The init sol expression. */
 	protected IExpression initSolExpression;
+	
+	/**
+	 * Instantiates a new a local search algorithm.
+	 *
+	 * @param species the species
+	 */
 	public ALocalSearchAlgorithm(final IDescription species) {
 		super(species);
 	}
 	
+	/**
+	 * Test solutions.
+	 *
+	 * @param solutions the solutions
+	 * @return the map
+	 */
 	public Map<ParametersSet, Double>  testSolutions(List<ParametersSet> solutions) {
 		Map<ParametersSet, Double> results = GamaMapFactory.create();
 		solutions.removeIf(a -> a == null);
@@ -78,6 +98,12 @@ public abstract class ALocalSearchAlgorithm extends AOptimizationAlgorithm {
 		}
 	}
 	
+	/**
+	 * Inits the solution.
+	 *
+	 * @param scope the scope
+	 * @param initVals the init vals
+	 */
 	public void initSolution(final IScope scope, Map<String, Object> initVals) {
 		for (String name : initVals.keySet()) {
 			if (solutionInit.containsKey(name)) {

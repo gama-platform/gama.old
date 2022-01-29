@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.ITopology.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ITopology.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
@@ -58,40 +58,138 @@ import msi.gaml.types.IType;
 })
 public interface ITopology extends IValue {
 	
+	/**
+	 * The Enum SpatialRelation.
+	 */
 	enum SpatialRelation {
+		
+		/** The overlap. */
 		OVERLAP,
+		
+		/** The cover. */
 		COVER,
+		
+		/** The inside. */
 		INSIDE,
+		
+		/** The touch. */
 		TOUCH,
+		
+		/** The cross. */
 		CROSS,
+		
+		/** The partially overlap. */
 		PARTIALLY_OVERLAP
 	}
 
+	/**
+	 * Gets the spatial index.
+	 *
+	 * @return the spatial index
+	 */
 	ISpatialIndex getSpatialIndex();
 
+	/**
+	 * Initialize.
+	 *
+	 * @param scope the scope
+	 * @param pop the pop
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	void initialize(IScope scope, IPopulation<? extends IAgent> pop) throws GamaRuntimeException;
 
+	/**
+	 * Update agent.
+	 *
+	 * @param previous the previous
+	 * @param agent the agent
+	 */
 	void updateAgent(Envelope3D previous, IAgent agent);
 
+	/**
+	 * Removes the agent.
+	 *
+	 * @param agent the agent
+	 */
 	void removeAgent(final IAgent agent);
 
+	/**
+	 * List toroidal geometries.
+	 *
+	 * @param geom the geom
+	 * @return the list
+	 */
 	List<Geometry> listToroidalGeometries(final Geometry geom);
 
+	/**
+	 * Gets the agent closest to.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param filter the filter
+	 * @param number the number
+	 * @return the agent closest to
+	 */
 	Collection<IAgent> getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter, int number);
 
+	/**
+	 * Gets the agent closest to.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param filter the filter
+	 * @return the agent closest to
+	 */
 	IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
 
+	/**
+	 * Gets the agent farthest to.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param filter the filter
+	 * @return the agent farthest to
+	 */
 	IAgent getAgentFarthestTo(IScope scope, final IShape source, IAgentFilter filter);
 
+	/**
+	 * Gets the neighbors of.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param distance the distance
+	 * @param filter the filter
+	 * @return the neighbors of
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	Collection<IAgent> getNeighborsOf(IScope scope, final IShape source, final Double distance, IAgentFilter filter)
 			throws GamaRuntimeException;
 
+	/**
+	 * Gets the agents in.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param f the f
+	 * @param relation the relation
+	 * @return the agents in
+	 */
 	Collection<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f, SpatialRelation relation);
 
 	
 
+	/**
+	 * Checks if is torus.
+	 *
+	 * @return true, if is torus
+	 */
 	boolean isTorus();
 
+	/**
+	 * Checks if is continuous.
+	 *
+	 * @return true, if is continuous
+	 */
 	boolean isContinuous();
 
 	/**
@@ -107,10 +205,36 @@ public interface ITopology extends IValue {
 	 */
 	Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
+	/**
+	 * Distance between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @return the double
+	 */
 	Double distanceBetween(IScope scope, final GamaPoint source, final GamaPoint target);
 
+	/**
+	 * Path between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target) throws GamaRuntimeException;
 
+	/**
+	 * Path between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @return the gama spatial path
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	GamaSpatialPath pathBetween(IScope scope, final GamaPoint source, final GamaPoint target)
 			throws GamaRuntimeException;
 
@@ -199,12 +323,34 @@ public interface ITopology extends IValue {
 
 	double getWidth();
 
+	/**
+	 * Gets the height.
+	 *
+	 * @return the height
+	 */
 	double getHeight();
 
+	/**
+	 * Dispose.
+	 */
 	void dispose();
 
+	/**
+	 * Checks if is valid location.
+	 *
+	 * @param scope the scope
+	 * @param p the p
+	 * @return true, if is valid location
+	 */
 	boolean isValidLocation(IScope scope, GamaPoint p);
 
+	/**
+	 * Checks if is valid geometry.
+	 *
+	 * @param scope the scope
+	 * @param g the g
+	 * @return true, if is valid geometry
+	 */
 	boolean isValidGeometry(IScope scope, IShape g);
 
 	/**
@@ -217,10 +363,34 @@ public interface ITopology extends IValue {
 	 */
 	Double directionInDegreesTo(IScope scope, IShape source, IShape target);
 
+	/**
+	 * Kpaths between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @param k the k
+	 * @return the i list
+	 */
 	IList<GamaSpatialPath> KpathsBetween(IScope scope, IShape source, IShape target, int k);
 
+	/**
+	 * Kpaths between.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @param k the k
+	 * @return the i list
+	 */
 	IList<GamaSpatialPath> KpathsBetween(IScope scope, GamaPoint source, GamaPoint target, int k);
 
+	/**
+	 * Sets the root.
+	 *
+	 * @param scope the scope
+	 * @param rt the rt
+	 */
 	void setRoot(IScope scope, RootTopology rt);
 
 }

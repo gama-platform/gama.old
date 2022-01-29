@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.Gama3DGeometryFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * Gama3DGeometryFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -26,15 +26,36 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class Gama3DGeometryFile.
+ */
 public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
+	/** The init rotation. */
 	protected AxisAngle initRotation;
+	
+	/** The envelope. */
 	protected Envelope3D envelope;
 
+	/**
+	 * Instantiates a new gama 3 D geometry file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public Gama3DGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
+	/**
+	 * Instantiates a new gama 3 D geometry file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param initRotation the init rotation
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public Gama3DGeometryFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
 			throws GamaRuntimeException {
 		super(scope, pathName);
@@ -61,6 +82,11 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 		return initRotation;
 	}
 
+	/**
+	 * Sets the inits the rotation.
+	 *
+	 * @param initRotation the new inits the rotation
+	 */
 	public void setInitRotation(final AxisAngle initRotation) {
 		this.initRotation = initRotation;
 	}

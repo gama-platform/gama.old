@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.MonitorOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * MonitorOutput.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -90,12 +90,27 @@ import msi.gaml.types.Types;
 						value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
 						isExecutable = false)) })
 public class MonitorOutput extends AbstractValuedDisplayOutput {
+	
+	/** The monitor folder. */
 	private static String monitorFolder = "monitors";
+	
+	/** The color expression. */
 	protected IExpression colorExpression = null;
+	
+	/** The color. */
 	protected GamaColor color = null;
+	
+	/** The constant color. */
 	protected GamaColor constantColor = null;
+	
+	/** The history. */
 	protected List<Object> history;
 
+	/**
+	 * Instantiates a new monitor output.
+	 *
+	 * @param desc the desc
+	 */
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
 		setColor(getFacet(IKeyword.COLOR));
@@ -112,6 +127,13 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		}
 	}
 
+	/**
+	 * Instantiates a new monitor output.
+	 *
+	 * @param scope the scope
+	 * @param name the name
+	 * @param expr the expr
+	 */
 	public MonitorOutput(final IScope scope, final String name, final String expr) {
 		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
 				name == null ? expr : name));
@@ -164,6 +186,11 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		return true;
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public GamaColor getColor() {
 		return constantColor == null ? color : constantColor;
 	}
@@ -195,6 +222,9 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		}
 	}
 
+	/**
+	 * Save history.
+	 */
 	public void saveHistory() {
 		if (getScope() == null || history == null || history.isEmpty()) return;
 		Files.newFolder(getScope(), monitorFolder);

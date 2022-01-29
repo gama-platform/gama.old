@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.graph._SpatialEdge.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * _SpatialEdge.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -19,8 +19,20 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph._Edge;
 
+/**
+ * The Class _SpatialEdge.
+ */
 public class _SpatialEdge extends _Edge<IShape, IShape> {
 
+	/**
+	 * Instantiates a new spatial edge.
+	 *
+	 * @param graph the graph
+	 * @param edge the edge
+	 * @param source the source
+	 * @param target the target
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public _SpatialEdge(final GamaSpatialGraph graph, final Object edge, final Object source, final Object target)
 			throws GamaRuntimeException {
 		super(graph, edge, source, target);
@@ -57,6 +69,12 @@ public class _SpatialEdge extends _Edge<IShape, IShape> {
 		super.buildTarget(edge, s);
 	}
 
+	/**
+	 * Find vertex with coordinates.
+	 *
+	 * @param c the c
+	 * @return the object
+	 */
 	private Object findVertexWithCoordinates(final Coordinate c) {
 		IShape vertex = ((GamaSpatialGraph) graph).getBuiltVertex(c);
 		if (vertex != null) { return vertex; }

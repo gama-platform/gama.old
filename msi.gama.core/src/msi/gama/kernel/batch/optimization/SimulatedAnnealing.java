@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.SimulatedAnnealing.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * SimulatedAnnealing.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
@@ -35,6 +35,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class SimulatedAnnealing.
+ */
 @symbol (
 		name = IKeyword.ANNEALING,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -105,16 +108,35 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 
+	/** The temperature end. */
 	double temperatureEnd = 1;
+	
+	/** The temp dim coeff. */
 	double tempDimCoeff = 0.5;
+	
+	/** The temperature init. */
 	double temperatureInit = 100;
+	
+	/** The nb iter cst temp. */
 	int nbIterCstTemp = 5;
 
+	/** The Constant TEMP_END. */
 	protected static final String TEMP_END = "temp_end";
+	
+	/** The Constant TEMP_DECREASE. */
 	protected static final String TEMP_DECREASE = "temp_decrease";
+	
+	/** The Constant TEMP_INIT. */
 	protected static final String TEMP_INIT = "temp_init";
+	
+	/** The Constant NB_ITER. */
 	protected static final String NB_ITER = "nb_iter_cst_temp";
 
+	/**
+	 * Instantiates a new simulated annealing.
+	 *
+	 * @param species the species
+	 */
 	public SimulatedAnnealing(final IDescription species) {
 		super(species);
 		initParams();

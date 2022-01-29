@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaMetaModel.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaMetaModel.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
@@ -38,25 +38,58 @@ import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaMetaModel.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMetaModel {
 
+	/** The Constant INSTANCE. */
 	public final static GamaMetaModel INSTANCE = new GamaMetaModel();
 
+	/** The experiment creators. */
 	private final Map<String, IExperimentAgentCreator> experimentCreators = new HashMap<>();
+	
+	/** The temp species. */
 	private final Map<String, SpeciesProto> tempSpecies = new HashMap();
+	
+	/** The species skills. */
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
+	
+	/** The abstract model species. */
 	private GamlModelSpecies abstractModelSpecies;
+	
+	/** The is initialized. */
 	public volatile boolean isInitialized;
 
+	/**
+	 * The Class SpeciesProto.
+	 */
 	private static class SpeciesProto {
 
+		/** The name. */
 		final String name;
+		
+		/** The plugin. */
 		final String plugin;
+		
+		/** The clazz. */
 		final Class clazz;
+		
+		/** The helper. */
 		final IAgentConstructor helper;
+		
+		/** The skills. */
 		final String[] skills;
 
+		/**
+		 * Instantiates a new species proto.
+		 *
+		 * @param name the name
+		 * @param clazz the clazz
+		 * @param helper the helper
+		 * @param skills the skills
+		 */
 		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper,
 				final String[] skills) {
 			plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
@@ -67,22 +100,50 @@ public class GamaMetaModel {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama meta model.
+	 */
 	private GamaMetaModel() {}
 
+	/**
+	 * Creates the experiment agent.
+	 *
+	 * @param name the name
+	 * @param pop the pop
+	 * @param index the index
+	 * @return the experiment agent
+	 */
 	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop, final int index) {
 		return (ExperimentAgent) experimentCreators.get(name).create(pop, index);
 	}
 
+	/**
+	 * Adds the experiment agent creator.
+	 *
+	 * @param key the key
+	 * @param creator the creator
+	 */
 	public void addExperimentAgentCreator(final String key, final IExperimentAgentCreator creator) {
 		experimentCreators.put(key, creator);
 	}
 
+	/**
+	 * Adds the species.
+	 *
+	 * @param name the name
+	 * @param clazz the clazz
+	 * @param helper the helper
+	 * @param skills the skills
+	 */
 	public void addSpecies(final String name, final Class clazz, final IAgentConstructor helper,
 			final String[] skills) {
 		final SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
 		tempSpecies.put(name, proto);
 	}
 
+	/**
+	 * Builds the.
+	 */
 	public void build() {
 
 		// We first build "agent" as the root of all other species (incl.
@@ -122,6 +183,16 @@ public class GamaMetaModel {
 		isInitialized = true;
 	}
 
+	/**
+	 * Builds the species.
+	 *
+	 * @param proto the proto
+	 * @param macro the macro
+	 * @param parent the parent
+	 * @param isModel the is model
+	 * @param isExperiment the is experiment
+	 * @return the species description
+	 */
 	public SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
 			final SpeciesDescription parent, final boolean isModel, final boolean isExperiment) {
 		final Class clazz = proto.clazz;
@@ -155,10 +226,21 @@ public class GamaMetaModel {
 		return desc;
 	}
 
+	/**
+	 * Adds the species skill.
+	 *
+	 * @param spec the spec
+	 * @param name the name
+	 */
 	public void addSpeciesSkill(final String spec, final String name) {
 		speciesSkills.put(spec, name);
 	}
 
+	/**
+	 * Gets the abstract model species.
+	 *
+	 * @return the abstract model species
+	 */
 	public GamlModelSpecies getAbstractModelSpecies() {
 		if (abstractModelSpecies == null) {
 			final IType model = Types.get(IKeyword.MODEL);
@@ -167,6 +249,11 @@ public class GamaMetaModel {
 		return abstractModelSpecies;
 	}
 
+	/**
+	 * Gets the platform species description.
+	 *
+	 * @return the platform species description
+	 */
 	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
 		final IType platform = Types.get(IKeyword.PLATFORM);
 		if (platform != null && platform != Types.NO_TYPE) return (PlatformSpeciesDescription) platform.getSpecies();

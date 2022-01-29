@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GraphEvent.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GraphEvent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -12,6 +12,9 @@ package msi.gama.util.graph;
 
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class GraphEvent.
+ */
 @SuppressWarnings({ "rawtypes" })
 public final class GraphEvent {
 
@@ -24,12 +27,22 @@ public final class GraphEvent {
 	 * the timestep at which the event was sent
 	 */
 	public final Object sender;
+	
+	/** The scope. */
 	public final IScope scope;
+	
+	/** The edge. */
 	public final Object edge;
+	
+	/** The vertex. */
 	public final Object vertex;
 
+	/** The event type. */
 	public final GraphEventType eventType;
 
+	/**
+	 * The Enum GraphEventType.
+	 */
 	public enum GraphEventType {
 
 		/**
@@ -76,6 +89,16 @@ public final class GraphEvent {
 
 	}
 
+	/**
+	 * Instantiates a new graph event.
+	 *
+	 * @param scope the scope
+	 * @param graph the corresponding graph
+	 * @param sender the timestep at which the event was sent
+	 * @param edge the edge
+	 * @param vertex the vertex
+	 * @param eventType the event type
+	 */
 	public GraphEvent(final IScope scope, final IGraph graph, final Object sender, final Object edge,
 			final Object vertex, final GraphEventType eventType) {
 		super();

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.ElseStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * ElseStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -28,6 +28,11 @@ import msi.gaml.descriptions.IDescription;
 @doc(value="This statement cannot be used alone",see={IKeyword.IF})
 public class ElseStatement extends AbstractStatementSequence {
 
+	/**
+	 * Instantiates a new else statement.
+	 *
+	 * @param desc the desc
+	 */
 	public ElseStatement(final IDescription desc) {
 		super(desc);
 		setName(IKeyword.ELSE);

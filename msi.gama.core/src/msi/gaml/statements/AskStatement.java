@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.AskStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * AskStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -36,6 +36,9 @@ import msi.gaml.types.Types;
 
 // A group of commands that can be executed on remote agents.
 
+/**
+ * The Class AskStatement.
+ */
 @symbol (
 		name = IKeyword.ASK,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -175,10 +178,20 @@ import msi.gaml.types.Types;
 
 public class AskStatement extends AbstractStatementSequence implements Breakable {
 
+	/** The sequence. */
 	private RemoteSequence sequence = null;
+	
+	/** The target. */
 	private final IExpression target;
+	
+	/** The parallel. */
 	private final IExpression parallel;
 
+	/**
+	 * Instantiates a new ask statement.
+	 *
+	 * @param desc the desc
+	 */
 	public AskStatement(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);

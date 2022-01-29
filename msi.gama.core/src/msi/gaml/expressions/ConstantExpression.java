@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.ConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ConstantExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -23,18 +23,37 @@ import msi.gaml.types.IType;
 
 public class ConstantExpression extends AbstractExpression {
 
+	/** The value. */
 	protected Object value;
 
+	/**
+	 * Instantiates a new constant expression.
+	 *
+	 * @param val the val
+	 * @param t the t
+	 * @param name the name
+	 */
 	public ConstantExpression(final Object val, final IType<?> t, final String name) {
 		value = val;
 		type = t;
 		setName(name);
 	}
 
+	/**
+	 * Instantiates a new constant expression.
+	 *
+	 * @param val the val
+	 * @param t the t
+	 */
 	public ConstantExpression(final Object val, final IType<?> t) {
 		this(val, t, val == null ? "nil" : val.toString());
 	}
 
+	/**
+	 * Instantiates a new constant expression.
+	 *
+	 * @param val the val
+	 */
 	public ConstantExpression(final Object val) {
 		this(val, GamaType.of(val));
 	}

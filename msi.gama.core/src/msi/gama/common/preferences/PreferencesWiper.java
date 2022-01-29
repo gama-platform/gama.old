@@ -1,20 +1,28 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.preferences.PreferencesWiper.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * PreferencesWiper.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.preferences;
 
 import java.util.prefs.Preferences;
 
+/**
+ * The Class PreferencesWiper.
+ */
 public class PreferencesWiper { // NO_UCD (unused code)
 
-	public static void main(final String[] args) {
+	/**
+  * The main method.
+  *
+  * @param args the arguments
+  */
+ public static void main(final String[] args) {
 		try {
 			final var store = Preferences.userRoot().node("gama");
 			store.removeNode();

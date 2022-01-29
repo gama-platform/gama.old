@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.ICoordinates.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ICoordinates.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -14,6 +14,9 @@ import org.locationtech.jts.geom.CoordinateSequence;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * The Interface ICoordinates.
+ */
 public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
 	/**
@@ -24,6 +27,13 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	@FunctionalInterface
 	public interface PairVisitor {
+		
+		/**
+		 * Process.
+		 *
+		 * @param p1 the p 1
+		 * @param p2 the p 2
+		 */
 		void process(GamaPoint p1, GamaPoint p2);
 	}
 
@@ -35,10 +45,28 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	@FunctionalInterface
 	public interface IndexedVisitor {
+		
+		/**
+		 * Process.
+		 *
+		 * @param i the i
+		 * @param x the x
+		 * @param y the y
+		 * @param z the z
+		 */
 		void process(final int i, final double x, final double y, final double z);
 	}
 
+	/**
+	 * The Interface VertexVisitor.
+	 */
 	public interface VertexVisitor {
+		
+		/**
+		 * Process.
+		 *
+		 * @param ordinates the ordinates
+		 */
 		void process(final double... ordinates);
 	}
 
@@ -58,11 +86,22 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		return p;
 	}
 
+	/**
+	 * Gets the center.
+	 *
+	 * @param center the center
+	 * @return the center
+	 */
 	default void getCenter(final GamaPoint center) {
 		center.setLocation(0, 0, 0);
 		addCenterTo(center);
 	}
 
+	/**
+	 * Clone.
+	 *
+	 * @return the coordinate sequence
+	 */
 	@Override
 	@Deprecated
 	default CoordinateSequence clone() {
@@ -77,6 +116,12 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	void addCenterTo(final GamaPoint other);
 
+	/**
+	 * Gets the coordinate.
+	 *
+	 * @param i the i
+	 * @return the coordinate
+	 */
 	@Override
 	GamaPoint getCoordinate(int i);
 
@@ -243,6 +288,13 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 		return setTo(0, ordinates);
 	}
 
+	/**
+	 * Sets the to.
+	 *
+	 * @param begin the begin
+	 * @param ordinates the ordinates
+	 * @return the i coordinates
+	 */
 	ICoordinates setTo(int begin, double... ordinates);
 
 	/**

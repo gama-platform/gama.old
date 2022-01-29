@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.model.IModel.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IModel.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.model;
 
@@ -32,24 +32,78 @@ import msi.gaml.statements.test.TestStatement;
  */
 public interface IModel extends ISpecies {
 
+	/**
+	 * Gets the species.
+	 *
+	 * @param speciesName the species name
+	 * @return the species
+	 */
 	ISpecies getSpecies(String speciesName);
 
+	/**
+	 * Gets the species.
+	 *
+	 * @param speciesName the species name
+	 * @param specDes the spec des
+	 * @return the species
+	 */
 	ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
 
+	/**
+	 * Gets the experiment.
+	 *
+	 * @param s the s
+	 * @return the experiment
+	 */
 	IExperimentPlan getExperiment(final String s);
 
+	/**
+	 * Gets the working path.
+	 *
+	 * @return the working path
+	 */
 	String getWorkingPath();
 
+	/**
+	 * Gets the file path.
+	 *
+	 * @return the file path
+	 */
 	String getFilePath();
 
+	/**
+	 * Gets the project path.
+	 *
+	 * @return the project path
+	 */
 	String getProjectPath();
 
+	/**
+	 * Gets the all species.
+	 *
+	 * @return the all species
+	 */
 	Map<String, ISpecies> getAllSpecies();
 
+	/**
+	 * Gets the imported paths.
+	 *
+	 * @return the imported paths
+	 */
 	Collection<String> getImportedPaths();
 
+	/**
+	 * Gets the all tests.
+	 *
+	 * @return the all tests
+	 */
 	List<TestStatement> getAllTests();
 
+	/**
+	 * Gets the uri.
+	 *
+	 * @return the uri
+	 */
 	@Override
 	default URI getURI() {
 		final ModelDescription md = (ModelDescription) getDescription();

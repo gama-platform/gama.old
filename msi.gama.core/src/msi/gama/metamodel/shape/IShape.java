@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.IShape.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IShape.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -101,35 +101,95 @@ import msi.gaml.types.IType;
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
+	
+	/** The jts types. */
 	Map<String, Type> JTS_TYPES = GamaMapFactory.createUnordered();
+	
+	/** The threed types. */
 	Set<Type> THREED_TYPES = new HashSet<>();
 
+	/**
+	 * The Enum Type.
+	 */
 	enum Type {
+		
+		/** The box. */
 		BOX("3D"),
+		
+		/** The circle. */
 		CIRCLE("3D"),
+		
+		/** The cone. */
 		CONE("3D"),
+		
+		/** The cube. */
 		CUBE("3D"),
+		
+		/** The square. */
 		SQUARE("3D"),
+		
+		/** The rounded. */
 		ROUNDED(""),
+		
+		/** The cylinder. */
 		CYLINDER("3D"),
+		
+		/** The gridline. */
 		GRIDLINE(""),
+		
+		/** The linearring. */
 		LINEARRING("LinearRing"),
+		
+		/** The linestring. */
 		LINESTRING("LineString"),
+		
+		/** The multilinestring. */
 		MULTILINESTRING("MultiLineString"),
+		
+		/** The multipoint. */
 		MULTIPOINT("MultiPoint"),
+		
+		/** The multipolygon. */
 		MULTIPOLYGON("MultiPolygon"),
+		
+		/** The null. */
 		NULL(""),
+		
+		/** The plan. */
 		PLAN("3D"),
+		
+		/** The point. */
 		POINT("Point"),
+		
+		/** The polygon. */
 		POLYGON("Polygon"),
+		
+		/** The polyhedron. */
 		POLYHEDRON("3D"),
+		
+		/** The polyplan. */
 		POLYPLAN("3D"),
+		
+		/** The pyramid. */
 		PYRAMID("3D"),
+		
+		/** The sphere. */
 		SPHERE("3D"),
+		
+		/** The teapot. */
 		TEAPOT("3D"),
+		
+		/** The linecylinder. */
 		LINECYLINDER("3D"),
+		
+		/** The threed file. */
 		THREED_FILE("");
 
+		/**
+		 * Instantiates a new type.
+		 *
+		 * @param name the name
+		 */
 		Type(final String name) {
 			if (name.isEmpty()) return;
 			if ("3D".equals(name)) {
@@ -140,27 +200,83 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		}
 	}
 
+	/** The shape writer. */
 	WKTWriter SHAPE_WRITER = new WKTWriter();
 
+	/**
+	 * Copy.
+	 *
+	 * @param scope the scope
+	 * @return the i shape
+	 */
 	@Override
 	IShape copy(IScope scope);
 
+	/**
+	 * Covers.
+	 *
+	 * @param g the g
+	 * @return true, if successful
+	 */
 	boolean covers(IShape g);
 	
+	/**
+	 * Partially overlaps.
+	 *
+	 * @param g the g
+	 * @return true, if successful
+	 */
 	boolean partiallyOverlaps(IShape g);
 
+	/**
+	 * Touches.
+	 *
+	 * @param g the g
+	 * @return true, if successful
+	 */
 	boolean touches(IShape g);
 
+	/**
+	 * Crosses.
+	 *
+	 * @param g the g
+	 * @return true, if successful
+	 */
 	boolean crosses(IShape g);
 
+	/**
+	 * Dispose.
+	 */
 	void dispose();
 
+	/**
+	 * Euclidian distance to.
+	 *
+	 * @param g the g
+	 * @return the double
+	 */
 	double euclidianDistanceTo(GamaPoint g);
 
+	/**
+	 * Euclidian distance to.
+	 *
+	 * @param g the g
+	 * @return the double
+	 */
 	double euclidianDistanceTo(IShape g);
 
+	/**
+	 * Gets the agent.
+	 *
+	 * @return the agent
+	 */
 	IAgent getAgent();
 
+	/**
+	 * Gets the envelope.
+	 *
+	 * @return the envelope
+	 */
 	Envelope3D getEnvelope();
 
 	/**
@@ -172,64 +288,181 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 */
 	IShape.Type getGeometricalType();
 
+	/**
+	 * Gets the geometry.
+	 *
+	 * @return the geometry
+	 */
 	IShape getGeometry();
 
+	/**
+	 * Gets the inner geometry.
+	 *
+	 * @return the inner geometry
+	 */
 	Geometry getInnerGeometry();
 
+	/**
+	 * Intersects.
+	 *
+	 * @param g the g
+	 * @return true, if successful
+	 */
 	boolean intersects(IShape g);
 
+	/**
+	 * Checks if is line.
+	 *
+	 * @return true, if is line
+	 */
 	boolean isLine();
 
+	/**
+	 * Checks if is point.
+	 *
+	 * @return true, if is point
+	 */
 	boolean isPoint();
 
+	/**
+	 * Sets the agent.
+	 *
+	 * @param agent the new agent
+	 */
 	void setAgent(IAgent agent);
 
+	/**
+	 * Sets the geometry.
+	 *
+	 * @param g the new geometry
+	 */
 	void setGeometry(IShape g);
 
+	/**
+	 * Sets the inner geometry.
+	 *
+	 * @param intersection the new inner geometry
+	 */
 	void setInnerGeometry(Geometry intersection);
 
+	/**
+	 * Sets the depth.
+	 *
+	 * @param depth the new depth
+	 */
 	void setDepth(double depth);
 
+	/**
+	 * Gets the or create attributes.
+	 *
+	 * @return the or create attributes
+	 */
 	@Override
 	@getter ("attributes")
 	IMap<String, Object> getOrCreateAttributes();
 
+	/**
+	 * Checks if is multiple.
+	 *
+	 * @return true, if is multiple
+	 */
 	@getter ("multiple")
 	boolean isMultiple();
 
+	/**
+	 * Gets the area.
+	 *
+	 * @return the area
+	 */
 	@getter ("area")
 	Double getArea();
 
+	/**
+	 * Gets the volume.
+	 *
+	 * @return the volume
+	 */
 	@getter ("volume")
 	Double getVolume();
 
+	/**
+	 * Gets the perimeter.
+	 *
+	 * @return the perimeter
+	 */
 	@getter ("perimeter")
 	double getPerimeter();
 
+	/**
+	 * Gets the holes.
+	 *
+	 * @return the holes
+	 */
 	@getter ("holes")
 	IList<GamaShape> getHoles();
 
+	/**
+	 * Gets the centroid.
+	 *
+	 * @return the centroid
+	 */
 	@getter ("centroid")
 	GamaPoint getCentroid();
 
+	/**
+	 * Gets the exterior ring.
+	 *
+	 * @param scope the scope
+	 * @return the exterior ring
+	 */
 	@getter ("contour")
 	GamaShape getExteriorRing(IScope scope);
 
+	/**
+	 * Gets the width.
+	 *
+	 * @return the width
+	 */
 	@getter ("width")
 	Double getWidth();
 
+	/**
+	 * Gets the height.
+	 *
+	 * @return the height
+	 */
 	@getter ("height")
 	Double getHeight();
 
+	/**
+	 * Gets the depth.
+	 *
+	 * @return the depth
+	 */
 	@getter ("depth")
 	Double getDepth();
 
+	/**
+	 * Gets the geometric envelope.
+	 *
+	 * @return the geometric envelope
+	 */
 	@getter ("envelope")
 	GamaShape getGeometricEnvelope();
 
+	/**
+	 * Gets the points.
+	 *
+	 * @return the points
+	 */
 	@getter ("points")
 	IList<GamaPoint> getPoints();
 
+	/**
+	 * Gets the geometries.
+	 *
+	 * @return the geometries
+	 */
 	@getter ("geometries")
 	IList<? extends IShape> getGeometries();
 
@@ -245,6 +478,11 @@ public interface IShape extends ILocated, IValue, IAttributed {
 		if (THREED_TYPES.contains(t)) { setGeometricalType(t); }
 	}
 
+	/**
+	 * Sets the geometrical type.
+	 *
+	 * @param t the new geometrical type
+	 */
 	void setGeometricalType(Type t);
 
 }

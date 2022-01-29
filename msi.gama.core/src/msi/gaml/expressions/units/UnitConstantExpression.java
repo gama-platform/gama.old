@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.UnitConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * UnitConstantExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.units;
 
@@ -35,8 +35,20 @@ import msi.gaml.types.Types;
  */
 public class UnitConstantExpression extends ConstantExpression implements IExpressionDescription {
 
+	/** The name. */
 	String name;
 
+	/**
+	 * Creates the.
+	 *
+	 * @param val the val
+	 * @param t the t
+	 * @param unit the unit
+	 * @param doc the doc
+	 * @param isTime the is time
+	 * @param names the names
+	 * @return the unit constant expression
+	 */
 	// Already cached in IExpressionFactory.UNIT_EXPRS
 	public static UnitConstantExpression create(final Object val, final IType<?> t, final String unit, final String doc,
 			final boolean isTime, final String[] names) {
@@ -69,10 +81,24 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 
+	/** The documentation. */
 	String documentation;
+	
+	/** The alternate names. */
 	final List<String> alternateNames;
+	
+	/** The is deprecated. */
 	private boolean isDeprecated;
 
+	/**
+	 * Instantiates a new unit constant expression.
+	 *
+	 * @param val the val
+	 * @param t the t
+	 * @param name the name
+	 * @param doc the doc
+	 * @param names the names
+	 */
 	public UnitConstantExpression(final Object val, final IType<?> t, final String name, final String doc,
 			final String[] names) {
 		super(val, t);
@@ -180,11 +206,21 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		return Types.NO_TYPE;
 	}
 
+	/**
+	 * Sets the deprecated.
+	 *
+	 * @param deprecated the new deprecated
+	 */
 	public void setDeprecated(final String deprecated) {
 		isDeprecated = true;
 		documentation = "Deprecated: " + deprecated + ". " + documentation;
 	}
 
+	/**
+	 * Checks if is deprecated.
+	 *
+	 * @return true, if is deprecated
+	 */
 	public boolean isDeprecated() {
 		return isDeprecated;
 	}

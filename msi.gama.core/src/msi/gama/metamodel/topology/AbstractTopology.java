@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.AbstractTopology.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AbstractTopology.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
@@ -48,6 +48,9 @@ import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class AbstractTopology.
+ */
 public abstract class AbstractTopology implements ITopology {
 
 	@Override
@@ -55,14 +58,27 @@ public abstract class AbstractTopology implements ITopology {
 		return Types.TOPOLOGY;
 	}
 
+	/** The environment. */
 	protected IShape environment;
+	
+	/** The root. */
 	protected RootTopology root;
+	
+	/** The places. */
 	protected IContainer<?, IShape> places;
 	// protected List<ISpecies> speciesInserted;
 
+	/** The adjusted XY vector. */
 	// VARIABLES USED IN TORUS ENVIRONMENT
 	private double[][] adjustedXYVector = null;
 
+	/**
+	 * Instantiates a new abstract topology.
+	 *
+	 * @param scope the scope
+	 * @param env the env
+	 * @param root the root
+	 */
 	public AbstractTopology(final IScope scope, final IShape env, final RootTopology root) {
 		setRoot(scope, root);
 		// speciesInserted = new ArrayList<>();
@@ -87,6 +103,12 @@ public abstract class AbstractTopology implements ITopology {
 		return geoms;
 	}
 
+	/**
+	 * Return toroidal geom.
+	 *
+	 * @param loc the loc
+	 * @return the geometry
+	 */
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
 		final List<Geometry> geoms = new ArrayList<>();
 		final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(loc);
@@ -99,11 +121,24 @@ public abstract class AbstractTopology implements ITopology {
 		return GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
 	}
 
+	/**
+	 * Return toroidal geom.
+	 *
+	 * @param shape the shape
+	 * @return the geometry
+	 */
 	public Geometry returnToroidalGeom(final IShape shape) {
 		if (shape.isPoint()) return returnToroidalGeom(shape.getLocation());
 		return GeometryUtils.GEOMETRY_FACTORY.buildGeometry(listToroidalGeometries(shape.getInnerGeometry()));
 	}
 
+	/**
+	 * Toroidal geoms.
+	 *
+	 * @param scope the scope
+	 * @param shps the shps
+	 * @return the map
+	 */
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
 		final Map<Geometry, IAgent> geoms = GamaMapFactory.create();
 		for (final IShape ag : shps.iterable(scope)) {
@@ -116,6 +151,9 @@ public abstract class AbstractTopology implements ITopology {
 		return geoms;
 	}
 
+	/**
+	 * Creates the virtual environments.
+	 */
 	protected void createVirtualEnvironments() {
 		adjustedXYVector = new double[8][2];
 		final Envelope environmentEnvelope = environment.getEnvelope();
@@ -157,6 +195,11 @@ public abstract class AbstractTopology implements ITopology {
 
 	}
 
+	/**
+	 * Can create agents.
+	 *
+	 * @return true, if successful
+	 */
 	protected boolean canCreateAgents() {
 		return false;
 	}
@@ -299,6 +342,13 @@ public abstract class AbstractTopology implements ITopology {
 				nullIfOutside);
 	}
 
+	/**
+	 * Normalize location 3 D.
+	 *
+	 * @param point the point
+	 * @param nullIfOutside the null if outside
+	 * @return the gama point
+	 */
 	public GamaPoint normalizeLocation3D(final GamaPoint point, final boolean nullIfOutside) {
 		final GamaPoint p = normalizeLocation(point, nullIfOutside);
 		if (p == null) return null;
@@ -440,11 +490,27 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
+	/**
+	 * Gets the tororoidal agents.
+	 *
+	 * @param source the source
+	 * @param scope the scope
+	 * @param filter the filter
+	 * @return the tororoidal agents
+	 */
 	public Map<Geometry, IAgent> getTororoidalAgents(final IShape source, final IScope scope,
 			final IAgentFilter filter) {
 		return toroidalGeoms(scope, getFilteredAgents(source, scope, filter));
 	}
 
+	/**
+	 * Gets the filtered agents.
+	 *
+	 * @param source the source
+	 * @param scope the scope
+	 * @param filter the filter
+	 * @return the filtered agents
+	 */
 	@SuppressWarnings ("unchecked")
 	public static IContainer<?, ? extends IShape> getFilteredAgents(final IShape source, final IScope scope,
 			final IAgentFilter filter) {
@@ -502,8 +568,17 @@ public abstract class AbstractTopology implements ITopology {
 		// scope = null;
 	}
 
+	/** The pg fact. */
 	private final PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
 
+	/**
+	 * Accept.
+	 *
+	 * @param pg1 the pg 1
+	 * @param g2 the g 2
+	 * @param rel the rel
+	 * @return true, if successful
+	 */
 	public static final boolean accept(final PreparedGeometry pg1, final Geometry g2, final SpatialRelation rel) {
 		if (rel == SpatialRelation.OVERLAP)
 			return pg1.intersects(g2);
@@ -570,6 +645,11 @@ public abstract class AbstractTopology implements ITopology {
 		return root.isTorus();
 	}
 
+	/**
+	 * Gets the adjusted XY vector.
+	 *
+	 * @return the adjusted XY vector
+	 */
 	protected double[][] getAdjustedXYVector() {
 		if (adjustedXYVector == null) { createVirtualEnvironments(); }
 		return adjustedXYVector;

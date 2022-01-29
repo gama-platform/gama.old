@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.INeighborhood.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * INeighborhood.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -23,8 +23,21 @@ import msi.gama.runtime.IScope;
  */
 public interface INeighborhood {
 
+	/**
+	 * Gets the neighbors in.
+	 *
+	 * @param scope the scope
+	 * @param placeIndex the place index
+	 * @param radius the radius
+	 * @return the neighbors in
+	 */
 	public abstract Set<IAgent> getNeighborsIn(IScope scope, final int placeIndex, final int radius);
 
+	/**
+	 * Checks if is vn.
+	 *
+	 * @return true, if is vn
+	 */
 	public abstract boolean isVN();
 
 	/**

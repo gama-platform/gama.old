@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.HillClimbing.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * HillClimbing.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization;
@@ -40,6 +40,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class HillClimbing.
+ */
 @symbol (
 		name = IKeyword.HILL_CLIMBING,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -95,16 +98,33 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class HillClimbing extends ALocalSearchAlgorithm {
 
+	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
+	
+	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = null;
+	
+	/** The max it. */
 	int maxIt;
 
+	/**
+	 * Instantiates a new hill climbing.
+	 *
+	 * @param species the species
+	 */
 	public HillClimbing(final IDescription species) {
 		super(species);
 		initParams();
 		
 	}
 
+	/**
+	 * Keep sol.
+	 *
+	 * @param neighborSol the neighbor sol
+	 * @param neighborFitness the neighbor fitness
+	 * @return true, if successful
+	 */
 	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness ) {
 		if (isMaximize() && neighborFitness.doubleValue() > getBestFitness()
 				|| !isMaximize() && neighborFitness.doubleValue() < getBestFitness()) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaMapType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaMapType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -24,6 +24,9 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class GamaMapType.
+ */
 @type (
 		name = IKeyword.MAP,
 		id = IType.MAP,
@@ -40,6 +43,16 @@ public class GamaMapType extends GamaContainerType<IMap> {
 		return staticCast(scope, obj, keyType, contentType, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param keyType the key type
+	 * @param contentsType the contents type
+	 * @param copy the copy
+	 * @return the i map
+	 */
 	public static IMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType,
 			final boolean copy) {
 		if (obj == null) { return GamaMapFactory.create(keyType, contentsType); }

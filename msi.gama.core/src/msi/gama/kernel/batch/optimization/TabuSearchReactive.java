@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.TabuSearchReactive.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * TabuSearchReactive.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization;
@@ -41,6 +41,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class TabuSearchReactive.
+ */
 @symbol (
 		name = IKeyword.REACTIVE_TABU,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -125,28 +128,60 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class TabuSearchReactive extends ALocalSearchAlgorithm {
 
+	/** The tabu list size init. */
 	int tabuListSizeInit = 5;
+	
+	/** The tabu list size max. */
 	int tabuListSizeMax = 2;
+	
+	/** The tabu list size min. */
 	int tabuListSizeMin = 10;
+	
+	/** The nb test without collision max. */
 	int nbTestWithoutCollisionMax = 20;
+	
+	/** The cycle size max. */
 	int cycleSizeMax = 20;
+	
+	/** The cycle size min. */
 	int cycleSizeMin = 2;
+	
+	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(100);
 
+	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
+	
+	/** The Constant LIST_SIZE_INIT. */
 	protected static final String LIST_SIZE_INIT = "tabu_list_size_init";
+	
+	/** The Constant LIST_SIZE_MAX. */
 	protected static final String LIST_SIZE_MAX = "tabu_list_size_max";
+	
+	/** The Constant LIST_SIZE_MIN. */
 	protected static final String LIST_SIZE_MIN = "tabu_list_size_min";
+	
+	/** The Constant NB_TESTS_MAX. */
 	protected static final String NB_TESTS_MAX = "nb_tests_wthout_col_max";
+	
+	/** The Constant CYCLE_SIZE_MAX. */
 	protected static final String CYCLE_SIZE_MAX = "cycle_size_max";
+	
+	/** The Constant CYCLE_SIZE_MIN. */
 	protected static final String CYCLE_SIZE_MIN = "cycle_size_min";
 
+	/**
+	 * Instantiates a new tabu search reactive.
+	 *
+	 * @param species the species
+	 */
 	public TabuSearchReactive(final IDescription species) {
 		super(species);
 		initParams();
 
 	}
 
+	/** The iter max. */
 	int iterMax = 100;
 
 	// @Override
@@ -187,6 +222,14 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 		}
 	}
 	
+	/**
+	 * Keep sol.
+	 *
+	 * @param neighborSol the neighbor sol
+	 * @param neighborFitness the neighbor fitness
+	 * @param bestFitnessAlgo the best fitness algo
+	 * @return true, if successful
+	 */
 	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
 		if (isMaximize() && neighborFitness > bestFitnessAlgo
 				|| !isMaximize() && neighborFitness < bestFitnessAlgo)  {

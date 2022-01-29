@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.WarnStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * WarnStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -43,8 +43,14 @@ concept = { IConcept.SYSTEM })
 		@usage(value = "Emmitting a warning", examples = { @example("warn 'This is a warning from ' + self;") }) })
 public class WarnStatement extends AbstractStatement {
 
+	/** The message. */
 	final IExpression message;
 
+	/**
+	 * Instantiates a new warn statement.
+	 *
+	 * @param desc the desc
+	 */
 	public WarnStatement(final IDescription desc) {
 		super(desc);
 		message = getFacet(IKeyword.MESSAGE);

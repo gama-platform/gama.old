@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.WriteStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * WriteStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -71,9 +71,17 @@ public class WriteStatement extends AbstractStatement {
 		return "";
 	}
 
+	/** The message. */
 	final IExpression message;
+	
+	/** The color. */
 	final IExpression color;
 
+	/**
+	 * Instantiates a new write statement.
+	 *
+	 * @param desc the desc
+	 */
 	public WriteStatement(final IDescription desc) {
 		super(desc);
 		message = getFacet(IKeyword.MESSAGE);
@@ -98,6 +106,13 @@ public class WriteStatement extends AbstractStatement {
 		return mes;
 	}
 
+	/**
+	 * Sample.
+	 *
+	 * @param scope the scope
+	 * @param expr the expr
+	 * @return the string
+	 */
 	@operator (
 			value = "sample",
 			doc = { @doc ("Returns a string containing the GAML code of the expression passed in parameter, followed by the result of its evaluation") },
@@ -107,6 +122,14 @@ public class WriteStatement extends AbstractStatement {
 		return sample(scope, expr == null ? "nil" : expr.serialize(false), expr);
 	}
 
+	/**
+	 * Sample.
+	 *
+	 * @param scope the scope
+	 * @param text the text
+	 * @param expr the expr
+	 * @return the string
+	 */
 	@operator (
 			value = "sample",
 			doc = @doc ("Returns a string containing the string passed in parameter, followed by the result of the evaluation of the expression"),

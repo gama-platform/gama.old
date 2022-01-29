@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.writer.AvailableGraphWriters.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * GraphExporters.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.graph.writer;
 
@@ -43,6 +43,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class GraphExporters {
 
+	/** The Constant name2writer. */
 	private static final Map<String, Class<? extends GraphExporter>> name2writer =
 			new HashMap<String, Class<? extends GraphExporter>>() {
 
@@ -56,12 +57,24 @@ public class GraphExporters {
 				}
 			};
 
+	/**
+	 * Gets the available writers.
+	 *
+	 * @return the available writers
+	 */
 	public static Set<String> getAvailableWriters() {
 		return name2writer.keySet();
 	}
 
+	/** The name 2 singleton. */
 	private static Map<String, GraphExporter> name2singleton = new HashMap<>();
 
+	/**
+	 * Gets the graph writer.
+	 *
+	 * @param name the name
+	 * @return the graph writer
+	 */
 	public static GraphExporter getGraphWriter(final String name) {
 		GraphExporter res = name2singleton.get(name);
 		

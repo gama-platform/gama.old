@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.GraphFromAgentContainerSynchronizer.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GraphFromAgentContainerSynchronizer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -29,8 +29,13 @@ import msi.gama.util.IContainer;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener {
 
+	/** The pop vertices. */
 	private final IPopulation popVertices;
+	
+	/** The pop edges. */
 	private final IPopulation popEdges;
+	
+	/** The graph. */
 	private final IGraph graph;
 
 	/**
@@ -38,12 +43,22 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 	 * populations
 	 */
 	private Object currentEventVertex = null;
+	
+	/** The current event edge. */
 	private Object currentEventEdge = null;
 
 	// private boolean ignoreNextEvent = false;
 
 	// private final List<Map> initialValues = Collections.EMPTY_LIST;
 
+	/**
+	 * Instantiates a new graph from agent container synchronizer.
+	 *
+	 * @param scope the scope
+	 * @param setVertices the set vertices
+	 * @param setEdges the set edges
+	 * @param graph the graph
+	 */
 	public GraphFromAgentContainerSynchronizer(final IScope scope, final IContainer setVertices,
 			final IContainer setEdges, final IGraph graph) {
 		this.popVertices = setVertices == null ? null : ((IAgent) setVertices.firstValue(scope)).getPopulation();
@@ -52,10 +67,20 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 
 	}
 
+	/**
+	 * Gets the vertices population.
+	 *
+	 * @return the vertices population
+	 */
 	IPopulation getVerticesPopulation() {
 		return popVertices;
 	}
 
+	/**
+	 * Gets the edges population.
+	 *
+	 * @return the edges population
+	 */
 	IPopulation getEdgesPopulation() {
 		return popEdges;
 	}

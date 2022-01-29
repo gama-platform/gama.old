@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFolderFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaFolderFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -26,8 +26,18 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaFolderFile.
+ */
 public class GamaFolderFile extends GamaFile<IList<String>, String> {
 
+	/**
+	 * Instantiates a new gama folder file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaFolderFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 		// AD 27/04/13 Let the flags of the file remain the same. Can be turned
@@ -36,6 +46,14 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 		// setWritable(true);
 	}
 
+	/**
+	 * Instantiates a new gama folder file.
+	 *
+	 * @param scope the scope
+	 * @param pn the pn
+	 * @param forReading the for reading
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaFolderFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		super(scope, pn, forReading);
 	}

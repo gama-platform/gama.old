@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.PrimitiveDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * PrimitiveDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -21,13 +21,30 @@ import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
+/**
+ * The Class PrimitiveDescription.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class PrimitiveDescription extends ActionDescription {
 
+	/** The helper. */
 	private IGamaHelper helper;
+	
+	/** The method. */
 	private AccessibleObject method;
+	
+	/** The plugin. */
 	private String plugin;
 
+	/**
+	 * Instantiates a new primitive description.
+	 *
+	 * @param superDesc the super desc
+	 * @param source the source
+	 * @param children the children
+	 * @param facets the facets
+	 * @param plugin the plugin
+	 */
 	public PrimitiveDescription(final IDescription superDesc, final EObject source,
 			final Iterable<IDescription> children, final Facets facets, final String plugin) {
 		super(IKeyword.PRIMITIVE, superDesc, children, source, facets);
@@ -76,6 +93,11 @@ public class PrimitiveDescription extends ActionDescription {
 		return documentation + super.getArgDocumentation();
 	}
 
+	/**
+	 * Gets the deprecated.
+	 *
+	 * @return the deprecated
+	 */
 	public String getDeprecated() {
 		final doc d = getDocAnnotation();
 		if (d == null) { return null; }
@@ -84,6 +106,11 @@ public class PrimitiveDescription extends ActionDescription {
 		return deprecated;
 	}
 
+	/**
+	 * Gets the doc annotation.
+	 *
+	 * @return the doc annotation
+	 */
 	public doc getDocAnnotation() {
 		doc d = null;
 		if (method != null && method.isAnnotationPresent(doc.class)) {
@@ -112,6 +139,11 @@ public class PrimitiveDescription extends ActionDescription {
 	//
 	// }
 
+	/**
+	 * Gets the helper.
+	 *
+	 * @return the helper
+	 */
 	public IGamaHelper getHelper() {
 		return helper;
 	}
@@ -121,6 +153,12 @@ public class PrimitiveDescription extends ActionDescription {
 		return this;
 	}
 
+	/**
+	 * Sets the helper.
+	 *
+	 * @param helper the helper
+	 * @param method the method
+	 */
 	public void setHelper(final IGamaHelper helper, final AccessibleObject method) {
 		this.helper = helper;
 		this.method = method;

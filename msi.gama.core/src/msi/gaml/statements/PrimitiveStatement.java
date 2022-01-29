@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.PrimitiveStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * PrimitiveStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -71,9 +71,17 @@ public class PrimitiveStatement extends ActionStatement {
 
 	// Declaring a null validator because primites dont need to be checked
 
+	/** The skill. */
 	private ISkill skill = null;
+	
+	/** The helper. */
 	private final IGamaHelper helper;
 
+	/**
+	 * Instantiates a new primitive statement.
+	 *
+	 * @param desc the desc
+	 */
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
 		helper = getDescription().getHelper();

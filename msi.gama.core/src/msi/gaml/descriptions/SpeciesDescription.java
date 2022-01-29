@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * SpeciesDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -50,27 +50,73 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
+/**
+ * The Class SpeciesDescription.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SpeciesDescription extends TypeDescription {
+	
+	/** The behaviors. */
 	// AD 08/16: Behaviors are now inherited dynamically
 	private IMap<String, StatementDescription> behaviors;
+	
+	/** The aspects. */
 	// AD 08/16: Aspects are now inherited dynamically
 	private IMap<String, StatementDescription> aspects;
+	
+	/** The micro species. */
 	private IMap<String, SpeciesDescription> microSpecies;
+	
+	/** The skills. */
 	protected LinkedHashSet<SkillDescription> skills;
+	
+	/** The control. */
 	protected SkillDescription control;
+	
+	/** The agent constructor. */
 	private IAgentConstructor agentConstructor;
+	
+	/** The species expr. */
 	private SpeciesConstantExpression speciesExpr;
+	
+	/** The java base. */
 	protected Class javaBase;
+	
+	/** The can use minimal agents. */
 	protected boolean canUseMinimalAgents = true;
+	
+	/** The control finalized. */
 	protected boolean controlFinalized;
 
+	/**
+	 * Instantiates a new species description.
+	 *
+	 * @param keyword the keyword
+	 * @param clazz the clazz
+	 * @param macroDesc the macro desc
+	 * @param parent the parent
+	 * @param cp the cp
+	 * @param source the source
+	 * @param facets the facets
+	 */
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets) {
 		this(keyword, clazz, macroDesc, parent, cp, source, facets, Collections.EMPTY_SET);
 	}
 
+	/**
+	 * Instantiates a new species description.
+	 *
+	 * @param keyword the keyword
+	 * @param clazz the clazz
+	 * @param macroDesc the macro desc
+	 * @param parent the parent
+	 * @param cp the cp
+	 * @param source the source
+	 * @param facets the facets
+	 * @param skills the skills
+	 */
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets, final Set<String> skills) {
@@ -93,6 +139,11 @@ public class SpeciesDescription extends TypeDescription {
 		setAgentConstructor(helper);
 	}
 
+	/**
+	 * Adds the skill.
+	 *
+	 * @param sk the sk
+	 */
 	protected void addSkill(final SkillDescription sk) {
 		if (sk == null) return;
 		if (skills == null) { skills = new LinkedHashSet(); }
@@ -119,6 +170,12 @@ public class SpeciesDescription extends TypeDescription {
 
 	}
 
+	/**
+	 * Sets the skills.
+	 *
+	 * @param userDefinedSkills the user defined skills
+	 * @param builtInSkills the built in skills
+	 */
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		/* We try to add the control architecture if any is defined */
 		final String controlName = getLitteral(CONTROL);
@@ -183,6 +240,11 @@ public class SpeciesDescription extends TypeDescription {
 		return false;
 	}
 
+	/**
+	 * Gets the control name.
+	 *
+	 * @return the control name
+	 */
 	public String getControlName() {
 		String controlName = getLitteral(CONTROL);
 		// if the "control" is not explicitly declared then inherit it from the
@@ -197,6 +259,11 @@ public class SpeciesDescription extends TypeDescription {
 		return controlName;
 	}
 
+	/**
+	 * Gets the parent name.
+	 *
+	 * @return the parent name
+	 */
 	public String getParentName() { return getLitteral(PARENT); }
 
 	@Override
@@ -211,6 +278,9 @@ public class SpeciesDescription extends TypeDescription {
 		return result;
 	}
 
+	/**
+	 * Copy java additions.
+	 */
 	public void copyJavaAdditions() {
 		final Class clazz = getJavaBase();
 		if (clazz == null) {
@@ -273,6 +343,11 @@ public class SpeciesDescription extends TypeDescription {
 		return desc;
 	}
 
+	/**
+	 * Adds the micro species.
+	 *
+	 * @param sd the sd
+	 */
 	protected void addMicroSpecies(final SpeciesDescription sd) {
 		if (!isModel() && sd.isGrid()) {
 			sd.error("For the moment, grids cannot be defined as micro-species anywhere else than in the model");
@@ -281,17 +356,30 @@ public class SpeciesDescription extends TypeDescription {
 		invalidateMinimalAgents();
 	}
 
+	/**
+	 * Invalidate minimal agents.
+	 */
 	protected void invalidateMinimalAgents() {
 		canUseMinimalAgents = false;
 		if (parent != null && parent != this && !parent.isBuiltIn()) { getParent().invalidateMinimalAgents(); }
 	}
 
+	/**
+	 * Use minimal agents.
+	 *
+	 * @return true, if successful
+	 */
 	protected boolean useMinimalAgents() {
 		if (!canUseMinimalAgents || parent != null && parent != this && !getParent().useMinimalAgents()) return false;
 		if (!hasFacet("use_regular_agents")) return GamaPreferences.External.AGENT_OPTIMIZATION.getValue();
 		return FALSE.equals(getLitteral("use_regular_agents"));
 	}
 
+	/**
+	 * Adds the behavior.
+	 *
+	 * @param r the r
+	 */
 	protected void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
 		if (behaviors == null) { behaviors = GamaMapFactory.create(); }
@@ -300,17 +388,34 @@ public class SpeciesDescription extends TypeDescription {
 		behaviors.put(behaviorName, r);
 	}
 
+	/**
+	 * Checks for behavior.
+	 *
+	 * @param a the a
+	 * @return true, if successful
+	 */
 	public boolean hasBehavior(final String a) {
 		return behaviors != null && behaviors.containsKey(a)
 				|| parent != null && parent != this && getParent().hasBehavior(a);
 	}
 
+	/**
+	 * Gets the behavior.
+	 *
+	 * @param aName the a name
+	 * @return the behavior
+	 */
 	public StatementDescription getBehavior(final String aName) {
 		StatementDescription ownBehavior = behaviors == null ? null : behaviors.get(aName);
 		if (ownBehavior == null && parent != null && parent != this) { ownBehavior = getParent().getBehavior(aName); }
 		return ownBehavior;
 	}
 
+	/**
+	 * Adds the aspect.
+	 *
+	 * @param ce the ce
+	 */
 	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
 		if (aspectName == null) {
@@ -322,12 +427,23 @@ public class SpeciesDescription extends TypeDescription {
 		aspects.put(aspectName, ce);
 	}
 
+	/**
+	 * Gets the aspect.
+	 *
+	 * @param aName the a name
+	 * @return the aspect
+	 */
 	public StatementDescription getAspect(final String aName) {
 		StatementDescription ownAspect = aspects == null ? null : aspects.get(aName);
 		if (ownAspect == null && parent != null && parent != this) { ownAspect = getParent().getAspect(aName); }
 		return ownAspect;
 	}
 
+	/**
+	 * Gets the behavior names.
+	 *
+	 * @return the behavior names
+	 */
 	public Collection<String> getBehaviorNames() {
 		final Collection<String> ownNames =
 				behaviors == null ? new LinkedHashSet() : new LinkedHashSet(behaviors.keySet());
@@ -335,6 +451,11 @@ public class SpeciesDescription extends TypeDescription {
 		return ownNames;
 	}
 
+	/**
+	 * Gets the aspect names.
+	 *
+	 * @return the aspect names
+	 */
 	public Collection<String> getAspectNames() {
 		final Collection<String> ownNames = aspects == null ? new LinkedHashSet() : new LinkedHashSet(aspects.keySet());
 		if (parent != null && parent != this) { ownNames.addAll(getParent().getAspectNames()); }
@@ -342,12 +463,28 @@ public class SpeciesDescription extends TypeDescription {
 
 	}
 
+	/**
+	 * Gets the aspects.
+	 *
+	 * @return the aspects
+	 */
 	public Iterable<StatementDescription> getAspects() {
 		return Iterables.transform(getAspectNames(), this::getAspect);
 	}
 
+	/**
+	 * Gets the control.
+	 *
+	 * @return the control
+	 */
 	public SkillDescription getControl() { return control; }
 
+	/**
+	 * Checks for aspect.
+	 *
+	 * @param a the a
+	 * @return true, if successful
+	 */
 	public boolean hasAspect(final String a) {
 		return aspects != null && aspects.containsKey(a)
 				|| parent != null && parent != this && getParent().hasAspect(a);
@@ -356,6 +493,12 @@ public class SpeciesDescription extends TypeDescription {
 	@Override
 	public SpeciesDescription getSpeciesContext() { return this; }
 
+	/**
+	 * Gets the micro species.
+	 *
+	 * @param name the name
+	 * @return the micro species
+	 */
 	public SpeciesDescription getMicroSpecies(final String name) {
 		if (hasMicroSpecies()) {
 			final SpeciesDescription retVal = microSpecies.get(name);
@@ -371,6 +514,11 @@ public class SpeciesDescription extends TypeDescription {
 		return "Description of " + getName();
 	}
 
+	/**
+	 * Gets the agent constructor.
+	 *
+	 * @return the agent constructor
+	 */
 	public IAgentConstructor getAgentConstructor() {
 		if (agentConstructor == null && parent != null && parent != this) {
 			if (getParent().getJavaBase() == getJavaBase()) {
@@ -382,10 +530,20 @@ public class SpeciesDescription extends TypeDescription {
 		return agentConstructor;
 	}
 
+	/**
+	 * Sets the agent constructor.
+	 *
+	 * @param agentConstructor the new agent constructor
+	 */
 	protected void setAgentConstructor(final IAgentConstructor agentConstructor) {
 		this.agentConstructor = agentConstructor;
 	}
 
+	/**
+	 * Gets the macro species.
+	 *
+	 * @return the macro species
+	 */
 	public SpeciesDescription getMacroSpecies() {
 		final IDescription d = getEnclosingDescription();
 		if (d instanceof SpeciesDescription) return (SpeciesDescription) d;
@@ -424,6 +582,11 @@ public class SpeciesDescription extends TypeDescription {
 
 	}
 
+	/**
+	 * Inherit micro species.
+	 *
+	 * @param parent the parent
+	 */
 	// FIXME HACK !
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
 		// Takes care of invalid species (see Issue 711)
@@ -437,6 +600,11 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
+	/**
+	 * Checks if is grid.
+	 *
+	 * @return true, if is grid
+	 */
 	public boolean isGrid() { return GRID.equals(getKeyword()); }
 
 	@Override
@@ -450,6 +618,11 @@ public class SpeciesDescription extends TypeDescription {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the documentation without meta.
+	 *
+	 * @return the documentation without meta
+	 */
 	public String getDocumentationWithoutMeta() {
 		final StringBuilder sb = new StringBuilder(200);
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
@@ -465,6 +638,11 @@ public class SpeciesDescription extends TypeDescription {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the skills names.
+	 *
+	 * @return the skills names
+	 */
 	public Iterable<String> getSkillsNames() {
 		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, TO_NAME),
 				parent != null && parent != this ? getParent().getSkillsNames() : Collections.EMPTY_LIST);
@@ -482,6 +660,12 @@ public class SpeciesDescription extends TypeDescription {
 		return speciesExpr;
 	}
 
+	/**
+	 * Visit micro species.
+	 *
+	 * @param visitor the visitor
+	 * @return true, if successful
+	 */
 	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 		if (!hasMicroSpecies()) return true;
 		return getMicroSpecies().forEachValue(visitor);
@@ -544,6 +728,11 @@ public class SpeciesDescription extends TypeDescription {
 		return true;
 	}
 
+	/**
+	 * Parent is among the micro species.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean parentIsAmongTheMicroSpecies() {
 		final boolean[] result = new boolean[1];
 		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
@@ -561,6 +750,11 @@ public class SpeciesDescription extends TypeDescription {
 		return result[0];
 	}
 
+	/**
+	 * Hierarchy contains self.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean hierarchyContainsSelf() {
 		SpeciesDescription currentSpeciesDesc = this;
 		while (currentSpeciesDesc != null) {
@@ -572,6 +766,11 @@ public class SpeciesDescription extends TypeDescription {
 		return false;
 	}
 
+	/**
+	 * Parent is visible.
+	 *
+	 * @return true, if successful
+	 */
 	protected boolean parentIsVisible() {
 		if (getParent().isExperiment()) return false;
 		SpeciesDescription host = getMacroSpecies();
@@ -676,19 +875,44 @@ public class SpeciesDescription extends TypeDescription {
 		return super.validateChildren();
 	}
 
+	/**
+	 * Checks if is experiment.
+	 *
+	 * @return true, if is experiment
+	 */
 	public boolean isExperiment() { return false; }
 
+	/**
+	 * Checks if is model.
+	 *
+	 * @return true, if is model
+	 */
 	public boolean isModel() { return false; }
 
+	/**
+	 * Checks for micro species.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasMicroSpecies() {
 		return microSpecies != null;
 	}
 
+	/**
+	 * Gets the micro species.
+	 *
+	 * @return the micro species
+	 */
 	public IMap<String, SpeciesDescription> getMicroSpecies() {
 		if (microSpecies == null) { microSpecies = GamaMapFactory.create(); }
 		return microSpecies;
 	}
 
+	/**
+	 * Checks if is mirror.
+	 *
+	 * @return true, if is mirror
+	 */
 	public boolean isMirror() { return hasFacet(MIRRORS); }
 
 	/**
@@ -722,6 +946,11 @@ public class SpeciesDescription extends TypeDescription {
 		return javaBase;
 	}
 
+	/**
+	 * Sets the java base.
+	 *
+	 * @param javaBase the new java base
+	 */
 	protected void setJavaBase(final Class javaBase) { this.javaBase = javaBase; }
 
 	/**
@@ -811,10 +1040,20 @@ public class SpeciesDescription extends TypeDescription {
 	// }
 	// }
 
+	/**
+	 * Belongs to A micro model.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean belongsToAMicroModel() {
 		return getModelDescription().isMicroModel();
 	}
 
+	/**
+	 * Gets the skills.
+	 *
+	 * @return the skills
+	 */
 	public Iterable<SkillDescription> getSkills() {
 		final List<SkillDescription> base =
 				control == null ? Collections.EMPTY_LIST : Collections.singletonList(control);

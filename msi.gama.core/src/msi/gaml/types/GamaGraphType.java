@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaGraphType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaGraphType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -29,6 +29,9 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class GamaGraphType.
+ */
 @type (
 		name = IKeyword.GRAPH,
 		id = IType.GRAPH,
@@ -50,6 +53,15 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return 2;
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param copy the copy
+	 * @return the i graph
+	 */
 	public static IGraph staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		// param = true : spatial.
 
@@ -71,6 +83,14 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return null;
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param spatial the spatial
+	 * @return the i graph
+	 */
 	public static IGraph from(final IScope scope, final IMap<?, ?> obj, final boolean spatial) {
 		final IGraph result = spatial
 				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, false,null, null, scope,
@@ -86,6 +106,14 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return result;
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param spatial the spatial
+	 * @return the i graph
+	 */
 	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
 		final IType nodeType = obj.getGamlType().getContentType();
 		return spatial ? new GamaSpatialGraph(obj, false, false,false, null, null, scope, nodeType, Types.NO_TYPE)
@@ -100,22 +128,53 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	// directed,
 	// final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param edgesOrVertices the edges or vertices
+	 * @param byEdge the by edge
+	 * @param directed the directed
+	 * @param spatial the spatial
+	 * @param nodeType the node type
+	 * @param edgeType the edge type
+	 * @return the i graph
+	 */
 	public static IGraph from(final IScope scope, final IList edgesOrVertices, final boolean byEdge,
 			final boolean directed, final boolean spatial, final IType nodeType, final IType edgeType) {
 		return spatial ? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, false,null, null, scope, nodeType, edgeType)
 				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, false,null, null, nodeType, edgeType);
 	}
 
+	/**
+	 * Use chache for shortest path.
+	 *
+	 * @param source the source
+	 * @param useCache the use cache
+	 * @return the i graph
+	 */
 	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {
 		source.setSaveComputedShortestPaths(useCache);
 		return source; // TODO Clone ?
 	}
 
+	/**
+	 * As directed graph.
+	 *
+	 * @param source the source
+	 * @return the i graph
+	 */
 	public static IGraph asDirectedGraph(final IGraph source) {
 		source.setDirected(true);
 		return source; // TODO Clone ?
 	}
 
+	/**
+	 * As undirected graph.
+	 *
+	 * @param source the source
+	 * @return the i graph
+	 */
 	public static IGraph asUndirectedGraph(final IGraph source) {
 		source.setDirected(false);
 		return source; // TODO Clone ?

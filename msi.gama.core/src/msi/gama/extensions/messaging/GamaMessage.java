@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.extensions.messaging.GamaMessage.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaMessage.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -41,26 +41,50 @@ import msi.gaml.types.Types;
 				@doc("Returns the emission time stamp of this message (I.e. at what cycle it has been emitted)") }) })
 public class GamaMessage implements IValue {
 
+	/** The Constant CONTENTS. */
 	public final static String CONTENTS = "contents";
+	
+	/** The Constant UNREAD. */
 	public final static String UNREAD = "unread";
+	
+	/** The Constant EMISSION_TIMESTAMP. */
 	public final static String EMISSION_TIMESTAMP = "emission_timestamp";
+	
+	/** The Constant RECEPTION_TIMESTAMP. */
 	public final static String RECEPTION_TIMESTAMP = "recention_timestamp";
+	
+	/** The Constant SENDER. */
 	public final static String SENDER = "sender";
+	
+	/** The Constant RECEIVERS. */
 	public final static String RECEIVERS = "receivers";
 
 	/** The unread. */
 	private boolean unread;
 
+	/** The sender. */
 	private Object sender;
 
+	/** The receivers. */
 	private Object receivers;
 
+	/** The contents. */
 	protected Object contents;
 
+	/** The emission time stamp. */
 	protected int emissionTimeStamp;
 
 	// private int receptionTimeStamp;
 
+	/**
+	 * Instantiates a new gama message.
+	 *
+	 * @param scope the scope
+	 * @param sender the sender
+	 * @param receivers the receivers
+	 * @param content the content
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaMessage(final IScope scope, final Object sender, final Object receivers, final Object content)
 			throws GamaRuntimeException {
 		emissionTimeStamp = scope.getClock().getCycle();
@@ -70,6 +94,11 @@ public class GamaMessage implements IValue {
 		setContents(content);
 	}
 
+	/**
+	 * Gets the sender.
+	 *
+	 * @return the sender
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -91,6 +120,11 @@ public class GamaMessage implements IValue {
 		this.sender = sender;
 	}
 
+	/**
+	 * Gets the receivers.
+	 *
+	 * @return the receivers
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -155,6 +189,11 @@ public class GamaMessage implements IValue {
 		this.unread = unread;
 	}
 
+	/**
+	 * Gets the emission timestamp.
+	 *
+	 * @return the emission timestamp
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
@@ -165,6 +204,11 @@ public class GamaMessage implements IValue {
 		return emissionTimeStamp;
 	}
 
+	/**
+	 * Gets the reception timestamp.
+	 *
+	 * @return the reception timestamp
+	 */
 	@getter(GamaMessage.RECEPTION_TIMESTAMP)
 	public int getReceptionTimestamp() {
 		return emissionTimeStamp;
@@ -195,6 +239,11 @@ public class GamaMessage implements IValue {
 		return Types.get(IType.MESSAGE);
 	}
 
+	/**
+	 * Checks for been received.
+	 *
+	 * @param scope the scope
+	 */
 	public void hasBeenReceived(final IScope scope) {
 		// receptionTimeStamp = scope.getClock().getCycle();
 

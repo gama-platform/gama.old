@@ -3,7 +3,7 @@
  * FileOutput.java, in msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -140,6 +140,8 @@ public class FileOutput extends AbstractOutput {
 	
 	/** The last value. */
 	Object lastValue = null;
+	
+	/** The last values. */
 	List<Object> lastValues = null;
 	
 	/** The logged batch param. */
@@ -406,6 +408,11 @@ public class FileOutput extends AbstractOutput {
 		writeToFile(getScope().getClock().getCycle());
 	}
 	
+	/**
+	 * Do write report and close.
+	 *
+	 * @param report the report
+	 */
 	public void doWriteReportAndClose(final String report) {
 		switch (type) {
 			case XML:

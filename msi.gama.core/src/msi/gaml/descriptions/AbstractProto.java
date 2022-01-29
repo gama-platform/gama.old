@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.AbstractProto.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * AbstractProto.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -27,11 +27,25 @@ import msi.gama.precompiler.GamlAnnotations.usage;
  */
 public abstract class AbstractProto implements IGamlDescription {
 
+	/** The name. */
 	protected String name;
+	
+	/** The plugin. */
 	protected String plugin;
+	
+	/** The support. */
 	protected AnnotatedElement support;
+	
+	/** The deprecated. */
 	protected String deprecated;
 
+	/**
+	 * Instantiates a new abstract proto.
+	 *
+	 * @param name the name
+	 * @param support the support
+	 * @param plugin the plugin
+	 */
 	protected AbstractProto(final String name, final AnnotatedElement support, final String plugin) {
 		this.name = name;
 		this.plugin = plugin;
@@ -59,6 +73,11 @@ public abstract class AbstractProto implements IGamlDescription {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the deprecated.
+	 *
+	 * @return the deprecated
+	 */
 	public String getDeprecated() {
 		if (deprecated != null) { return deprecated.isEmpty() ? null : deprecated; }
 		final doc d = getDocAnnotation();
@@ -68,6 +87,11 @@ public abstract class AbstractProto implements IGamlDescription {
 		return deprecated;
 	}
 
+	/**
+	 * Gets the main doc.
+	 *
+	 * @return the main doc
+	 */
 	public String getMainDoc() {
 		final doc d = getDocAnnotation();
 		if (d == null) { return null; }
@@ -99,6 +123,11 @@ public abstract class AbstractProto implements IGamlDescription {
 	@Override
 	public void setName(final String newName) {}
 
+	/**
+	 * Gets the usages.
+	 *
+	 * @return the usages
+	 */
 	public Iterable<usage> getUsages() {
 		final doc d = getDocAnnotation();
 		if (d != null) {
@@ -118,14 +147,29 @@ public abstract class AbstractProto implements IGamlDescription {
 	// meta.put(GamlProperties.PLUGINS, plugin);
 	// }
 
+	/**
+	 * Gets the support.
+	 *
+	 * @return the support
+	 */
 	public AnnotatedElement getSupport() {
 		return support;
 	}
 
+	/**
+	 * Sets the support.
+	 *
+	 * @param support the new support
+	 */
 	public void setSupport(final AnnotatedElement support) {
 		this.support = support;
 	}
 
+	/**
+	 * Gets the doc annotation.
+	 *
+	 * @return the doc annotation
+	 */
 	public doc getDocAnnotation() {
 		doc d = null;
 		if (support != null && support.isAnnotationPresent(doc.class)) {

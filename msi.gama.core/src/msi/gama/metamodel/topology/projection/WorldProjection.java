@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.WorldProjection.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * WorldProjection.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -21,12 +21,25 @@ import org.locationtech.jts.geom.Geometry;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class WorldProjection.
+ */
 public class WorldProjection extends Projection {
 
+	/** The absolute to gis translation. */
 	public CoordinateFilter gisToAbsoluteTranslation, absoluteToGisTranslation;
 	
+	/** The meter to other unit. */
 	public CoordinateFilter otherUnitToMeter, meterToOtherUnit;
 
+	/**
+	 * Instantiates a new world projection.
+	 *
+	 * @param scope the scope
+	 * @param crs the crs
+	 * @param env the env
+	 * @param fact the fact
+	 */
 	public WorldProjection(final IScope scope, final CoordinateReferenceSystem crs, final Envelope3D env,
 			final ProjectionFactory fact) {
 		super(scope, null, crs, env, fact);
@@ -71,6 +84,11 @@ public class WorldProjection extends Projection {
 		}
 	}
 
+	/**
+	 * Update translations.
+	 *
+	 * @param env the env
+	 */
 	public void updateTranslations(final Envelope3D env) {
 		if (env != null) {
 			projectedEnv = env;
@@ -78,11 +96,23 @@ public class WorldProjection extends Projection {
 		createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 	}
 	
+	/**
+	 * Update unit.
+	 *
+	 * @param unitConverter the unit converter
+	 */
 	public void updateUnit(final UnitConverter unitConverter) {
 		if (unitConverter != null)
 			createUnitTransformations(unitConverter);
 	}
 
+	/**
+	 * Creates the translations.
+	 *
+	 * @param minX the min X
+	 * @param height the height
+	 * @param minY the min Y
+	 */
 	public void createTranslations(final double minX, final double height, final double minY) {
 		gisToAbsoluteTranslation = coord -> {
 			coord.x -= minX;
@@ -93,6 +123,12 @@ public class WorldProjection extends Projection {
 			coord.y = -coord.y + height + minY;
 		};
 	}
+	
+	/**
+	 * Creates the unit transformations.
+	 *
+	 * @param unitConverter the unit converter
+	 */
 	public void createUnitTransformations(final UnitConverter unitConverter) {
 		otherUnitToMeter = coord -> {
 			coord.x = unitConverter.convert(coord.x);

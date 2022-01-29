@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.GamaQuadTree.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaQuadTree.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.metamodel.topology;
@@ -47,20 +47,47 @@ import msi.gaml.operators.Maths;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
 
+	/** The Constant NW. */
 	public static final int NW = 0;
+	
+	/** The Constant NE. */
 	public static final int NE = 1;
+	
+	/** The Constant SW. */
 	public static final int SW = 2;
+	
+	/** The Constant SE. */
 	public static final int SE = 3;
 
+	/** The root. */
 	final QuadNode root;
+	
+	/** The Constant maxCapacity. */
 	final static int maxCapacity = 100;
+	
+	/** The min size. */
 	double minSize = 10;
+	
+	/** The parallel. */
 	final boolean parallel;
 
+	/**
+	 * Creates the.
+	 *
+	 * @param envelope the envelope
+	 * @param parallel the parallel
+	 * @return the gama quad tree
+	 */
 	public static GamaQuadTree create(final Envelope envelope, final boolean parallel) {
 		return new GamaQuadTree(envelope, parallel);
 	}
 
+	/**
+	 * Instantiates a new gama quad tree.
+	 *
+	 * @param bounds the bounds
+	 * @param sync the sync
+	 */
 	private GamaQuadTree(final Envelope bounds, final boolean sync) {
 		// AD To address Issue 804, explictely converts the bounds to an
 		// Envelope 2D, so that all computations are made
@@ -85,6 +112,12 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 	}
 
+	/**
+	 * Checks if is point.
+	 *
+	 * @param env the env
+	 * @return true, if is point
+	 */
 	private boolean isPoint(final Envelope env) {
 		// TODO Beware that null enveloppes also return 0 !
 		return env.getArea() == 0.0;
@@ -102,6 +135,15 @@ public class GamaQuadTree implements ISpatialIndex {
 		current.dispose();
 	}
 
+	/**
+	 * Find intersects.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param r the r
+	 * @param filter the filter
+	 * @return the collection
+	 */
 	protected Collection<IAgent> findIntersects(final IScope scope, final IShape source, final Envelope r,
 			final IAgentFilter filter) {
 		// Adresses Issue 722 by explicitly shuffling the results with GAMA
@@ -115,6 +157,15 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 	}
 
+	/**
+	 * Find intersects new.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param r the r
+	 * @param filter the filter
+	 * @return the collection
+	 */
 	protected Collection<IAgent> findIntersectsNew(final IScope scope, final IShape source, final Envelope r,
 			final IAgentFilter filter) {
 		// Adresses Issue 722 by explicitly shuffling the results with GAMA
@@ -148,6 +199,15 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 	}
 
+	/**
+	 * Visit all at distance.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param dist the dist
+	 * @param f the f
+	 * @param action the action
+	 */
 	public void visitAllAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f,
 			final Consumer<IAgent> action) {
 		final Envelope3D env = Envelope3D.of(source.getEnvelope());
@@ -204,6 +264,15 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 	}
 
+	/**
+	 * First at distance new.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param dist the dist
+	 * @param f the f
+	 * @return the i agent
+	 */
 	public IAgent firstAtDistanceNew(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final Envelope3D env = Envelope3D.of(source.getEnvelope());
 		env.expandBy(dist * Maths.SQRT2);
@@ -232,16 +301,32 @@ public class GamaQuadTree implements ISpatialIndex {
 		return findIntersects(scope, source, envelope, f);
 	}
 
+	/**
+	 * The Class QuadNode.
+	 */
 	private class QuadNode {
 
+		/** The bounds. */
 		final Envelope bounds;
+		
+		/** The halfy. */
 		private final double halfx, halfy;
+		
+		/** The nodes. */
 		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
+		/** The objects. */
 		// (by insertion order) **
 		private IMap<IAgent, IIntersectable> objects;
+		
+		/** The can split. */
 		private final boolean canSplit;
 
+		/**
+		 * Instantiates a new quad node.
+		 *
+		 * @param bounds the bounds
+		 */
 		public QuadNode(final Envelope bounds) {
 			this.bounds = bounds;
 			final double hw = bounds.getWidth();
@@ -251,11 +336,19 @@ public class GamaQuadTree implements ISpatialIndex {
 			canSplit = hw > minSize && hh > minSize;
 		}
 
+		/**
+		 * Gets the or create objects.
+		 *
+		 * @return the or create objects
+		 */
 		private IMap<IAgent, IIntersectable> getOrCreateObjects() {
 			if (objects == null) { objects = parallel ? GamaMapFactory.concurrentMap() : GamaMapFactory.create(); }
 			return objects;
 		}
 
+		/**
+		 * Dispose.
+		 */
 		public void dispose() {
 			if (objects != null) {
 				objects.forEach((a, e) -> {
@@ -272,6 +365,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Removes the.
+		 *
+		 * @param p the p
+		 * @param a the a
+		 */
 		public void remove(final Coordinate p, final IShape a) {
 			if (nodes == null) {
 				if (objects != null) {
@@ -283,6 +382,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Removes the.
+		 *
+		 * @param env the env
+		 * @param a the a
+		 */
 		public void remove(final Envelope env, final IShape a) {
 			if (nodes == null) {
 				if (objects != null) { objects.remove(a); }
@@ -293,10 +398,21 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Should split.
+		 *
+		 * @return true, if successful
+		 */
 		public boolean shouldSplit() {
 			return canSplit && nodes == null && objects != null && objects.size() >= maxCapacity;
 		}
 
+		/**
+		 * Adds the.
+		 *
+		 * @param p the p
+		 * @param a the a
+		 */
 		public void add(final GamaPoint p, final IAgent a) {
 			if (shouldSplit()) { split(); }
 			if (nodes == null) {
@@ -306,6 +422,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Adds the.
+		 *
+		 * @param env the env
+		 * @param a the a
+		 */
 		public void add(final Envelope3D env, final IAgent a) {
 			if (shouldSplit()) { split(); }
 			if (nodes == null) {
@@ -317,12 +439,21 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Quadrant.
+		 *
+		 * @param p the p
+		 * @return the int
+		 */
 		int quadrant(final Coordinate p) {
 			final boolean north = p.y >= bounds.getMinY() && p.y < halfy;
 			final boolean west = p.x >= bounds.getMinX() && p.x < halfx;
 			return north ? west ? NW : NE : west ? SW : SE;
 		}
 
+		/**
+		 * Split.
+		 */
 		public void split() {
 			final double maxx = bounds.getMaxX();
 			final double minx = bounds.getMinX();
@@ -349,6 +480,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Visit intersects.
+		 *
+		 * @param envelope the envelope
+		 * @param action the action
+		 */
 		public void visitIntersects(final Envelope envelope, final Consumer<IAgent> action) {
 			if (!bounds.intersects(envelope)) return;
 			if (nodes == null && objects != null) {
@@ -362,6 +499,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 		}
 
+		/**
+		 * Find intersects.
+		 *
+		 * @param r the r
+		 * @param result the result
+		 */
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (!bounds.intersects(r)) return;
 			if (nodes == null && objects != null) {

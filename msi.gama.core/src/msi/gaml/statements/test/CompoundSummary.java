@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.CompoundSummary.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * CompoundSummary.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -37,10 +37,20 @@ import one.util.streamex.StreamEx;
  */
 public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSummary<?>> extends AbstractSummary<S> {
 
+	/** The summaries. */
 	public final Map<String, T> summaries = GamaMapFactory.create();
+	
+	/** The aborted. */
 	public boolean aborted;
+	
+	/** The string summary. */
 	public String stringSummary;
 
+	/**
+	 * Instantiates a new compound summary.
+	 *
+	 * @param symbol the symbol
+	 */
 	@SuppressWarnings ("unchecked")
 	public CompoundSummary(final S symbol) {
 		super(symbol);
@@ -50,6 +60,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 
 	}
 
+	/**
+	 * Instantiates a new compound summary.
+	 *
+	 * @param summaries the summaries
+	 */
 	public CompoundSummary(final Collection<T> summaries) {
 		super(null);
 		summaries.forEach(a -> addSummary(a));
@@ -60,10 +75,18 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 	// summaries.forEach(a -> addSummary(a));
 	// }
 
+	/**
+	 * Instantiates a new compound summary.
+	 */
 	public CompoundSummary() {
 		this(Collections.EMPTY_LIST);
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @return true, if is empty
+	 */
 	public boolean isEmpty() {
 		return summaries.isEmpty();
 	}
@@ -88,6 +111,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		return summaries;
 	}
 
+	/**
+	 * Adds the summary.
+	 *
+	 * @param summary the summary
+	 */
 	public void addSummary(final T summary) {
 		final String originalKey = summary.getTitle();
 		String key = originalKey;
@@ -98,6 +126,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		summaries.put(key, summary);
 	}
 
+	/**
+	 * Adds the summaries.
+	 *
+	 * @param sum the sum
+	 */
 	public void addSummaries(final Collection<T> sum) {
 		for (final T s : sum) {
 			addSummary(s);
@@ -157,6 +190,13 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		return StreamEx.ofValues(summaries).mapToInt(s -> s.countTestsWith(state)).sum();
 	}
 
+	/**
+	 * Gets the sub summaries belonging to.
+	 *
+	 * @param fileURI the file URI
+	 * @param collector the collector
+	 * @return the sub summaries belonging to
+	 */
 	public void getSubSummariesBelongingTo(final URI fileURI, final List<AbstractSummary<?>> collector) {
 		getSummaries().values().forEach(s -> {
 			if (matches(s.getURI(), fileURI)) {
@@ -167,6 +207,13 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		});
 	}
 
+	/**
+	 * Matches.
+	 *
+	 * @param summary the summary
+	 * @param query the query
+	 * @return true, if successful
+	 */
 	private boolean matches(final URI summary, final URI query) {
 		if (summary == null) { return false; }
 		final String s = summary.toString();
@@ -175,6 +222,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 
 	}
 
+	/**
+	 * Gets the string summary.
+	 *
+	 * @return the string summary
+	 */
 	public String getStringSummary() {
 		if (stringSummary == null) {
 			stringSummary = createTestsSummary();
@@ -182,6 +234,11 @@ public class CompoundSummary<T extends AbstractSummary<?>, S extends WithTestSum
 		return stringSummary;
 	}
 
+	/**
+	 * Creates the tests summary.
+	 *
+	 * @return the string
+	 */
 	protected String createTestsSummary() {
 		final Map<TestState, Integer> map = new TreeMap<>();
 		map.put(TestState.ABORTED, 0);

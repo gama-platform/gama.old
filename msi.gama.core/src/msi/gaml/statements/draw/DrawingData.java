@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.draw.DrawingData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * DrawingData.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -44,23 +44,56 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrawingData extends AttributeHolder {
 
+	/** The Constant DEFAULT_BORDER_COLOR. */
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
+	/** The size. */
 	final Attribute<GamaPoint> size;
+	
+	/** The depth. */
 	final Attribute<Double> depth;
+	
+	/** The rotation. */
 	final Attribute<AxisAngle> rotation;
+	
+	/** The location. */
 	final Attribute<GamaPoint> location;
+	
+	/** The anchor. */
 	final Attribute<GamaPoint> anchor;
+	
+	/** The empty. */
 	final Attribute<Boolean> empty;
+	
+	/** The color. */
 	final Attribute<GamaColor> border, color;
+	
+	/** The font. */
 	final Attribute<GamaFont> font;
+	
+	/** The texture. */
 	final Attribute<IList> texture;
+	
+	/** The material. */
 	final Attribute<GamaMaterial> material;
+	
+	/** The perspective. */
 	final Attribute<Boolean> perspective;
+	
+	/** The line width. */
 	final Attribute<Double> lineWidth;
+	
+	/** The lighting. */
 	final Attribute<Boolean> lighting;
+	
+	/** The precision. */
 	final Attribute<Double> precision;
 
+	/**
+	 * Instantiates a new drawing data.
+	 *
+	 * @param symbol the symbol
+	 */
 	public DrawingData(final DrawStatement symbol) {
 		super(symbol);
 		final Function<IExpression, GamaPoint> constSizeCaster = (exp) -> {
@@ -158,10 +191,20 @@ public class DrawingData extends AttributeHolder {
 
 	}
 
+	/**
+	 * Gets the location.
+	 *
+	 * @return the location
+	 */
 	public GamaPoint getLocation() {
 		return location.get() == null ? null : location.get();
 	}
 
+	/**
+	 * Gets the anchor.
+	 *
+	 * @return the anchor
+	 */
 	public GamaPoint getAnchor() {
 		return anchor.get() == null ? null : anchor.get();
 	}

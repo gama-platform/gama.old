@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.MinimalAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * MinimalAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -32,6 +32,9 @@ import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 
+/**
+ * The Class MinimalAgent.
+ */
 @species (
 		name = IKeyword.AGENT,
 		doc = @doc ("The species parent of all agent species"))
@@ -46,8 +49,14 @@ public class MinimalAgent extends AbstractAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation<? extends IAgent> population;
+	
+	/** The name. */
 	protected String name;
+	
+	/** The geometry. */
 	protected final IShape geometry;
+	
+	/** The hash code. */
 	private final int hashCode;
 
 	/**
@@ -58,6 +67,13 @@ public class MinimalAgent extends AbstractAgent {
 		this(s, index, new GamaShape((Geometry) null));
 	}
 
+	/**
+	 * Instantiates a new minimal agent.
+	 *
+	 * @param population the population that this agent belongs to.
+	 * @param index the index
+	 * @param geometry the geometry
+	 */
 	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
 		super(index);
 		this.population = population;

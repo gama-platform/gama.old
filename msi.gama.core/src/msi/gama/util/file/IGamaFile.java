@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.IGamaFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * IGamaFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -76,38 +76,98 @@ import msi.gaml.types.IType;
 public interface IGamaFile<C extends IModifiableContainer, Contents>
 		extends IAddressableContainer, IModifiableContainer {
 
+	/**
+	 * Sets the writable.
+	 *
+	 * @param scope the scope
+	 * @param w the w
+	 */
 	void setWritable(IScope scope, final boolean w);
 
+	/**
+	 * Sets the contents.
+	 *
+	 * @param cont the new contents
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	void setContents(final C cont) throws GamaRuntimeException;
 
+	/**
+	 * Copy.
+	 *
+	 * @param scope the scope
+	 * @return the i gama file
+	 */
 	@Override
 	IGamaFile copy(IScope scope);
 
+	/**
+	 * Gets the buffer.
+	 *
+	 * @return the buffer
+	 */
 	C getBuffer();
 
+	/**
+	 * Exists.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@getter (
 			value = IKeyword.EXISTS,
 			initializer = true)
 	Boolean exists(IScope scope);
 
+	/**
+	 * Gets the extension.
+	 *
+	 * @param scope the scope
+	 * @return the extension
+	 */
 	@getter (
 			value = IKeyword.EXTENSION,
 			initializer = true)
 	String getExtension(IScope scope);
 
+	/**
+	 * Gets the name.
+	 *
+	 * @param scope the scope
+	 * @return the name
+	 */
 	@getter (
 			value = IKeyword.NAME,
 			initializer = true)
 	String getName(IScope scope);
 
+	/**
+	 * Gets the path.
+	 *
+	 * @param scope the scope
+	 * @return the path
+	 */
 	@getter (
 			value = IKeyword.PATH,
 			initializer = true)
 	String getPath(IScope scope);
 
+	/**
+	 * Gets the contents.
+	 *
+	 * @param scope the scope
+	 * @return the contents
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@getter (IKeyword.CONTENTS)
 	C getContents(IScope scope) throws GamaRuntimeException;
 
+	/**
+	 * Gets the attributes.
+	 *
+	 * @param scope the scope
+	 * @return the attributes
+	 */
 	@getter (IKeyword.ATTRIBUTES)
 	/**
 	 * Retrieves the list of "attributes" present in files that support this concept (and an empty list for the others).
@@ -119,27 +179,69 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	 */
 	IList<String> getAttributes(IScope scope);
 
+	/**
+	 * Checks if is folder.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@getter (
 			value = IKeyword.ISFOLDER,
 			initializer = true)
 	Boolean isFolder(IScope scope);
 
+	/**
+	 * Checks if is readable.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@getter (
 			value = IKeyword.READABLE,
 			initializer = true)
 	Boolean isReadable(IScope scope);
 
+	/**
+	 * Checks if is writable.
+	 *
+	 * @param scope the scope
+	 * @return the boolean
+	 */
 	@getter (
 			value = IKeyword.WRITABLE,
 			initializer = true)
 	Boolean isWritable(IScope scope);
 
+	/**
+	 * Compute envelope.
+	 *
+	 * @param scope the scope
+	 * @return the envelope 3 D
+	 */
 	Envelope3D computeEnvelope(final IScope scope);
 
+	/**
+	 * Save.
+	 *
+	 * @param scope the scope
+	 * @param parameters the parameters
+	 */
 	void save(IScope scope, Facets parameters);
 
+	/**
+	 * Gets the original path.
+	 *
+	 * @return the original path
+	 */
 	String getOriginalPath();
 
+	/**
+	 * Contains key.
+	 *
+	 * @param scope the scope
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	@Override
 	default boolean containsKey(final IScope scope, final Object o) {
 		final C contents = getContents(scope);

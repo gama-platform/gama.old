@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.GeneticAlgorithm.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GeneticAlgorithm.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization.genetic;
@@ -45,6 +45,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GeneticAlgorithm.
+ */
 @symbol (
 		name = IKeyword.GENETIC,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -125,28 +128,65 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
+	/** The population dim. */
 	int populationDim = 3;
+	
+	/** The crossover prob. */
 	double crossoverProb = 0.7;
+	
+	/** The mutation prob. */
 	double mutationProb = 0.1;
+	
+	/** The nb prelim generations. */
 	int nbPrelimGenerations = 1;
+	
+	/** The max generations. */
 	int maxGenerations = 20;
 
+	/** The init pop. */
 	Initialization initPop;
+	
+	/** The cross over op. */
 	CrossOver crossOverOp;
+	
+	/** The mutation op. */
 	Mutation mutationOp;
+	
+	/** The selection op. */
 	Selection selectionOp;
+	
+	/** The improve solution. */
 	Boolean improveSolution;
 
+	/** The Constant POP_DIM. */
 	protected static final String POP_DIM = "pop_dim";
+	
+	/** The Constant CROSSOVER_PROB. */
 	protected static final String CROSSOVER_PROB = "crossover_prob";
+	
+	/** The Constant MUTATION_PROB. */
 	protected static final String MUTATION_PROB = "mutation_prob";
+	
+	/** The Constant NB_GEN. */
 	protected static final String NB_GEN = "nb_prelim_gen";
+	
+	/** The Constant MAX_GEN. */
 	protected static final String MAX_GEN = "max_gen";
+	
+	/** The Constant IMPROVE_SOL. */
 	protected static final String IMPROVE_SOL = "improve_sol";
+	
+	/** The Constant STOCHASTIC_SEL. */
 	protected static final String STOCHASTIC_SEL = "stochastic_sel";
 
+	/** The neighborhood. */
 	protected Neighborhood neighborhood;
 
+	/**
+	 * Instantiates a new genetic algorithm.
+	 *
+	 * @param species the species
+	 */
 	public GeneticAlgorithm(final IDescription species) {
 		super(species);
 		initParams();
@@ -243,6 +283,13 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		return getBestSolution();
 	}
 
+	/**
+	 * Compute pop fitness.
+	 *
+	 * @param scope the scope
+	 * @param population the population
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void computePopFitness(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
 		for (final Chromosome chromosome : population) {
 			computeChroFitness(scope, chromosome);
@@ -258,6 +305,13 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		}
 	}
 	
+	/**
+	 * Compute pop fitness all.
+	 *
+	 * @param scope the scope
+	 * @param population the population
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void computePopFitnessAll(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
 		List<ParametersSet> sets = new ArrayList<>();
 		Map<Chromosome,ParametersSet> paramToCh = GamaMapFactory.create();
@@ -285,6 +339,12 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	}
 
 	
+	/**
+	 * Compute chro fitness.
+	 *
+	 * @param scope the scope
+	 * @param chromosome the chromosome
+	 */
 	public void computeChroFitness(final IScope scope, final Chromosome chromosome) {
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
@@ -343,6 +403,14 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				});
 	}
 
+	/**
+	 * Improve solution.
+	 *
+	 * @param scope the scope
+	 * @param solution the solution
+	 * @param currentFitness the current fitness
+	 * @return the parameters set
+	 */
 	private ParametersSet improveSolution(final IScope scope, final ParametersSet solution,
 			final double currentFitness) {
 		ParametersSet bestSol = solution;
@@ -383,22 +451,47 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		return bestSol;
 	}
 
+	/**
+	 * Gets the population dim.
+	 *
+	 * @return the population dim
+	 */
 	public int getPopulationDim() {
 		return populationDim;
 	}
 
+	/**
+	 * Gets the mutation prob.
+	 *
+	 * @return the mutation prob
+	 */
 	public double getMutationProb() {
 		return mutationProb;
 	}
 
+	/**
+	 * Gets the nb prelim generations.
+	 *
+	 * @return the nb prelim generations
+	 */
 	public int getNbPrelimGenerations() {
 		return nbPrelimGenerations;
 	}
 
+	/**
+	 * Gets the max generations.
+	 *
+	 * @return the max generations
+	 */
 	public int getMaxGenerations() {
 		return maxGenerations;
 	}
 
+	/**
+	 * Gets the mutation op.
+	 *
+	 * @return the mutation op
+	 */
 	public Mutation getMutationOp() {
 		return mutationOp;
 	}

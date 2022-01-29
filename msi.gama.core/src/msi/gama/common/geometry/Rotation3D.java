@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.Rotation3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * Rotation3D.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.common.geometry;
@@ -33,10 +33,20 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public class Rotation3D implements Serializable, Transformation3D {
 
+	/**
+	 * The Class CenteredOn.
+	 */
 	public static class CenteredOn extends Rotation3D {
 
+		/** The center. */
 		final GamaPoint center;
 
+		/**
+		 * Instantiates a new centered on.
+		 *
+		 * @param description the description
+		 * @param center the center
+		 */
 		public CenteredOn(final AxisAngle description, final GamaPoint center) {
 			super(description);
 			this.center = center;
@@ -55,9 +65,16 @@ public class Rotation3D implements Serializable, Transformation3D {
 
 	}
 
+	/** The Constant PLUS_I. */
 	public static final GamaPoint PLUS_I = new GamaPoint(1, 0, 0);
+	
+	/** The Constant MINUS_I. */
 	public static final GamaPoint MINUS_I = new GamaPoint(-1, 0, 0);
+	
+	/** The Constant PLUS_J. */
 	public static final GamaPoint PLUS_J = new GamaPoint(0, 1, 0);
+	
+	/** The Constant PLUS_K. */
 	// public static final GamaPoint MINUS_J = new GamaPoint(0, -1, 0);
 	public static final GamaPoint PLUS_K = new GamaPoint(0, 0, 1);
 	// public static final GamaPoint MINUS_K = new GamaPoint(0, 0, -1);
@@ -97,6 +114,9 @@ public class Rotation3D implements Serializable, Transformation3D {
 		}
 	}
 
+	/**
+	 * Sets the to identity.
+	 */
 	public void setToIdentity() {
 		// 1.0, 0.0, 0.0, 0.0
 		q0 = 1;
@@ -455,6 +475,11 @@ public class Rotation3D implements Serializable, Transformation3D {
 
 	}
 
+	/**
+	 * Apply to.
+	 *
+	 * @param u the u
+	 */
 	public void applyTo(final Coordinate u) {
 
 		final double x = u.x;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaPair.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8.1)
+ * GamaPair.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -51,25 +51,56 @@ public class GamaPair<K, V>
 	// (have the entrySet() of GamaMap built from GamaPairs)
 	// FIXME: This has still to be implemented
 
+	/** The Constant KEY. */
 	public static final String KEY = "key";
+	
+	/** The Constant VALUE. */
 	public static final String VALUE = "value";
 
+	/** The type. */
 	private final IContainerType type;
+	
+	/** The key. */
 	public K key;
+	
+	/** The value. */
 	public V value;
 
+	/**
+	 * Instantiates a new gama pair.
+	 *
+	 * @param k the k
+	 * @param v the v
+	 * @param keyType the key type
+	 * @param contentsType the contents type
+	 */
 	public GamaPair(final K k, final V v, final IType keyType, final IType contentsType) {
 		key = k;
 		value = v;
 		type = Types.PAIR.of(keyType, contentsType);
 	}
 
+	/**
+	 * Instantiates a new gama pair.
+	 *
+	 * @param scope the scope
+	 * @param k the k
+	 * @param v the v
+	 * @param keyType the key type
+	 * @param contentsType the contents type
+	 */
 	public GamaPair(final IScope scope, final K k, final V v, final IType keyType, final IType contentsType) {
 		key = (K) keyType.cast(scope, k, null, false);
 		value = (V) contentsType.cast(scope, v, null, false);
 		type = Types.PAIR.of(keyType, contentsType);
 	}
 
+	/**
+	 * Equals.
+	 *
+	 * @param p the p
+	 * @return true, if successful
+	 */
 	public boolean equals(final GamaPair p) {
 		return Objects.equals(key, p.key) && Objects.equals(value, p.value);
 		// return key.equals(p.key) && value.equals(p.value);
@@ -98,6 +129,11 @@ public class GamaPair<K, V>
 		return key;
 	}
 
+	/**
+	 * First.
+	 *
+	 * @return the k
+	 */
 	// FIXME: To be removed
 	public K first() {
 		return key;
@@ -109,6 +145,11 @@ public class GamaPair<K, V>
 		return value;
 	}
 
+	/**
+	 * Last.
+	 *
+	 * @return the v
+	 */
 	// FIXME: To be removed
 	public V last() {
 		return value;

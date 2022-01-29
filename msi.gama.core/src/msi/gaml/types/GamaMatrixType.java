@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaMatrixType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaMatrixType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -33,6 +33,9 @@ import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class GamaMatrixType.
+ */
 @type (
 		name = IKeyword.MATRIX,
 		id = IType.MATRIX,
@@ -43,6 +46,16 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param contentType the content type
+	 * @param copy the copy
+	 * @return the i matrix
+	 */
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
 			final boolean copy) {
 		if (obj == null && param == null) return null;
@@ -67,6 +80,15 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		return staticCast(scope, obj, param, contentsType, copy);
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param list the list
+	 * @param desiredType the desired type
+	 * @param preferredSize the preferred size
+	 * @return the i matrix
+	 */
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
 			final GamaPoint preferredSize) {
 		if (list == null || list.isEmpty()) return new GamaObjectMatrix(0, 0, desiredType);
@@ -120,11 +142,29 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	}
 
+	/**
+	 * With.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param p the p
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix with(final IScope scope, final IExpression val, final GamaPoint p)
 			throws GamaRuntimeException {
 		return with(scope, val, (int) p.x, (int) p.y);
 	}
 
+	/**
+	 * With.
+	 *
+	 * @param scope the scope
+	 * @param fillExpr the fill expr
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @return the i matrix
+	 */
 	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
 		IMatrix result;
 		if (fillExpr == null) return new GamaObjectMatrix(cols, rows, Types.NO_TYPE);
@@ -166,11 +206,32 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		return result;
 	}
 
+	/**
+	 * With.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param p the p
+	 * @param contentsType the contents type
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p, final IType contentsType)
 			throws GamaRuntimeException {
 		return withObject(scope, val, (int) p.x, (int) p.y, contentsType);
 	}
 
+	/**
+	 * With object.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param contentsType the contents type
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IMatrix withObject(final IScope scope, final Object val, final int cols, final int rows,
 			final IType contentsType) throws GamaRuntimeException {
 		if (contentsType == Types.INT || val instanceof Integer) {

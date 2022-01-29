@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.Neighborhood1Var.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * Neighborhood1Var.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -19,8 +19,16 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+/**
+ * The Class Neighborhood1Var.
+ */
 public class Neighborhood1Var extends Neighborhood {
 
+	/**
+	 * Instantiates a new neighborhood 1 var.
+	 *
+	 * @param variables the variables
+	 */
 	public Neighborhood1Var(final List<IParameter.Batch> variables) {
 		super(variables);
 	}

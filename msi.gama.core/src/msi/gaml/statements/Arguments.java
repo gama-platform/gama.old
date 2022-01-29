@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.Arguments.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Arguments.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -22,16 +22,28 @@ import msi.gaml.expressions.IExpression;
  */
 public class Arguments extends Facets {
 
+	/** The caller. */
 	/*
 	 * The caller represents the agent in the context of which the arguments need to be evaluated.
 	 */
 	ThreadLocal<IAgent> caller = new ThreadLocal<>();
 
+	/**
+	 * Instantiates a new arguments.
+	 *
+	 * @param args the args
+	 */
 	public Arguments(final Arguments args) {
 		super(args);
 		if (args != null) { setCaller(args.caller.get()); }
 	}
 
+	/**
+	 * Instantiates a new arguments.
+	 *
+	 * @param caller the caller
+	 * @param args the args
+	 */
 	/*
 	 * A constructor that takes a caller and arguments defined as a map <string, values>. Values are then transformed
 	 * into a constant expression
@@ -41,6 +53,9 @@ public class Arguments extends Facets {
 		args.forEach((k, v) -> put(k, ConstantExpressionDescription.create(v)));
 	}
 
+	/**
+	 * Instantiates a new arguments.
+	 */
 	public Arguments() {}
 
 	@Override
@@ -53,6 +68,12 @@ public class Arguments extends Facets {
 		return result;
 	}
 
+	/**
+	 * Resolve against.
+	 *
+	 * @param scope the scope
+	 * @return the arguments
+	 */
 	public Arguments resolveAgainst(final IScope scope) {
 		final Arguments result = new Arguments();
 		result.setCaller(caller.get());
@@ -63,10 +84,20 @@ public class Arguments extends Facets {
 		return result;
 	}
 
+	/**
+	 * Sets the caller.
+	 *
+	 * @param caller the new caller
+	 */
 	public void setCaller(final IAgent caller) {
 		this.caller.set(caller);
 	}
 
+	/**
+	 * Gets the caller.
+	 *
+	 * @return the caller
+	 */
 	public IAgent getCaller() {
 		return caller.get();
 	}

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaListCollectionWrapper.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.ArrayList;
@@ -24,9 +34,18 @@ import msi.gaml.types.Types;
  */
 public class GamaListCollectionWrapper<E> extends ForwardingCollection<E> implements IList<E> {
 
+	/** The wrapped. */
 	final Collection<E> wrapped;
+	
+	/** The type. */
 	final IContainerType type;
 
+	/**
+	 * Instantiates a new gama list collection wrapper.
+	 *
+	 * @param wrapped the wrapped
+	 * @param contents the contents
+	 */
 	GamaListCollectionWrapper(final Collection<E> wrapped, final IType contents) {
 		this.type = Types.LIST.of(contents);
 		this.wrapped = wrapped;

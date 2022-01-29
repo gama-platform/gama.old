@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.random.JavaRNG.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * JavaRNG.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -42,8 +42,10 @@ import msi.gama.common.util.RandomUtils;
  */
 public class JavaRNG extends GamaRNG {
 
+	/** The Constant SEED_SIZE_BYTES. */
 	private static final int SEED_SIZE_BYTES = 8;
 
+	/** The seed. */
 	private final byte[] seed;
 
 	/**

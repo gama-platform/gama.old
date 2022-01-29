@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.kernel.GamaClassLoader.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaClassLoader.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -34,13 +34,26 @@ import org.osgi.framework.Bundle;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaClassLoader extends ClassLoader {
 
+	/**
+	 * The Class ListBasedLoader.
+	 */
 	public static class ListBasedLoader extends ClassLoader {
 
+		/**
+		 * Instantiates a new list based loader.
+		 */
 		ListBasedLoader() {
 		}
 
+		/** The classes. */
 		Set<Class> classes = new LinkedHashSet();
 
+		/**
+		 * Adds the new class.
+		 *
+		 * @param c the c
+		 * @return true, if successful
+		 */
 		public boolean addNewClass(final Class c) {
 			return classes.add(c);
 		}
@@ -66,8 +79,12 @@ public class GamaClassLoader extends ClassLoader {
 
 	}
 
+	/**
+	 * The Class BundleClassLoader.
+	 */
 	public static class BundleClassLoader extends ClassLoader {
 
+		/** The bundle. */
 		private final Bundle bundle;
 
 		/**
@@ -78,6 +95,11 @@ public class GamaClassLoader extends ClassLoader {
 			this.bundle = bundle;
 		}
 
+		/**
+		 * Gets the bundle.
+		 *
+		 * @return the bundle
+		 */
 		public Bundle getBundle() {
 			return bundle;
 		}
@@ -119,9 +141,17 @@ public class GamaClassLoader extends ClassLoader {
 
 	}
 
+	/** The loader. */
 	private volatile static GamaClassLoader loader;
+	
+	/** The loaders. */
 	private final List<ClassLoader> loaders = new ArrayList<>();
 
+	/**
+	 * Gets the single instance of GamaClassLoader.
+	 *
+	 * @return single instance of GamaClassLoader
+	 */
 	public static GamaClassLoader getInstance() {
 		if (loader == null) {
 			loader = new GamaClassLoader();
@@ -129,8 +159,12 @@ public class GamaClassLoader extends ClassLoader {
 		return loader;
 	}
 
+	/** The Constant customLoader. */
 	private final static ListBasedLoader customLoader = new ListBasedLoader();
 
+	/**
+	 * Instantiates a new gama class loader.
+	 */
 	private GamaClassLoader() {
 		super();
 	}
@@ -140,12 +174,24 @@ public class GamaClassLoader extends ClassLoader {
 	// return customLoader.addNewClass(c);
 	// }
 
+	/**
+	 * Adds the bundle.
+	 *
+	 * @param bundle the bundle
+	 * @return the class loader
+	 */
 	public ClassLoader addBundle(final Bundle bundle) {
 		// TODO verify if the bundle is not already known
 		final BundleClassLoader loader = createBundleClassLoaderFor(bundle);
 		return addLoader(loader);
 	}
 
+	/**
+	 * Adds the loader.
+	 *
+	 * @param loader the loader
+	 * @return the class loader
+	 */
 	public ClassLoader addLoader(final ClassLoader loader) {
 		loaders.add(loader);
 		return loader;
@@ -205,6 +251,12 @@ public class GamaClassLoader extends ClassLoader {
 		return clazz;
 	}
 
+	/**
+	 * Creates the bundle class loader for.
+	 *
+	 * @param bundle the bundle
+	 * @return the bundle class loader
+	 */
 	private BundleClassLoader createBundleClassLoaderFor(final Bundle bundle) {
 		return (BundleClassLoader) AccessController
 				.doPrivileged((PrivilegedAction) () -> new BundleClassLoader(bundle));

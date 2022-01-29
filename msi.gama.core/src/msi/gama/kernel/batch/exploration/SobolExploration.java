@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SobolExploration.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
 import java.io.File;
@@ -105,19 +115,38 @@ import msi.gaml.types.Types;
 		)
 public class SobolExploration extends AExplorationAlgorithm {
 
+	/** The Constant SAMPLE_SIZE. */
 	protected static final String SAMPLE_SIZE = "sample";
+	
+	/** The sample. */
 	protected int sample;
+	
+	/** The sample. */
 	protected int _sample;
+	
+	/** The resample. */
 	protected int _resample = 1000; // Bootstraping for confidence interval
+	
+	/** The parameters. */
 	protected List<Batch> parameters;
 	
+	/** The current parameters space. */
 	/* The parameter space defined by the Sobol sequence (Satteli sampling method) */
 	protected List<ParametersSet> currentParametersSpace;
+	
+	/** The res outputs. */
 	/* All the outputs for each simulation */
 	protected IMap<ParametersSet,Map<String,List<Object>>> res_outputs;
+	
+	/** The sobol num report. */
 	/* Sobol indexes for every output of interest */
 	private Map<String,Map<Batch,List<Double>>> sobolNumReport;
 	
+	/**
+	 * Instantiates a new sobol exploration.
+	 *
+	 * @param desc the desc
+	 */
 	public SobolExploration(IDescription desc) { super(desc); }
 
 	// ----------------------------------------------------------------- //
@@ -276,6 +305,11 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 	}
 	
+	/**
+	 * Compute sobol indexes.
+	 *
+	 * @param scope the scope
+	 */
 	@SuppressWarnings("unchecked")
 	/**
 	 * Manage simulation outputs from BatchAgent and compute (First & Total order) Sobol indices on requested outputs <\br>

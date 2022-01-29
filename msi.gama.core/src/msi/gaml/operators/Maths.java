@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Maths.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Maths.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -29,6 +29,13 @@ import msi.gama.util.matrix.IMatrix;
 @SuppressWarnings ({ "rawtypes" })
 public class Maths {
 
+	/**
+	 * Pow.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = { "^" },
 			can_be_const = true,
@@ -50,6 +57,13 @@ public class Maths {
 		return pow(a.doubleValue(), b.doubleValue());
 	}
 
+	/**
+	 * Pow.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = { "^" },
 			can_be_const = true,
@@ -64,6 +78,13 @@ public class Maths {
 		return pow(a, b.doubleValue());
 	}
 
+	/**
+	 * Pow.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = { "^" },
 			can_be_const = true,
@@ -79,6 +100,13 @@ public class Maths {
 		return pow(a.doubleValue(), b);
 	}
 
+	/**
+	 * Pow.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = { "^" },
 			can_be_const = true,
@@ -98,6 +126,12 @@ public class Maths {
 
 	// ==== Operators
 
+	/**
+	 * Abs.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "abs",
 			can_be_const = true,
@@ -119,6 +153,12 @@ public class Maths {
 		return Math.abs(rv);
 	}
 
+	/**
+	 * Abs.
+	 *
+	 * @param rv the rv
+	 * @return the integer
+	 */
 	@operator (
 			value = "abs",
 			can_be_const = true,
@@ -142,6 +182,12 @@ public class Maths {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
 
+	/**
+	 * Acos.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "acos",
 			can_be_const = true,
@@ -165,6 +211,12 @@ public class Maths {
 		return Math.acos(rv) * toDeg;
 	}
 
+	/**
+	 * Acos.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "acos",
 			can_be_const = true,
@@ -181,6 +233,12 @@ public class Maths {
 		return Math.acos(rv) * toDeg;
 	}
 
+	/**
+	 * Asin.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "asin",
 			can_be_const = true,
@@ -203,6 +261,12 @@ public class Maths {
 		return Math.asin(rv) * toDeg;
 	}
 
+	/**
+	 * Asin.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "asin",
 			can_be_const = true,
@@ -225,6 +289,12 @@ public class Maths {
 		return Math.asin(rv) * toDeg;
 	}
 
+	/**
+	 * Atan.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "atan",
 			can_be_const = true,
@@ -244,6 +314,12 @@ public class Maths {
 		return Math.atan(rv) * toDeg;
 	}
 
+	/**
+	 * Atan.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "atan",
 			can_be_const = true,
@@ -258,6 +334,12 @@ public class Maths {
 		return Math.atan(rv) * toDeg;
 	}
 
+	/**
+	 * Tanh.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "tanh",
 			can_be_const = true,
@@ -275,6 +357,12 @@ public class Maths {
 		return Math.tanh(rv);
 	}
 
+	/**
+	 * Tanh.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "tanh",
 			can_be_const = true,
@@ -288,6 +376,12 @@ public class Maths {
 		return Math.tanh(rv);
 	}
 
+	/**
+	 * Cos rad.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	// hqnghi & Tri 14/04/2013
 	@operator (
 			value = "cos_rad",
@@ -309,6 +403,12 @@ public class Maths {
 		return Math.cos(rv);
 	}
 
+	/**
+	 * Sin rad.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "sin_rad",
 			can_be_const = true,
@@ -328,6 +428,12 @@ public class Maths {
 		return Math.sin(rv);
 	}
 
+	/**
+	 * Tan rad.
+	 *
+	 * @param v the v
+	 * @return the double
+	 */
 	@operator (
 			value = "tan_rad",
 			can_be_const = true,
@@ -346,6 +452,12 @@ public class Maths {
 
 	// end hqnghi & Tri 14/04/2013
 
+	/**
+	 * Cos.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "cos",
 			can_be_const = true,
@@ -369,6 +481,12 @@ public class Maths {
 		return Math.cos(rv * toRad);
 	}
 
+	/**
+	 * Cos.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "cos",
 			can_be_const = true,
@@ -391,6 +509,12 @@ public class Maths {
 		// return Math.cos(rad);
 	}
 
+	/**
+	 * Sin.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "sin",
 			can_be_const = true,
@@ -408,6 +532,12 @@ public class Maths {
 		return Math.sin(rv * toRad);
 	}
 
+	/**
+	 * Sin.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "sin",
 			can_be_const = true,
@@ -425,6 +555,12 @@ public class Maths {
 		// return Math.sin(rad);
 	}
 
+	/**
+	 * Tan.
+	 *
+	 * @param v the v
+	 * @return the double
+	 */
 	@operator (
 			value = "tan",
 			can_be_const = true,
@@ -445,6 +581,12 @@ public class Maths {
 		return Math.tan(toRad * v);
 	}
 
+	/**
+	 * Tan.
+	 *
+	 * @param v the v
+	 * @return the double
+	 */
 	@operator (
 			value = "tan",
 			can_be_const = true,
@@ -462,6 +604,12 @@ public class Maths {
 		return Math.tan(toRad * v);
 	}
 
+	/**
+	 * Even.
+	 *
+	 * @param rv the rv
+	 * @return the boolean
+	 */
 	@operator (
 			value = "even",
 			can_be_const = true,
@@ -483,6 +631,12 @@ public class Maths {
 		return rv.intValue() % 2 == 0;
 	}
 
+	/**
+	 * Exp.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "exp",
 			can_be_const = true,
@@ -501,6 +655,12 @@ public class Maths {
 		return Math.exp(rv);
 	}
 
+	/**
+	 * Exp.
+	 *
+	 * @param rv the rv
+	 * @return the double
+	 */
 	@operator (
 			value = "exp",
 			can_be_const = true,
@@ -513,6 +673,12 @@ public class Maths {
 		return Math.exp(rv.doubleValue());
 	}
 
+	/**
+	 * Fact.
+	 *
+	 * @param n the n
+	 * @return the double
+	 */
 	@operator (
 			value = "fact",
 			can_be_const = true,
@@ -533,6 +699,13 @@ public class Maths {
 		return product;
 	}
 
+	/**
+	 * Ln.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "ln",
 			can_be_const = true,
@@ -555,6 +728,13 @@ public class Maths {
 		return Math.log(x);
 	}
 
+	/**
+	 * Ln.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "ln",
 			can_be_const = true,
@@ -573,6 +753,13 @@ public class Maths {
 		return Math.log(x);
 	}
 
+	/**
+	 * Log.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "log",
 			can_be_const = true,
@@ -594,6 +781,13 @@ public class Maths {
 		return Double.valueOf(Math.log10(x.doubleValue()));
 	}
 
+	/**
+	 * Log.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "log",
 			can_be_const = true,
@@ -612,6 +806,12 @@ public class Maths {
 		return Math.log10(x);
 	}
 
+	/**
+	 * Negate.
+	 *
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "-",
 			can_be_const = true,
@@ -625,6 +825,12 @@ public class Maths {
 		return -x;
 	}
 
+	/**
+	 * Negate.
+	 *
+	 * @param x the x
+	 * @return the integer
+	 */
 	@operator (
 			value = "-",
 			can_be_const = true,
@@ -639,6 +845,12 @@ public class Maths {
 		return -x;
 	}
 
+	/**
+	 * Round.
+	 *
+	 * @param v the v
+	 * @return the integer
+	 */
 	@operator (
 			value = "round",
 			can_be_const = true,
@@ -667,6 +879,12 @@ public class Maths {
 		return i;
 	}
 
+	/**
+	 * Round.
+	 *
+	 * @param v the v
+	 * @return the integer
+	 */
 	@operator (
 			value = "round",
 			can_be_const = true,
@@ -680,6 +898,14 @@ public class Maths {
 		return v;
 	}
 
+	/**
+	 * Sqrt.
+	 *
+	 * @param scope the scope
+	 * @param v the v
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "sqrt",
 			can_be_const = true,
@@ -698,6 +924,14 @@ public class Maths {
 		return Math.sqrt(v);
 	}
 
+	/**
+	 * Sqrt.
+	 *
+	 * @param scope the scope
+	 * @param v the v
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "sqrt",
 			can_be_const = true,
@@ -713,6 +947,15 @@ public class Maths {
 		return Math.sqrt(v);
 	}
 
+	/**
+	 * Op divide.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -736,6 +979,15 @@ public class Maths {
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
 	}
 
+	/**
+	 * Op divide.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -752,6 +1004,15 @@ public class Maths {
 		return a / b.doubleValue();
 	}
 
+	/**
+	 * Op divide.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -768,6 +1029,15 @@ public class Maths {
 		return a / b;
 	}
 
+	/**
+	 * Op divide.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.DIVIDE,
 			can_be_const = true,
@@ -784,6 +1054,13 @@ public class Maths {
 		return a.doubleValue() / b.doubleValue();
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -802,6 +1079,13 @@ public class Maths {
 		return a * b;
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -817,6 +1101,13 @@ public class Maths {
 		return Double.valueOf(a * b);
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -834,6 +1125,13 @@ public class Maths {
 		return a * b;
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -849,6 +1147,13 @@ public class Maths {
 		return Double.valueOf(a * b);
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -865,6 +1170,13 @@ public class Maths {
 		return b.times(a);
 	}
 
+	/**
+	 * Op times.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
 			can_be_const = true,
@@ -877,6 +1189,13 @@ public class Maths {
 		return b.times(a);
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -895,6 +1214,13 @@ public class Maths {
 		return a + b;
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -912,6 +1238,13 @@ public class Maths {
 		return a + b;
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -925,6 +1258,13 @@ public class Maths {
 		return a + b;
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -938,6 +1278,13 @@ public class Maths {
 		return a + b;
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -955,6 +1302,13 @@ public class Maths {
 		return b.plus(a);
 	}
 
+	/**
+	 * Op plus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.PLUS,
 			can_be_const = true,
@@ -970,6 +1324,13 @@ public class Maths {
 		return b.plus(a);
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -988,6 +1349,13 @@ public class Maths {
 		return a - b;
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -1008,6 +1376,13 @@ public class Maths {
 		return a - b;
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -1028,6 +1403,13 @@ public class Maths {
 		return a - b;
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the double
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -1045,6 +1427,13 @@ public class Maths {
 		return a - b;
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -1063,6 +1452,13 @@ public class Maths {
 		return b.times(-1).plus(a);
 	}
 
+	/**
+	 * Op minus.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return the i matrix
+	 */
 	@operator (
 			value = IKeyword.MINUS,
 			can_be_const = true,
@@ -1085,6 +1481,13 @@ public class Maths {
 	// examples = {
 	// "12345.78943 with_precision 2 --: 12345.79", "123 with_precision 2 --:
 	// 123.00" }, see =
+	/**
+	 * Op truncate.
+	 *
+	 * @param x the x
+	 * @param precision the precision
+	 * @return the double
+	 */
 	// "round")
 	public static Double opTruncate(final Double x, final Integer precision) {
 		final double x1 = x.doubleValue();
@@ -1104,6 +1507,13 @@ public class Maths {
 		return whole + fract;
 	}
 
+	/**
+	 * Round.
+	 *
+	 * @param v the v
+	 * @param precision the precision
+	 * @return the double
+	 */
 	@operator (
 			value = "with_precision",
 			can_be_const = true,
@@ -1123,6 +1533,12 @@ public class Maths {
 		return (double) (long) (v > 0 ? v * t + 0.5 : v * t - 0.5) / t;
 	}
 
+	/**
+	 * Floor.
+	 *
+	 * @param d the d
+	 * @return the double
+	 */
 	@operator (
 			value = "floor",
 			can_be_const = true,
@@ -1144,6 +1560,12 @@ public class Maths {
 		return Math.floor(d);
 	}
 
+	/**
+	 * Ceil.
+	 *
+	 * @param d the d
+	 * @return the double
+	 */
 	@operator (
 			value = "ceil",
 			can_be_const = true,
@@ -1164,6 +1586,14 @@ public class Maths {
 		return Math.ceil(d);
 	}
 
+	/**
+	 * Op mod.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 */
 	@operator (
 			value = "mod",
 			can_be_const = true,
@@ -1183,6 +1613,15 @@ public class Maths {
 		return a % b;
 	}
 
+	/**
+	 * Div.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "div",
 			can_be_const = true,
@@ -1202,6 +1641,15 @@ public class Maths {
 		return a / b;
 	}
 
+	/**
+	 * Div.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "div",
 			can_be_const = true,
@@ -1218,6 +1666,15 @@ public class Maths {
 		return (int) (a / b);
 	}
 
+	/**
+	 * Div.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "div",
 			can_be_const = true,
@@ -1233,6 +1690,15 @@ public class Maths {
 		return (int) (a / b);
 	}
 
+	/**
+	 * Div.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the integer
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "div",
 			can_be_const = true,
@@ -1265,11 +1731,14 @@ public class Maths {
 	/** Constant field PREC_MIN_1. */
 	public final static int PREC_MIN_1 = PRECISION - 1;
 
+	/** The Constant SQRT2. */
 	public static final double SQRT2 = Math.sqrt(2);
 	/** Constant field toDeg. */
 	public static final double toDeg = 180d / Math.PI;
 	/** Constant field toRad. */
 	public static final double toRad = Math.PI / 180d;
+	
+	/** The Constant TENS. */
 	public static final long[] TENS = new long[100];
 
 	static {
@@ -1278,6 +1747,13 @@ public class Maths {
 		}
 	}
 
+	/**
+	 * Atan 2.
+	 *
+	 * @param y the y
+	 * @param x the x
+	 * @return the double
+	 */
 	@operator (
 			value = "atan2",
 			can_be_const = true,
@@ -1330,6 +1806,16 @@ public class Maths {
 		return result;
 	}
 
+	/**
+	 * Hypot.
+	 *
+	 * @param scope the scope
+	 * @param x1 the x 1
+	 * @param x2 the x 2
+	 * @param y1 the y 1
+	 * @param y2 the y 2
+	 * @return the double
+	 */
 	@operator (
 			value = "hypot",
 			can_be_const = true,
@@ -1348,6 +1834,12 @@ public class Maths {
 		return sqrt(scope, dx * dx + dy * dy);
 	}
 
+	/**
+	 * Checks if is number.
+	 *
+	 * @param d the d
+	 * @return the boolean
+	 */
 	@operator (
 			value = "is_number",
 			can_be_const = true,
@@ -1368,6 +1860,12 @@ public class Maths {
 		return !Double.isNaN(d);
 	}
 
+	/**
+	 * Checks if is finite.
+	 *
+	 * @param d the d
+	 * @return the boolean
+	 */
 	@operator (
 			value = "is_finite",
 			can_be_const = true,
@@ -1385,6 +1883,12 @@ public class Maths {
 		return !Double.isInfinite(d);
 	}
 
+	/**
+	 * Signum.
+	 *
+	 * @param d the d
+	 * @return the integer
+	 */
 	@operator (
 			value = "signum",
 			can_be_const = true,

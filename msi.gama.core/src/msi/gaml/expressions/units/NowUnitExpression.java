@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.NowUnitExpression.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * NowUnitExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -16,8 +16,17 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaDate;
 import msi.gaml.types.Types;
 
+/**
+ * The Class NowUnitExpression.
+ */
 public class NowUnitExpression extends UnitConstantExpression {
 
+	/**
+	 * Instantiates a new now unit expression.
+	 *
+	 * @param name the name
+	 * @param doc the doc
+	 */
 	public NowUnitExpression(final String name, final String doc) {
 		super(1.0, Types.DATE, name, doc, null);
 	}

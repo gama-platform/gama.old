@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaDateType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaDateType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -42,9 +42,14 @@ import msi.gaml.operators.Cast;
 		doc = { @doc ("GAML objects that represent a date") })
 public class GamaDateType extends GamaType<GamaDate> {
 
+	/** The Constant DEFAULT_ZONE. */
 	public static final ZoneId DEFAULT_ZONE = Clock.systemDefaultZone().getZone();
+	
+	/** The Constant DEFAULT_OFFSET_IN_SECONDS. */
 	public static final ZoneOffset DEFAULT_OFFSET_IN_SECONDS =
 			Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
+	
+	/** The Constant EPOCH. */
 	public static final GamaDate EPOCH = GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
 
 	// public static final ZoneOffset DEFAULT_OFFSET_IN_SECONDS = ZoneOffset.UTC; // ofTotalSeconds(0);
@@ -60,6 +65,16 @@ public class GamaDateType extends GamaType<GamaDate> {
 		return staticCast(scope, obj, param, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param copy the copy
+	 * @return the gama date
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static GamaDate staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj == null) return null;

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.random.MersenneTwisterRNG.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * MersenneTwisterRNG.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -59,28 +59,54 @@ import msi.gama.common.util.RandomUtils;
 public class MersenneTwisterRNG extends GamaRNG {
 
 	// The actual seed size isn't that important, but it should be a multiple of
+	/** The Constant SEED_SIZE_BYTES. */
 	// 4.
 	private static final int SEED_SIZE_BYTES = 16;
 
+	/** The Constant N. */
 	// Magic numbers from original C version.
 	private static final int N = 624;
+	
+	/** The Constant M. */
 	private static final int M = 397;
+	
+	/** The Constant MAG01. */
 	private static final int[] MAG01 = { 0, 0x9908b0df };
+	
+	/** The Constant UPPER_MASK. */
 	private static final int UPPER_MASK = 0x80000000;
+	
+	/** The Constant LOWER_MASK. */
 	private static final int LOWER_MASK = 0x7fffffff;
+	
+	/** The Constant BOOTSTRAP_SEED. */
 	private static final int BOOTSTRAP_SEED = 19650218;
+	
+	/** The Constant BOOTSTRAP_FACTOR. */
 	private static final int BOOTSTRAP_FACTOR = 1812433253;
+	
+	/** The Constant SEED_FACTOR1. */
 	private static final int SEED_FACTOR1 = 1664525;
+	
+	/** The Constant SEED_FACTOR2. */
 	private static final int SEED_FACTOR2 = 1566083941;
+	
+	/** The Constant GENERATE_MASK1. */
 	private static final int GENERATE_MASK1 = 0x9d2c5680;
+	
+	/** The Constant GENERATE_MASK2. */
 	private static final int GENERATE_MASK2 = 0xefc60000;
 
+	/** The seed. */
 	private final byte[] seed;
 
 	// Lock to prevent concurrent modification of the RNG's internal state.
 	// private final ReentrantLock lock = new ReentrantLock();
 
+	/** The mt. */
 	private final int[] mt = new int[N]; // State vector.
+	
+	/** The mt index. */
 	private int mtIndex = 0; // Index into state vector.
 
 	/**

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.IDescriptionValidator.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * IDescriptionValidator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -37,6 +37,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public interface IDescriptionValidator<T extends IDescription> extends IValidator {
 
+	/** The reserved. */
 	ImmutableSet<String> RESERVED = ImmutableSet
 			.copyOf(new String[] { IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
 
@@ -63,8 +64,20 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 		return true;
 	}
 
+	/**
+	 * The Class Assert.
+	 */
 	public static class Assert {
 
+		/**
+		 * Types are compatible for assignment.
+		 *
+		 * @param facetName the facet name
+		 * @param context the context
+		 * @param receiverDescription the receiver description
+		 * @param receiverType the receiver type
+		 * @param assigned the assigned
+		 */
 		public static void typesAreCompatibleForAssignment(final String facetName, final IDescription context,
 				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned) {
 			if (assigned == null) { return; }
@@ -133,6 +146,12 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 			}
 		}
 
+		/**
+		 * Name is valid.
+		 *
+		 * @param cd the cd
+		 * @return true, if successful
+		 */
 		public static boolean nameIsValid(final IDescription cd) {
 			final String name = cd.getName();
 			if (name == null) {
@@ -161,6 +180,9 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 
 	}
 
+	/**
+	 * The Class ValidNameValidator.
+	 */
 	public static class ValidNameValidator implements IDescriptionValidator {
 
 		/**
@@ -174,6 +196,9 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 		}
 	}
 
+	/**
+	 * The Class NullValidator.
+	 */
 	public static class NullValidator implements IDescriptionValidator {
 
 		/**

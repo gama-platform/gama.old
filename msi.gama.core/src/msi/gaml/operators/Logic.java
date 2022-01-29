@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Logic.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * Logic.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -32,6 +32,15 @@ import msi.gaml.expressions.operators.IOperator;
  */
 public class Logic {
 
+	/**
+	 * Xor.
+	 *
+	 * @param scope the scope
+	 * @param left the left
+	 * @param right the right
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "xor",
 			category = IOperatorCategory.LOGIC,
@@ -53,6 +62,15 @@ public class Logic {
 		return !Objects.equals(left, right);
 	}
 
+	/**
+	 * Or.
+	 *
+	 * @param scope the scope
+	 * @param left the left
+	 * @param right the right
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "or",
 			category = IOperatorCategory.LOGIC,
@@ -75,6 +93,15 @@ public class Logic {
 		return left != null && left || right != null && Cast.asBool(scope, right.value(scope));
 	}
 
+	/**
+	 * And.
+	 *
+	 * @param scope the scope
+	 * @param left the left
+	 * @param right the right
+	 * @return the boolean
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "and",
 			category = IOperatorCategory.LOGIC,
@@ -97,6 +124,12 @@ public class Logic {
 		return left != null && left && right != null && Cast.asBool(scope, right.value(scope));
 	}
 
+	/**
+	 * Not.
+	 *
+	 * @param b the b
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "!", "not" },
 			can_be_const = true,
@@ -113,6 +146,15 @@ public class Logic {
 		return !b;
 	}
 
+	/**
+	 * Iff.
+	 *
+	 * @param scope the scope
+	 * @param left the left
+	 * @param right the right
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "?",
 			type = ITypeProvider.TYPE_AT_INDEX + 2,
@@ -136,6 +178,14 @@ public class Logic {
 		return left ? expr.arg(0).value(scope) : expr.arg(1).value(scope);
 	}
 
+	/**
+	 * Then.
+	 *
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
+	 * @return the object
+	 */
 	@operator (
 			value = ":",
 			type = ITypeProvider.BOTH,

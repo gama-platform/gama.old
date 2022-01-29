@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -45,17 +45,43 @@ import one.util.streamex.StreamEx;
 public abstract class GamaFile<Container extends IAddressableContainer & IModifiableContainer, Contents>
 		implements IGamaFile<Container, Contents> {
 
+	/** The file. */
 	private File file;
+	
+	/** The local path. */
 	protected final String localPath;
+	
+	/** The original path. */
 	protected final String originalPath;
+	
+	/** The url. */
 	protected final URL url;
+	
+	/** The writable. */
 	protected boolean writable = false;
+	
+	/** The buffer. */
 	private Container buffer;
 
+	/**
+	 * Instantiates a new gama file.
+	 *
+	 * @param scope the scope
+	 * @param pn the pn
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaFile(final IScope scope, final String pn) throws GamaRuntimeException {
 		this(scope, pn, true);
 	}
 
+	/**
+	 * Instantiates a new gama file.
+	 *
+	 * @param scope the scope
+	 * @param pn the pn
+	 * @param forReading the for reading
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
 		originalPath = pn;
 		String tempPath = originalPath;
@@ -85,10 +111,22 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		checkValidity(scope);
 	}
 
+	/**
+	 * Checks if is remote.
+	 *
+	 * @return true, if is remote
+	 */
 	public boolean isRemote() {
 		return url != null;
 	}
 
+	/**
+	 * Instantiates a new gama file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param container the container
+	 */
 	public GamaFile(final IScope scope, final String pathName, final Container container) {
 		this(scope, pathName, false);
 		setWritable(scope, true);
@@ -113,11 +151,23 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return true;
 	}
 
+	/**
+	 * Fetch from URL.
+	 *
+	 * @param scope the scope
+	 * @return the string
+	 */
 	protected String fetchFromURL(final IScope scope) {
 		if (!automaticallyFetchFromURL()) return null;
 		return FileUtils.fetchToTempFile(scope, url);
 	}
 
+	/**
+	 * Send to URL.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected void sendToURL(final IScope scope) throws GamaRuntimeException {
 		final String urlPath = url.toExternalForm();
 		final String status = "Uploading file to " + urlPath;
@@ -143,6 +193,14 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return "text/plain";
 	}
 
+	/**
+	 * Builds the URL.
+	 *
+	 * @param scope the scope
+	 * @param urlPath the url path
+	 * @return the url
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected URL buildURL(final IScope scope, final String urlPath) throws GamaRuntimeException {
 		try {
 			return new URL(urlPath);
@@ -151,6 +209,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		}
 	}
 
+	/**
+	 * Check validity.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
 		if (getFile(scope).exists() && getFile(scope).isDirectory()) throw GamaRuntimeException
 				.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
@@ -161,12 +225,25 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		writable = w;
 	}
 
+	/**
+	 * Fill buffer.
+	 *
+	 * @param scope the scope
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("Loading is not yet impletemented for files of type "
 				+ this.getExtension(scope) + ". Please post a request for enhancement to implement "
 				+ getClass().getSimpleName() + ".fillBuffer(IScope, Facets)", scope);
 	}
 
+	/**
+	 * Flush buffer.
+	 *
+	 * @param scope the scope
+	 * @param facets the facets
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("Saving is not yet impletemented for files of type " + this.getExtension(scope)
 				+ ". Please post a request for enhancement to implement " + getClass().getSimpleName()
@@ -178,6 +255,13 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		if (writable) { setBuffer(cont); }
 	}
 
+	/**
+	 * String value.
+	 *
+	 * @param scope the scope
+	 * @return the string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected String _stringValue(final IScope scope) throws GamaRuntimeException {
 		return getPath(scope);
 	}
@@ -412,6 +496,16 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return _matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
+	/**
+	 * Matrix value.
+	 *
+	 * @param scope the scope
+	 * @param contentsType the contents type
+	 * @param preferredSize the preferred size
+	 * @param copy the copy
+	 * @return the i matrix
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
@@ -441,6 +535,12 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return (Contents) getBuffer().anyValue(scope);
 	}
 
+	/**
+	 * Gets the file.
+	 *
+	 * @param scope the scope
+	 * @return the file
+	 */
 	public File getFile(final IScope scope) {
 		if (file == null) { file = new File(getPath(scope)); }
 		return file;
@@ -451,10 +551,18 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		return buffer;
 	}
 
+	/**
+	 * Sets the buffer.
+	 *
+	 * @param buffer the new buffer
+	 */
 	protected void setBuffer(final Container buffer) {
 		this.buffer = buffer;
 	}
 
+	/**
+	 * Invalidate contents.
+	 */
 	public void invalidateContents() {
 		buffer = null;
 	}

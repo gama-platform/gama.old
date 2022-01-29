@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.StatementWithChildrenDescription.java, in plugin msi.gama.core, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * StatementWithChildrenDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -29,11 +29,28 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
+/**
+ * The Class StatementWithChildrenDescription.
+ */
 public class StatementWithChildrenDescription extends StatementDescription {
 
+	/** The temps. */
 	protected IMap<String, IVarExpression> temps;
+	
+	/** The children. */
 	protected final Collector.AsList<IDescription> children = Collector.getList();
 
+	/**
+	 * Instantiates a new statement with children description.
+	 *
+	 * @param keyword the keyword
+	 * @param superDesc the super desc
+	 * @param cp the cp
+	 * @param hasArgs the has args
+	 * @param source the source
+	 * @param facets the facets
+	 * @param alreadyComputedArgs the already computed args
+	 */
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
@@ -96,10 +113,23 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		return null;
 	}
 
+	/**
+	 * Checks for temps.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasTemps() {
 		return getMeta().hasScope() /* canHaveTemps */ && temps != null;
 	}
 
+	/**
+	 * Adds the temp.
+	 *
+	 * @param declaration the declaration
+	 * @param name the name
+	 * @param type the type
+	 * @return the i expression
+	 */
 	public IExpression addTemp(final IDescription declaration, final String name, final IType<?> type) {
 		// TODO Should separate validation from execution, here.
 

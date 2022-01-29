@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.FocusStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * FocusStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -53,8 +53,14 @@ public class FocusStatement extends AbstractStatement {
 		return "";
 	}
 
+	/** The value. */
 	final IExpression value;
 
+	/**
+	 * Instantiates a new focus statement.
+	 *
+	 * @param desc the desc
+	 */
 	public FocusStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);

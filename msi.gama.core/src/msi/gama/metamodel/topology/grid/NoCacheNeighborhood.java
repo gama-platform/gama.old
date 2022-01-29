@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.NoCacheNeighborhood.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * NoCacheNeighborhood.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -19,6 +19,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 
+/**
+ * The Class NoCacheNeighborhood.
+ */
 public class NoCacheNeighborhood implements INeighborhood {
 
 	/**
@@ -26,6 +29,11 @@ public class NoCacheNeighborhood implements INeighborhood {
 	 */
 	private final GamaSpatialMatrix matrix;
 
+	/**
+	 * Instantiates a new no cache neighborhood.
+	 *
+	 * @param gamaSpatialMatrix the gama spatial matrix
+	 */
 	public NoCacheNeighborhood(final GamaSpatialMatrix gamaSpatialMatrix) {
 		matrix = gamaSpatialMatrix;
 	}
@@ -43,6 +51,15 @@ public class NoCacheNeighborhood implements INeighborhood {
 		return computeNeighborsFrom(scope, placeIndex, 1, radius);
 	}
 
+	/**
+	 * Compute neighbors from.
+	 *
+	 * @param scope the scope
+	 * @param placeIndex the place index
+	 * @param begin the begin
+	 * @param end the end
+	 * @return the sets the
+	 */
 	private Set<IAgent> computeNeighborsFrom(final IScope scope, final int placeIndex, final int begin, final int end) {
 		try (final Collector.AsOrderedSet<IAgent> result = Collector.getOrderedSet()) {
 			for (int i = begin; i <= end; i++) {
@@ -57,6 +74,13 @@ public class NoCacheNeighborhood implements INeighborhood {
 		}
 	}
 
+	/**
+	 * Gets the 8 neighbors at radius.
+	 *
+	 * @param placeIndex the place index
+	 * @param radius the radius
+	 * @return the 8 neighbors at radius
+	 */
 	protected List<Integer> get8NeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
@@ -85,6 +109,13 @@ public class NoCacheNeighborhood implements INeighborhood {
 		return v;
 	}
 
+	/**
+	 * Gets the 4 neighbors at radius.
+	 *
+	 * @param placeIndex the place index
+	 * @param radius the radius
+	 * @return the 4 neighbors at radius
+	 */
 	protected List<Integer> get4NeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;

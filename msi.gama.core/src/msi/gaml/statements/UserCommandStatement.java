@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.UserCommandStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * UserCommandStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -111,6 +111,9 @@ import msi.gaml.types.IType;
 public class UserCommandStatement extends AbstractStatementSequence
 		implements IStatement.WithArgs, IExperimentDisplayable {
 
+	/**
+	 * The Class UserCommandValidator.
+	 */
 	public static class UserCommandValidator implements IDescriptionValidator<IDescription> {
 
 		/*
@@ -151,13 +154,29 @@ public class UserCommandStatement extends AbstractStatementSequence
 		}
 	}
 
+	/** The args. */
 	Arguments args;
+	
+	/** The runtime args. */
 	Arguments runtimeArgs;
+	
+	/** The action name. */
 	final String actionName;
+	
+	/** The category. */
 	String category;
+	
+	/** The when. */
 	final IExpression when;
+	
+	/** The inputs. */
 	List<UserInputStatement> inputs = new ArrayList<>();
 
+	/**
+	 * Instantiates a new user command statement.
+	 *
+	 * @param desc the desc
+	 */
 	public UserCommandStatement(final IDescription desc) {
 		super(desc);
 		setName(desc.getName());
@@ -166,6 +185,11 @@ public class UserCommandStatement extends AbstractStatementSequence
 		when = getFacet(IKeyword.WHEN);
 	}
 
+	/**
+	 * Gets the inputs.
+	 *
+	 * @return the inputs
+	 */
 	public List<UserInputStatement> getInputs() {
 		return inputs;
 	}
@@ -230,16 +254,34 @@ public class UserCommandStatement extends AbstractStatementSequence
 		this.runtimeArgs = args;
 	}
 
+	/**
+	 * Checks if is enabled.
+	 *
+	 * @param scope the scope
+	 * @return true, if is enabled
+	 */
 	public boolean isEnabled(final IScope scope) {
 		return when == null || Cast.asBool(scope, when.value(scope));
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @param scope the scope
+	 * @return the color
+	 */
 	public GamaColor getColor(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.COLOR);
 		if (exp == null) return null;
 		return Cast.asColor(scope, exp.value(scope));
 	}
 
+	/**
+	 * Checks if is continue.
+	 *
+	 * @param scope the scope
+	 * @return true, if is continue
+	 */
 	public boolean isContinue(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.CONTINUE);
 		if (exp == null) return false;

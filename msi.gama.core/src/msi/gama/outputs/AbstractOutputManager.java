@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.AbstractOutputManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * AbstractOutputManager.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -34,12 +34,23 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
+	/** The layout. */
 	LayoutStatement layout;
+	
+	/** The outputs. */
 	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
+	
+	/** The virtual outputs. */
 	protected final IMap<String, IOutput> virtualOutputs = GamaMapFactory.create();
 
+	/** The display index. */
 	protected int displayIndex;
 
+	/**
+	 * Instantiates a new abstract output manager.
+	 *
+	 * @param desc the desc
+	 */
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 	}
@@ -199,10 +210,20 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return true;
 	}
 
+	/**
+	 * Sets the layout.
+	 *
+	 * @param layout the new layout
+	 */
 	public void setLayout(final LayoutStatement layout) {
 		this.layout = layout;
 	}
 
+	/**
+	 * Gets the layout.
+	 *
+	 * @return the layout
+	 */
 	public LayoutStatement getLayout() {
 		return layout;
 	}
@@ -226,6 +247,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	}
 
+	/**
+	 * Initial step.
+	 *
+	 * @param scope the scope
+	 * @param output the output
+	 * @return true, if successful
+	 */
 	protected boolean initialStep(final IScope scope, final IOutput output) {
 		return scope.step(output).passed();
 	}

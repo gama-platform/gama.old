@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.runtime.benchmark.BenchmarkTree.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * BenchmarkTree.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -18,13 +18,30 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.operators.IOperator;
 
+/**
+ * The Class BenchmarkTree.
+ */
 public class BenchmarkTree extends GamaTree<IBenchmarkable> {
 
+	/**
+	 * Instantiates a new benchmark tree.
+	 *
+	 * @param model the model
+	 * @param focusedExperiment the focused experiment
+	 */
 	public BenchmarkTree(final IDescription model, final ExperimentDescription focusedExperiment) {
 		setRoot(new GamaNode<>(model, 0));
 		build(model, focusedExperiment, getRoot(), 1);
 	}
 
+	/**
+	 * Builds the.
+	 *
+	 * @param desc the desc
+	 * @param focusedExperiment the focused experiment
+	 * @param node the node
+	 * @param level the level
+	 */
 	private void build(final IDescription desc, final ExperimentDescription focusedExperiment,
 			final GamaNode<IBenchmarkable> node, final int level) {
 		desc.visitFacets((name, exp) -> {
@@ -44,6 +61,13 @@ public class BenchmarkTree extends GamaTree<IBenchmarkable> {
 		});
 	}
 
+	/**
+	 * Builds the.
+	 *
+	 * @param op the op
+	 * @param currentNode the current node
+	 * @param level the level
+	 */
 	private void build(final IOperator op, final GamaNode<IBenchmarkable> currentNode, final int level) {
 		op.visitSuboperators((o) -> {
 			final GamaNode<IBenchmarkable> node = currentNode.addChild(new GamaNode<>(o, level));

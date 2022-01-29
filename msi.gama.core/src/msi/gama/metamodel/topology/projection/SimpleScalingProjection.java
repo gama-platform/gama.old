@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SimpleScalingProjection.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
 
@@ -10,8 +20,12 @@ import org.locationtech.jts.geom.Geometry;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class SimpleScalingProjection.
+ */
 public class SimpleScalingProjection implements IProjection{
 
+	/** The inverse scaling. */
 	public CoordinateFilter scaling, inverseScaling;
 
 	@Override
@@ -19,6 +33,11 @@ public class SimpleScalingProjection implements IProjection{
 		
 	}
 	
+	/**
+	 * Instantiates a new simple scaling projection.
+	 *
+	 * @param scale the scale
+	 */
 	public SimpleScalingProjection(Double scale) {
 		if (scale != null) {
 			createScalingTransformations(scale);
@@ -44,6 +63,11 @@ public class SimpleScalingProjection implements IProjection{
 		return geom;
 	}
 	
+	/**
+	 * Creates the scaling transformations.
+	 *
+	 * @param scale the scale
+	 */
 	public void createScalingTransformations(final Double scale) {
 		scaling = coord -> {
 			coord.x *= scale;

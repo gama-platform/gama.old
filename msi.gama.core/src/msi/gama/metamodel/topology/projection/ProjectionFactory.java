@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.projection.ProjectionFactory.java, in plugin msi.gama.core, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * ProjectionFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
@@ -42,23 +42,49 @@ import msi.gama.util.file.GamaGisFile;
  */
 public class ProjectionFactory {
 
+	/** The Constant EPSGPrefix. */
 	private static final String EPSGPrefix = "EPSG:";
+	
+	/** The Constant defaultTargetCRS. */
 	private static final String defaultTargetCRS =
 			String.valueOf(GamaPreferences.External.LIB_TARGET_CRS.getInitialValue(null));
+	
+	/** The Constant defaultSaveCRS. */
 	private static final String defaultSaveCRS =
 			String.valueOf(GamaPreferences.External.LIB_OUTPUT_CRS.getInitialValue(null));
+	
+	/** The CRS cache. */
 	private static Map<String, CoordinateReferenceSystem> CRSCache = GamaMapFactory.createUnordered();
 
+	/** The world. */
 	private IProjection world;
+	
+	/** The unit converter. */
 	private UnitConverter unitConverter = null;
+	
+	/** The target CRS. */
 	public CoordinateReferenceSystem targetCRS;
 
+	/**
+	 * Sets the world projection env.
+	 *
+	 * @param scope the scope
+	 * @param env the env
+	 */
 	public void setWorldProjectionEnv(final IScope scope, final Envelope3D env) {
 		if (world != null) { return; }
 		world = new WorldProjection(scope, null, env, this);
 		// ((WorldProjection) world).updateTranslations(env);
 	}
 
+	/**
+	 * Compute target CRS.
+	 *
+	 * @param scope the scope
+	 * @param crs the crs
+	 * @param longitude the longitude
+	 * @param latitude the latitude
+	 */
 	void computeTargetCRS(final IScope scope, final CoordinateReferenceSystem crs, final double longitude,
 			final double latitude) {
 		// If we already know in which CRS we project the data in GAMA, no need to recompute it. This information is
@@ -89,6 +115,12 @@ public class ProjectionFactory {
 		}
 	}
 
+	/**
+	 * Gets the target CRS.
+	 *
+	 * @param scope the scope
+	 * @return the target CRS
+	 */
 	public CoordinateReferenceSystem getTargetCRS(final IScope scope) {
 		if (targetCRS == null) {
 
@@ -105,24 +137,60 @@ public class ProjectionFactory {
 		return targetCRS;
 	}
 
+	/**
+	 * Gets the save CRS.
+	 *
+	 * @param scope the scope
+	 * @return the save CRS
+	 */
 	public CoordinateReferenceSystem getSaveCRS(final IScope scope) {
 		if (GamaPreferences.External.LIB_USE_DEFAULT.getValue()) { return getWorld().getInitialCRS(scope); }
 		return computeDefaultCRS(scope, GamaPreferences.External.LIB_OUTPUT_CRS.getValue(), false);
 	}
 
+	/**
+	 * Gets the crs.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @return the crs
+	 */
 	public CoordinateReferenceSystem getCRS(final IScope scope, final int code) {
 		return getCRS(scope, code, true);
 	}
 
+	/**
+	 * Gets the crs.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @param longitudeFirst the longitude first
+	 * @return the crs
+	 */
 	public CoordinateReferenceSystem getCRS(final IScope scope, final int code, final boolean longitudeFirst) {
 		if (code == GamaGisFile.ALREADY_PROJECTED_CODE) { return getTargetCRS(scope); }
 		return getCRS(scope, EPSGPrefix + code, longitudeFirst);
 	}
 
+	/**
+	 * Gets the crs.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @return the crs
+	 */
 	public CoordinateReferenceSystem getCRS(final IScope scope, final String code) {
 		return getCRS(scope, code, true);
 	}
 
+	/**
+	 * Gets the crs.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @param longitudeFirst the longitude first
+	 * @return the crs
+	 */
 	public CoordinateReferenceSystem getCRS(final IScope scope, final String code, final boolean longitudeFirst) {
 		try {
 			CoordinateReferenceSystem crs = CRSCache.get(code);
@@ -149,6 +217,11 @@ public class ProjectionFactory {
 		}
 	}
 
+	/**
+	 * Gets the world.
+	 *
+	 * @return the world
+	 */
 	/*
 	 * Thai.truongming@gmail.com ---------------begin date: 03-01-2014
 	 */
@@ -156,6 +229,14 @@ public class ProjectionFactory {
 		return world;
 	}
 
+	/**
+	 * Compute default CRS.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @param target the target
+	 * @return the coordinate reference system
+	 */
 	/*
 	 * thai.truongming@gmail.com -----------------end
 	 */
@@ -167,6 +248,14 @@ public class ProjectionFactory {
 		return crs;
 	}
 
+	/**
+	 * From params.
+	 *
+	 * @param scope the scope
+	 * @param params the params
+	 * @param env the env
+	 * @return the i projection
+	 */
 	public IProjection fromParams(final IScope scope, final Map<String, Object> params, final Envelope3D env) {
 		final Boolean lonFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		final Object crs = params.get("crs");
@@ -176,6 +265,14 @@ public class ProjectionFactory {
 		return fromCRS(scope, getDefaultInitialCRS(scope), env);
 	}
 
+	/**
+	 * From CRS.
+	 *
+	 * @param scope the scope
+	 * @param crs the crs
+	 * @param env the env
+	 * @return the i projection
+	 */
 	public IProjection fromCRS(final IScope scope, final CoordinateReferenceSystem crs, final Envelope3D env) {
 		if (env != null) {
 			testConsistency(scope, crs, env);
@@ -191,19 +288,52 @@ public class ProjectionFactory {
 		}
 	}
 
+	/**
+	 * For saving with.
+	 *
+	 * @param scope the scope
+	 * @param epsgCode the epsg code
+	 * @return the i projection
+	 * @throws FactoryException the factory exception
+	 */
 	public IProjection forSavingWith(final IScope scope, final Integer epsgCode) throws FactoryException {
 		return forSavingWith(scope, epsgCode, true);
 	}
 
+	/**
+	 * For saving with.
+	 *
+	 * @param scope the scope
+	 * @param epsgCode the epsg code
+	 * @param lonFirst the lon first
+	 * @return the i projection
+	 * @throws FactoryException the factory exception
+	 */
 	public IProjection forSavingWith(final IScope scope, final Integer epsgCode, final boolean lonFirst)
 			throws FactoryException {
 		return forSavingWith(scope, EPSGPrefix + epsgCode, lonFirst);
 	}
 
+	/**
+	 * For saving with.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @return the i projection
+	 * @throws FactoryException the factory exception
+	 */
 	public IProjection forSavingWith(final IScope scope, final String code) throws FactoryException {
 		return forSavingWith(scope, code, true);
 	}
 
+	/**
+	 * For saving with.
+	 *
+	 * @param scope the scope
+	 * @param crs the crs
+	 * @return the i projection
+	 * @throws FactoryException the factory exception
+	 */
 	public IProjection forSavingWith(final IScope scope, final CoordinateReferenceSystem crs) throws FactoryException {
 		final Projection gis = new Projection(world, this);
 		gis.initialCRS = crs;
@@ -211,6 +341,15 @@ public class ProjectionFactory {
 		return gis;
 	}
 
+	/**
+	 * For saving with.
+	 *
+	 * @param scope the scope
+	 * @param code the code
+	 * @param lonFirst the lon first
+	 * @return the i projection
+	 * @throws FactoryException the factory exception
+	 */
 	public IProjection forSavingWith(final IScope scope, final String code, final boolean lonFirst)
 			throws FactoryException {
 		CoordinateReferenceSystem crs = null;
@@ -230,6 +369,12 @@ public class ProjectionFactory {
 		return gis;
 	}
 
+	/**
+	 * Gets the default initial CRS.
+	 *
+	 * @param scope the scope
+	 * @return the default initial CRS
+	 */
 	public CoordinateReferenceSystem getDefaultInitialCRS(final IScope scope) {
 		if (!GamaPreferences.External.LIB_PROJECTED.getValue()) {
 			try {
@@ -244,6 +389,13 @@ public class ProjectionFactory {
 		}
 	}
 
+	/**
+	 * Test consistency.
+	 *
+	 * @param scope the scope
+	 * @param crs the crs
+	 * @param env the env
+	 */
 	public void testConsistency(final IScope scope, final CoordinateReferenceSystem crs, final Envelope env) {
 		if (!(crs instanceof DefaultProjectedCRS)) {
 			if (env.getHeight() > 180 || env.getWidth() > 180) {
@@ -255,6 +407,11 @@ public class ProjectionFactory {
 		}
 	}
 
+	/**
+	 * Gets the unit converter.
+	 *
+	 * @return the unit converter
+	 */
 	public UnitConverter getUnitConverter() {
 		return unitConverter;
 	}

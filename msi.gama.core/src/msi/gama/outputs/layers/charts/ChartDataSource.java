@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartDataSource.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ChartDataSource.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -24,59 +24,144 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+/**
+ * The Class ChartDataSource.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class ChartDataSource {
 
+	/** The Constant DATA_TYPE_NULL. */
 	public static final int DATA_TYPE_NULL = 0;
+	
+	/** The Constant DATA_TYPE_DOUBLE. */
 	public static final int DATA_TYPE_DOUBLE = 1;
+	
+	/** The Constant DATA_TYPE_LIST_DOUBLE_12. */
 	public static final int DATA_TYPE_LIST_DOUBLE_12 = 2;
+	
+	/** The Constant DATA_TYPE_LIST_DOUBLE_3. */
 	public static final int DATA_TYPE_LIST_DOUBLE_3 = 3;
+	
+	/** The Constant DATA_TYPE_LIST_DOUBLE_N. */
 	public static final int DATA_TYPE_LIST_DOUBLE_N = 4;
+	
+	/** The Constant DATA_TYPE_LIST_LIST_DOUBLE_12. */
 	public static final int DATA_TYPE_LIST_LIST_DOUBLE_12 = 5;
+	
+	/** The Constant DATA_TYPE_LIST_LIST_DOUBLE_3. */
 	public static final int DATA_TYPE_LIST_LIST_DOUBLE_3 = 6;
+	
+	/** The Constant DATA_TYPE_LIST_LIST_DOUBLE_N. */
 	public static final int DATA_TYPE_LIST_LIST_DOUBLE_N = 7;
+	
+	/** The Constant DATA_TYPE_LIST_LIST_LIST_DOUBLE. */
 	public static final int DATA_TYPE_LIST_LIST_LIST_DOUBLE = 8;
+	
+	/** The Constant DATA_TYPE_POINT. */
 	public static final int DATA_TYPE_POINT = 9;
+	
+	/** The Constant DATA_TYPE_LIST_POINT. */
 	public static final int DATA_TYPE_LIST_POINT = 10;
+	
+	/** The Constant DATA_TYPE_LIST_LIST_POINT. */
 	public static final int DATA_TYPE_LIST_LIST_POINT = 11;
+	
+	/** The Constant DATA_TYPE_MATRIX_DOUBLE. */
 	public static final int DATA_TYPE_MATRIX_DOUBLE = 12;
+	
+	/** The Constant DATA_TYPE_MATRIX_POINT. */
 	public static final int DATA_TYPE_MATRIX_POINT = 13;
+	
+	/** The Constant DATA_TYPE_MATRIX_LIST_DOUBLE. */
 	public static final int DATA_TYPE_MATRIX_LIST_DOUBLE = 14;
 
+	/** The value. */
 	IExpression value;
 
+	/** The valueyerr. */
 	IExpression valueyerr;
+	
+	/** The valuexerr. */
 	IExpression valuexerr;
+	
+	/** The valueyminmax. */
 	IExpression valueyminmax;
+	
+	/** The colorexp. */
 	IExpression colorexp;
+	
+	/** The sizeexp. */
 	IExpression sizeexp;
+	
+	/** The markershapeexp. */
 	IExpression markershapeexp;
 
+	/** The unique marker name. */
 	String uniqueMarkerName;
+	
+	/** The style. */
 	String style = IKeyword.DEFAULT;
 
+	/** The my series. */
 	// Object lastvalue;
 	LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<>();
+	
+	/** The my dataset. */
 	ChartDataSet myDataset;
+	
+	/** The is cumulative. */
 	boolean isCumulative = false;
+	
+	/** The is cumulative Y. */
 	boolean isCumulativeY = false;
+	
+	/** The force cumulative. */
 	boolean forceCumulative = false;
+	
+	/** The force cumulative Y. */
 	boolean forceCumulativeY = false;
+	
+	/** The use marker. */
 	boolean useMarker = true;
+	
+	/** The fill marker. */
 	boolean fillMarker = true;
+	
+	/** The show line. */
 	boolean showLine = true;
+	
+	/** The use second Y axis. */
 	boolean useSecondYAxis = false;
 
+	/** The use size. */
 	boolean useSize = false;
 
+	/** The use Y err values. */
 	boolean useYErrValues = false;
+	
+	/** The use X err values. */
 	boolean useXErrValues = false;
+	
+	/** The use Y min max values. */
 	boolean useYMinMaxValues = false;
+	
+	/** The use color exp. */
 	boolean useColorExp = false;
+	
+	/** The use marker shape exp. */
 	boolean useMarkerShapeExp = false;
 
+	/** The line thickness. */
 	double lineThickness = 1.0;
 
+	/**
+	 * Clone me.
+	 *
+	 * @param scope the scope
+	 * @param chartCycle the chart cycle
+	 * @param source the source
+	 * @return true, if successful
+	 */
 	public boolean cloneMe(final IScope scope, final int chartCycle, final ChartDataSource source) {
 
 		value = source.value;
@@ -112,98 +197,217 @@ public class ChartDataSource {
 		return true;
 	}
 
+	/**
+	 * Gets the clone.
+	 *
+	 * @param scope the scope
+	 * @param chartCycle the chart cycle
+	 * @return the clone
+	 */
 	public ChartDataSource getClone(final IScope scope, final int chartCycle) {
 		final ChartDataSource res = new ChartDataSource();
 		res.cloneMe(scope, chartCycle, this);
 		return res;
 	}
 
+	/**
+	 * Gets the valueyerr.
+	 *
+	 * @return the valueyerr
+	 */
 	public IExpression getValueyerr() {
 		return valueyerr;
 	}
 
+	/**
+	 * Gets the valuexerr.
+	 *
+	 * @return the valuexerr
+	 */
 	public IExpression getValuexerr() {
 		return valuexerr;
 	}
 
+	/**
+	 * Gets the valueyminmax.
+	 *
+	 * @return the valueyminmax
+	 */
 	public IExpression getValueyminmax() {
 		return valueyminmax;
 	}
 
+	/**
+	 * Gets the unique marker name.
+	 *
+	 * @return the unique marker name
+	 */
 	public String getUniqueMarkerName() {
 		return uniqueMarkerName;
 	}
 
+	/**
+	 * Checks if is use size.
+	 *
+	 * @return true, if is use size
+	 */
 	public boolean isUseSize() {
 		return useSize;
 	}
 
+	/**
+	 * Sets the use size.
+	 *
+	 * @param useSize the new use size
+	 */
 	public void setUseSize(final boolean useSize) {
 		this.useSize = useSize;
 	}
 
+	/**
+	 * Sets the line thickness.
+	 *
+	 * @param thickness the new line thickness
+	 */
 	public void setLineThickness(final double thickness) {
 		lineThickness = thickness;
 	}
 
+	/**
+	 * Gets the line thickness.
+	 *
+	 * @return the line thickness
+	 */
 	public double getLineThickness() {
 		return lineThickness;
 	}
 
+	/**
+	 * Gets the colorexp.
+	 *
+	 * @return the colorexp
+	 */
 	public IExpression getColorexp() {
 		return colorexp;
 	}
 
+	/**
+	 * Checks if is use Y err values.
+	 *
+	 * @return true, if is use Y err values
+	 */
 	public boolean isUseYErrValues() {
 		return useYErrValues;
 	}
 
+	/**
+	 * Sets the use Y err values.
+	 *
+	 * @param useYErrValues the new use Y err values
+	 */
 	public void setUseYErrValues(final boolean useYErrValues) {
 		this.useYErrValues = useYErrValues;
 	}
 
+	/**
+	 * Checks if is use X err values.
+	 *
+	 * @return true, if is use X err values
+	 */
 	public boolean isUseXErrValues() {
 		return useXErrValues;
 	}
 
+	/**
+	 * Sets the use X err values.
+	 *
+	 * @param useXErrValues the new use X err values
+	 */
 	public void setUseXErrValues(final boolean useXErrValues) {
 		this.useXErrValues = useXErrValues;
 	}
 
+	/**
+	 * Checks if is use Y min max values.
+	 *
+	 * @return true, if is use Y min max values
+	 */
 	public boolean isUseYMinMaxValues() {
 		return useYMinMaxValues;
 	}
 
+	/**
+	 * Sets the use Y min max values.
+	 *
+	 * @param useYMinMaxValues the new use Y min max values
+	 */
 	public void setUseYMinMaxValues(final boolean useYMinMaxValues) {
 		this.useYMinMaxValues = useYMinMaxValues;
 	}
 
+	/**
+	 * Checks if is by category.
+	 *
+	 * @return true, if is by category
+	 */
 	public boolean isByCategory() {
 		return this.getDataset().isByCategory();
 	}
 
+	/**
+	 * Checks if is common X series.
+	 *
+	 * @return true, if is common X series
+	 */
 	public boolean isCommonXSeries() {
 		return this.getDataset().isCommonXSeries();
 	}
 
+	/**
+	 * Checks if is common Y series.
+	 *
+	 * @return true, if is common Y series
+	 */
 	public boolean isCommonYSeries() {
 		return this.getDataset().isCommonYSeries();
 	}
 
+	/**
+	 * Checks if is cumulative.
+	 *
+	 * @return true, if is cumulative
+	 */
 	public boolean isCumulative() {
 		return isCumulative;
 	}
 
+	/**
+	 * Sets the cumulative.
+	 *
+	 * @param scope the scope
+	 * @param isCumulative the is cumulative
+	 */
 	public void setCumulative(final IScope scope, final boolean isCumulative) {
 		if (!forceCumulative) {
 			this.isCumulative = isCumulative;
 		}
 	}
 
+	/**
+	 * Checks if is cumulative Y.
+	 *
+	 * @return true, if is cumulative Y
+	 */
 	public boolean isCumulativeY() {
 		return isCumulativeY;
 	}
 
+	/**
+	 * Sets the cumulative Y.
+	 *
+	 * @param scope the scope
+	 * @param isCumulative the is cumulative
+	 */
 	public void setCumulativeY(final IScope scope, final boolean isCumulative) {
 		if (!forceCumulativeY) {
 			this.isCumulativeY = isCumulative;
@@ -213,15 +417,32 @@ public class ChartDataSource {
 		}
 	}
 
+	/**
+	 * Sets the force cumulative.
+	 *
+	 * @param scope the scope
+	 * @param b the b
+	 */
 	public void setForceCumulative(final IScope scope, final boolean b) {
 		this.forceCumulative = b;
 
 	}
 
+	/**
+	 * Gets the dataset.
+	 *
+	 * @return the dataset
+	 */
 	public ChartDataSet getDataset() {
 		return myDataset;
 	}
 
+	/**
+	 * Sets the dataset.
+	 *
+	 * @param scope the scope
+	 * @param myDataset the my dataset
+	 */
 	public void setDataset(final IScope scope, final ChartDataSet myDataset) {
 		this.myDataset = myDataset;
 		if (myDataset.getStyle(scope) != null) {
@@ -229,23 +450,53 @@ public class ChartDataSource {
 		}
 	}
 
+	/**
+	 * Sets the style.
+	 *
+	 * @param scope the scope
+	 * @param stval the stval
+	 */
 	public void setStyle(final IScope scope, final String stval) {
 		style = stval;
 	}
 
+	/**
+	 * Gets the style.
+	 *
+	 * @param scope the scope
+	 * @return the style
+	 */
 	public String getStyle(final IScope scope) {
 		if (IKeyword.DEFAULT.equals(style)) { return this.getDataset().getStyle(scope); }
 		return style;
 	}
 
+	/**
+	 * Sets the value exp.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setValueExp(final IScope scope, final IExpression expval) {
 		value = expval;
 	}
 
+	/**
+	 * Gets the value.
+	 *
+	 * @return the value
+	 */
 	public IExpression getValue() {
 		return value;
 	}
 
+	/**
+	 * Gets the data type.
+	 *
+	 * @param scope the scope
+	 * @param o the o
+	 * @return the data type
+	 */
 	public int get_data_type(final IScope scope, final Object o) {
 		// final int type = this.DATA_TYPE_NULL;
 		if (o == null) { return this.DATA_TYPE_NULL; }
@@ -287,6 +538,16 @@ public class ChartDataSource {
 	// void updateseriewithvalue(final IScope scope, final ChartDataSeries myserie, final IExpression expr,
 	// final int chartCycle, final HashMap barvalues, final int listvalue) {
 	// final int type_val = this.computeTypeOfData(scope, expr);
+	/**
+	 * Updateseriewithvalue.
+	 *
+	 * @param scope the scope
+	 * @param myserie the myserie
+	 * @param o the o
+	 * @param chartCycle the chart cycle
+	 * @param barvalues the barvalues
+	 * @param listvalue the listvalue
+	 */
 	// final Object o = expr.value(scope);
 	void updateseriewithvalue(final IScope scope, final ChartDataSeries myserie, final Object o, final int chartCycle,
 			final HashMap barvalues, final int listvalue) {
@@ -743,32 +1004,66 @@ public class ChartDataSource {
 
 	}
 
+	/**
+	 * Gets the series.
+	 *
+	 * @return the series
+	 */
 	public LinkedHashMap<String, ChartDataSeries> getSeries() {
 		return mySeries;
 	}
 
+	/**
+	 * Sets the value.
+	 *
+	 * @param value the new value
+	 */
 	public void setValue(final IExpression value) {
 		this.value = value;
 	}
 
+	/**
+	 * Sets the Y err value exp.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setYErrValueExp(final IScope scope, final IExpression expval) {
 		this.setUseYErrValues(true);
 		this.valueyerr = expval;
 
 	}
 
+	/**
+	 * Sets the X err value exp.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setXErrValueExp(final IScope scope, final IExpression expval) {
 		this.setUseXErrValues(true);
 		this.valuexerr = expval;
 
 	}
 
+	/**
+	 * Sets the Y min max value exp.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setYMinMaxValueExp(final IScope scope, final IExpression expval) {
 		this.setUseYMinMaxValues(true);
 		this.valueyminmax = expval;
 
 	}
 
+	/**
+	 * Sets the marker shape.
+	 *
+	 * @param scope the scope
+	 * @param stval the stval
+	 */
 	public void setMarkerShape(final IScope scope, final String stval) {
 		// markerName is useless, for now creates/modifies the output
 		uniqueMarkerName = stval;
@@ -777,68 +1072,154 @@ public class ChartDataSource {
 		}
 	}
 
+	/**
+	 * Sets the marker size.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setMarkerSize(final IScope scope, final IExpression expval) {
 		this.setUseSize(scope, true);
 		this.sizeexp = expval;
 
 	}
 
+	/**
+	 * Gets the sizeexp.
+	 *
+	 * @return the sizeexp
+	 */
 	public IExpression getSizeexp() {
 		return sizeexp;
 	}
 
+	/**
+	 * Sets the color exp.
+	 *
+	 * @param scope the scope
+	 * @param expval the expval
+	 */
 	public void setColorExp(final IScope scope, final IExpression expval) {
 		this.setUseColorExp(scope, true);
 		this.colorexp = expval;
 
 	}
 
+	/**
+	 * Checks if is use size exp.
+	 *
+	 * @return true, if is use size exp
+	 */
 	public boolean isUseSizeExp() {
 		if (this.sizeexp == null) { return false; }
 		return true;
 	}
 
+	/**
+	 * Sets the use color exp.
+	 *
+	 * @param scope the scope
+	 * @param b the b
+	 */
 	public void setUseColorExp(final IScope scope, final boolean b) {
 		this.useColorExp = b;
 
 	}
 
+	/**
+	 * Checks if is use color exp.
+	 *
+	 * @return true, if is use color exp
+	 */
 	public boolean isUseColorExp() {
 		return useColorExp;
 	}
 
+	/**
+	 * Sets the marker bool.
+	 *
+	 * @param scope the scope
+	 * @param boolval the boolval
+	 */
 	public void setMarkerBool(final IScope scope, final boolean boolval) {
 		useMarker = boolval;
 	}
 
+	/**
+	 * Sets the fill marker.
+	 *
+	 * @param scope the scope
+	 * @param boolval the boolval
+	 */
 	public void setFillMarker(final IScope scope, final boolean boolval) {
 		fillMarker = boolval;
 	}
 
+	/**
+	 * Sets the use second Y axis.
+	 *
+	 * @param scope the scope
+	 * @param boolval the boolval
+	 */
 	public void setUseSecondYAxis(final IScope scope, final boolean boolval) {
 		useSecondYAxis = boolval;
 	}
 
+	/**
+	 * Gets the use second Y axis.
+	 *
+	 * @param scope the scope
+	 * @return the use second Y axis
+	 */
 	public boolean getUseSecondYAxis(final IScope scope) {
 		return useSecondYAxis;
 	}
 
+	/**
+	 * Sets the show line.
+	 *
+	 * @param scope the scope
+	 * @param boolval the boolval
+	 */
 	public void setShowLine(final IScope scope, final boolean boolval) {
 		showLine = boolval;
 	}
 
+	/**
+	 * Updatevalues.
+	 *
+	 * @param scope the scope
+	 * @param lastUpdateCycle the last update cycle
+	 */
 	public void updatevalues(final IScope scope, final int lastUpdateCycle) {
 
 	}
 
+	/**
+	 * Sets the use size.
+	 *
+	 * @param scope the scope
+	 * @param b the b
+	 */
 	public void setUseSize(final IScope scope, final boolean b) {
 		this.setUseSize(b);
 	}
 
+	/**
+	 * Creates the initial series.
+	 *
+	 * @param scope the scope
+	 */
 	public void createInitialSeries(final IScope scope) {
 
 	}
 
+	/**
+	 * Savehistory.
+	 *
+	 * @param scope the scope
+	 * @param history the history
+	 */
 	public void savehistory(final IScope scope, final ChartHistory history) {
 		for (final Map.Entry<String, ChartDataSeries> seriepair : this.mySeries.entrySet()) {
 			seriepair.getValue().savehistory(scope, history);

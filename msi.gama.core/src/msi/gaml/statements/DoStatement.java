@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.DoStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * DoStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -166,6 +166,9 @@ import msi.gaml.types.IType;
 @serializer (DoSerializer.class)
 public class DoStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
+	/**
+	 * The Class DoSerializer.
+	 */
 	public static class DoSerializer extends StatementSerializer {
 
 		@Override
@@ -190,6 +193,9 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	}
 
+	/**
+	 * The Class DoValidator.
+	 */
 	public static class DoValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
@@ -230,12 +236,26 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	}
 
+	/** The args. */
 	Arguments args;
+	
+	/** The return string. */
 	String returnString;
+	
+	/** The target species. */
 	final String targetSpecies;
+	
+	/** The function. */
 	final IExpression function;
+	
+	/** The Constant DO_FACETS. */
 	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO, IKeyword.INVOKE);
 
+	/**
+	 * Instantiates a new do statement.
+	 *
+	 * @param desc the desc
+	 */
 	public DoStatement(final IDescription desc) {
 		super(desc);
 
@@ -264,6 +284,12 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		this.args = args;
 	}
 
+	/**
+	 * Gets the runtime args.
+	 *
+	 * @param scope the scope
+	 * @return the runtime args
+	 */
 	public Arguments getRuntimeArgs(final IScope scope) {
 		if (args == null) { return null; }
 		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)

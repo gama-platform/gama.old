@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaListArrayWrapper.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.AbstractList;
@@ -17,11 +27,25 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaListArrayWrapper.
+ *
+ * @param <E> the element type
+ */
 public class GamaListArrayWrapper<E> extends AbstractList<E> implements IList<E>, RandomAccess {
 
+	/** The a. */
 	private final E[] a;
+	
+	/** The type. */
 	private final IContainerType type;
 
+	/**
+	 * Instantiates a new gama list array wrapper.
+	 *
+	 * @param array the array
+	 * @param contents the contents
+	 */
 	GamaListArrayWrapper(final E[] array, final IType contents) {
 		a = Objects.requireNonNull(array);
 		type = Types.LIST.of(contents);

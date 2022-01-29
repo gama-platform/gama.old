@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaPoint.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaPoint.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -60,20 +60,41 @@ import msi.gaml.types.Types;
 				doc = { @doc ("Returns the z ordinate of this point") }) })
 public class GamaPoint extends Coordinate implements IShape, ILocation, IIntersectable {
 
+	/**
+	 * Instantiates a new gama point.
+	 */
 	public GamaPoint() {
 		x = 0.0d;
 		y = 0.0d;
 		z = 0.0d;
 	}
 
+	/**
+	 * Instantiates a new gama point.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 */
 	public GamaPoint(final double x, final double y) {
 		setLocation(x, y, 0d);
 	}
 
+	/**
+	 * Instantiates a new gama point.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param z the z
+	 */
 	public GamaPoint(final double x, final double y, final double z) {
 		setLocation(x, y, z);
 	}
 
+	/**
+	 * Instantiates a new gama point.
+	 *
+	 * @param coord the coord
+	 */
 	public GamaPoint(final Coordinate coord) {
 		if (coord == null) {
 			setLocation(0d, 0d, 0d);
@@ -82,18 +103,42 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		}
 	}
 
+	/**
+	 * Smaller than.
+	 *
+	 * @param other the other
+	 * @return true, if successful
+	 */
 	public boolean smallerThan(final GamaPoint other) {
 		return x < other.x || y < other.y || z < other.z;
 	}
 
+	/**
+	 * Smaller than or equal to.
+	 *
+	 * @param other the other
+	 * @return true, if successful
+	 */
 	public boolean smallerThanOrEqualTo(final GamaPoint other) {
 		return x <= other.x || y <= other.y || z <= other.z;
 	}
 
+	/**
+	 * Bigger than.
+	 *
+	 * @param other the other
+	 * @return true, if successful
+	 */
 	public boolean biggerThan(final GamaPoint other) {
 		return x > other.x || y > other.y || z > other.z;
 	}
 
+	/**
+	 * Bigger than or equal to.
+	 *
+	 * @param other the other
+	 * @return true, if successful
+	 */
 	public boolean biggerThanOrEqualTo(final GamaPoint other) {
 		return x >= other.x || y >= other.y || z >= other.z;
 	}
@@ -104,6 +149,14 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return setLocation(al.x, al.y, al.z);
 	}
 
+	/**
+	 * Sets the location.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 * @param z the z
+	 * @return the gama point
+	 */
 	public GamaPoint setLocation(final double x, final double y, final double z) {
 		this.x = x;
 		this.y = y;
@@ -194,6 +247,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return "{" + x + "," + y + "," + z + "}";
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param loc the loc
+	 * @return the gama point
+	 */
 	public GamaPoint add(final GamaPoint loc) {
 		x += loc.x;
 		y += loc.y;
@@ -201,6 +260,14 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return this;
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @param ax the ax
+	 * @param ay the ay
+	 * @param az the az
+	 * @return the gama point
+	 */
 	public GamaPoint add(final double ax, final double ay, final double az) {
 		x += ax;
 		y += ay;
@@ -208,6 +275,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return this;
 	}
 
+	/**
+	 * Subtract.
+	 *
+	 * @param loc the loc
+	 * @return the gama point
+	 */
 	public GamaPoint subtract(final GamaPoint loc) {
 		x -= loc.x;
 		y -= loc.y;
@@ -215,6 +288,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return this;
 	}
 
+	/**
+	 * Multiply by.
+	 *
+	 * @param value the value
+	 * @return the gama point
+	 */
 	public GamaPoint multiplyBy(final double value) {
 		x *= value;
 		y *= value;
@@ -222,6 +301,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return this;
 	}
 
+	/**
+	 * Divide by.
+	 *
+	 * @param value the value
+	 * @return the gama point
+	 */
 	public GamaPoint divideBy(final double value) {
 		x /= value;
 		y /= value;
@@ -399,30 +484,75 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return Type.POINT;
 	}
 
+	/**
+	 * Times.
+	 *
+	 * @param d the d
+	 * @return the gama point
+	 */
 	public GamaPoint times(final double d) {
 		return new GamaPoint(x * d, y * d, z * d);
 	}
 
+	/**
+	 * Divided by.
+	 *
+	 * @param d the d
+	 * @return the gama point
+	 */
 	public GamaPoint dividedBy(final double d) {
 		return new GamaPoint(x / d, y / d, z / d);
 	}
 
+	/**
+	 * Minus.
+	 *
+	 * @param other the other
+	 * @return the gama point
+	 */
 	public GamaPoint minus(final GamaPoint other) {
 		return new GamaPoint(x - other.x, y - other.y, z - other.z);
 	}
 
+	/**
+	 * Minus.
+	 *
+	 * @param ax the ax
+	 * @param ay the ay
+	 * @param az the az
+	 * @return the gama point
+	 */
 	public GamaPoint minus(final double ax, final double ay, final double az) {
 		return new GamaPoint(x - ax, y - ay, z - az);
 	}
 
+	/**
+	 * Plus.
+	 *
+	 * @param other the other
+	 * @return the gama point
+	 */
 	public GamaPoint plus(final GamaPoint other) {
 		return new GamaPoint(x + other.x, y + other.y, z + other.z);
 	}
 
+	/**
+	 * Plus.
+	 *
+	 * @param ax the ax
+	 * @param ay the ay
+	 * @param az the az
+	 * @return the gama point
+	 */
 	public GamaPoint plus(final double ax, final double ay, final double az) {
 		return new GamaPoint(x + ax, y + ay, z + az);
 	}
 
+	/**
+	 * Norm.
+	 *
+	 * @return the double
+	 */
 	public double norm() {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
@@ -435,12 +565,22 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return 3700 * result + hashCode(z);
 	}
 
+	/**
+	 * Normalized.
+	 *
+	 * @return the gama point
+	 */
 	public GamaPoint normalized() {
 		final double r = this.norm();
 		if (r == 0d) return new GamaPoint(0, 0, 0);
 		return new GamaPoint(this.x / r, this.y / r, this.z / r);
 	}
 
+	/**
+	 * Normalize.
+	 *
+	 * @return the gama point
+	 */
 	public GamaPoint normalize() {
 		final double r = this.norm();
 		if (r == 0d) return this;
@@ -450,20 +590,42 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return this;
 	}
 
+	/**
+	 * Negated.
+	 *
+	 * @return the gama point
+	 */
 	public GamaPoint negated() {
 		return new GamaPoint(-x, -y, -z);
 	}
 
+	/**
+	 * Negate.
+	 */
 	public void negate() {
 		x = -x;
 		y = -y;
 		z = -z;
 	}
 
+	/**
+	 * Dot product.
+	 *
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @return the double
+	 */
 	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
 
+	/**
+	 * Cross.
+	 *
+	 * @param v1 the v 1
+	 * @param v2 the v 2
+	 * @return the gama point
+	 */
 	public final static GamaPoint cross(final GamaPoint v1, final GamaPoint v2) {
 		return new GamaPoint(v1.y * v2.z - v1.z * v2.y, v2.x * v1.z - v2.z * v1.x, v1.x * v2.y - v1.y * v2.x);
 	}
@@ -636,6 +798,11 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	@Override
 	public void copyShapeAttributesFrom(final IShape other) {}
 
+	/**
+	 * Orthogonal.
+	 *
+	 * @return the gama point
+	 */
 	public GamaPoint orthogonal() {
 		final double threshold = 0.6 * norm();
 		if (threshold == 0) return this;
@@ -651,6 +818,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return new GamaPoint(inverse * y, -inverse * x, 0);
 	}
 
+	/**
+	 * With precision.
+	 *
+	 * @param i the i
+	 * @return the gama point
+	 */
 	public GamaPoint withPrecision(final int i) {
 		return new GamaPoint(round(x, i), round(y, i), round(z, i));
 	}

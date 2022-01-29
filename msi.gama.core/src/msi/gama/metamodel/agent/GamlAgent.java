@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.agent.GamlAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamlAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -41,11 +41,15 @@ import msi.gaml.variables.IVariable;
 public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	// hqnghi manipulate micro-models AD put it to null to have lazy
+	/** The extern micro populations. */
 	// initialization (saves some bytes in each agent)
 	protected IMap<String, IPopulation<? extends IAgent>> externMicroPopulations;
 	// Added to optimize the traversal of "non-minimal" agents that contain
+	/** The micro populations. */
 	// micropopulations
 	protected IPopulation<? extends IAgent>[] microPopulations;
+	
+	/** The Constant NO_POP. */
 	static final IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
 
 	// end-hqnghi
@@ -66,6 +70,12 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		super(gridPopulation, index, geometry);
 	}
 
+	/**
+	 * Checks if is population.
+	 *
+	 * @param populationName the population name
+	 * @return the boolean
+	 */
 	private Boolean isPopulation(final String populationName) {
 		final IVariable v = getSpecies().getVar(populationName);
 		if (v == null) { return false; }
@@ -225,6 +235,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		registerMicropopulation(scope, microSpec, microPop);
 	}
 	
+	/**
+	 * Register micropopulation.
+	 *
+	 * @param scope the scope
+	 * @param microSpec the micro spec
+	 * @param microPop the micro pop
+	 */
 	protected void registerMicropopulation(IScope scope, ISpecies microSpec, IPopulation<? extends IAgent> microPop) {
 		setAttribute(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.KmlOp.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * KmlOp.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -24,9 +24,26 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gaml.types.GamaKmlExport;
 
+/**
+ * The Class KmlOp.
+ */
 public class KmlOp {
 
 	
+	/**
+	 * Adds the shape.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param shape the shape
+	 * @param lineWidth the line width
+	 * @param lineColor the line color
+	 * @param fillColor the fill color
+	 * @param begin the begin
+	 * @param end the end
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_geometry",
 			category = IOperatorCategory.LOGIC,
@@ -45,6 +62,19 @@ public class KmlOp {
 		return kml;
 	}
 	
+	/**
+	 * Adds the shape.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param shape the shape
+	 * @param lineWidth the line width
+	 * @param lineColor the line color
+	 * @param fillColor the fill color
+	 * @param end the end
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_geometry",
 			category = IOperatorCategory.LOGIC,
@@ -60,6 +90,18 @@ public class KmlOp {
 	}
 	
 	
+	/**
+	 * Adds the shape.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param shape the shape
+	 * @param lineWidth the line width
+	 * @param lineColor the line color
+	 * @param fillColor the fill color
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_geometry",
 			category = IOperatorCategory.LOGIC,
@@ -75,6 +117,17 @@ public class KmlOp {
 		return addShape(scope,kml,shape,lineWidth,lineColor,fillColor,begin,end) ;
 	}
 	
+	/**
+	 * Adds the shape.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param shape the shape
+	 * @param lineColor the line color
+	 * @param fillColor the fill color
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_geometry",
 			category = IOperatorCategory.LOGIC,
@@ -89,6 +142,17 @@ public class KmlOp {
 	}
 	
 
+	/**
+	 * Adds the shape.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param shape the shape
+	 * @param lineWidth the line width
+	 * @param color the color
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_geometry",
 			category = IOperatorCategory.LOGIC,
@@ -102,6 +166,20 @@ public class KmlOp {
 		return addShape(scope,kml,shape,lineWidth,color,color) ;
 	}
 	
+	/**
+	 * Adds the 3 D model.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param loc the loc
+	 * @param scale the scale
+	 * @param orientation the orientation
+	 * @param file the file
+	 * @param begin the begin
+	 * @param end the end
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_3Dmodel",
 			category = IOperatorCategory.LOGIC,
@@ -118,6 +196,18 @@ public class KmlOp {
 		return kml;
 	}
 	
+	/**
+	 * Adds the 3 D model.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param loc the loc
+	 * @param scale the scale
+	 * @param orientation the orientation
+	 * @param file the file
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_3Dmodel",
 			category = IOperatorCategory.LOGIC,
@@ -133,6 +223,20 @@ public class KmlOp {
 		return add3DModel( scope, kml,loc,scale , orientation,file, currentDate,endDate);
 	}
 	
+	/**
+	 * Adds the icon.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param loc the loc
+	 * @param scale the scale
+	 * @param orientation the orientation
+	 * @param file the file
+	 * @param begin the begin
+	 * @param end the end
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_icon",
 			category = IOperatorCategory.LOGIC,
@@ -151,6 +255,18 @@ public class KmlOp {
 		return kml;
 	}
 	
+	/**
+	 * Adds the icon.
+	 *
+	 * @param scope the scope
+	 * @param kml the kml
+	 * @param loc the loc
+	 * @param scale the scale
+	 * @param orientation the orientation
+	 * @param file the file
+	 * @return the gama kml export
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@operator (
 			value = "add_icon",
 			category = IOperatorCategory.LOGIC,

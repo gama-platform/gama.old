@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGifFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaGifFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -20,6 +20,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GamaGifFile.
+ */
 @file (
 		name = "gif",
 		extensions = { "gif" },
@@ -31,6 +34,13 @@ import msi.gaml.types.IType;
 public class GamaGifFile extends GamaImageFile {
 
 	// private int averageDelay;
+	/**
+	 * Instantiates a new gama gif file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// private int frameCount;
 	@doc (value= "This file constructor allows to read a gif file",
 			examples = {
@@ -40,6 +50,13 @@ public class GamaGifFile extends GamaImageFile {
 		super(scope, pathName);
 	}
 
+	/**
+	 * Instantiates a new gama gif file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param image the image
+	 */
 	@doc (value= "This file constructor allows to store a matrix in a gif file (it does not save it - just store it in memory)",
 			examples = {
 					@example(value = "gif_file f <- gif_file(\"file.gif\",matrix([10,10],[10,10]));", isExecutable = false)
@@ -55,10 +72,20 @@ public class GamaGifFile extends GamaImageFile {
 		return getFrameCount() > 0;
 	}
 
+	/**
+	 * Gets the average delay.
+	 *
+	 * @return the average delay
+	 */
 	public int getAverageDelay() {
 		return ImageUtils.getInstance().getDuration(localPath) / getFrameCount();
 	}
 
+	/**
+	 * Gets the frame count.
+	 *
+	 * @return the frame count
+	 */
 	public int getFrameCount() {
 		return ImageUtils.getInstance().getFrameCount(localPath);
 	}

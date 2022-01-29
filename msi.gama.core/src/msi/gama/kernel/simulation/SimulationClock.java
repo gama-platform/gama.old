@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.simulation.SimulationClock.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * SimulationClock.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
@@ -35,6 +35,7 @@ import msi.gaml.operators.Dates;
  */
 public class SimulationClock {
 
+	/** The info string builder. */
 	final StringBuilder infoStringBuilder = new StringBuilder();
 
 	/** The number of simulation cycles elapsed so far. */
@@ -77,13 +78,23 @@ public class SimulationClock {
 	// */
 	// private volatile boolean displayCycles = true;
 
+	/** The starting date. */
 	private GamaDate startingDate = null;
+	
+	/** The current date. */
 	private GamaDate currentDate = null;
 
+	/** The output current date as duration. */
 	private final boolean outputCurrentDateAsDuration;
 
+	/** The clock scope. */
 	private final IScope clockScope;
 
+	/**
+	 * Instantiates a new simulation clock.
+	 *
+	 * @param scope the scope
+	 */
 	public SimulationClock(final IScope scope) {
 		final IModel model = scope.getModel();
 		outputCurrentDateAsDuration =
@@ -114,11 +125,17 @@ public class SimulationClock {
 		setCurrentDate(getCurrentDate().plus(getStepInMillis(), i - previous, ChronoUnit.MILLIS));
 	}
 
+	/**
+	 * Increment cycle.
+	 */
 	public void incrementCycle() {
 		cycle.incrementAndGet();
 		setCurrentDate(getCurrentDate().plusMillis(getStepInMillis()));
 	}
 
+	/**
+	 * Reset cycles.
+	 */
 	public void resetCycles() {
 		cycle.set(0);
 		startingDate = null;
@@ -188,6 +205,11 @@ public class SimulationClock {
 		return step;
 	}
 
+	/**
+	 * Gets the step in millis.
+	 *
+	 * @return the step in millis
+	 */
 	public long getStepInMillis() {
 		return (long) (step * 1000);
 	}
@@ -200,6 +222,9 @@ public class SimulationClock {
 		// duration = 0;
 	}
 
+	/**
+	 * Reset total duration.
+	 */
 	public void resetTotalDuration() {
 		resetDuration();
 		duration = 0;
@@ -242,12 +267,20 @@ public class SimulationClock {
 		return totalDuration;
 	}
 
+	/**
+	 * Step.
+	 *
+	 * @param scope the scope
+	 */
 	public void step(final IScope scope) {
 		incrementCycle();
 		computeDuration();
 		waitDelay();
 	}
 
+	/**
+	 * Wait delay.
+	 */
 	public void waitDelay() {
 		final double delay = getDelayInMilliseconds();
 		if (delay == 0d) { return; }
@@ -259,15 +292,28 @@ public class SimulationClock {
 		}
 	}
 
+	/**
+	 * Reset.
+	 *
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public void reset() throws GamaRuntimeException {
 		resetCycles();
 		resetTotalDuration();
 	}
 
+	/**
+	 * Begin cycle.
+	 */
 	public void beginCycle() {
 		resetDuration();
 	}
 
+	/**
+	 * Gets the info.
+	 *
+	 * @return the info
+	 */
 	public String getInfo() {
 		final int currentCycle = getCycle();
 		final ITopLevelAgent agent = clockScope.getRoot();
@@ -283,8 +329,16 @@ public class SimulationClock {
 		return infoStringBuilder.toString();
 	}
 
+	/**
+	 * The Class ExperimentClock.
+	 */
 	public static class ExperimentClock extends SimulationClock {
 
+		/**
+		 * Instantiates a new experiment clock.
+		 *
+		 * @param scope the scope
+		 */
 		public ExperimentClock(final IScope scope) {
 			super(scope);
 		}
@@ -299,6 +353,11 @@ public class SimulationClock {
 			this.totalDuration = totalDuration;
 		}
 
+		/**
+		 * Sets the last duration.
+		 *
+		 * @param duration the new last duration
+		 */
 		public void setLastDuration(final long duration) {
 			this.duration = duration;
 		}
@@ -311,10 +370,20 @@ public class SimulationClock {
 
 	}
 
+	/**
+	 * Gets the delay in milliseconds.
+	 *
+	 * @return the delay in milliseconds
+	 */
 	public double getDelayInMilliseconds() {
 		return clockScope.getExperiment().getMinimumDuration() * 1000;
 	}
 
+	/**
+	 * Gets the current date.
+	 *
+	 * @return the current date
+	 */
 	public GamaDate getCurrentDate() {
 		if (currentDate == null) {
 			currentDate = getStartingDate();
@@ -322,6 +391,11 @@ public class SimulationClock {
 		return currentDate;
 	}
 
+	/**
+	 * Gets the starting date.
+	 *
+	 * @return the starting date
+	 */
 	public GamaDate getStartingDate() {
 		if (startingDate == null) {
 			setStartingDate(Dates.DATES_STARTING_DATE.getValue());
@@ -329,12 +403,22 @@ public class SimulationClock {
 		return startingDate;
 	}
 
+	/**
+	 * Sets the starting date.
+	 *
+	 * @param starting_date the new starting date
+	 */
 	public void setStartingDate(final GamaDate starting_date) {
 		this.startingDate = starting_date;
 		this.currentDate = starting_date;
 		cycle.set(0);
 	}
 
+	/**
+	 * Sets the current date.
+	 *
+	 * @param date the new current date
+	 */
 	public void setCurrentDate(final GamaDate date) {
 		currentDate = date;
 	}

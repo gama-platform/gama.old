@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.SelectionRoulette.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * SelectionRoulette.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -15,8 +15,14 @@ import java.util.*;
 
 import msi.gama.runtime.IScope;
 
+/**
+ * The Class SelectionRoulette.
+ */
 public class SelectionRoulette implements Selection {
 
+	/**
+	 * Instantiates a new selection roulette.
+	 */
 	public SelectionRoulette() {}
 
 	@Override

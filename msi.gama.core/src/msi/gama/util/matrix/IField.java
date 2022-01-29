@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * IField.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.util.matrix;
 
 import javax.annotation.Nonnull;
@@ -42,8 +52,15 @@ import msi.gaml.types.IType;
 				doc = @doc ("The list of bands that are optionnaly present in the field. The first band is the primary field itself, and each of these bands is a field w/o bands ")) })
 public interface IField extends IMatrix<Double>, IDiffusionTarget {
 
+	/** The no no data. */
 	double NO_NO_DATA = Double.MAX_VALUE;
 
+	/**
+	 * Gets the field.
+	 *
+	 * @param scope the scope
+	 * @return the field
+	 */
 	@Override
 	default IField getField(final IScope scope) {
 		return this;
@@ -91,14 +108,32 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	@getter ("bands")
 	IList<? extends IField> getBands(IScope scope);
 
+	/**
+	 * Sets the bands.
+	 *
+	 * @param scope the scope
+	 * @param bands the bands
+	 */
 	@setter ("bands")
 	default void setBands(final IScope scope, final IList<IField> bands) {
 		// Nothing to do by default as this value is supposed to be read-only
 	}
 
+	/**
+	 * Gets the cell size.
+	 *
+	 * @param scope the scope
+	 * @return the cell size
+	 */
 	@getter ("cell_size")
 	GamaPoint getCellSize(IScope scope);
 
+	/**
+	 * Sets the cell size.
+	 *
+	 * @param scope the scope
+	 * @param size the size
+	 */
 	@setter ("cell_size")
 	default void setCellSize(final IScope scope, final GamaPoint size) {
 		// Nothing to do by default as this value is supposed to be read-only
@@ -113,6 +148,14 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 */
 	IShape getCellShapeAt(IScope scope, GamaPoint loc);
 
+	/**
+	 * Gets the cell shape at.
+	 *
+	 * @param scope the scope
+	 * @param columns the columns
+	 * @param rows the rows
+	 * @return the cell shape at
+	 */
 	IShape getCellShapeAt(IScope scope, int columns, int rows);
 
 	/**
@@ -134,8 +177,22 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	 */
 	IList<IShape> getCellsIntersecting(IScope scope, IShape shape);
 
+	/**
+	 * Gets the locations intersecting.
+	 *
+	 * @param scope the scope
+	 * @param shape the shape
+	 * @return the locations intersecting
+	 */
 	IList<GamaPoint> getLocationsIntersecting(final IScope scope, final IShape shape);
 
+	/**
+	 * Gets the neighbors of.
+	 *
+	 * @param scope the scope
+	 * @param point the point
+	 * @return the neighbors of
+	 */
 	IList<GamaPoint> getNeighborsOf(IScope scope, GamaPoint point);
 
 }

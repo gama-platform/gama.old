@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaGenericAgentType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaGenericAgentType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -38,10 +38,18 @@ import msi.gaml.descriptions.SpeciesDescription;
 		doc = @doc ("The basic and default type of agents in GAML"))
 public class GamaGenericAgentType extends GamaAgentType {
 
+	/**
+	 * Instantiates a new gama generic agent type.
+	 */
 	public GamaGenericAgentType() {
 		super(null, IKeyword.AGENT, IType.AGENT, IAgent.class);
 	}
 
+	/**
+	 * Sets the species.
+	 *
+	 * @param sd the new species
+	 */
 	public void setSpecies(final SpeciesDescription sd) {
 		species = sd;
 	}

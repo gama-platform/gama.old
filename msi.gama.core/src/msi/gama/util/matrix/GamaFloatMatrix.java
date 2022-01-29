@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaFloatMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GamaFloatMatrix.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -35,9 +35,19 @@ import msi.gaml.types.Types;
 import one.util.streamex.DoubleStreamEx;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class GamaFloatMatrix.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaFloatMatrix extends GamaMatrix<Double> {
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param m the m
+	 * @return the gama float matrix
+	 */
 	static public GamaFloatMatrix from(final IScope scope, final IMatrix m) {
 		if (m instanceof GamaFloatMatrix) return (GamaFloatMatrix) m;
 		if (m instanceof GamaObjectMatrix)
@@ -47,6 +57,15 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return null;
 	}
 
+	/**
+	 * From.
+	 *
+	 * @param scope the scope
+	 * @param c the c
+	 * @param r the r
+	 * @param m the m
+	 * @return the gama float matrix
+	 */
 	static public GamaFloatMatrix from(final IScope scope, final int c, final int r, final IMatrix m) {
 		if (m instanceof GamaFloatMatrix) return new GamaFloatMatrix(c, r, ((GamaFloatMatrix) m).getMatrix());
 		if (m instanceof GamaObjectMatrix) return new GamaFloatMatrix(scope, c, r, ((GamaObjectMatrix) m).getMatrix());
@@ -54,28 +73,59 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return null;
 	}
 
+	/** The matrix. */
 	protected double[] matrix;
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param mat the mat
+	 */
 	public GamaFloatMatrix(final double[] mat) {
 		super(1, mat.length, Types.FLOAT);
 		setMatrix(mat);
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param p the p
+	 */
 	public GamaFloatMatrix(final GamaPoint p) {
 		this((int) p.x, (int) p.y);
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 */
 	public GamaFloatMatrix(final int cols, final int rows) {
 		super(cols, rows, Types.FLOAT);
 		setMatrix(new double[cols * rows]);
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaFloatMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows);
 
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
 		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
@@ -85,6 +135,14 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		// FastMath.min(objects.length, rows * cols));
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param scope the scope
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param objects the objects
+	 */
 	public GamaFloatMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(cols, rows);
 		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) {
@@ -92,6 +150,14 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param scope the scope
+	 * @param objects the objects
+	 * @param preferredSize the preferred size
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public GamaFloatMatrix(final IScope scope, final List objects, final GamaPoint preferredSize)
 			throws GamaRuntimeException {
 		super(scope, objects, preferredSize, Types.FLOAT);
@@ -113,6 +179,12 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 	}
 
+	/**
+	 * Instantiates a new gama float matrix.
+	 *
+	 * @param scope the scope
+	 * @param mat the mat
+	 */
 	public GamaFloatMatrix(final IScope scope, final Object[] mat) {
 		this(1, mat.length);
 		for (int i = 0; i < mat.length; i++) {
@@ -257,6 +329,12 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	private boolean remove(final double o) {
 		for (int i = 0; i < getMatrix().length; i++) {
 			if (isZeroWidth(getMatrix()[i], o)) {
@@ -281,6 +359,12 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return o;
 	}
 
+	/**
+	 * Removes the all.
+	 *
+	 * @param o the o
+	 * @return true, if successful
+	 */
 	private boolean removeAll(final double o) {
 		boolean removed = false;
 		for (int i = 0; i < getMatrix().length; i++) {
@@ -325,10 +409,20 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return Doubles.asList(getMatrix());
 	}
 
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
 	public double[] getMatrix() {
 		return matrix;
 	}
 
+	/**
+	 * Sets the matrix.
+	 *
+	 * @param matrix the new matrix
+	 */
 	void setMatrix(final double[] matrix) {
 		this.matrix = matrix;
 	}

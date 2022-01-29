@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.topology.grid.GridNeighborhood.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * GridNeighborhood.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -24,12 +24,22 @@ import msi.gama.util.Collector;
  */
 public abstract class GridNeighborhood implements INeighborhood {
 
+	/** The matrix. */
 	protected final GamaSpatialMatrix matrix;
+	
+	/** The neighbors. */
 	// i : index of agents; j : index of neighbors
 	protected int[][] neighbors;
+	
+	/** The neighbors indexes. */
 	// i : index of agents; j : index of the neighbors by distance
 	protected int[][] neighborsIndexes;
 
+	/**
+	 * Instantiates a new grid neighborhood.
+	 *
+	 * @param matrix the matrix
+	 */
 	public GridNeighborhood(final GamaSpatialMatrix matrix) {
 		this.matrix = matrix;
 		neighbors = new int[matrix.matrix.length][0];
@@ -54,8 +64,22 @@ public abstract class GridNeighborhood implements INeighborhood {
 		return neighbors[placeIndex];
 	}
 
+	/**
+	 * Gets the neighbors at radius.
+	 *
+	 * @param placeIndex the place index
+	 * @param radius the radius
+	 * @return the neighbors at radius
+	 */
 	protected abstract Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius);
 
+	/**
+	 * Compute neighbors from.
+	 *
+	 * @param placeIndex the place index
+	 * @param begin the begin
+	 * @param end the end
+	 */
 	private void computeNeighborsFrom(final int placeIndex, final int begin, final int end) {
 		for (int i = begin; i <= end; i++) {
 			// final int previousIndex = i == 1 ? 0 :
@@ -78,6 +102,12 @@ public abstract class GridNeighborhood implements INeighborhood {
 		}
 	}
 
+	/**
+	 * Adds the to neighbors index.
+	 *
+	 * @param placeIndex the place index
+	 * @param newIndex the new index
+	 */
 	private final void addToNeighborsIndex(final int placeIndex, final int newIndex) {
 		final int[] previous = neighborsIndexes[placeIndex];
 		final int[] newOne = new int[previous.length + 1];

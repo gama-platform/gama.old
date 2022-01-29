@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.graph.loader.AvailableGraphParsers.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GraphImporters.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -41,6 +41,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class GraphImporters {
 
+	/** The Constant name2parser. */
 	private static final Map<String, Class<? extends GraphImporter>> name2parser =
 		new HashMap<String, Class<? extends GraphImporter>>() {
 
@@ -106,8 +107,15 @@ public class GraphImporters {
 		return parsersForAutomaticDetection;
 	}
 
+	/** The name 2 singleton. */
 	private static Map<String, GraphImporter> name2singleton = new HashMap<String, GraphImporter>();
 
+	/**
+	 * Gets the graph importer.
+	 *
+	 * @param fileType the file type
+	 * @return the graph importer
+	 */
 	public static GraphImporter getGraphImporter(final String fileType) {
 		GraphImporter res = name2singleton.get(fileType);
 

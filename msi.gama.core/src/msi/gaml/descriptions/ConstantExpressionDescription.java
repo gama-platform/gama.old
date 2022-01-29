@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ConstantExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v. 1.8.1)
+ * ConstantExpressionDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -25,13 +25,29 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class ConstantExpressionDescription.
+ */
 public class ConstantExpressionDescription extends ConstantExpression implements IExpressionDescription {
 
+	/** The Constant CACHE. */
 	final static Cache<Object, IExpressionDescription> CACHE = CacheBuilder.newBuilder().maximumSize(1000).build();
+	
+	/** The Constant NULL_EXPR_DESCRIPTION. */
 	public final static ConstantExpressionDescription NULL_EXPR_DESCRIPTION = new ConstantExpressionDescription(null);
+	
+	/** The Constant TRUE_EXPR_DESCRIPTION. */
 	public final static ConstantExpressionDescription TRUE_EXPR_DESCRIPTION = new ConstantExpressionDescription(true);
+	
+	/** The Constant FALSE_EXPR_DESCRIPTION. */
 	public final static ConstantExpressionDescription FALSE_EXPR_DESCRIPTION = new ConstantExpressionDescription(false);
 
+	/**
+	 * Creates the.
+	 *
+	 * @param object the object
+	 * @return the i expression description
+	 */
 	public static IExpressionDescription create(final Object object) {
 		if (object == null) { return NULL_EXPR_DESCRIPTION; }
 		try {
@@ -41,6 +57,12 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 		}
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param i the i
+	 * @return the i expression description
+	 */
 	public static IExpressionDescription create(final Integer i) {
 		try {
 			return CACHE.get(i, () -> new ConstantExpressionDescription(i, Types.INT));
@@ -50,6 +72,12 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param d the d
+	 * @return the i expression description
+	 */
 	public static IExpressionDescription create(final Double d) {
 		try {
 			return CACHE.get(d, () -> new ConstantExpressionDescription(d, Types.FLOAT));
@@ -59,14 +87,31 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param b the b
+	 * @return the i expression description
+	 */
 	public static IExpressionDescription create(final Boolean b) {
 		return b ? TRUE_EXPR_DESCRIPTION : FALSE_EXPR_DESCRIPTION;
 	}
 
+	/**
+	 * Instantiates a new constant expression description.
+	 *
+	 * @param object the object
+	 */
 	private ConstantExpressionDescription(final Object object) {
 		this(object, GamaType.of(object));
 	}
 
+	/**
+	 * Instantiates a new constant expression description.
+	 *
+	 * @param object the object
+	 * @param t the t
+	 */
 	private ConstantExpressionDescription(final Object object, final IType<?> t) {
 		super(object, t);
 	}

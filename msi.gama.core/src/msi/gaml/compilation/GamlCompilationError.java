@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.compilation.GamlCompilationError.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * GamlCompilationError.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -19,14 +19,37 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class GamlCompilationError {
 
+	/** The is warning. */
 	protected boolean isWarning = false;
+	
+	/** The is info. */
 	protected boolean isInfo = false;
+	
+	/** The message. */
 	protected final String message;
+	
+	/** The code. */
 	protected String code;
+	
+	/** The data. */
 	protected String[] data;
+	
+	/** The source. */
 	protected EObject source;
+	
+	/** The uri. */
 	protected final URI uri;
 
+	/**
+	 * Instantiates a new gaml compilation error.
+	 *
+	 * @param string the string
+	 * @param code the code
+	 * @param object the object
+	 * @param warning the warning
+	 * @param info the info
+	 * @param data the data
+	 */
 	public GamlCompilationError(final String string, final String code, final EObject object, final boolean warning,
 			final boolean info, final String... data) {
 
@@ -39,6 +62,16 @@ public class GamlCompilationError {
 		uri = object.eResource().getURI();
 	}
 
+	/**
+	 * Instantiates a new gaml compilation error.
+	 *
+	 * @param string the string
+	 * @param code the code
+	 * @param uri the uri
+	 * @param warning the warning
+	 * @param info the info
+	 * @param data the data
+	 */
 	public GamlCompilationError(final String string, final String code, final URI uri, final boolean warning,
 			final boolean info, final String... data) {
 
@@ -51,14 +84,29 @@ public class GamlCompilationError {
 		this.uri = uri;
 	}
 
+	/**
+	 * Gets the data.
+	 *
+	 * @return the data
+	 */
 	public String[] getData() {
 		return data;
 	}
 
+	/**
+	 * Gets the uri.
+	 *
+	 * @return the uri
+	 */
 	public URI getURI() {
 		return uri;
 	}
 
+	/**
+	 * Gets the code.
+	 *
+	 * @return the code
+	 */
 	public String getCode() {
 		return code;
 	}
@@ -68,18 +116,38 @@ public class GamlCompilationError {
 		return message;
 	}
 
+	/**
+	 * Checks if is warning.
+	 *
+	 * @return true, if is warning
+	 */
 	public boolean isWarning() {
 		return isWarning && !isInfo;
 	}
 
+	/**
+	 * Checks if is info.
+	 *
+	 * @return true, if is info
+	 */
 	public boolean isInfo() {
 		return isInfo;
 	}
 
+	/**
+	 * Gets the statement.
+	 *
+	 * @return the statement
+	 */
 	public EObject getStatement() {
 		return source;
 	}
 
+	/**
+	 * Checks if is error.
+	 *
+	 * @return true, if is error
+	 */
 	public boolean isError() {
 		return !isInfo && !isWarning;
 	}

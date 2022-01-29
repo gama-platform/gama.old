@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaProxyGeometry.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaProxyGeometry.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -58,13 +58,20 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
+	/** The absolute location. */
 	GamaPoint absoluteLocation;
 	// Property map to add all kinds of information (e.g to specify if the
 	// geometry is a sphere, a
 	// cube, etc...). Can be reused by subclasses (for example to store GIS
+	/** The attributes. */
 	// information)
 	protected IMap<String, Object> attributes;
 
+	/**
+	 * Instantiates a new gama proxy geometry.
+	 *
+	 * @param loc the loc
+	 */
 	public GamaProxyGeometry(final GamaPoint loc) {
 		setLocation(loc);
 	}

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.interfaces.IDisplayCreator.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * IDisplayCreator.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -13,14 +13,30 @@ package msi.gama.common.interfaces;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 
+/**
+ * The Interface IDisplayCreator.
+ */
 @FunctionalInterface
 public interface IDisplayCreator {
 
+	/**
+	 * The Class DisplayDescription.
+	 */
 	public static class DisplayDescription implements IDisplayCreator, IGamlDescription {
 
+		/** The original. */
 		private final IDisplayCreator original;
+		
+		/** The plugin. */
 		private final String name, plugin;
 
+		/**
+		 * Instantiates a new display description.
+		 *
+		 * @param original the original
+		 * @param name the name
+		 * @param plugin the plugin
+		 */
 		public DisplayDescription(final IDisplayCreator original, final String name, final String plugin) {
 			this.original = original;
 			this.name = name;
@@ -38,6 +54,13 @@ public interface IDisplayCreator {
 			return new NullDisplaySurface();
 		}
 
+		/**
+		 * Creates the.
+		 *
+		 * @param output the output
+		 * @param args the args
+		 * @return the i display surface
+		 */
 		public IDisplaySurface create(final IDisplayOutput output, final Object... args) {
 			final Object[] params = new Object[args.length + 1];
 			params[0] = output;
@@ -116,6 +139,12 @@ public interface IDisplayCreator {
 		// }
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param args the args
+	 * @return the i display surface
+	 */
 	IDisplaySurface create(Object... args);
 
 }

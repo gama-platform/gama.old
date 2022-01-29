@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.AbstractSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * AbstractSpecies.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -59,16 +59,38 @@ import msi.gaml.variables.IVariable;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
+	/** The is graph. */
 	protected final boolean isGrid, isGraph;
+	
+	/** The micro species. */
 	protected final Map<String, ISpecies> microSpecies = GamaMapFactory.createUnordered();
+	
+	/** The variables. */
 	private final Map<String, IVariable> variables = GamaMapFactory.createOrdered();
+	
+	/** The aspects. */
 	private final Map<String, AspectStatement> aspects = GamaMapFactory.createOrdered();
+	
+	/** The actions. */
 	private final Map<String, ActionStatement> actions = GamaMapFactory.createOrdered();
+	
+	/** The user commands. */
 	private final Map<String, UserCommandStatement> userCommands = GamaMapFactory.createOrdered();
+	
+	/** The behaviors. */
 	private final List<IStatement> behaviors = new ArrayList<>();
+	
+	/** The parent species. */
 	protected ISpecies macroSpecies, parentSpecies;
+	
+	/** The control. */
 	final IArchitecture control;
 
+	/**
+	 * Instantiates a new abstract species.
+	 *
+	 * @param description the description
+	 */
 	public AbstractSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
@@ -507,12 +529,25 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return pop == null ? Collections.EMPTY_LIST : Collections.singleton(pop);
 	}
 
+	/**
+	 * Gets the skill instance for.
+	 *
+	 * @param skillClass the skill class
+	 * @return the skill instance for
+	 */
 	public ISkill getSkillInstanceFor(final Class skillClass) {
 		if (skillClass == null) return null;
 		if (skillClass.isAssignableFrom(control.getClass())) return control;
 		return getSkillInstanceFor(getDescription(), skillClass);
 	}
 
+	/**
+	 * Gets the skill instance for.
+	 *
+	 * @param sd the sd
+	 * @param skillClass the skill class
+	 * @return the skill instance for
+	 */
 	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {
 		for (final SkillDescription sk : sd.getSkills()) {
 			if (skillClass.isAssignableFrom(sk.getJavaBase())) return sk.getInstance();

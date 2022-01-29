@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AExplorationAlgorithm.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
 import java.time.temporal.ChronoUnit;
@@ -25,12 +35,20 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 
+/**
+ * The Class AExplorationAlgorithm.
+ */
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
 public abstract class AExplorationAlgorithm extends Symbol implements IExploration {
 
+	/** The current experiment. */
 	protected BatchAgent currentExperiment;
+	
+	/** The outputs expression. */
 	protected IExpression outputsExpression;
+	
+	/** The output variables. */
 	List<String> outputVariables;
 	
 	@Override
@@ -38,6 +56,11 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 		this.currentExperiment = agent;
 	}
 	
+	/**
+	 * Instantiates a new a exploration algorithm.
+	 *
+	 * @param desc the desc
+	 */
 	public AExplorationAlgorithm(final IDescription desc) { 
 		super(desc);
 		outputsExpression = getFacet(IKeyword.BATCH_OUTPUTS);
@@ -103,6 +126,14 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 	
 	// UTILITY
 	
+	/**
+	 * Adds the parameter value.
+	 *
+	 * @param scope the scope
+	 * @param set the set
+	 * @param var the var
+	 * @return the parameters set
+	 */
 	/*
 	 * Add a value to a parameter set
 	 */

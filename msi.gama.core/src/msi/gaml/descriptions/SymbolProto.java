@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SymbolProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * SymbolProto.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -45,25 +45,70 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SymbolProto extends AbstractProto {
 
+	/** The null validator. */
 	static IValidator NULL_VALIDATOR = (d, e, i) -> true;
 
+	/** The constructor. */
 	private final ISymbolConstructor constructor;
+	
+	/** The validator. */
 	private IValidator validator;
+	
+	/** The serializer. */
 	private SymbolSerializer serializer;
+	
+	/** The factory. */
 	private final SymbolFactory factory;
 
+	/** The kind. */
 	private final int kind;
+	
+	/** The is unique in context. */
 	private final boolean hasSequence, hasArgs, hasScope, isRemoteContext, isUniqueInContext;
+	
+	/** The context keywords. */
 	private final ImmutableSet<String> contextKeywords;
+	
+	/** The context kinds. */
 	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
+	
+	/** The possible facets. */
 	private final Map<String, FacetProto> possibleFacets;
+	
+	/** The mandatory facets. */
 	private final ImmutableSet<String> mandatoryFacets;
+	
+	/** The omissible facet. */
 	private final String omissibleFacet;
+	
+	/** The is primitive. */
 	private final boolean isPrimitive;
+	
+	/** The is var. */
 	private final boolean isVar;
 
+	/** The Constant ids. */
 	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID);
 
+	/**
+	 * Instantiates a new symbol proto.
+	 *
+	 * @param clazz the clazz
+	 * @param hasSequence the has sequence
+	 * @param hasArgs the has args
+	 * @param kind the kind
+	 * @param doesNotHaveScope the does not have scope
+	 * @param possibleFacets the possible facets
+	 * @param omissible the omissible
+	 * @param contextKeywords the context keywords
+	 * @param parentKinds the parent kinds
+	 * @param isRemoteContext the is remote context
+	 * @param isUniqueInContext the is unique in context
+	 * @param nameUniqueInContext the name unique in context
+	 * @param constr the constr
+	 * @param name the name
+	 * @param plugin the plugin
+	 */
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
 			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
@@ -100,45 +145,102 @@ public class SymbolProto extends AbstractProto {
 		for (final int i : parentKinds) { contextKinds[i] = true; }
 	}
 
+	/**
+	 * Gets the factory.
+	 *
+	 * @return the factory
+	 */
 	public SymbolFactory getFactory() { return factory; }
 
+	/**
+	 * Checks if is remote context.
+	 *
+	 * @return true, if is remote context
+	 */
 	public boolean isRemoteContext() { return isRemoteContext; }
 
+	/**
+	 * Checks if is label.
+	 *
+	 * @param s the s
+	 * @return true, if is label
+	 */
 	public boolean isLabel(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
 		if (f == null) return false;
 		return f.isLabel();
 	}
 
+	/**
+	 * Checks if is id.
+	 *
+	 * @param s the s
+	 * @return true, if is id
+	 */
 	public boolean isId(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
 		if (f == null) return false;
 		return f.isId();
 	}
 
+	/**
+	 * Checks for sequence.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasSequence() {
 		return hasSequence;
 	}
 
+	/**
+	 * Checks if is primitive.
+	 *
+	 * @return true, if is primitive
+	 */
 	public boolean isPrimitive() { return isPrimitive; }
 
+	/**
+	 * Checks for args.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasArgs() {
 		return hasArgs;
 	}
 
+	/**
+	 * Checks for scope.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasScope() {
 		return hasScope;
 	}
 
+	/**
+	 * Gets the possible facets.
+	 *
+	 * @return the possible facets
+	 */
 	public Map<String, FacetProto> getPossibleFacets() {
 		return possibleFacets == null ? Collections.emptyMap() : possibleFacets;
 	}
 
+	/**
+	 * Checks if is top level.
+	 *
+	 * @return true, if is top level
+	 */
 	public boolean isTopLevel() { return kind == ISymbolKind.BEHAVIOR; }
 
 	@Override
 	public int getKind() { return kind; }
 
+	/**
+	 * Gets the constructor.
+	 *
+	 * @return the constructor
+	 */
 	public ISymbolConstructor getConstructor() { return constructor; }
 
 	/**
@@ -179,6 +281,11 @@ public class SymbolProto extends AbstractProto {
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the facets documentation.
+	 *
+	 * @return the facets documentation
+	 */
 	public String getFacetsDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append("<b><br/>Possible facets :</b><ul>");
@@ -200,6 +307,11 @@ public class SymbolProto extends AbstractProto {
 		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
 	}
 
+	/**
+	 * Gets the validator.
+	 *
+	 * @return the validator
+	 */
 	IValidator getValidator() {
 		if (validator == null) {
 			final validator v = support.getAnnotation(validator.class);
@@ -211,6 +323,11 @@ public class SymbolProto extends AbstractProto {
 		return validator;
 	}
 
+	/**
+	 * Gets the serializer.
+	 *
+	 * @return the serializer
+	 */
 	public SymbolSerializer getSerializer() {
 		if (serializer == null) {
 			final serializer s = support.getAnnotation(serializer.class);
@@ -222,6 +339,11 @@ public class SymbolProto extends AbstractProto {
 		return serializer;
 	}
 
+	/**
+	 * Sets the serializer.
+	 *
+	 * @param serializer the new serializer
+	 */
 	public void setSerializer(final SymbolSerializer serializer) { this.serializer = serializer; }
 
 	/**
@@ -240,10 +362,21 @@ public class SymbolProto extends AbstractProto {
 		return contextKinds[sd.getKind()] || contextKeywords.contains(sd.getKeyword());
 	}
 
+	/**
+	 * Should be defined in.
+	 *
+	 * @param context the context
+	 * @return true, if successful
+	 */
 	public boolean shouldBeDefinedIn(final String context) {
 		return contextKeywords.contains(context);
 	}
 
+	/**
+	 * Checks if is unique in context.
+	 *
+	 * @return true, if is unique in context
+	 */
 	public boolean isUniqueInContext() { return isUniqueInContext; }
 
 	/**

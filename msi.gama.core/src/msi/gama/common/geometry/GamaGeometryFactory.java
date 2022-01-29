@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.geometry.GamaGeometryFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * GamaGeometryFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -25,21 +25,42 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * A factory for creating GamaGeometry objects.
+ */
 public class GamaGeometryFactory extends GeometryFactory {
 
+	/** The Constant COORDINATES_FACTORY. */
 	public static final GamaCoordinateSequenceFactory COORDINATES_FACTORY = new GamaCoordinateSequenceFactory();
+	
+	/** The Constant JTS_COORDINATES_FACTORY. */
 	public static final CoordinateSequenceFactory JTS_COORDINATES_FACTORY = CoordinateArraySequenceFactory.instance();
 
+	/**
+	 * Instantiates a new gama geometry factory.
+	 */
 	public GamaGeometryFactory() {
 		super(COORDINATES_FACTORY);
 	}
 
+	/**
+	 * Checks if is ring.
+	 *
+	 * @param pts the pts
+	 * @return true, if is ring
+	 */
 	public static boolean isRing(final Coordinate[] pts) {
 		if (pts.length < 4) { return false; }
 		if (!pts[0].equals(pts[pts.length - 1])) { return false; }
 		return true;
 	}
 
+	/**
+	 * Checks if is ring.
+	 *
+	 * @param pts the pts
+	 * @return true, if is ring
+	 */
 	public static boolean isRing(final List<GamaPoint> pts) {
 		final int size = pts.size();
 		if (size < 4) { return false; }
@@ -66,6 +87,12 @@ public class GamaGeometryFactory extends GeometryFactory {
 		return createLinearRing(JTS_COORDINATES_FACTORY.create(coords));
 	}
 
+	/**
+	 * Builds the rectangle.
+	 *
+	 * @param points the points
+	 * @return the polygon
+	 */
 	public Polygon buildRectangle(final Coordinate[] points) {
 		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
 		final CoordinateSequence cs = fact.create(points);
@@ -89,6 +116,12 @@ public class GamaGeometryFactory extends GeometryFactory {
 		return super.createPolygon(shellClockwise, holes);
 	}
 
+	/**
+	 * Turn clockwise.
+	 *
+	 * @param ring the ring
+	 * @return the linear ring
+	 */
 	private LinearRing turnClockwise(final LinearRing ring) {
 		if (ring == null || ring.isEmpty()) { return ring; }
 		return createLinearRing(COORDINATES_FACTORY.create(ring.getCoordinateSequence()));
@@ -99,6 +132,13 @@ public class GamaGeometryFactory extends GeometryFactory {
 		return COORDINATES_FACTORY;
 	}
 
+	/**
+	 * Creates a new GamaGeometry object.
+	 *
+	 * @param coordinates the coordinates
+	 * @param copyPoints the copy points
+	 * @return the line string
+	 */
 	public LineString createLineString(final GamaPoint[] coordinates, final boolean copyPoints) {
 		return createLineString(COORDINATES_FACTORY.create(coordinates, copyPoints));
 	}

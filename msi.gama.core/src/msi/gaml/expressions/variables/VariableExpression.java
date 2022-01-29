@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.expressions.VariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * VariableExpression.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -16,12 +16,28 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.types.IType;
 
+/**
+ * The Class VariableExpression.
+ */
 public abstract class VariableExpression extends AbstractExpression implements IVarExpression {
 
+	/** The name. */
 	protected final String name;
+	
+	/** The is not modifiable. */
 	protected final boolean isNotModifiable;
+	
+	/** The enclosing description. */
 	private final IDescription enclosingDescription;
 
+	/**
+	 * Instantiates a new variable expression.
+	 *
+	 * @param n the n
+	 * @param type the type
+	 * @param notModifiable the not modifiable
+	 * @param definitionDescription the definition description
+	 */
 	protected VariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription definitionDescription) {
 		name = n;
@@ -71,10 +87,20 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		// return isNotModifiable;
 	}
 
+	/**
+	 * Gets the definition description.
+	 *
+	 * @return the definition description
+	 */
 	public IDescription getDefinitionDescription() {
 		return enclosingDescription;
 	}
 
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
 	protected void setType(final IType<?> type) {
 		this.type = type;
 	}

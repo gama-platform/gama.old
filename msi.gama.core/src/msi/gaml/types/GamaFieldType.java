@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaFieldType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.types;
 
 import java.util.Arrays;
@@ -24,6 +34,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 
+/**
+ * The Class GamaFieldType.
+ */
 @type (
 		name = IKeyword.FIELD,
 		id = IType.FIELD,
@@ -39,10 +52,27 @@ import msi.gaml.species.ISpecies;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaFieldType extends GamaMatrixType {
 
+	/**
+	 * Builds the field.
+	 *
+	 * @param scope the scope
+	 * @param object the object
+	 * @return the i field
+	 */
 	public static IField buildField(final IScope scope, final Object object) {
 		return staticCast(scope, object, null, null, false);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param contentType the content type
+	 * @param copy the copy
+	 * @return the i field
+	 */
 	public static IField staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
 			final boolean copy) {
 		if (obj == null && param == null) return null;
@@ -68,6 +98,16 @@ public class GamaFieldType extends GamaMatrixType {
 
 	}
 
+	/**
+	 * With.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param p the p
+	 * @param contentsType the contents type
+	 * @return the i field
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IField with(final IScope scope, final Object val, final GamaPoint p, final IType contentsType)
 			throws GamaRuntimeException {
 		int x = p == null ? 1 : (int) p.x;
@@ -75,6 +115,17 @@ public class GamaFieldType extends GamaMatrixType {
 		return withObject(scope, val, x, y, contentsType);
 	}
 
+	/**
+	 * With object.
+	 *
+	 * @param scope the scope
+	 * @param val the val
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param contentsType the contents type
+	 * @return the i field
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IField withObject(final IScope scope, final Object val, final int cols, final int rows,
 			final IType contentsType) throws GamaRuntimeException {
 		Double toStore = Cast.asFloat(scope, val);
@@ -121,6 +172,15 @@ public class GamaFieldType extends GamaMatrixType {
 		return new GamaField(scope, cols, rows, data, no);
 	}
 
+	/**
+	 * Builds the field.
+	 *
+	 * @param scope the scope
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @param init the init
+	 * @return the i field
+	 */
 	@operator (
 			value = IKeyword.FIELD,
 			can_be_const = false,
@@ -132,6 +192,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return buildField(scope, cols, rows, init, IField.NO_NO_DATA);
 	}
 
+	/**
+	 * Builds the field.
+	 *
+	 * @param scope the scope
+	 * @param cols the cols
+	 * @param rows the rows
+	 * @return the i field
+	 */
 	@operator (
 			value = IKeyword.FIELD,
 			can_be_const = false,
@@ -143,6 +211,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return buildField(scope, cols, rows, 0d);
 	}
 
+	/**
+	 * Builds the field with no data.
+	 *
+	 * @param scope the scope
+	 * @param object the object
+	 * @param noData the no data
+	 * @return the i field
+	 */
 	@operator (
 			value = IKeyword.FIELD,
 			can_be_const = false,
@@ -156,6 +232,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return field;
 	}
 
+	/**
+	 * Builds the shape from field location.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param location the location
+	 * @return the i shape
+	 */
 	@operator (
 			value = "cell_at",
 			can_be_const = false,
@@ -166,6 +250,15 @@ public class GamaFieldType extends GamaMatrixType {
 		return field.getCellShapeAt(scope, location);
 	}
 
+	/**
+	 * Builds the shape from field location.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param columns the columns
+	 * @param rows the rows
+	 * @return the i shape
+	 */
 	@operator (
 			value = "cell_at",
 			can_be_const = false,
@@ -177,6 +270,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return field.getCellShapeAt(scope, columns, rows);
 	}
 
+	/**
+	 * Gets the shapes from geometry.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param shape the shape
+	 * @return the shapes from geometry
+	 */
 	@operator (
 			value = "cells_in",
 			can_be_const = false,
@@ -188,6 +289,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return field.getCellsIntersecting(scope, shape);
 	}
 
+	/**
+	 * Gets the values from geometry.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param shape the shape
+	 * @return the values from geometry
+	 */
 	@operator (
 			value = "values_in",
 			can_be_const = false,
@@ -199,6 +308,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return field.getValuesIntersecting(scope, shape);
 	}
 
+	/**
+	 * Gets the points from geometry.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param shape the shape
+	 * @return the points from geometry
+	 */
 	@operator (
 			value = "points_in",
 			can_be_const = false,
@@ -210,6 +327,14 @@ public class GamaFieldType extends GamaMatrixType {
 		return field.getLocationsIntersecting(scope, shape);
 	}
 
+	/**
+	 * Gets the neighbors of.
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param point the point
+	 * @return the neighbors of
+	 */
 	@operator (
 			value = "neighbors_of",
 			can_be_const = false,

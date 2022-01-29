@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaTextFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaTextFile.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -31,6 +31,9 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class GamaTextFile.
+ */
 @file (
 		name = "text",
 		extensions = { "txt", "data", "text" },
@@ -41,6 +44,13 @@ import msi.gaml.types.Types;
 		doc = @doc ("Represents an arbitrary text file. The internal contents is a list of strings (lines)"))
 public class GamaTextFile extends GamaFile<IList<String>, String> {
 
+	/**
+	 * Instantiates a new gama text file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@doc (value= "This file constructor allows to read a text file (.txt, .data, .text)",
 			examples = {
 					@example(value = "file f <-text_file(\"file.txt\");", isExecutable = false)
@@ -49,6 +59,13 @@ public class GamaTextFile extends GamaFile<IList<String>, String> {
 		super(scope, pathName);
 	}
 	
+	/**
+	 * Instantiates a new gama text file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param text the text
+	 */
 	@doc (value= "This file constructor allows to store a list of string in a text file (it does not save it - just store it in memory)",
 			examples = {
 					@example(value = "file f <-text_file(\"file.txt\", [\"item1\",\"item2\",\"item3\"]);", isExecutable = false)

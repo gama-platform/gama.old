@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.architecture.user.UserFirstControlArchitecture.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * UserFirstControlArchitecture.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -18,6 +18,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
+/**
+ * The Class UserFirstControlArchitecture.
+ */
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 @skill (
 		name = IKeyword.USER_FIRST,

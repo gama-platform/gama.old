@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaMaterial.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaMaterial.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -37,9 +37,13 @@ import msi.gaml.types.Types;
 				doc = { @doc ("Returns the reflectivity of the material (between 0 and 1)") }) })
 public class GamaMaterial implements IValue {
 
+	/** The damper. */
 	private final double damper;
+	
+	/** The reflectivity. */
 	private final double reflectivity;
 
+	/** The Constant materials. */
 	public final static Map<String, GamaMaterial> materials = GamaMapFactory.createUnordered();
 
 	static {
@@ -61,10 +65,21 @@ public class GamaMaterial implements IValue {
 	// @doc("TODO") })
 	// public final static GamaMaterial gumMaterial = new GamaMaterial(1,0);
 
+	/**
+	 * The Class NamedGamaMaterial.
+	 */
 	public static class NamedGamaMaterial extends GamaMaterial {
 
+		/** The name. */
 		final String name;
 
+		/**
+		 * Instantiates a new named gama material.
+		 *
+		 * @param n the n
+		 * @param damper the damper
+		 * @param reflectivity the reflectivity
+		 */
 		NamedGamaMaterial(final String n, final float damper, final float reflectivity) {
 			// c must be of length 4.
 			super(damper, reflectivity);
@@ -88,20 +103,41 @@ public class GamaMaterial implements IValue {
 
 	}
 
+	/**
+	 * Instantiates a new gama material.
+	 *
+	 * @param damper2 the damper 2
+	 * @param reflectivity2 the reflectivity 2
+	 */
 	public GamaMaterial(final double damper2, final double reflectivity2) {
 		this.damper = damper2;
 		this.reflectivity = reflectivity2;
 	}
 
+	/**
+	 * Instantiates a new gama material.
+	 *
+	 * @param material the material
+	 */
 	public GamaMaterial(final GamaMaterial material) {
 		this.damper = material.getDamper();
 		this.reflectivity = material.getReflectivity();
 	}
 
+	/**
+	 * Gets the damper.
+	 *
+	 * @return the damper
+	 */
 	public double getDamper() {
 		return damper;
 	}
 
+	/**
+	 * Gets the reflectivity.
+	 *
+	 * @return the reflectivity
+	 */
 	public double getReflectivity() {
 		return reflectivity;
 	}
@@ -121,11 +157,21 @@ public class GamaMaterial implements IValue {
 		return "material (damper value : " + getDamper() + ", reflectivity value : " + getReflectivity() + ")";
 	}
 
+	/**
+	 * Reflectivity.
+	 *
+	 * @return the double
+	 */
 	@getter (IKeyword.REFLECTIVITY)
 	public Double reflectivity() {
 		return reflectivity;
 	}
 
+	/**
+	 * Damper.
+	 *
+	 * @return the double
+	 */
 	@getter (IKeyword.DAMPER)
 	public Double damper() {
 		return damper;

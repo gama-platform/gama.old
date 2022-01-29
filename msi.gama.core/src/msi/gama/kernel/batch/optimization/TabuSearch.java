@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.TabuSearch.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * TabuSearch.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
@@ -40,6 +40,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class TabuSearch.
+ */
 @symbol (
 		name = IKeyword.TABU,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -100,12 +103,23 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class TabuSearch extends ALocalSearchAlgorithm {
 
+	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
+	
+	/** The Constant LIST_SIZE. */
 	protected static final String LIST_SIZE = "tabu_list_size";
 
+	/** The tabu list size. */
 	int tabuListSize = 5;
+	
+	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(50);
 
+	/**
+	 * Instantiates a new tabu search.
+	 *
+	 * @param species the species
+	 */
 	public TabuSearch(final IDescription species) {
 		super(species);
 		initParams();
@@ -113,6 +127,14 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 	}
 
 	
+	/**
+	 * Keep sol.
+	 *
+	 * @param neighborSol the neighbor sol
+	 * @param neighborFitness the neighbor fitness
+	 * @param bestFitnessAlgo the best fitness algo
+	 * @return true, if successful
+	 */
 	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
 		final boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
 		if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) {
@@ -205,6 +227,7 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 		return getBestSolution();
 	}
 
+	/** The iter max. */
 	int iterMax = 50;
 	//
 	// @Override

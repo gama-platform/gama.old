@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.species.GamlSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamlSpecies.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -230,6 +230,9 @@ import one.util.streamex.StreamEx;
 @validator (SpeciesValidator.class)
 public class GamlSpecies extends AbstractSpecies {
 
+	/**
+	 * The Class SpeciesValidator.
+	 */
 	public static class SpeciesValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -332,10 +335,20 @@ public class GamlSpecies extends AbstractSpecies {
 		}
 	}
 
+	/** The concurrency. */
 	private final IExpression concurrency;
+	
+	/** The schedule. */
 	private final IExpression schedule;
+	
+	/** The frequency. */
 	private final IExpression frequency;
 
+	/**
+	 * Instantiates a new gaml species.
+	 *
+	 * @param desc the desc
+	 */
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
 		concurrency = this.getFacet(IKeyword.PARALLEL);
@@ -440,6 +453,11 @@ public class GamlSpecies extends AbstractSpecies {
 		return (IContainerType<?>) getDescription().getSpeciesExpr().getGamlType();
 	}
 
+	/**
+	 * Belongs to A micro model.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean belongsToAMicroModel() {
 		return getDescription().belongsToAMicroModel();
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SymbolSerializer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * SymbolSerializer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -33,8 +33,14 @@ import msi.gaml.statements.Facets;
 
 public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
+	/**
+	 * Instantiates a new symbol serializer.
+	 */
 	protected SymbolSerializer() {}
 
+	/**
+	 * The Class VarSerializer.
+	 */
 	public static class VarSerializer extends SymbolSerializer<VariableDescription> {
 		//
 		// @Override
@@ -75,6 +81,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
+	/**
+	 * The Class SpeciesSerializer.
+	 */
 	public static class SpeciesSerializer extends SymbolSerializer<SpeciesDescription> {
 
 		@Override
@@ -133,6 +142,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		//
 	}
 
+	/**
+	 * The Class ModelSerializer.
+	 */
 	public static class ModelSerializer extends SpeciesSerializer {
 
 		@Override
@@ -197,10 +209,16 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
+	/**
+	 * The Class ExperimentSerializer.
+	 */
 	public static class ExperimentSerializer extends SymbolSerializer<ExperimentDescription> {
 
 	}
 
+	/**
+	 * The Class StatementSerializer.
+	 */
 	public static class StatementSerializer extends SymbolSerializer<StatementDescription> {
 		//
 		// @Override
@@ -222,6 +240,13 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 		}
 
+		/**
+		 * Serialize args.
+		 *
+		 * @param s the s
+		 * @param sb the sb
+		 * @param includingBuiltIn the including built in
+		 */
 		protected void serializeArgs(final SymbolDescription s, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			final StatementDescription desc = (StatementDescription) s;
@@ -254,6 +279,14 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			}
 		}
 
+		/**
+		 * Serialize arg.
+		 *
+		 * @param desc the desc
+		 * @param arg the arg
+		 * @param sb the sb
+		 * @param includingBuiltIn the including built in
+		 */
 		protected void serializeArg(final IDescription desc, final IDescription arg, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			// normally never called as it is redefined for action, do and
@@ -262,6 +295,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
+	/** The Constant uselessFacets. */
 	public static final Set<String> uselessFacets =
 			new HashSet<>(Arrays.asList(/* DEPENDS_ON, KEYWORD, */INTERNAL_FUNCTION, WITH));
 
@@ -277,12 +311,26 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		return sb.toString();
 	}
 
+	/**
+	 * Serialize no recursion.
+	 *
+	 * @param sb the sb
+	 * @param symbolDescription the symbol description
+	 * @param includingBuiltIn the including built in
+	 */
 	public final void serializeNoRecursion(final StringBuilder sb, final IDescription symbolDescription,
 			final boolean includingBuiltIn) {
 		serializeKeyword((SymbolDescription) symbolDescription, sb, includingBuiltIn);
 		serializeFacets((SymbolDescription) symbolDescription, sb, includingBuiltIn);
 	}
 
+	/**
+	 * Serialize.
+	 *
+	 * @param symbolDescription the symbol description
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 */
 	protected void serialize(final SymbolDescription symbolDescription, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 		serializeKeyword(symbolDescription, sb, includingBuiltIn);
@@ -290,11 +338,25 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		serializeChildren(symbolDescription, sb, includingBuiltIn);
 	}
 
+	/**
+	 * Serialize keyword.
+	 *
+	 * @param symbolDescription the symbol description
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 */
 	protected void serializeKeyword(final SymbolDescription symbolDescription, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 		sb.append(symbolDescription.getKeyword()).append(' ');
 	}
 
+	/**
+	 * Serialize children.
+	 *
+	 * @param symbolDescription the symbol description
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 */
 	protected void serializeChildren(final SymbolDescription symbolDescription, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 
@@ -313,6 +375,13 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
+	/**
+	 * Serialize child.
+	 *
+	 * @param s the s
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 */
 	protected void serializeChild(final IDescription s, final StringBuilder sb, final boolean includingBuiltIn) {
 		final String gaml = s.serialize(false);
 		if (gaml != null && gaml.length() > 0) {
@@ -320,6 +389,13 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		}
 	}
 
+	/**
+	 * Serialize facets.
+	 *
+	 * @param symbolDescription the symbol description
+	 * @param sb the sb
+	 * @param includingBuiltIn the including built in
+	 */
 	protected void serializeFacets(final SymbolDescription symbolDescription, final StringBuilder sb,
 			final boolean includingBuiltIn) {
 		final String omit = DescriptionFactory.getOmissibleFacetForSymbol(symbolDescription.getKeyword());
@@ -339,6 +415,14 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		});
 	}
 
+	/**
+	 * Serialize facet key.
+	 *
+	 * @param symbolDescription the symbol description
+	 * @param key the key
+	 * @param includingBuiltIn the including built in
+	 * @return the string
+	 */
 	protected String serializeFacetKey(final SymbolDescription symbolDescription, final String key,
 			final boolean includingBuiltIn) {
 		return key + ": ";

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.SetStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * SetStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -72,6 +72,9 @@ import msi.gaml.types.IType;
 @serializer (AssignmentSerializer.class)
 public class SetStatement extends AbstractStatement {
 
+	/**
+	 * The Class AssignmentSerializer.
+	 */
 	public static class AssignmentSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
@@ -89,6 +92,9 @@ public class SetStatement extends AbstractStatement {
 
 	}
 
+	/**
+	 * The Class AssignmentValidator.
+	 */
 	public static class AssignmentValidator implements IDescriptionValidator<IDescription> {
 
 		/**
@@ -129,9 +135,17 @@ public class SetStatement extends AbstractStatement {
 		}
 	}
 
+	/** The var expr. */
 	protected final IVarExpression varExpr;
+	
+	/** The value. */
 	protected final IExpression value;
 
+	/**
+	 * Instantiates a new sets the statement.
+	 *
+	 * @param desc the desc
+	 */
 	public SetStatement(final IDescription desc) {
 		super(desc);
 		varExpr = (IVarExpression) getFacet(IKeyword.NAME);
@@ -152,6 +166,11 @@ public class SetStatement extends AbstractStatement {
 		return val;
 	}
 
+	/**
+	 * Gets the var name.
+	 *
+	 * @return the var name
+	 */
 	public String getVarName() {
 		if (varExpr != null) { return varExpr.literalValue(); }
 		return null;

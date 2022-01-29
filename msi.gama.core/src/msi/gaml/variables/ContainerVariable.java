@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.variables.ContainerVariable.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ContainerVariable.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -27,6 +27,9 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.IType;
 import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 
+/**
+ * The Class ContainerVariable.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
@@ -119,6 +122,9 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 @validator (ContainerVarValidator.class)
 public class ContainerVariable extends Variable {
 
+	/**
+	 * The Class ContainerVarValidator.
+	 */
 	public static class ContainerVarValidator extends VarValidator {
 
 		/**
@@ -170,6 +176,11 @@ public class ContainerVariable extends Variable {
 		}
 	}
 
+	/**
+	 * Instantiates a new container variable.
+	 *
+	 * @param sd the sd
+	 */
 	public ContainerVariable(final IDescription sd) {
 		super(sd);
 	}

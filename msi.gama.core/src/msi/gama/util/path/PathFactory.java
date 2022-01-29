@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.path.PathFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * PathFactory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -27,9 +27,21 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 
+/**
+ * A factory for creating Path objects.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class PathFactory {
 
+	/**
+	 * New instance.
+	 *
+	 * @param <V> the value type
+	 * @param <E> the element type
+	 * @param g the g
+	 * @param nodes the nodes
+	 * @return the gama path
+	 */
 	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g,
 			final IList<? extends V> nodes) {
 		if (nodes.isEmpty() && g instanceof GamaSpatialGraph || nodes.get(0) instanceof GamaPoint
@@ -39,6 +51,17 @@ public class PathFactory {
 			return new GamaPath<>(g, nodes);
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param <V> the value type
+	 * @param <E> the element type
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 * @return the gama path
+	 */
 	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g, final V start, final V target,
 			final IList<E> edges) {
 		if (g instanceof GamaSpatialGraph) {
@@ -49,6 +72,18 @@ public class PathFactory {
 			return new GamaPath<>(g, start, target, edges);
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param <V> the value type
+	 * @param <E> the element type
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 * @param modify_edges the modify edges
+	 * @return the gama path
+	 */
 	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g, final V start, final V target,
 			final IList<E> edges, final boolean modify_edges) {
 		if (g instanceof GamaSpatialGraph)
@@ -58,6 +93,15 @@ public class PathFactory {
 			return new GamaPath<>(g, start, target, edges, modify_edges);
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param scope the scope
+	 * @param g the g
+	 * @param nodes the nodes
+	 * @param weight the weight
+	 * @return the gama spatial path
+	 */
 	// With Topology
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g,
 			final IList<? extends IShape> nodes, final double weight) {
@@ -72,6 +116,16 @@ public class PathFactory {
 		return path;
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param scope the scope
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 * @return the gama spatial path
+	 */
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,
 			final IShape target, final IList<IShape> edges) {
 		if (g instanceof GraphTopology)
@@ -80,6 +134,17 @@ public class PathFactory {
 			return new GamaSpatialPath(start, target, edges);
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param scope the scope
+	 * @param g the g
+	 * @param start the start
+	 * @param target the target
+	 * @param edges the edges
+	 * @param modify_edges the modify edges
+	 * @return the gama spatial path
+	 */
 	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,
 			final IShape target, final IList<IShape> edges, final boolean modify_edges) {
 		if (g instanceof GraphTopology)
@@ -89,6 +154,14 @@ public class PathFactory {
 			return new GamaSpatialPath(null, start, target, edges, modify_edges);
 	}
 
+	/**
+	 * New instance.
+	 *
+	 * @param scope the scope
+	 * @param edgesNodes the edges nodes
+	 * @param isEdges the is edges
+	 * @return the i path
+	 */
 	public static IPath newInstance(final IScope scope, final IList<? extends IShape> edgesNodes,
 			final boolean isEdges) {
 		if (isEdges) {

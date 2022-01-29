@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.test.TestState.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * TestState.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -12,10 +12,30 @@ package msi.gaml.statements.test;
 
 import msi.gama.util.GamaColor;
 
+/**
+ * The Enum TestState.
+ */
 public enum TestState {
-	ABORTED("error"), FAILED("failed"), WARNING("warning"), PASSED("passed"), NOT_RUN("not run");
+	
+	/** The aborted. */
+	ABORTED("error"), 
+ /** The failed. */
+ FAILED("failed"), 
+ /** The warning. */
+ WARNING("warning"), 
+ /** The passed. */
+ PASSED("passed"), 
+ /** The not run. */
+ NOT_RUN("not run");
+	
+	/** The name. */
 	private final String name;
 
+	/**
+	 * Instantiates a new test state.
+	 *
+	 * @param s the s
+	 */
 	TestState(final String s) {
 		name = s;
 	}
@@ -25,6 +45,11 @@ public enum TestState {
 		return name;
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public GamaColor getColor() {
 		switch (this) {
 			case FAILED:

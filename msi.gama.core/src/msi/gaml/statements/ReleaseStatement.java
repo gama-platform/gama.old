@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.statements.ReleaseStatement.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ReleaseStatement.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -40,6 +40,9 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class ReleaseStatement.
+ */
 @symbol (
 		name = { IKeyword.RELEASE },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -128,13 +131,26 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class ReleaseStatement extends AbstractStatementSequence {
 
+	/** The target. */
 	private final IExpression target;
+	
+	/** The as expr. */
 	private final IExpression asExpr;
+	
+	/** The in expr. */
 	private final IExpression inExpr;
+	
+	/** The return string. */
 	private final String returnString;
 
+	/** The sequence. */
 	private RemoteSequence sequence = null;
 
+	/**
+	 * Instantiates a new release statement.
+	 *
+	 * @param desc the desc
+	 */
 	public ReleaseStatement(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
@@ -198,6 +214,14 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		return releasedMicroAgents;
 	}
 
+	/**
+	 * Release agent prototype.
+	 *
+	 * @param scope the scope
+	 * @param macroAgent the macro agent
+	 * @param saved the saved
+	 * @return the list
+	 */
 	private List<IAgent> releaseAgentPrototype(final IScope scope, final IAgent macroAgent, final SavedAgent saved) {
 		if (asExpr == null) {
 			GAMA.reportError(scope, GamaRuntimeException
@@ -238,6 +262,14 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		return GamaListFactory.create(scope, Types.AGENT, released);
 	}
 
+	/**
+	 * Release existing agents.
+	 *
+	 * @param scope the scope
+	 * @param macroAgent the macro agent
+	 * @param microAgents the micro agents
+	 * @return the list
+	 */
 	public List<IAgent> releaseExistingAgents(final IScope scope, final IAgent macroAgent,
 			final IList<IAgent> microAgents) {
 		List<IAgent> releasedMicroAgents = GamaListFactory.create();

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.display.AWTDisplayGraphics.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * AWTDisplayGraphics.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.outputs.display;
@@ -84,13 +84,21 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 
 public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
+	/** The normal renderer. */
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
+	
+	/** The temporary envelope. */
 	private Rectangle2D temporaryEnvelope = null;
 
+	/** The Constant defaultFont. */
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
+	/**
+	 * The Class Java2DPointTransformation.
+	 */
 	private class Java2DPointTransformation implements PointTransformation {
 
+		/** The y ratio. */
 		double xOffset, yOffset, xRatio, yRatio;
 
 		@Override
@@ -99,6 +107,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 		}
 
+		/**
+		 * Adapt.
+		 */
 		public void adapt() {
 			xOffset = getXOffsetInPixels();
 			yOffset = getYOffsetInPixels();
@@ -108,7 +119,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 	}
 
+	/** The pf. */
 	private final Java2DPointTransformation pf = new Java2DPointTransformation();
+	
+	/** The sw. */
 	private final ShapeWriter sw = new ShapeWriter(pf);
 
 	static {
@@ -133,6 +147,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 	}
 
+	/**
+	 * Instantiates a new AWT display graphics.
+	 *
+	 * @param g2 the g 2
+	 */
 	public AWTDisplayGraphics(final Graphics2D g2) {
 		setGraphics2D(g2);
 		sw.setRemoveDuplicatePoints(true);
@@ -189,6 +208,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 				new ShapeDrawingAttributes(shape.getLocation(), c, c, (IShape.Type) null));
 	}
 
+	/** The image transform. */
 	AffineTransform imageTransform = new AffineTransform();
 
 	@Override
@@ -288,6 +308,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		return r;
 	}
 
+	/**
+	 * Sets the font.
+	 *
+	 * @param f the new font
+	 */
 	private void setFont(final Font f) {
 		final Font font = surface == null ? f : surface.computeFont(f);
 		currentRenderer.setFont(font);
@@ -332,6 +357,12 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		currentRenderer.fillRect(0, 0, (int) surface.getDisplayWidth(), (int) surface.getDisplayHeight());
 	}
 
+	/**
+	 * Draw grid line.
+	 *
+	 * @param image the image
+	 * @param lineColor the line color
+	 */
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 
 		// The image contains the dimensions of the grid.
@@ -360,6 +391,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 	}
 
+	/**
+	 * Highlight rectangle in pixels.
+	 *
+	 * @param r the r
+	 */
 	private void highlightRectangleInPixels(final Rectangle2D r) {
 		if (r == null) return;
 		final Stroke oldStroke = currentRenderer.getStroke();
@@ -409,12 +445,22 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		currentRenderer = normalRenderer;
 	}
 
+	/**
+	 * Sets the graphics 2 D.
+	 *
+	 * @param g the new graphics 2 D
+	 */
 	public void setGraphics2D(final Graphics2D g) {
 		normalRenderer = g;
 		currentRenderer = g;
 		if (g != null) { setFont(defaultFont); }
 	}
 
+	/**
+	 * Sets the untranslated graphics 2 D.
+	 *
+	 * @param g the new untranslated graphics 2 D
+	 */
 	public void setUntranslatedGraphics2D(final Graphics2D g) {
 		overlayRenderer = g;
 	}
@@ -440,6 +486,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		return result;
 	}
 
+	/** The chart rect. */
 	final Rectangle2D chartRect = new Rectangle2D.Double();
 
 	@Override

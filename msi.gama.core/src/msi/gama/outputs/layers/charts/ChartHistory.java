@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartHistory.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartHistory.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -32,17 +32,31 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class ChartHistory {
 
+	/** The Constant MAX. */
 	final static int MAX = 5000000;
 
+	/** The current. */
 	public StringBuilder current = new StringBuilder(MAX);
+	
+	/** The older. */
 	List<byte[]> older = new ArrayList<>();
+	
+	/** The buffer. */
 	final char[] buffer = new char[4096];
 
+	/**
+	 * Append.
+	 *
+	 * @param string the string
+	 */
 	public void append(final String string) {
 		current.append(string);
 		verifyOverflow();
 	}
 
+	/**
+	 * Verify overflow.
+	 */
 	private void verifyOverflow() {
 		if (current.length() > MAX) {
 			final ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -56,6 +70,12 @@ public class ChartHistory {
 		}
 	}
 
+	/**
+	 * Write to.
+	 *
+	 * @param bw the bw
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void writeTo(final BufferedWriter bw) throws IOException {
 		for (final byte[] array : older) {
 			try (final InputStreamReader reader =

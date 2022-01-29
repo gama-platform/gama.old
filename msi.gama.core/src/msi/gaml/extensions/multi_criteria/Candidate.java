@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.extensions.multi_criteria.Candidate.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
- * 
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * Candidate.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -12,11 +12,23 @@ package msi.gaml.extensions.multi_criteria;
 
 import java.util.Map;
 
+/**
+ * The Class Candidate.
+ */
 public class Candidate {
 
+	/** The index. */
 	private int index;
+	
+	/** The val criteria. */
 	private Map<String, Double> valCriteria;
 
+	/**
+	 * Instantiates a new candidate.
+	 *
+	 * @param index the index
+	 * @param valCriteria the val criteria
+	 */
 	protected Candidate(final int index, final Map<String, Double> valCriteria) {
 		super();
 		this.index = index;
@@ -50,18 +62,38 @@ public class Candidate {
 		return true;
 	}
 
+	/**
+	 * Gets the index.
+	 *
+	 * @return the index
+	 */
 	public int getIndex() {
 		return index;
 	}
 
+	/**
+	 * Sets the index.
+	 *
+	 * @param index the new index
+	 */
 	public void setIndex(final int index) {
 		this.index = index;
 	}
 
+	/**
+	 * Gets the val criteria.
+	 *
+	 * @return the val criteria
+	 */
 	public Map<String, Double> getValCriteria() {
 		return valCriteria;
 	}
 
+	/**
+	 * Sets the val criteria.
+	 *
+	 * @param valCriteria the val criteria
+	 */
 	public void setValCriteria(final Map<String, Double> valCriteria) {
 		this.valCriteria = valCriteria;
 	}
