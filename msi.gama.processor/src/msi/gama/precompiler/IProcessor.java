@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * IProcessor.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.lang.annotation.Annotation;
@@ -13,8 +23,18 @@ import java.util.Collection;
  */
 public interface IProcessor<T extends Annotation> {
 
+	/**
+	 * Process.
+	 *
+	 * @param context the context
+	 */
 	default void process(final ProcessorContext context) {}
 
+	/**
+	 * Gets the initialization method name.
+	 *
+	 * @return the initialization method name
+	 */
 	/*
 	 * Returns the name of the initialization method in which the elements will be written
 	 *
@@ -24,6 +44,11 @@ public interface IProcessor<T extends Annotation> {
 		return null;
 	}
 
+	/**
+	 * Gets the exceptions.
+	 *
+	 * @return the exceptions
+	 */
 	/*
 	 * The exceptions that should decorate the initialization method
 	 */
@@ -31,6 +56,11 @@ public interface IProcessor<T extends Annotation> {
 		return "";
 	}
 
+	/**
+	 * Output to java.
+	 *
+	 * @return true, if successful
+	 */
 	/*
 	 * Returns whether or not this processor produces Java code
 	 */
@@ -38,14 +68,32 @@ public interface IProcessor<T extends Annotation> {
 		return true;
 	}
 
+	/**
+	 * Checks for elements.
+	 *
+	 * @return true, if successful
+	 */
 	/*
 	 * Returns whether or not this processor has elements to process
 	 *
 	 */
 	boolean hasElements();
 
+	/**
+	 * Serialize.
+	 *
+	 * @param context the context
+	 * @param elements the elements
+	 * @param sb the sb
+	 */
 	void serialize(ProcessorContext context, Collection<StringBuilder> elements, StringBuilder sb);
 
+	/**
+	 * Write java body.
+	 *
+	 * @param sb the sb
+	 * @param context the context
+	 */
 	void writeJavaBody(StringBuilder sb, ProcessorContext context);
 
 }

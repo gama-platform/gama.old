@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * TestProcessor.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler.tests;
 
 import java.io.IOException;
@@ -25,6 +35,9 @@ import msi.gama.precompiler.GamlAnnotations.tests;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.ProcessorContext;
 
+/**
+ * The Class TestProcessor.
+ */
 public class TestProcessor extends ElementProcessor<tests> {
 
 	@Override
@@ -56,6 +69,12 @@ public class TestProcessor extends ElementProcessor<tests> {
 		return false;
 	}
 
+	/**
+	 * Creates the from.
+	 *
+	 * @param test the test
+	 * @return the tests
+	 */
 	private tests createFrom(final test test) {
 		return new tests() {
 
@@ -88,6 +107,13 @@ public class TestProcessor extends ElementProcessor<tests> {
 		sb.append(ln).append(tab).append("}").append(ln);
 	}
 
+	/**
+	 * Write tests.
+	 *
+	 * @param context the context
+	 * @param sb the sb
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public void writeTests(final ProcessorContext context, final Writer sb) throws IOException {
 		sb.append("experiment ").append(toJavaString("Tests for " + context.currentPlugin)).append(" type: test {");
 		for (final StringBuilder tests : serializedElements.values()) {
@@ -98,6 +124,13 @@ public class TestProcessor extends ElementProcessor<tests> {
 		namesAlreadyUsed.clear();
 	}
 
+	/**
+	 * Determine text.
+	 *
+	 * @param context the context
+	 * @param test the test
+	 * @return the string
+	 */
 	private String determineText(final ProcessorContext context, final test test) {
 		String text = test.value().trim();
 		final int lastSemiColon = text.lastIndexOf(';');
@@ -110,6 +143,14 @@ public class TestProcessor extends ElementProcessor<tests> {
 		return text + "assert " + lastAssert + ";";
 	}
 
+	/**
+	 * Determine name.
+	 *
+	 * @param context the context
+	 * @param e the e
+	 * @param tests the tests
+	 * @return the string
+	 */
 	private String determineName(final ProcessorContext context, final Element e, final tests tests) {
 		String testName = null;
 		// Looking for named tests and concatenating their individual names
@@ -174,8 +215,15 @@ public class TestProcessor extends ElementProcessor<tests> {
 		return tests.class;
 	}
 
+	/** The names already used. */
 	final Map<String, Integer> namesAlreadyUsed = new HashMap<>();
 
+	/**
+	 * Gets the test name.
+	 *
+	 * @param name the name
+	 * @return the test name
+	 */
 	private String getTestName(final String name) {
 		String result = name;
 		if (namesAlreadyUsed.containsKey(name)) {

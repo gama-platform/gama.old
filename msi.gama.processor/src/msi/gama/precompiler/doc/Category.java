@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Category.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * Category.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc;
 
 import msi.gama.precompiler.doc.utils.XMLElements;
@@ -17,11 +15,23 @@ import msi.gama.precompiler.doc.utils.XMLElements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * The Class Category.
+ */
 public class Category implements IElement {
 
+	/** The doc. */
 	Document doc;
+	
+	/** The id category. */
 	String idCategory;
 	
+	/**
+	 * Instantiates a new category.
+	 *
+	 * @param _doc the doc
+	 * @param id the id
+	 */
 	public Category(Document _doc, String id){
 		doc = _doc;
 		idCategory = id;

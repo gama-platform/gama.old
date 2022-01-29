@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'Operand.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * Operand.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc;
 
 import msi.gama.precompiler.doc.utils.XMLElements;
@@ -17,17 +15,40 @@ import msi.gama.precompiler.doc.utils.XMLElements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * The Class Operand.
+ */
 public class Operand implements IElement {
 
+	/** The doc. */
 	Document doc;
+	
+	/** The name. */
 	String name;
+	
+	/** The position. */
 	int position;
+	
+	/** The type. */
 	String type;
 	
+	/**
+	 * Instantiates a new operand.
+	 *
+	 * @param _doc the doc
+	 */
 	public Operand(Document _doc){
 		doc = _doc;
 	}
 	
+	/**
+	 * Instantiates a new operand.
+	 *
+	 * @param _doc the doc
+	 * @param _name the name
+	 * @param _position the position
+	 * @param _type the type
+	 */
 	public Operand(Document _doc, String _name, int _position, String _type){
 		doc = _doc;
 		name = _name;

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SymbolProcessor.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler;
 
 import java.util.HashSet;
@@ -11,7 +21,12 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 
+/**
+ * The Class SymbolProcessor.
+ */
 public class SymbolProcessor extends ElementProcessor<symbol> {
+	
+	/** The temp. */
 	Set<String> temp = new HashSet<>();
 
 	@Override

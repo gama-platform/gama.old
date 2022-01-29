@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'ElementTypeUtils.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (v. 1.8.1)
+ * ElementTypeUtils.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc;
 
 import java.util.ArrayList;
@@ -24,14 +22,36 @@ import javax.lang.model.type.TypeMirror;
 
 import msi.gama.precompiler.GamlAnnotations.vars;
 
+/**
+ * The Class ElementTypeUtils.
+ */
 public class ElementTypeUtils {
+	
+	/** The Constant ARCHITECTURE. */
 	public static final String ARCHITECTURE = "IArchitecture";
+	
+	/** The Constant SKILL. */
 	public static final String SKILL = "ISkill";
 
+	/**
+	 * Checks if is architecture element.
+	 *
+	 * @param typeElt the type elt
+	 * @param mes the mes
+	 * @return true, if is architecture element
+	 */
 	public static boolean isArchitectureElement(TypeElement typeElt, Messager mes) {
 		return isImplementingInterface(typeElt, ARCHITECTURE, mes);
 	}
 
+	/**
+	 * Checks if is implementing interface.
+	 *
+	 * @param typeElt the type elt
+	 * @param interfaceName the interface name
+	 * @param mes the mes
+	 * @return true, if is implementing interface
+	 */
 	// Inspired by http://types.cs.washington.edu/checker-framework/current/api/ElementUtils
 	public static boolean isImplementingInterface(TypeElement typeElt, String interfaceName, Messager mes) {
         
@@ -67,6 +87,13 @@ public class ElementTypeUtils {
 		return isImplementing;
 	}
 
+	/**
+	 * Gets the first implementing interfaces with vars.
+	 *
+	 * @param typeElt the type elt
+	 * @param mes the mes
+	 * @return the first implementing interfaces with vars
+	 */
 	// Inspired by the previous method and thus by http://types.cs.washington.edu/checker-framework/current/api/ElementUtils	
 	public static TypeElement getFirstImplementingInterfacesWithVars(TypeElement typeElt, Messager mes) {
 		

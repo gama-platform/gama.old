@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * ExamplesToTests.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'XmlToTestGAML.java', in plugin 'msi.gama.documentation', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.precompiler.tests;
 
 import java.io.IOException;
@@ -41,13 +39,25 @@ import msi.gama.precompiler.GamaProcessor;
 import msi.gama.precompiler.ProcessorContext;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
+/**
+ * The Class ExamplesToTests.
+ */
 public class ExamplesToTests implements XMLElements {
 
+	/** The Constant ATT_NAME_FILE. */
 	public static final String ATT_NAME_FILE = "fileName";
+	
+	/** The Constant factoryT. */
 	static final TransformerFactory factoryT = TransformerFactory.newInstance();
+	
+	/** The Constant OPERATORS_XSL. */
 	static final URL OPERATORS_XSL = GamaProcessor.class.getClassLoader()
 			.getResource("msi/gama/precompiler/resources/testGaml-Operators-xml2test.xsl");
+	
+	/** The Constant OPERATORS_TRANSFORMER. */
 	static final Transformer OPERATORS_TRANSFORMER;
+	
+	/** The Constant NAME_OPERATOR. */
 	static final HashMap<String, String> NAME_OPERATOR = new HashMap<String, String>() {
 		{
 			put("*", "Multiply");
@@ -87,12 +97,24 @@ public class ExamplesToTests implements XMLElements {
 		OPERATORS_TRANSFORMER = transformer;
 	}
 
+	/**
+	 * Creates the tests.
+	 *
+	 * @param context the context
+	 * @param doc the doc
+	 */
 	public static void createTests(final ProcessorContext context, final Document doc) {
 		if (doc == null || !doc.hasChildNodes()) { return; }
 		final Document document = cleanDocumentTest(doc);
 		createOperatorsTests(context, document, OPERATORS_TRANSFORMER);
 	}
 
+	/**
+	 * List.
+	 *
+	 * @param nl the nl
+	 * @return the list
+	 */
 	private static List<org.w3c.dom.Element> list(final NodeList nl) {
 		if (nl.getLength() == 0) { return Collections.EMPTY_LIST; }
 		final List<org.w3c.dom.Element> result = new ArrayList<>();
@@ -102,8 +124,16 @@ public class ExamplesToTests implements XMLElements {
 		return result;
 	}
 
+	/** The Constant documents. */
 	final static Map<String, Document> documents = new HashMap<>();
 
+	/**
+	 * Creates the operators tests.
+	 *
+	 * @param context the context
+	 * @param document the document
+	 * @param xsl the xsl
+	 */
 	private static void createOperatorsTests(final ProcessorContext context, final Document document,
 			final Transformer xsl) {
 		final List<org.w3c.dom.Element> categories =
@@ -150,6 +180,12 @@ public class ExamplesToTests implements XMLElements {
 
 	}
 
+	/**
+	 * Transform documents.
+	 *
+	 * @param context the context
+	 * @param transformer the transformer
+	 */
 	public static void transformDocuments(final ProcessorContext context, final Transformer transformer) {
 
 		documents.forEach((targetFile, doc) -> {
@@ -175,6 +211,12 @@ public class ExamplesToTests implements XMLElements {
 	// Cleaning means:
 	// - Category: remove space and minus characters in the category name to be able to use it in the model
 	// - Operators: replace special characters like +, -, *, /
+	/**
+	 * Clean document test.
+	 *
+	 * @param doc the doc
+	 * @return the document
+	 */
 	// - Operators and statements: addition of an index to have different variables
 	public static Document cleanDocumentTest(final Document doc) {
 

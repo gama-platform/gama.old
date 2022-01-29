@@ -1,14 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'GamlDocProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * DocProcessor.java, in msi.gama.processor, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.precompiler.doc;
 
 import java.io.PrintWriter;
@@ -65,22 +64,41 @@ import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.precompiler.doc.utils.TypeConverter;
 import msi.gama.precompiler.doc.utils.XMLElements;
 
+/**
+ * The Class DocProcessor.
+ */
 public class DocProcessor extends ElementProcessor<doc> {
 
+	/** The Constant CAST_METHOD. */
 	public static final String CAST_METHOD = "cast";
 	
+	/** The mes. */
 	Messager mes;
+	
+	/** The tc. */
 	TypeConverter tc;
+	
+	/** The document. */
 	public Document document;
 
 	// boolean firstParsing;
 
+	/** The nbr operators. */
 	// Statistic values
 	int nbrOperators;
+	
+	/** The nbr operators doc. */
 	int nbrOperatorsDoc;
+	
+	/** The nbr skills. */
 	int nbrSkills;
+	
+	/** The nbr symbols. */
 	int nbrSymbols;
 
+	/**
+	 * Instantiates a new doc processor.
+	 */
 	public DocProcessor() {
 		// firstParsing = true;
 		nbrOperators = 0;
@@ -104,10 +122,21 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return doc.class;
 	}
 
+	/**
+	 * Gets the root name.
+	 *
+	 * @return the root name
+	 */
 	protected String getRootName() {
 		return "doc";
 	}
 
+	/**
+	 * Gets the root node.
+	 *
+	 * @param doc the doc
+	 * @return the root node
+	 */
 	protected org.w3c.dom.Element getRootNode(final Document doc) {
 		org.w3c.dom.Element root = null;
 		if (doc.hasChildNodes()) {
@@ -238,6 +267,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		}
 	}
 
+	/**
+	 * Process doc XML constants.
+	 *
+	 * @param set the set
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLConstants(final Set<? extends Element> set) {
 		final org.w3c.dom.Element eltConstants = document.createElement(XMLElements.CONSTANTS);
 		for (final Element e : set) {
@@ -289,6 +324,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltConstants;
 	}
 
+	/**
+	 * Process doc XML operators from types.
+	 *
+	 * @param set the set
+	 * @return the array list
+	 */
 	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromTypes(final Set<? extends Element> set) {
 
 		// Parcours de tous les types
@@ -337,6 +378,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltOpFromTypes;
 	}
 
+	/**
+	 * Process doc XML types.
+	 *
+	 * @param setFiles the set files
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setFiles) {
 		final org.w3c.dom.Element files = document.createElement(XMLElements.FILES);
 
@@ -384,6 +431,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return files;
 	}
 
+	/**
+	 * Process doc XML operators from files.
+	 *
+	 * @param set the set
+	 * @return the array list
+	 */
 	private ArrayList<org.w3c.dom.Element> processDocXMLOperatorsFromFiles(final Set<? extends Element> set) {
 
 		final ArrayList<org.w3c.dom.Element> eltOpFromTypes = new ArrayList<>();
@@ -471,6 +524,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return eltOpFromTypes;
 	}
 
+	/**
+	 * Process doc XML categories.
+	 *
+	 * @param set the set
+	 * @param typeElement the type element
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLCategories(final Set<? extends Element> set, final String typeElement) {
 		final org.w3c.dom.Element categories = document.createElement(typeElement);
 
@@ -522,6 +582,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return categories;
 	}
 
+	/**
+	 * Process doc XML concepts.
+	 *
+	 * @param conceptArray the concept array
+	 * @param typeElement the type element
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLConcepts(final Field[] conceptArray, final String typeElement) {
 		final org.w3c.dom.Element concepts = document.createElement(typeElement);
 		for (final Field field : conceptArray) {
@@ -541,6 +608,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return concepts;
 	}
 
+	/**
+	 * Process doc XML operators.
+	 *
+	 * @param set the set
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLOperators(final Set<? extends ExecutableElement> set) {
 		final org.w3c.dom.Element operators = document.createElement(XMLElements.OPERATORS);
 
@@ -705,6 +778,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return operators;
 	}
 
+	/**
+	 * Process doc XML architectures.
+	 *
+	 * @param setArchis the set archis
+	 * @param env the env
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLArchitectures(final Set<? extends Element> setArchis,
 			final RoundEnvironment env) {
 		final org.w3c.dom.Element archis = document.createElement(XMLElements.ARCHITECTURES);
@@ -764,6 +844,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return archis;
 	}
 
+	/**
+	 * Process doc XML skills.
+	 *
+	 * @param setSkills the set skills
+	 * @param env the env
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLSkills(final Set<? extends Element> setSkills,
 			final RoundEnvironment env) {
 
@@ -859,6 +946,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return skills;
 	}
 
+	/**
+	 * Process doc XML species.
+	 *
+	 * @param setSpecies the set species
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLSpecies(final Set<? extends TypeElement> setSpecies) {
 		final org.w3c.dom.Element species = document.createElement(XMLElements.SPECIESS);
 
@@ -931,6 +1024,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return species;
 	}
 
+	/**
+	 * Process doc XML statements inside symbol.
+	 *
+	 * @param setStatement the set statement
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLStatementsInsideSymbol(final Set<? extends Element> setStatement) {
 		final org.w3c.dom.Element statementsInsideSymbolElt = document.createElement(XMLElements.INSIDE_STAT_SYMBOLS);
 		final ArrayList<String> insideStatementSymbol = new ArrayList<>();
@@ -961,6 +1060,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsInsideSymbolElt;
 	}
 
+	/**
+	 * Process doc XML statements inside kind.
+	 *
+	 * @param setStatement the set statement
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLStatementsInsideKind(final Set<? extends Element> setStatement) {
 		final org.w3c.dom.Element statementsInsideKindElt = document.createElement(XMLElements.INSIDE_STAT_KINDS);
 		final ArrayList<String> insideStatementKind = new ArrayList<>();
@@ -992,6 +1097,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsInsideKindElt;
 	}
 
+	/**
+	 * Process doc XML statements kinds.
+	 *
+	 * @param setStatements the set statements
+	 * @return the node
+	 */
 	private Node processDocXMLStatementsKinds(final Set<? extends Element> setStatements) {
 		final org.w3c.dom.Element statementsKindsElt = document.createElement(XMLElements.STATEMENT_KINDS);
 		final ArrayList<String> statementKinds = new ArrayList<>();
@@ -1018,6 +1129,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsKindsElt;
 	}
 
+	/**
+	 * Process doc XML types.
+	 *
+	 * @param setTypes the set types
+	 * @param env the env
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLTypes(final Set<? extends Element> setTypes, final RoundEnvironment env) {
 		final org.w3c.dom.Element types = document.createElement(XMLElements.TYPES);
 
@@ -1054,6 +1172,12 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return types;
 	}
 
+	/**
+	 * Process doc XML statements.
+	 *
+	 * @param setStatement the set statement
+	 * @return the org.w 3 c.dom. element
+	 */
 	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement) {
 		final org.w3c.dom.Element statementsElt = document.createElement(XMLElements.STATEMENTS);
 
@@ -1112,14 +1236,40 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return statementsElt;
 	}
 
+	/** The Constant PREFIX_CONSTANT. */
 	public static final String PREFIX_CONSTANT = "#";
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnot the doc annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @param parentElement the parent element
+	 * @return the doc elt
+	 */
 	public org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final Messager mes,
 			final String eltName, final TypeConverter tc, final ExecutableElement e,
 			final org.w3c.dom.Element parentElement) {
 		return getDocElt(docAnnot, doc, null, mes, eltName, tc, e, parentElement);
 	}
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnot the doc annot
+	 * @param doc the doc
+	 * @param docElement the doc element
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @param parentElement the parent element
+	 * @return the doc elt
+	 */
 	public org.w3c.dom.Element getDocElt(final doc docAnnot, final Document doc, final org.w3c.dom.Element docElement,
 			final Messager mes, final String eltName, final TypeConverter tc, final ExecutableElement e,
 			final org.w3c.dom.Element parentElement) { // e.getSimpleName()
@@ -1290,6 +1440,18 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return docElt;
 	}
 
+	/**
+	 * Gets the doc elt.
+	 *
+	 * @param docAnnotTab the doc annot tab
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param eltName the elt name
+	 * @param tc the tc
+	 * @param e the e
+	 * @param parentElement the parent element
+	 * @return the doc elt
+	 */
 	public org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
 			final String eltName, final TypeConverter tc, final ExecutableElement e,
 			final org.w3c.dom.Element parentElement) { // e.getSimpleName()
@@ -1298,6 +1460,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e, parentElement);
 	}
 
+	/**
+	 * Gets the examples elt.
+	 *
+	 * @param examples the examples
+	 * @param doc the doc
+	 * @param e the e
+	 * @param tc the tc
+	 * @param parentElement the parent element
+	 * @return the examples elt
+	 */
 	public org.w3c.dom.Element getExamplesElt(final example[] examples, final Document doc, final ExecutableElement e,
 			final TypeConverter tc, final org.w3c.dom.Element parentElement) {
 		final org.w3c.dom.Element examplesElt = doc.createElement(XMLElements.EXAMPLES);
@@ -1307,6 +1479,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return examplesElt;
 	}
 
+	/**
+	 * Gets the example elt.
+	 *
+	 * @param example the example
+	 * @param doc the doc
+	 * @param e the e
+	 * @param tc the tc
+	 * @param parentElement the parent element
+	 * @return the example elt
+	 */
 	public org.w3c.dom.Element getExampleElt(final example example, final Document doc, final ExecutableElement e,
 			final TypeConverter tc, final org.w3c.dom.Element parentElement) {
 		final org.w3c.dom.Element exampleElt = doc.createElement(XMLElements.EXAMPLE);
@@ -1343,6 +1525,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return exampleElt;
 	}
 
+	/**
+	 * Gets the constant elt.
+	 *
+	 * @param constant the constant
+	 * @param doc the doc
+	 * @param e the e
+	 * @param mes the mes
+	 * @param tc the tc
+	 * @return the constant elt
+	 */
 	public org.w3c.dom.Element getConstantElt(final constant constant, final Document doc, final Element e,
 			final Messager mes, final TypeConverter tc) {
 		final org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);
@@ -1373,6 +1565,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return constantElt;
 	}
 
+	/**
+	 * Gets the vars elt.
+	 *
+	 * @param varsAnnot the vars annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param skillName the skill name
+	 * @param tc the tc
+	 * @return the vars elt
+	 */
 	public org.w3c.dom.Element getVarsElt(final vars varsAnnot, final Document doc, final Messager mes,
 			final String skillName, final TypeConverter tc) {
 		if (varsAnnot != null) {
@@ -1401,6 +1603,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return null;
 	}
 
+	/**
+	 * Gets the action elt.
+	 *
+	 * @param actionAnnot the action annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param e the e
+	 * @param tc the tc
+	 * @return the action elt
+	 */
 	public org.w3c.dom.Element getActionElt(final action actionAnnot, final Document doc, final Messager mes,
 			final Element e, final TypeConverter tc) {
 		if (!(e instanceof ExecutableElement) || actionAnnot == null) { return null; }
@@ -1442,6 +1654,16 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return actionElt;
 	}
 
+	/**
+	 * Gets the facets elt.
+	 *
+	 * @param facetsAnnot the facets annot
+	 * @param doc the doc
+	 * @param mes the mes
+	 * @param statName the stat name
+	 * @param tc the tc
+	 * @return the facets elt
+	 */
 	public org.w3c.dom.Element getFacetsElt(final facets facetsAnnot, final Document doc, final Messager mes,
 			final String statName, final TypeConverter tc) {
 		if (facetsAnnot == null) { return null; }
@@ -1477,6 +1699,14 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return facetsElt;
 	}
 
+	/**
+	 * Gets the inside elt.
+	 *
+	 * @param insideAnnot the inside annot
+	 * @param doc the doc
+	 * @param tc the tc
+	 * @return the inside elt
+	 */
 	public org.w3c.dom.Element getInsideElt(final inside insideAnnot, final Document doc, final TypeConverter tc) {
 		if (insideAnnot == null) { return null; }
 
@@ -1501,6 +1731,13 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return insideElt;
 	}
 
+	/**
+	 * Gets the operator element.
+	 *
+	 * @param operators the operators
+	 * @param eltName the elt name
+	 * @return the operator element
+	 */
 	public org.w3c.dom.Element getOperatorElement(final org.w3c.dom.Element operators, final String eltName) {
 		final NodeList nL = operators.getElementsByTagName(XMLElements.OPERATOR);
 		int i = 0;
@@ -1513,6 +1750,15 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return null;
 	}
 
+	/**
+	 * Gets the categories.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param categoriesElt the categories elt
+	 * @param tc the tc
+	 * @return the categories
+	 */
 	public org.w3c.dom.Element getCategories(final Element e, final Document doc,
 			final org.w3c.dom.Element categoriesElt, final TypeConverter tc) {
 		final ArrayList<String> categories = new ArrayList<>();
@@ -1561,12 +1807,29 @@ public class DocProcessor extends ElementProcessor<doc> {
 		return categoriesElt;
 	}
 
+	/**
+	 * Gets the categories.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param tc the tc
+	 * @return the categories
+	 */
 	public org.w3c.dom.Element getCategories(final Element e, final Document doc, final TypeConverter tc) {
 		final org.w3c.dom.Element categoriesElt = doc.createElement(XMLElements.OPERATORS_CATEGORIES);
 
 		return getCategories(e, doc, categoriesElt, tc);
 	}
 
+	/**
+	 * Gets the concepts.
+	 *
+	 * @param e the e
+	 * @param doc the doc
+	 * @param conceptElt the concept elt
+	 * @param tc the tc
+	 * @return the concepts
+	 */
 	public org.w3c.dom.Element getConcepts(final Element e, final Document doc, final org.w3c.dom.Element conceptElt,
 			final TypeConverter tc) {
 		final ArrayList<String> concepts = new ArrayList<>();
