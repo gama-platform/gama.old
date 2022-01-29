@@ -103,19 +103,16 @@ public class GAML {
 	public final static HashMultimap<String, Class> LISTENERS_BY_NAME = HashMultimap.create();
 
 	/** The expression factory. */
-	public static IExpressionFactory expressionFactory = null;
+	public static volatile IExpressionFactory expressionFactory = null;
 
 	/** The model factory. */
-	public static ModelFactory modelFactory = null;
+	public static volatile ModelFactory modelFactory = null;
 
 	/** The info provider. */
 	private static IGamlResourceInfoProvider infoProvider = null;
 
 	/** The gaml ecore utils. */
 	private static IGamlEcoreUtils gamlEcoreUtils = null;
-
-	/** The command index. */
-	public static int COMMAND_INDEX = 0;
 
 	/**
 	 * Not null.

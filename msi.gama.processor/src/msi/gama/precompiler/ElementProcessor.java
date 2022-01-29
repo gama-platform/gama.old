@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ElementProcessor.java, in msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ElementProcessor.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler;
 
@@ -647,8 +647,11 @@ public abstract class ElementProcessor<T extends Annotation> implements IProcess
 		if (context.getTypeUtils().isAssignable(t, context.getIAgent())
 				|| context.getTypeUtils().isAssignable(t, context.getISkill()))
 			return true;
-		context.emit(throwsError ? Kind.ERROR : Kind.WARNING, getAnnotationClass().getSimpleName()
-				+ " annotations do not make sense outside IAgent or ISkill subclasses", e);
+		context.emit(throwsError ? Kind.ERROR : Kind.WARNING,
+				getAnnotationClass().getSimpleName()
+						+ " annotations do not make sense outside an IAgent or ISkill subclass: " + t.toString()
+						+ " is neither of them.",
+				e);
 		return !throwsError;
 	}
 

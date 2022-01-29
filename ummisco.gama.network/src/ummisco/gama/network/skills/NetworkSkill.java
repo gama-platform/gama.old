@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * NetworkSkill.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -175,7 +175,7 @@ public class NetworkSkill extends MessagingSkill {
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
 							@example ("	do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;") }))
-	public void connectToServer(final IScope scope) throws GamaRuntimeException {
+	public boolean connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getExperiment().hasAttribute(REGISTRED_SERVER)) { this.startSkill(scope); }
 		final IAgent agt = scope.getAgent();
 		final String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
@@ -260,6 +260,7 @@ public class NetworkSkill extends MessagingSkill {
 			DEBUG.OUT(grp);
 			// connector.joinAGroup(agt, grp);
 		}
+		return true;
 	}
 
 	/**
@@ -340,10 +341,14 @@ public class NetworkSkill extends MessagingSkill {
 					examples = { @example ("do join_group with_name:\"group name\";"),
 							@example ("do join_group with_name:\"group name\";"
 									+ "do send to:\"group name\" contents:\"I am new in this group\";") }))
-	public void registerToGroup(final IScope scope) {
+	public boolean registerToGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final String groupName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
-		if (groupName != null) { joinAGroup(scope, agent, groupName); }
+		if (groupName != null) {
+			joinAGroup(scope, agent, groupName);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -400,16 +405,16 @@ public class NetworkSkill extends MessagingSkill {
 					value = "leave a group of agents. The leaving agent will not receive any "
 							+ "message from the group. Overwhise, it can send messages to the left group",
 					examples = { @example (" do leave_group with_name:\"my_group\";\n") }))
-	public void leaveTheGroup(final IScope scope) {
+	public boolean leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final String groupName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
-		if (groupName == null) return;
+		if (groupName == null) return false;
 		final IList<String> groups = getGroups(scope, agent);
 
 		groups.remove(groupName);
 		final Collection<IConnector> connectors = getRegisteredServers(scope).values();
 		for (final IConnector con : connectors) { con.leaveTheGroup(agent, groupName); }
-
+		return true;
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -442,12 +447,13 @@ public class NetworkSkill extends MessagingSkill {
 					value = "Simulate a step to test the skill. It must be used for Gama-platform test only",
 					returns = "nothing",
 					examples = { @example ("do simulate_step;\n") }))
-	public void fetchMessagesOfAgents(final IScope scope) {
+	public boolean fetchMessagesOfAgents(final IScope scope) {
 
 		for (final IConnector connection : getRegisteredServers(scope).values()) {
 			final Map<IAgent, LinkedList<ConnectorMessage>> messages = connection.fetchAllMessages();
 			for (final IAgent agt : messages.keySet()) {
-				final GamaMailbox mailbox = (GamaMailbox) agt.getAttribute(MAILBOX_ATTRIBUTE);
+				@SuppressWarnings ("unchecked") final GamaMailbox<GamaMessage> mailbox =
+						(GamaMailbox<GamaMessage>) agt.getAttribute(MAILBOX_ATTRIBUTE);
 
 				// to be check....
 				/*
@@ -458,6 +464,7 @@ public class NetworkSkill extends MessagingSkill {
 				}
 			}
 		}
+		return true;
 	}
 
 	/**

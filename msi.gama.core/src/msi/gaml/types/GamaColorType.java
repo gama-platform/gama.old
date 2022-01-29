@@ -41,6 +41,7 @@ import msi.gaml.operators.Cast;
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
+	@doc("Transforms the parameter into a rgb color. A second parameter can be used to express the transparency of the color, either an int (between 0 and 255) or a float (between 0 and 1)")
 	public GamaColor cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, param, copy);
@@ -63,7 +64,7 @@ public class GamaColorType extends GamaType<GamaColor> {
 		if (obj instanceof List) {
 			final List l = (List) obj;
 			final int size = l.size();
-			if (size == 0) { return new GamaColor(Color.black); }
+			if (size == 0) { return new GamaColor(Color.black); } 
 			if (size == 1 || size == 2) {
 				return staticCast(scope, ((List) obj).get(0), param, copy);
 			} else if (size == 3) {

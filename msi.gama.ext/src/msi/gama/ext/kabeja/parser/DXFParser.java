@@ -1,18 +1,12 @@
-/*
- Copyright 2005 Simon Mieth
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
+/*******************************************************************************************************
+ *
+ * DXFParser.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.parser;
 
 import java.io.BufferedInputStream;
@@ -32,266 +26,307 @@ import msi.gama.ext.kabeja.parser.dxf.DXFHandler;
 import msi.gama.ext.kabeja.parser.dxf.filter.DXFStreamFilter;
 import msi.gama.ext.kabeja.tools.CodePageParser;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  *
  */
 public class DXFParser implements HandlerManager, Handler, Parser, DXFHandler {
-    public final static String PARSER_NAME = "DXFParser";
-    public final static String EXTENSION = "dxf";
-    private final static String SECTION_START = "SECTION";
-    private final static String SECTION_END = "ENDSEC";
-    private final static String END_STREAM = "EOF";
-    private final static int COMMAND_CODE = 0;
-    public static final String DEFAULT_ENCODING = "";
-    protected DXFDocument doc;
-    protected Hashtable handlers = new Hashtable();
-    protected DXFSectionHandler currentHandler;
-    private String line;
-    protected List streamFilters = new ArrayList();
-    protected DXFHandler filter;
 
-    // some parse flags
-    private boolean key = false;
-    private boolean sectionstarts = false;
-    private int linecount;
-    private boolean parse = false;
+	/** The Constant PARSER_NAME. */
+	public final static String PARSER_NAME = "DXFParser";
 
-    public DXFParser() {
-    }
+	/** The Constant EXTENSION. */
+	public final static String EXTENSION = "dxf";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#parse(java.lang.String)
-     */
-    public void parse(String file) throws ParseException {
-        parse(file, DEFAULT_ENCODING);
-    }
+	/** The Constant SECTION_START. */
+	private final static String SECTION_START = "SECTION";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#parse(java.lang.String, java.lang.String)
-     */
-    public void parse(String file, String encoding) throws ParseException {
-        try {
-            parse(new FileInputStream(file), encoding);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+	/** The Constant SECTION_END. */
+	private final static String SECTION_END = "ENDSEC";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#parse(java.io.InputStream,
-     *      java.lang.String)
-     */
-    public void parse(InputStream input, String encoding)
-        throws ParseException {
-        String currentKey = "";
-        key = false;
-        linecount = 0;
-        parse = false;
+	/** The Constant END_STREAM. */
+	private final static String END_STREAM = "EOF";
 
-        //initialize 
-        doc = new DXFDocument();
-        doc.setProperty(DXFDocument.PROPERTY_ENCODING, encoding);
-        //the StreamFilters
-        this.buildFilterChain();
+	/** The Constant COMMAND_CODE. */
+	private final static int COMMAND_CODE = 0;
 
-        BufferedReader in = null;
+	/** The Constant DEFAULT_ENCODING. */
+	public static final String DEFAULT_ENCODING = "";
 
-        try {
-            if ("".equals(encoding)) {
-                BufferedInputStream buf = new BufferedInputStream(input);
-                buf.mark(9000);
+	/** The doc. */
+	protected DXFDocument doc;
 
-                try {
-                    BufferedReader r = new BufferedReader(new InputStreamReader(
-                                buf));
-                    CodePageParser p = new CodePageParser();
-                    encoding = p.parseEncoding(r);
-                    buf.reset();
+	/** The handlers. */
+	protected Hashtable<String, DXFSectionHandler> handlers = new Hashtable<>();
 
-                    in = new BufferedReader(new InputStreamReader(buf, encoding));
-                } catch (IOException e1) {
-                    buf.reset();
-                    in = new BufferedReader(new InputStreamReader(buf));
-                }
-            } else {
-                in = new BufferedReader(new InputStreamReader(input, encoding));
-            }
+	/** The current handler. */
+	protected DXFSectionHandler currentHandler;
 
-            key = true;
-            sectionstarts = false;
+	/** The line. */
+	private String line;
 
-            while ((line = in.readLine()) != null) {
-                linecount++;
+	/** The stream filters. */
+	protected List<DXFStreamFilter> streamFilters = new ArrayList<>();
 
-                if (key) {
-                    currentKey = line;
-                    key = false;
-                } else {
-                    int keyCode = Integer.parseInt(currentKey.trim());
-                    //the filter chain
-                    filter.parseGroup(keyCode, new DXFValue(line.trim()));
-                    // parseGroup(currentKey, line);
-                    key = true;
-                }
-            }
+	/** The filter. */
+	protected DXFHandler filter;
 
-            in.close();
+	/** The key. */
+	// some parse flags
+	private boolean key = false;
 
-            in = null;
+	/** The sectionstarts. */
+	private boolean sectionstarts = false;
 
-            // finish last parsing
-            if (parse) {
-                currentHandler.endSection();
-            }
-        } catch (FileNotFoundException e) {
-            throw new ParseException(e.toString());
-        } catch (IOException ioe) {
-            throw new ParseException(ioe.toString());
-        }
-    }
+	/** The linecount. */
+	private int linecount;
 
-    public void parseGroup(int keyCode, DXFValue value)
-        throws ParseException {
-        //System.out.println(""+keyCode);
-        //System.out.println(" "+value.getValue());
-        try {
-            if (sectionstarts) {
-                sectionstarts = false;
+	/** The parse. */
+	private boolean parse = false;
 
-                if (handlers.containsKey(value.getValue())) {
-                    currentHandler = (DXFSectionHandler) handlers.get(value.getValue());
-                    parse = true;
-                    currentHandler.setDXFDocument(doc);
-                    currentHandler.startSection();
-                } else {
-                    parse = false;
-                }
+	/**
+	 * Instantiates a new DXF parser.
+	 */
+	public DXFParser() {}
 
-                return;
-            }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#parse(java.lang.String)
+	 */
+	@Override
+	public void parse(final String file) throws ParseException {
+		parse(file, DEFAULT_ENCODING);
+	}
 
-            if ((keyCode == COMMAND_CODE) &&
-                    SECTION_START.equals(value.getValue()) && !sectionstarts) {
-                sectionstarts = true;
-            }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#parse(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void parse(final String file, final String encoding) throws ParseException {
+		try {
+			parse(new FileInputStream(file), encoding);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
-            if ((keyCode == COMMAND_CODE) &&
-                    SECTION_END.equals(value.getValue())) {
-                if (parse) {
-                    currentHandler.endSection();
-                }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#parse(java.io.InputStream, java.lang.String)
+	 */
+	@Override
+	public void parse(final InputStream input, String encoding) throws ParseException {
+		String currentKey = "";
+		key = false;
+		linecount = 0;
+		parse = false;
 
-                parse = false;
+		// initialize
+		doc = new DXFDocument();
+		doc.setProperty(DXFDocument.PROPERTY_ENCODING, encoding);
+		// the StreamFilters
+		this.buildFilterChain();
 
-                return;
-            }
+		@SuppressWarnings ("resource") BufferedReader in = null;
+		try {
+			if ("".equals(encoding)) {
+				BufferedInputStream buf = new BufferedInputStream(input);
+				buf.mark(9000);
 
-            if (parse) {
-                currentHandler.parseGroup(keyCode, value);
-            }
+				try {
+					BufferedReader r = new BufferedReader(new InputStreamReader(buf));
+					CodePageParser p = new CodePageParser();
+					encoding = p.parseEncoding(r);
+					buf.reset();
+					in = new BufferedReader(new InputStreamReader(buf, encoding));
+				} catch (IOException e1) {
+					buf.reset();
+					in = new BufferedReader(new InputStreamReader(buf));
+				}
+			} else {
+				in = new BufferedReader(new InputStreamReader(input, encoding));
+			}
 
-            return;
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            throw new ParseException("Line: " + linecount +
-                " unsupported groupcode: " + key + " for value:" + value, e);
-        }
-    }
+			key = true;
+			sectionstarts = false;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#getDocument()
-     */
-    public DXFDocument getDocument() {
-        return doc;
-    }
+			while ((line = in.readLine()) != null) {
+				linecount++;
 
-    public void addDXFSectionHandler(DXFSectionHandler handler) {
-        handler.setDXFDocument(doc);
-        handlers.put(handler.getSectionKey(), handler);
-    }
+				if (key) {
+					currentKey = line;
+					key = false;
+				} else {
+					int keyCode = Integer.parseInt(currentKey.trim());
+					// the filter chain
+					filter.parseGroup(keyCode, new DXFValue(line.trim()));
+					// parseGroup(currentKey, line);
+					key = true;
+				}
+			}
 
-    public void addHandler(Handler handler) {
-        addDXFSectionHandler((DXFSectionHandler) handler);
-    }
+			in.close();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.miethxml.kabeja.parser.Handler#releaseDXFDocument()
-     */
+			in = null;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#releaseDXFDocument()
-     */
-    public void releaseDXFDocument() {
-        this.doc = null;
+			// finish last parsing
+			if (parse) { currentHandler.endSection(); }
+		} catch (IOException ioe) {
+			throw new ParseException(ioe.toString());
+		}
+	}
 
-        Iterator i = handlers.values().iterator();
+	@Override
+	public void parseGroup(final int keyCode, final DXFValue value) throws ParseException {
+		// System.out.println(""+keyCode);
+		// System.out.println(" "+value.getValue());
+		try {
+			if (sectionstarts) {
+				sectionstarts = false;
 
-        while (i.hasNext()) {
-            Handler handler = (Handler) i.next();
-            handler.releaseDXFDocument();
-        }
-    }
+				if (handlers.containsKey(value.getValue())) {
+					currentHandler = handlers.get(value.getValue());
+					parse = true;
+					currentHandler.setDXFDocument(doc);
+					currentHandler.startSection();
+				} else {
+					parse = false;
+				}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.miethxml.kabeja.parser.Handler#setDXFDocument(de.miethxml.kabeja.dxf.DXFDocument)
-     */
+				return;
+			}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.parser.Parser#setDXFDocument(org.kabeja.dxf.DXFDocument)
-     */
-    public void setDXFDocument(DXFDocument doc) {
-        this.doc = doc;
-    }
+			if (keyCode == COMMAND_CODE && SECTION_START.equals(value.getValue()) && !sectionstarts) {
+				sectionstarts = true;
+			}
 
-    public boolean supportedExtension(String extension) {
-        return extension.toLowerCase().equals(EXTENSION);
-    }
+			if (keyCode == COMMAND_CODE && SECTION_END.equals(value.getValue())) {
+				if (parse) { currentHandler.endSection(); }
 
-    public void addDXFStreamFilter(DXFStreamFilter filter) {
-        this.streamFilters.add(filter);
-    }
+				parse = false;
 
-    public void removeDXFStreamFilter(DXFStreamFilter filter) {
-        this.streamFilters.remove(filter);
-    }
+				return;
+			}
 
-    protected void buildFilterChain() {
-        // build the chain from end to start
-        // the parser itself is the last element
-        // in the chain
-        DXFHandler handler = this;
+			if (parse) { currentHandler.parseGroup(keyCode, value); }
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			throw new ParseException("Line: " + linecount + " unsupported groupcode: " + key + " for value:" + value,
+					e);
+		}
+	}
 
-        for (int i = this.streamFilters.size() - 1; i >= 0; i--) {
-            DXFStreamFilter f = (DXFStreamFilter) this.streamFilters.get(i);
-            f.setDXFHandler(handler);
-            handler = f;
-        }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#getDocument()
+	 */
+	@Override
+	public DXFDocument getDocument() { return doc; }
 
-        // the first is used filter and if no filter
-        // the parser itself is the filter
-        this.filter = handler;
-    }
+	/**
+	 * Adds the DXF section handler.
+	 *
+	 * @param handler
+	 *            the handler
+	 */
+	public void addDXFSectionHandler(final DXFSectionHandler handler) {
+		handler.setDXFDocument(doc);
+		handlers.put(handler.getSectionKey(), handler);
+	}
 
-    public String getName() {
-        return PARSER_NAME;
-    }
+	@Override
+	public void addHandler(final Handler handler) {
+		addDXFSectionHandler((DXFSectionHandler) handler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.miethxml.kabeja.parser.Handler#releaseDXFDocument()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#releaseDXFDocument()
+	 */
+	@Override
+	public void releaseDXFDocument() {
+		this.doc = null;
+
+		Iterator i = handlers.values().iterator();
+
+		while (i.hasNext()) {
+			Handler handler = (Handler) i.next();
+			handler.releaseDXFDocument();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.miethxml.kabeja.parser.Handler#setDXFDocument(de.miethxml.kabeja.dxf.DXFDocument)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.parser.Parser#setDXFDocument(org.kabeja.dxf.DXFDocument)
+	 */
+	@Override
+	public void setDXFDocument(final DXFDocument doc) { this.doc = doc; }
+
+	@Override
+	public boolean supportedExtension(final String extension) {
+		return EXTENSION.equals(extension.toLowerCase());
+	}
+
+	/**
+	 * Adds the DXF stream filter.
+	 *
+	 * @param filter
+	 *            the filter
+	 */
+	public void addDXFStreamFilter(final DXFStreamFilter filter) {
+		this.streamFilters.add(filter);
+	}
+
+	/**
+	 * Removes the DXF stream filter.
+	 *
+	 * @param filter
+	 *            the filter
+	 */
+	public void removeDXFStreamFilter(final DXFStreamFilter filter) {
+		this.streamFilters.remove(filter);
+	}
+
+	/**
+	 * Builds the filter chain.
+	 */
+	protected void buildFilterChain() {
+		// build the chain from end to start
+		// the parser itself is the last element
+		// in the chain
+		DXFHandler handler = this;
+
+		for (int i = this.streamFilters.size() - 1; i >= 0; i--) {
+			DXFStreamFilter f = this.streamFilters.get(i);
+			f.setDXFHandler(handler);
+			handler = f;
+		}
+
+		// the first is used filter and if no filter
+		// the parser itself is the filter
+		this.filter = handler;
+	}
+
+	@Override
+	public String getName() { return PARSER_NAME; }
 }

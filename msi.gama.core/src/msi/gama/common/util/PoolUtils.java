@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * PoolUtils.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.common.util;
 
 import java.util.LinkedHashSet;
@@ -10,9 +20,15 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class PoolUtils.
+ */
 public class PoolUtils {
 
+	/** The pools. */
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
+	
+	/** The pool. */
 	static public boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
 	static {
 		DEBUG.OFF();
@@ -22,6 +38,9 @@ public class PoolUtils {
 		});
 	}
 
+	/**
+	 * Write stats.
+	 */
 	public static void WriteStats() {
 		if (!DEBUG.IS_ON()) return;
 		DEBUG.SECTION("Pool statistics");
@@ -32,29 +51,81 @@ public class PoolUtils {
 		});
 	}
 
-	public interface ObjectFactory<T> {
-		T createNew();
-	}
+	/**
+	 * A factory for creating Object objects.
+	 *
+	 * @param <T> the generic type
+	 */
+	public interface ObjectFactory<T> { /**
+  * Creates a new Object object.
+  *
+  * @return the t
+  */
+ T createNew(); }
 
+	/**
+	 * The Interface ObjectCopy.
+	 *
+	 * @param <T> the generic type
+	 */
 	public interface ObjectCopy<T> {
 
+		/**
+		 * Creates the new.
+		 *
+		 * @param copyFrom the copy from
+		 * @param copyTo the copy to
+		 */
 		void createNew(T copyFrom, T copyTo);
 	}
 
-	public interface ObjectCleaner<T> {
-		void clean(T object);
-	}
+	/**
+	 * The Interface ObjectCleaner.
+	 *
+	 * @param <T> the generic type
+	 */
+	public interface ObjectCleaner<T> { /**
+  * Clean.
+  *
+  * @param object the object
+  */
+ void clean(T object); }
 
+	/**
+	 * The Class ObjectPool.
+	 *
+	 * @param <T> the generic type
+	 */
 	public static class ObjectPool<T> implements IDisposable {
 
+		/** The name. */
 		private String name;
+		
+		/** The created. */
 		private long accessed, released, created;
+		
+		/** The factory. */
 		private final ObjectFactory<T> factory;
+		
+		/** The copy. */
 		private final ObjectCopy<T> copy;
+		
+		/** The cleaner. */
 		private final ObjectCleaner<T> cleaner;
+		
+		/** The objects. */
 		private final Queue<T> objects;
+		
+		/** The active. */
 		public boolean active;
 
+		/**
+		 * Instantiates a new object pool.
+		 *
+		 * @param factory the factory
+		 * @param copy the copy
+		 * @param cleaner the cleaner
+		 */
 		private ObjectPool(final ObjectFactory<T> factory, final ObjectCopy<T> copy, final ObjectCleaner<T> cleaner) {
 			this.factory = factory;
 			this.copy = copy;
@@ -62,6 +133,11 @@ public class PoolUtils {
 			objects = Queues.synchronizedDeque(Queues.newArrayDeque());
 		}
 
+		/**
+		 * Gets the.
+		 *
+		 * @return the t
+		 */
 		public T get() {
 			if (!POOL || !active) return factory.createNew();
 			accessed++;
@@ -74,13 +150,24 @@ public class PoolUtils {
 			return result;
 		}
 
+		/**
+		 * Gets the.
+		 *
+		 * @param from the from
+		 * @return the t
+		 */
 		public T get(final T from) {
 			T result = get();
 			if (copy != null) { copy.createNew(from, result); }
 			return result;
 		}
 
-		public void release(final T... tt) {
+		/**
+		 * Release.
+		 *
+		 * @param tt the tt
+		 */
+		public void release(@SuppressWarnings ("unchecked") final T... tt) {
 			if (tt == null) return;
 			for (T t : tt) {
 				if (cleaner != null) { cleaner.clean(t); }

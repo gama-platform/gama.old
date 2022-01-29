@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.common.util.JavaUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * JavaUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,18 +38,53 @@ import msi.gama.common.interfaces.ISkill;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class JavaUtils {
 
+	/** The null iterator. */
+	static Iterator NULL_ITERATOR = new UnmodifiableIterator<>() {
+
+		@Override
+		public boolean hasNext() {
+			return false;
+		}
+
+		@Override
+		public Object next() {
+			return null;
+		}
+	};
+
+	/** The Constant IMPLEMENTATION_CLASSES. */
 	public final static Map<Integer, List<Class>> IMPLEMENTATION_CLASSES = new HashMap();
+
+	/** The interfaces. */
 	private static Multimap<Class, Class> INTERFACES = HashMultimap.<Class, Class> create();
+
+	/** The superclasses. */
 	private static Multimap<Class, Class> SUPERCLASSES = HashMultimap.<Class, Class> create();
 
+	/**
+	 * Key of.
+	 *
+	 * @param base
+	 *            the base
+	 * @param others
+	 *            the others
+	 * @return the int
+	 */
 	private static int keyOf(final Class base, final Iterable<Class<? extends ISkill>> others) {
 		int result = base.hashCode();
-		for (final Class other : others) {
-			result += other.hashCode();
-		}
+		for (final Class other : others) { result += other.hashCode(); }
 		return result;
 	}
 
+	/**
+	 * All interfaces of.
+	 *
+	 * @param c
+	 *            the c
+	 * @param in
+	 *            the in
+	 * @return the sets the
+	 */
 	private static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
 		if (c == null) return Collections.EMPTY_SET;
 		if (!INTERFACES.containsKey(c)) {
@@ -66,6 +100,15 @@ public class JavaUtils {
 		return (Set<Class>) INTERFACES.get(c);
 	}
 
+	/**
+	 * All superclasses of.
+	 *
+	 * @param c
+	 *            the c
+	 * @param in
+	 *            the in
+	 * @return the sets the
+	 */
 	private static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
 		if (c == null) return null;
 		if (!SUPERCLASSES.containsKey(c)) {
@@ -78,6 +121,17 @@ public class JavaUtils {
 		return (Set<Class>) SUPERCLASSES.get(c);
 	}
 
+	/**
+	 * Collect implementation classes.
+	 *
+	 * @param baseClass
+	 *            the base class
+	 * @param skillClasses
+	 *            the skill classes
+	 * @param in
+	 *            the in
+	 * @return the list
+	 */
 	public static List<Class> collectImplementationClasses(final Class baseClass,
 			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
 		final int key = keyOf(baseClass, skillClasses);
@@ -92,7 +146,7 @@ public class JavaUtils {
 				if (o1.isAssignableFrom(o2)) return -1;
 				if (o2.isAssignableFrom(o1)) return 1;
 				if (o1.isInterface() && !o2.isInterface()) return -1;
-				if (o2.isInterface() && !o1.isInterface()) return 1;
+				if (o2.isInterface() && !o1.isInterface()) {}
 				return 1;
 			});
 
@@ -102,20 +156,18 @@ public class JavaUtils {
 
 	}
 
+	/**
+	 * Iterator.
+	 *
+	 * @param <F>
+	 *            the generic type
+	 * @param array
+	 *            the array
+	 * @return the iterator
+	 */
 	public static <F> Iterator<F> iterator(final Object[] array) {
-		if (array != null) return (Iterator<F>) Iterators.forArray(array);
-		return new UnmodifiableIterator<>() {
-
-			@Override
-			public boolean hasNext() {
-				return false;
-			}
-
-			@Override
-			public F next() {
-				return null;
-			}
-		};
+		if (array != null && array.length > 0) return (Iterator<F>) Iterators.forArray(array);
+		return NULL_ITERATOR;
 	}
 
 }

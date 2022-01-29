@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * EGaml.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EGaml.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml;
 
@@ -66,9 +65,9 @@ import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.GamaMapFactory;
-import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IGamlEcoreUtils;
 import msi.gaml.compilation.ast.SyntacticFactory;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * The class EGaml.getInstance(). A stateless class, bunch of utilities to work with the various GAML statements and
@@ -94,7 +93,7 @@ public class EGaml implements IGamlEcoreUtils {
 	public String getNameOf(final EObject o) {
 		if (o instanceof S_Reflex) {
 			String s = ((S_Reflex) o).getName();
-			if (s == null) return IKeyword.INTERNAL + getKeyOf(o) + GAML.COMMAND_INDEX++;
+			if (s == null) return IKeyword.INTERNAL + getKeyOf(o) + COUNTER.GET();
 		}
 		if (o instanceof GamlDefinition) return ((GamlDefinition) o).getName();
 		if (o instanceof S_Display) return ((S_Display) o).getName();
@@ -404,9 +403,8 @@ public class EGaml implements IGamlEcoreUtils {
 		final ICompositeNode n = NodeModelUtils.getNode(o);
 		if (n != null) return NodeModelUtils.getTokenText(n);
 		if (o instanceof VariableRef) return ((VariableRef) o).getRef().getName();
-		if (o instanceof UnitName)
-			return ((UnitName) o).getRef().getName();
-		else if (o instanceof ActionRef)
+		if (o instanceof UnitName) return ((UnitName) o).getRef().getName();
+		if (o instanceof ActionRef)
 			return ((ActionRef) o).getRef().getName();
 		else if (o instanceof SkillRef)
 			return ((SkillRef) o).getRef().getName();
@@ -609,8 +607,10 @@ public class EGaml implements IGamlEcoreUtils {
 	/**
 	 * Creates the gaml definition.
 	 *
-	 * @param t the t
-	 * @param eClass the e class
+	 * @param t
+	 *            the t
+	 * @param eClass
+	 *            the e class
 	 * @return the gaml definition
 	 */
 	public GamlDefinition createGamlDefinition(final String t, final EClass eClass) {

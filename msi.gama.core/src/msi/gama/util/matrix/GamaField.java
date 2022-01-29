@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * GamaField.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.util.matrix;
 
 import static msi.gaml.types.GamaGeometryType.buildRectangle;
@@ -13,7 +22,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -31,22 +39,48 @@ import msi.gaml.types.Types;
 import one.util.streamex.DoubleStreamEx;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class GamaField.
+ */
 public class GamaField extends GamaFloatMatrix implements IField {
 
+	/** The world dimensions. */
 	GamaPoint worldDimensions = null;
+
+	/** The cell dimensions. */
 	GamaPoint cellDimensions = null;
+
+	/** The no data value. */
 	double epsilon, noDataValue;
+
+	/** The bands. */
 	IList<GamaField> bands = GamaListFactory.create(Types.FIELD);
 
+	/**
+	 * Instantiates a new gama field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param provider
+	 *            the provider
+	 */
 	public GamaField(final IScope scope, final IFieldMatrixProvider provider) {
 		this(scope, provider.getCols(scope), provider.getRows(scope), provider.getFieldData(scope),
 				provider.getNoData(scope));
 		int nbBands = provider.getBandsNumber(scope);
-		for (int i = 0; i < nbBands; i++) {
-			bands.add(new GamaField(scope, this, provider.getBand(scope, i)));
-		}
+		for (int i = 0; i < nbBands; i++) { bands.add(new GamaField(scope, this, provider.getBand(scope, i))); }
 	}
 
+	/**
+	 * Instantiates a new gama field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param primary
+	 *            the primary
+	 * @param band
+	 *            the band
+	 */
 	private GamaField(final IScope scope, final GamaField primary, final double[] band) {
 		this(scope, primary.numCols, primary.numRows, band, primary.noDataValue);
 		worldDimensions = primary.worldDimensions;
@@ -54,6 +88,20 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		epsilon = primary.epsilon;
 	}
 
+	/**
+	 * Instantiates a new gama field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param objects
+	 *            the objects
+	 * @param noDataValue
+	 *            the no data value
+	 */
 	public GamaField(final IScope scope, final int cols, final int rows, final double[] objects,
 			final double noDataValue) {
 		super(objects); // no copy
@@ -78,14 +126,35 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		epsilon = cellDimensions.x / 1000;
 	}
 
+	/**
+	 * Gets the grid X.
+	 *
+	 * @param x
+	 *            the x
+	 * @return the grid X
+	 */
 	int getGridX(final double x) {
 		return (int) ((x == worldDimensions.x ? x - epsilon : x) / cellDimensions.x);
 	}
 
+	/**
+	 * Gets the grid Y.
+	 *
+	 * @param y
+	 *            the y
+	 * @return the grid Y
+	 */
 	int getGridY(final double y) {
 		return (int) ((y == worldDimensions.y ? y - epsilon : y) / cellDimensions.y);
 	}
 
+	/**
+	 * Gets the index.
+	 *
+	 * @param p
+	 *            the p
+	 * @return the index
+	 */
 	int getIndex(final GamaPoint p) {
 		return getGridY(p.y) * numCols + getGridX(p.x);
 	}
@@ -96,10 +165,8 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		final int size = indices.size();
 		if (size == 1) {
 			final Object index = indices.get(0);
-			if (index instanceof GamaPoint)
-				return get(scope, (GamaPoint) index);
-			else
-				return matrix[Cast.asInt(scope, index)];
+			if (index instanceof GamaPoint) return get(scope, (GamaPoint) index);
+			return matrix[Cast.asInt(scope, index)];
 		}
 		return get(scope, Cast.asInt(scope, indices.get(0)), Cast.asInt(scope, indices.get(1)));
 	}
@@ -154,11 +221,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public void setNoData(final IScope scope, final double noData) {
 		if (noData != noDataValue) { noDataValue = noData; }
-		if (bands.size() > 1) {
-			for (int i = 1; i < bands.size(); i++) {
-				bands.get(i).setNoData(scope, noData);
-			}
-		}
+		if (bands.size() > 1) { for (int i = 1; i < bands.size(); i++) { bands.get(i).setNoData(scope, noData); } }
 	}
 
 	@Override
@@ -205,9 +268,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public void getValuesInto(final IScope scope, final String varName, final double minValue, final double[] input) {
 		System.arraycopy(matrix, 0, input, 0, input.length);
-		for (int i = 0; i < input.length; i++) {
-			if (input[i] < minValue) { input[i] = 0; }
-		}
+		for (int i = 0; i < input.length; i++) { if (input[i] < minValue) { input[i] = 0; } }
 	}
 
 	/**
@@ -234,7 +295,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public IShape getCellShapeAt(final IScope scope, final GamaPoint at) {
 		computeDimensions(scope);
-		final GamaPoint p = (GamaPoint) at;
+		final GamaPoint p = at;
 		return getCellShapeAt(scope, getGridX(p.x), getGridY(p.y));
 
 	}
@@ -334,18 +395,16 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField copy(final IScope scope, final GamaPoint size, final boolean copy) {
 		if (size == null) {
-			if (copy) {
-				GamaField result = new GamaField(scope, numCols, numRows,
-						Arrays.copyOf(getMatrix(), getMatrix().length), noDataValue);
-				if (bands.size() > 1) {
-					for (GamaField f : bands) {
-						result.bands.add(new GamaField(scope, numCols, numRows,
-								Arrays.copyOf(f.getMatrix(), f.getMatrix().length), noDataValue));
-					}
+			if (!copy) return this;
+			GamaField result =
+					new GamaField(scope, numCols, numRows, Arrays.copyOf(getMatrix(), getMatrix().length), noDataValue);
+			if (bands.size() > 1) {
+				for (GamaField f : bands) {
+					result.bands.add(new GamaField(scope, numCols, numRows,
+							Arrays.copyOf(f.getMatrix(), f.getMatrix().length), noDataValue));
 				}
-				return result;
-			} else
-				return this;
+			}
+			return result;
 		}
 		GamaField result = new GamaField(scope, (int) size.getX(), (int) size.getY(),
 				Arrays.copyOf(getMatrix(), getMatrix().length), noDataValue);
@@ -372,9 +431,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		if (other instanceof GamaFloatMatrix) {
 			GamaFloatMatrix nm = (GamaFloatMatrix) other;
-			for (int i = 0; i < matrix.length; i++) {
-				matrix[i] += nm.matrix[i];
-			}
+			for (int i = 0; i < matrix.length; i++) { matrix[i] += nm.matrix[i]; }
 		}
 		return this;
 	}
@@ -393,9 +450,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		if (other instanceof GamaFloatMatrix) {
 			GamaFloatMatrix nm = (GamaFloatMatrix) other;
-			for (int i = 0; i < matrix.length; i++) {
-				matrix[i] -= nm.matrix[i];
-			}
+			for (int i = 0; i < matrix.length; i++) { matrix[i] -= nm.matrix[i]; }
 		}
 		return this;
 	}
@@ -412,9 +467,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField times(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] *= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
 		return this;
 	}
 
@@ -430,9 +483,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField times(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] *= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
 		return this;
 	}
 
@@ -448,9 +499,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField divides(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] /= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
 		return this;
 	}
 
@@ -466,9 +515,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField divides(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] /= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
 		return this;
 	}
 
@@ -484,9 +531,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField plus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] += val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
 		return this;
 	}
 
@@ -502,9 +547,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField plus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] += val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
 		return this;
 	}
 
@@ -520,9 +563,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField minus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] -= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
 		return this;
 	}
 
@@ -538,15 +579,12 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField minus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) {
-			matrix[i] -= val;
-		}
+		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
 		return this;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
-	public IContainerType getGamlType() {
-		return Types.FIELD;
-	}
+	public IContainerType getGamlType() { return Types.FIELD; }
 
 }

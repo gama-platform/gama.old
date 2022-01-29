@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.SkillDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * SkillDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -20,12 +20,28 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.skills.Skill;
 
+/**
+ * The Class SkillDescription.
+ */
 public class SkillDescription extends TypeDescription {
 
+	/** The instance. */
 	Skill instance;
+	
+	/** The is control. */
 	final boolean isControl;
+	
+	/** The java base. */
 	final Class<? extends ISkill> javaBase;
 
+	/**
+	 * Instantiates a new skill description.
+	 *
+	 * @param name the name
+	 * @param support the support
+	 * @param children the children
+	 * @param plugin the plugin
+	 */
 	public SkillDescription(final String name, final Class<? extends ISkill> support,
 			final Iterable<IDescription> children, final String plugin) {
 		super(IKeyword.SKILL, support, null, null, children, null, null, plugin);
@@ -36,14 +52,10 @@ public class SkillDescription extends TypeDescription {
 	}
 
 	@Override
-	public Class getJavaBase() {
-		return javaBase;
-	}
+	public Class getJavaBase() { return javaBase; }
 
 	@Override
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
 	public IDescription addChild(final IDescription child) {
@@ -57,20 +69,23 @@ public class SkillDescription extends TypeDescription {
 	}
 
 	@Override
-	public boolean visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
 		return visitOwnChildren(visitor);
 	}
 
 	@Override
-	public Collection<String> getActionNames() {
-		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
-	}
+	public Collection<String> getActionNames() { return actions == null ? Collections.EMPTY_LIST : actions.keySet(); }
 
 	@Override
 	public Collection<String> getAttributeNames() {
 		return attributes == null ? Collections.EMPTY_LIST : attributes.keySet();
 	}
 
+	/**
+	 * Creates the instance.
+	 *
+	 * @return the skill
+	 */
 	public Skill createInstance() {
 		Skill instance = null;
 		try {
@@ -80,20 +95,25 @@ public class SkillDescription extends TypeDescription {
 		return instance;
 	}
 
+	/**
+	 * Gets the single instance of SkillDescription.
+	 *
+	 * @return single instance of SkillDescription
+	 */
 	public Skill getInstance() {
-		if (instance == null)
-			instance = createInstance();
+		if (instance == null) { instance = createInstance(); }
 		return instance;
 	}
 
-	public boolean isControl() {
-		return isControl;
-	}
+	/**
+	 * Checks if is control.
+	 *
+	 * @return true, if is control
+	 */
+	public boolean isControl() { return isControl; }
 
 	@Override
-	public String getTitle() {
-		return "skill " + getName();
-	}
+	public String getTitle() { return "skill " + getName(); }
 
 	@Override
 	public String getDocumentation() {
@@ -121,27 +141,33 @@ public class SkillDescription extends TypeDescription {
 
 	}
 
+	/**
+	 * Gets the doc annotation.
+	 *
+	 * @return the doc annotation
+	 */
 	public doc getDocAnnotation() {
 		skill s = javaBase.getAnnotation(skill.class);
 		doc[] docs = s.doc();
 		doc d = null;
 		if (docs.length == 0) {
-			if (javaBase.isAnnotationPresent(doc.class)) {
-				d = javaBase.getAnnotation(doc.class);
-			}
+			if (javaBase.isAnnotationPresent(doc.class)) { d = javaBase.getAnnotation(doc.class); }
 		} else {
 			d = docs[0];
 		}
 		return d;
 	}
 
+	/**
+	 * Gets the deprecated.
+	 *
+	 * @return the deprecated
+	 */
 	public String getDeprecated() {
 		doc d = getDocAnnotation();
-		if (d == null)
-			return null;
+		if (d == null) return null;
 		String s = d.deprecated();
-		if (s == null || s.isEmpty())
-			return null;
+		if (s == null || s.isEmpty()) return null;
 		return s;
 	}
 

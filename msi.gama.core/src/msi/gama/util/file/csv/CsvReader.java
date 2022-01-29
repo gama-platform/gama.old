@@ -495,8 +495,8 @@ public class CsvReader {
 		/** The headers. */
 		public String[] headers = null;
 
-		/** The qualifier. */
-		public Character qualifier;
+		// /** The qualifier. */
+		// public Character qualifier;
 
 		/** The first line type. */
 		private IType firstLineType = Types.NO_TYPE;

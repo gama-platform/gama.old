@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.ModelDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * ModelDescription.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -28,7 +28,6 @@ import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
@@ -47,51 +46,113 @@ import msi.gaml.types.TypesManager;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelDescription extends SpeciesDescription {
 
+	/** The Constant MODEL_SUFFIX. */
 	// TODO Move elsewhere
 	public static final String MODEL_SUFFIX = "_model";
+	
+	/** The root. */
 	public static volatile ModelDescription ROOT;
+	
+	/** The built in models. */
 	public static volatile Map<String, ModelDescription> BUILT_IN_MODELS = new HashMap();
+	
+	/** The experiments. */
 	private IMap<String, ExperimentDescription> experiments;
+	
+	/** The types. */
 	final ITypesManager types;
+	
+	/** The model file path. */
 	private String modelFilePath;
+	
+	/** The model project path. */
 	private final String modelProjectPath;
+	
+	/** The alternate paths. */
 	private final Set<String> alternatePaths;
+	
+	/** The validation context. */
 	private final ValidationContext validationContext;
+	
+	/** The document. */
 	protected volatile boolean document;
+	
+	/** The micro models. */
 	// hqnghi new attribute manipulate micro-models
 	private IMap<String, ModelDescription> microModels;
+	
+	/** The alias. */
 	private String alias = "";
+	
+	/** The is starting date defined. */
 	boolean isStartingDateDefined = false;
+	
+	/** The imported model names. */
 	private Collection<String> importedModelNames;
 
+	/**
+	 * Gets the alternate paths.
+	 *
+	 * @return the alternate paths
+	 */
 	public Collection<String> getAlternatePaths() {
 		return alternatePaths == null ? Collections.EMPTY_LIST : alternatePaths;
 	}
 
+	/**
+	 * Gets the micro model.
+	 *
+	 * @param name the name
+	 * @return the micro model
+	 */
 	public ModelDescription getMicroModel(final String name) {
 		if (microModels == null) return null;
 		return microModels.get(name);
 	}
 
-	public void setAlias(final String as) {
-		alias = as;
-	}
+	/**
+	 * Sets the alias.
+	 *
+	 * @param as the new alias
+	 */
+	public void setAlias(final String as) { alias = as; }
 
-	public String getAlias() {
-		return alias;
-	}
+	/**
+	 * Gets the alias.
+	 *
+	 * @return the alias
+	 */
+	public String getAlias() { return alias; }
 
-	public boolean isMicroModel() {
-		return alias != null && !alias.isEmpty();
-	}
+	/**
+	 * Checks if is micro model.
+	 *
+	 * @return true, if is micro model
+	 */
+	public boolean isMicroModel() { return alias != null && !alias.isEmpty(); }
 
 	@Override
-	public boolean isModel() {
-		return true;
-	}
+	public boolean isModel() { return true; }
 
 	// end-hqnghi
 
+	/**
+	 * Instantiates a new model description.
+	 *
+	 * @param name the name
+	 * @param clazz the clazz
+	 * @param projectPath the project path
+	 * @param modelPath the model path
+	 * @param source the source
+	 * @param macro the macro
+	 * @param parent the parent
+	 * @param children the children
+	 * @param facets the facets
+	 * @param validationContext the validation context
+	 * @param imports the imports
+	 * @param helper the helper
+	 * @param skills the skills
+	 */
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
 			final Iterable<? extends IDescription> children, final Facets facets,
@@ -108,6 +169,22 @@ public class ModelDescription extends SpeciesDescription {
 		if (helper != null) { setAgentConstructor(helper); }
 	}
 
+	/**
+	 * Instantiates a new model description.
+	 *
+	 * @param name the name
+	 * @param clazz the clazz
+	 * @param projectPath the project path
+	 * @param modelPath the model path
+	 * @param source the source
+	 * @param macro the macro
+	 * @param parent the parent
+	 * @param children the children
+	 * @param facets the facets
+	 * @param validationContext the validation context
+	 * @param imports the imports
+	 * @param helper the helper
+	 */
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
 			final Iterable<? extends IDescription> children, final Facets facets,
@@ -122,15 +199,16 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public String getTitle() {
-		return getName().replace(MODEL_SUFFIX, "");
-	}
+	public String getTitle() { return getName().replace(MODEL_SUFFIX, ""); }
 
 	@Override
-	public boolean isDocumenting() {
-		return document;
-	}
+	public boolean isDocumenting() { return document; }
 
+	/**
+	 * Checks if is documenting.
+	 *
+	 * @param b the b
+	 */
 	public void isDocumenting(final boolean b) {
 		document = b;
 	}
@@ -178,7 +256,7 @@ public class ModelDescription extends SpeciesDescription {
 	public String getDocumentationWithoutMeta() {
 		final StringBuilder sb = new StringBuilder(200);
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
-		if (!parentName.equals(IKeyword.MODEL)) {
+		if (!IKeyword.MODEL.equals(parentName)) {
 			sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		}
 		final Iterable<String> skills = getSkillsNames();
@@ -222,17 +300,21 @@ public class ModelDescription extends SpeciesDescription {
 	 *
 	 * @return the model file name
 	 */
-	public String getModelFilePath() {
-		return modelFilePath;
-	}
+	public String getModelFilePath() { return modelFilePath; }
 
-	public String getModelFolderPath() {
-		return new File(modelFilePath).getParent();
-	}
+	/**
+	 * Gets the model folder path.
+	 *
+	 * @return the model folder path
+	 */
+	public String getModelFolderPath() { return new File(modelFilePath).getParent(); }
 
-	public String getModelProjectPath() {
-		return modelProjectPath;
-	}
+	/**
+	 * Gets the model project path.
+	 *
+	 * @return the model project path
+	 */
+	public String getModelProjectPath() { return modelProjectPath; }
 
 	/**
 	 * Create types from the species descriptions
@@ -273,14 +355,23 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void addOwnAttribute(final VariableDescription vd) {
-		if (!vd.isBuiltIn() && vd.getName().equals(SimulationAgent.STARTING_DATE)) { isStartingDateDefined = true; }
+		if (!vd.isBuiltIn() && SimulationAgent.STARTING_DATE.equals(vd.getName())) { isStartingDateDefined = true; }
 		super.addOwnAttribute(vd);
 	}
 
-	public boolean isStartingDateDefined() {
-		return isStartingDateDefined;
-	}
+	/**
+	 * Checks if is starting date defined.
+	 *
+	 * @return true, if is starting date defined
+	 */
+	public boolean isStartingDateDefined() { return isStartingDateDefined; }
 
+	/**
+	 * Checks for experiment.
+	 *
+	 * @param nameOrTitle the name or title
+	 * @return true, if successful
+	 */
 	public boolean hasExperiment(final String nameOrTitle) {
 		if (experiments == null) return false;
 		if (experiments.containsKey(nameOrTitle)) return true;
@@ -291,21 +382,16 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public ModelDescription getModelDescription() {
-		return this;
-	}
+	public ModelDescription getModelDescription() { return this; }
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (spec.equals(getName())) return this;
-		if (importedModelNames != null && importedModelNames.contains(spec)) return this;
-		if (getTypesManager() == null) {
-			if (hasMicroSpecies())
-				return getMicroSpecies().get(spec);
-			else
-				return null;
-		} else
-			return getTypesManager().get(spec).getSpecies();
+		if (spec.equals(getName()) || (importedModelNames != null && importedModelNames.contains(spec))) return this;
+		if (getTypesManager() != null) return getTypesManager().get(spec).getSpecies();
+		if (hasMicroSpecies())
+			return getMicroSpecies().get(spec);
+		else
+			return null;
 	}
 
 	@Override
@@ -314,20 +400,31 @@ public class ModelDescription extends SpeciesDescription {
 		return types.get(s);
 	}
 
-	public ITypesManager getTypesManager() {
-		return types;
-	}
+	/**
+	 * Gets the types manager.
+	 *
+	 * @return the types manager
+	 */
+	public ITypesManager getTypesManager() { return types; }
 
 	@Override
-	public SpeciesDescription getSpeciesContext() {
-		return this;
-	}
+	public SpeciesDescription getSpeciesContext() { return this; }
 
+	/**
+	 * Gets the experiment names.
+	 *
+	 * @return the experiment names
+	 */
 	public Set<String> getExperimentNames() {
 		if (experiments == null) return Collections.EMPTY_SET;
 		return new LinkedHashSet(experiments.keySet());
 	}
 
+	/**
+	 * Gets the experiment titles.
+	 *
+	 * @return the experiment titles
+	 */
 	public Set<String> getExperimentTitles() {
 		final Set<String> strings = new LinkedHashSet();
 		if (experiments != null) {
@@ -340,10 +437,14 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public ValidationContext getValidationContext() {
-		return validationContext;
-	}
+	public ValidationContext getValidationContext() { return validationContext; }
 
+	/**
+	 * Gets the experiment.
+	 *
+	 * @param name the name
+	 * @return the experiment
+	 */
 	public ExperimentDescription getExperiment(final String name) {
 		if (experiments == null) return null;
 		final ExperimentDescription desc = experiments.get(name);
@@ -364,8 +465,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		if (!super.visitOwnChildren(visitor)) return false;
-		if (experiments != null) { if (!experiments.forEachValue(visitor)) return false; }
+		if (!super.visitOwnChildren(visitor) || ((experiments != null) && !experiments.forEachValue(visitor))) return false;
 		return true;
 	}
 
@@ -375,8 +475,7 @@ public class ModelDescription extends SpeciesDescription {
 			if (!visitor.process(each)) return false;
 			return each.visitOwnChildrenRecursively(visitor);
 		};
-		if (!super.visitOwnChildrenRecursively(visitor)) return false;
-		if (experiments != null && !experiments.forEachValue(recursiveVisitor)) return false;
+		if (!super.visitOwnChildrenRecursively(visitor) || (experiments != null && !experiments.forEachValue(recursiveVisitor))) return false;
 		return true;
 	}
 
@@ -402,6 +501,12 @@ public class ModelDescription extends SpeciesDescription {
 		return validate(false);
 	}
 
+	/**
+	 * Validate.
+	 *
+	 * @param document the document
+	 * @return the i description
+	 */
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
 		super.validate();
@@ -416,9 +521,12 @@ public class ModelDescription extends SpeciesDescription {
 		return experiments.values();
 	}
 
-	public void setImportedModelNames(final Collection<String> allModelNames) {
-		importedModelNames = allModelNames;
-	}
+	/**
+	 * Sets the imported model names.
+	 *
+	 * @param allModelNames the new imported model names
+	 */
+	public void setImportedModelNames(final Collection<String> allModelNames) { importedModelNames = allModelNames; }
 
 	/**
 	 * Returns all the species including the model itself, all the micro-species and the experiments
@@ -443,17 +551,18 @@ public class ModelDescription extends SpeciesDescription {
 		// }
 	}
 
+	/**
+	 * Gets the all species.
+	 *
+	 * @param accumulator the accumulator
+	 * @return the all species
+	 */
 	public void getAllSpecies(final List<SpeciesDescription> accumulator) {
 		final DescriptionVisitor<SpeciesDescription> visitor = desc -> {
 			accumulator.add(desc);
 			return true;
 		};
 		visitAllSpecies(visitor);
-	}
-
-	@Override
-	public Class<? extends IAgent> getJavaBase() {
-		return super.getJavaBase();
 	}
 
 	@Override

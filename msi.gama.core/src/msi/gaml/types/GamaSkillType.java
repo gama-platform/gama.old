@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaSkillType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaSkillType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -39,17 +39,16 @@ import msi.gaml.compilation.kernel.GamaSkillRegistry;
 public class GamaSkillType extends GamaType<ISkill> {
 
 	@Override
+	@doc ("Tries to convert the parameter to a skill. If it is a skill already, returns it. If it is a string, returns it if it is registered in GAMA. Otherwise return null")
 	public ISkill cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj instanceof ISkill) { return (ISkill) obj; }
-		if (obj instanceof String) { return GamaSkillRegistry.INSTANCE.getSkillInstanceFor((String) obj); }
+		if (obj instanceof ISkill) return (ISkill) obj;
+		if (obj instanceof String) return GamaSkillRegistry.INSTANCE.getSkillInstanceFor((String) obj);
 		return null;
 	}
 
 	@Override
-	public ISkill getDefault() {
-		return null;
-	}
+	public ISkill getDefault() { return null; }
 
 	@Override
 	public boolean canCastToConst() {

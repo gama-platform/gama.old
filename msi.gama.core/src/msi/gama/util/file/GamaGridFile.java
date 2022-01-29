@@ -3,7 +3,7 @@
  * GamaGridFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -277,19 +277,18 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	 */
 	private void createCoverage(final IScope scope, final GamaField field) {
 		// temporary fixes #3128 - the code comes from the save statement... maybe we can do better
-		
-		//old code
-		/*double[] data = field.getMatrix();
-		
-		DataBuffer buffer = new DataBufferDouble(data, data.length);
-		SampleModel sample = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, field.numCols, field.numRows,
-				field.getBandsNumber(scope));
-		WritableRaster raster = Raster.createWritableRaster(sample, buffer, null);
-		Envelope2D envelope = new Envelope2D(getCRS(scope), 0, 0, scope.getSimulation().getWidth(),
-				scope.getSimulation().getHeight());
-		GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-		GridCoverage2D cov = factory.create(getName(scope), raster, envelope);
-		coverage = cov;*/
+
+		// old code
+		/*
+		 * double[] data = field.getMatrix();
+		 *
+		 * DataBuffer buffer = new DataBufferDouble(data, data.length); SampleModel sample = new
+		 * BandedSampleModel(DataBuffer.TYPE_DOUBLE, field.numCols, field.numRows, field.getBandsNumber(scope));
+		 * WritableRaster raster = Raster.createWritableRaster(sample, buffer, null); Envelope2D envelope = new
+		 * Envelope2D(getCRS(scope), 0, 0, scope.getSimulation().getWidth(), scope.getSimulation().getHeight());
+		 * GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null); GridCoverage2D cov =
+		 * factory.create(getName(scope), raster, envelope); coverage = cov;
+		 */
 		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
 
 		final int cols = field.numCols;
@@ -301,21 +300,18 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 		final float[][] imagePixelData = new float[rows][cols];
 		for (int row = 0; row < rows; row++) {
-			for (int col = 0; col < cols; col++) {
-				imagePixelData[row][col] = field.get(scope, col, row).floatValue();
-			}
+			for (int col = 0; col < cols; col++) { imagePixelData[row][col] = field.get(scope, col, row).floatValue(); }
 
 		}
 		final double width = scope.getSimulation().getEnvelope().getWidth();
 		final double height = scope.getSimulation().getEnvelope().getHeight();
 
 		Envelope2D refEnvelope;
-		
+
 		refEnvelope = new Envelope2D(this.getCRS(scope), x, y, width, height);
 
-		
 		coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
-		
+
 	}
 
 	/**
@@ -339,15 +335,15 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		if (!writable || (coverage == null)) return;
+		if (!writable || coverage == null) return;
 		try {
 			final File f = getFile(scope);
 			f.setWritable(true);
 			GridCoverageWriter writer;
-				
+
 			if (isTiff(scope)) {
 				final GeoTiffFormat format = new GeoTiffFormat();
-				 writer = format.getWriter(f);
+				writer = format.getWriter(f);
 			} else {
 				writer = new ArcGridWriter(f);
 			}
@@ -587,11 +583,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		final String sourceAsString;
 		sourceAsString = source.getAbsolutePath();
 		final int index = sourceAsString.lastIndexOf('.');
-		final StringBuffer prjFileName;
+		final StringBuilder prjFileName;
 		if (index == -1) {
-			prjFileName = new StringBuffer(sourceAsString);
+			prjFileName = new StringBuilder(sourceAsString);
 		} else {
-			prjFileName = new StringBuffer(sourceAsString.substring(0, index));
+			prjFileName = new StringBuilder(sourceAsString.substring(0, index));
 		}
 		prjFileName.append(".prj");
 
@@ -599,28 +595,14 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		final File prjFile = new File(prjFileName.toString());
 		if (prjFile.exists()) {
 			// it exists then we have to read it
-			PrjFileReader projReader = null;
-			try (FileInputStream fip = new FileInputStream(prjFile); final FileChannel channel = fip.getChannel();) {
-				projReader = new PrjFileReader(channel);
+			try (FileInputStream fip = new FileInputStream(prjFile);
+					final FileChannel channel = fip.getChannel();
+					PrjFileReader projReader = new PrjFileReader(channel);) {
 				return projReader.getCoordinateReferenceSystem();
-			} catch (final IOException e) {
+			} catch (final IOException | FactoryException e) {
 				// warn about the error but proceed, it is not fatal
 				// we have at least the default crs to use
 				return null;
-			} catch (final FactoryException e) {
-				// warn about the error but proceed, it is not fatal
-				// we have at least the default crs to use
-				return null;
-			} finally {
-				if (projReader != null) {
-					try {
-						projReader.close();
-					} catch (final IOException e) {
-						// warn about the error but proceed, it is not fatal
-						// we have at least the default crs to use
-						return null;
-					}
-				}
 			}
 		}
 		if (isTiff(scope)) {
@@ -670,7 +652,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		if (getBuffer() == null) { fillBuffer(scope); }
 		Object vals = null;
 		try {
-			vals = coverage.evaluate(new DirectPosition2D(x, y));	
+			vals = coverage.evaluate(new DirectPosition2D(x, y));
 		} catch (final Exception e) {
 			vals = noData.doubleValue();
 		}

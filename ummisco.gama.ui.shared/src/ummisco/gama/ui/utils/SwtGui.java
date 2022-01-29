@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
@@ -305,8 +305,7 @@ public class SwtGui implements IGui {
 			GamaFont f = (GamaFont) l.get(IKeyword.FONT);
 			String t = (String) l.get(IKeyword.TITLE);
 			String d = (String) l.get(IKeyword.DESCRIPTION);
-			List<IParameter> ps = (List<IParameter>) l.get(IKeyword.PARAMETERS);
-
+			@SuppressWarnings ("unchecked") List<IParameter> ps = (List<IParameter>) l.get(IKeyword.PARAMETERS);
 			wizardPages.add(new GamaWizardPage(scope, ps, t, d, f));
 
 		}

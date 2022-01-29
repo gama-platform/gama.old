@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * Application.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * GAMA modeling and simulation platform. 'Application.java', in plugin 'msi.gama.headless', is part of the source code
- * of the (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
 import java.io.BufferedWriter;
@@ -60,43 +58,90 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class Application.
+ */
 public class Application implements IApplication {
 
+	/** The Constant HELP_PARAMETER. */
 	final public static String HELP_PARAMETER = "-help";
+	
+	/** The Constant GAMA_VERSION. */
 	final public static String GAMA_VERSION = "-version";
 
+	/** The Constant CONSOLE_PARAMETER. */
 	final public static String CONSOLE_PARAMETER = "-c";
+	
+	/** The Constant VERBOSE_PARAMETER. */
 	final public static String VERBOSE_PARAMETER = "-v";
+	
+	/** The Constant THREAD_PARAMETER. */
 	final public static String THREAD_PARAMETER = "-hpc";
+	
+	/** The Constant SOCKET_PARAMETER. */
 	final public static String SOCKET_PARAMETER = "-socket";
 
+	/** The Constant TUNNELING_PARAMETER. */
 	final public static String TUNNELING_PARAMETER = "-p";
 
+	/** The Constant VALIDATE_LIBRARY_PARAMETER. */
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
+	
+	/** The Constant TEST_LIBRARY_PARAMETER. */
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	
+	/** The Constant BUILD_XML_PARAMETER. */
 	final public static String BUILD_XML_PARAMETER = "-xml";
+	
+	/** The Constant CHECK_MODEL_PARAMETER. */
 	final public static String CHECK_MODEL_PARAMETER = "-check";
+	
+	/** The Constant RUN_LIBRARY_PARAMETER. */
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 
+	/** The Constant BATCH_PARAMETER. */
 	// -> Code still exist, but not documented nor use
 	final public static String BATCH_PARAMETER = "-batch";
+	
+	/** The Constant GAML_PARAMETER. */
 	final public static String GAML_PARAMETER = "-gaml";
+	
+	/** The Constant WRITE_XMI. */
 	final public static String WRITE_XMI = "-write-xmi";
 
+	/** The head less simulation. */
 	public static boolean headLessSimulation = false;
+	
+	/** The number of thread. */
 	public int numberOfThread = -1;
+	
+	/** The socket. */
 	public int socket = -1;
+	
+	/** The console mode. */
 	public boolean consoleMode = false;
+	
+	/** The tunneling mode. */
 	public boolean tunnelingMode = false;
+	
+	/** The verbose. */
 	public boolean verbose = false;
+	
+	/** The processor queue. */
 	public SimulationRuntime processorQueue;
 
+	/**
+	 * Show version.
+	 */
 	private static void showVersion() {
 		DEBUG.ON();
 		DEBUG.LOG("Welcome to Gama-platform.org version " + GAMA.VERSION + "\n");
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Show help.
+	 */
 	private static void showHelp() {
 		showVersion();
 		DEBUG.ON();
@@ -127,10 +172,23 @@ public class Application implements IApplication {
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Check parameters.
+	 *
+	 * @param args the args
+	 * @return true, if successful
+	 */
 	private boolean checkParameters(final List<String> args) {
 		return checkParameters(args, false);
 	}
 
+	/**
+	 * Check parameters.
+	 *
+	 * @param args the args
+	 * @param apply the apply
+	 * @return true, if successful
+	 */
 	private boolean checkParameters(final List<String> args, final boolean apply) {
 
 		int size = args.size();
@@ -220,6 +278,13 @@ public class Application implements IApplication {
 		return true;
 	}
 
+	/**
+	 * Show error.
+	 *
+	 * @param errorCode the error code
+	 * @param path the path
+	 * @return true, if successful
+	 */
 	private static boolean showError(final int errorCode, final String path) {
 		DEBUG.ON();
 		DEBUG.ERR(HeadLessErrors.getError(errorCode, path));
@@ -260,9 +325,8 @@ public class Application implements IApplication {
 
 		// Debug runner
 		if (args.contains(VALIDATE_LIBRARY_PARAMETER)) return ModelLibraryValidator.getInstance().start();
-		if (args.contains(TEST_LIBRARY_PARAMETER))
-			return ModelLibraryTester.getInstance().start();
-		else if (args.contains(RUN_LIBRARY_PARAMETER))
+		if (args.contains(TEST_LIBRARY_PARAMETER)) return ModelLibraryTester.getInstance().start();
+		if (args.contains(RUN_LIBRARY_PARAMETER))
 			return ModelLibraryRunner.getInstance().start();
 		else if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
@@ -297,12 +361,28 @@ public class Application implements IApplication {
 		return null;
 	}
 
+	/**
+	 * After.
+	 *
+	 * @param args the args
+	 * @param arg the arg
+	 * @return the string
+	 */
 	public String after(final List<String> args, final String arg) {
 		if (args == null || args.size() < 2) return null;
 		for (int i = 0; i < args.size() - 1; i++) { if (args.get(i).equals(arg)) return args.get(i + 1); }
 		return null;
 	}
 
+	/**
+	 * Builds the XML.
+	 *
+	 * @param arg the arg
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws TransformerException the transformer exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
+	 */
 	public void buildXML(final List<String> arg)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		if (arg.size() < 3) {
@@ -337,6 +417,16 @@ public class Application implements IApplication {
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
+	/**
+	 * Builds the XML for model library.
+	 *
+	 * @param modelPaths the model paths
+	 * @param outputPath the output path
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws TransformerException the transformer exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
+	 */
 	public void buildXMLForModelLibrary(final ArrayList<File> modelPaths, final String outputPath)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
 		// "arg[]" are the paths to the different models
@@ -358,6 +448,12 @@ public class Application implements IApplication {
 		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
 	}
 
+	/**
+	 * Run XML for model library.
+	 *
+	 * @param xmlPath the xml path
+	 * @throws FileNotFoundException the file not found exception
+	 */
 	public void runXMLForModelLibrary(final String xmlPath) throws FileNotFoundException {
 
 		processorQueue = new LocalSimulationRuntime();
@@ -375,6 +471,13 @@ public class Application implements IApplication {
 		}
 	}
 
+	/**
+	 * Run simulation.
+	 *
+	 * @param args the args
+	 * @throws FileNotFoundException the file not found exception
+	 * @throws InterruptedException the interrupted exception
+	 */
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
 		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
 
@@ -394,6 +497,11 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
+	/**
+	 * Builds the and run simulation.
+	 *
+	 * @param sims the sims
+	 */
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
 		while (it.hasNext()) {
@@ -468,7 +576,7 @@ public class Application implements IApplication {
 				break;
 			}
 		}
-
+		if (selectedJob == null) return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.setBufferedWriter(new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml"));

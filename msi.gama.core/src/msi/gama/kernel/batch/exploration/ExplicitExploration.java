@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.batch.HillClimbing.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * ExplicitExploration.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
@@ -34,6 +34,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+/**
+ * The Class ExplicitExploration.
+ */
 @symbol (
 		name = IKeyword.EXPLICIT,
 		kind = ISymbolKind.BATCH_METHOD,
@@ -53,8 +56,7 @@ import msi.gaml.types.IType;
 						type = IType.LIST,
 						of = IType.MAP,
 						optional = false,
-						doc = @doc ("the list of parameter sets to explore; a parameter set is defined by a map: key: name of the variable, value: expression for the value of the variable"))
-				},
+						doc = @doc ("the list of parameter sets to explore; a parameter set is defined by a map: key: name of the variable, value: expression for the value of the variable")) },
 		omissible = IKeyword.NAME)
 @doc (
 		value = "This algorithm run simulations with the given parameter sets",
@@ -70,12 +72,24 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class ExplicitExploration extends AExplorationAlgorithm {
 
+	/** The Constant PARAMETER_SET. */
 	protected static final String PARAMETER_SET = "parameter_sets";
+	
+	/** The parameter sets. */
 	protected List<Map<String, Object>> parameterSets;
-	public ExplicitExploration(final IDescription desc) { super(desc); }
-	@Override public void setChildren(Iterable<? extends ISymbol> children) { }
-	
-	
+
+	/**
+	 * Instantiates a new explicit exploration.
+	 *
+	 * @param desc the desc
+	 */
+	public ExplicitExploration(final IDescription desc) {
+		super(desc);
+	}
+
+	@Override
+	public void setChildren(final Iterable<? extends ISymbol> children) {}
+
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
 		List<ParametersSet> solutions = buildParameterSets(scope, new ArrayList<>(), 0);
@@ -86,16 +100,16 @@ public class ExplicitExploration extends AExplorationAlgorithm {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
-	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
+	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
 		IExpression psexp = getFacet(PARAMETER_SET);
-		parameterSets = (List<Map<String, Object>>) Cast.asList(scope, psexp.value(scope));
-		for (Map<String,Object> parameterSet : parameterSets) {
+		parameterSets = Cast.asList(scope, psexp.value(scope));
+		for (Map<String, Object> parameterSet : parameterSets) {
 			ParametersSet p = new ParametersSet();
 			for (String v : parameterSet.keySet()) {
 				Object val = parameterSet.get(v);
-				p.put(v,(val instanceof IExpression) ? ((IExpression) val).value(scope) : val);
+				p.put(v, val instanceof IExpression ? ((IExpression) val).value(scope) : val);
 			}
 			sets.add(p);
 		}

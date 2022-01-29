@@ -1,63 +1,100 @@
-/*
-   Copyright 2008 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFMLineSegment.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * The Class DXFMLineSegment.
+ */
 public class DXFMLineSegment {
-    protected Point startPoint = new Point();
-    protected Vector direction = new Vector();
-    protected Vector miterDirection = new Vector();
-    protected List elements = new ArrayList();
+	
+	/** The start point. */
+	protected Point startPoint = new Point();
+	
+	/** The direction. */
+	protected Vector direction = new Vector();
+	
+	/** The miter direction. */
+	protected Vector miterDirection = new Vector();
+	
+	/** The elements. */
+	protected List<DXFMLineSegmentElement> elements = new ArrayList<>();
 
-    public Point getStartPoint() {
-        return startPoint;
-    }
+	/**
+	 * Gets the start point.
+	 *
+	 * @return the start point
+	 */
+	public Point getStartPoint() { return startPoint; }
 
-    public void setStartPoint(Point startPoint) {
-        this.startPoint = startPoint;
-    }
+	/**
+	 * Sets the start point.
+	 *
+	 * @param startPoint the new start point
+	 */
+	public void setStartPoint(final Point startPoint) { this.startPoint = startPoint; }
 
-    public Vector getDirection() {
-        return direction;
-    }
+	/**
+	 * Gets the direction.
+	 *
+	 * @return the direction
+	 */
+	public Vector getDirection() { return direction; }
 
-    public void setDirection(Vector direction) {
-        this.direction = direction;
-    }
+	/**
+	 * Sets the direction.
+	 *
+	 * @param direction the new direction
+	 */
+	public void setDirection(final Vector direction) { this.direction = direction; }
 
-    public Vector getMiterDirection() {
-        return miterDirection;
-    }
+	/**
+	 * Gets the miter direction.
+	 *
+	 * @return the miter direction
+	 */
+	public Vector getMiterDirection() { return miterDirection; }
 
-    public void setMiterDirection(Vector miterDirection) {
-        this.miterDirection = miterDirection;
-    }
+	/**
+	 * Sets the miter direction.
+	 *
+	 * @param miterDirection the new miter direction
+	 */
+	public void setMiterDirection(final Vector miterDirection) { this.miterDirection = miterDirection; }
 
-    public void addDXFMLineSegmentElement(DXFMLineSegmentElement el) {
-        this.elements.add(el);
-    }
+	/**
+	 * Adds the DXFM line segment element.
+	 *
+	 * @param el the el
+	 */
+	public void addDXFMLineSegmentElement(final DXFMLineSegmentElement el) {
+		this.elements.add(el);
+	}
 
-    public int getDXFMLineSegmentElementCount() {
-        return this.elements.size();
-    }
+	/**
+	 * Gets the DXFM line segment element count.
+	 *
+	 * @return the DXFM line segment element count
+	 */
+	public int getDXFMLineSegmentElementCount() { return this.elements.size(); }
 
-    public DXFMLineSegmentElement getDXFMLineSegmentElement(int index) {
-        return (DXFMLineSegmentElement) this.elements.get(index);
-    }
+	/**
+	 * Gets the DXFM line segment element.
+	 *
+	 * @param index the index
+	 * @return the DXFM line segment element
+	 */
+	public DXFMLineSegmentElement getDXFMLineSegmentElement(final int index) {
+		return this.elements.get(index);
+	}
 }

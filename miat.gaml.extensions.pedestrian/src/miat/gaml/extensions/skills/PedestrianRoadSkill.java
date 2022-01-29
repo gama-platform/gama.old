@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * simtools.gaml.extensions.traffic.RoadSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8)
+ * PedestrianRoadSkill.java, in miat.gaml.extensions.pedestrian, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * (c) 2007-2018 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -46,6 +46,9 @@ import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class PedestrianRoadSkill.
+ */
 @skill (
 		name = PedestrianRoadSkill.PEDESTRIAN_ROAD_SKILL,
 		concept = { IConcept.TRANSPORT, IConcept.SKILL },
@@ -83,92 +86,212 @@ import msi.gaml.types.Types;
 				init = "[]",
 				doc = @doc ("The exit hub (several exit connected to each road extremities) that makes it possible to reduce angular distance when travelling to connected pedestrian roads")) })
 public class PedestrianRoadSkill extends Skill {
-  
+
+	/** The Constant PEDESTRIAN_ROAD_SKILL. */
 	public final static String PEDESTRIAN_ROAD_SKILL = "pedestrian_road";
+
+	/** The Constant LINKED_PEDESTRIAN_ROADS. */
 	public final static String LINKED_PEDESTRIAN_ROADS = "linked_pedestrian_roads";
 
+	/** The Constant AGENTS_ON. */
 	public final static String AGENTS_ON = "agents_on";
+
+	/** The Constant FREE_SPACE. */
 	public final static String FREE_SPACE = "free_space";
+
+	/** The Constant PEDESTRIAN_ROAD_STATUS. */
 	public final static String PEDESTRIAN_ROAD_STATUS = "road_status";
+
+	/** The Constant EXIT_NODES_HUB. */
 	public final static String EXIT_NODES_HUB = "exit_nodes";
+
+	/** The Constant DISTANCE. */
 	public final static String DISTANCE = "distance";
+
+	/** The Constant INTERSECTION_AREAS. */
 	public final static String INTERSECTION_AREAS = "intersection_areas";
 
+	/** The Constant SIMPLE_STATUS. */
 	public final static int SIMPLE_STATUS = 0; // use simple goto operator on those road
+
+	/** The Constant COMPLEX_STATUS. */
 	public final static int COMPLEX_STATUS = 1; // use walk operator
 
+	/**
+	 * Gets the agents on.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the agents on
+	 */
 	@SuppressWarnings ("unchecked")
 	@getter (AGENTS_ON)
 	public static IList<IAgent> getAgentsOn(final IAgent agent) {
 		return (IList<IAgent>) agent.getAttribute(AGENTS_ON);
 	}
 
+	/**
+	 * Gets the linked pedestrian roads.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the linked pedestrian roads
+	 */
+	@SuppressWarnings ("unchecked")
 	@getter (LINKED_PEDESTRIAN_ROADS)
 	public static IList<IAgent> getLinkedPedestrianRoads(final IAgent agent) {
 		return (IList<IAgent>) agent.getAttribute(LINKED_PEDESTRIAN_ROADS);
 	}
- 
+
+	/**
+	 * Gets the exit nodes hub.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the exit nodes hub
+	 */
 	@SuppressWarnings ("unchecked")
 	@getter (EXIT_NODES_HUB)
 	public static IMap<GamaPoint, IList<GamaPoint>> getExitNodesHub(final IAgent agent) {
 		return (IMap<GamaPoint, IList<GamaPoint>>) agent.getAttribute(EXIT_NODES_HUB);
 	}
 
+	/**
+	 * Sets the exit nodes hub.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param exitNodesHub
+	 *            the exit nodes hub
+	 */
 	@setter (EXIT_NODES_HUB)
 	public static void setExitNodesHub(final IAgent agent, final IMap<GamaPoint, IList<GamaPoint>> exitNodesHub) {
 		agent.setAttribute(EXIT_NODES_HUB, exitNodesHub);
 	}
 
+	/**
+	 * Gets the connected segments intersection.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the connected segments intersection
+	 */
 	@SuppressWarnings ("unchecked")
 	@getter (INTERSECTION_AREAS)
 	public static IMap<IAgent, IShape> getConnectedSegmentsIntersection(final IAgent agent) {
 		return (IMap<IAgent, IShape>) agent.getAttribute(INTERSECTION_AREAS);
 	}
 
+	/**
+	 * Sets the connected segments intersection.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param map
+	 *            the map
+	 */
 	@setter (INTERSECTION_AREAS)
 	public static void setConnectedSegmentsIntersection(final IAgent agent, final IMap<IAgent, IShape> map) {
 		agent.setAttribute(INTERSECTION_AREAS, map);
 	}
 
+	/**
+	 * Gets the pedestrian road status.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the pedestrian road status
+	 */
 	@getter (PEDESTRIAN_ROAD_STATUS)
 	public static int getPedestrianRoadStatus(final IAgent agent) {
 		return (int) agent.getAttribute(PEDESTRIAN_ROAD_STATUS);
 	}
 
+	/**
+	 * Sets the pedestrian road status.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param status
+	 *            the status
+	 */
 	@setter (PEDESTRIAN_ROAD_STATUS)
 	public static void setPedestrianRoadStatus(final IAgent agent, final int status) {
 		agent.setAttribute(PEDESTRIAN_ROAD_STATUS, status);
 	}
 
+	/**
+	 * Gets the free space.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the free space
+	 */
 	@getter (FREE_SPACE)
 	public static IShape getFreeSpace(final IAgent agent) {
 		return (IShape) agent.getAttribute(FREE_SPACE);
 	}
 
+	/**
+	 * Sets the free space.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (FREE_SPACE)
 	public static void setFreeSpace(final IAgent agent, final IShape val) {
 		agent.setAttribute(FREE_SPACE, val);
 	}
 
+	/**
+	 * Sets the distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (DISTANCE)
 	public static void setDistance(final IAgent agent, final Double val) {
 		agent.setAttribute(DISTANCE, val);
 	}
 
+	/**
+	 * Gets the distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the distance
+	 */
 	@getter (DISTANCE)
 	public static Double getDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(DISTANCE);
 	}
 
+	/**
+	 * Gets the close agents.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the close agents
+	 */
 	public static IList<IAgent> getCloseAgents(final IAgent agent) {
 		IList<IAgent> agents = GamaListFactory.create();
 		agents.addAll(getAgentsOn(agent));
-		for (IAgent ag : getLinkedPedestrianRoads(agent)) {
-			agents.addAll(getAgentsOn(ag));
-		}
+		for (IAgent ag : getLinkedPedestrianRoads(agent)) { agents.addAll(getAgentsOn(ag)); }
 		return agents;
 	}
 
+	/**
+	 * Prim initialize.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = "initialize",
 			args = { @arg (
@@ -210,12 +333,13 @@ public class PedestrianRoadSkill extends Skill {
 					value = "action to initialize the free space of roads",
 					examples = { @example ("do initialize distance: 10.0 obstacles: [building];") }))
 	@SuppressWarnings ("unchecked")
-	public void primInitialize(final IScope scope) throws GamaRuntimeException {
+	public boolean primInitialize(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 
 		int status = scope.hasArg("status") ? scope.getIntArg("status")
 				: agent.getGeometry().hasAttribute(PEDESTRIAN_ROAD_STATUS) ? GamaIntegerType.staticCast(scope,
-						agent.getGeometry().getAttribute(PEDESTRIAN_ROAD_STATUS), null, false) : 1;
+						agent.getGeometry().getAttribute(PEDESTRIAN_ROAD_STATUS), null, false)
+				: 1;
 		setPedestrianRoadStatus(agent, status);
 		double distAdd = scope.hasArg("distance_extremity") ? scope.getFloatArg("distance_extremity") : 0.0;
 		IShape freeSpace = agent.getGeometry().copy(scope);
@@ -272,7 +396,7 @@ public class PedestrianRoadSkill extends Skill {
 				IShape g = Spatial.Operators.inter(scope, freeSpace, bds);
 				if (g != null) { freeSpace = g; }
 			}
-			if (freeSpace == null) return ;
+			if (freeSpace == null) return false;
 			if (freeSpace.getGeometries().size() > 1) {
 				for (IShape g : freeSpace.getGeometries()) {
 					if (agent.intersects(g)) {
@@ -297,9 +421,7 @@ public class PedestrianRoadSkill extends Skill {
 								obstacles.addAll((Collection<? extends IShape>) species.getPopulations(scope));
 							}
 						} else {
-							for (Object obj : maskedbyL) {
-								if (obj instanceof IShape) { obstacles.add((IShape) obj); }
-							}
+							for (Object obj : maskedbyL) { if (obj instanceof IShape) { obstacles.add((IShape) obj); } }
 						}
 						freeSpace = Operators.masked_by(scope, freeSpace, obstacles, prec);
 					}
@@ -308,8 +430,15 @@ public class PedestrianRoadSkill extends Skill {
 		}
 
 		setFreeSpace(agent, freeSpace);
+		return true;
 	}
 
+	/**
+	 * Prim intersection areas.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
 	@action (
 			name = "build_intersection_areas",
 			args = { @arg (
@@ -320,15 +449,16 @@ public class PedestrianRoadSkill extends Skill {
 			doc = @doc (
 					value = "Build intersection areas with connected roads",
 					examples = { @example ("do build_intersection_areas pedestrian_graph: pedestrian_network;") }))
-	public void primIntersectionAreas(final IScope scope) {
+	public boolean primIntersectionAreas(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		if (!agent.isInstanceOf(PEDESTRIAN_ROAD_SKILL, true)) throw GamaRuntimeException
 				.error("Trying to manipulate agent with " + PEDESTRIAN_ROAD_SKILL + " while being " + agent, scope);
 		IShape g = PedestrianRoadSkill.getFreeSpace(agent);
-		final IGraph graph = (IGraph) scope.getVarValue(PedestrianSkill.PEDESTRIAN_GRAPH);
+		@SuppressWarnings ("unchecked") final IGraph<IShape, IAgent> graph =
+				(IGraph<IShape, IAgent>) scope.getVarValue(PedestrianSkill.PEDESTRIAN_GRAPH);
 		IMap<IAgent, IShape> connectedComp = GamaMapFactory.create();
-		IShape target = (IShape) graph.getEdgeTarget(agent);
-		IShape source = (IShape) graph.getEdgeSource(agent);
+		IShape target = graph.getEdgeTarget(agent);
+		IShape source = graph.getEdgeSource(agent);
 		IList<IAgent> connectedRoads = getLinkedPedestrianRoads(agent);
 		for (Object obj : graph.outgoingEdgesOf(source)) {
 			IAgent ag = (IAgent) obj;
@@ -355,8 +485,15 @@ public class PedestrianRoadSkill extends Skill {
 		}
 
 		PedestrianRoadSkill.setConnectedSegmentsIntersection(agent, connectedComp);
+		return true;
 	}
 
+	/**
+	 * Prim exit hub escape.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
 	@action (
 			name = "build_exit_hub",
 			args = { @arg (
@@ -373,7 +510,7 @@ public class PedestrianRoadSkill extends Skill {
 					value = "Add exit hub to pedestrian corridor to reduce angular distance between node of the network",
 					examples = {
 							@example ("do build_exit_hub pedestrian_graph: pedestrian_network distance_between_targets: 10.0;") }))
-	public void primExitHubEscape(final IScope scope) {
+	public boolean primExitHubEscape(final IScope scope) {
 
 		// TODO : Exit hub should probably be symmetric ...
 		final IAgent agent = getCurrentAgent(scope);
@@ -399,7 +536,7 @@ public class PedestrianRoadSkill extends Skill {
 			}
 		}
 		PedestrianRoadSkill.setExitNodesHub(agent, exitHub);
-
+		return true;
 	}
 
 	/**
@@ -434,16 +571,12 @@ public class PedestrianRoadSkill extends Skill {
 	@SuppressWarnings ("unchecked")
 	public static IList<GamaPoint> getConnectedOutput(final IScope scope, final IShape currentRoad,
 			final GamaPoint target) {
-		if (currentRoad.hasAttribute(EXIT_NODES_HUB)) {
-			IMap<GamaPoint, IList<GamaPoint>> exitHub =
-					(IMap<GamaPoint, IList<GamaPoint>>) currentRoad.getAttribute(EXIT_NODES_HUB);
-			if (exitHub.containsKey(target))
-				return exitHub.get(target);
-			else
-				return GamaListFactory.create(Types.POINT, Stream.of(target));
-		} else
-			throw GamaRuntimeException.error("Looking for exit hub related to " + currentRoad + " but there is none",
-					scope);
+		if (!currentRoad.hasAttribute(EXIT_NODES_HUB)) throw GamaRuntimeException
+				.error("Looking for exit hub related to " + currentRoad + " but there is none", scope);
+		IMap<GamaPoint, IList<GamaPoint>> exitHub =
+				(IMap<GamaPoint, IList<GamaPoint>>) currentRoad.getAttribute(EXIT_NODES_HUB);
+		if (exitHub.containsKey(target)) return exitHub.get(target);
+		return GamaListFactory.create(Types.POINT, Stream.of(target));
 	}
 
 	/**
@@ -470,14 +603,32 @@ public class PedestrianRoadSkill extends Skill {
 	 * @param pedestrian
 	 */
 	@SuppressWarnings ("unchecked")
-	public static void unregister(final IScope scope, final IAgent road, final IAgent pedestrian) {
+	public static boolean unregister(final IScope scope, final IAgent road, final IAgent pedestrian) {
 		((IList<IAgent>) road.getAttribute(AGENTS_ON)).remove(pedestrian);
 		pedestrian.setAttribute("current_edge", null);
+		return true;
 	}
 
+	/**
+	 * Connected roads.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param currentRoad
+	 *            the current road
+	 * @param dist
+	 *            the dist
+	 * @param lp
+	 *            the lp
+	 * @param pp
+	 *            the pp
+	 * @param bounds
+	 *            the bounds
+	 * @return the i list
+	 */
 	/*
 	 * Create exit hub for a set of connected out edges
-	 */ 
+	 */
 	@SuppressWarnings ("unchecked")
 	private IList<GamaPoint> connectedRoads(final IScope scope, final IAgent currentRoad, final Double dist,
 			final GamaPoint lp, final GamaPoint pp, final IShape bounds) {

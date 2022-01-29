@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaSpeciesType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaSpeciesType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -41,16 +41,15 @@ import msi.gaml.species.ISpecies;
 public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 
 	@Override
+	@doc ("Transforms the parameter into a species. If it is already a species, returns it. If it is an agent, returns its species. If it is a string, returns the species named this way. Otherwise returns null.")
 	public ISpecies cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		// TODO Add a more general cast with list of agents to find a common
 		// species.
-		ISpecies species = obj == null ? getDefault()
-				: obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent ? ((IAgent) obj).getSpecies()
-						: obj instanceof String ? scope.getModel().getSpecies((String) obj) : getDefault();
-		if (obj instanceof IPopulationSet) {
-			species = ((IPopulationSet) obj).getSpecies();
-		}
+		ISpecies species = obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj
+				: obj instanceof IAgent ? ((IAgent) obj).getSpecies()
+				: obj instanceof String ? scope.getModel().getSpecies((String) obj) : getDefault();
+		if (obj instanceof IPopulationSet) { species = ((IPopulationSet) obj).getSpecies(); }
 		return species;
 	}
 
@@ -59,38 +58,28 @@ public class GamaSpeciesType extends GamaContainerType<ISpecies> {
 			final IType contentType, final boolean copy) {
 
 		final ISpecies result = cast(scope, obj, param, copy);
-		if (result == null) {
-			if (contentType.isAgentType()) { return scope.getModel().getSpecies(contentType.getName()); }
-		}
+		if ((result == null) && contentType.isAgentType()) return scope.getModel().getSpecies(contentType.getName());
 		return result;
 	}
 
 	// TODO Verify that we dont need to declare the other cast method
 
 	@Override
-	public ISpecies getDefault() {
-		return null;
-	}
+	public ISpecies getDefault() { return null; }
 
 	@Override
-	public IType getContentType() {
-		return Types.get(AGENT);
-	}
+	public IType getContentType() { return Types.get(AGENT); }
 
 	@Override
-	public IType getKeyType() {
-		return Types.INT;
-	}
+	public IType getKeyType() { return Types.INT; }
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
 		final IType itemType = exp.getGamlType();
-		if (itemType.isAgentType()) { return itemType; }
+		if (itemType.isAgentType()) return itemType;
 		switch (exp.getGamlType().id()) {
 			case SPECIES:
 				return itemType.getContentType();

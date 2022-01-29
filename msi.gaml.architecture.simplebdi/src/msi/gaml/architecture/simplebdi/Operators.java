@@ -1,10 +1,17 @@
+/*******************************************************************************************************
+ *
+ * Operators.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -17,13 +24,26 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.types.IType;
 
+/**
+ * The Class Operators.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Operators {
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -40,6 +60,17 @@ public class Operators {
 		return new Predicate(name);
 	}
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param values
+	 *            the values
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -55,6 +86,17 @@ public class Operators {
 		return new Predicate(name, values);
 	}
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param ist
+	 *            the ist
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -70,6 +112,17 @@ public class Operators {
 		return new Predicate(name, ist);
 	}
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param agent
+	 *            the agent
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -85,6 +138,19 @@ public class Operators {
 		return new Predicate(name, agent);
 	}
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param values
+	 *            the values
+	 * @param truth
+	 *            the truth
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -117,6 +183,19 @@ public class Operators {
 	// return new Predicate(name, values, lifetime);
 	// }
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param values
+	 *            the values
+	 * @param agent
+	 *            the agent
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -133,6 +212,21 @@ public class Operators {
 		return new Predicate(name, values, agent);
 	}
 
+	/**
+	 * New predicate.
+	 *
+	 * @param name
+	 *            the name
+	 * @param values
+	 *            the values
+	 * @param truth
+	 *            the truth
+	 * @param agent
+	 *            the agent
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_predicate",
 			can_be_const = true,
@@ -149,6 +243,17 @@ public class Operators {
 		return new Predicate(name, values, truth, agent);
 	}
 
+	/**
+	 * With agent cause.
+	 *
+	 * @param predicate
+	 *            the predicate
+	 * @param agent
+	 *            the agent
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_agent_cause",
 			can_be_const = true,
@@ -165,6 +270,17 @@ public class Operators {
 		return predicate;
 	}
 
+	/**
+	 * With truth.
+	 *
+	 * @param predicate
+	 *            the predicate
+	 * @param truth
+	 *            the truth
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_truth",
 			can_be_const = true,
@@ -181,6 +297,17 @@ public class Operators {
 		return predicate;
 	}
 
+	/**
+	 * With values.
+	 *
+	 * @param predicate
+	 *            the predicate
+	 * @param values
+	 *            the values
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "with_values",
 			can_be_const = true,
@@ -197,6 +324,17 @@ public class Operators {
 		return predicate;
 	}
 
+	/**
+	 * Adds the values.
+	 *
+	 * @param predicate
+	 *            the predicate
+	 * @param values
+	 *            the values
+	 * @return the predicate
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "add_values",
 			can_be_const = true,
@@ -209,19 +347,22 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate addValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {
-		if (values != null && predicate != null)
-			predicate.getValues().putAll(values);
+		if (values != null && predicate != null) { predicate.getValues().putAll(values); }
 		return predicate;
-		/*final Predicate temp = predicate.copy();
-		final Map<String, Object> tempValues = predicate.getValues();
-		final Set<String> keys = values.keySet();
-		for (final String k : keys) {
-			tempValues.put(k, values.get(k));
-		}
-		temp.setValues(tempValues);
-		return temp;*/
+		/*
+		 * final Predicate temp = predicate.copy(); final Map<String, Object> tempValues = predicate.getValues(); final
+		 * Set<String> keys = values.keySet(); for (final String k : keys) { tempValues.put(k, values.get(k)); }
+		 * temp.setValues(tempValues); return temp;
+		 */
 	}
 
+	/**
+	 * Not.
+	 *
+	 * @param pred1
+	 *            the pred 1
+	 * @return the predicate
+	 */
 	@operator (
 			value = "not",
 			can_be_const = true,
@@ -238,6 +379,15 @@ public class Operators {
 		return pred1;
 	}
 
+	/**
+	 * And.
+	 *
+	 * @param pred1
+	 *            the pred 1
+	 * @param pred2
+	 *            the pred 2
+	 * @return the predicate
+	 */
 	@operator (
 			value = "and",
 			can_be_const = true,
@@ -257,12 +407,21 @@ public class Operators {
 		tempList.add(tempPred1);
 		tempList.add(tempPred2);
 		tempPred.setSubintentions(tempList);
-		final Map<String, Object> tempMap = new HashMap();
+		final IMap<String, Object> tempMap = GamaMapFactory.create();
 		tempMap.put("and", true);
 		tempPred.setValues(tempMap);
 		return tempPred;
 	}
 
+	/**
+	 * Or.
+	 *
+	 * @param pred1
+	 *            the pred 1
+	 * @param pred2
+	 *            the pred 2
+	 * @return the predicate
+	 */
 	@operator (
 			value = "or",
 			can_be_const = true,
@@ -282,12 +441,21 @@ public class Operators {
 		tempList.add(tempPred1);
 		tempList.add(tempPred2);
 		tempPred.setSubintentions(tempList);
-		final Map<String, Object> tempMap = new HashMap();
+		final IMap<String, Object> tempMap = GamaMapFactory.create();
 		tempMap.put("or", true);
 		tempPred.setValues(tempMap);
 		return tempPred;
 	}
 
+	/**
+	 * Eval when.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param plan
+	 *            the plan
+	 * @return the boolean
+	 */
 	@operator (
 			value = "eval_when",
 			can_be_const = true,
@@ -304,6 +472,13 @@ public class Operators {
 				|| msi.gaml.operators.Cast.asBool(scope, plan.getPlanStatement().getContextExpression().value(scope));
 	}
 
+	/**
+	 * Gets the super intention.
+	 *
+	 * @param pred1
+	 *            the pred 1
+	 * @return the super intention
+	 */
 	@operator (
 			value = "get_super_intention",
 			can_be_const = true,
@@ -316,13 +491,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static MentalState getSuperIntention(final Predicate pred1) {
-		if (pred1.getSuperIntention() != null) {
-			return pred1.getSuperIntention();
-		} else {
-			return null;
-		}
+		if (pred1.getSuperIntention() != null) return pred1.getSuperIntention();
+		return null;
 	}
 
+	/**
+	 * Gets the truth.
+	 *
+	 * @param pred
+	 *            the pred
+	 * @return the truth
+	 */
 	@operator (
 			value = "get_truth",
 			can_be_const = true,
@@ -335,13 +514,17 @@ public class Operators {
 					isExecutable = false))
 	@test ("get_truth(new_predicate('test1'))=true")
 	public static Boolean getTruth(final Predicate pred) {
-		if (pred != null) {
-			return pred.is_true;
-		} else {
-			return null;
-		}
+		if (pred != null) return pred.is_true;
+		return null;
 	}
 
+	/**
+	 * Gets the agent cause.
+	 *
+	 * @param pred
+	 *            the pred
+	 * @return the agent cause
+	 */
 	@operator (
 			value = "get_agent_cause",
 			can_be_const = true,
@@ -354,13 +537,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static IAgent getAgentCause(final Predicate pred) {
-		if (pred != null) {
-			return pred.getAgentCause();
-		} else {
-			return null;
-		}
+		if (pred != null) return pred.getAgentCause();
+		return null;
 	}
 
+	/**
+	 * Gets the values.
+	 *
+	 * @param pred
+	 *            the pred
+	 * @return the values
+	 */
 	@operator (
 			value = "get_values",
 			can_be_const = true,
@@ -372,14 +559,20 @@ public class Operators {
 					value = "get_values(pred1)",
 					isExecutable = false))
 	@no_test
-	public static Map<String, Object> getValues(final Predicate pred) {
-		if (pred != null) {
-			return pred.getValues();
-		} else {
-			return null;
-		}
+	public static IMap<String, Object> getValues(final Predicate pred) {
+		if (pred != null) return pred.getValues();
+		return null;
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -391,27 +584,50 @@ public class Operators {
 			examples = @example (
 					value = "new_emotion(\"joy\")",
 					isExecutable = false))
-	@test("emotion e <- new_emotion(\"joy\"); assert e.name = \"joy\"; assert e.intensity  = -1.0;")
+	@test ("emotion e <- new_emotion(\"joy\"); assert e.name = \"joy\"; assert e.intensity  = -1.0;")
 	public static Emotion newEmotion(final String name) throws GamaRuntimeException {
 		return new Emotion(name);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
 			category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc ( value = "a new emotion with the given properties (name, intensity)",
-		usages = {
-			@usage(value = "a new emotion with a name and an initial intensity: ",
-				examples = {@example (
-					value = "new_emotion(\"joy\",12.3)",
-					isExecutable = false)})})
+	@doc (
+			value = "a new emotion with the given properties (name, intensity)",
+			usages = { @usage (
+					value = "a new emotion with a name and an initial intensity: ",
+					examples = { @example (
+							value = "new_emotion(\"joy\",12.3)",
+							isExecutable = false) }) })
 	@test ("get_intensity(new_emotion('joy',12.3)) = 12.3")
 	public static Emotion newEmotion(final String name, final Double intensity) throws GamaRuntimeException {
 		return new Emotion(name, intensity);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param about
+	 *            the about
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -419,15 +635,30 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name, about)",
-			usages = {
-					@usage(value = "a new emotion with a given name and the predicate it is about ",
-						examples = {@example (value = "new_emotion(\"joy\",estFood)", isExecutable = false),
-								@example (value = "new_emotion(\"joy\",agent1)", isExecutable = false)})})			
+			usages = { @usage (
+					value = "a new emotion with a given name and the predicate it is about ",
+					examples = { @example (
+							value = "new_emotion(\"joy\",estFood)",
+							isExecutable = false),
+							@example (
+									value = "new_emotion(\"joy\",agent1)",
+									isExecutable = false) }) })
 	@no_test
 	public static Emotion newEmotion(final String name, final Predicate about) throws GamaRuntimeException {
 		return new Emotion(name, about);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -435,14 +666,29 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name and cause agent)",
-			usages = {
-					@usage(value = "a new emotion with a given name and the agent which has caused this emotion ",
-						examples = {@example (value = "new_emotion(\"joy\",agent1)", isExecutable = false)})})	
+			usages = { @usage (
+					value = "a new emotion with a given name and the agent which has caused this emotion ",
+					examples = { @example (
+							value = "new_emotion(\"joy\",agent1)",
+							isExecutable = false) }) })
 	@no_test
 	public static Emotion newEmotion(final String name, final IAgent agent) throws GamaRuntimeException {
 		return new Emotion(name, agent);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param about
+	 *            the about
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -450,19 +696,36 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name,intensity,about)",
-			usages = {
-				@usage(value = "Various combinations are possible to create the emotion: (name,intensity,about), (name,about,cause), (name,intensity,cause)... ",
-					examples = {
-						@example (value = "new_emotion(\"joy\",12.3,eatFood)", isExecutable = false),
-						@example (value = "new_emotion(\"joy\",eatFood,agent1)", isExecutable = false),
-						@example (value = "new_emotion(\"joy\",12.3,agent1)", isExecutable = false)
-					})})				
+			usages = { @usage (
+					value = "Various combinations are possible to create the emotion: (name,intensity,about), (name,about,cause), (name,intensity,cause)... ",
+					examples = { @example (
+							value = "new_emotion(\"joy\",12.3,eatFood)",
+							isExecutable = false),
+							@example (
+									value = "new_emotion(\"joy\",eatFood,agent1)",
+									isExecutable = false),
+							@example (
+									value = "new_emotion(\"joy\",12.3,agent1)",
+									isExecutable = false) }) })
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Predicate about)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, about);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param decay
+	 *            the decay
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -470,17 +733,30 @@ public class Operators {
 			concept = { IConcept.BDI })
 	@doc (
 			value = "a new emotion with the given properties (name,intensity,decay)",
-			usages = {
-				@usage(value = "A decay value value can be added to define a new emotion.",
-					examples = {
-						@example (value = "new_emotion(\"joy\",12.3,4.0)", isExecutable = false)
-					})})				
+			usages = { @usage (
+					value = "A decay value value can be added to define a new emotion.",
+					examples = { @example (
+							value = "new_emotion(\"joy\",12.3,4.0)",
+							isExecutable = false) }) })
 	@no_test
 	public static Emotion newEmotion(final String name, final Double intensity, final Double decay)
 			throws GamaRuntimeException {
 		return new Emotion(name, intensity, decay);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param about
+	 *            the about
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -494,6 +770,19 @@ public class Operators {
 		return new Emotion(name, about, agent);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -507,6 +796,21 @@ public class Operators {
 		return new Emotion(name, intensity, agent);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param about
+	 *            the about
+	 * @param decay
+	 *            the decay
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -523,6 +827,21 @@ public class Operators {
 		return new Emotion(name, intensity, about, decay);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param decay
+	 *            the decay
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -539,6 +858,21 @@ public class Operators {
 		return new Emotion(name, intensity, decay, agent);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param about
+	 *            the about
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -555,6 +889,23 @@ public class Operators {
 		return new Emotion(name, intensity, about, agent);
 	}
 
+	/**
+	 * New emotion.
+	 *
+	 * @param name
+	 *            the name
+	 * @param intensity
+	 *            the intensity
+	 * @param about
+	 *            the about
+	 * @param decay
+	 *            the decay
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_emotion",
 			can_be_const = true,
@@ -571,6 +922,17 @@ public class Operators {
 		return new Emotion(name, intensity, about, decay, agent);
 	}
 
+	/**
+	 * With agent cause.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @param agent
+	 *            the agent
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_agent_cause",
 			can_be_const = true,
@@ -587,6 +949,17 @@ public class Operators {
 		return emotion;
 	}
 
+	/**
+	 * Sets the intensity.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @param intensity
+	 *            the intensity
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_intensity",
 			can_be_const = true,
@@ -603,6 +976,17 @@ public class Operators {
 		return emotion;
 	}
 
+	/**
+	 * Sets the decay.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @param decay
+	 *            the decay
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_decay",
 			can_be_const = true,
@@ -619,6 +1003,17 @@ public class Operators {
 		return emotion;
 	}
 
+	/**
+	 * Sets the about.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @param about
+	 *            the about
+	 * @return the emotion
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_about",
 			can_be_const = true,
@@ -635,6 +1030,13 @@ public class Operators {
 		return emotion;
 	}
 
+	/**
+	 * Gets the intensity.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @return the intensity
+	 */
 	@operator (
 			value = "get_intensity",
 			can_be_const = true,
@@ -648,13 +1050,17 @@ public class Operators {
 	@test ("get_intensity(new_emotion('joy',1.0))=1.0")
 	@test ("get_intensity(new_emotion('joy',1.0,0.5))=1.0")
 	public static Double getIntensity(final Emotion emotion) {
-		if (emotion != null) {
-			return emotion.intensity;
-		} else {
-			return null;
-		}
+		if (emotion != null) return emotion.intensity;
+		return null;
 	}
 
+	/**
+	 * Gets the decay.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @return the decay
+	 */
 	@operator (
 			value = "get_decay",
 			can_be_const = true,
@@ -667,13 +1073,17 @@ public class Operators {
 					isExecutable = false))
 	@test ("get_decay(new_emotion('joy',1.0,0.5))=0.5")
 	public static Double getDecay(final Emotion emotion) {
-		if (emotion != null) {
-			return emotion.decay;
-		} else {
-			return null;
-		}
+		if (emotion != null) return emotion.decay;
+		return null;
 	}
 
+	/**
+	 * Gets the about.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @return the about
+	 */
 	@operator (
 			value = "get_about",
 			can_be_const = true,
@@ -686,13 +1096,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate getAbout(final Emotion emotion) {
-		if (emotion != null) {
-			return emotion.about;
-		} else {
-			return null;
-		}
+		if (emotion != null) return emotion.about;
+		return null;
 	}
 
+	/**
+	 * Gets the agent.
+	 *
+	 * @param emotion
+	 *            the emotion
+	 * @return the agent
+	 */
 	@operator (
 			value = "get_agent_cause",
 			can_be_const = true,
@@ -705,11 +1119,8 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static IAgent getAgent(final Emotion emotion) {
-		if (emotion != null) {
-			return emotion.getAgentCause();
-		} else {
-			return null;
-		}
+		if (emotion != null) return emotion.getAgentCause();
+		return null;
 	}
 
 	// @operator(value = "new_social_link", can_be_const = true, category = {
@@ -721,6 +1132,15 @@ public class Operators {
 	// return new SocialLink();
 	// }
 
+	/**
+	 * New social link.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_social_link",
 			can_be_const = true,
@@ -737,6 +1157,23 @@ public class Operators {
 		return new SocialLink(agent);
 	}
 
+	/**
+	 * New social link.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param appreciation
+	 *            the appreciation
+	 * @param dominance
+	 *            the dominance
+	 * @param solidarity
+	 *            the solidarity
+	 * @param familiarity
+	 *            the familiarity
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_social_link",
 			can_be_const = true,
@@ -753,6 +1190,15 @@ public class Operators {
 		return new SocialLink(agent, appreciation, dominance, solidarity, familiarity);
 	}
 
+	/**
+	 * Sets the agent.
+	 *
+	 * @param social
+	 *            the social
+	 * @param agent
+	 *            the agent
+	 * @return the social link
+	 */
 	@operator (
 			value = "set_agent",
 			can_be_const = true,
@@ -769,6 +1215,17 @@ public class Operators {
 		return social;
 	}
 
+	/**
+	 * Sets the liking.
+	 *
+	 * @param social
+	 *            the social
+	 * @param appreciation
+	 *            the appreciation
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_liking",
 			can_be_const = true,
@@ -781,12 +1238,21 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static SocialLink setLiking(final SocialLink social, final Double appreciation) throws GamaRuntimeException {
-		if (appreciation >= -1.0 && appreciation <= 1.0) {
-			social.setLiking(appreciation);
-		}
+		if (appreciation >= -1.0 && appreciation <= 1.0) { social.setLiking(appreciation); }
 		return social;
 	}
 
+	/**
+	 * Sets the dominance.
+	 *
+	 * @param social
+	 *            the social
+	 * @param dominance
+	 *            the dominance
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_dominance",
 			can_be_const = true,
@@ -799,12 +1265,21 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static SocialLink setDominance(final SocialLink social, final Double dominance) throws GamaRuntimeException {
-		if (dominance >= -1.0 && dominance < 1.0) {
-			social.setDominance(dominance);
-		}
+		if (dominance >= -1.0 && dominance < 1.0) { social.setDominance(dominance); }
 		return social;
 	}
 
+	/**
+	 * Sets the solidarity.
+	 *
+	 * @param social
+	 *            the social
+	 * @param solidarity
+	 *            the solidarity
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_solidarity",
 			can_be_const = true,
@@ -818,12 +1293,21 @@ public class Operators {
 	@no_test
 	public static SocialLink setSolidarity(final SocialLink social, final Double solidarity)
 			throws GamaRuntimeException {
-		if (solidarity >= 0.0 && solidarity <= 1.0) {
-			social.setSolidarity(solidarity);
-		}
+		if (solidarity >= 0.0 && solidarity <= 1.0) { social.setSolidarity(solidarity); }
 		return social;
 	}
 
+	/**
+	 * Sets the familiarity.
+	 *
+	 * @param social
+	 *            the social
+	 * @param familiarity
+	 *            the familiarity
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_familiarity",
 			can_be_const = true,
@@ -837,12 +1321,21 @@ public class Operators {
 	@no_test
 	public static SocialLink setFamiliarity(final SocialLink social, final Double familiarity)
 			throws GamaRuntimeException {
-		if (familiarity >= 0.0 && familiarity <= 1.0) {
-			social.setFamiliarity(familiarity);
-		}
+		if (familiarity >= 0.0 && familiarity <= 1.0) { social.setFamiliarity(familiarity); }
 		return social;
 	}
 
+	/**
+	 * Sets the trust.
+	 *
+	 * @param social
+	 *            the social
+	 * @param trust
+	 *            the trust
+	 * @return the social link
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "set_trust",
 			can_be_const = true,
@@ -855,12 +1348,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static SocialLink setTrust(final SocialLink social, final Double trust) throws GamaRuntimeException {
-		if (trust >= -1.0 && trust <= 1.0) {
-			social.setTrust(trust);
-		}
+		if (trust >= -1.0 && trust <= 1.0) { social.setTrust(trust); }
 		return social;
 	}
 
+	/**
+	 * Gets the agent.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the agent
+	 */
 	@operator (
 			value = "get_agent",
 			can_be_const = true,
@@ -873,13 +1371,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static IAgent getAgent(final SocialLink social) {
-		if (social != null) {
-			return social.getAgent();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getAgent();
+		return null;
 	}
 
+	/**
+	 * Gets the likink.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the likink
+	 */
 	@operator (
 			value = "get_liking",
 			can_be_const = true,
@@ -892,13 +1394,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Double getLikink(final SocialLink social) {
-		if (social != null) {
-			return social.getLiking();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getLiking();
+		return null;
 	}
 
+	/**
+	 * Gets the dominance.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the dominance
+	 */
 	@operator (
 			value = "get_dominance",
 			can_be_const = true,
@@ -911,13 +1417,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Double getDominance(final SocialLink social) {
-		if (social != null) {
-			return social.getDominance();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getDominance();
+		return null;
 	}
 
+	/**
+	 * Gets the solidarity.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the solidarity
+	 */
 	@operator (
 			value = "get_solidarity",
 			can_be_const = true,
@@ -930,13 +1440,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Double getSolidarity(final SocialLink social) {
-		if (social != null) {
-			return social.getSolidarity();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getSolidarity();
+		return null;
 	}
 
+	/**
+	 * Gets the trust.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the trust
+	 */
 	@operator (
 			value = "get_familiarity",
 			can_be_const = true,
@@ -949,13 +1463,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Double getTrust(final SocialLink social) {
-		if (social != null) {
-			return social.getTrust();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getTrust();
+		return null;
 	}
 
+	/**
+	 * Gets the familiarity.
+	 *
+	 * @param social
+	 *            the social
+	 * @return the familiarity
+	 */
 	@operator (
 			value = "get_trust",
 			can_be_const = true,
@@ -968,16 +1486,22 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Double getFamiliarity(final SocialLink social) {
-		if (social != null) {
-			return social.getFamiliarity();
-		} else {
-			return null;
-		}
+		if (social != null) return social.getFamiliarity();
+		return null;
 	}
 
 	// Faire en sorte que l'on puisse utiliser les opérateurs seulement avec le
 	// nom de l'agent ?
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	// Faire des opérateurs pour créer des états mentaux (en précisant ou non l'agent propriétaire)
 	@operator (
 			value = "new_mental_state",
@@ -995,6 +1519,17 @@ public class Operators {
 		return new MentalState(modality);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1010,6 +1545,19 @@ public class Operators {
 		return new MentalState(modality, pred);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1026,6 +1574,19 @@ public class Operators {
 		return new MentalState(modality, pred, strength);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1042,6 +1603,19 @@ public class Operators {
 		return new MentalState(modality, pred, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1058,6 +1632,21 @@ public class Operators {
 		return new MentalState(modality, pred, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1074,6 +1663,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1090,6 +1694,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1106,6 +1725,23 @@ public class Operators {
 		return new MentalState(modality, pred, life, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1122,6 +1758,17 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1138,6 +1785,19 @@ public class Operators {
 		return new MentalState(modality, pred);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1154,6 +1814,19 @@ public class Operators {
 		return new MentalState(modality, pred, strength);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1170,6 +1843,19 @@ public class Operators {
 		return new MentalState(modality, pred, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1186,6 +1872,21 @@ public class Operators {
 		return new MentalState(modality, pred, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1202,6 +1903,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1218,6 +1934,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1234,6 +1965,23 @@ public class Operators {
 		return new MentalState(modality, pred, life, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1250,6 +1998,17 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	// Remplacer avec les émotions
 	@operator (
 			value = "new_mental_state",
@@ -1266,6 +2025,19 @@ public class Operators {
 		return new MentalState(modality, pred);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1282,6 +2054,19 @@ public class Operators {
 		return new MentalState(modality, pred, strength);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1298,6 +2083,19 @@ public class Operators {
 		return new MentalState(modality, pred, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1314,6 +2112,21 @@ public class Operators {
 		return new MentalState(modality, pred, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1330,6 +2143,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1346,6 +2174,21 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1362,6 +2205,23 @@ public class Operators {
 		return new MentalState(modality, pred, life, ag);
 	}
 
+	/**
+	 * New mental state.
+	 *
+	 * @param modality
+	 *            the modality
+	 * @param pred
+	 *            the pred
+	 * @param strength
+	 *            the strength
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
+	 * @return the mental state
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "new_mental_state",
 			can_be_const = true,
@@ -1378,6 +2238,15 @@ public class Operators {
 		return new MentalState(modality, pred, strength, life, ag);
 	}
 
+	/**
+	 * Sets the modalitity.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @param modality
+	 *            the modality
+	 * @return the mental state
+	 */
 	@operator (
 			value = "set_modality",
 			can_be_const = true,
@@ -1394,6 +2263,15 @@ public class Operators {
 		return mental;
 	}
 
+	/**
+	 * Sets the predicate.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @param predicate
+	 *            the predicate
+	 * @return the mental state
+	 */
 	@operator (
 			value = "set_predicate",
 			can_be_const = true,
@@ -1410,6 +2288,15 @@ public class Operators {
 		return mental;
 	}
 
+	/**
+	 * Sets the strength.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @param strength
+	 *            the strength
+	 * @return the mental state
+	 */
 	@operator (
 			value = "set_strength",
 			can_be_const = true,
@@ -1426,6 +2313,15 @@ public class Operators {
 		return mental;
 	}
 
+	/**
+	 * Sets the lifetime.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @param life
+	 *            the life
+	 * @return the mental state
+	 */
 	@operator (
 			value = "set_lifetime",
 			can_be_const = true,
@@ -1442,6 +2338,13 @@ public class Operators {
 		return mental;
 	}
 
+	/**
+	 * Gets the modality.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @return the modality
+	 */
 	@operator (
 			value = "get_modality",
 			can_be_const = true,
@@ -1454,13 +2357,17 @@ public class Operators {
 					isExecutable = false))
 	@test ("get_modality(new_mental_state('Belief',new_predicate('test1')))='Belief'")
 	public static String getModality(final MentalState mental) {
-		if (mental != null) {
-			return mental.getModality();
-		} else {
-			return null;
-		}
+		if (mental != null) return mental.getModality();
+		return null;
 	}
 
+	/**
+	 * Gets the predicate.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @return the predicate
+	 */
 	@operator (
 			value = "get_predicate",
 			can_be_const = true,
@@ -1473,13 +2380,17 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static Predicate getPredicate(final MentalState mental) {
-		if (mental != null) {
-			return mental.getPredicate();
-		} else {
-			return null;
-		}
+		if (mental != null) return mental.getPredicate();
+		return null;
 	}
 
+	/**
+	 * Gets the strength.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @return the strength
+	 */
 	@operator (
 			value = "get_strength",
 			can_be_const = true,
@@ -1492,13 +2403,17 @@ public class Operators {
 					isExecutable = false))
 	@test ("get_strength(new_mental_state('Belief',new_predicate('test1')))=1.0")
 	public static Double getStrength(final MentalState mental) {
-		if (mental != null) {
-			return mental.getStrength();
-		} else {
-			return null;
-		}
+		if (mental != null) return mental.getStrength();
+		return null;
 	}
 
+	/**
+	 * Gets the lifetime.
+	 *
+	 * @param mental
+	 *            the mental
+	 * @return the lifetime
+	 */
 	@operator (
 			value = "get_lifetime",
 			can_be_const = true,
@@ -1511,13 +2426,17 @@ public class Operators {
 					isExecutable = false))
 	@test ("get_lifetime(new_mental_state('Belief',new_predicate('test1'),4))=4")
 	public static int getLifetime(final MentalState mental) {
-		if (mental != null) {
-			return mental.getLifeTime();
-		} else {
-			return -1;
-		}
+		if (mental != null) return mental.getLifeTime();
+		return -1;
 	}
 
+	/**
+	 * Gets the plan name.
+	 *
+	 * @param plan
+	 *            the plan
+	 * @return the plan name
+	 */
 	@operator (
 			value = "get_plan_name",
 			can_be_const = true,
@@ -1530,13 +2449,23 @@ public class Operators {
 					isExecutable = false))
 	@no_test
 	public static String getPlanName(final BDIPlan plan) {
-		if (plan != null && plan.getPlanStatement() != null) {
-			return plan.getPlanStatement().getName();
-		} else {
-			return null;
-		}
+		if (plan != null && plan.getPlanStatement() != null) return plan.getPlanStatement().getName();
+		return null;
 	}
 
+	/**
+	 * Gets the beliefs name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the beliefs name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	// example of transformation of actions to operator
 	@operator (
 			value = "get_beliefs_with_name_op",
@@ -1554,7 +2483,7 @@ public class Operators {
 	public static IList<MentalState> getBeliefsName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
@@ -1566,6 +2495,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the belief name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the belief name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_belief_with_name_op",
 			can_be_const = true,
@@ -1581,18 +2523,30 @@ public class Operators {
 	public static MentalState getBeliefName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the belief.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the belief
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_belief_op",
 			can_be_const = true,
@@ -1608,16 +2562,29 @@ public class Operators {
 	public static MentalState getBelief(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the beliefs.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the beliefs
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_beliefs_op",
 			can_be_const = true,
@@ -1634,18 +2601,29 @@ public class Operators {
 	public static IList<MentalState> getBeliefs(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the desires name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the desires name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_desires_with_name_op",
 			can_be_const = true,
@@ -1662,7 +2640,7 @@ public class Operators {
 	public static IList<MentalState> getDesiresName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
@@ -1674,6 +2652,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the desire name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the desire name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_desire_with_name_op",
 			can_be_const = true,
@@ -1689,18 +2680,30 @@ public class Operators {
 	public static MentalState getDesireName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the desire.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the desire
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_desire_op",
 			can_be_const = true,
@@ -1716,16 +2719,29 @@ public class Operators {
 	public static MentalState getDesire(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the desires.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the desires
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_desires_op",
 			can_be_const = true,
@@ -1742,18 +2758,29 @@ public class Operators {
 	public static IList<MentalState> getDesires(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the uncertainties name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the uncertainties name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_uncertainties_with_name_op",
 			can_be_const = true,
@@ -1770,7 +2797,7 @@ public class Operators {
 	public static IList<MentalState> getUncertaintiesName(final IScope scope, final IAgent ag,
 			final String predicateName) throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
@@ -1782,6 +2809,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the uncertainty name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the uncertainty name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_uncertainty_with_name_op",
 			can_be_const = true,
@@ -1797,18 +2837,30 @@ public class Operators {
 	public static MentalState getUncertaintyName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the uncertainty.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the uncertainty
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_uncertainty_op",
 			can_be_const = true,
@@ -1824,16 +2876,29 @@ public class Operators {
 	public static MentalState getUncertainty(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the uncertainties.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the uncertainties
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_uncertainties_op",
 			can_be_const = true,
@@ -1850,18 +2915,29 @@ public class Operators {
 	public static IList<MentalState> getUncertainties(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the ideals name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the ideals name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_ideals_with_name_op",
 			can_be_const = true,
@@ -1878,7 +2954,7 @@ public class Operators {
 	public static IList<MentalState> getIdealsName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
@@ -1890,6 +2966,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the ideal name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the ideal name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_ideal_with_name_op",
 			can_be_const = true,
@@ -1905,18 +2994,30 @@ public class Operators {
 	public static MentalState getIdealName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the ideal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the ideal
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_ideal_op",
 			can_be_const = true,
@@ -1932,16 +3033,29 @@ public class Operators {
 	public static MentalState getIdeal(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the ideals.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the ideals
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_ideals_op",
 			can_be_const = true,
@@ -1958,18 +3072,29 @@ public class Operators {
 	public static IList<MentalState> getIdeals(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the obligations name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the obligations name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_obligations_with_name_op",
 			can_be_const = true,
@@ -1986,7 +3111,7 @@ public class Operators {
 	public static IList<MentalState> getObligationsName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
@@ -1998,6 +3123,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the obligation name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the obligation name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_obligation_with_name_op",
 			can_be_const = true,
@@ -2013,18 +3151,30 @@ public class Operators {
 	public static MentalState getObligationName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the obligation.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the obligation
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_obligation_op",
 			can_be_const = true,
@@ -2040,16 +3190,29 @@ public class Operators {
 	public static MentalState getObligation(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the obligations.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the obligations
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_obligations_op",
 			can_be_const = true,
@@ -2066,18 +3229,29 @@ public class Operators {
 	public static IList<MentalState> getObligations(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the intentions name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the intentions name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_intentions_with_name_op",
 			can_be_const = true,
@@ -2094,7 +3268,7 @@ public class Operators {
 	public static IList<MentalState> getIntentionsName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
@@ -2106,6 +3280,19 @@ public class Operators {
 		return predicates;
 	}
 
+	/**
+	 * Gets the intention name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predicateName
+	 *            the predicate name
+	 * @return the intention name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_intention_with_name_op",
 			can_be_const = true,
@@ -2122,18 +3309,30 @@ public class Operators {
 	public static MentalState getIntentionName(final IScope scope, final IAgent ag, final String predicateName)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (predicateName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName())) {
+				if (mental.getPredicate() != null && predicateName.equals(mental.getPredicate().getName()))
 					return mental;
-				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the intention.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the intention
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_intention_op",
 			can_be_const = true,
@@ -2150,16 +3349,29 @@ public class Operators {
 	public static MentalState getIntention(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { return mental; }
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) return mental;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Gets the intentions.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the intentions
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_intentions_op",
 			can_be_const = true,
@@ -2176,18 +3388,27 @@ public class Operators {
 	public static IList<MentalState> getIntentions(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
 		final IList<MentalState> predicates = GamaListFactory.create();
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return predicates; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return predicates;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					predicates.add(mental);
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { predicates.add(mental); }
 			}
 		}
 		return predicates;
 	}
 
+	/**
+	 * Gets the current intention.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @return the current intention
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get_current_intention_op",
 			can_be_const = true,
@@ -2202,13 +3423,26 @@ public class Operators {
 					equals = "nil") })
 	public static MentalState getCurrentIntention(final IScope scope, final IAgent ag) throws GamaRuntimeException {
 		// final MentalState predicate = new MentalState("Belief");
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return null; }
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return null;
 		final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 		// if (beliefs == null) { return null; }
-		if (!beliefs.isEmpty()) { return beliefs.lastValue(scope); }
+		if (!beliefs.isEmpty()) return beliefs.lastValue(scope);
 		return null;
 	}
 
+	/**
+	 * Checks for belief.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_belief_op",
 			can_be_const = true,
@@ -2223,19 +3457,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasBelief(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for belief name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_belief_with_name_op",
 			can_be_const = true,
@@ -2250,8 +3495,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasBeliefName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("belief_base");
 			for (final MentalState mental : beliefs) {
@@ -2263,6 +3508,19 @@ public class Operators {
 		return result;
 	}
 
+	/**
+	 * Checks for desire.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_desire_op",
 			can_be_const = true,
@@ -2277,19 +3535,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasDesire(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for desire name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_desire_with_name_op",
 			can_be_const = true,
@@ -2304,8 +3573,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasDesireName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("desire_base");
 			for (final MentalState mental : beliefs) {
@@ -2317,6 +3586,19 @@ public class Operators {
 		return result;
 	}
 
+	/**
+	 * Checks for uncertainty.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_uncertainty_op",
 			can_be_const = true,
@@ -2331,19 +3613,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasUncertainty(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for uncertainty name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_uncertainty_with_name_op",
 			can_be_const = true,
@@ -2358,8 +3651,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasUncertaintyName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("uncertainty_base");
 			for (final MentalState mental : beliefs) {
@@ -2371,6 +3664,19 @@ public class Operators {
 		return result;
 	}
 
+	/**
+	 * Checks for ideal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_ideal_op",
 			can_be_const = true,
@@ -2385,19 +3691,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasIdeal(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for ideal name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_ideal_with_name_op",
 			can_be_const = true,
@@ -2412,8 +3729,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasIdealName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("ideal_base");
 			for (final MentalState mental : beliefs) {
@@ -2425,6 +3742,19 @@ public class Operators {
 		return result;
 	}
 
+	/**
+	 * Checks for intention.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_intention_op",
 			can_be_const = true,
@@ -2439,19 +3769,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasIntention(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for intention name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_intention_with_name_op",
 			can_be_const = true,
@@ -2466,8 +3807,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasIntentionName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("intention_base");
 			for (final MentalState mental : beliefs) {
@@ -2479,6 +3820,19 @@ public class Operators {
 		return result;
 	}
 
+	/**
+	 * Checks for obligation.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param pred
+	 *            the pred
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_obligation_op",
 			can_be_const = true,
@@ -2493,19 +3847,30 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasObligation(final IScope scope, final IAgent ag, final Predicate pred)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (pred != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {
-				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) {
-					result = true;
-				}
+				if (mental.getPredicate() != null && pred.equals(mental.getPredicate())) { result = true; }
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Checks for obligation name.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ag
+	 *            the ag
+	 * @param predName
+	 *            the pred name
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "has_obligation_with_name_op",
 			can_be_const = true,
@@ -2520,8 +3885,8 @@ public class Operators {
 					equals = "false") })
 	public static Boolean hasObligationName(final IScope scope, final IAgent ag, final String predName)
 			throws GamaRuntimeException {
-		Boolean result = false;
-		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) { return result; }
+		boolean result = false;
+		if (!(ag.getSpecies().getArchitecture() instanceof SimpleBdiArchitecture)) return result;
 		if (predName != null) {
 			final IList<MentalState> beliefs = (IList<MentalState>) ag.getAttribute("obligation_base");
 			for (final MentalState mental : beliefs) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * simtools.gaml.extensions.traffic.DrivingSkill.java, in plugin simtools.gaml.extensions.traffic, is part of the source
- * code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * OldDrivingSkill.java, in simtools.gaml.extensions.traffic, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving;
 
@@ -52,6 +52,9 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class OldDrivingSkill.
+ */
 @vars ({ @variable (
 		name = "living_space",
 		type = IType.FLOAT,
@@ -87,67 +90,154 @@ import msi.gaml.types.Types;
 @Deprecated
 public class OldDrivingSkill extends MovingSkill {
 
+	/** The Constant LIVING_SPACE. */
 	public final static String LIVING_SPACE = "living_space";
+	
+	/** The Constant TOLERANCE. */
 	public final static String TOLERANCE = "tolerance";
+	
+	/** The Constant LANES_ATTRIBUTE. */
 	public final static String LANES_ATTRIBUTE = "lanes_attribute";
+	
+	/** The Constant OBSTACLE_SPECIES. */
 	public final static String OBSTACLE_SPECIES = "obstacle_species";
 
+	/**
+	 * Gets the living space.
+	 *
+	 * @param agent the agent
+	 * @return the living space
+	 */
 	@getter (LIVING_SPACE)
 	public double getLivingSpace(final IAgent agent) {
 		return (Double) agent.getAttribute(LIVING_SPACE);
 	}
 
+	/**
+	 * Sets the lanes attribute.
+	 *
+	 * @param agent the agent
+	 * @param latt the latt
+	 */
 	@setter (LANES_ATTRIBUTE)
 	public void setLanesAttribute(final IAgent agent, final String latt) {
 		agent.setAttribute(LANES_ATTRIBUTE, latt);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
+	/**
+	 * Gets the lanes attribute.
+	 *
+	 * @param agent the agent
+	 * @return the lanes attribute
+	 */
 	@getter (LANES_ATTRIBUTE)
 	public String getLanesAttribute(final IAgent agent) {
 		return (String) agent.getAttribute(LANES_ATTRIBUTE);
 	}
 
+	/**
+	 * Sets the living space.
+	 *
+	 * @param agent the agent
+	 * @param ls the ls
+	 */
 	@setter (LIVING_SPACE)
 	public void setLivingSpace(final IAgent agent, final double ls) {
 		agent.setAttribute(LIVING_SPACE, ls);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
+	/**
+	 * Gets the tolerance.
+	 *
+	 * @param agent the agent
+	 * @return the tolerance
+	 */
 	@getter (TOLERANCE)
 	public double getTolerance(final IAgent agent) {
 		return (Double) agent.getAttribute(TOLERANCE);
 	}
 
+	/**
+	 * Sets the tolerance.
+	 *
+	 * @param agent the agent
+	 * @param t the t
+	 */
 	@setter (TOLERANCE)
 	public void setTolerance(final IAgent agent, final double t) {
 		agent.setAttribute(TOLERANCE, t);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
+	/**
+	 * Gets the obstacle species.
+	 *
+	 * @param agent the agent
+	 * @return the obstacle species
+	 */
 	@getter (OBSTACLE_SPECIES)
 	public IList<ISpecies> getObstacleSpecies(final IAgent agent) {
 		return (IList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
 	}
 
+	/**
+	 * Sets the obstacle species.
+	 *
+	 * @param agent the agent
+	 * @param os the os
+	 */
 	@setter (OBSTACLE_SPECIES)
 	public void setObstacleSpecies(final IAgent agent, final IList<ISpecies> os) {
 		agent.setAttribute(OBSTACLE_SPECIES, os);
 	}
 
+	/**
+	 * Compute lanes number.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the string
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected String computeLanesNumber(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		return scope.hasArg(LANES_ATTRIBUTE) ? scope.getStringArg(LANES_ATTRIBUTE) : getLanesAttribute(agent);
 	}
 
+	/**
+	 * Compute obstacle species.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected IList<ISpecies> computeObstacleSpecies(final IScope scope, final IAgent agent)
 			throws GamaRuntimeException {
 		return scope.hasArg(OBSTACLE_SPECIES) ? scope.getListArg(OBSTACLE_SPECIES) : getObstacleSpecies(agent);
 	}
 
+	/**
+	 * Compute tolerance.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected double computeTolerance(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		return scope.hasArg(TOLERANCE) ? scope.getFloatArg(TOLERANCE) : getTolerance(agent);
 	}
 
+	/**
+	 * Compute living space.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected double computeLivingSpace(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		return scope.hasArg(LIVING_SPACE) ? scope.getFloatArg(LIVING_SPACE) : getLivingSpace(agent);
 	}
@@ -203,41 +293,36 @@ public class OldDrivingSkill extends MovingSkill {
 		final IMap weigths = (IMap) computeMoveWeights(scope);
 		final IList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		String laneAttributes = computeLanesNumber(scope, agent);
-		if (laneAttributes == null || "".equals(laneAttributes)) {
-			laneAttributes = "lanes_number";
-		}
+		if (laneAttributes == null || "".equals(laneAttributes)) { laneAttributes = "lanes_number"; }
 
 		final IShape goal = computeTarget(scope, agent);
-		if (goal == null) {
-			// scope.setStatus(ExecutionStatus.failure);
+		if (goal == null) // scope.setStatus(ExecutionStatus.failure);
 			return null;
-		}
 		final ITopology topo = computeTopology(scope, agent);
-		if (topo == null) {
-			// scope.setStatus(ExecutionStatus.failure);
+		if (topo == null) // scope.setStatus(ExecutionStatus.failure);
 			return null;
-		}
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		if (path != null && !path.getEdgeList().isEmpty()) {
 			if (returnPath != null && returnPath) {
 				final IPath pathFollowed = moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths,
 						livingSpace, tolerance, laneAttributes, obsSpecies);
-				if (pathFollowed == null) {
-					// scope.setStatus(ExecutionStatus.failure);
-					return null;
-				}
 				// scope.setStatus(ExecutionStatus.success);
 				return pathFollowed;
 			}
 			moveToNextLocAlongPathSimplifiedTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
 					laneAttributes, obsSpecies);
-			// scope.setStatus(ExecutionStatus.success);
-			return null;
 		}
 		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
 
+	/**
+	 * Prim goto traffic.
+	 *
+	 * @param scope the scope
+	 * @return the i path
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "goto_driving",
 			args = { @arg (
@@ -292,47 +377,30 @@ public class OldDrivingSkill extends MovingSkill {
 		final double livingSpace = computeLivingSpace(scope, agent);
 		final IList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		String laneAttributes = computeLanesNumber(scope, agent);
-		if (laneAttributes == null || "".equals(laneAttributes)) {
-			laneAttributes = "lanes_number";
-		}
+		if (laneAttributes == null || "".equals(laneAttributes)) { laneAttributes = "lanes_number"; }
 
 		final IShape goal = computeTarget(scope, agent);
-		if (goal == null) {
-			// scope.setStatus(ExecutionStatus.failure);
+		if (goal == null) // scope.setStatus(ExecutionStatus.failure);
 			return null;
-		}
 		final ITopology topo = computeTopology(scope, agent);
-		if (topo == null) {
-			// scope.setStatus(ExecutionStatus.failure);
+		if (topo == null) // scope.setStatus(ExecutionStatus.failure);
 			return null;
-		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if (path == null || !path.getTopology(scope).equals(topo) || !path.getEndVertex().equals(goal)
 				|| !path.getStartVertex().equals(source)) {
 			path = topo.pathBetween(scope, source, goal);
-		} else {
-
-			if (topo instanceof GraphTopology) {
-				if (((GraphTopology) topo).getPlaces() != path.getGraph()
-						|| ((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion()) {
-					path = topo.pathBetween(scope, source, goal);
-				}
-			}
+		} else if ((topo instanceof GraphTopology) && (((GraphTopology) topo).getPlaces() != path.getGraph()
+				|| ((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion())) {
+			path = topo.pathBetween(scope, source, goal);
 		}
 
-		if (path == null) {
-			// scope.setStatus(ExecutionStatus.failure);
+		if (path == null) // scope.setStatus(ExecutionStatus.failure);
 			return null;
-		}
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
 		final IMap weigths = (IMap) computeMoveWeights(scope);
 		if (returnPath != null && returnPath) {
 			final IPath pathFollowed = moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace,
 					tolerance, laneAttributes, obsSpecies);
-			if (pathFollowed == null) {
-				// scope.setStatus(ExecutionStatus.failure);
-				return null;
-			}
 			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
@@ -382,9 +450,7 @@ public class OldDrivingSkill extends MovingSkill {
 			result.addAll(scope.getTopology().getNeighborsOf(scope, new GamaShape(basicLine), tolerance, species));
 		}
 		for (final IAgent ia : result) {
-			if (ia == agent || ia.intersects(currentLocation)) {
-				continue;
-			}
+			if (ia == agent || ia.intersects(currentLocation)) { continue; }
 			// if(fr2.intersects(ia.getLocation().getInnerGeometry())){
 			// final double distL = basicLine.distance(ia.getInnerGeometry());
 			double currentDistance = ia.euclidianDistanceTo(currentLocation);
@@ -396,14 +462,8 @@ public class OldDrivingSkill extends MovingSkill {
 				final Collection<IAgent> ns = filter == null ? Collections.EMPTY_LIST
 						: scope.getTopology().getNeighborsOf(scope, ia, livingSpace / 2.0, filter);
 				int nbAg = 1;
-				for (final IAgent ag : ns) {
-					if (ag != agent) {
-						nbAg++;
-					}
-				}
-				if (nbAg >= nbLanes && currentDistance < minDist) {
-					minDist = Math.max(0, currentDistance);
-				}
+				for (final IAgent ag : ns) { if (ag != agent) { nbAg++; } }
+				if (nbAg >= nbLanes && currentDistance < minDist) { minDist = Math.max(0, currentDistance); }
 
 			}
 
@@ -413,18 +473,38 @@ public class OldDrivingSkill extends MovingSkill {
 		return minDist;
 	}
 
+	/**
+	 * Compute nb lanes.
+	 *
+	 * @param lineAg the line ag
+	 * @param laneAttributes the lane attributes
+	 * @return the int
+	 */
 	private int computeNbLanes(final IShape lineAg, final String laneAttributes) {
 		return lineAg == null || !(lineAg instanceof IAgent) ? 1
 				: (Integer) ((IAgent) lineAg).getAttribute(laneAttributes);
 
 	}
 
+	/**
+	 * Move to next loc along path simplified traffic.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param path the path
+	 * @param _distance the distance
+	 * @param weigths the weigths
+	 * @param livingSpace the living space
+	 * @param tolerance the tolerance
+	 * @param laneAttributes the lane attributes
+	 * @param obsSpecies the obs species
+	 */
 	private void moveToNextLocAlongPathSimplifiedTraffic(final IScope scope, final IAgent agent, final IPath path,
 			final double _distance, final IMap weigths, final double livingSpace, final double tolerance,
 			final String laneAttributes, final IList<ISpecies> obsSpecies) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
+		GamaPoint currentLocation = agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) { return; }
+		if (indexVals == null) return;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -475,9 +555,7 @@ public class OldDrivingSkill extends MovingSkill {
 
 				// that's the real distance to move
 				// Agent moves
-				if (distance == 0) {
-					break;
-				}
+				if (distance == 0) { break; }
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -485,12 +563,11 @@ public class OldDrivingSkill extends MovingSkill {
 					currentLocation.setLocation(newX, newY, 0d);
 					distance = 0;
 					break;
-				} else if (distance > dist) {
+				}
+				if (distance > dist) {
 					currentLocation = pt;
 					distance = distance - dist;
-					if (i == nb - 1 && j == endIndexSegment) {
-						break;
-					}
+					if (i == nb - 1 && j == endIndexSegment) { break; }
 					indexSegment++;
 				} else {
 					currentLocation = pt;
@@ -503,16 +580,12 @@ public class OldDrivingSkill extends MovingSkill {
 					break;
 				}
 			}
-			if (distance == 0) {
-				break;
-			}
+			if (distance == 0) { break; }
 			indexSegment = 1;
 			index++;
 			// The current edge is over, agent moves to the next one
 		}
-		if (currentLocation.equals(falseTarget)) {
-			currentLocation = ((IShape) path.getEndVertex()).getLocation();
-		}
+		if (currentLocation.equals(falseTarget)) { currentLocation = ((IShape) path.getEndVertex()).getLocation(); }
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		setLocation(agent, currentLocation);
@@ -520,12 +593,26 @@ public class OldDrivingSkill extends MovingSkill {
 
 	}
 
+	/**
+	 * Move to next loc along path traffic.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @param path the path
+	 * @param _distance the distance
+	 * @param weigths the weigths
+	 * @param livingSpace the living space
+	 * @param tolerance the tolerance
+	 * @param laneAttributes the lane attributes
+	 * @param obsSpecies the obs species
+	 * @return the i path
+	 */
 	private IPath moveToNextLocAlongPathTraffic(final IScope scope, final IAgent agent, final IPath path,
 			final double _distance, final IMap weigths, final double livingSpace, final double tolerance,
 			final String laneAttributes, final IList<ISpecies> obsSpecies) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
+		GamaPoint currentLocation = agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) { return null; }
+		if (indexVals == null) return null;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -535,7 +622,7 @@ public class OldDrivingSkill extends MovingSkill {
 		final int nb = edges.size();
 		double distance = _distance;
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
-		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
+		final GamaPoint startLocation = agent.getLocation().copy(scope);
 		final IMap agents = GamaMapFactory.createUnordered();
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
@@ -574,31 +661,24 @@ public class OldDrivingSkill extends MovingSkill {
 					currentLocation.setLocation(newX, newY, 0d);
 					final IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
 					final IAgent a = line.getAgent();
-					if (a != null) {
-						agents.put(gl, a);
-					}
+					if (a != null) { agents.put(gl, a); }
 					segments.add(gl);
 					distance = 0;
 					break;
-				} else if (distance > dist) {
+				}
+				if (distance > dist) {
 					final IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
 					final IAgent a = line.getAgent();
-					if (a != null) {
-						agents.put(gl, a);
-					}
+					if (a != null) { agents.put(gl, a); }
 					segments.add(gl);
 					currentLocation = pt;
 					distance = distance - dist;
-					if (i == nb - 1 && j == endIndexSegment) {
-						break;
-					}
+					if (i == nb - 1 && j == endIndexSegment) { break; }
 					indexSegment++;
 				} else {
 					final IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
 					final IAgent a = line.getAgent();
-					if (a != null) {
-						agents.put(gl, a);
-					}
+					if (a != null) { agents.put(gl, a); }
 					segments.add(gl);
 					currentLocation = pt;
 					distance = 0;
@@ -610,19 +690,15 @@ public class OldDrivingSkill extends MovingSkill {
 					break;
 				}
 			}
-			if (distance == 0) {
-				break;
-			}
+			if (distance == 0) { break; }
 			indexSegment = 1;
 			index++;
 		}
-		if (currentLocation.equals(falseTarget)) {
-			currentLocation = (GamaPoint) path.getEndVertex();
-		}
+		if (currentLocation.equals(falseTarget)) { currentLocation = (GamaPoint) path.getEndVertex(); }
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		path.setSource(currentLocation.copy(scope));
-		if (segments.isEmpty()) { return null; }
+		if (segments.isEmpty()) return null;
 		final IPath followedPath =
 				PathFactory.newInstance(scope, scope.getTopology(), startLocation, currentLocation, segments);
 		// new GamaPath(scope.getTopology(), startLocation, currentLocation,

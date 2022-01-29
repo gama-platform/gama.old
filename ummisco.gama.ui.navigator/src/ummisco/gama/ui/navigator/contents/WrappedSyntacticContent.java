@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -119,7 +118,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 		final var e = o.element;
 		if (element.isSpecies()) {
 			if (e.isSpecies()) return getName().compareTo(o.getName());
-			if (IKeyword.GRID.equals(element.getKeyword())) {}
+			// if (IKeyword.GRID.equals(element.getKeyword())) {}
 			return 1;
 		}
 		if (e.isSpecies()) return -1;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.skills.MovingSkill3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * MovingSkill3D.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.skills;
 
@@ -83,6 +83,12 @@ public class MovingSkill3D extends MovingSkill {
 		return topology.getDestination3D(actualLocation, getHeading(agent), getPitch(agent), dist, false);
 	}
 
+	/**
+	 * Gets the pitch.
+	 *
+	 * @param agent the agent
+	 * @return the pitch
+	 */
 	@getter (IKeyword.PITCH)
 	public Double getPitch(final IAgent agent) {
 		Double p = (Double) agent.getAttribute(IKeyword.PITCH);
@@ -93,11 +99,23 @@ public class MovingSkill3D extends MovingSkill {
 		return Maths.checkHeading(p);
 	}
 
+	/**
+	 * Sets the pitch.
+	 *
+	 * @param agent the agent
+	 * @param newPitch the new pitch
+	 */
 	@setter (IKeyword.PITCH)
 	public void setPitch(final IAgent agent, final double newPitch) {
 		agent.setAttribute(IKeyword.PITCH, newPitch);
 	}
 
+	/**
+	 * Gets the roll.
+	 *
+	 * @param agent the agent
+	 * @return the roll
+	 */
 	@getter (IKeyword.ROLL)
 	public Double getRoll(final IAgent agent) {
 		Double r = (Double) agent.getAttribute(IKeyword.ROLL);
@@ -108,17 +126,39 @@ public class MovingSkill3D extends MovingSkill {
 		return Maths.checkHeading(r);
 	}
 
+	/**
+	 * Sets the roll.
+	 *
+	 * @param agent the agent
+	 * @param newRoll the new roll
+	 */
 	@setter (IKeyword.ROLL)
 	public void setRoll(final IAgent agent, final Double newRoll) {
 		agent.setAttribute(IKeyword.ROLL, newRoll);
 	}
 
+	/**
+	 * Compute pitch from amplitude.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected double computePitchFromAmplitude(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final int ampl = scope.hasArg("amplitude") ? scope.getIntArg("amplitude") : 359;
 		setPitch(agent, getPitch(agent) + scope.getRandom().between(-ampl / 2, ampl / 2));
 		return getPitch(agent);
 	}
 
+	/**
+	 * Compute pitch.
+	 *
+	 * @param scope the scope
+	 * @param agent the agent
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	protected double computePitch(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final Integer pitch = scope.hasArg(IKeyword.PITCH) ? scope.getIntArg(IKeyword.PITCH) : null;
 		if (pitch != null) { setPitch(agent, pitch); }
@@ -181,7 +221,7 @@ public class MovingSkill3D extends MovingSkill {
 	}
 
 	@Override
-	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
+	public boolean primMoveRandomly(final IScope scope) throws GamaRuntimeException {
 
 		final IAgent agent = getCurrentAgent(scope);
 		final GamaPoint location = agent.getLocation();
@@ -202,7 +242,7 @@ public class MovingSkill3D extends MovingSkill {
 					probaDeplacement = (IMap<IShape, Double>) scope.getVarValue("proba_edges");
 				}
 				moveToNextLocAlongPathSimplified(scope, agent, graph, dist, probaDeplacement);
-				return;
+				return true;
 			}
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if (bounds != null) {
@@ -241,6 +281,7 @@ public class MovingSkill3D extends MovingSkill {
 			setHeading(agent, heading);
 			setPitch(agent, pitch);
 		}
+		return true;
 	}
 
 	@Override

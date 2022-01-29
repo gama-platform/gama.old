@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MemoryUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * MemoryUtils.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -254,14 +254,16 @@ public final class MemoryUtils {
 	 */
 	public static File findIt(final File rootDir) {
 		File[] files = rootDir.listFiles();
-		List<File> directories = new ArrayList<>(files.length);
-		for (File file : files) {
-			if ("Gama.ini".equals(file.getName())) return file;
-			if (file.isDirectory()) { directories.add(file); }
-		}
-		for (File directory : directories) {
-			File file = findIt(directory);
-			if (file != null) return file;
+		if (files != null) {
+			List<File> directories = new ArrayList<>(files.length);
+			for (File file : files) {
+				if ("Gama.ini".equals(file.getName())) return file;
+				if (file.isDirectory()) { directories.add(file); }
+			}
+			for (File directory : directories) {
+				File file = findIt(directory);
+				if (file != null) return file;
+			}
 		}
 		return null;
 	}

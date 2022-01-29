@@ -1,18 +1,13 @@
-/*
-   Copyright 2006 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * HatchLineIterator.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.helpers;
 
 import java.util.ArrayList;
@@ -23,253 +18,275 @@ import msi.gama.ext.kabeja.dxf.Bounds;
 import msi.gama.ext.kabeja.dxf.DXFHatch;
 import msi.gama.ext.kabeja.math.MathUtils;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
 public class HatchLineIterator implements Iterator {
-    public static final double LIMIT = 0.00001;
-    protected double angle;
-    protected Bounds hatchBounds;
-    protected HatchLineFamily pattern;
-    protected double length;
-    protected Vector v;
-    protected Vector r;
-    protected List bounderyEdges;
-    protected ParametricLine patternLine;
-    protected double tmin = Double.POSITIVE_INFINITY;
-    protected double tmax = Double.NEGATIVE_INFINITY;
-    protected double walkingLength;
-    protected double currentWalkingStep = 0;
 
-    // public HatchLineIterator(List boundaryEdges,DXFHatch
-    // hatch,HatchLineFamily lineFamily){
-    // this.bounderyEdges=boundaryEdges;
-    // this.hatchBounds = hatch.getBounds();
-    // this.pattern=lineFamily;
-    // this.initialize();
-    // }
-    public HatchLineIterator(DXFHatch hatch, HatchLineFamily pattern) {
-        this.angle = Math.toRadians(pattern.getRotationAngle());
-        this.hatchBounds = hatch.getBounds();
-        this.length = pattern.getLength();
+	/** The Constant LIMIT. */
+	public static final double LIMIT = 0.00001;
 
-        this.bounderyEdges = new ArrayList();
+	/** The angle. */
+	protected double angle;
 
-        // edge 0
-        Point start = new Point(this.hatchBounds.getMinimumX(),
-                this.hatchBounds.getMaximumY(), 0);
-        Point end = new Point(this.hatchBounds.getMinimumX(),
-                this.hatchBounds.getMinimumY(), 0);
-        this.bounderyEdges.add(new ParametricLine(start,
-                MathUtils.getVector(start, end)));
+	/** The hatch bounds. */
+	protected Bounds hatchBounds;
 
-        // edge 1
-        start = new Point(this.hatchBounds.getMinimumX(),
-                this.hatchBounds.getMinimumY(), 0);
-        end = new Point(this.hatchBounds.getMaximumX(),
-                this.hatchBounds.getMinimumY(), 0);
-        this.bounderyEdges.add(new ParametricLine(start,
-                MathUtils.getVector(start, end)));
+	/** The pattern. */
+	protected HatchLineFamily pattern;
 
-        // edge 2
-        start = new Point(this.hatchBounds.getMaximumX(),
-                this.hatchBounds.getMinimumY(), 0);
-        end = new Point(this.hatchBounds.getMaximumX(),
-                this.hatchBounds.getMaximumY(), 0);
-        this.bounderyEdges.add(new ParametricLine(start,
-                MathUtils.getVector(start, end)));
+	/** The length. */
+	protected double length;
 
-        // edge 3
-        start = new Point(this.hatchBounds.getMaximumX(),
-                this.hatchBounds.getMaximumY(), 0);
-        end = new Point(this.hatchBounds.getMinimumX(),
-                this.hatchBounds.getMaximumY(), 0);
-        this.bounderyEdges.add(new ParametricLine(start,
-                MathUtils.getVector(start, end)));
+	/** The v. */
+	protected Vector v;
 
-        this.pattern = pattern;
-        this.initialize();
-    }
+	/** The r. */
+	protected Vector r;
 
-    public boolean hasNext() {
-        return this.currentWalkingStep <= this.walkingLength;
-    }
+	/** The boundery edges. */
+	protected List<ParametricLine> bounderyEdges;
 
-    protected void initialize() {
-        // setup a length
-        // this can happen on solid lines
-        if (this.length == 0) {
-            this.length = 1;
-        }
+	/** The pattern line. */
+	protected ParametricLine patternLine;
 
-        // first get the center point of the bound rectangle
-        Point center = new Point();
-        center.setX(this.hatchBounds.getMinimumX() +
-            (this.hatchBounds.getWidth() / 2));
-        center.setY(this.hatchBounds.getMinimumY() +
-            (this.hatchBounds.getHeight() / 2));
-        center.setZ(0);
+	/** The tmin. */
+	protected double tmin = Double.POSITIVE_INFINITY;
 
-        this.r = new Vector();
+	/** The tmax. */
+	protected double tmax = Double.NEGATIVE_INFINITY;
 
-        if (Math.abs(this.pattern.getOffsetY()) < LIMIT) {
-            this.r.setY(0);
-        } else {
-            this.r.setY(this.pattern.getOffsetY());
-        }
+	/** The walking length. */
+	protected double walkingLength;
 
-        if (Math.abs(this.pattern.getOffsetX()) < LIMIT) {
-            this.r.setX(0);
-        } else {
-            this.r.setX(this.pattern.getOffsetX());
-        }
+	/** The current walking step. */
+	protected double currentWalkingStep = 0;
 
-        // create the direction vector of the line family
-        this.v = new Vector();
-        this.v.setX(this.length * Math.cos(this.angle));
-        this.v.setY(this.length * Math.sin(this.angle));
+	// public HatchLineIterator(List boundaryEdges,DXFHatch
+	// hatch,HatchLineFamily lineFamily){
+	// this.bounderyEdges=boundaryEdges;
+	// this.hatchBounds = hatch.getBounds();
+	// this.pattern=lineFamily;
+	// this.initialize();
+	/**
+	 * Instantiates a new hatch line iterator.
+	 *
+	 * @param hatch
+	 *            the hatch
+	 * @param pattern
+	 *            the pattern
+	 */
+	// }
+	public HatchLineIterator(final DXFHatch hatch, final HatchLineFamily pattern) {
+		this.angle = Math.toRadians(pattern.getRotationAngle());
+		this.hatchBounds = hatch.getBounds();
+		this.length = pattern.getLength();
 
-        if (Math.abs(this.v.getX()) < LIMIT) {
-            this.v.setX(0);
-        }
+		this.bounderyEdges = new ArrayList<>();
 
-        if (Math.abs(this.v.getY()) < LIMIT) {
-            this.v.setY(0);
-        }
+		// edge 0
+		Point start = new Point(this.hatchBounds.getMinimumX(), this.hatchBounds.getMaximumY(), 0);
+		Point end = new Point(this.hatchBounds.getMinimumX(), this.hatchBounds.getMinimumY(), 0);
+		this.bounderyEdges.add(new ParametricLine(start, MathUtils.getVector(start, end)));
 
-        // we will now find the next raster point near the center point
-        double[] para = this.getRasterValues(center.getX(), center.getY());
-        center = this.getPoint(Math.round(para[0]), Math.round(para[1]));
+		// edge 1
+		start = new Point(this.hatchBounds.getMinimumX(), this.hatchBounds.getMinimumY(), 0);
+		end = new Point(this.hatchBounds.getMaximumX(), this.hatchBounds.getMinimumY(), 0);
+		this.bounderyEdges.add(new ParametricLine(start, MathUtils.getVector(start, end)));
 
-        // we create now our walking line
-        this.patternLine = new ParametricLine(center, this.r);
+		// edge 2
+		start = new Point(this.hatchBounds.getMaximumX(), this.hatchBounds.getMinimumY(), 0);
+		end = new Point(this.hatchBounds.getMaximumX(), this.hatchBounds.getMaximumY(), 0);
+		this.bounderyEdges.add(new ParametricLine(start, MathUtils.getVector(start, end)));
 
-        this.calculateIntersection(this.hatchBounds.getMinimumX(),
-            this.hatchBounds.getMaximumY());
-        this.calculateIntersection(this.hatchBounds.getMinimumX(),
-            this.hatchBounds.getMinimumY());
-        this.calculateIntersection(this.hatchBounds.getMaximumX(),
-            this.hatchBounds.getMinimumY());
-        this.calculateIntersection(this.hatchBounds.getMaximumX(),
-            this.hatchBounds.getMaximumY());
+		// edge 3
+		start = new Point(this.hatchBounds.getMaximumX(), this.hatchBounds.getMaximumY(), 0);
+		end = new Point(this.hatchBounds.getMinimumX(), this.hatchBounds.getMaximumY(), 0);
+		this.bounderyEdges.add(new ParametricLine(start, MathUtils.getVector(start, end)));
 
-        // the minimum point is our starting point
-        this.tmin = Math.floor(this.tmin);
-        this.tmax = Math.ceil(this.tmax);
+		this.pattern = pattern;
+		this.initialize();
+	}
 
-        Point p = this.patternLine.getPointAt(this.tmin);
-        this.patternLine.setStartPoint(p);
-        this.walkingLength = Math.ceil(Math.abs(this.tmax - this.tmin));
-    }
+	@Override
+	public boolean hasNext() {
+		return this.currentWalkingStep <= this.walkingLength;
+	}
 
-    protected void calculateIntersection(double x, double y) {
-        Point s = new Point(x, y, 0);
-        ParametricLine line = new ParametricLine(s, this.v);
-        double t = this.patternLine.getIntersectionParameter(line);
+	/**
+	 * Initialize.
+	 */
+	protected void initialize() {
+		// setup a length
+		// this can happen on solid lines
+		if (this.length == 0) { this.length = 1; }
 
-        if (t < this.tmin) {
-            this.tmin = t;
-        }
+		// first get the center point of the bound rectangle
+		Point center = new Point();
+		center.setX(this.hatchBounds.getMinimumX() + this.hatchBounds.getWidth() / 2);
+		center.setY(this.hatchBounds.getMinimumY() + this.hatchBounds.getHeight() / 2);
+		center.setZ(0);
 
-        if (t > this.tmax) {
-            this.tmax = t;
-        }
-    }
+		this.r = new Vector();
 
-    /**
-     * calculate the m and n raster values of a given point.
-     *
-     * @return the raster values, where v[0]=m and v[1]=n
-     */
-    protected double[] getRasterValues(double x, double y) {
-        double[] v = new double[2];
+		if (Math.abs(this.pattern.getOffsetY()) < LIMIT) {
+			this.r.setY(0);
+		} else {
+			this.r.setY(this.pattern.getOffsetY());
+		}
 
-        if (this.r.getX() == 0.0) {
-            v[0] = (x - this.pattern.getBaseX()) / this.v.getX();
-            v[1] = (y - this.pattern.getBaseY() - (this.v.getY() * v[0])) / this.r.getY();
-        } else if (this.r.getY() == 0.0) {
-            v[0] = (y - this.pattern.getBaseY()) / this.v.getY();
-            v[1] = (x - this.pattern.getBaseX()) / this.r.getX();
-        } else if (this.v.getX() == 0) {
-            v[1] = (x - this.pattern.getBaseX()) / this.r.getX();
-            v[0] = (y - this.pattern.getBaseY() - (this.r.getY() * v[1])) / this.v.getY();
-        } else if (this.v.getY() == 0.0) {
-            v[1] = (y - this.pattern.getBaseY()) / this.r.getY();
-            v[0] = (x - this.pattern.getBaseX() - (this.r.getX() * v[1])) / this.v.getX();
-        } else {
-            // a helper variable
-            double a = this.r.getY() / this.r.getX();
+		if (Math.abs(this.pattern.getOffsetX()) < LIMIT) {
+			this.r.setX(0);
+		} else {
+			this.r.setX(this.pattern.getOffsetX());
+		}
 
-            v[0] = (y - this.pattern.getBaseY() - (x * a) +
-                (this.pattern.getBaseX() * a)) / (this.v.getY() -
-                (a * this.v.getX()));
-            v[1] = (x - this.pattern.getBaseX() - (this.v.getX() * v[0])) / this.r.getX();
-        }
+		// create the direction vector of the line family
+		this.v = new Vector();
+		this.v.setX(this.length * Math.cos(this.angle));
+		this.v.setY(this.length * Math.sin(this.angle));
 
-        return v;
-    }
+		if (Math.abs(this.v.getX()) < LIMIT) { this.v.setX(0); }
 
-    public Object next() {
-        Point p = this.patternLine.getPointAt(this.currentWalkingStep);
-        ParametricLine line = new ParametricLine(p, this.v);
+		if (Math.abs(this.v.getY()) < LIMIT) { this.v.setY(0); }
 
-        // get the next intersection of
-        Iterator i = this.bounderyEdges.iterator();
-        List points = new ArrayList();
+		// we will now find the next raster point near the center point
+		double[] para = this.getRasterValues(center.getX(), center.getY());
+		center = this.getPoint(Math.round(para[0]), Math.round(para[1]));
 
-        while (i.hasNext()) {
-            ParametricLine edge = (ParametricLine) i.next();
-            double t = edge.getIntersectionParameter(line);
+		// we create now our walking line
+		this.patternLine = new ParametricLine(center, this.r);
 
-            if ((t >= 0) && (t < 1)) {
-                points.add(edge.getPointAt(t));
-            }
-        }
+		this.calculateIntersection(this.hatchBounds.getMinimumX(), this.hatchBounds.getMaximumY());
+		this.calculateIntersection(this.hatchBounds.getMinimumX(), this.hatchBounds.getMinimumY());
+		this.calculateIntersection(this.hatchBounds.getMaximumX(), this.hatchBounds.getMinimumY());
+		this.calculateIntersection(this.hatchBounds.getMaximumX(), this.hatchBounds.getMaximumY());
 
-        double startL = 0;
-        double l = 0;
+		// the minimum point is our starting point
+		this.tmin = Math.floor(this.tmin);
+		this.tmax = Math.ceil(this.tmax);
 
-        if (points.size() == 2) {
-            Point start = (Point) points.get(0);
-            double startT = line.getParameter(start);
-            Point end = (Point) points.get(1);
-            double endT = line.getParameter(end);
-            startL = 0;
+		Point p = this.patternLine.getPointAt(this.tmin);
+		this.patternLine.setStartPoint(p);
+		this.walkingLength = Math.ceil(Math.abs(this.tmax - this.tmin));
+	}
 
-            if (startT > endT) {
-                line.setStartPoint(end);
-                startL = Math.abs(endT - Math.floor(endT)) * this.length;
-            } else {
-                line.setStartPoint(start);
-                startL = Math.abs(startT - Math.floor(startT)) * this.length;
-            }
+	/**
+	 * Calculate intersection.
+	 *
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 */
+	protected void calculateIntersection(final double x, final double y) {
+		Point s = new Point(x, y, 0);
+		ParametricLine line = new ParametricLine(s, this.v);
+		double t = this.patternLine.getIntersectionParameter(line);
 
-            l = Math.abs(endT - startT) * this.length;
-        }
+		if (t < this.tmin) { this.tmin = t; }
 
-        line.setDirectionVector(MathUtils.normalize(this.v));
+		if (t > this.tmax) { this.tmax = t; }
+	}
 
-        HatchLineSegment segment = new HatchLineSegment(line, l, startL,
-                this.pattern.getPattern());
+	/**
+	 * calculate the m and n raster values of a given point.
+	 *
+	 * @return the raster values, where v[0]=m and v[1]=n
+	 */
+	protected double[] getRasterValues(final double x, final double y) {
+		double[] v = new double[2];
 
-        this.currentWalkingStep++;
+		if (this.r.getX() == 0.0) {
+			v[0] = (x - this.pattern.getBaseX()) / this.v.getX();
+			v[1] = (y - this.pattern.getBaseY() - this.v.getY() * v[0]) / this.r.getY();
+		} else if (this.r.getY() == 0.0) {
+			v[0] = (y - this.pattern.getBaseY()) / this.v.getY();
+			v[1] = (x - this.pattern.getBaseX()) / this.r.getX();
+		} else if (this.v.getX() == 0) {
+			v[1] = (x - this.pattern.getBaseX()) / this.r.getX();
+			v[0] = (y - this.pattern.getBaseY() - this.r.getY() * v[1]) / this.v.getY();
+		} else if (this.v.getY() == 0.0) {
+			v[1] = (y - this.pattern.getBaseY()) / this.r.getY();
+			v[0] = (x - this.pattern.getBaseX() - this.r.getX() * v[1]) / this.v.getX();
+		} else {
+			// a helper variable
+			double a = this.r.getY() / this.r.getX();
 
-        return segment;
-    }
+			v[0] = (y - this.pattern.getBaseY() - x * a + this.pattern.getBaseX() * a)
+					/ (this.v.getY() - a * this.v.getX());
+			v[1] = (x - this.pattern.getBaseX() - this.v.getX() * v[0]) / this.r.getX();
+		}
 
-    public void remove() {
-        // we do nothing here
-    }
+		return v;
+	}
 
-    protected Point getPoint(double m, double n) {
-        Point p = new Point();
-        p.setX((n * this.r.getX()) + this.pattern.getBaseX() +
-            (this.v.getX() * m));
-        p.setY((n * this.r.getY()) + this.pattern.getBaseY() +
-            (this.v.getY() * m));
+	@Override
+	public Object next() {
+		Point p = this.patternLine.getPointAt(this.currentWalkingStep);
+		ParametricLine line = new ParametricLine(p, this.v);
 
-        return p;
-    }
+		// get the next intersection of
+		Iterator i = this.bounderyEdges.iterator();
+		List<Point> points = new ArrayList<>();
+
+		while (i.hasNext()) {
+			ParametricLine edge = (ParametricLine) i.next();
+			double t = edge.getIntersectionParameter(line);
+
+			if (t >= 0 && t < 1) { points.add(edge.getPointAt(t)); }
+		}
+
+		double startL = 0;
+		double l = 0;
+
+		if (points.size() == 2) {
+			Point start = points.get(0);
+			double startT = line.getParameter(start);
+			Point end = points.get(1);
+			double endT = line.getParameter(end);
+			startL = 0;
+
+			if (startT > endT) {
+				line.setStartPoint(end);
+				startL = Math.abs(endT - Math.floor(endT)) * this.length;
+			} else {
+				line.setStartPoint(start);
+				startL = Math.abs(startT - Math.floor(startT)) * this.length;
+			}
+
+			l = Math.abs(endT - startT) * this.length;
+		}
+
+		line.setDirectionVector(MathUtils.normalize(this.v));
+
+		HatchLineSegment segment = new HatchLineSegment(line, l, startL, this.pattern.getPattern());
+
+		this.currentWalkingStep++;
+
+		return segment;
+	}
+
+	@Override
+	public void remove() {
+		// we do nothing here
+	}
+
+	/**
+	 * Gets the point.
+	 *
+	 * @param m
+	 *            the m
+	 * @param n
+	 *            the n
+	 * @return the point
+	 */
+	protected Point getPoint(final double m, final double n) {
+		Point p = new Point();
+		p.setX(n * this.r.getX() + this.pattern.getBaseX() + this.v.getX() * m);
+		p.setY(n * this.r.getY() + this.pattern.getBaseY() + this.v.getY() * m);
+
+		return p;
+	}
 }

@@ -1,23 +1,16 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFVariable.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf;
 
 import java.util.Hashtable;
 import java.util.Iterator;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
@@ -26,42 +19,86 @@ import java.util.Iterator;
  *
  */
 public class DXFVariable {
-    private Hashtable values = new Hashtable();
-    private String name = "";
 
-    public DXFVariable(String name) {
-        this.name = name;
-    }
+	/** The values. */
+	private final Hashtable<String, String> values = new Hashtable<>();
 
-    public String getName() {
-        return name;
-    }
+	/** The name. */
+	private String name = "";
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 * Instantiates a new DXF variable.
+	 *
+	 * @param name
+	 *            the name
+	 */
+	public DXFVariable(final String name) {
+		this.name = name;
+	}
 
-    public String getValue(String name) {
-        return (String) values.get(name);
-    }
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() { return name; }
 
-    public int getIntegerValue(String name) {
-        return Integer.parseInt((String) values.get(name));
-    }
+	/**
+	 * Sets the name.
+	 *
+	 * @param name
+	 *            the new name
+	 */
+	public void setName(final String name) { this.name = name; }
 
-    public double getDoubleValue(String name) {
-        return Double.parseDouble((String) values.get(name));
-    }
+	/**
+	 * Gets the value.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the value
+	 */
+	public String getValue(final String name) {
+		return values.get(name);
+	}
 
-    public void setValue(String name, String value) {
-        values.put(name, value);
-    }
+	/**
+	 * Gets the integer value.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the integer value
+	 */
+	public int getIntegerValue(final String name) {
+		return Integer.parseInt(values.get(name));
+	}
 
-    /**
-     *
-     * @return a iterator over all keys of this DXFValue
-     */
-    public Iterator getValueKeyIterator() {
-        return values.keySet().iterator();
-    }
+	/**
+	 * Gets the double value.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the double value
+	 */
+	public double getDoubleValue(final String name) {
+		return Double.parseDouble(values.get(name));
+	}
+
+	/**
+	 * Sets the value.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	public void setValue(final String name, final String value) {
+		values.put(name, value);
+	}
+
+	/**
+	 *
+	 * @return a iterator over all keys of this DXFValue
+	 */
+	public Iterator getValueKeyIterator() { return values.keySet().iterator(); }
 }

@@ -185,6 +185,10 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 			case "Short":
 				warning = "it is safer to use the Integer type";
 				break;
+			case "float":
+			case "Float":
+				warning = "it is safer to use the Double type";
+				break;
 			case "Color":
 				warning = "it is safer to use the GamaColor type";
 				break;

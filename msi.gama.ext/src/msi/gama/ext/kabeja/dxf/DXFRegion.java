@@ -1,71 +1,69 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
- */
+/*******************************************************************************************************
+ *
+ * DXFRegion.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
 public class DXFRegion extends DXFEntity {
-    protected List acisData = new ArrayList();
+	
+	/** The acis data. */
+	protected List<String> acisData = new ArrayList<>();
 
-    /**
-     *
-     *
-     * @return always invalid bounds
-     */
-    public Bounds getBounds() {
-        Bounds bounds = new Bounds();
-        bounds.setValid(false);
+	/**
+	 *
+	 *
+	 * @return always invalid bounds
+	 */
+	@Override
+	public Bounds getBounds() {
+		Bounds bounds = new Bounds();
+		bounds.setValid(false);
 
-        return bounds;
-    }
+		return bounds;
+	}
 
-    /**
-     *
-     *
-     * @see org.kabeja.dxf.DXFEntity#getType()
-     */
-    public String getType() {
-        return DXFConstants.ENTITY_TYPE_REGION;
-    }
+	/**
+	 *
+	 *
+	 * @see org.kabeja.dxf.DXFEntity#getType()
+	 */
+	@Override
+	public String getType() { return DXFConstants.ENTITY_TYPE_REGION; }
 
-    /**
-     * The ACIS commands as a list of lines
-     *
-     * @return the list
-     */
-    public List getACISDATA() {
-        return acisData;
-    }
+	/**
+	 * The ACIS commands as a list of lines
+	 *
+	 * @return the list
+	 */
+	public List getACISDATA() { return acisData; }
 
-    public void appendACISDATA(String data) {
-        acisData.add(data);
-    }
+	/**
+	 * Append ACISDATA.
+	 *
+	 * @param data the data
+	 */
+	public void appendACISDATA(final String data) {
+		acisData.add(data);
+	}
 
-    /**
-     * This entity is only a container of ACIS data.
-     *
-     * @return always 0
-     */
-    public double getLength() {
-        return 0;
-    }
+	/**
+	 * This entity is only a container of ACIS data.
+	 *
+	 * @return always 0
+	 */
+	@Override
+	public double getLength() { return 0; }
 }

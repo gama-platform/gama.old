@@ -1,18 +1,13 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFTableSectionHandler.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.parser;
 
 import java.util.Hashtable;
@@ -20,109 +15,129 @@ import java.util.Iterator;
 
 import msi.gama.ext.kabeja.parser.table.DXFTableHandler;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
-public class DXFTableSectionHandler extends AbstractSectionHandler
-    implements HandlerManager {
-    public final static String sectionKey = "TABLES";
-    public final static String TABLE_START = "TABLE";
-    public final static String TABLE_END = "ENDTAB";
-    public final int TABLE_CODE = 0;
-    private String table = "";
-    private DXFTableHandler handler;
-    private Hashtable handlers = new Hashtable();
-    private boolean parse = false;
+public class DXFTableSectionHandler extends AbstractSectionHandler implements HandlerManager {
 
-    public DXFTableSectionHandler() {
-    }
+	/** The Constant sectionKey. */
+	public final static String sectionKey = "TABLES";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.dxf2svg.parser.SectionHandler#getSectionKey()
-     */
-    public String getSectionKey() {
-        return sectionKey;
-    }
+	/** The Constant TABLE_START. */
+	public final static String TABLE_START = "TABLE";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.dxf2svg.parser.SectionHandler#parseGroup(int, java.lang.String)
-     */
-    public void parseGroup(int groupCode, DXFValue value) {
-        if (groupCode == TABLE_CODE) {
-            //switch table
-            if (TABLE_END.equals(value)) {
-                table = "";
+	/** The Constant TABLE_END. */
+	public final static String TABLE_END = "ENDTAB";
 
-                if (parse) {
-                    handler.endParsing();
-                    parse = false;
-                }
-            } else if (TABLE_START.equals(value)) {
-            } else {
-                if (parse) {
-                    handler.endParsing();
-                }
+	/** The table code. */
+	public final int TABLE_CODE = 0;
 
-                table = value.getValue();
+	/** The table. */
+	private String table = "";
 
-                if (handlers.containsKey(table)) {
-                    handler = (DXFTableHandler) handlers.get(table);
-                    handler.setDXFDocument(this.doc);
-                    handler.startParsing();
-                    parse = true;
-                } else {
-                    parse = false;
-                }
-            }
-        } else {
-            if (parse) {
-                handler.parseGroup(groupCode, value);
-            }
-        }
-    }
+	/** The handler. */
+	private DXFTableHandler handler;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.dxf2svg.parser.SectionHandler#endParsing()
-     */
-    public void endSection() {
-    }
+	/** The handlers. */
+	private final Hashtable<String, DXFTableHandler> handlers = new Hashtable<>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.dxf2svg.parser.SectionHandler#startParsing()
-     */
-    public void startSection() {
-        parse = false;
-    }
+	/** The parse. */
+	private boolean parse = false;
 
-    public void addHandler(Handler handler) {
-        addDXFTableHandler((DXFTableHandler) handler);
-    }
+	/**
+	 * Instantiates a new DXF table section handler.
+	 */
+	public DXFTableSectionHandler() {}
 
-    public void addDXFTableHandler(DXFTableHandler handler) {
-        handlers.put(handler.getTableKey(), handler);
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.dxf2svg.parser.SectionHandler#getSectionKey()
+	 */
+	@Override
+	public String getSectionKey() { return sectionKey; }
 
-    /* (non-Javadoc)
-     * @see de.miethxml.kabeja.parser.Handler#releaseDXFDocument()
-     */
-    public void releaseDXFDocument() {
-        this.doc = null;
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.dxf2svg.parser.SectionHandler#parseGroup(int, java.lang.String)
+	 */
+	@Override
+	public void parseGroup(final int groupCode, final DXFValue value) {
+		if (groupCode == TABLE_CODE) {
+			// switch table
+			if (TABLE_END.equals(value.toString())) {
+				table = "";
 
-        Iterator i = handlers.values().iterator();
+				if (parse) {
+					handler.endParsing();
+					parse = false;
+				}
+			} else if (TABLE_START.equals(value.toString())) {} else {
+				if (parse) { handler.endParsing(); }
 
-        while (i.hasNext()) {
-            Handler handler = (Handler) i.next();
-            handler.releaseDXFDocument();
-        }
-    }
+				table = value.getValue();
+
+				if (handlers.containsKey(table)) {
+					handler = handlers.get(table);
+					handler.setDXFDocument(this.doc);
+					handler.startParsing();
+					parse = true;
+				} else {
+					parse = false;
+				}
+			}
+		} else if (parse) { handler.parseGroup(groupCode, value); }
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.dxf2svg.parser.SectionHandler#endParsing()
+	 */
+	@Override
+	public void endSection() {}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.dxf2svg.parser.SectionHandler#startParsing()
+	 */
+	@Override
+	public void startSection() {
+		parse = false;
+	}
+
+	@Override
+	public void addHandler(final Handler handler) {
+		addDXFTableHandler((DXFTableHandler) handler);
+	}
+
+	/**
+	 * Adds the DXF table handler.
+	 *
+	 * @param handler
+	 *            the handler
+	 */
+	public void addDXFTableHandler(final DXFTableHandler handler) {
+		handlers.put(handler.getTableKey(), handler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.miethxml.kabeja.parser.Handler#releaseDXFDocument()
+	 */
+	@Override
+	public void releaseDXFDocument() {
+		this.doc = null;
+
+		Iterator i = handlers.values().iterator();
+
+		while (i.hasNext()) {
+			Handler handler = (Handler) i.next();
+			handler.releaseDXFDocument();
+		}
+	}
 }

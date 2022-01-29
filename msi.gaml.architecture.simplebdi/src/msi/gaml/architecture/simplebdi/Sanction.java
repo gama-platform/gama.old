@@ -1,4 +1,16 @@
+/*******************************************************************************************************
+ *
+ * Sanction.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
+
+import java.util.Objects;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -10,63 +22,84 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class Sanction.
+ */
 @vars ({ @variable (
 		name = "name",
 		type = IType.STRING,
 		doc = @doc ("The name of this sanction")),
 
 })
-public class Sanction implements IValue{
+public class Sanction implements IValue {
 
+	/** The sanction statement. */
 	private SanctionStatement sanctionStatement;
-	
+
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
 	@getter ("name")
-	public String getName() {
-		return this.sanctionStatement.getName();
+	public String getName() { return this.sanctionStatement.getName(); }
+
+	/**
+	 * Gets the sanction statement.
+	 *
+	 * @return the sanction statement
+	 */
+	public SanctionStatement getSanctionStatement() { return this.sanctionStatement; }
+
+	/**
+	 * Instantiates a new sanction.
+	 */
+	public Sanction() {
 	}
-	
-	public SanctionStatement getSanctionStatement() {
-		return this.sanctionStatement;
-	}
-	
-	public Sanction(){
-		super();
-	}
-	
+
+	/**
+	 * Instantiates a new sanction.
+	 *
+	 * @param statement the statement
+	 */
 	public Sanction(final SanctionStatement statement) {
-		super();
 		this.sanctionStatement = statement;
 	}
-	
+
+	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
+		if (this == obj) return true;
+		if ((obj == null) || (getClass() != obj.getClass())) return false;
 		final Sanction other = (Sanction) obj;
-		if (sanctionStatement == null) {
-			if (other.sanctionStatement != null) { return false; }
-		} else if (!sanctionStatement.equals(other.sanctionStatement)) { return false; }
+		if (!Objects.equals(sanctionStatement, other.sanctionStatement)) {
+			return false;
+		}
 		return true;
 	}
-	
+
 	@Override
-	public String serialize(boolean includingBuiltIn) {
+	public int hashCode() {
+		return Objects.hash(sanctionStatement);
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
 		return "Sanction( " + sanctionStatement + ")";
 	}
 
 	@Override
 	public IType<?> getGamlType() {
 		return Types.get(SanctionType.id);
-//		return null;
+		// return null;
 	}
 
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return "Sanction( " + sanctionStatement + ")";
 	}
 
 	@Override
-	public IValue copy(IScope scope) throws GamaRuntimeException {
+	public IValue copy(final IScope scope) throws GamaRuntimeException {
 		return new Sanction(sanctionStatement);
 	}
 

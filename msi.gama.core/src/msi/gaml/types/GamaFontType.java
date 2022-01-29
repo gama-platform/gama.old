@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaFontType.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaFontType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -41,28 +41,35 @@ import msi.gama.util.GamaFont;
 		concept = { IConcept.TYPE, IConcept.TEXT, IConcept.DISPLAY })
 public class GamaFontType extends GamaType<GamaFont> {
 
-	public static Pref<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
+	/** The Constant DEFAULT_DISPLAY_FONT. */
+	public static final Pref<GamaFont> DEFAULT_DISPLAY_FONT = GamaPreferences
 			.create("pref_display_default_font", "Default font to use in 'draw'",
 					() -> new GamaFont("Helvetica", Font.PLAIN, 12), IType.FONT, true)
 			.in(GamaPreferences.Displays.NAME, GamaPreferences.Displays.DRAWING);
 
-	@doc(value="Cast any object as a font", 
-			usages = {
-				@usage(value = "if the operand is a number, returns with the operand value as font size and the default display font style", 		
-					examples = {
-						@example("font f <- font(12);")
-					}),
-				@usage(value = "if the operand is a string, returns a font with this font name", 		
-					examples = {
-						@example("font f <- font(12);")
-					}),				
-			})
+	@doc (
+			value = "Cast any object as a font",
+			usages = { @usage (
+					value = "if the operand is a number, returns with the operand value as font size and the default display font style",
+					examples = { @example ("font f <- font(12);") }),
+					@usage (
+							value = "if the operand is a string, returns a font with this font name",
+							examples = { @example ("font f <- font(12);") }), })
 	@Override
 	public GamaFont cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param copy the copy
+	 * @return the gama font
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static GamaFont staticCast(final IScope scope, final Object obj, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj instanceof Number) {
@@ -71,20 +78,15 @@ public class GamaFontType extends GamaType<GamaFont> {
 			return new GamaFont(font.getName(), font.getStyle(), size.intValue());
 		}
 		if (obj instanceof GamaFont) {
-			if (copy) {
-				return new GamaFont((Font) obj);
-			} else {
-				return (GamaFont) obj;
-			}
+			if (copy) return new GamaFont((Font) obj);
+			return (GamaFont) obj;
 		}
-		if (obj instanceof String) { return new GamaFont(Font.decode((String) obj)); }
+		if (obj instanceof String) return new GamaFont(Font.decode((String) obj));
 		return DEFAULT_DISPLAY_FONT.getValue();
 	}
 
 	@Override
-	public GamaFont getDefault() {
-		return DEFAULT_DISPLAY_FONT.getValue();
-	}
+	public GamaFont getDefault() { return DEFAULT_DISPLAY_FONT.getValue(); }
 
 	@Override
 	public boolean canCastToConst() {

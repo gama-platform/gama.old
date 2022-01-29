@@ -1,51 +1,55 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * SAXSerializerConfig.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  *
  */
 public class SAXSerializerConfig {
-    private Map properties = new HashMap();
-    private String saxSerializerName;
+	
+	/** The properties. */
+	private final Map<String, String> properties = new HashMap<>();
+	
+	/** The sax serializer name. */
+	private String saxSerializerName;
 
-    public Map getProperties() {
-        return this.properties;
-    }
+	/**
+	 * Gets the properties.
+	 *
+	 * @return the properties
+	 */
+	public Map getProperties() { return this.properties; }
 
-    public void addProperty(String name, String value) {
-        this.properties.put(name, value);
-    }
+	/**
+	 * Adds the property.
+	 *
+	 * @param name the name
+	 * @param value the value
+	 */
+	public void addProperty(final String name, final String value) {
+		this.properties.put(name, value);
+	}
 
-    /**
-     * @return Returns the filterName.
-     */
-    public String getSAXSerializerName() {
-        return saxSerializerName;
-    }
+	/**
+	 * @return Returns the filterName.
+	 */
+	public String getSAXSerializerName() { return saxSerializerName; }
 
-    /**
-     * @param filterName The filterName to set.
-     */
-    public void setSAXSerializerName(String filterName) {
-        this.saxSerializerName = filterName;
-    }
+	/**
+	 * @param filterName
+	 *            The filterName to set.
+	 */
+	public void setSAXSerializerName(final String filterName) { this.saxSerializerName = filterName; }
 }

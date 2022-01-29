@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DiffusionStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DiffusionStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 
@@ -201,30 +201,29 @@ public class DiffusionStatement extends AbstractStatement {
 	 * The Class DiffusionData.
 	 */
 	private class DiffusionData {
-		
+
 		/** The terrain. */
 		IDiffusionTarget terrain;
-		
+
 		/** The variable name. */
 		String variableName;
-		
+
 		/** The min value. */
 		double minValue;
-		
+
 		/** The avoid mask. */
-		boolean initialized, useConvolution, isGradient, avoidMask;
-		
+		boolean useConvolution, isGradient, avoidMask;
+
 		/** The nb neighbors. */
 		int cycleLength, nbNeighbors;
 
 		/**
 		 * Instantiates a new diffusion data.
 		 *
-		 * @param scope the scope
+		 * @param scope
+		 *            the scope
 		 */
 		private DiffusionData(final IScope scope) {
-			if (initialized) return;
-			initialized = true;
 			variableName = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
 			minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
 			if (minValue < 0) throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
@@ -253,7 +252,8 @@ public class DiffusionStatement extends AbstractStatement {
 	/**
 	 * Instantiates a new diffusion statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public DiffusionStatement(final IDescription desc) {
 		super(desc);
@@ -290,8 +290,10 @@ public class DiffusionStatement extends AbstractStatement {
 	/**
 	 * Translate matrix.
 	 *
-	 * @param scope the scope
-	 * @param mm the mm
+	 * @param scope
+	 *            the scope
+	 * @param mm
+	 *            the mm
 	 * @return the double[][]
 	 */
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {
@@ -308,9 +310,12 @@ public class DiffusionStatement extends AbstractStatement {
 	/**
 	 * Compute matrix.
 	 *
-	 * @param basicMatrix the basic matrix
-	 * @param numberOfIteration the number of iteration
-	 * @param is_gradient the is gradient
+	 * @param basicMatrix
+	 *            the basic matrix
+	 * @param numberOfIteration
+	 *            the number of iteration
+	 * @param is_gradient
+	 *            the is gradient
 	 * @return the double[][]
 	 */
 	private double[][] computeMatrix(final double[][] basicMatrix, final int numberOfIteration,
@@ -343,8 +348,10 @@ public class DiffusionStatement extends AbstractStatement {
 	/**
 	 * Compute mask.
 	 *
-	 * @param scope the scope
-	 * @param mm the mm
+	 * @param scope
+	 *            the scope
+	 * @param mm
+	 *            the mm
 	 * @return the double[][]
 	 */
 	private double[][] computeMask(final IScope scope, final IMatrix<?> mm) {
@@ -391,7 +398,8 @@ public class DiffusionStatement extends AbstractStatement {
 	/**
 	 * Compute diffusion matrix.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the double[][]
 	 */
 	public double[][] computeDiffusionMatrix(final IScope scope) {

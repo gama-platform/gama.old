@@ -1,18 +1,13 @@
-/*
-   Copyright 2008 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFMLineStyle.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.objects;
 
 import java.util.ArrayList;
@@ -22,117 +17,241 @@ import java.util.List;
 
 import msi.gama.ext.kabeja.dxf.DXFConstants;
 
-
+/**
+ * The Class DXFMLineStyle.
+ */
 public class DXFMLineStyle extends DXFObject {
-    protected List lines = new ArrayList();
-    protected String name = "";
-    protected String descrition = "";
-    protected int fillColor = 256;
-    protected int flags = 0;
-    protected double startAngle = 0;
-    protected double endAngle = 0;
 
-    public String getObjectType() {
-        return DXFConstants.OBJECT_TYPE_MLINESTYLE;
-    }
+	/** The lines. */
+	protected List<DXFMLineStyleElement> lines = new ArrayList<>();
 
-    public void addDXFMLineStyleElement(DXFMLineStyleElement e) {
-        this.lines.add(e);
-    }
+	/** The name. */
+	protected String name = "";
 
-    public DXFMLineStyleElement getDXFMLineStyleLElement(int index) {
-        return (DXFMLineStyleElement) this.lines.get(index);
-    }
+	/** The descrition. */
+	protected String descrition = "";
 
-    public DXFMLineStyleElement removeDXFMLineStyleLElement(int index) {
-        return (DXFMLineStyleElement) this.lines.remove(index);
-    }
+	/** The fill color. */
+	protected int fillColor = 256;
 
-    public int getDXFMLineStyleLElementCount() {
-        return this.lines.size();
-    }
+	/** The flags. */
+	protected int flags = 0;
 
-    public void sortDXFMLineStyleElements(Comparator comp) {
-        Collections.sort(this.lines, comp);
-    }
+	/** The start angle. */
+	protected double startAngle = 0;
 
-    public String getName() {
-        return name;
-    }
+	/** The end angle. */
+	protected double endAngle = 0;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Override
+	public String getObjectType() { return DXFConstants.OBJECT_TYPE_MLINESTYLE; }
 
-    public String getDescrition() {
-        return descrition;
-    }
+	/**
+	 * Adds the DXFM line style element.
+	 *
+	 * @param e
+	 *            the e
+	 */
+	public void addDXFMLineStyleElement(final DXFMLineStyleElement e) {
+		this.lines.add(e);
+	}
 
-    public void setDescrition(String descrition) {
-        this.descrition = descrition;
-    }
+	/**
+	 * Gets the DXFM line style L element.
+	 *
+	 * @param index
+	 *            the index
+	 * @return the DXFM line style L element
+	 */
+	public DXFMLineStyleElement getDXFMLineStyleLElement(final int index) {
+		return this.lines.get(index);
+	}
 
-    public int getFillColor() {
-        return fillColor;
-    }
+	/**
+	 * Removes the DXFM line style L element.
+	 *
+	 * @param index
+	 *            the index
+	 * @return the DXFM line style element
+	 */
+	public DXFMLineStyleElement removeDXFMLineStyleLElement(final int index) {
+		return this.lines.remove(index);
+	}
 
-    public void setFillColor(int fillColor) {
-        this.fillColor = fillColor;
-    }
+	/**
+	 * Gets the DXFM line style L element count.
+	 *
+	 * @return the DXFM line style L element count
+	 */
+	public int getDXFMLineStyleLElementCount() { return this.lines.size(); }
 
-    public int getFlags() {
-        return flags;
-    }
+	/**
+	 * Sort DXFM line style elements.
+	 *
+	 * @param comp
+	 *            the comp
+	 */
+	public void sortDXFMLineStyleElements(final Comparator<DXFMLineStyleElement> comp) {
+		Collections.sort(this.lines, comp);
+	}
 
-    public void setFlags(int flags) {
-        this.flags = flags;
-    }
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() { return name; }
 
-    public double getStartAngle() {
-        return startAngle;
-    }
+	/**
+	 * Sets the name.
+	 *
+	 * @param name
+	 *            the new name
+	 */
+	public void setName(final String name) { this.name = name; }
 
-    public void setStartAngle(double startAngle) {
-        this.startAngle = startAngle;
-    }
+	/**
+	 * Gets the descrition.
+	 *
+	 * @return the descrition
+	 */
+	public String getDescrition() { return descrition; }
 
-    public double getEndAngle() {
-        return endAngle;
-    }
+	/**
+	 * Sets the descrition.
+	 *
+	 * @param descrition
+	 *            the new descrition
+	 */
+	public void setDescrition(final String descrition) { this.descrition = descrition; }
 
-    public void setEndAngle(double endAngle) {
-        this.endAngle = endAngle;
-    }
+	/**
+	 * Gets the fill color.
+	 *
+	 * @return the fill color
+	 */
+	public int getFillColor() { return fillColor; }
 
-    public boolean isFilled() {
-        return (this.flags & 1) == 1;
-    }
+	/**
+	 * Sets the fill color.
+	 *
+	 * @param fillColor
+	 *            the new fill color
+	 */
+	public void setFillColor(final int fillColor) { this.fillColor = fillColor; }
 
-    public boolean hasStartSquareCaps() {
-        return (this.flags & 16) == 16;
-    }
+	/**
+	 * Gets the flags.
+	 *
+	 * @return the flags
+	 */
+	public int getFlags() { return flags; }
 
-    public boolean hasStartRoundCaps() {
-        return (this.flags & 64) == 64;
-    }
+	/**
+	 * Sets the flags.
+	 *
+	 * @param flags
+	 *            the new flags
+	 */
+	public void setFlags(final int flags) { this.flags = flags; }
 
-    public boolean hasStartInnerArcs() {
-        return (this.flags & 32) == 32;
-    }
+	/**
+	 * Gets the start angle.
+	 *
+	 * @return the start angle
+	 */
+	public double getStartAngle() { return startAngle; }
 
-    public boolean hasEndSquareCaps() {
-        return (this.flags & 256) == 256;
-    }
+	/**
+	 * Sets the start angle.
+	 *
+	 * @param startAngle
+	 *            the new start angle
+	 */
+	public void setStartAngle(final double startAngle) { this.startAngle = startAngle; }
 
-    public boolean hasEndRoundCaps() {
-        return (this.flags & 1024) == 1024;
-    }
+	/**
+	 * Gets the end angle.
+	 *
+	 * @return the end angle
+	 */
+	public double getEndAngle() { return endAngle; }
 
-    public boolean hasEndInnderArcs() {
-        return (this.flags & 512) == 512;
-    }
+	/**
+	 * Sets the end angle.
+	 *
+	 * @param endAngle
+	 *            the new end angle
+	 */
+	public void setEndAngle(final double endAngle) { this.endAngle = endAngle; }
 
-    public boolean showMiters() {
-        return (this.flags & 2) == 2;
-    }
+	/**
+	 * Checks if is filled.
+	 *
+	 * @return true, if is filled
+	 */
+	public boolean isFilled() { return (this.flags & 1) == 1; }
+
+	/**
+	 * Checks for start square caps.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasStartSquareCaps() {
+		return (this.flags & 16) == 16;
+	}
+
+	/**
+	 * Checks for start round caps.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasStartRoundCaps() {
+		return (this.flags & 64) == 64;
+	}
+
+	/**
+	 * Checks for start inner arcs.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasStartInnerArcs() {
+		return (this.flags & 32) == 32;
+	}
+
+	/**
+	 * Checks for end square caps.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasEndSquareCaps() {
+		return (this.flags & 256) == 256;
+	}
+
+	/**
+	 * Checks for end round caps.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasEndRoundCaps() {
+		return (this.flags & 1024) == 1024;
+	}
+
+	/**
+	 * Checks for end innder arcs.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasEndInnderArcs() {
+		return (this.flags & 512) == 512;
+	}
+
+	/**
+	 * Show miters.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean showMiters() {
+		return (this.flags & 2) == 2;
+	}
 }

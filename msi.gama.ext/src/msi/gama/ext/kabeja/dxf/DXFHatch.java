@@ -1,18 +1,12 @@
-/*
- Copyright 2005 Simon Mieth
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
+/*******************************************************************************************************
+ *
+ * DXFHatch.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf;
 
 import java.util.ArrayList;
@@ -22,349 +16,341 @@ import java.util.List;
 import msi.gama.ext.kabeja.dxf.helpers.HatchBoundaryLoop;
 import msi.gama.ext.kabeja.dxf.helpers.Point;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
 public class DXFHatch extends DXFEntity {
-    private String name = "";
-    private boolean solid = false;
-    private int associativityFlag = 0;
-    private int boundaryPathCount = 0;
-    private int hatchStyle = 0;
-    private int patternType = 0;
-    private double patternAngle = 0.0;
-    private double patternScaleSpacing = 1.0;
-    private boolean boundaryAnnotation = false;
-    private boolean patternDouble = false;
-    private int definationLinesCount = 0;
-    private double pixelSize = 0.0;
-    private int seedPointCount = 0;
-    private double offsetVector = 0.0;
-    private int degenerateBoundaryPathCount = 0;
-    private boolean gradientHatch = false;
-    private Point elevationPoint = new Point();
-    private List boundaries = new ArrayList();
-    private List patterns = new ArrayList();
-    private String patternID = "";
-    private double patternScale;
 
-    public DXFHatch() {
-    }
+	/** The name. */
+	private String name = "";
 
-    /**
-     * @return Returns the associativityFlag.
-     */
-    public int getAssociativityFlag() {
-        return associativityFlag;
-    }
+	/** The associativity flag. */
+	private int associativityFlag = 0;
 
-    /**
-     * @param associativityFlag
-     *            The associativityFlag to set.
-     */
-    public void setAssociativityFlag(int associativityFlag) {
-        this.associativityFlag = associativityFlag;
-    }
+	/** The boundary path count. */
+	private int boundaryPathCount = 0;
 
-    /**
-     * @return Returns the boundaryAnnotation.
-     */
-    public boolean isBoundaryAnnotation() {
-        return boundaryAnnotation;
-    }
+	/** The hatch style. */
+	private int hatchStyle = 0;
 
-    /**
-     * @param boundaryAnnotation
-     *            The boundaryAnnotation to set.
-     */
-    public void setBoundaryAnnotation(boolean boundaryAnnotation) {
-        this.boundaryAnnotation = boundaryAnnotation;
-    }
+	/** The pattern type. */
+	private int patternType = 0;
 
-    /**
-     * @return Returns the boundaryPathCount.
-     */
-    public int getBoundaryPathCount() {
-        return boundaryPathCount;
-    }
+	/** The pattern angle. */
+	private double patternAngle = 0.0;
 
-    /**
-     * @param boundaryPathCount
-     *            The boundaryPathCount to set.
-     */
-    public void setBoundaryPathCount(int boundaryPathCount) {
-        this.boundaryPathCount = boundaryPathCount;
-    }
+	/** The pattern scale spacing. */
+	private double patternScaleSpacing = 1.0;
 
-    /**
-     * @return Returns the definationLinesCount.
-     */
-    public int getDefinationLinesCount() {
-        return definationLinesCount;
-    }
+	/** The boundary annotation. */
+	private boolean boundaryAnnotation = false;
 
-    /**
-     * @param definationLinesCount
-     *            The definationLinesCount to set.
-     */
-    public void setDefinationLinesCount(int definationLinesCount) {
-        this.definationLinesCount = definationLinesCount;
-    }
+	/** The pattern double. */
+	private boolean patternDouble = false;
 
-    /**
-     * @return Returns the degenerateBoundaryPathCount.
-     */
-    public int getDegenerateBoundaryPathCount() {
-        return degenerateBoundaryPathCount;
-    }
+	/** The defination lines count. */
+	private int definationLinesCount = 0;
 
-    /**
-     * @param degenerateBoundaryPathCount
-     *            The degenerateBoundaryPathCount to set.
-     */
-    public void setDegenerateBoundaryPathCount(int degenerateBoundaryPathCount) {
-        this.degenerateBoundaryPathCount = degenerateBoundaryPathCount;
-    }
+	/** The pixel size. */
+	private double pixelSize = 0.0;
 
-    /**
-     * @return Returns the gradientHatch.
-     */
-    public boolean isGradientHatch() {
-        return gradientHatch;
-    }
+	/** The seed point count. */
+	private int seedPointCount = 0;
 
-    /**
-     * @param gradientHatch
-     *            The gradientHatch to set.
-     */
-    public void setGradientHatch(boolean gradientHatch) {
-        this.gradientHatch = gradientHatch;
-    }
+	/** The offset vector. */
+	private double offsetVector = 0.0;
 
-    /**
-     * @return Returns the hatchStyle.
-     */
-    public int getHatchStyle() {
-        return hatchStyle;
-    }
+	/** The degenerate boundary path count. */
+	private int degenerateBoundaryPathCount = 0;
 
-    /**
-     * @param hatchStyle
-     *            The hatchStyle to set.
-     */
-    public void setHatchStyle(int hatchStyle) {
-        this.hatchStyle = hatchStyle;
-    }
+	/** The gradient hatch. */
+	private boolean gradientHatch = false;
 
-    /**
-     * @return Returns the name.
-     */
-    public String getName() {
-        return name;
-    }
+	/** The elevation point. */
+	private Point elevationPoint = new Point();
 
-    /**
-     * @param name
-     *            The name to set.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/** The boundaries. */
+	private final List<HatchBoundaryLoop> boundaries = new ArrayList<>();
+	//
+	// /** The patterns. */
+	// private final List patterns = new ArrayList();
 
-    /**
-     * @return Returns the offsetVector.
-     */
-    public double getOffsetVector() {
-        return offsetVector;
-    }
+	/** The pattern ID. */
+	private String patternID = "";
 
-    /**
-     * @param offsetVector
-     *            The offsetVector to set.
-     */
-    public void setOffsetVector(double offsetVector) {
-        this.offsetVector = offsetVector;
-    }
+	/** The pattern scale. */
+	private double patternScale;
 
-    /**
-     * @return Returns the patternAngle.
-     */
-    public double getPatternAngle() {
-        return patternAngle;
-    }
+	/**
+	 * Instantiates a new DXF hatch.
+	 */
+	public DXFHatch() {}
 
-    /**
-     * @param patternAngle
-     *            The patternAngle to set.
-     */
-    public void setPatternAngle(double patternAngle) {
-        this.patternAngle = patternAngle;
-    }
+	/**
+	 * @return Returns the associativityFlag.
+	 */
+	public int getAssociativityFlag() { return associativityFlag; }
 
-    /**
-     * @return Returns the patternDouble.
-     */
-    public boolean isPatternDouble() {
-        return patternDouble;
-    }
+	/**
+	 * @param associativityFlag
+	 *            The associativityFlag to set.
+	 */
+	public void setAssociativityFlag(final int associativityFlag) { this.associativityFlag = associativityFlag; }
 
-    /**
-     * @param patternDouble
-     *            The patternDouble to set.
-     */
-    public void setPatternDouble(boolean patternDouble) {
-        this.patternDouble = patternDouble;
-    }
+	/**
+	 * @return Returns the boundaryAnnotation.
+	 */
+	public boolean isBoundaryAnnotation() { return boundaryAnnotation; }
 
-    /**
-     * @return Returns the patternScaleSpacing.
-     */
-    public double getPatternScaleSpacing() {
-        return patternScaleSpacing;
-    }
+	/**
+	 * @param boundaryAnnotation
+	 *            The boundaryAnnotation to set.
+	 */
+	public void setBoundaryAnnotation(final boolean boundaryAnnotation) {
+		this.boundaryAnnotation = boundaryAnnotation;
+	}
 
-    /**
-     * @param patternScaleSpacing
-     *            The patternScaleSpacing to set.
-     */
-    public void setPatternScaleSpacing(double patternScaleSpacing) {
-        this.patternScaleSpacing = patternScaleSpacing;
-    }
+	/**
+	 * @return Returns the boundaryPathCount.
+	 */
+	public int getBoundaryPathCount() { return boundaryPathCount; }
 
-    /**
-     * @return Returns the patternType.
-     */
-    public int getPatternType() {
-        return patternType;
-    }
+	/**
+	 * @param boundaryPathCount
+	 *            The boundaryPathCount to set.
+	 */
+	public void setBoundaryPathCount(final int boundaryPathCount) { this.boundaryPathCount = boundaryPathCount; }
 
-    /**
-     * @param patternType
-     *            The patternType to set.
-     */
-    public void setPatternType(int patternType) {
-        this.patternType = patternType;
-    }
+	/**
+	 * @return Returns the definationLinesCount.
+	 */
+	public int getDefinationLinesCount() { return definationLinesCount; }
 
-    /**
-     * @return Returns the pixelSize.
-     */
-    public double getPixelSize() {
-        return pixelSize;
-    }
+	/**
+	 * @param definationLinesCount
+	 *            The definationLinesCount to set.
+	 */
+	public void setDefinationLinesCount(final int definationLinesCount) {
+		this.definationLinesCount = definationLinesCount;
+	}
 
-    /**
-     * @param pixelSize
-     *            The pixelSize to set.
-     */
-    public void setPixelSize(double pixelSize) {
-        this.pixelSize = pixelSize;
-    }
+	/**
+	 * @return Returns the degenerateBoundaryPathCount.
+	 */
+	public int getDegenerateBoundaryPathCount() { return degenerateBoundaryPathCount; }
 
-    /**
-     * @return Returns the seedPointCount.
-     */
-    public int getSeedPointCount() {
-        return seedPointCount;
-    }
+	/**
+	 * @param degenerateBoundaryPathCount
+	 *            The degenerateBoundaryPathCount to set.
+	 */
+	public void setDegenerateBoundaryPathCount(final int degenerateBoundaryPathCount) {
+		this.degenerateBoundaryPathCount = degenerateBoundaryPathCount;
+	}
 
-    /**
-     * @param seedPointCount
-     *            The seedPointCount to set.
-     */
-    public void setSeedPointCount(int seedPointCount) {
-        this.seedPointCount = seedPointCount;
-    }
+	/**
+	 * @return Returns the gradientHatch.
+	 */
+	public boolean isGradientHatch() { return gradientHatch; }
 
-    /**
-     * @return Returns the solid.
-     */
-    public boolean isSolid() {
-        return this.flags == 1;
-    }
+	/**
+	 * @param gradientHatch
+	 *            The gradientHatch to set.
+	 */
+	public void setGradientHatch(final boolean gradientHatch) { this.gradientHatch = gradientHatch; }
 
-    /**
-     * @param solid
-     *            The solid to set.
-     */
-    public void setSolid(boolean solid) {
-        this.solid = solid;
-    }
+	/**
+	 * @return Returns the hatchStyle.
+	 */
+	public int getHatchStyle() { return hatchStyle; }
 
-    public void addBoundaryLoop(HatchBoundaryLoop loop) {
-        this.boundaries.add(loop);
-    }
+	/**
+	 * @param hatchStyle
+	 *            The hatchStyle to set.
+	 */
+	public void setHatchStyle(final int hatchStyle) { this.hatchStyle = hatchStyle; }
 
-    public Iterator getBoundaryLoops() {
-        return this.boundaries.iterator();
-    }
+	/**
+	 * @return Returns the name.
+	 */
+	public String getName() { return name; }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see de.miethxml.kabeja.dxf.DXFEntity#getBounds()
-     */
-    public Bounds getBounds() {
-        Bounds bounds = new Bounds();
-        Iterator i = this.boundaries.iterator();
+	/**
+	 * @param name
+	 *            The name to set.
+	 */
+	public void setName(final String name) { this.name = name; }
 
-        while (i.hasNext()) {
-            HatchBoundaryLoop loop = (HatchBoundaryLoop) i.next();
-            Bounds b = loop.getBounds();
+	/**
+	 * @return Returns the offsetVector.
+	 */
+	public double getOffsetVector() { return offsetVector; }
 
-            if (b.isValid()) {
-                bounds.addToBounds(b);
-            }
-        }
+	/**
+	 * @param offsetVector
+	 *            The offsetVector to set.
+	 */
+	public void setOffsetVector(final double offsetVector) { this.offsetVector = offsetVector; }
 
-        return bounds;
-    }
+	/**
+	 * @return Returns the patternAngle.
+	 */
+	public double getPatternAngle() { return patternAngle; }
 
-    /**
-     * @return Returns the elevationPoint.
-     */
-    public Point getElevationPoint() {
-        return elevationPoint;
-    }
+	/**
+	 * @param patternAngle
+	 *            The patternAngle to set.
+	 */
+	public void setPatternAngle(final double patternAngle) { this.patternAngle = patternAngle; }
 
-    /**
-     * @param elevationPoint
-     *            The elevationPoint to set.
-     */
-    public void setElevationPoint(Point elevationPoint) {
-        this.elevationPoint = elevationPoint;
-    }
+	/**
+	 * @return Returns the patternDouble.
+	 */
+	public boolean isPatternDouble() { return patternDouble; }
 
-    public String getType() {
-        return DXFConstants.ENTITY_TYPE_HATCH;
-    }
+	/**
+	 * @param patternDouble
+	 *            The patternDouble to set.
+	 */
+	public void setPatternDouble(final boolean patternDouble) { this.patternDouble = patternDouble; }
 
-    /**
-     * @return Returns the ID of the pattern (also called pattern name).
-     */
-    public String getDXFHatchPatternID() {
-        return this.patternID;
-    }
+	/**
+	 * @return Returns the patternScaleSpacing.
+	 */
+	public double getPatternScaleSpacing() { return patternScaleSpacing; }
 
-    /**
-     * @param patternID
-     *            The patternID to set.
-     */
-    public void setDXFHatchPatternID(String patternID) {
-        this.patternID = patternID;
-    }
+	/**
+	 * @param patternScaleSpacing
+	 *            The patternScaleSpacing to set.
+	 */
+	public void setPatternScaleSpacing(final double patternScaleSpacing) {
+		this.patternScaleSpacing = patternScaleSpacing;
+	}
 
-    public double getLength() {
-        return 0;
-    }
+	/**
+	 * @return Returns the patternType.
+	 */
+	public int getPatternType() { return patternType; }
 
-    public double getPatternScale() {
-        return patternScale;
-    }
+	/**
+	 * @param patternType
+	 *            The patternType to set.
+	 */
+	public void setPatternType(final int patternType) { this.patternType = patternType; }
 
-    public void setPatternScale(double patternScale) {
-        this.patternScale = patternScale;
-    }
+	/**
+	 * @return Returns the pixelSize.
+	 */
+	public double getPixelSize() { return pixelSize; }
+
+	/**
+	 * @param pixelSize
+	 *            The pixelSize to set.
+	 */
+	public void setPixelSize(final double pixelSize) { this.pixelSize = pixelSize; }
+
+	/**
+	 * @return Returns the seedPointCount.
+	 */
+	public int getSeedPointCount() { return seedPointCount; }
+
+	/**
+	 * @param seedPointCount
+	 *            The seedPointCount to set.
+	 */
+	public void setSeedPointCount(final int seedPointCount) { this.seedPointCount = seedPointCount; }
+
+	/**
+	 * @return Returns the solid.
+	 */
+	public boolean isSolid() { return this.flags == 1; }
+
+	/**
+	 * @param solid
+	 *            The solid to set.
+	 */
+	public void setSolid(final boolean solid) {
+		this.flags = 1;
+		// this. solid = solid;
+	}
+
+	/**
+	 * Adds the boundary loop.
+	 *
+	 * @param loop
+	 *            the loop
+	 */
+	public void addBoundaryLoop(final HatchBoundaryLoop loop) {
+		this.boundaries.add(loop);
+	}
+
+	/**
+	 * Gets the boundary loops.
+	 *
+	 * @return the boundary loops
+	 */
+	public Iterator getBoundaryLoops() { return this.boundaries.iterator(); }
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.miethxml.kabeja.dxf.DXFEntity#getBounds()
+	 */
+	@Override
+	public Bounds getBounds() {
+		Bounds bounds = new Bounds();
+		Iterator i = this.boundaries.iterator();
+
+		while (i.hasNext()) {
+			HatchBoundaryLoop loop = (HatchBoundaryLoop) i.next();
+			Bounds b = loop.getBounds();
+
+			if (b.isValid()) { bounds.addToBounds(b); }
+		}
+
+		return bounds;
+	}
+
+	/**
+	 * @return Returns the elevationPoint.
+	 */
+	public Point getElevationPoint() { return elevationPoint; }
+
+	/**
+	 * @param elevationPoint
+	 *            The elevationPoint to set.
+	 */
+	public void setElevationPoint(final Point elevationPoint) { this.elevationPoint = elevationPoint; }
+
+	@Override
+	public String getType() { return DXFConstants.ENTITY_TYPE_HATCH; }
+
+	/**
+	 * @return Returns the ID of the pattern (also called pattern name).
+	 */
+	public String getDXFHatchPatternID() { return this.patternID; }
+
+	/**
+	 * @param patternID
+	 *            The patternID to set.
+	 */
+	public void setDXFHatchPatternID(final String patternID) { this.patternID = patternID; }
+
+	@Override
+	public double getLength() { return 0; }
+
+	/**
+	 * Gets the pattern scale.
+	 *
+	 * @return the pattern scale
+	 */
+	public double getPatternScale() { return patternScale; }
+
+	/**
+	 * Sets the pattern scale.
+	 *
+	 * @param patternScale
+	 *            the new pattern scale
+	 */
+	public void setPatternScale(final double patternScale) { this.patternScale = patternScale; }
 }

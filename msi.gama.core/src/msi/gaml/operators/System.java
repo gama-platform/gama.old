@@ -209,13 +209,14 @@ public class System {
 		try {
 			final Process p = b.start();
 			if (nonBlocking) return "";
-			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			final int returnValue = p.waitFor();
-			String line = "";
-			while ((line = reader.readLine()) != null) { output.append(line + Strings.LN); }
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+				final int returnValue = p.waitFor();
+				String line = "";
+				while ((line = reader.readLine()) != null) { output.append(line + Strings.LN); }
 
-			if (returnValue != 0)
-				throw GamaRuntimeException.error("Error in console command." + output.toString(), scope);
+				if (returnValue != 0)
+					throw GamaRuntimeException.error("Error in console command." + output.toString(), scope);
+			}
 		} catch (final IOException | InterruptedException e) {
 			throw GamaRuntimeException.error("Error in console command. " + e.getMessage(), scope);
 		}

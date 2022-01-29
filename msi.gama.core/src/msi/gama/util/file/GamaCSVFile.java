@@ -3,7 +3,7 @@
  * GamaCSVFile.java, in msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -12,7 +12,6 @@ package msi.gama.util.file;
 
 import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -63,31 +62,34 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 
 		/** The cols. */
 		public int cols;
-		
+
 		/** The rows. */
 		public int rows;
-		
+
 		/** The header. */
 		public boolean header;
-		
+
 		/** The delimiter. */
 		public Character delimiter;
-		
-		/** The qualifier. */
-		public Character qualifier;
-		
+		//
+		// /** The qualifier. */
+		// public Character qualifier;
+
 		/** The type. */
 		public final IType type;
-		
+
 		/** The headers. */
 		public String[] headers;
 
 		/**
 		 * Instantiates a new CSV info.
 		 *
-		 * @param fileName the file name
-		 * @param modificationStamp the modification stamp
-		 * @param CSVsep the CS vsep
+		 * @param fileName
+		 *            the file name
+		 * @param modificationStamp
+		 *            the modification stamp
+		 * @param CSVsep
+		 *            the CS vsep
 		 */
 		public CSVInfo(final String fileName, final long modificationStamp, final String CSVsep) {
 			super(modificationStamp);
@@ -103,7 +105,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		/**
 		 * Instantiates a new CSV info.
 		 *
-		 * @param propertyString the property string
+		 * @param propertyString
+		 *            the property string
 		 */
 		public CSVInfo(final String propertyString) {
 			super(propertyString);
@@ -171,22 +174,22 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 
 	/** The csv separator. */
 	String csvSeparator = null;
-	
+
 	/** The text qualifier. */
 	Character textQualifier = null;
-	
+
 	/** The contents type. */
 	IType contentsType;
-	
+
 	/** The user size. */
 	GamaPoint userSize;
-	
+
 	/** The has header. */
 	Boolean hasHeader;
-	
+
 	/** The headers. */
 	IList<String> headers;
-	
+
 	/** The info. */
 	CSVInfo info;
 
@@ -207,9 +210,12 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param withHeader the with header
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param withHeader
+	 *            the with header
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file with the default separator (coma), with specifying if the model has a header or not (boolean), and no assumption on the type of data. No text qualifier will be used",
@@ -224,9 +230,12 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file and specify the separator used, without making any assumption on the type of data. Headers should be detected automatically if they exist. No text qualifier will be used",
@@ -240,10 +249,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param withHeader the with header
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param withHeader
+	 *            the with header
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file and specify (1) the separator used; (2) if the model has a header or not, without making any assumption on the type of data. No text qualifier will be used",
@@ -258,11 +271,16 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param qualifier the qualifier
-	 * @param withHeader the with header
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param qualifier
+	 *            the qualifier
+	 * @param withHeader
+	 *            the with header
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file and specify (1) the separator used; (2) the text qualifier used; (3) if the model has a header or not, without making any assumption on the type of data",
@@ -279,10 +297,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param type the type
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param type
+	 *            the type
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file with a given separator, no header, and the type of data. No text qualifier will be used",
@@ -296,11 +318,16 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param qualifier the qualifier
-	 * @param type the type
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param qualifier
+	 *            the qualifier
+	 * @param type
+	 *            the type
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file and specify the separator, text qualifier to use, and the type of data to read.  Headers should be detected automatically if they exist.  ",
@@ -316,11 +343,16 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param type the type
-	 * @param withHeader the with header
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param type
+	 *            the type
+	 * @param withHeader
+	 *            the with header
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying if the model has a header or not (boolean). No text qualifier will be used",
@@ -336,11 +368,16 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param separator the separator
-	 * @param type the type
-	 * @param size the size
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param separator
+	 *            the separator
+	 * @param type
+	 *            the type
+	 * @param size
+	 *            the size
 	 */
 	@doc (
 			value = "This file constructor allows to read a CSV file with a given separator, the type of data, with specifying the number of cols and rows taken into account. No text qualifier will be used",
@@ -358,9 +395,12 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Instantiates a new gama CSV file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param matrix the matrix
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param matrix
+	 *            the matrix
 	 */
 	@doc (
 			value = "This file constructor allows to store a matrix in a CSV file (it does not save it - just store it in memory),",
@@ -379,7 +419,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Sets the csv separators.
 	 *
-	 * @param string the new csv separators
+	 * @param string
+	 *            the new csv separators
 	 */
 	public void setCsvSeparators(final String string) {
 		if (string == null) return;
@@ -400,8 +441,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Gets the info.
 	 *
-	 * @param scope the scope
-	 * @param CSVSep the CSV sep
+	 * @param scope
+	 *            the scope
+	 * @param CSVSep
+	 *            the CSV sep
 	 * @return the info
 	 */
 	private CSVInfo getInfo(final IScope scope, final String CSVSep) {
@@ -485,10 +528,13 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	/**
 	 * Creates the matrix from.
 	 *
-	 * @param scope the scope
-	 * @param reader the reader
+	 * @param scope
+	 *            the scope
+	 * @param reader
+	 *            the reader
 	 * @return the i matrix
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private IMatrix createMatrixFrom(final IScope scope, final CsvReader reader) throws IOException {
 		final int t = contentsType.id();

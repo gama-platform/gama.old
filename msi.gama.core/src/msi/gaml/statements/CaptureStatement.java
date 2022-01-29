@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CaptureStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CaptureStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -151,10 +151,10 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 	/** The target. */
 	private IExpression target;
-	
+
 	/** The return string. */
 	private final String returnString;
-	
+
 	/** The micro species name. */
 	private String microSpeciesName = null;
 
@@ -164,7 +164,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 	/**
 	 * Instantiates a new capture statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public CaptureStatement(final IDescription desc) {
 		super(desc);
@@ -231,7 +232,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 					microAgents.clear();
 
 					// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
-					if (!capturedAgents.isEmpty() && (sequence != null && !sequence.isEmpty())) {
+					if (!capturedAgents.isEmpty() && sequence != null && !sequence.isEmpty()) {
 						for (final IAgent capturedA : capturedAgents) {
 							if (!scope.execute(sequence, capturedA, null).passed()) { break; }
 						}
@@ -268,8 +269,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 			}
 			raStr.remove(raStr.size() - 1);
 
-			final StringBuilder raB = new StringBuilder();
-			for (final String s : raStr) { raB.append(s); }
+			// final StringBuilder raB = new StringBuilder();
+			// for (final String s : raStr) { raB.append(s); }
 
 			if (microSpeciesName != null) throw GamaRuntimeException.error(
 					macroAgent.getName() + " can't capture " + raStr.toString() + " as " + microSpeciesName + " agent",

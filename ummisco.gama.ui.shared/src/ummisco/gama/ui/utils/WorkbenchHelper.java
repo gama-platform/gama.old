@@ -3,7 +3,7 @@
  * WorkbenchHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -90,7 +90,7 @@ public class WorkbenchHelper {
 	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
 	/** The clipboard. */
-	private static Clipboard CLIPBOARD;
+	private static volatile Clipboard CLIPBOARD;
 
 	/** The Constant TRANSFERS. */
 	private final static Transfer[] TRANSFERS = { TextTransfer.getInstance() };
@@ -160,15 +160,17 @@ public class WorkbenchHelper {
 		if (d == null || d.isDisposed() || d.getThread() == Thread.currentThread()) {
 			try {
 				return r.call();
-			} catch (Exception e1) {}
+			} catch (Exception e1) {
+				return null;
+			}
 		}
-		Object[] result = new Object[1];
+		@SuppressWarnings ("unchecked") T[] result = (T[]) new Object[1];
 		d.syncExec(() -> {
 			try {
 				result[0] = r.call();
 			} catch (Exception e) {}
 		});
-		return (T) result[0];
+		return result[0];
 	}
 
 	/**

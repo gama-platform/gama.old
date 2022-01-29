@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * BulletBodyWrapper.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.java_version;
 
 import static java.lang.Math.max;
@@ -21,11 +31,13 @@ import gama.extensions.physics.common.AbstractBodyWrapper;
 import gama.extensions.physics.common.IBody;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.Types;
 
+/**
+ * The Class BulletBodyWrapper.
+ */
 /*
  * A rigid body "wrapper" dedicated to GAMA agents. Allows to translate information from/to the agents and their bodies,
  * to reconstruct shapes (from JTS geometries and GAMA 3D additions, but also from AABB envelopes) and to pass commands
@@ -36,11 +48,24 @@ import msi.gaml.types.Types;
 public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld, RigidBody, CollisionShape, Vector3f>
 		implements IBulletPhysicalEntity {
 
+	/** The temp. */
 	private final Transform temp = new Transform();
+	
+	/** The vtemp 2. */
 	private final Vector3f vtemp = new Vector3f(), vtemp2 = new Vector3f();
+	
+	/** The axis angle transfer. */
 	final AxisAngle4f axisAngleTransfer = new AxisAngle4f();
+	
+	/** The quat transfer. */
 	Quat4f quatTransfer = new Quat4f();
 
+	/**
+	 * Instantiates a new bullet body wrapper.
+	 *
+	 * @param agent the agent
+	 * @param gateway the gateway
+	 */
 	public BulletBodyWrapper(final IAgent agent, final BulletPhysicalWorld gateway) {
 		super(agent, gateway);
 		body.setUserPointer(this);
@@ -183,9 +208,7 @@ public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld
 	}
 
 	@Override
-	public float getContactDamping() {
-		return 0;
-	}
+	public float getContactDamping() { return 0; }
 
 	@Override
 	public void setContactDamping(final Double damping) {
@@ -193,9 +216,7 @@ public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld
 	}
 
 	@Override
-	public float getFriction() {
-		return body.getFriction();
-	}
+	public float getFriction() { return body.getFriction(); }
 
 	@Override
 	public float getRestitution() {
@@ -204,14 +225,10 @@ public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld
 	}
 
 	@Override
-	public float getLinearDamping() {
-		return body.getLinearDamping();
-	}
+	public float getLinearDamping() { return body.getLinearDamping(); }
 
 	@Override
-	public float getAngularDamping() {
-		return body.getAngularDamping();
-	}
+	public float getAngularDamping() { return body.getAngularDamping(); }
 
 	@Override
 	public void clearForces() {
@@ -224,7 +241,7 @@ public class BulletBodyWrapper extends AbstractBodyWrapper<DiscreteDynamicsWorld
 		agent.setLocation(new GamaPoint(vectorTransfer.x, vectorTransfer.y, vectorTransfer.z - aabbTranslation.z));
 		temp.getRotation(quatTransfer);
 		axisAngleTransfer.set(quatTransfer);
-		var rot = (GamaPair<Double, GamaPoint>) agent.getAttribute(ROTATION);
+		@SuppressWarnings ("unchecked") var rot = (GamaPair<Double, GamaPoint>) agent.getAttribute(ROTATION);
 		if (rot == null) {
 			rot = new GamaPair<>(0d, new GamaPoint(0, 0, 1), Types.FLOAT, Types.POINT);
 			agent.setAttribute(ROTATION, rot);

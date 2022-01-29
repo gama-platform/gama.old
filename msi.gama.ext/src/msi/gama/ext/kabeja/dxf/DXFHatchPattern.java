@@ -1,18 +1,13 @@
-/*
- Copyright 2005 Simon Mieth
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
+/*******************************************************************************************************
+ *
+ * DXFHatchPattern.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf;
 
 import java.util.ArrayList;
@@ -21,7 +16,6 @@ import java.util.List;
 
 import msi.gama.ext.kabeja.dxf.helpers.HatchLineFamily;
 
-
 /**
  * This class represent a single line family of a hatch pattern set.
  *
@@ -29,63 +23,71 @@ import msi.gama.ext.kabeja.dxf.helpers.HatchLineFamily;
  *
  */
 public class DXFHatchPattern {
-    private static int idCount = 0;
-    private String id = null;
-    private List patterns = new ArrayList();
-    private DXFHatch hatch;
+	
+	/** The id count. */
+	private static int idCount = 0;
+	
+	/** The id. */
+	private String id = null;
+	
+	/** The patterns. */
+	private final List<HatchLineFamily> patterns = new ArrayList<>();
+	
+	/** The hatch. */
+	private DXFHatch hatch;
 
-    /**
-     * @return Returns the id.
-     */
-    public String getID() {
-        if (this.id == null) {
-            this.id = "HATCH_PATTERN_ID_" + DXFHatchPattern.idCount;
-            DXFHatchPattern.idCount++;
-        }
+	/**
+	 * @return Returns the id.
+	 */
+	public String getID() {
+		if (this.id == null) {
+			this.id = "HATCH_PATTERN_ID_" + DXFHatchPattern.idCount;
+			DXFHatchPattern.idCount++;
+		}
 
-        return id;
-    }
+		return id;
+	}
 
-    /**
-     * @param id
-     *            The id to set.
-     */
-    public void setID(String id) {
-        this.id = id;
-    }
+	/**
+	 * @param id
+	 *            The id to set.
+	 */
+	public void setID(final String id) { this.id = id; }
 
-    public void addLineFamily(HatchLineFamily pattern) {
-        patterns.add(pattern);
-    }
+	/**
+	 * Adds the line family.
+	 *
+	 * @param pattern the pattern
+	 */
+	public void addLineFamily(final HatchLineFamily pattern) {
+		patterns.add(pattern);
+	}
 
-    public Iterator getLineFamilyIterator() {
-        return patterns.iterator();
-    }
+	/**
+	 * Gets the line family iterator.
+	 *
+	 * @return the line family iterator
+	 */
+	public Iterator getLineFamilyIterator() { return patterns.iterator(); }
 
-    /**
-     * The associated hatch for this pattern.
-     *
-     * @return Returns the hatch.
-     */
-    public DXFHatch getDXFHatch() {
-        return this.hatch;
-    }
+	/**
+	 * The associated hatch for this pattern.
+	 *
+	 * @return Returns the hatch.
+	 */
+	public DXFHatch getDXFHatch() { return this.hatch; }
 
-    /**
-     * The associated hatch for this pattern.
-     *
-     * @param hatch
-     *            The hatch to set.
-     */
-    public void setHatch(DXFHatch hatch) {
-        this.hatch = hatch;
-    }
+	/**
+	 * The associated hatch for this pattern.
+	 *
+	 * @param hatch
+	 *            The hatch to set.
+	 */
+	public void setHatch(final DXFHatch hatch) { this.hatch = hatch; }
 
-    /**
-     *
-     * @return the count of the used line families
-     */
-    public int getLineFamilyCount() {
-        return this.patterns.size();
-    }
+	/**
+	 *
+	 * @return the count of the used line families
+	 */
+	public int getLineFamilyCount() { return this.patterns.size(); }
 }

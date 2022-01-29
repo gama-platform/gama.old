@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.descriptions.StatementDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * StatementDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,6 +29,7 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
@@ -39,9 +40,26 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class StatementDescription extends SymbolDescription {
 
+	/** The passed args. */
 	// Corresponds to the "with" facet
 	protected final Arguments passedArgs;
 
+	/**
+	 * Instantiates a new statement description.
+	 *
+	 * @param keyword
+	 *            the keyword
+	 * @param superDesc
+	 *            the super desc
+	 * @param hasArgs
+	 *            the has args
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
+	 * @param alreadyComputedArgs
+	 *            the already computed args
+	 */
 	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
 			final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, source, /* children, */ facets);
@@ -61,37 +79,49 @@ public class StatementDescription extends SymbolDescription {
 		if (passedArgs != null) { passedArgs.dispose(); }
 	}
 
+	/**
+	 * Creates the args.
+	 *
+	 * @return the arguments
+	 */
 	private Arguments createArgs() {
 		if (!hasFacets()) return null;
-		if (!hasFacet(WITH)) {
-			if (!isInvocation()) return null;
-			if (hasFacetsNotIn(DO_FACETS)) {
-				final Arguments args = new Arguments();
-				visitFacets((facet, b) -> {
-					if (!DO_FACETS.contains(facet)) { args.put(facet, b); }
-					return true;
-				});
-				return args;
-			} else
-				return null;
-		} else {
+		if (hasFacet(WITH)) {
 			try {
 				return GAML.getExpressionFactory().createArgumentMap(getAction(), getFacet(WITH), this);
 			} finally {
 				removeFacets(WITH);
 			}
 		}
+		if (!isInvocation() || !hasFacetsNotIn(DO_FACETS)) return null;
+		final Arguments args = new Arguments();
+		visitFacets((facet, b) -> {
+			if (!DO_FACETS.contains(facet)) { args.put(facet, b); }
+			return true;
+		});
+		return args;
 
 	}
 
-	public boolean isSuperInvocation() {
-		return INVOKE.equals(keyword);
-	}
+	/**
+	 * Checks if is super invocation.
+	 *
+	 * @return true, if is super invocation
+	 */
+	public boolean isSuperInvocation() { return INVOKE.equals(keyword); }
 
-	private boolean isInvocation() {
-		return DO.equals(keyword) || isSuperInvocation();
-	}
+	/**
+	 * Checks if is invocation.
+	 *
+	 * @return true, if is invocation
+	 */
+	private boolean isInvocation() { return DO.equals(keyword) || isSuperInvocation(); }
 
+	/**
+	 * Gets the action.
+	 *
+	 * @return the action
+	 */
 	private ActionDescription getAction() {
 		final String actionName = getLitteral(ACTION);
 		if (actionName == null) return null;
@@ -128,19 +158,32 @@ public class StatementDescription extends SymbolDescription {
 		return false;
 	}
 
+	/**
+	 * Verify args.
+	 *
+	 * @param args
+	 *            the args
+	 * @return true, if successful
+	 */
 	public boolean verifyArgs(final Arguments args) {
 		final ActionDescription executer = getAction();
 		if (executer == null) return false;
 		return executer.verifyArgs(this, args);
 	}
 
-	public Iterable<IDescription> getFormalArgs() {
-		return getChildrenWithKeyword(ARG);
-	}
+	/**
+	 * Gets the formal args.
+	 *
+	 * @return the formal args
+	 */
+	public Iterable<IDescription> getFormalArgs() { return getChildrenWithKeyword(ARG); }
 
-	public Facets getPassedArgs() {
-		return passedArgs == null ? Facets.NULL : passedArgs;
-	}
+	/**
+	 * Gets the passed args.
+	 *
+	 * @return the passed args
+	 */
+	public Facets getPassedArgs() { return passedArgs == null ? Facets.NULL : passedArgs; }
 
 	@Override
 	public String getName() {
@@ -153,7 +196,7 @@ public class StatementDescription extends SymbolDescription {
 				if (REFLEX.equals(getKeyword())) {
 					warning("Reflexes should be named", MISSING_NAME, getUnderlyingElement());
 				}
-				s = INTERNAL + getKeyword() + String.valueOf(GAML.COMMAND_INDEX++);
+				s = INTERNAL + getKeyword() + String.valueOf(COUNTER.GET());
 			}
 			setName(s);
 		}
@@ -193,6 +236,11 @@ public class StatementDescription extends SymbolDescription {
 		return result;
 	}
 
+	/**
+	 * Validate passed args.
+	 *
+	 * @return the arguments
+	 */
 	public Arguments validatePassedArgs() {
 		final IDescription superDesc = getEnclosingDescription();
 		passedArgs.forEachFacet((nm, exp) -> {
@@ -205,6 +253,12 @@ public class StatementDescription extends SymbolDescription {
 		return passedArgs;
 	}
 
+	/**
+	 * Verify inits.
+	 *
+	 * @param ca
+	 *            the ca
+	 */
 	private void verifyInits(final Arguments ca) {
 		final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies();
 		if (denotedSpecies == null) {
@@ -223,25 +277,23 @@ public class StatementDescription extends SymbolDescription {
 				error("Attribute " + nm + " does not exist in species " + denotedSpecies.getName(), UNKNOWN_ARGUMENT,
 						exp.getTarget(), (String[]) null);
 				return false;
-			} else {
-				IType<?> initType = NO_TYPE;
-				IType<?> varType = NO_TYPE;
-				final VariableDescription vd = denotedSpecies.getAttribute(nm);
-				if (vd != null) { varType = vd.getGamlType(); }
-				if (exp != null) {
-					final IExpression expr = exp.getExpression();
-					if (expr != null) { initType = expr.getGamlType(); }
-					if (varType != NO_TYPE && !initType.isTranslatableInto(varType)) {
-						if (CREATE.equals(getKeyword())) {
-							final boolean isDB = getFacet(FROM) != null
-									&& getFacet(FROM).getExpression().getGamlType().isAssignableFrom(Types.LIST);
-							if (isDB && initType.equals(Types.STRING)) return true;
-						}
-						warning("The type of attribute " + nm + " should be " + varType, SHOULD_CAST, exp.getTarget(),
-								varType.toString());
+			}
+			IType<?> initType = NO_TYPE;
+			IType<?> varType = NO_TYPE;
+			final VariableDescription vd = denotedSpecies.getAttribute(nm);
+			if (vd != null) { varType = vd.getGamlType(); }
+			if (exp != null) {
+				final IExpression expr = exp.getExpression();
+				if (expr != null) { initType = expr.getGamlType(); }
+				if (varType != NO_TYPE && !initType.isTranslatableInto(varType)) {
+					if (CREATE.equals(getKeyword())) {
+						final boolean isDB = getFacet(FROM) != null
+								&& getFacet(FROM).getExpression().getGamlType().isAssignableFrom(Types.LIST);
+						if (isDB && initType.equals(Types.STRING)) return true;
 					}
+					warning("The type of attribute " + nm + " should be " + varType, SHOULD_CAST, exp.getTarget(),
+							varType.toString());
 				}
-
 			}
 
 			return true;
@@ -299,6 +351,15 @@ public class StatementDescription extends SymbolDescription {
 
 	}
 
+	/**
+	 * Adds the new temp if necessary.
+	 *
+	 * @param facetName
+	 *            the facet name
+	 * @param type
+	 *            the type
+	 * @return the i var expression
+	 */
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
 		final String varName = getLitteral(facetName);
 		final IDescription sup = getEnclosingDescription();
@@ -320,10 +381,13 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public Iterable<IDescription> getOwnChildren() {
-		return EMPTY_LIST;
-	}
+	public Iterable<IDescription> getOwnChildren() { return EMPTY_LIST; }
 
+	/**
+	 * Creates the compiled args.
+	 *
+	 * @return the arguments
+	 */
 	public Arguments createCompiledArgs() {
 		return passedArgs;
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.metamodel.shape.GamaShape.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaShape.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -54,28 +54,53 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShape implements IShape {
 
-	class ShapeData {
+	/**
+	 * The Class ShapeData.
+	 */
+	private static class ShapeData {
+		
+		/** The depth. */
 		private Double depth;
+		
+		/** The type. */
 		private Type type;
 	}
 
+	/** The geometry. */
 	protected Geometry geometry;
+	
+	/** The agent. */
 	private IAgent agent;
+	
+	/** The attributes. */
 	protected IMap<String, Object> attributes;
 
+	/**
+	 * Instantiates a new gama shape.
+	 *
+	 * @param geom the geom
+	 */
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
 	}
 
 	@Override
-	public IType getGamlType() {
-		return Types.GEOMETRY;
-	}
+	public IType getGamlType() { return Types.GEOMETRY; }
 
+	/**
+	 * Instantiates a new gama shape.
+	 *
+	 * @param env the env
+	 */
 	public GamaShape(final Envelope3D env) {
 		this(env == null ? null : env.toGeometry());
 	}
 
+	/**
+	 * Instantiates a new gama shape.
+	 *
+	 * @param geom the geom
+	 */
 	public GamaShape(final IShape geom) {
 		this(geom, null);
 
@@ -109,9 +134,7 @@ public class GamaShape implements IShape {
 			final GamaShape shape = (GamaShape) source;
 			if (shape.attributes != null) {
 				getOrCreateAttributes();
-				shape.attributes.forEach((key, val) -> {
-					if (val != source) { attributes.put(key, val); }
-				});
+				shape.attributes.forEach((key, val) -> { if (val != source) { attributes.put(key, val); } });
 			}
 		} else {
 			// if (attr == null) { return; }
@@ -225,10 +248,13 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public boolean isMultiple() {
-		return getInnerGeometry() instanceof GeometryCollection;
-	}
+	public boolean isMultiple() { return getInnerGeometry() instanceof GeometryCollection; }
 
+	/**
+	 * Checks if is 3d.
+	 *
+	 * @return true, if is 3d
+	 */
 	public boolean is3D() {
 		return getDepth() != null;
 	}
@@ -275,9 +301,7 @@ public class GamaShape implements IShape {
 			result = "polygon (" + getPoints().serialize(includingBuiltIn) + ")";
 		}
 		if (holes.isEmpty()) return result;
-		for (final GamaShape g : holes) {
-			result = "(" + result + ") - (" + g.serialize(includingBuiltIn) + ")";
-		}
+		for (final GamaShape g : holes) { result = "(" + result + ") - (" + g.serialize(includingBuiltIn) + ")"; }
 		return result;
 	}
 
@@ -302,18 +326,24 @@ public class GamaShape implements IShape {
 		return l;
 	}
 
+	/**
+	 * Translated to.
+	 *
+	 * @param scope the scope
+	 * @param target the target
+	 * @return the gama shape
+	 */
 	public GamaShape translatedTo(final IScope scope, final GamaPoint target) {
 		final GamaShape result = copy(scope);
 		result.setLocation(target);
 		return result;
 	}
 
+	/** The Constant pl. */
 	public final static PointLocator pl = new PointLocator();
 
 	@Override
-	public GamaShape getGeometry() {
-		return this;
-	}
+	public GamaShape getGeometry() { return this; }
 
 	@Override
 	public Double getArea() {
@@ -324,26 +354,23 @@ public class GamaShape implements IShape {
 	@Override
 	public Double getVolume() {
 		final Double d = getDepth();
-		if (d == 0)
-			return 0d;
-		else {
-			final Type shapeType = getGeometricalType();
-			// TODO : should put any specific shape volume calculation here !!!
-			switch (shapeType) {
-				case SPHERE:
-					return 4 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 3);
-				case CONE:
-					return 1 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 2) * d;
-				case PYRAMID:
-					return Maths.pow(getWidth(), 2) * d / 3;
-				case THREED_FILE:
-				case NULL:
-					final Envelope3D env3D = getEnvelope();
-					return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
-							: env3D.getVolume();
-				default:
-					return getArea() * d;
-			}
+		if (d == 0) return 0d;
+		final Type shapeType = getGeometricalType();
+		// TODO : should put any specific shape volume calculation here !!!
+		switch (shapeType) {
+			case SPHERE:
+				return 4 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 3);
+			case CONE:
+				return 1 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 2) * d;
+			case PYRAMID:
+				return Maths.pow(getWidth(), 2) * d / 3;
+			case THREED_FILE:
+			case NULL:
+				final Envelope3D env3D = getEnvelope();
+				return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
+						: env3D.getVolume();
+			default:
+				return getArea() * d;
 		}
 	}
 
@@ -402,29 +429,29 @@ public class GamaShape implements IShape {
 		return new GamaShape(result);
 	}
 
+	/**
+	 * Gets the data.
+	 *
+	 * @param createIt the create it
+	 * @return the data
+	 */
 	private ShapeData getData(final boolean createIt) {
 		final Geometry g = getInnerGeometry();
 		if (g == null) return null;
 		Object o = g.getUserData();
 		if (o == null) {
-			if (createIt) {
-				o = new ShapeData();
-				g.setUserData(o);
-			} else
-				return null;
+			if (!createIt) return null;
+			o = new ShapeData();
+			g.setUserData(o);
 		}
 		return (ShapeData) o;
 	}
 
 	@Override
-	public Double getWidth() {
-		return getEnvelope().getWidth();
-	}
+	public Double getWidth() { return getEnvelope().getWidth(); }
 
 	@Override
-	public Double getHeight() {
-		return getEnvelope().getHeight();
-	}
+	public Double getHeight() { return getEnvelope().getHeight(); }
 
 	@Override
 	public Double getDepth() {
@@ -439,9 +466,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public GamaShape getGeometricEnvelope() {
-		return new GamaShape(getEnvelope());
-	}
+	public GamaShape getGeometricEnvelope() { return new GamaShape(getEnvelope()); }
 
 	@Override
 	public IList<GamaPoint> getPoints() {
@@ -456,14 +481,10 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public IAgent getAgent() {
-		return agent;
-	}
+	public IAgent getAgent() { return agent; }
 
 	@Override
-	public void setAgent(final IAgent a) {
-		agent = a;
-	}
+	public void setAgent(final IAgent a) { agent = a; }
 
 	@Override
 	public void setInnerGeometry(final Geometry geom) {
@@ -487,6 +508,11 @@ public class GamaShape implements IShape {
 		mixAttributes(geom);
 	}
 
+	/**
+	 * Compute average Z ordinate.
+	 *
+	 * @return the double
+	 */
 	private double computeAverageZOrdinate() {
 		double z = 0d;
 		final Coordinate[] coords = geometry.getCoordinates();
@@ -526,9 +552,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public Geometry getInnerGeometry() {
-		return geometry;
-	}
+	public Geometry getInnerGeometry() { return geometry; }
 
 	@Override
 	public GamaShape copy(final IScope scope) {
@@ -627,7 +651,7 @@ public class GamaShape implements IShape {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean partiallyOverlaps(final IShape g) {
 		try {
@@ -648,7 +672,7 @@ public class GamaShape implements IShape {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean touches(final IShape g) {
 		try {

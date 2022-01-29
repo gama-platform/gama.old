@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CreateStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CreateStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -122,7 +122,8 @@ import msi.gaml.types.Types;
 						name = AS,
 						type = { IType.SPECIES },
 						optional = true,
-						doc = @doc ("")),
+						internal = true,
+						doc = @doc ("optionally indicates a species into which to cast the created agents.")),
 				@facet (
 						name = WITH,
 						type = { IType.MAP },
@@ -226,7 +227,7 @@ import msi.gaml.types.Types;
 										value = "}",
 										isExecutable = false) }),
 				@usage (
-						value = "Desprecated uses: ",
+						value = "Deprecated uses: ",
 						examples = { @example (
 								value = "// Simple syntax",
 								isExecutable = false),
@@ -351,19 +352,19 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/** The init. */
 	// private final ThreadLocal<Arguments> init = new ThreadLocal();
 	private Arguments init;
-	
+
 	/** The header. */
 	private final IExpression from, number, species, header;
-	
+
 	/** The returns. */
 	private final String returns;
-	
+
 	/** The sequence. */
 	private final RemoteSequence sequence;
-	
+
 	/** The delegates. */
 	static List<ICreateDelegate> delegates = new ArrayList<>();
-	
+
 	/** The delegate types. */
 	static List<IType> delegateTypes = new ArrayList<>();
 
@@ -379,7 +380,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Removes the delegate.
 	 *
-	 * @param cd the cd
+	 * @param cd
+	 *            the cd
 	 */
 	public static void removeDelegate(final ICreateDelegate cd) {
 		delegates.remove(cd);
@@ -388,7 +390,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Instantiates a new creates the statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public CreateStatement(final IDescription desc) {
 		super(desc);
@@ -416,7 +419,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Find population.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i population
 	 */
 	IPopulation findPopulation(final IScope scope) {
@@ -494,7 +498,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Gets the source.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the source
 	 */
 	private Object getSource(final IScope scope) {
@@ -508,9 +513,12 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Creates the agents.
 	 *
-	 * @param scope the scope
-	 * @param population the population
-	 * @param inits the inits
+	 * @param scope
+	 *            the scope
+	 * @param population
+	 *            the population
+	 * @param inits
+	 *            the inits
 	 * @return the i list<? extends I agent>
 	 */
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
@@ -564,8 +572,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Fill with user init.
 	 *
-	 * @param scope the scope
-	 * @param values the values
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
 	 */
 	// TODO Call it before calling the ICreateDelegate createFrom method !
 	public void fillWithUserInit(final IScope scope, final Map values) {

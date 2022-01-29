@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.outputs.layers.charts.ChartJFreeChartOutputPie.java, in plugin msi.gama.core, is part of the source code of
- * the GAMA modeling and simulation platform (v. 1.8.1)
+ * ChartJFreeChartOutputPie.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -35,8 +35,21 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 
+/**
+ * The Class ChartJFreeChartOutputPie.
+ */
 public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
+	/**
+	 * Instantiates a new chart J free chart output pie.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 * @param typeexp
+	 *            the typeexp
+	 */
 	public ChartJFreeChartOutputPie(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stubs
@@ -46,9 +59,9 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	@Override
 	public void createChart(final IScope scope) {
 		super.createChart(scope);
-		if (style.equals(IKeyword.THREE_D)) {
+		if (IKeyword.THREE_D.equals(style)) {
 			chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
-		} else if (style.equals(IKeyword.RING)) {
+		} else if (IKeyword.RING.equals(style)) {
 			chart = ChartFactory.createRingChart(getName(), null, false, true, false);
 		} else {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
@@ -88,17 +101,15 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	public void initChart(final IScope scope, final String chartname) {
 		super.initChart(scope, chartname);
 
-		final PiePlot pp = (PiePlot) chart.getPlot();
+		final PiePlot<?> pp = (PiePlot<?>) chart.getPlot();
 		pp.setShadowXOffset(0);
 		pp.setShadowYOffset(0);
-		if (!this.series_label_position.equals("none")) {
+		if (!"none".equals(this.series_label_position)) {
 			pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
-			if (axesColor != null) {
-				pp.setLabelLinkPaint(axesColor);
-			}
+			if (axesColor != null) { pp.setLabelLinkPaint(axesColor); }
 			pp.setLabelFont(getTickFont());
 		}
-		if (this.series_label_position.equals("none")) {
+		if ("none".equals(this.series_label_position)) {
 			pp.setLabelLinksVisible(false);
 			pp.setLabelGenerator(null);
 
@@ -135,11 +146,19 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		return newr;
 	}
 
+	/**
+	 * Reset renderer.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
+	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 		// final int myrow = IdPosition.get(serieid);
 		if (myserie.getMycolor() != null) {
-			((PiePlot) this.getJFChart().getPlot()).setSectionPaint(serieid, myserie.getMycolor());
+			((PiePlot<?>) this.getJFChart().getPlot()).setSectionPaint(serieid, myserie.getMycolor());
 		}
 
 	}
@@ -148,10 +167,11 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	protected void clearDataSet(final IScope scope) {
 		// TODO Auto-generated method stub
 		super.clearDataSet(scope);
-		final PiePlot plot = (PiePlot) this.chart.getPlot();
+		final PiePlot<?> plot = (PiePlot) this.chart.getPlot();
 		jfreedataset.clear();
-		jfreedataset.add(0, new DefaultPieDataset());
-		plot.setDataset((DefaultPieDataset) jfreedataset.get(0));
+		DefaultPieDataset dd = new DefaultPieDataset<>();
+		jfreedataset.add(0, dd);
+		plot.setDataset(dd);
 		IdPosition.clear();
 		nbseries = 0;
 	}
@@ -160,17 +180,15 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	protected void createNewSerie(final IScope scope, final String serieid) {
 		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
 		// serieid);
-		if(!IdPosition.containsKey(serieid)) {
-			final PiePlot plot = (PiePlot) this.chart.getPlot();
-	
+		if (!IdPosition.containsKey(serieid)) {
+			@SuppressWarnings ("unchecked") final PiePlot<String> plot = (PiePlot<String>) this.chart.getPlot();
+
 			// final DefaultPieDataset firstdataset = (DefaultPieDataset)
 			// plot.getDataset();
-	
+
 			nbseries++;
 			IdPosition.put(serieid, nbseries - 1);
-			if (getStyle().equals(IKeyword.EXPLODED)) {
-				plot.setExplodePercent(serieid, 0.20);
-			}
+			if (IKeyword.EXPLODED.equals(getStyle())) { plot.setExplodePercent(serieid, 0.20); }
 		}
 		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+"
@@ -182,7 +200,8 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
-		final DefaultPieDataset serie = (DefaultPieDataset) jfreedataset.get(0);
+		@SuppressWarnings ("unchecked") final DefaultPieDataset<String> serie =
+				(DefaultPieDataset<String>) jfreedataset.get(0);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 
 		if (YValues.size() > 0) {
@@ -218,24 +237,20 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			final boolean xInt = xx % 1 == 0;
 			final boolean yInt = yy % 1 == 0;
 			String xTitle = xAxis.getLabel();
-			if (StringUtils.isBlank(xTitle)) {
-				xTitle = "X";
-			}
+			if (StringUtils.isBlank(xTitle)) { xTitle = "X"; }
 			String yTitle = yAxis.getLabel();
-			if (StringUtils.isBlank(yTitle)) {
-				yTitle = "Y";
-			}
+			if (StringUtils.isBlank(yTitle)) { yTitle = "Y"; }
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
 			return;
-		} else if (entity instanceof PieSectionEntity) {
+		}
+		if (entity instanceof PieSectionEntity) {
 			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
-			final PieDataset data = ((PieSectionEntity) entity).getDataset();
+			final PieDataset<?> data = ((PieSectionEntity) entity).getDataset();
 			final int index = ((PieSectionEntity) entity).getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return;
 		} else if (entity instanceof CategoryItemEntity) {
 			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 			final String title = columnKey.toString();
@@ -244,7 +259,6 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return;
 		}
 	}
 

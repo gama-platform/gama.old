@@ -1,21 +1,31 @@
+/*******************************************************************************************************
+ *
+ * LawStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -23,8 +33,12 @@ import msi.gaml.operators.System;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-//Définition des lois pour créer des obligations sur le modèle des rêgles d'inférences avec en supplément un seuil d'obéissance
+// Définition des lois pour créer des obligations sur le modèle des rêgles d'inférences avec en supplément un seuil
+// d'obéissance
 
+/**
+ * The Class LawStatement.
+ */
 @symbol (
 		name = LawStatement.LAW,
 		kind = ISymbolKind.SINGLE_STATEMENT,
@@ -60,7 +74,7 @@ import msi.gaml.types.IType;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (" ")),
-				
+
 				@facet (
 						name = IKeyword.PARALLEL,
 						type = { IType.BOOL, IType.INT },
@@ -97,52 +111,107 @@ import msi.gaml.types.IType;
 		examples = {
 				@example ("rule belief: new_predicate(\"test\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
 
+public class LawStatement extends AbstractStatement {
 
-public class LawStatement extends AbstractStatement{
-
+	/** The Constant LAW. */
 	public static final String LAW = "law";
-	public static final String BELIEF = "belief";
-	public static final String BELIEFS = "beliefs";
-	public static final String NEW_OBLIGATION = "new_obligation";
-	public static final String NEW_OBLIGATIONS = "new_obligations";
-	public static final String STRENGTH = "strength";
-	public static final String LIFETIME = "lifetime";
-	public static final String THRESHOLD = "threshold";
-	public static final String ALL = "all";
-	
 
+	/** The Constant BELIEF. */
+	public static final String BELIEF = "belief";
+
+	/** The Constant BELIEFS. */
+	public static final String BELIEFS = "beliefs";
+
+	/** The Constant NEW_OBLIGATION. */
+	public static final String NEW_OBLIGATION = "new_obligation";
+
+	/** The Constant NEW_OBLIGATIONS. */
+	public static final String NEW_OBLIGATIONS = "new_obligations";
+
+	/** The Constant STRENGTH. */
+	public static final String STRENGTH = "strength";
+
+	/** The Constant LIFETIME. */
+	public static final String LIFETIME = "lifetime";
+
+	/** The Constant THRESHOLD. */
+	public static final String THRESHOLD = "threshold";
+
+	/** The Constant ALL. */
+	public static final String ALL = "all";
+
+	/** The when. */
 	final IExpression when;
+
+	/** The parallel. */
 	final IExpression parallel;
+
+	/** The belief. */
 	final IExpression belief;
+
+	/** The beliefs. */
 	final IExpression beliefs;
+
+	/** The new obligation. */
 	final IExpression newObligation;
+
+	/** The new obligations. */
 	final IExpression newObligations;
+
+	/** The strength. */
 	final IExpression strength;
+
+	/** The lifetime. */
 	final IExpression lifetime;
+
+	/** The threshold. */
 	final IExpression threshold;
+
+	/** The all. */
 	final IExpression all;
-	
-	public IExpression getContextExpression() {
-		return when;
-	}
-	
-	public IExpression getBeliefExpression() {
-		return belief;
-	}
-	
-	public IExpression getObligationExpression() {
-		return newObligation;
-	}
-	
-	public IExpression getParallel() {
-		return parallel;
-	}
-	
-	public IExpression getThreshold() {
-		return threshold;
-	}
-	
-	public LawStatement(IDescription desc) {
+
+	/**
+	 * Gets the context expression.
+	 *
+	 * @return the context expression
+	 */
+	public IExpression getContextExpression() { return when; }
+
+	/**
+	 * Gets the belief expression.
+	 *
+	 * @return the belief expression
+	 */
+	public IExpression getBeliefExpression() { return belief; }
+
+	/**
+	 * Gets the obligation expression.
+	 *
+	 * @return the obligation expression
+	 */
+	public IExpression getObligationExpression() { return newObligation; }
+
+	/**
+	 * Gets the parallel.
+	 *
+	 * @return the parallel
+	 */
+	public IExpression getParallel() { return parallel; }
+
+	/**
+	 * Gets the threshold.
+	 *
+	 * @return the threshold
+	 */
+	public IExpression getThreshold() { return threshold; }
+
+	/**
+	 * Instantiates a new law statement.
+	 *
+	 * @param desc
+	 *            the desc
+	 */
+	public LawStatement(final IDescription desc) {
 		super(desc);
 		when = getFacet(IKeyword.WHEN);
 		belief = getFacet(LawStatement.BELIEF);
@@ -157,12 +226,11 @@ public class LawStatement extends AbstractStatement{
 		setName(desc.getName());
 	}
 
-
+	@SuppressWarnings ("unchecked")
 	@Override
-	protected Object privateExecuteIn(IScope scope) throws GamaRuntimeException {
-		if (newObligation == null && newObligations == null)
-			return null;
-		boolean allVal = (all != null) && Cast.asBool(scope, all.value(scope));
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		if (newObligation == null && newObligations == null) return null;
+		boolean allVal = all != null && Cast.asBool(scope, all.value(scope));
 		List<Predicate> predBeliefList = null;
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
 			final MentalState tempBelief = new MentalState("Belief");
@@ -172,101 +240,98 @@ public class LawStatement extends AbstractStatement{
 				tempBelief.setPredicate((Predicate) belief.value(scope));
 				has_belief = SimpleBdiArchitecture.hasBelief(scope, tempBelief);
 				if (has_belief) {
-					predBeliefList = new ArrayList<Predicate>();
-					for (final MentalState mental : SimpleBdiArchitecture.getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
-						if(mental.getPredicate()!=null){
-							if (tempBelief.getPredicate().equals(mental.getPredicate())) {
-								predBeliefList.add(mental.getPredicate());
-							}
+					predBeliefList = new ArrayList<>();
+					for (final MentalState mental : SimpleBdiArchitecture.getBase(scope,
+							SimpleBdiArchitecture.BELIEF_BASE)) {
+						if (mental.getPredicate() != null && tempBelief.getPredicate().equals(mental.getPredicate())) {
+							predBeliefList.add(mental.getPredicate());
 						}
 					}
 				}
 			}
-			if (belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief)) {				
-				if (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope))) {
-					if (threshold == null || obedienceValue>= (Double) threshold.value(scope)) {
-						if (newObligation != null) {
-							if (allVal) {
-								for (Predicate p : predBeliefList) {
-									final Predicate newObl = (Predicate) newObligation.value(scope);
-									final MentalState tempNewObligation = new MentalState("Obligation", newObl);
-									tempNewObligation.getPredicate().setValues((Map<String, Object>) System.opCopy(scope, p.getValues()));
-									if (strength != null) {
-										tempNewObligation.setStrength(
-										Cast.asFloat(scope, strength.value(scope)));
-									}
-									if (lifetime != null) {
-										tempNewObligation
-											.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
-									}
-									//ne faire ces actions que si on n'a pas d�j� l'obligation
-									if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
-										SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
-										SimpleBdiArchitecture.clearIntention(scope);
-										final IAgent agent = scope.getAgent();
-										agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
-										agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
-									}
-								} 
-							}else {
-									final Predicate newObl = (Predicate) newObligation.value(scope);
-									final MentalState tempNewObligation = new MentalState("Obligation", newObl);
-									if (strength != null) {
-										tempNewObligation.setStrength(
-										Cast.asFloat(scope, strength.value(scope)));
-									}
-									if (lifetime != null) {
-										tempNewObligation
-											.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
-									}
-									//ne faire ces actions que si on n'a pas d�j� l'obligation
-									if(!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)){
-										SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
-										SimpleBdiArchitecture.clearIntention(scope);
-										final IAgent agent = scope.getAgent();
-										agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
-										agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
-									}
-								}
-						}
-						if (newObligations != null) {
-							final List<Predicate> newObls =
-								(List<Predicate>) newObligations.value(scope);
-							for (final Predicate newDes : newObls) {
-								final MentalState tempDesires =
-									new MentalState("Obligation", newDes);
+			if ((belief == null || SimpleBdiArchitecture.hasBelief(scope, tempBelief))
+					&& (beliefs == null || hasBeliefs(scope, (List<Predicate>) beliefs.value(scope)))) {
+				if (threshold == null || obedienceValue >= (Double) threshold.value(scope)) {
+					if (newObligation != null) {
+						if (allVal) {
+							for (Predicate p : predBeliefList) {
+								final Predicate newObl = (Predicate) newObligation.value(scope);
+								final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+								tempNewObligation.getPredicate()
+										.setValues((IMap<String, Object>) System.opCopy(scope, p.getValues()));
 								if (strength != null) {
-									tempDesires.setStrength(
-										Cast.asFloat(scope, strength.value(scope)));
+									tempNewObligation.setStrength(Cast.asFloat(scope, strength.value(scope)));
 								}
 								if (lifetime != null) {
-									tempDesires.setLifeTime(
-											Cast.asInt(scope, lifetime.value(scope)));
+									tempNewObligation.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
 								}
-								if(!SimpleBdiArchitecture.hasObligation(scope, tempDesires)){
-									SimpleBdiArchitecture.addObligation(scope, tempDesires);
+								// ne faire ces actions que si on n'a pas d�j� l'obligation
+								if (!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)) {
+									SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
 									SimpleBdiArchitecture.clearIntention(scope);
 									final IAgent agent = scope.getAgent();
 									agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
 									agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
 								}
 							}
+						} else {
+							final Predicate newObl = (Predicate) newObligation.value(scope);
+							final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+							if (strength != null) {
+								tempNewObligation.setStrength(Cast.asFloat(scope, strength.value(scope)));
+							}
+							if (lifetime != null) {
+								tempNewObligation.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+							}
+							// ne faire ces actions que si on n'a pas d�j� l'obligation
+							if (!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)) {
+								SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+								SimpleBdiArchitecture.clearIntention(scope);
+								final IAgent agent = scope.getAgent();
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+							}
+						}
+					}
+					if (newObligations != null) {
+						@SuppressWarnings ("unchecked") final List<Predicate> newObls =
+								(List<Predicate>) newObligations.value(scope);
+						for (final Predicate newDes : newObls) {
+							final MentalState tempDesires = new MentalState("Obligation", newDes);
+							if (strength != null) {
+								tempDesires.setStrength(Cast.asFloat(scope, strength.value(scope)));
+							}
+							if (lifetime != null) { tempDesires.setLifeTime(Cast.asInt(scope, lifetime.value(scope))); }
+							if (!SimpleBdiArchitecture.hasObligation(scope, tempDesires)) {
+								SimpleBdiArchitecture.addObligation(scope, tempDesires);
+								SimpleBdiArchitecture.clearIntention(scope);
+								final IAgent agent = scope.getAgent();
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+								agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+							}
 						}
 					}
 				}
 			}
-		}	
+		}
 		return null;
 	}
 
-
-private boolean hasBeliefs(final IScope scope, final List<Predicate> predicates) {
-	for (final Predicate p : predicates) {
-		final MentalState temp = new MentalState("Belief", p);
-		if (!SimpleBdiArchitecture.hasBelief(scope, temp))
-			return false;
+	/**
+	 * Checks for beliefs.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param predicates
+	 *            the predicates
+	 * @return true, if successful
+	 */
+	private boolean hasBeliefs(final IScope scope, final List<Predicate> predicates) {
+		for (final Predicate p : predicates) {
+			final MentalState temp = new MentalState("Belief", p);
+			if (!SimpleBdiArchitecture.hasBelief(scope, temp)) return false;
+		}
+		return true;
 	}
-	return true;
-}
 
 }

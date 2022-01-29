@@ -1,15 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * AgentDB.java, in irit.gaml.extensions.database, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * 'AgentDB.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the GAMA modeling and
- * simulation platform. (v. 1.8.1)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package irit.gaml.extensions.database.species;
 
 import java.sql.Connection;
@@ -29,6 +27,9 @@ import msi.gama.util.IList;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class AgentDB.
+ */
 /*
  * @Author TRUONG Minh Thai
  *
@@ -56,15 +57,36 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class AgentDB extends GamlAgent {
 
+	/** The conn. */
 	private Connection conn = null;
+	
+	/** The sql conn. */
 	private SqlConnection sqlConn = null;
+	
+	/** The is connection. */
 	private boolean isConnection = false;
+	
+	/** The params. */
 	private java.util.Map<String, String> params = null;
 
+	/**
+	 * Instantiates a new agent DB.
+	 *
+	 * @param s the s
+	 * @param index the index
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public AgentDB(final IPopulation s, final int index) throws GamaRuntimeException {
 		super(s, index);
 	}
 
+	/**
+	 * Checks if is connected.
+	 *
+	 * @param scope the scope
+	 * @return true, if is connected
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "isConnected",
 			doc = @doc (
@@ -74,6 +96,13 @@ public class AgentDB extends GamlAgent {
 		return isConnection;
 	}
 
+	/**
+	 * Close.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "close",
 			doc = @doc (
@@ -87,10 +116,8 @@ public class AgentDB extends GamlAgent {
 			// e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString(), scope);
 		} catch (final NullPointerException npe) {
-			if (conn == null) {
-				throw GamaRuntimeException
-						.error("AgentDB.close error: cannot close a database connection that does not exist.", scope);
-			}
+			if (conn == null) throw GamaRuntimeException
+					.error("AgentDB.close error: cannot close a database connection that does not exist.", scope);
 		}
 		return null;
 
@@ -104,6 +131,13 @@ public class AgentDB extends GamlAgent {
 	// }
 
 	// Get current time of system
+	/**
+	 * Time stamp.
+	 *
+	 * @param scope the scope
+	 * @return the long
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	// added from MaeliaSkill
 	@action (
 			name = "timeStamp",
@@ -111,10 +145,16 @@ public class AgentDB extends GamlAgent {
 					value = "Get the current time of the system.",
 					returns = "Current time of the system in millisecondes"))
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
-		final Long timeStamp = System.currentTimeMillis();
-		return timeStamp;
+		return System.currentTimeMillis();
 	}
 
+	/**
+	 * Connect DB.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to BDMS
 	 *
@@ -135,7 +175,7 @@ public class AgentDB extends GamlAgent {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
-		final String dbtype = params.get("dbtype");
+		// final String dbtype = params.get("dbtype");
 		// Note BG: before 13/06/2020, SQLite was not supported in AgentDB.
 		// The reason is not clear, a guess is that when an agent update the database file,
 		// the file is locked and thus another agent cannot try to update it.
@@ -149,9 +189,8 @@ public class AgentDB extends GamlAgent {
 		// further info).",
 		// scope);
 		// }
-		if (isConnection) {
+		if (isConnection)
 			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened", scope);
-		}
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			conn = sqlConn.connectDB();
@@ -163,6 +202,13 @@ public class AgentDB extends GamlAgent {
 		// ----------------------------------------------------------------------------------------------------------
 	}
 
+	/**
+	 * Test connection.
+	 *
+	 * @param scope the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Test a connection to DBMS
 	 *
@@ -187,6 +233,13 @@ public class AgentDB extends GamlAgent {
 		// ---------------------------------------------------------------------------------------
 	}
 
+	/**
+	 * Select.
+	 *
+	 * @param scope the scope
+	 * @return the i list
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
@@ -219,9 +272,7 @@ public class AgentDB extends GamlAgent {
 					returns = "Returns the obtained result from executing the select statement."))
 	public IList select(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) {
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
-		}
+		if (!isConnection) throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		final String selectComm = (String) scope.getArg("select", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// Boolean transform = scope.hasArg("transform") ? (Boolean)
@@ -245,6 +296,13 @@ public class AgentDB extends GamlAgent {
 
 	}
 
+	/**
+	 * Execute update.
+	 *
+	 * @param scope the scope
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * - Make a connection to BDMS - Executes the SQL statement in this PreparedStatement object, which must be an SQL
 	 * INSERT, UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
@@ -276,9 +334,7 @@ public class AgentDB extends GamlAgent {
 					returns = "Returns the number of updated rows. "))
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) {
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
-		}
+		if (!isConnection) throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 
@@ -295,14 +351,19 @@ public class AgentDB extends GamlAgent {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString(), scope);
 		}
-		if (DEBUG.IS_ON()) {
-			DEBUG.OUT(updateComm + " was run");
-		}
+		if (DEBUG.IS_ON()) { DEBUG.OUT(updateComm + " was run"); }
 
 		return row_count;
 		// ----------------------------------------------------------------------------------------------------
 	}
 
+	/**
+	 * Gets the paramater.
+	 *
+	 * @param scope the scope
+	 * @return the paramater
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "getParameter",
 			args = {},
@@ -313,6 +374,13 @@ public class AgentDB extends GamlAgent {
 		return params;
 	}
 
+	/**
+	 * Sets the parameter.
+	 *
+	 * @param scope the scope
+	 * @return the object
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	@action (
 			name = "setParameter",
 			args = { @arg (
@@ -338,6 +406,13 @@ public class AgentDB extends GamlAgent {
 		return null;
 	}
 
+	/**
+	 * Insert.
+	 *
+	 * @param scope the scope
+	 * @return the int
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	/*
 	 * Make a connection to BDMS and execute the insert statement
 	 *
@@ -373,9 +448,7 @@ public class AgentDB extends GamlAgent {
 					returns = "Returns the number of updated rows. "))
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
-		if (!isConnection) {
-			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
-		}
+		if (!isConnection) throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		final String table_name = (String) scope.getArg("into", IType.STRING);
 		final IList<Object> cols = (IList<Object>) scope.getArg("columns", IType.LIST);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
@@ -401,9 +474,7 @@ public class AgentDB extends GamlAgent {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString(), scope);
 		}
-		if (DEBUG.IS_ON()) {
-			DEBUG.OUT("Insert into " + " was run");
-		}
+		if (DEBUG.IS_ON()) { DEBUG.OUT("Insert into " + " was run"); }
 
 		return rec_no;
 	}

@@ -3,7 +3,7 @@
  * ExecutionScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -44,6 +44,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * Class AbstractScope.
@@ -57,9 +58,6 @@ public class ExecutionScope implements IScope {
 
 	/** The Constant ATTRIBUTES. */
 	private static final String ATTRIBUTES = "%_attributes_%";
-
-	/** The scope number. */
-	private static int SCOPE_NUMBER = 0;
 
 	/** The scope name. */
 	private final String scopeName;
@@ -105,9 +103,9 @@ public class ExecutionScope implements IScope {
 
 		/** The current error. */
 		GamaRuntimeException currentError;
-
-		/** The horizontal pixel context. */
-		boolean horizontalPixelContext = false;
+		//
+		// /** The horizontal pixel context. */
+		// boolean horizontalPixelContext = false;
 
 		/**
 		 * Clear.
@@ -193,7 +191,7 @@ public class ExecutionScope implements IScope {
 	 */
 	public ExecutionScope(final ITopLevelAgent root, final String otherName, final IExecutionContext context,
 			final AgentExecutionContext agentContext, final SpecialContext specialContext) {
-		StringBuilder name = new StringBuilder("Scope #").append(++SCOPE_NUMBER);
+		StringBuilder name = new StringBuilder("Scope #").append(COUNTER.GET());
 		setRoot(root);
 		if (root != null) { name.append(" of ").append(root.stringValue(root.getScope())); }
 		name.append(otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")");

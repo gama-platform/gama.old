@@ -48,7 +48,7 @@ public class ParametricFileType extends ParametricType {
 	String plugin;
 
 	/** The generic instance. */
-	static ParametricFileType genericInstance;
+	static volatile ParametricFileType genericInstance;
 
 	/**
 	 * Instantiates a new parametric file type.

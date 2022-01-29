@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.GamaListFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaListFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,11 +50,23 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaListFactory {
 
+	/** The Constant DEFAULT_SIZE. */
 	private static final int DEFAULT_SIZE = 4;
+
+	/** The Constant EMPTY_LIST. */
 	public static final IList EMPTY_LIST = wrap(Types.NO_TYPE, Collections.EMPTY_LIST);
+
+	/** The ch. */
 	static Set<Collector.Characteristics> CH =
 			ImmutableSet.<Collector.Characteristics> of(Collector.Characteristics.IDENTITY_FINISH);
 
+	/**
+	 * To gama list.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @return the collector
+	 */
 	public static <T> Collector<T, IList<T>, IList<T>> toGamaList() {
 		return new Collector<>() {
 
@@ -88,12 +100,23 @@ public class GamaListFactory {
 		};
 	}
 
+	/** The to gama list. */
 	public static Collector<Object, IList<Object>, IList<Object>> TO_GAMA_LIST = toGamaList();
 
+	/**
+	 * The Class GamaListSupplier.
+	 */
 	public static class GamaListSupplier implements Supplier<IList> {
 
+		/** The t. */
 		final IType t;
 
+		/**
+		 * Instantiates a new gama list supplier.
+		 *
+		 * @param t
+		 *            the t
+		 */
 		public GamaListSupplier(final IType t) {
 			this.t = t;
 		}
@@ -105,6 +128,17 @@ public class GamaListFactory {
 
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param t
+	 *            the t
+	 * @param stream
+	 *            the stream
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IType t, final Stream<T> stream) {
 		return (IList<T>) stream.collect(TO_GAMA_LIST);
 	}
@@ -166,105 +200,216 @@ public class GamaListFactory {
 		return list;
 	}
 
+	/**
+	 * Cast and add.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param list
+	 *            the list
+	 * @param o
+	 *            the o
+	 */
 	private static void castAndAdd(final IScope scope, final IList list, final Object o) {
 		list.addValue(scope, o);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param container
+	 *            the container
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final IContainer container) {
 		if (container == null) return create(contentType);
 		if (GamaType.requiresCasting(contentType, container.getGamlType().getContentType()))
 			return create(scope, contentType, container.iterable(scope));
-		else
-			return createWithoutCasting(contentType, container.iterable(scope));
+		return createWithoutCasting(contentType, container.iterable(scope));
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param container
+	 *            the container
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final IList<T> container) {
 		if (container == null) return create(contentType);
 		if (GamaType.requiresCasting(contentType, container.getGamlType().getContentType()))
 			return create(scope, contentType, (Collection) container);
-		else
-			return createWithoutCasting(contentType, container);
+		return createWithoutCasting(contentType, container);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param iterable
+	 *            the iterable
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final Iterable<T> iterable) {
 		final IList<T> list = create(contentType);
-		for (final Object o : iterable) {
-			castAndAdd(scope, list, o);
-		}
+		for (final Object o : iterable) { castAndAdd(scope, list, o); }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param iterator
+	 *            the iterator
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final Iterator<T> iterator) {
 		final IList<T> list = create(contentType);
-		if (iterator != null) {
-			while (iterator.hasNext()) {
-				castAndAdd(scope, list, iterator.next());
-			}
-		}
+		if (iterator != null) { while (iterator.hasNext()) { castAndAdd(scope, list, iterator.next()); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param iterator
+	 *            the iterator
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final Enumeration<T> iterator) {
 		final IList<T> list = create(contentType);
 		if (iterator != null) {
-			while (iterator.hasMoreElements()) {
-				castAndAdd(scope, list, iterator.nextElement());
-			}
+			while (iterator.hasMoreElements()) { castAndAdd(scope, list, iterator.nextElement()); }
 		}
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param objects
+	 *            the objects
+	 * @return the i list
+	 */
 	@SafeVarargs
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final T... objects) {
 		final IList<T> list = create(contentType, objects == null ? 0 : objects.length);
-		if (objects != null) {
-			for (final Object o : objects) {
-				castAndAdd(scope, list, o);
-			}
-		}
+		if (objects != null) { for (final Object o : objects) { castAndAdd(scope, list, o); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param ints
+	 *            the ints
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final byte[] ints) {
 		final IList list = create(contentType, ints == null ? 0 : ints.length);
-		if (ints != null) {
-			for (final int o : ints) {
-				castAndAdd(scope, list, Integer.valueOf(o));
-			}
-		}
+		if (ints != null) { for (final int o : ints) { castAndAdd(scope, list, Integer.valueOf(o)); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param ints
+	 *            the ints
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final int[] ints) {
 		final IList list = create(contentType, ints == null ? 0 : ints.length);
-		if (ints != null) {
-			for (final int o : ints) {
-				castAndAdd(scope, list, Integer.valueOf(o));
-			}
-		}
+		if (ints != null) { for (final int o : ints) { castAndAdd(scope, list, Integer.valueOf(o)); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param ints
+	 *            the ints
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final long[] ints) {
 		final IList list = create(contentType, ints == null ? 0 : ints.length);
-		if (ints != null) {
-			for (final long o : ints) {
-				castAndAdd(scope, list, Long.valueOf(o).intValue());
-			}
-		}
+		if (ints != null) { for (final long o : ints) { castAndAdd(scope, list, Long.valueOf(o).intValue()); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param doubles
+	 *            the doubles
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final float[] doubles) {
 		final IList list = create(contentType, doubles == null ? 0 : doubles.length);
-		if (doubles != null) {
-			for (final float o : doubles) {
-				castAndAdd(scope, list, Double.valueOf(o));
-			}
-		}
+		if (doubles != null) { for (final float o : doubles) { castAndAdd(scope, list, Double.valueOf(o)); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param fillExpr
+	 *            the fill expr
+	 * @param size
+	 *            the size
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IExpression fillExpr, final Integer size) {
 		if (fillExpr == null) return create(Types.NO_TYPE, size);
 		final Object[] contents = new Object[size];
@@ -272,32 +417,56 @@ public class GamaListFactory {
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 		if (fillExpr.isConst()) {
 			final Object o = fillExpr.value(scope);
-			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
-				contents[i] = o;
-			}));
-		} else {
 			GamaExecutorService.executeThreaded(
-					() -> IntStream.range(0, contents.length)./* see #2974. parallel(). */forEach(i -> {
-						contents[i] = fillExpr.value(scope);
-					}));
+					() -> IntStream.range(0, contents.length).parallel().forEach(i -> { contents[i] = o; }));
+		} else {
+			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length)
+					./* see #2974. parallel(). */forEach(i -> { contents[i] = fillExpr.value(scope); }));
 		}
 		return create(scope, contentType, contents);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param doubles
+	 *            the doubles
+	 * @return the i list
+	 */
 	public static IList create(final IScope scope, final IType contentType, final double[] doubles) {
 		final IList list = create(contentType, doubles == null ? 0 : doubles.length);
-		if (doubles != null) {
-			for (final double o : doubles) {
-				castAndAdd(scope, list, Double.valueOf(o));
-			}
-		}
+		if (doubles != null) { for (final double o : doubles) { castAndAdd(scope, list, Double.valueOf(o)); } }
 		return list;
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param contentType
+	 *            the content type
+	 * @param size
+	 *            the size
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IType contentType, final int size) {
 		return new GamaList<>(size, contentType);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param contentType
+	 *            the content type
+	 * @return the i list
+	 */
 	public static <T> IList<T> create(final IType contentType) {
 		return create(contentType, DEFAULT_SIZE);
 	}
@@ -330,7 +499,7 @@ public class GamaListFactory {
 	 * @param wrapped
 	 * @return
 	 */
-	public static <E> IList<E> wrap(final IType<E> contentType, final List<E> wrapped) {
+	public static <E> IList<E> wrap(final IType contentType, final List<E> wrapped) {
 		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListWrapper(wrapped, contentType);
 	}
@@ -344,7 +513,7 @@ public class GamaListFactory {
 	 * @param wrapped
 	 * @return
 	 */
-	public static <E> IList<E> wrap(final IType<E> contentType, final E... wrapped) {
+	public static <E> IList<E> wrap(final IType contentType, final E... wrapped) {
 		// return createWithoutCasting(contentType, wrapped);
 		return new GamaListArrayWrapper(wrapped, contentType);
 	}
@@ -360,16 +529,23 @@ public class GamaListFactory {
 	 * @param wrapped
 	 * @return
 	 */
-	public static <E> IList<E> wrap(final IType<E> contentType, final Collection<E> wrapped) {
+	public static <E> IList<E> wrap(final IType contentType, final Collection<E> wrapped) {
 		return new GamaListCollectionWrapper(wrapped, contentType);
 	}
 
+	/**
+	 * Equals.
+	 *
+	 * @param one
+	 *            the one
+	 * @param two
+	 *            the two
+	 * @return true, if successful
+	 */
 	public static boolean equals(final IList one, final IList two) {
 		final Iterator<Object> it1 = one.iterator();
 		final Iterator<Object> it2 = two.iterator();
-		while (it1.hasNext() && it2.hasNext()) {
-			if (!Objects.equals(it1.next(), it2.next())) return false;
-		}
+		while (it1.hasNext() && it2.hasNext()) { if (!Objects.equals(it1.next(), it2.next())) return false; }
 		return !it1.hasNext() && !it2.hasNext();
 	}
 

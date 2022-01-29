@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * Box2DPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gama.extensions.physics.box2d_version;
 
 import org.jbox2d.collision.shapes.Shape;
@@ -12,15 +22,25 @@ import gama.extensions.physics.gaml.PhysicalSimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * The Class Box2DPhysicalWorld.
+ */
 public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2> implements IBox2DPhysicalEntity {
 
+	/**
+	 * Instantiates a new box 2 D physical world.
+	 *
+	 * @param physicalSimulationAgent
+	 *            the physical simulation agent
+	 */
 	public Box2DPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		super(physicalSimulationAgent);
 	}
 
+	@SuppressWarnings ("unused")
 	@Override
 	public void registerAgent(final IAgent agent) {
-		Box2DBodyWrapper body = new Box2DBodyWrapper(agent, this);
+		new Box2DBodyWrapper(agent, this);
 	}
 
 	@Override
@@ -77,12 +97,8 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 	@Override
 	protected void updateAgentsShape() {
 		// We update the agents
-		for (IAgent a : updatableAgents) {
-			unregisterAgent(a);
-		}
-		for (IAgent a : updatableAgents) {
-			registerAgent(a);
-		}
+		for (IAgent a : updatableAgents) { unregisterAgent(a); }
+		for (IAgent a : updatableAgents) { registerAgent(a); }
 		updatableAgents.clear();
 	}
 

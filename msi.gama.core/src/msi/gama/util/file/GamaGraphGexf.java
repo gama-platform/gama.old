@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.GamaGraphMLFile.java, in plugin msi.gama.core,
- * is part of the source code of the GAMA modeling and simulation platform (v. 1.8.1)
+ * GamaGraphGexf.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -18,6 +18,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
+/**
+ * The Class GamaGraphGexf.
+ */
 @file (
 		name = "graphgexf",
 		extensions = { "gexf" },
@@ -27,21 +30,55 @@ import msi.gaml.types.IType;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGraphGexf extends GamaGraphFile {
 
+	/**
+	 * Instantiates a new gama graph gexf.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pn
+	 *            the pn
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@doc ("References a gexf graph file by its filename")
 	public GamaGraphGexf(final IScope scope, final String pn) throws GamaRuntimeException {
 		super(scope, pn);
 	}
 
+	/**
+	 * Instantiates a new gama graph gexf.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param nodeSpecies
+	 *            the node species
+	 */
+	@doc ("References a gexf graph file by its filename and the species to use to instantiate the nodes")
 	public GamaGraphGexf(final IScope scope, final String pathName, final ISpecies nodeSpecies) {
 		super(scope, pathName, nodeSpecies);
 	}
 
-	public GamaGraphGexf(final IScope scope, final String pathName, final ISpecies nodeSpecies, final ISpecies edgeSpecies) {
-		super(scope, pathName,nodeSpecies,edgeSpecies);
+	/**
+	 * Instantiates a new gama graph gexf.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param nodeSpecies
+	 *            the node species
+	 * @param edgeSpecies
+	 *            the edge species
+	 */
+	@doc ("References a gexf graph file by its filename and the 2 species to use to instantiate the nodes and the edges")
+	public GamaGraphGexf(final IScope scope, final String pathName, final ISpecies nodeSpecies,
+			final ISpecies edgeSpecies) {
+		super(scope, pathName, nodeSpecies, edgeSpecies);
 	}
 
 	@Override
-	protected String getFileType() {
-		return "gexf";
-	}
+	protected String getFileType() { return "gexf"; }
 
 }

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ModelLibraryRunner.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.batch;
 
 import java.io.IOException;
@@ -24,10 +34,17 @@ import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.descriptions.ModelDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ModelLibraryRunner.
+ */
 public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 
+	/** The instance. */
 	private static ModelLibraryRunner instance;
 
+	/**
+	 * Instantiates a new model library runner.
+	 */
 	private ModelLibraryRunner() {
 		DEBUG.ON();
 	}
@@ -111,6 +128,17 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	// });
 	// }
 
+	/**
+	 * Validate and run.
+	 *
+	 * @param builder the builder
+	 * @param executionErrors the execution errors
+	 * @param countOfModelsValidated the count of models validated
+	 * @param returnCode the return code
+	 * @param pathToModel the path to model
+	 * @param expGUIOnly the exp GUI only
+	 * @param nbCycles the nb cycles
+	 */
 	private void validateAndRun(final GamlModelBuilder builder, final Map<String, Exception> executionErrors,
 			final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel, final boolean expGUIOnly,
 			final int nbCycles) {
@@ -121,7 +149,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 		final IModel mdl = builder.compile(pathToModel, errors);
 
 		countOfModelsValidated[0]++;
-		errors.stream().filter(e -> e.isError()).forEach(e -> {
+		errors.stream().filter(GamlCompilationError::isError).forEach(e -> {
 			DEBUG.OUT("Error in " + e.getURI() + ":\n " + e.toString() + " \n " + e.getStatement().toString() + "\n");
 			returnCode[0]++;
 		});
@@ -137,23 +165,30 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 			final IExperimentPlan exp = mdl.getExperiment(expName);
 			if (!exp.isBatch() || !expGUIOnly) {
 				DEBUG.OUT("*********** Run experiment " + exp + " from model: " + mdl.getName());
-				try {
-					experiment.setup(expName, 0.1);
-					for (int i = 0; i < nbCycles; i++) {
-						experiment.step();
-						DEBUG.OUT("****** Ap step()");
+				if (experiment != null) {
+					try {
+						experiment.setup(expName, 0.1);
+						for (int i = 0; i < nbCycles; i++) {
+							experiment.step();
+							DEBUG.OUT("****** Ap step()");
+						}
+					} catch (final msi.gama.ext.webb.WebbException ex1) {
+						DEBUG.OUT("msi.gama.ext.webb.WebbException");
+					} catch (final Exception ex) {
+						ex.printStackTrace();
+						executionErrors.put(pathToModel.getPath() + "\n" + expName, ex);
 					}
-				} catch (final msi.gama.ext.webb.WebbException ex1) {
-					DEBUG.OUT("msi.gama.ext.webb.WebbException");
-				} catch (final Exception ex) {
-					ex.printStackTrace();
-					executionErrors.put(pathToModel.getPath() + "\n" + expName, ex);
 				}
 			}
 		}
 
 	}
 
+	/**
+	 * Gets the single instance of ModelLibraryRunner.
+	 *
+	 * @return single instance of ModelLibraryRunner
+	 */
 	public static ModelLibraryRunner getInstance() {
 		if (instance == null) { instance = new ModelLibraryRunner(); }
 		return instance;

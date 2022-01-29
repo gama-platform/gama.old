@@ -1,11 +1,12 @@
 /*******************************************************************************************************
  *
- * Spatial.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * Spatial.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -4499,7 +4500,8 @@ public abstract class Spatial {
 					if (!ls.isEmpty()) {
 						final GamaPoint pto = l.getPoints().firstValue(scope);
 						final GamaPoint ptd = l.getPoints().lastValue(scope);
-						final PreparedGeometry pg = PreparedGeometryFactory.prepare(gg.getInnerGeometry());
+						@SuppressWarnings ("null") final PreparedGeometry pg =
+								PreparedGeometryFactory.prepare(gg.getInnerGeometry());
 						for (final IShape l2 : ls) {
 							if (pg.covers(l2.getInnerGeometry()) || pg.coveredBy(l2.getInnerGeometry())) { continue; }
 							final IShape it = Spatial.Operators.inter(scope, l, l2);

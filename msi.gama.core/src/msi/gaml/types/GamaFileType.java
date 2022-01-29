@@ -51,13 +51,13 @@ import msi.gaml.operators.Cast;
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	/** The extensions to full type. */
-	public static Map<String, ParametricFileType> extensionsToFullType = GamaMapFactory.createUnordered();
+	public static final Map<String, ParametricFileType> extensionsToFullType = GamaMapFactory.createUnordered();
 
 	/** The aliases to full type. */
-	static Map<String, ParametricFileType> aliasesToFullType = GamaMapFactory.createUnordered();
+	static final Map<String, ParametricFileType> aliasesToFullType = GamaMapFactory.createUnordered();
 
 	/** The aliases to extensions. */
-	static Multimap<String, String> aliasesToExtensions = HashMultimap.<String, String> create();
+	static final Multimap<String, String> aliasesToExtensions = HashMultimap.<String, String> create();
 
 	/** The current file type index. */
 	static int currentFileTypeIndex = 1000;

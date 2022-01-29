@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaGeometryType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaGeometryType.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -84,7 +84,8 @@ import msi.gaml.species.ISpecies;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaGeometryType extends GamaType<IShape> {
 
-	public static WKTReader SHAPE_READER = new WKTReader();
+	/** The Constant SHAPE_READER. */
+	public static final WKTReader SHAPE_READER = new WKTReader();
 
 	@Override
 	public IShape cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -92,6 +93,16 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return staticCast(scope, obj, param, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope the scope
+	 * @param obj the obj
+	 * @param param the param
+	 * @param copy the copy
+	 * @return the i shape
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IShape staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 
@@ -128,26 +139,18 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @return
 	 */
 	private static boolean isPoints(final IScope scope, final IContainer obj) {
-		for (final Object o : obj.iterable(scope)) {
-			if (!(o instanceof GamaPoint)) return false;
-		}
+		for (final Object o : obj.iterable(scope)) { if (!(o instanceof GamaPoint)) return false; }
 		return true;
 	}
 
 	@Override
-	public GamaShape getDefault() {
-		return null;
-	}
+	public GamaShape getDefault() { return null; }
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 	@Override
-	public IType getKeyType() {
-		return Types.STRING;
-	}
+	public IType getKeyType() { return Types.STRING; }
 
 	//
 	// @Override
@@ -156,9 +159,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	// }
 
 	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	public boolean isFixedLength() { return false; }
 
 	@Override
 	public boolean canCastToConst() {
@@ -202,6 +203,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		// GeometryUtils.changeClockWise(p));
 	}
 
+	/**
+	 * Builds the multi polygon.
+	 *
+	 * @param lpoints the lpoints
+	 * @return the i shape
+	 */
 	// A.G 28/05/2015 ADDED for gamanalyser
 	public static IShape buildMultiPolygon(final List<List<IShape>> lpoints) {
 		final Polygon[] polys = new Polygon[lpoints.size()];
@@ -231,6 +238,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(m.buffer(0.0));
 	}
 
+	/**
+	 * Builds the triangle.
+	 *
+	 * @param base the base
+	 * @param height the height
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildTriangle(final double base, final double height, final GamaPoint location) {
 		final Coordinate[] points = new Coordinate[4];
 		final double z = location == null ? 0.0 : location.getZ();
@@ -247,6 +262,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return s;
 	}
 
+	/**
+	 * Builds the triangle.
+	 *
+	 * @param side_size the side size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildTriangle(final double side_size, final GamaPoint location) {
 		final double h = Math.sqrt(3) / 2 * side_size;
 		final Coordinate[] points = new Coordinate[4];
@@ -264,6 +286,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(p);
 	}
 
+	/**
+	 * Builds the rectangle.
+	 *
+	 * @param width the width
+	 * @param height the height
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildRectangle(final double width, final double height, final GamaPoint location) {
 		final Coordinate[] points = new Coordinate[5];
 		final double x = location == null ? 0 : location.getX();
@@ -296,10 +326,23 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the line.
+	 *
+	 * @param location2 the location 2
+	 * @return the i shape
+	 */
 	public static IShape buildLine(final IShape location2) {
 		return buildLine(new GamaPoint(), location2);
 	}
 
+	/**
+	 * Builds the line.
+	 *
+	 * @param location1 the location 1
+	 * @param location2 the location 2
+	 * @return the i shape
+	 */
 	public static IShape buildLine(final IShape location1, final IShape location2) {
 		final Coordinate coordinates[] =
 				{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1.getLocation(),
@@ -311,6 +354,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(GeometryUtils.GEOMETRY_FACTORY.createLineString(coordinates));
 	}
 
+	/**
+	 * Builds the line cylinder.
+	 *
+	 * @param location1 the location 1
+	 * @param location2 the location 2
+	 * @param radius the radius
+	 * @return the i shape
+	 */
 	public static IShape buildLineCylinder(final IShape location1, final IShape location2, final double radius) {
 		final IShape g = buildLine(location1, location2);
 		g.setDepth(radius);
@@ -318,6 +369,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the plan.
+	 *
+	 * @param location1 the location 1
+	 * @param location2 the location 2
+	 * @param depth the depth
+	 * @return the i shape
+	 */
 	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
 		final IShape g = buildLine(location1, location2);
 		g.setDepth(depth);
@@ -325,15 +384,26 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the polyline.
+	 *
+	 * @param points the points
+	 * @return the i shape
+	 */
 	public static IShape buildPolyline(final List<IShape> points) {
 		final List<Coordinate> coordinates = new ArrayList<>();
-		for (final IShape p : points) {
-			coordinates.add(p.getLocation());
-		}
+		for (final IShape p : points) { coordinates.add(p.getLocation()); }
 		return new GamaShape(GeometryUtils.GEOMETRY_FACTORY
 				.createLineString(coordinates.toArray(new Coordinate[coordinates.size()])));
 	}
 
+	/**
+	 * Builds the polyline cylinder.
+	 *
+	 * @param points the points
+	 * @param radius the radius
+	 * @return the i shape
+	 */
 	public static IShape buildPolylineCylinder(final List<IShape> points, final double radius) {
 		final IShape g = buildPolyline(points);
 		g.setDepth(radius);
@@ -341,6 +411,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the polyplan.
+	 *
+	 * @param points the points
+	 * @param depth the depth
+	 * @return the i shape
+	 */
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
 		final IShape g = buildPolyline(points);
 		g.setDepth(depth);
@@ -348,15 +425,35 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Creates the point.
+	 *
+	 * @param location the location
+	 * @return the gama shape
+	 */
 	public static GamaShape createPoint(final IShape location) {
 		return new GamaShape(GeometryUtils.GEOMETRY_FACTORY
 				.createPoint(location == null ? new GamaPoint(0, 0) : (GamaPoint) location.getLocation()));
 	}
 
+	/**
+	 * Builds the square.
+	 *
+	 * @param side_size the side size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildSquare(final double side_size, final GamaPoint location) {
 		return buildRectangle(side_size, side_size, location);
 	}
 
+	/**
+	 * Builds the cube.
+	 *
+	 * @param side_size the side size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildCube(final double side_size, final GamaPoint location) {
 
 		final IShape g = buildRectangle(side_size, side_size, location);
@@ -366,6 +463,15 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	}
 
+	/**
+	 * Builds the box.
+	 *
+	 * @param width the width
+	 * @param height the height
+	 * @param depth the depth
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildBox(final double width, final double height, final double depth,
 			final GamaPoint location) {
 		final IShape g = buildRectangle(width, height, location);
@@ -374,14 +480,37 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the hexagon.
+	 *
+	 * @param size the size
+	 * @param x the x
+	 * @param y the y
+	 * @return the i shape
+	 */
 	public static IShape buildHexagon(final double size, final double x, final double y) {
 		return buildHexagon(size, new GamaPoint(x, y));
 	}
 
+	/**
+	 * Builds the hexagon.
+	 *
+	 * @param size the size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildHexagon(final double size, final GamaPoint location) {
 		return buildHexagon(size, size, location);
 	}
 
+	/**
+	 * Builds the hexagon.
+	 *
+	 * @param sizeX the size X
+	 * @param sizeY the size Y
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final GamaPoint location) {
 		final double x = location.getX();
 		final double y = location.getY();
@@ -399,21 +528,34 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	}
 
+	/**
+	 * Builds the circle.
+	 *
+	 * @param radius the radius
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildCircle(final double radius, final GamaPoint location) {
 		final Geometry geom = GeometryUtils.GEOMETRY_FACTORY
 				.createPoint(location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
 		final Geometry g = geom.buffer(radius);
 		if (location != null) {
 			final Coordinate[] coordinates = g.getCoordinates();
-			for (int i = 0; i < coordinates.length; i++) {
-				coordinates[i].z = location.z;
-			}
+			for (int i = 0; i < coordinates.length; i++) { coordinates[i].z = location.z; }
 		}
 		return new GamaShape(g);
 	}
 
+	/**
+	 * Builds the ellipse.
+	 *
+	 * @param xRadius the x radius
+	 * @param yRadius the y radius
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildEllipse(final double xRadius, final double yRadius, final GamaPoint location) {
-		if ((xRadius <= 0) && (yRadius <= 0)) return new GamaShape(location);
+		if (xRadius <= 0 && yRadius <= 0) return new GamaShape(location);
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
 		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
 																						// Maybe add a
@@ -424,13 +566,19 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final Geometry g = factory.createEllipse();
 		if (location != null) {
 			final Coordinate[] coordinates = g.getCoordinates();
-			for (int i = 0; i < coordinates.length; i++) {
-				coordinates[i].z = location.z;
-			}
+			for (int i = 0; i < coordinates.length; i++) { coordinates[i].z = location.z; }
 		}
 		return new GamaShape(g);
 	}
 
+	/**
+	 * Builds the squircle.
+	 *
+	 * @param xRadius the x radius
+	 * @param power the power
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
 		if (xRadius <= 0) return new GamaShape(location);
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
@@ -442,9 +590,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final Geometry g = factory.createSupercircle(power);
 		if (location != null) {
 			final Coordinate[] coordinates = g.getCoordinates();
-			for (int i = 0; i < coordinates.length; i++) {
-				coordinates[i].z = location.z;
-			}
+			for (int i = 0; i < coordinates.length; i++) { coordinates[i].z = location.z; }
 		}
 		return new GamaShape(g);
 
@@ -482,14 +628,20 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		if (location != null) {
 			final Coordinate[] coordinates = g.getCoordinates();
-			for (int i = 0; i < coordinates.length; i++) {
-				coordinates[i].z = location.z;
-			}
+			for (int i = 0; i < coordinates.length; i++) { coordinates[i].z = location.z; }
 		}
 		return new GamaShape(g);
 
 	}
 
+	/**
+	 * Builds the cylinder.
+	 *
+	 * @param radius the radius
+	 * @param depth the depth
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildCylinder(final double radius, final double depth, final GamaPoint location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(depth);
@@ -497,6 +649,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the sphere.
+	 *
+	 * @param radius the radius
+	 * @param location the location
+	 * @return the i shape
+	 */
 	// FIXME: Be sure that a buffer on a sphere returns a sphere.
 	public static IShape buildSphere(final double radius, final GamaPoint location) {
 		final IShape g = buildCircle(radius, location);
@@ -505,6 +664,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the cone 3 D.
+	 *
+	 * @param radius the radius
+	 * @param depth the depth
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildCone3D(final double radius, final double depth, final GamaPoint location) {
 		final IShape g = buildCircle(radius, location);
 		g.setDepth(depth);
@@ -512,6 +679,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the teapot.
+	 *
+	 * @param size the size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildTeapot(final double size, final GamaPoint location) {
 		final IShape g = buildCircle(size, location);
 		g.setDepth(size);
@@ -519,6 +693,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/**
+	 * Builds the pyramid.
+	 *
+	 * @param side_size the side size
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildPyramid(final double side_size, final GamaPoint location) {
 		final IShape g = buildRectangle(side_size, side_size, location);
 		g.setDepth(side_size);
@@ -526,12 +707,30 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	/** The theta. */
 	private static double theta = Math.tan(0.423d);
 
+	/**
+	 * Builds the arrow.
+	 *
+	 * @param head the head
+	 * @param size the size
+	 * @return the i shape
+	 */
 	public static IShape buildArrow(final GamaPoint head, final double size) {
 		return buildArrow(new GamaPoint(), head, size, size, true);
 	}
 
+	/**
+	 * Builds the arrow.
+	 *
+	 * @param tail the tail
+	 * @param head the head
+	 * @param arrowWidth the arrow width
+	 * @param arrowLength the arrow length
+	 * @param closed the closed
+	 * @return the i shape
+	 */
 	public static IShape buildArrow(final GamaPoint tail, final GamaPoint head, final double arrowWidth,
 			final double arrowLength, final boolean closed) {
 		final IList points = GamaListFactory.createWithoutCasting(Types.POINT, head);
@@ -556,6 +755,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return closed ? buildPolygon(points) : buildPolyline(points);
 	}
 
+	/**
+	 * Geometries to geometry.
+	 *
+	 * @param scope the scope
+	 * @param ags the ags
+	 * @return the gama shape
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
 			throws GamaRuntimeException {
 		if (ags == null || ags.isEmpty(scope)) return null;
@@ -579,9 +786,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 				if (geom != null && !geom.isEmpty()) return new GamaShape(geom);
 			} else if (is_polyline) {
 				final LineMerger merger = new LineMerger();
-				for (final Geometry g : geoms) {
-					merger.add(g);
-				}
+				for (final Geometry g : geoms) { merger.add(g); }
 				final Collection<LineString> collection = merger.getMergedLineStrings();
 
 				Geometry geom =
@@ -597,19 +802,24 @@ public class GamaGeometryType extends GamaType<IShape> {
 		} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e) {
 			// Geometry gs[] = new Geometry[geoms.length];
 			final List<Geometry> gs = new ArrayList(geoms.size());
-			for (final Geometry g : geoms) {
-				gs.add(g.buffer(0.0));
-			}
+			for (final Geometry g : geoms) { gs.add(g.buffer(0.0)); }
 			try {
 				final Geometry geom = CascadedPolygonUnion.union(gs);
 				if (geom != null && !geom.isEmpty()) return new GamaShape(geom);
-			} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e2) {
-			}
+			} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e2) {}
 
 		}
 		return null;
 	}
 
+	/**
+	 * Points to geometry.
+	 *
+	 * @param scope the scope
+	 * @param coordinates the coordinates
+	 * @return the gama shape
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static GamaShape pointsToGeometry(final IScope scope, final IContainer<?, GamaPoint> coordinates)
 			throws GamaRuntimeException {
 		if (coordinates != null && !coordinates.isEmpty(scope)) {
@@ -624,10 +834,26 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return null;
 	}
 
+	/**
+	 * Builds the link.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @param target the target
+	 * @return the gama shape
+	 */
 	public static GamaShape buildLink(final IScope scope, final IShape source, final IShape target) {
 		return new GamaShape(new DynamicLineString(GeometryUtils.GEOMETRY_FACTORY, source, target));
 	}
 
+	/**
+	 * Pair to geometry.
+	 *
+	 * @param scope the scope
+	 * @param p the p
+	 * @return the i shape
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
 	public static IShape pairToGeometry(final IScope scope, final GamaPair p) throws GamaRuntimeException {
 		final IShape first = staticCast(scope, p.first(), null, false);
 		if (first == null) return null;
@@ -636,6 +862,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return buildLink(scope, first, second);
 	}
 
+	/**
+	 * Builds the multi geometry.
+	 *
+	 * @param shapes the shapes
+	 * @return the i shape
+	 */
 	public static IShape buildMultiGeometry(final IList<IShape> shapes) {
 		if (shapes.size() == 0) return null;
 		if (shapes.size() == 1) return shapes.get(0);
@@ -644,15 +876,27 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(geom);
 	}
 
+	/**
+	 * Builds the multi geometry.
+	 *
+	 * @param shapes the shapes
+	 * @return the i shape
+	 */
 	public static IShape buildMultiGeometry(final IShape... shapes) {
 		try (final Collector.AsList<IShape> list = Collector.getList()) {
-			for (final IShape shape : shapes) {
-				if (shape != null) { list.add(shape); }
-			}
+			for (final IShape shape : shapes) { if (shape != null) { list.add(shape); } }
 			return buildMultiGeometry(list.items());
 		}
 	}
 
+	/**
+	 * Builds the cross.
+	 *
+	 * @param xRadius the x radius
+	 * @param width the width
+	 * @param location the location
+	 * @return the i shape
+	 */
 	public static IShape buildCross(final Double xRadius, final Double width, final GamaPoint location) {
 		if (xRadius <= 0) return new GamaShape(location);
 		final double val = xRadius / Math.sqrt(2);

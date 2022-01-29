@@ -1,18 +1,13 @@
-/*
-   Copyright 2008 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFSplineConverter.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.helpers;
 
 import java.util.ArrayList;
@@ -24,54 +19,61 @@ import msi.gama.ext.kabeja.dxf.DXFVertex;
 import msi.gama.ext.kabeja.math.NURBS;
 import msi.gama.ext.kabeja.math.NURBSFixedNTELSPointIterator;
 
-
+/**
+ * The Class DXFSplineConverter.
+ */
 public class DXFSplineConverter {
-    public static DXFPolyline toDXFPolyline(DXFSpline spline) {
-        DXFPolyline p = new DXFPolyline();
-        p.setDXFDocument(spline.getDXFDocument());
+	
+	/**
+	 * To DXF polyline.
+	 *
+	 * @param spline the spline
+	 * @return the DXF polyline
+	 */
+	public static DXFPolyline toDXFPolyline(final DXFSpline spline) {
+		DXFPolyline p = new DXFPolyline();
+		p.setDXFDocument(spline.getDXFDocument());
 
-        if ((spline.getDegree() > 0) && (spline.getKnots().length > 0)) {
-            Iterator pi = new NURBSFixedNTELSPointIterator(toNurbs(spline), 30);
+		if (spline.getDegree() > 0 && spline.getKnots().length > 0) {
+			Iterator<?> pi = new NURBSFixedNTELSPointIterator(toNurbs(spline), 30);
 
-            while (pi.hasNext()) {
-                p.addVertex(new DXFVertex((Point) pi.next()));
-            }
-        } else {
-            // the curve is the controlpoint polygon
-            Iterator i = spline.getSplinePointIterator();
+			while (pi.hasNext()) { p.addVertex(new DXFVertex((Point) pi.next())); }
+		} else {
+			// the curve is the controlpoint polygon
+			Iterator<?> i = spline.getSplinePointIterator();
 
-            while (i.hasNext()) {
-                SplinePoint sp = (SplinePoint) i.next();
+			while (i.hasNext()) {
+				SplinePoint sp = (SplinePoint) i.next();
 
-                if (sp.isControlPoint()) {
-                    p.addVertex(new DXFVertex(sp));
-                }
-            }
-        }
+				if (sp.isControlPoint()) { p.addVertex(new DXFVertex(sp)); }
+			}
+		}
 
-        if (spline.isClosed()) {
-            p.setFlags(1);
-        }
+		if (spline.isClosed()) { p.setFlags(1); }
 
-        return p;
-    }
+		return p;
+	}
 
-    public static NURBS toNurbs(DXFSpline spline) {
-        Iterator i = spline.getSplinePointIterator();
-        ArrayList list = new ArrayList();
+	/**
+	 * To nurbs.
+	 *
+	 * @param spline the spline
+	 * @return the nurbs
+	 */
+	public static NURBS toNurbs(final DXFSpline spline) {
+		Iterator<?> i = spline.getSplinePointIterator();
+		ArrayList<SplinePoint> list = new ArrayList<>();
 
-        while (i.hasNext()) {
-            SplinePoint sp = (SplinePoint) i.next();
+		while (i.hasNext()) {
+			SplinePoint sp = (SplinePoint) i.next();
 
-            if (sp.isControlPoint()) {
-                list.add(sp);
-            }
-        }
+			if (sp.isControlPoint()) { list.add(sp); }
+		}
 
-        NURBS n = new NURBS((Point[]) list.toArray(new Point[list.size()]),
-                spline.getKnots(), spline.getWeights(), spline.getDegree());
-        n.setClosed(spline.isClosed());
+		NURBS n = new NURBS(list.toArray(new Point[list.size()]), spline.getKnots(), spline.getWeights(),
+				spline.getDegree());
+		n.setClosed(spline.isClosed());
 
-        return n;
-    }
+		return n;
+	}
 }

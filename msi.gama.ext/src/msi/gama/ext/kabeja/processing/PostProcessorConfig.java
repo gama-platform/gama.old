@@ -1,59 +1,74 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * PostProcessorConfig.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.processing;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  *
  */
 public class PostProcessorConfig {
-    private Map properties = new HashMap();
-    private String postProcessorName;
 
-    public PostProcessorConfig(Map properties) {
-        this.properties = properties;
-    }
+	/** The properties. */
+	private Map<String, String> properties = new HashMap<>();
 
-    public PostProcessorConfig() {
-        this(new HashMap());
-    }
+	/** The post processor name. */
+	private String postProcessorName;
 
-    public Map getProperties() {
-        return this.properties;
-    }
+	/**
+	 * Instantiates a new post processor config.
+	 *
+	 * @param properties
+	 *            the properties
+	 */
+	public PostProcessorConfig(final Map<String, String> properties) {
+		this.properties = properties;
+	}
 
-    public void addProperty(String name, String value) {
-        this.properties.put(name, value);
-    }
+	/**
+	 * Instantiates a new post processor config.
+	 */
+	public PostProcessorConfig() {
+		this(new HashMap<>());
+	}
 
-    /**
-     * @return Returns the filterName.
-     */
-    public String getPostProcessorName() {
-        return postProcessorName;
-    }
+	/**
+	 * Gets the properties.
+	 *
+	 * @return the properties
+	 */
+	public Map getProperties() { return this.properties; }
 
-    /**
-     * @param filterName The filterName to set.
-     */
-    public void setPostProcessorName(String filterName) {
-        this.postProcessorName = filterName;
-    }
+	/**
+	 * Adds the property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	public void addProperty(final String name, final String value) {
+		this.properties.put(name, value);
+	}
+
+	/**
+	 * @return Returns the filterName.
+	 */
+	public String getPostProcessorName() { return postProcessorName; }
+
+	/**
+	 * @param filterName
+	 *            The filterName to set.
+	 */
+	public void setPostProcessorName(final String filterName) { this.postProcessorName = filterName; }
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * msi.gama.kernel.experiment.ParameterAdapter.java, in plugin msi.gama.core, is part of the source code of the GAMA
- * modeling and simulation platform (v. 1.8.1)
+ * ParameterAdapter.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -17,54 +17,78 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
+/**
+ * The Class ParameterAdapter.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public abstract class ParameterAdapter implements IParameter.Batch {
 
-	private final int order = SymbolDescription.ORDER++;
+	/** The order. */
+	private final int order = COUNTER.GET();
 
+	/** The title. */
 	protected String title;
+	
+	/** The type. */
 	protected final IType type;
+	
+	/** The category. */
 	protected String category;
+	
+	/** The unit label. */
 	protected String unitLabel;
 
+	/**
+	 * Instantiates a new parameter adapter.
+	 *
+	 * @param title the title
+	 * @param type the type
+	 */
 	public ParameterAdapter(final String title, final int type) {
 		this.title = title;
 		this.type = Types.get(type);
 	}
 
+	/**
+	 * Instantiates a new parameter adapter.
+	 *
+	 * @param title the title
+	 * @param category the category
+	 * @param type the type
+	 */
 	public ParameterAdapter(final String title, final String category, final int type) {
 		this(title, type);
 		this.category = category;
 	}
 
+	/**
+	 * Instantiates a new parameter adapter.
+	 *
+	 * @param title the title
+	 * @param category the category
+	 * @param unit the unit
+	 * @param type the type
+	 */
 	public ParameterAdapter(final String title, final String category, final String unit, final int type) {
 		this(title, category, type);
 		this.unitLabel = unit;
 	}
 
 	@Override
-	public int getOrder() {
-		return order;
-	}
+	public int getOrder() { return order; }
 
 	@Override
-	public String getTitle() {
-		return title;
-	}
+	public String getTitle() { return title; }
 
 	@Override
-	public String getName() {
-		return getTitle();
-	}
+	public String getName() { return getTitle(); }
 
 	@Override
-	public boolean isEditable() {
-		return false;
-	}
+	public boolean isEditable() { return false; }
 
 	@Override
 	public boolean canBeExplored() {
@@ -75,9 +99,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public void setEditable(final boolean editable) {}
 
 	@Override
-	public String getCategory() {
-		return category;
-	}
+	public String getCategory() { return category; }
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
@@ -93,9 +115,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public IType getType() {
-		return type;
-	}
+	public IType getType() { return type; }
 
 	// @Override
 	// public IType getContentType() {
@@ -145,9 +165,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public void setCategory(final String name) {
-		category = name;
-	}
+	public void setCategory(final String name) { category = name; }
 
 	/**
 	 * Method setUnitLabel()
@@ -155,22 +173,16 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	 * @see msi.gama.kernel.experiment.IParameter#setUnitLabel(java.lang.String)
 	 */
 	@Override
-	public void setUnitLabel(final String label) {
-		unitLabel = label;
-	}
+	public void setUnitLabel(final String label) { unitLabel = label; }
 
 	@Override
-	public boolean isDefined() {
-		return true;
-	}
+	public boolean isDefined() { return true; }
 
 	@Override
 	public void setDefined(final boolean defined) {}
 
 	@Override
-	public boolean isDefinedInExperiment() {
-		return false;
-	}
+	public boolean isDefinedInExperiment() { return false; }
 
 	@Override
 	public boolean acceptsSlider(final IScope scope) {

@@ -3,7 +3,7 @@
  * ObjectDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -45,6 +45,7 @@ public abstract class ObjectDrawer<T extends AbstractObject<?, ?>> {
 	 * @param isPicking
 	 *            the is picking
 	 */
+	@SuppressWarnings ("unchecked")
 	public final void draw(final AbstractObject object, final boolean isPicking) {
 		gl.beginObject(object, isPicking);
 		_draw((T) object);

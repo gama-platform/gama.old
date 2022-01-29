@@ -79,9 +79,6 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	/** The round. */
 	private RoundEnvironment round;
 
-	/** The string. */
-	private TypeMirror iSkill, iAgent, iVarAndActionSupport, iScope, string, iExpression, iType;
-
 	/** The current plugin. */
 	public volatile String currentPlugin;
 
@@ -198,8 +195,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the i skill
 	 */
 	public TypeMirror getISkill() {
-		if (iSkill == null) { iSkill = getType("msi.gama.common.interfaces.ISkill"); }
-		return iSkill;
+		return getType("msi.gama.common.interfaces.ISkill");
+		// if (iSkill == null) { iSkill = getType("msi.gama.common.interfaces.ISkill"); }
+		// return iSkill;
 	}
 
 	/**
@@ -208,8 +206,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the i scope
 	 */
 	public TypeMirror getIScope() {
-		if (iScope == null) { iScope = getType("msi.gama.runtime.IScope"); }
-		return iScope;
+		return getType("msi.gama.runtime.IScope");
+		// if (iScope == null) { iScope = getType("msi.gama.runtime.IScope"); }
+		// return iScope;
 	}
 
 	/**
@@ -218,8 +217,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the string
 	 */
 	public TypeMirror getString() {
-		if (string == null) { string = getType("java.lang.String"); }
-		return string;
+		return getType("java.lang.String");
+		// if (string == null) { string = getType("java.lang.String"); }
+		// return string;
 	}
 
 	/**
@@ -228,8 +228,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the i expression
 	 */
 	public TypeMirror getIExpression() {
-		if (iExpression == null) { iExpression = getType("msi.gaml.expressions.IExpression"); }
-		return iExpression;
+		return getType("msi.gaml.expressions.IExpression");
+		// if (iExpression == null) { iExpression = getType("msi.gaml.expressions.IExpression"); }
+		// return iExpression;
 	}
 
 	/**
@@ -238,8 +239,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the string
 	 */
 	public TypeMirror getIType() {
-		if (iType == null) { iType = getType("msi.gaml.types.IType"); }
-		return iType;
+		return getType("msi.gaml.types.IType");
+		// if (iType == null) { iType = getType("msi.gaml.types.IType"); }
+		// return iType;
 	}
 
 	/**
@@ -261,10 +263,11 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the i var and action support
 	 */
 	public TypeMirror getIVarAndActionSupport() {
-		if (iVarAndActionSupport == null) {
-			iVarAndActionSupport = getType("msi.gama.common.interfaces.IVarAndActionSupport");
-		}
-		return iVarAndActionSupport;
+		return getType("msi.gama.common.interfaces.IVarAndActionSupport");
+		// if (iVarAndActionSupport == null) {
+		// iVarAndActionSupport = getType("msi.gama.common.interfaces.IVarAndActionSupport");
+		// }
+		// return iVarAndActionSupport;
 	}
 
 	/**
@@ -273,8 +276,9 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 * @return the i agent
 	 */
 	TypeMirror getIAgent() {
-		if (iAgent == null) { iAgent = getType("msi.gama.metamodel.agent.IAgent"); }
-		return iAgent;
+		return getType("msi.gama.metamodel.agent.IAgent");
+		// if (iAgent == null) { iAgent = getType("msi.gama.metamodel.agent.IAgent"); }
+		// return iAgent;
 	}
 
 	@Override

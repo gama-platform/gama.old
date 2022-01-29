@@ -1,129 +1,191 @@
-/*
-   Copyright 2006 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * HatchLineSegment.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.helpers;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
 public class HatchLineSegment {
-    protected Point startPoint;
-    protected Vector direction;
-    protected double angle;
-    protected double totalLength;
-    protected double length;
-    protected double currentLength;
-    protected double[] pattern;
-    protected double l;
-    protected int index;
-    protected ParametricLine line;
+	
+	/** The start point. */
+	protected Point startPoint;
+	
+	/** The direction. */
+	protected Vector direction;
+	
+	/** The angle. */
+	protected double angle;
+	
+	/** The total length. */
+	protected double totalLength;
+	
+	/** The length. */
+	protected double length;
+	
+	/** The current length. */
+	protected double currentLength;
+	
+	/** The pattern. */
+	protected double[] pattern;
+	
+	/** The l. */
+	protected double l;
+	
+	/** The index. */
+	protected int index;
+	
+	/** The line. */
+	protected ParametricLine line;
 
-    /**
-     *
-     * @param startPoint
-     * @param angle the angle in degrees
-     */
-    public HatchLineSegment(Point startPoint, double angle, double length) {
-        this.startPoint = startPoint;
-        this.angle = Math.toRadians(angle);
-        this.totalLength = length;
-    }
+	/**
+	 *
+	 * @param startPoint
+	 * @param angle
+	 *            the angle in degrees
+	 */
+	public HatchLineSegment(final Point startPoint, final double angle, final double length) {
+		this.startPoint = startPoint;
+		this.angle = Math.toRadians(angle);
+		this.totalLength = length;
+	}
 
-    public HatchLineSegment(Point startPoint, Vector direction, double length) {
-        this.startPoint = startPoint;
-        this.direction = direction;
-        this.totalLength = length;
-    }
+	/**
+	 * Instantiates a new hatch line segment.
+	 *
+	 * @param startPoint the start point
+	 * @param direction the direction
+	 * @param length the length
+	 */
+	public HatchLineSegment(final Point startPoint, final Vector direction, final double length) {
+		this.startPoint = startPoint;
+		this.direction = direction;
+		this.totalLength = length;
+	}
 
-    public HatchLineSegment(ParametricLine line, double length,
-        double startLength, double[] pattern) {
-        this.startPoint = line.getStartPoint();
-        this.angle = Math.toRadians(angle);
-        this.totalLength = length;
-        this.currentLength = startLength;
-        this.pattern = pattern;
-        this.line = line;
-        this.initialize(startLength);
-    }
+	/**
+	 * Instantiates a new hatch line segment.
+	 *
+	 * @param line the line
+	 * @param length the length
+	 * @param startLength the start length
+	 * @param pattern the pattern
+	 */
+	public HatchLineSegment(final ParametricLine line, final double length, final double startLength,
+			final double[] pattern) {
+		this.startPoint = line.getStartPoint();
+		// this.angle = Math.toRadians(angle);
+		this.totalLength = length;
+		this.currentLength = startLength;
+		this.pattern = pattern;
+		this.line = line;
+		this.initialize(startLength);
+	}
 
-    public Point getStartPoint() {
-        return this.startPoint;
-    }
+	/**
+	 * Gets the start point.
+	 *
+	 * @return the start point
+	 */
+	public Point getStartPoint() { return this.startPoint; }
 
-    public double getLength() {
-        return this.totalLength;
-    }
+	/**
+	 * Gets the length.
+	 *
+	 * @return the length
+	 */
+	public double getLength() { return this.totalLength; }
 
-    public Point getPoint(double offset) {
-        Point p = new Point();
-        p.setX(this.startPoint.getX() +
-            (Math.cos(this.angle) * this.totalLength));
-        p.setY(this.startPoint.getY() +
-            (Math.sin(this.angle) * this.totalLength));
+	/**
+	 * Gets the point.
+	 *
+	 * @param offset the offset
+	 * @return the point
+	 */
+	public Point getPoint(final double offset) {
+		Point p = new Point();
+		p.setX(this.startPoint.getX() + Math.cos(this.angle) * this.totalLength);
+		p.setY(this.startPoint.getY() + Math.sin(this.angle) * this.totalLength);
 
-        return p;
-    }
+		return p;
+	}
 
-    public Point getPointAt(double para) {
-        return line.getPointAt(para);
-    }
+	/**
+	 * Gets the point at.
+	 *
+	 * @param para the para
+	 * @return the point at
+	 */
+	public Point getPointAt(final double para) {
+		return line.getPointAt(para);
+	}
 
-    public boolean hasNext() {
-        return this.length <= totalLength;
-    }
+	/**
+	 * Checks for next.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasNext() {
+		return this.length <= totalLength;
+	}
 
-    public double next() {
-        double l = this.currentLength;
-        this.length += Math.abs(this.currentLength);
+	/**
+	 * Next.
+	 *
+	 * @return the double
+	 */
+	public double next() {
+		double l = this.currentLength;
+		this.length += Math.abs(this.currentLength);
 
-        if (index == pattern.length) {
-            index = 0;
-        }
+		if (index == pattern.length) { index = 0; }
 
-        this.currentLength = pattern[index];
-        index++;
+		this.currentLength = pattern[index];
+		index++;
 
-        return l;
-    }
+		return l;
+	}
 
-    protected void initialize(double startLength) {
-        double l = 0;
+	/**
+	 * Initialize.
+	 *
+	 * @param startLength the start length
+	 */
+	protected void initialize(final double startLength) {
+		double l = 0;
 
-        for (int i = 0; i < pattern.length; i++) {
-            l += Math.abs(pattern[i]);
+		for (int i = 0; i < pattern.length; i++) {
+			l += Math.abs(pattern[i]);
 
-            // System.out.println("test Pattern part:"+pattern[i]+" startLength="+startLength+" currentLength:"+l);
-            if (l > startLength) {
-                this.currentLength = l - startLength;
+			// System.out.println("test Pattern part:"+pattern[i]+" startLength="+startLength+" currentLength:"+l);
+			if (l > startLength) {
+				this.currentLength = l - startLength;
 
-                if (pattern[i] < 0) {
-                    //System.out.println("is empty");
-                    this.currentLength *= (-1);
-                }
+				if (pattern[i] < 0) {
+					// System.out.println("is empty");
+					this.currentLength *= -1;
+				}
 
-                //System.out.println("pattern startet bei="+i+" mit length="+this.currentLength);
-                this.index = i + 1;
+				// System.out.println("pattern startet bei="+i+" mit length="+this.currentLength);
+				this.index = i + 1;
 
-                return;
-            }
-        }
-    }
+				return;
+			}
+		}
+	}
 
-    public boolean isSolid() {
-        return pattern.length == 0;
-    }
+	/**
+	 * Checks if is solid.
+	 *
+	 * @return true, if is solid
+	 */
+	public boolean isSolid() { return pattern.length == 0; }
 }

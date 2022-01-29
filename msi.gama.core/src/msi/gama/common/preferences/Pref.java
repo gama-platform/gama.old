@@ -2,7 +2,7 @@
  *
  * Pref.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,6 +24,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * The Class Pref.
@@ -51,10 +52,7 @@ public class Pref<T> implements IParameter {
 	}
 
 	/** The order. */
-	static int ORDER = 0;
-
-	/** The order. */
-	private final int order = ORDER++;
+	private final int order = COUNTER.GET();
 
 	/** The in gaml. */
 	private final boolean inGaml;

@@ -3,7 +3,7 @@
  * ImageDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -38,6 +38,7 @@ import msi.gama.outputs.display.AWTDisplayGraphics;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
 import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -48,7 +49,13 @@ import msi.gaml.operators.Files;
 /**
  * The Class ImageDisplaySurface.
  */
-@display ("image")
+
+/**
+ * The Class ImageDisplaySurface.
+ */
+@display (
+		value = "image")
+@doc ("A display used to save the graphical representations of agents into image files")
 public class ImageDisplaySurface implements IDisplaySurface {
 
 	/** The output. */

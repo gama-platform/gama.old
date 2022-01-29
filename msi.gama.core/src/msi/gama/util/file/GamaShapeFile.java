@@ -3,7 +3,7 @@
  * GamaShapeFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -137,7 +137,7 @@ public class GamaShapeFile extends GamaGisFile {
 					try {
 						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
 					} catch (final Exception e) {
-						if (store != null) { store.dispose(); }
+						store.dispose();
 						throw e;
 					}
 				}
@@ -145,7 +145,7 @@ public class GamaShapeFile extends GamaGisFile {
 					number = features.size();
 				} catch (final Exception e) {
 
-					if (store != null) { store.dispose(); }
+					store.dispose();
 					DEBUG.ERR("Error in loading shapefile: " + e.getMessage());
 				}
 				final java.util.List<AttributeDescriptor> att_list = store.getSchema().getAttributeDescriptors();
@@ -479,43 +479,43 @@ public class GamaShapeFile extends GamaGisFile {
 		} catch (final Exception ex) {
 			try {
 				ShpFiles shp = new ShpFiles(getFile(scope).toURI().toURL());
-				ShapefileReader reader = new ShapefileReader(shp, false, false, GeometryUtils.GEOMETRY_FACTORY);
-				reader.setFlatGeometry(true);
-				// System.out.println("count:" + reader.getCount(0));
-				while (reader.hasNext()) {
-					Record record = reader.nextRecord();
-					Geometry g = GeometryUtils.cleanGeometry((Geometry) record.shape());
+				try (ShapefileReader reader = new ShapefileReader(shp, false, false, GeometryUtils.GEOMETRY_FACTORY)) {
+					reader.setFlatGeometry(true);
+					// System.out.println("count:" + reader.getCount(0));
+					while (reader.hasNext()) {
+						Record record = reader.nextRecord();
+						Geometry g = GeometryUtils.cleanGeometry((Geometry) record.shape());
 
-					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
+						if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 
-						if (!with3D && g.getNumPoints() > 2) {
-							try {
-								if (!g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
-							} catch (Exception e) {
-								g = GeometryUtils.cleanGeometry(g);
+							if (!with3D && g.getNumPoints() > 2) {
+								try {
+									if (!g.isValid()) { g = GeometryUtils.cleanGeometry(g); }
+								} catch (Exception e) {
+									g = GeometryUtils.cleanGeometry(g);
+								}
 							}
-						}
-						g = gis.transform(g);
-						if (!with3D) {
-							g.apply(ZERO_Z);
-							g.geometryChanged();
-						}
-						g = multiPolygonManagement(g);
+							g = gis.transform(g);
+							if (!with3D) {
+								g.apply(ZERO_Z);
+								g.geometryChanged();
+							}
+							g = multiPolygonManagement(g);
 
-						for (int i = 0; i < g.getNumGeometries(); i++) {
-							GamaShape gt = new GamaGisGeometry(g.getGeometryN(i), null);
-							if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
-						}
+							for (int i = 0; i < g.getNumGeometries(); i++) {
+								GamaShape gt = new GamaGisGeometry(g.getGeometryN(i), null);
+								if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
+							}
 
-					} else if (g == null) {
-						// See Issue 725
-						GAMA.reportError(scope,
-								GamaRuntimeException.warning(
-										"geometry could not be added as it is " + "nil: " + record.number, scope),
-								false);
+						} else if (g == null) {
+							// See Issue 725
+							GAMA.reportError(scope,
+									GamaRuntimeException.warning(
+											"geometry could not be added as it is " + "nil: " + record.number, scope),
+									false);
+						}
 					}
 				}
-				reader.close();
 			} catch (final IOException e2) {
 
 				throw GamaRuntimeException.create(e2, scope);

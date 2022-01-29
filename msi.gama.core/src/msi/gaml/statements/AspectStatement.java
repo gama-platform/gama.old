@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AspectStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AspectStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -106,10 +106,10 @@ public class AspectStatement extends AbstractStatementSequence {
 	};
 
 	/** The border color. */
-	public static GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
+	public static final GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
 
 	/** The default aspect. */
-	public static IExecutable DEFAULT_ASPECT = sc -> {
+	public static final IExecutable DEFAULT_ASPECT = sc -> {
 		if (!sc.isGraphics()) return null;
 		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IAgent agent = scope.getAgent();

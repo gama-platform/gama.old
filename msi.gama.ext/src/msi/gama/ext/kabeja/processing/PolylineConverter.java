@@ -1,18 +1,13 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * PolylineConverter.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.processing;
 
 import java.util.ArrayList;
@@ -31,161 +26,185 @@ import msi.gama.ext.kabeja.dxf.DXFPolyline;
 import msi.gama.ext.kabeja.dxf.helpers.Point;
 import msi.gama.ext.kabeja.processing.helper.PolylineQueue;
 
-
+/**
+ * The Class PolylineConverter.
+ */
 public class PolylineConverter extends AbstractPostProcessor {
-    public final static String PROPERTY_POINT_DISTANCE = "point.distance";
-    private List queues;
-    private double radius = DXFConstants.POINT_CONNECTION_RADIUS;
 
-    public void process(DXFDocument doc, Map context) throws ProcessorException {
-        Iterator i = doc.getDXFLayerIterator();
+	/** The Constant PROPERTY_POINT_DISTANCE. */
+	public final static String PROPERTY_POINT_DISTANCE = "point.distance";
 
-        while (i.hasNext()) {
-            DXFLayer layer = (DXFLayer) i.next();
+	/** The queues. */
+	private List<PolylineQueue> queues;
 
-            processLayer(layer);
-        }
+	/** The radius. */
+	private double radius = DXFConstants.POINT_CONNECTION_RADIUS;
 
-        // TODO process the blocks too
-    }
+	@Override
+	public void process(final DXFDocument doc, final Map context) throws ProcessorException {
+		Iterator i = doc.getDXFLayerIterator();
 
-    public void setProperties(Map properties) {
-        if (properties.containsKey(PROPERTY_POINT_DISTANCE)) {
-            this.radius = Double.parseDouble((String) properties.get(
-                        PROPERTY_POINT_DISTANCE));
-        }
-    }
+		while (i.hasNext()) {
+			DXFLayer layer = (DXFLayer) i.next();
 
-    protected void processLayer(DXFLayer layer) {
-        this.queues = new ArrayList();
+			processLayer(layer);
+		}
 
-        // check the lines
-        if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LINE)) {
-            List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
-            Iterator i = l.iterator();
+		// TODO process the blocks too
+	}
 
-            while (i.hasNext()) {
-                DXFLine line = (DXFLine) i.next();
-                Point start = line.getStartPoint();
-                Point end = line.getEndPoint();
-                checkDXFEntity(line, start, end);
-            }
-        }
+	@Override
+	public void setProperties(final Map properties) {
+		if (properties.containsKey(PROPERTY_POINT_DISTANCE)) {
+			this.radius = Double.parseDouble((String) properties.get(PROPERTY_POINT_DISTANCE));
+		}
+	}
 
-        // check the polylines
-        if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_POLYLINE)) {
-            List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_POLYLINE);
-            Iterator i = l.iterator();
+	/**
+	 * Process layer.
+	 *
+	 * @param layer
+	 *            the layer
+	 */
+	protected void processLayer(final DXFLayer layer) {
+		this.queues = new ArrayList<>();
 
-            while (i.hasNext()) {
-                DXFPolyline pl = (DXFPolyline) i.next();
+		// check the lines
+		if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LINE)) {
+			List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
+			Iterator i = l.iterator();
 
-                if (!pl.isClosed() && !pl.is3DPolygonMesh() &&
-                        !pl.isClosedMeshMDirection() &&
-                        !pl.isClosedMeshNDirection() &&
-                        !pl.isCubicSurefaceMesh()) {
-                    Point start = pl.getVertex(0).getPoint();
-                    Point end = pl.getVertex(pl.getVertexCount() - 1).getPoint();
-                    checkDXFEntity(pl, start, end);
-                }
-            }
-        }
+			while (i.hasNext()) {
+				DXFLine line = (DXFLine) i.next();
+				Point start = line.getStartPoint();
+				Point end = line.getEndPoint();
+				checkDXFEntity(line, start, end);
+			}
+		}
 
-        // check the lwpolylines
-        if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
-            List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
-            Iterator i = l.iterator();
+		// check the polylines
+		if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_POLYLINE)) {
+			List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_POLYLINE);
+			Iterator i = l.iterator();
 
-            while (i.hasNext()) {
-                DXFLWPolyline pl = (DXFLWPolyline) i.next();
+			while (i.hasNext()) {
+				DXFPolyline pl = (DXFPolyline) i.next();
 
-                if (!pl.isClosed() && !pl.is3DPolygonMesh() &&
-                        !pl.isClosedMeshMDirection() &&
-                        !pl.isClosedMeshNDirection() &&
-                        !pl.isCubicSurefaceMesh()) {
-                    Point start = pl.getVertex(0).getPoint();
-                    Point end = pl.getVertex(pl.getVertexCount() - 1).getPoint();
-                    checkDXFEntity(pl, start, end);
-                }
-            }
-        }
+				if (!pl.isClosed() && !pl.is3DPolygonMesh() && !pl.isClosedMeshMDirection()
+						&& !pl.isClosedMeshNDirection() && !pl.isCubicSurefaceMesh()) {
+					Point start = pl.getVertex(0).getPoint();
+					Point end = pl.getVertex(pl.getVertexCount() - 1).getPoint();
+					checkDXFEntity(pl, start, end);
+				}
+			}
+		}
 
-        // check the arcs
-        if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_ARC)) {
-            List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_ARC);
-            Iterator i = l.iterator();
+		// check the lwpolylines
+		if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
+			List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+			Iterator i = l.iterator();
 
-            while (i.hasNext()) {
-                DXFArc arc = (DXFArc) i.next();
+			while (i.hasNext()) {
+				DXFLWPolyline pl = (DXFLWPolyline) i.next();
 
-                // note that this points are calculated
-                // and could be not connected to the rest
-                // even though they should in you CAD
-                Point start = arc.getStartPoint();
-                Point end = arc.getEndPoint();
-                checkDXFEntity(arc, start, end);
-            }
-        }
+				if (!pl.isClosed() && !pl.is3DPolygonMesh() && !pl.isClosedMeshMDirection()
+						&& !pl.isClosedMeshNDirection() && !pl.isCubicSurefaceMesh()) {
+					Point start = pl.getVertex(0).getPoint();
+					Point end = pl.getVertex(pl.getVertexCount() - 1).getPoint();
+					checkDXFEntity(pl, start, end);
+				}
+			}
+		}
 
-        // finish up the connection search
-        // and connect parts, if it is possible
-        connectPolylineQueues();
+		// check the arcs
+		if (layer.hasDXFEntities(DXFConstants.ENTITY_TYPE_ARC)) {
+			List l = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_ARC);
+			Iterator i = l.iterator();
 
-        cleanUp(layer);
-    }
+			while (i.hasNext()) {
+				DXFArc arc = (DXFArc) i.next();
 
-    protected void checkDXFEntity(DXFEntity e, Point start, Point end) {
-        Iterator i = this.queues.iterator();
+				// note that this points are calculated
+				// and could be not connected to the rest
+				// even though they should in you CAD
+				Point start = arc.getStartPoint();
+				Point end = arc.getEndPoint();
+				checkDXFEntity(arc, start, end);
+			}
+		}
 
-        while (i.hasNext()) {
-            PolylineQueue queue = (PolylineQueue) i.next();
+		// finish up the connection search
+		// and connect parts, if it is possible
+		connectPolylineQueues();
 
-            if (queue.connectDXFEntity(e, start, end)) {
-                return;
-            }
-        }
+		cleanUp(layer);
+	}
 
-        // nothing found create a new queue
-        PolylineQueue queue = new PolylineQueue(e, start, end, this.radius);
+	/**
+	 * Check DXF entity.
+	 *
+	 * @param e
+	 *            the e
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
+	 */
+	protected void checkDXFEntity(final DXFEntity e, final Point start, final Point end) {
+		Iterator i = this.queues.iterator();
 
-        this.queues.add(queue);
-    }
+		while (i.hasNext()) {
+			PolylineQueue queue = (PolylineQueue) i.next();
 
-    protected void cleanUp(DXFLayer layer) {
-        Iterator i = this.queues.iterator();
+			if (queue.connectDXFEntity(e, start, end)) return;
+		}
 
-        while (i.hasNext()) {
-            PolylineQueue queue = (PolylineQueue) i.next();
+		// nothing found create a new queue
+		PolylineQueue queue = new PolylineQueue(e, start, end, this.radius);
 
-            if (queue.size() > 1) {
-                queue.createDXFPolyline(layer);
-            } else {
-                // ignore
-                i.remove();
-            }
-        }
-    }
+		this.queues.add(queue);
+	}
 
-    /**
-     * Goes through all polylinequeues and connect them, if they have the same
-     * start and end points.
-     *
-     */
-    protected void connectPolylineQueues() {
-        for (int i = 0; i < this.queues.size(); i++) {
-            PolylineQueue queue = (PolylineQueue) this.queues.get(i);
+	/**
+	 * Clean up.
+	 *
+	 * @param layer
+	 *            the layer
+	 */
+	protected void cleanUp(final DXFLayer layer) {
+		Iterator i = this.queues.iterator();
 
-            boolean connected = false;
+		while (i.hasNext()) {
+			PolylineQueue queue = (PolylineQueue) i.next();
 
-            //inner loop -> test all following polylines if
-            //we can connect
-            for (int x = i + 1; (x < this.queues.size()) && !connected; x++) {
-                if (((PolylineQueue) this.queues.get(x)).connect(queue)) {
-                    this.queues.remove(i);
-                    i--;
-                    connected = true;
-                }
-            }
-        }
-    }
+			if (queue.size() > 1) {
+				queue.createDXFPolyline(layer);
+			} else {
+				// ignore
+				i.remove();
+			}
+		}
+	}
+
+	/**
+	 * Goes through all polylinequeues and connect them, if they have the same start and end points.
+	 *
+	 */
+	protected void connectPolylineQueues() {
+		for (int i = 0; i < this.queues.size(); i++) {
+			PolylineQueue queue = this.queues.get(i);
+
+			boolean connected = false;
+
+			// inner loop -> test all following polylines if
+			// we can connect
+			for (int x = i + 1; x < this.queues.size() && !connected; x++) {
+				if (this.queues.get(x).connect(queue)) {
+					this.queues.remove(i);
+					i--;
+					connected = true;
+				}
+			}
+		}
+	}
 }

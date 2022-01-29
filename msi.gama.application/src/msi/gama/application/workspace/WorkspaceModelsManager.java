@@ -3,7 +3,7 @@
  * WorkspaceModelsManager.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -296,7 +297,7 @@ public class WorkspaceModelsManager {
 	 *
 	 */
 
-	public static String UNCLASSIFIED_MODELS = "Unclassified Models";
+	public static final String UNCLASSIFIED_MODELS = "Unclassified Models";
 
 	/**
 	 * Creates the unclassified models project.
@@ -441,9 +442,9 @@ public class WorkspaceModelsManager {
 		}
 		// If the directory is not empty, we should maybe try to recreate the projects (if they do not exist...)
 
-		try {
-			for (java.nio.file.Path r : Files.newDirectoryStream(java.nio.file.Path.of(workspaceLocation),
-					Files::isDirectory)) {
+		try (DirectoryStream<java.nio.file.Path> paths =
+				Files.newDirectoryStream(java.nio.file.Path.of(workspaceLocation), Files::isDirectory)) {
+			for (java.nio.file.Path r : paths) {
 				File folder = r.toFile();
 				if (isGamaProject(folder)) { createOrUpdateProject(folder.getName()); }
 			}

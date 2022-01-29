@@ -3,7 +3,7 @@
  * ThemeHelper.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -83,7 +83,7 @@ public class ThemeHelper {
 	private static final List<IThemeListener> listeners = new ArrayList<>();
 
 	/** The engine. */
-	private static IThemeEngine engine;
+	private static volatile IThemeEngine engine;
 
 	/** The bundle. */
 	private static Bundle bundle = Platform.getBundle("msi.gama.application");
@@ -288,8 +288,8 @@ public class ThemeHelper {
 	 */
 	private static ThemeEngine getThemeEngine() {
 		BundleContext context = bundle.getBundleContext();
-		ServiceReference ref = context.getServiceReference(IThemeManager.class.getName());
-		IThemeManager manager = (IThemeManager) context.getService(ref);
+		ServiceReference<IThemeManager> ref = context.getServiceReference(IThemeManager.class);
+		IThemeManager manager = context.getService(ref);
 		return (ThemeEngine) manager.getEngineForDisplay(PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null
 				? Display.getCurrent() : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay());
 	}

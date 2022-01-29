@@ -1,11 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGraph.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * GamaGraph.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -274,8 +275,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param edgeType
 	 *            the edge type
 	 */
-	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed, final boolean uniqueEdge,
-			final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
+	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+			final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType,
+			final IType edgeType) {
 		vertexMap = GamaMapFactory.create();
 		edgeMap = GamaMapFactory.create();
 		shortestPathComputed = new ConcurrentHashMap<>();
@@ -332,9 +334,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				final IList<IAgent> listAgt =
 						nodeS.getPopulation(scope).createAgents(scope, 1, atts, false, false, null);
 				IAgent ag = listAgt.get(0);
-				if (v != null) { ag.setName(v.toString()); }
-				addVertex(ag);
-				verticesAg.put(v.toString(), ag);
+				if (v != null) {
+					ag.setName(v.toString());
+					addVertex(ag);
+					verticesAg.put(v.toString(), ag);
+				}
 			}
 		}
 		for (DefaultEdge e : graph.edgeSet()) {
@@ -436,7 +440,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *            the edges species
 	 */
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
-			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies) {
+			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel,
+			final ISpecies edgesSpecies) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
@@ -470,7 +475,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *            the tolerance
 	 */
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
-			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies, final Double tolerance) {
+			final boolean directed, final boolean uniqueEdge, final VertexRelationship rel, final ISpecies edgesSpecies,
+			final Double tolerance) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
@@ -526,7 +532,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param vertices
 	 *            the vertices
 	 */
-	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices, boolean uniqueEdge) {
+	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices, final boolean uniqueEdge) {
 		for (final E p : vertices.iterable(scope)) { addVertex(p); }
 	}
 
@@ -1480,12 +1486,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 		Graphs.addAllVertices(g, this.getVertices());
 		Graphs.addAllEdges(g, this, this.edgeSet());
-		for(Object obj : getVertices()) {
-			g.setVertexWeight(obj, getWeightOf(obj));
-		}
-		for(Object obj : getEdges()) {
-			g.setEdgeWeight(obj, getWeightOf(obj));
-		}
+		for (Object obj : getVertices()) { g.setVertexWeight(obj, getWeightOf(obj)); }
+		for (Object obj : getEdges()) { g.setEdgeWeight(obj, getWeightOf(obj)); }
 		return g;
 	}
 

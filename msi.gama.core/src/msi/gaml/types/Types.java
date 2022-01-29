@@ -349,7 +349,7 @@ public class Types {
 	}
 
 	/** The built in species. */
-	private static List<SpeciesDescription> builtInSpecies;
+	private static volatile List<SpeciesDescription> builtInSpecies;
 
 	/**
 	 * Gets the built in species.

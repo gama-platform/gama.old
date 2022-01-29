@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ReferenceAgent.java, in ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ReferenceAgent.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reference;
 
@@ -42,16 +42,19 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	/** The agt attr. */
 	ArrayList<AgentAttribute> agtAttr;
-	
+
 	/** The attribute value. */
 	ReferenceToAgent attributeValue;
 
 	/**
 	 * Instantiates a new reference agent.
 	 *
-	 * @param _agt the agt
-	 * @param agtAttrName the agt attr name
-	 * @param agtAttrValue the agt attr value
+	 * @param _agt
+	 *            the agt
+	 * @param agtAttrName
+	 *            the agt attr name
+	 * @param agtAttrValue
+	 *            the agt attr value
 	 */
 	public ReferenceAgent(final IAgent _agt, final String agtAttrName, final IAgent agtAttrValue) {
 		// super(null,-1);
@@ -64,9 +67,12 @@ public class ReferenceAgent implements IReference, IAgent {
 	/**
 	 * Instantiates a new reference agent.
 	 *
-	 * @param refAgt the ref agt
-	 * @param attrName the attr name
-	 * @param refAttrValue the ref attr value
+	 * @param refAgt
+	 *            the ref agt
+	 * @param attrName
+	 *            the attr name
+	 * @param refAttrValue
+	 *            the ref attr value
 	 */
 	public ReferenceAgent(final IAgent refAgt, final String attrName, final ReferenceToAgent refAttrValue) {
 		// super(null,-1);
@@ -95,6 +101,11 @@ public class ReferenceAgent implements IReference, IAgent {
 	public boolean equals(final Object o) {
 		if (o == this) return true;
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return System.identityHashCode(this);
 	}
 
 	@Override

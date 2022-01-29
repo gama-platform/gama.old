@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gaml.types.GamaPointType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * GamaPointType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -43,11 +43,25 @@ import msi.gaml.operators.Cast;
 public class GamaPointType extends GamaType<GamaPoint> {
 
 	@Override
+	@doc ("Transforms the parameter into a point. If it is already a point, returns it. "
+			+ "If it is a geometry, returns its location. If it is a list, interprets its elements as float values and use up to the first 3 ones to return a point. "
+			+ "If it is a map, tries to find 'x', 'y' and 'z' keys in it. If it is a number, returns a point with the x, y and equal to this value")
 	public GamaPoint cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
 	}
 
+	/**
+	 * Static cast.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param copy
+	 *            the copy
+	 * @return the gama point
+	 */
 	public static GamaPoint staticCast(final IScope scope, final Object obj, final boolean copy) {
 		if (obj instanceof GamaPoint) return (GamaPoint) obj;
 		if (obj instanceof IShape) return ((IShape) obj).getLocation();
@@ -82,19 +96,13 @@ public class GamaPointType extends GamaType<GamaPoint> {
 	}
 
 	@Override
-	public GamaPoint getDefault() {
-		return null;
-	}
+	public GamaPoint getDefault() { return null; }
 
 	@Override
-	public IType getContentType() {
-		return Types.get(FLOAT);
-	}
+	public IType getContentType() { return Types.get(FLOAT); }
 
 	@Override
-	public IType getKeyType() {
-		return Types.get(INT);
-	}
+	public IType getKeyType() { return Types.get(INT); }
 
 	@Override
 	public boolean canCastToConst() {
@@ -102,13 +110,9 @@ public class GamaPointType extends GamaType<GamaPoint> {
 	}
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 	@Override
-	public boolean isCompoundType() {
-		return true;
-	}
+	public boolean isCompoundType() { return true; }
 
 }

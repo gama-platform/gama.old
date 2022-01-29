@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * PedestrianSkill.java, in miat.gaml.extensions.pedestrian, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package miat.gaml.extensions.skills;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -41,6 +51,9 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/**
+ * The Class PedestrianSkill.
+ */
 @skill (
 		name = "pedestrian",
 		concept = { IConcept.TRANSPORT, IConcept.SKILL },
@@ -200,329 +213,812 @@ public class PedestrianSkill extends MovingSkill {
 
 	// ---------- CONSTANTS -------------- //
 
+	/** The Constant PEDESTRIAN_MODEL. */
 	// General mode of walking
 	public final static String PEDESTRIAN_MODEL = "pedestrian_model";
 
+	/** The Constant SHOULDER_LENGTH. */
 	public final static String SHOULDER_LENGTH = "shoulder_length";
+
+	/** The Constant MINIMAL_DISTANCE. */
 	public final static String MINIMAL_DISTANCE = "minimal_distance";
 
+	/** The Constant CURRENT_TARGET. */
 	public final static String CURRENT_TARGET = "current_waypoint";
+
+	/** The Constant OBSTACLE_CONSIDERATION_DISTANCE. */
 	public final static String OBSTACLE_CONSIDERATION_DISTANCE = "obstacle_consideration_distance";
+
+	/** The Constant PEDESTRIAN_CONSIDERATION_DISTANCE. */
 	public final static String PEDESTRIAN_CONSIDERATION_DISTANCE = "pedestrian_consideration_distance";
+
+	/** The Constant PROBA_DETOUR. */
 	public final static String PROBA_DETOUR = "proba_detour";
+
+	/** The Constant AVOID_OTHER. */
 	public final static String AVOID_OTHER = "avoid_other";
+
+	/** The Constant OBSTACLE_SPECIES. */
 	public final static String OBSTACLE_SPECIES = "obstacle_species";
+
+	/** The Constant PEDESTRIAN_SPECIES. */
 	public final static String PEDESTRIAN_SPECIES = "pedestrian_species";
+
+	/** The Constant VELOCITY. */
 	public final static String VELOCITY = "velocity";
+
+	/** The Constant FORCES. */
 	public final static String FORCES = "forces";
 
+	/** The Constant A_PEDESTRIAN_SFM. */
 	public final static String A_PEDESTRIAN_SFM = "A_pedestrians_SFM";
+
+	/** The Constant A_OBSTACLES_SFM. */
 	public final static String A_OBSTACLES_SFM = "A_obstacles_SFM";
+
+	/** The Constant B_PEDESTRIAN_SFM. */
 	public final static String B_PEDESTRIAN_SFM = "B_pedestrians_SFM";
+
+	/** The Constant B_OBSTACLES_SFM. */
 	public final static String B_OBSTACLES_SFM = "B_obstacles_SFM";
 
+	/** The Constant K_SFM. */
 	public final static String K_SFM = "k_SFM";
+
+	/** The Constant KAPPA_SFM. */
 	public final static String KAPPA_SFM = "kappa_SFM";
+
+	/** The Constant RELAXION_SFM. */
 	public final static String RELAXION_SFM = "relaxion_SFM";
+
+	/** The Constant GAMA_SFM. */
 	public final static String GAMA_SFM = "gama_SFM";
+
+	/** The Constant lAMBDA_SFM. */
 	public final static String lAMBDA_SFM = "lambda_SFM";
 
+	/** The Constant N_SFM. */
 	public final static String N_SFM = "n_SFM";
+
+	/** The Constant N_PRIME_SFM. */
 	public final static String N_PRIME_SFM = "n_prime_SFM";
 
+	/** The Constant CURRENT_TARGET_GEOM. */
 	public final static String CURRENT_TARGET_GEOM = "current_waypoint_geom";
+
+	/** The Constant CURRENT_INDEX. */
 	public final static String CURRENT_INDEX = "current_index";
+
+	/** The Constant FINAL_TARGET. */
 	public final static String FINAL_TARGET = "final_waypoint";
+
+	/** The Constant CURRENT_PATH. */
 	public final static String CURRENT_PATH = "current_path";
+
+	/** The Constant PEDESTRIAN_GRAPH. */
 	public final static String PEDESTRIAN_GRAPH = "pedestrian_graph";
+
+	/** The Constant TOLERANCE_TARGET. */
 	public final static String TOLERANCE_TARGET = "tolerance_waypoint";
 
+	/** The Constant USE_GEOMETRY_TARGET. */
 	public final static String USE_GEOMETRY_TARGET = "use_geometry_waypoint";
 
+	/** The Constant COMPUTE_VIRTUAL_PATH. */
 	// ACTION
 	public final static String COMPUTE_VIRTUAL_PATH = "compute_virtual_path";
+
+	/** The Constant WALK. */
 	public final static String WALK = "walk";
+
+	/** The Constant WALK_TO. */
 	public final static String WALK_TO = "walk_to";
 	// ---------- VARIABLES GETTER AND SETTER ------------- //
 
+	/** The Constant TARGETS. */
 	public final static String TARGETS = "waypoints";
+
+	/** The Constant ROADS_TARGET. */
 	public final static String ROADS_TARGET = "roads_waypoints";
 
+	/**
+	 * Gets the shoulder length.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the shoulder length
+	 */
 	@getter (SHOULDER_LENGTH)
 	public double getShoulderLength(final IAgent agent) {
 		return (Double) agent.getAttribute(SHOULDER_LENGTH);
 	}
 
+	/**
+	 * Gets the forces.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the forces
+	 */
+	@SuppressWarnings ("unchecked")
 	@getter (FORCES)
 	public IMap<IShape, GamaPoint> getForces(final IAgent agent) {
 		return (IMap<IShape, GamaPoint>) agent.getAttribute(FORCES);
 	}
 
+	/**
+	 * Sets the shoulder length.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param s
+	 *            the s
+	 */
 	@setter (SHOULDER_LENGTH)
 	public void setShoulderLength(final IAgent agent, final double s) {
 		agent.setAttribute(SHOULDER_LENGTH, s);
 	}
 
+	/**
+	 * Gets the min dist.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the min dist
+	 */
 	@getter (MINIMAL_DISTANCE)
 	public double getMinDist(final IAgent agent) {
 		return (Double) agent.getAttribute(MINIMAL_DISTANCE);
 	}
 
+	/**
+	 * Sets the min dist.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param s
+	 *            the s
+	 */
 	@setter (MINIMAL_DISTANCE)
 	public void setMinDist(final IAgent agent, final double s) {
 		agent.setAttribute(MINIMAL_DISTANCE, s);
 	}
 
+	/**
+	 * Gets the ksfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the ksfm
+	 */
 	@getter (K_SFM)
 	public double getKSFM(final IAgent agent) {
 		return (Double) agent.getAttribute(K_SFM);
 	}
 
+	/**
+	 * Sets the KSFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param s
+	 *            the s
+	 */
 	@setter (K_SFM)
 	public void setKSFM(final IAgent agent, final double s) {
 		agent.setAttribute(K_SFM, s);
 	}
 
+	/**
+	 * Gets the kappa SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the kappa SFM
+	 */
 	@getter (KAPPA_SFM)
 	public double getKappaSFM(final IAgent agent) {
 		return (Double) agent.getAttribute(KAPPA_SFM);
 	}
 
+	/**
+	 * Sets the kappa SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param s
+	 *            the s
+	 */
 	@setter (KAPPA_SFM)
 	public void setKappaSFM(final IAgent agent, final double s) {
 		agent.setAttribute(KAPPA_SFM, s);
 	}
 
+	/**
+	 * Sets the N PRIM E SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (N_PRIME_SFM)
 	public void setN_PRIME_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(N_PRIME_SFM, val);
 	}
 
+	/**
+	 * Gets the n prime sfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the n prime sfm
+	 */
 	@getter (N_PRIME_SFM)
 	public Double getN_PRIME_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(N_PRIME_SFM);
 	}
 
+	/**
+	 * Sets the N SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (N_SFM)
 	public void setN_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(N_SFM, val);
 	}
 
+	/**
+	 * Gets the n sfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the n sfm
+	 */
 	@getter (N_SFM)
 	public Double getN_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(N_SFM);
 	}
 
+	/**
+	 * Gets the obstacle species.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the obstacle species
+	 */
+	@SuppressWarnings ("unchecked")
 	@getter (OBSTACLE_SPECIES)
 	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
 		return (GamaList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
 	}
 
+	/**
+	 * Sets the obstacle species.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param os
+	 *            the os
+	 */
 	@setter (OBSTACLE_SPECIES)
 	public void setObstacleSpecies(final IAgent agent, final GamaList<ISpecies> os) {
 		agent.setAttribute(OBSTACLE_SPECIES, os);
 	}
 
+	/**
+	 * Gets the pedestrian species.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the pedestrian species
+	 */
+	@SuppressWarnings ("unchecked")
 	@getter (PEDESTRIAN_SPECIES)
 	public GamaList<ISpecies> getPedestrianSpecies(final IAgent agent) {
 		return (GamaList<ISpecies>) agent.getAttribute(PEDESTRIAN_SPECIES);
 	}
 
+	/**
+	 * Sets the pedestrian species.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param os
+	 *            the os
+	 */
 	@setter (PEDESTRIAN_SPECIES)
 	public void setPedestrianSpecies(final IAgent agent, final GamaList<ISpecies> os) {
 		agent.setAttribute(PEDESTRIAN_SPECIES, os);
 	}
 
+	/**
+	 * Gets the current target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the current target
+	 */
 	@getter (CURRENT_TARGET)
 	public IShape getCurrentTarget(final IAgent agent) {
 		return (IShape) agent.getAttribute(CURRENT_TARGET);
 	}
 
+	/**
+	 * Sets the current target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param point
+	 *            the point
+	 */
 	@setter (CURRENT_TARGET)
 	public void setCurrentTarget(final IAgent agent, final IShape point) {
 		agent.setAttribute(CURRENT_TARGET, point);
 	}
 
+	/**
+	 * Gets the obstacle consideration distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the obstacle consideration distance
+	 */
 	@getter (OBSTACLE_CONSIDERATION_DISTANCE)
 	public Double getObstacleConsiderationDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(OBSTACLE_CONSIDERATION_DISTANCE);
 	}
 
+	/**
+	 * Sets the obstacle consideration distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (OBSTACLE_CONSIDERATION_DISTANCE)
 	public void setObstacleConsiderationDistance(final IAgent agent, final Double val) {
 		agent.setAttribute(OBSTACLE_CONSIDERATION_DISTANCE, val);
 	}
 
+	/**
+	 * Gets the pedestrian consideration distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the pedestrian consideration distance
+	 */
 	@getter (PEDESTRIAN_CONSIDERATION_DISTANCE)
 	public Double getPedestrianConsiderationDistance(final IAgent agent) {
 		return (Double) agent.getAttribute(PEDESTRIAN_CONSIDERATION_DISTANCE);
 	}
 
+	/**
+	 * Sets the pedestrian consideration distance.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (PEDESTRIAN_CONSIDERATION_DISTANCE)
 	public void setPedestrianConsiderationDistance(final IAgent agent, final Double val) {
 		agent.setAttribute(PEDESTRIAN_CONSIDERATION_DISTANCE, val);
 	}
 
+	/**
+	 * Gets the proba detour.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the proba detour
+	 */
 	@getter (PROBA_DETOUR)
 	public Double getProbaDetour(final IAgent agent) {
 		return (Double) agent.getAttribute(PROBA_DETOUR);
 	}
 
+	/**
+	 * Setl AMBD A SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (lAMBDA_SFM)
 	public void setlAMBDA_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(lAMBDA_SFM, val);
 	}
 
+	/**
+	 * Gets the l AMBD A SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the l AMBD A SFM
+	 */
 	@getter (lAMBDA_SFM)
 	public Double getlAMBDA_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(lAMBDA_SFM);
 	}
 
+	/**
+	 * Sets the GAM A SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (GAMA_SFM)
 	public void setGAMA_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(GAMA_SFM, val);
 	}
 
+	/**
+	 * Gets the gama sfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the gama sfm
+	 */
 	@getter (GAMA_SFM)
 	public Double getGAMA_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(GAMA_SFM);
 	}
 
+	/**
+	 * Sets the proba detour.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (PROBA_DETOUR)
 	public void setProbaDetour(final IAgent agent, final Double val) {
 		agent.setAttribute(PROBA_DETOUR, val);
 	}
 
+	/**
+	 * Gets the relaxion sfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the relaxion sfm
+	 */
 	@getter (RELAXION_SFM)
 	public Double getRELAXION_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(RELAXION_SFM);
 	}
 
+	/**
+	 * Sets the RELAXIO N SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (RELAXION_SFM)
 	public void setRELAXION_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(RELAXION_SFM, val);
 	}
 
+	/**
+	 * Gets the a pedestrian SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the a pedestrian SFM
+	 */
 	@getter (A_PEDESTRIAN_SFM)
 	public Double getAPedestrian_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(A_PEDESTRIAN_SFM);
 	}
 
+	/**
+	 * Sets the A pedestrian SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (A_PEDESTRIAN_SFM)
 	public void setAPedestrian_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(A_PEDESTRIAN_SFM, val);
 	}
 
+	/**
+	 * Gets the a obst SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the a obst SFM
+	 */
 	@getter (A_OBSTACLES_SFM)
 	public Double getAObstSFM(final IAgent agent) {
 		return (Double) agent.getAttribute(A_OBSTACLES_SFM);
 	}
 
+	/**
+	 * Sets the A obst SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (A_OBSTACLES_SFM)
 	public void setAObstSFM(final IAgent agent, final Double val) {
 		agent.setAttribute(A_OBSTACLES_SFM, val);
 	}
 
+	/**
+	 * Gets the b sfm.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the b sfm
+	 */
 	@getter (B_PEDESTRIAN_SFM)
 	public Double getB_SFM(final IAgent agent) {
 		return (Double) agent.getAttribute(B_PEDESTRIAN_SFM);
 	}
 
+	/**
+	 * Sets the B SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (B_PEDESTRIAN_SFM)
 	public void setB_SFM(final IAgent agent, final Double val) {
 		agent.setAttribute(B_PEDESTRIAN_SFM, val);
 	}
 
+	/**
+	 * Gets the b obst SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the b obst SFM
+	 */
 	@getter (B_OBSTACLES_SFM)
 	public Double getBObstSFM(final IAgent agent) {
 		return (Double) agent.getAttribute(B_OBSTACLES_SFM);
 	}
 
+	/**
+	 * Sets the B obst SFM.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (B_OBSTACLES_SFM)
 	public void setBObstSFM(final IAgent agent, final Double val) {
 		agent.setAttribute(B_OBSTACLES_SFM, val);
 	}
 
+	/**
+	 * Gets the avoid other.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the avoid other
+	 */
 	@getter (AVOID_OTHER)
 	public Boolean getAvoidOther(final IAgent agent) {
 		return (Boolean) agent.getAttribute(AVOID_OTHER);
 	}
 
+	/**
+	 * Sets the avoid other.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (AVOID_OTHER)
 	public void setAvoidOther(final IAgent agent, final Boolean val) {
 		agent.setAttribute(AVOID_OTHER, val);
 	}
 
+	/**
+	 * Sets the velocity.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (VELOCITY)
 	public void setVelocity(final IAgent agent, final GamaPoint val) {
 		agent.setAttribute(VELOCITY, val);
 	}
 
+	/**
+	 * Gets the velocity.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the velocity
+	 */
 	@getter (VELOCITY)
 	public GamaPoint getVelocity(final IAgent agent) {
 		return (GamaPoint) agent.getAttribute(VELOCITY);
 	}
 
+	/**
+	 * Gets the tolerance target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the tolerance target
+	 */
 	@getter (TOLERANCE_TARGET)
 	public double getToleranceTarget(final IAgent agent) {
 		return (Double) agent.getAttribute(TOLERANCE_TARGET);
 	}
 
+	/**
+	 * Sets the tolerance target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param s
+	 *            the s
+	 */
 	@setter (TOLERANCE_TARGET)
 	public void setToleranceTarget(final IAgent agent, final double s) {
 		agent.setAttribute(TOLERANCE_TARGET, s);
 	}
 
+	/**
+	 * Gets the targets.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the targets
+	 */
+	@SuppressWarnings ("unchecked")
 	@getter (TARGETS)
 	public IList<IShape> getTargets(final IAgent agent) {
 		return (IList<IShape>) agent.getAttribute(TARGETS);
 	}
 
+	/**
+	 * Gets the roads targets.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the roads targets
+	 */
 	@getter (ROADS_TARGET)
 	public IMap getRoadsTargets(final IAgent agent) {
 		return (IMap) agent.getAttribute(ROADS_TARGET);
 	}
 
+	/**
+	 * Sets the targets.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param points
+	 *            the points
+	 */
 	@setter (TARGETS)
 	public void setTargets(final IAgent agent, final IList<IShape> points) {
 		agent.setAttribute(TARGETS, points);
 	}
 
+	/**
+	 * Gets the final target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the final target
+	 */
 	@getter (FINAL_TARGET)
 	public IShape getFinalTarget(final IAgent agent) {
 		return (IShape) agent.getAttribute(FINAL_TARGET);
 	}
 
+	/**
+	 * Sets the final target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param point
+	 *            the point
+	 */
 	@setter (FINAL_TARGET)
 	public void setFinalTarget(final IAgent agent, final IShape point) {
 		agent.setAttribute(FINAL_TARGET, point);
 	}
 
+	/**
+	 * Gets the current index.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the current index
+	 */
 	@getter (CURRENT_INDEX)
 	public Integer getCurrentIndex(final IAgent agent) {
 		return (Integer) agent.getAttribute(CURRENT_INDEX);
 	}
 
+	/**
+	 * Sets the current index.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param index
+	 *            the index
+	 */
 	@setter (CURRENT_INDEX)
 	public void setCurrentIndex(final IAgent agent, final Integer index) {
 		agent.setAttribute(CURRENT_INDEX, index);
 	}
 
+	/**
+	 * Gets the use geometry target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the use geometry target
+	 */
 	@getter (USE_GEOMETRY_TARGET)
 	public Boolean getUseGeometryTarget(final IAgent agent) {
 		return (Boolean) agent.getAttribute(USE_GEOMETRY_TARGET);
 	}
 
+	/**
+	 * Sets the use geometry target.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (USE_GEOMETRY_TARGET)
 	public void setUseGeometryTarget(final IAgent agent, final Boolean val) {
 		agent.setAttribute(USE_GEOMETRY_TARGET, val);
 	}
 
+	/**
+	 * Gets the pedestrian model.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @return the pedestrian model
+	 */
 	@getter (PEDESTRIAN_MODEL)
 	public String getPedestrianModel(final IAgent agent) {
 		return (String) agent.getAttribute(PEDESTRIAN_MODEL);
 	}
 
+	/**
+	 * Sets the pedestrian model.
+	 *
+	 * @param agent
+	 *            the agent
+	 * @param val
+	 *            the val
+	 */
 	@setter (PEDESTRIAN_MODEL)
 	public void setPedestrianModel(final IAgent agent, final String val) {
 		if ("advanced".equals(val) || "simple".equals(val)) {
@@ -536,6 +1032,14 @@ public class PedestrianSkill extends MovingSkill {
 
 	// ----------------------------------- //
 
+	/**
+	 * Prim walk to.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = WALK_TO,
 			args = { @arg (
@@ -554,18 +1058,18 @@ public class PedestrianSkill extends MovingSkill {
 			doc = @doc (
 					value = "action to walk toward a target",
 					examples = { @example ("do walk_to {10,10};") }))
-	public void primWalkTo(final IScope scope) throws GamaRuntimeException {
+	public boolean primWalkTo(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		if (agent == null || agent.dead()) return;
+		if (agent == null || agent.dead()) return false;
 		IShape goal = computeTarget(scope, agent);
-		if (goal == null) return;
+		if (goal == null) return false;
 		IShape bounds = null;
 		if (scope.hasArg(IKeyword.BOUNDS)) {
 			final Object obj = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			bounds = GamaGeometryType.staticCast(scope, obj, null, false);
 		}
 		IList<ISpecies> speciesList = getObstacleSpecies(agent);
-		IContainer obstacles = null;
+		IContainer<Integer, IAgent> obstacles = null;
 		if (speciesList.size() == 1) {
 			obstacles = speciesList.get(0);
 		} else {
@@ -577,7 +1081,7 @@ public class PedestrianSkill extends MovingSkill {
 		}
 
 		speciesList = getPedestrianSpecies(agent);
-		IContainer pedestrians = null;
+		IContainer<Integer, IAgent> pedestrians = null;
 		if (speciesList.size() == 1) {
 			pedestrians = speciesList.get(0);
 		} else {
@@ -594,7 +1098,7 @@ public class PedestrianSkill extends MovingSkill {
 				obstacles, maxDist);
 
 		setRealSpeed(agent, realSpeed);
-
+		return true;
 	}
 
 	/**
@@ -673,7 +1177,8 @@ public class PedestrianSkill extends MovingSkill {
 		}
 		double realSpeed = 0.0;
 		double proba_detour = getProbaDetour(agent);
-		if ((!Random.opFlip(scope, 1.0 - proba_detour) || (location.euclidianDistanceTo(target) <= agent.getLocation().euclidianDistanceTo(target)))) {
+		if (!Random.opFlip(scope, 1.0 - proba_detour)
+				|| location.euclidianDistanceTo(target) <= agent.getLocation().euclidianDistanceTo(target)) {
 			realSpeed = agent.euclidianDistanceTo(location) / scope.getSimulation().getTimeStep(scope);
 			setVelocity(agent, location.copy(scope).minus(getLocation(agent)));
 			setLocation(agent, location);
@@ -701,18 +1206,18 @@ public class PedestrianSkill extends MovingSkill {
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
 		IMap<IShape, GamaPoint> forcesMap = GamaMapFactory.create();
-		
+
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
 		GamaPoint fsoc = new GamaPoint(0, 0, 0);
 		double dist = location.euclidianDistanceTo(currentTarget);
-		double step = scope.getSimulation().getClock().getStepInSeconds();
-		double speed = getSpeed(agent);
+		// double step = scope.getSimulation().getClock().getStepInSeconds();
+		// double speed = getSpeed(agent);
 		IList<IAgent> obstacles = GamaListFactory.create(Types.AGENT);
 		IList<IAgent> pedestrians = GamaListFactory.create(Types.AGENT);
 
 		pedestrians.addAll(Spatial.Queries.at_distance(scope, pedestriansList, distPercepPedestrian));
 		obstacles.addAll(Spatial.Queries.at_distance(scope, obstaclesList, distPercepObstacle));
-		
+
 		pedestrians.remove(agent);
 		pedestrians.removeIf(IAgent::dead);
 		double lambda = getlAMBDA_SFM(agent);
@@ -752,12 +1257,10 @@ public class PedestrianSkill extends MovingSkill {
 
 			forcesMap.put(ag, force);
 		}
-		
-		
+
 		GamaPoint desiredVelo = currentTarget.copy(scope).minus(location)
 				.divideBy(dist / Math.min(getSpeed(agent), dist / scope.getSimulation().getClock().getStepInSeconds()));
 		GamaPoint fdest = desiredVelo.minus(current_velocity).dividedBy(getRELAXION_SFM(agent));
-
 
 		forcesMap.put(agent, fdest);
 		agent.setAttribute(FORCES, forcesMap);
@@ -765,6 +1268,27 @@ public class PedestrianSkill extends MovingSkill {
 		return current_velocity.add(forces).normalize();
 	}
 
+	/**
+	 * Avoid SFM.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param location
+	 *            the location
+	 * @param currentTarget
+	 *            the current target
+	 * @param distPercepPedestrian
+	 *            the dist percep pedestrian
+	 * @param distPercepObstacle
+	 *            the dist percep obstacle
+	 * @param pedestriansList
+	 *            the pedestrians list
+	 * @param obstaclesList
+	 *            the obstacles list
+	 * @return the gama point
+	 */
 	public GamaPoint avoidSFM(final IScope scope, final IAgent agent, final GamaPoint location,
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
@@ -871,6 +1395,15 @@ public class PedestrianSkill extends MovingSkill {
 		return current_velocity.add(forces).normalize();
 	}
 
+	/**
+	 * Prim compute virtual path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the i path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = COMPUTE_VIRTUAL_PATH,
 			args = { @arg (
@@ -903,7 +1436,7 @@ public class PedestrianSkill extends MovingSkill {
 		IMap<IShape, IShape> roadTarget = GamaMapFactory.create();
 		IList<IShape> targets = GamaListFactory.create();
 		IList<IShape> segments = thePath.getEdgeGeometry();
-		GamaPoint pp = source.getCentroid();
+		// GamaPoint pp = source.getCentroid();
 
 		for (int i = 0; i < segments.size(); i++) {
 			IShape cSeg = segments.get(i);
@@ -916,12 +1449,13 @@ public class PedestrianSkill extends MovingSkill {
 				if (i < segments.size() - 1) {
 					cRoadNext = thePath.getRealObject(segments.get(i + 1));
 					geomNext = PedestrianRoadSkill.getFreeSpace(cRoadNext.getAgent());
-				} else {
-					geomNext = null;
 				}
+				// else {
+				// geomNext = null;
+				// }
 			}
 
-			IShape nSeg = i == segments.size() - 1 ? null : segments.get(i + 1);
+			// IShape nSeg = i == segments.size() - 1 ? null : segments.get(i + 1);
 			// AD Note: getPoints() can be a very costly operation. It'd be better to call it once.
 			for (int j = 1; j < cSeg.getPoints().size(); j++) {
 				GamaPoint pt = cSeg.getPoints().get(j);
@@ -929,12 +1463,12 @@ public class PedestrianSkill extends MovingSkill {
 				if (PedestrianRoadSkill.getRoadStatus(scope, cRoad) == PedestrianRoadSkill.SIMPLE_STATUS) {
 					cTarget = pt;
 				} else {
-					GamaPoint nextPt = null;
-					if (j == cSeg.getPoints().size() - 1) {
-						nextPt = nSeg == null ? null : nSeg.getPoints().get(1);
-					} else {
-						nextPt = cSeg.getPoints().get(j + 1);
-					}
+					// GamaPoint nextPt = null;
+					// if (j == cSeg.getPoints().size() - 1) {
+					// nextPt = nSeg == null ? null : nSeg.getPoints().get(1);
+					// } else {
+					// nextPt = cSeg.getPoints().get(j + 1);
+					// }
 					cTarget = pt;
 					if (cTarget == null) { cTarget = pt; }
 				}
@@ -954,7 +1488,7 @@ public class PedestrianSkill extends MovingSkill {
 				targets.add(cTarget);
 
 				roadTarget.put(cTarget, cRoad);
-				pp = cTarget.getLocation();
+				// pp = cTarget.getLocation();
 			}
 		}
 		IShape targ = targets.get(0);
@@ -983,6 +1517,14 @@ public class PedestrianSkill extends MovingSkill {
 		return thePath;
 	}
 
+	/**
+	 * Prim arrived at destination.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = "release_path",
 			args = { @arg (
@@ -992,7 +1534,7 @@ public class PedestrianSkill extends MovingSkill {
 					doc = @doc ("current road on which the agent is located (can be nil)")), },
 			doc = @doc (
 					value = "clean all the interne state of the agent"))
-	public void primArrivedAtDestination(final IScope scope) throws GamaRuntimeException {
+	public boolean primArrivedAtDestination(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		IAgent road = (IAgent) scope.getArg("current_road", IType.AGENT);
 		setCurrentIndex(agent, 0);
@@ -1002,23 +1544,32 @@ public class PedestrianSkill extends MovingSkill {
 		setCurrentPath(agent, null);
 		setCurrentEdge(agent, (IShape) null);
 		setRealSpeed(agent, 0.0);
-		if (road != null) { PedestrianRoadSkill.unregister(scope, road, agent); }
+		if (road != null) return PedestrianRoadSkill.unregister(scope, road, agent);
+		return false;
 	}
 
+	/**
+	 * Prim walk.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = WALK,
 			doc = @doc (
 					value = "action to walk toward the final target using the current_path (requires to use the "
 							+ COMPUTE_VIRTUAL_PATH + " action before)",
 					examples = { @example ("do walk;") }))
-	public void primWalk(final IScope scope) throws GamaRuntimeException {
+	public boolean primWalk(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		if (agent == null || agent.dead()) return;
+		if (agent == null || agent.dead()) return false;
 		final IShape finalTarget = getFinalTarget(agent);
-		if (finalTarget == null) return;
+		if (finalTarget == null) return false;
 
 		final IList<IShape> targets = getTargets(agent);
-		if (targets == null || targets.isEmpty()) return;
+		if (targets == null || targets.isEmpty()) return false;
 
 		GamaPoint location = getLocation(agent).copy(scope);
 		double maxDist = computeDistance(scope, agent);
@@ -1047,6 +1598,8 @@ public class PedestrianSkill extends MovingSkill {
 					road == null ? GamaListFactory.create() : PedestrianRoadSkill.getCloseAgents(road);
 			IList<ISpecies> speciesList = getObstacleSpecies(agent);
 			IContainer obstacles = null;
+
+			// AD : recreating these lists everytime is really terrible. Better use MetaPopulations
 			if (speciesList.size() == 1) {
 				obstacles = speciesList.get(0);
 			} else {
@@ -1087,9 +1640,28 @@ public class PedestrianSkill extends MovingSkill {
 				}
 			}
 		}
-
+		return true;
 	}
 
+	/**
+	 * Arrived at target.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param location
+	 *            the location
+	 * @param currentTarget
+	 *            the current target
+	 * @param size
+	 *            the size
+	 * @param index
+	 *            the index
+	 * @param maxIndex
+	 *            the max index
+	 * @param targets
+	 *            the targets
+	 * @return true, if successful
+	 */
 	boolean arrivedAtTarget(final IScope scope, final GamaPoint location, final IShape currentTarget, final double size,
 			final int index, final int maxIndex, final IList<IShape> targets) {
 		double dist = location.euclidianDistanceTo(currentTarget);

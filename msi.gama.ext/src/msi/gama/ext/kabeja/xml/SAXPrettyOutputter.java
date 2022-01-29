@@ -1,18 +1,13 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * SAXPrettyOutputter.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.xml;
 
 import java.io.BufferedOutputStream;
@@ -28,313 +23,354 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-
 /**
  * <p>
- * This outputs a SAXStream to an OutputStream with the given encoding or
- * otherwise with the default encoding (utf-8).
+ * This outputs a SAXStream to an OutputStream with the given encoding or otherwise with the default encoding (utf-8).
  * </p>
  * <p>
- * <b>Note: </b> Not all features are implemented, so if you use this with other
- * SAXStreams others then the Kabeja-SAXStream you will get broken
- * XML-Documents.
+ * <b>Note: </b> Not all features are implemented, so if you use this with other SAXStreams others then the
+ * Kabeja-SAXStream you will get broken XML-Documents.
  * </p>
  *
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  *
  */
-public class SAXPrettyOutputter extends AbstractSAXSerializer
-    implements SAXSerializer {
-    public static final String DEFAULT_ENCODING = "UTF-8";
-    public static final String SUFFIX = "svg";
-    public static final String SUFFIX_GZIP = "svgz";
-    public static final String MIMETYPE = "text/svg";
-    public static final String PROPERTY_ENCODING = "encoding";
-    public static final String PROPERTY_GZIP = "gzip";
-    private OutputStreamWriter out;
-    private String encoding;
-    private String dtd;
-    private int indent = 0;
-    private boolean parent = false;
-    private ArrayList textContentList = new ArrayList();
-    protected HashMap rootxmlns = new HashMap();
-    protected boolean gzip = false;
+public class SAXPrettyOutputter extends AbstractSAXSerializer implements SAXSerializer {
 
-    public SAXPrettyOutputter(OutputStream output, String encoding) {
-        this.encoding = encoding;
-        this.setOutput(output);
-    }
+	/** The Constant DEFAULT_ENCODING. */
+	public static final String DEFAULT_ENCODING = "UTF-8";
 
-    /**
-     *
-     */
-    public SAXPrettyOutputter(OutputStream out) {
-        this(out, DEFAULT_ENCODING);
-    }
+	/** The Constant SUFFIX. */
+	public static final String SUFFIX = "svg";
 
-    public SAXPrettyOutputter() {
-        this.encoding = DEFAULT_ENCODING;
-    }
+	/** The Constant SUFFIX_GZIP. */
+	public static final String SUFFIX_GZIP = "svgz";
 
-    public void characters(char[] ch, int start, int length)
-        throws SAXException {
-        try {
-            if (length > 0) {
-                if (parent) {
-                    this.out.write(">");
-                    parent = false;
-                }
+	/** The Constant MIMETYPE. */
+	public static final String MIMETYPE = "text/svg";
 
-                char[] enc = encodeXML(new String(ch, 0, length)).toCharArray();
-                this.out.write(enc, start, enc.length);
+	/** The Constant PROPERTY_ENCODING. */
+	public static final String PROPERTY_ENCODING = "encoding";
 
-                // textNode in this context
-                textContentList.set(textContentList.size() - 1,
-                    new Boolean(true));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	/** The Constant PROPERTY_GZIP. */
+	public static final String PROPERTY_GZIP = "gzip";
 
-    public void endDocument() throws SAXException {
-        try {
-            this.out.flush();
-            this.out.close();
+	/** The out. */
+	private OutputStreamWriter out;
 
-            textContentList.clear();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	/** The encoding. */
+	private String encoding;
 
-    public void endElement(String namespaceURI, String localName, String qName)
-        throws SAXException {
-        try {
-            if (parent) {
-                this.out.write("/>");
-            } else {
-                // check for textNodes in this context
-                Boolean b = (Boolean) textContentList.remove(textContentList.size() -
-                        1);
+	/** The dtd. */
+	private String dtd;
 
-                if (b.booleanValue()) {
-                    this.out.write("</" + qName + ">");
-                } else {
-                    // there was no textNode we can create a new line
-                    this.out.write('\n');
-                    indentOutput(indent);
-                    this.out.write("</" + qName + ">");
-                }
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+	/** The indent. */
+	private int indent = 0;
 
-        indent--;
-        parent = false;
-    }
+	/** The parent. */
+	private boolean parent = false;
 
-    public void endPrefixMapping(String prefix) throws SAXException {
-    }
+	/** The text content list. */
+	private final ArrayList<Boolean> textContentList = new ArrayList<>();
 
-    public void ignorableWhitespace(char[] ch, int start, int length)
-        throws SAXException {
-    }
+	/** The rootxmlns. */
+	protected HashMap<String, String> rootxmlns = new HashMap<>();
 
-    public void processingInstruction(String target, String data)
-        throws SAXException {
-    }
+	/** The gzip. */
+	protected boolean gzip = false;
 
-    public void setDocumentLocator(Locator locator) {
-    }
+	/**
+	 * Instantiates a new SAX pretty outputter.
+	 *
+	 * @param output
+	 *            the output
+	 * @param encoding
+	 *            the encoding
+	 */
+	public SAXPrettyOutputter(final OutputStream output, final String encoding) {
+		this.encoding = encoding;
+		this.setOutput(output);
+	}
 
-    public void skippedEntity(String name) throws SAXException {
-    }
+	/**
+	 *
+	 */
+	public SAXPrettyOutputter(final OutputStream out) {
+		this(out, DEFAULT_ENCODING);
+	}
 
-    public void startDocument() throws SAXException {
-        indent = 0;
+	/**
+	 * Instantiates a new SAX pretty outputter.
+	 */
+	public SAXPrettyOutputter() {
+		this.encoding = DEFAULT_ENCODING;
+	}
 
-        try {
-            this.out.write("<?xml version=\"1.0\" encoding=\"" + encoding +
-                "\" ?>");
+	@Override
+	public void characters(final char[] ch, final int start, final int length) throws SAXException {
+		try {
+			if (length > 0) {
+				if (parent) {
+					this.out.write(">");
+					parent = false;
+				}
 
-            if (this.dtd != null) {
-                this.out.write("\n<!DOCTYPE " + dtd + ">");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+				char[] enc = encodeXML(new String(ch, 0, length)).toCharArray();
+				this.out.write(enc, start, enc.length);
 
-    public void startElement(String namespaceURI, String localName,
-        String qName, Attributes atts) throws SAXException {
-        this.indent++;
+				// textNode in this context
+				textContentList.set(textContentList.size() - 1, true);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-        try {
-            if (this.parent) {
-                // we are nested
-                this.out.write(">");
-            } else {
-                this.parent = true;
-            }
+	@Override
+	public void endDocument() throws SAXException {
+		try {
+			this.out.flush();
+			this.out.close();
 
-            // first create a new line
-            this.out.write('\n');
+			textContentList.clear();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            // indent the line
-            this.indentOutput(indent);
+	@Override
+	public void endElement(final String namespaceURI, final String localName, final String qName) throws SAXException {
+		try {
+			if (parent) {
+				this.out.write("/>");
+			} else {
+				// check for textNodes in this context
+				Boolean b = textContentList.remove(textContentList.size() - 1);
 
-            // the element
-            this.out.write("<" + qName);
+				if (b.booleanValue()) {} else {
+					// there was no textNode we can create a new line
+					this.out.write('\n');
+					indentOutput(indent);
+				}
+				this.out.write("</" + qName + ">");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-            int attrCount = atts.getLength();
+		indent--;
+		parent = false;
+	}
 
-            for (int i = 0; i < attrCount; i++) {
-                //we need a white space between the 
-                //attributes
-                this.indentOutput(1);
+	@Override
+	public void endPrefixMapping(final String prefix) throws SAXException {}
 
-                String uri = atts.getURI(i);
-                String qname = atts.getQName(i);
+	@Override
+	public void ignorableWhitespace(final char[] ch, final int start, final int length) throws SAXException {}
 
-                // if (uri.length() > 0) {
-                // String prefix = qname.substring(0, qname.indexOf(':'));
-                // out
-                // .write(" xmlns:" + prefix + "=\"" + uri
-                // + "\" ");
-                // }
-                String value = atts.getValue(i);
-                if(value == null){
-                	value="";
-                }
-                this.out.write(qname + "=\"" + encodeXML(atts.getValue(i)) +
-                    "\"");
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+	@Override
+	public void processingInstruction(final String target, final String data) throws SAXException {}
 
-        // no text in this context now
-        this.textContentList.add(Boolean.valueOf(false));
-    }
+	@Override
+	public void setDocumentLocator(final Locator locator) {}
 
-    public void startPrefixMapping(String prefix, String uri)
-        throws SAXException {
-    }
+	@Override
+	public void skippedEntity(final String name) throws SAXException {}
 
-    /**
-     * Indent the output
-     *
-     * @param indentSize
-     */
-    private void indentOutput(int indentSize) {
-        try {
-            for (int i = 0; i < indentSize; i++) {
-                this.out.write(' ');
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void startDocument() throws SAXException {
+		indent = 0;
 
-    public static String encodeXML(String text) {
-        int length = text.length();
-        StringBuffer work = new StringBuffer(length);
+		try {
+			this.out.write("<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>");
 
-        for (int i = 0; i < length; i++) {
-            char c = text.charAt(i);
+			if (this.dtd != null) { this.out.write("\n<!DOCTYPE " + dtd + ">"); }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-            if (c == '&') {
-                work.append("&amp;");
-            } else if (c == '<') {
-                work.append("&lt;");
-            } else if (c == '>') {
-                work.append("&gt;");
-            } else if (!Character.isIdentifierIgnorable(c)) {
-                work.append(c);
-            }
-        }
+	@Override
+	public void startElement(final String namespaceURI, final String localName, final String qName,
+			final Attributes atts) throws SAXException {
+		this.indent++;
 
-        return work.toString();
-    }
+		try {
+			if (this.parent) {
+				// we are nested
+				this.out.write(">");
+			} else {
+				this.parent = true;
+			}
 
-    public void setDTD(String dtd) {
-        this.dtd = dtd;
-    }
+			// first create a new line
+			this.out.write('\n');
 
-    protected void queryXMLNS(Attributes atts) {
-        for (int i = 0; i < atts.getLength(); i++) {
-            String qname = atts.getQName(i);
+			// indent the line
+			this.indentOutput(indent);
 
-            if (qname.startsWith("xmlns:")) {
-                String prefix = atts.getLocalName(i);
-                String uri = atts.getValue(i);
-                rootxmlns.put(uri, prefix);
-            }
-        }
-    }
+			// the element
+			this.out.write("<" + qName);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.xml.SAXSerializer#getMimeType()
-     */
-    public String getMimeType() {
-        return MIMETYPE;
-    }
+			int attrCount = atts.getLength();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.xml.SAXSerializer#getSuffix()
-     */
-    public String getSuffix() {
-        if (gzip) {
-            return SUFFIX_GZIP;
-        } else {
-            return SUFFIX;
-        }
-    }
+			for (int i = 0; i < attrCount; i++) {
+				// we need a white space between the
+				// attributes
+				this.indentOutput(1);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.xml.SAXSerializer#setOutput(java.io.OutputStream)
-     */
-    public void setOutput(OutputStream out) {
-        OutputStream bout = null;
+				// String uri = atts.getURI(i);
+				String qname = atts.getQName(i);
 
-        try {
-            if (gzip) {
-                bout = new BufferedOutputStream(new GZIPOutputStream(out));
-            } else {
-                bout = new BufferedOutputStream(out);
-            }
+				// if (uri.length() > 0) {
+				// String prefix = qname.substring(0, qname.indexOf(':'));
+				// out
+				// .write(" xmlns:" + prefix + "=\"" + uri
+				// + "\" ");
+				// }
+				String value = atts.getValue(i);
+				if (value == null) { value = ""; }
+				this.out.write(qname + "=\"" + encodeXML(atts.getValue(i)) + "\"");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-            this.out = new OutputStreamWriter(bout, this.encoding);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		// no text in this context now
+		this.textContentList.add(false);
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.kabeja.xml.SAXSerializer#setProperties(java.util.Map)
-     */
-    public void setProperties(Map properties) {
-        this.properties = properties;
+	@Override
+	public void startPrefixMapping(final String prefix, final String uri) throws SAXException {}
 
-        if (properties.containsKey(PROPERTY_ENCODING)) {
-            this.encoding = (String) properties.get(PROPERTY_ENCODING);
-        }
+	/**
+	 * Indent the output
+	 *
+	 * @param indentSize
+	 */
+	private void indentOutput(final int indentSize) {
+		try {
+			for (int i = 0; i < indentSize; i++) { this.out.write(' '); }
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-        if (properties.containsKey(PROPERTY_GZIP)) {
-            this.gzip = Boolean.getBoolean((String) properties.get(
-                        PROPERTY_GZIP));
-        }
-    }
+	/**
+	 * Encode XML.
+	 *
+	 * @param text
+	 *            the text
+	 * @return the string
+	 */
+	public static String encodeXML(final String text) {
+		int length = text.length();
+		StringBuilder work = new StringBuilder(length);
+
+		for (int i = 0; i < length; i++) {
+			char c = text.charAt(i);
+
+			switch (c) {
+				case '&':
+					work.append("&amp;");
+					break;
+				case '<':
+					work.append("&lt;");
+					break;
+				case '>':
+					work.append("&gt;");
+					break;
+				default:
+					if (!Character.isIdentifierIgnorable(c)) { work.append(c); }
+					break;
+			}
+		}
+
+		return work.toString();
+	}
+
+	/**
+	 * Sets the dtd.
+	 *
+	 * @param dtd
+	 *            the new dtd
+	 */
+	public void setDTD(final String dtd) { this.dtd = dtd; }
+
+	/**
+	 * Query XMLNS.
+	 *
+	 * @param atts
+	 *            the atts
+	 */
+	protected void queryXMLNS(final Attributes atts) {
+		for (int i = 0; i < atts.getLength(); i++) {
+			String qname = atts.getQName(i);
+
+			if (qname.startsWith("xmlns:")) {
+				String prefix = atts.getLocalName(i);
+				String uri = atts.getValue(i);
+				rootxmlns.put(uri, prefix);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.xml.SAXSerializer#getMimeType()
+	 */
+	@Override
+	public String getMimeType() { return MIMETYPE; }
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.xml.SAXSerializer#getSuffix()
+	 */
+	@Override
+	public String getSuffix() {
+		if (gzip) return SUFFIX_GZIP;
+		return SUFFIX;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.xml.SAXSerializer#setOutput(java.io.OutputStream)
+	 */
+	@Override
+	public void setOutput(final OutputStream out) {
+		OutputStream bout = null;
+
+		try {
+			if (gzip) {
+				bout = new BufferedOutputStream(new GZIPOutputStream(out));
+			} else {
+				bout = new BufferedOutputStream(out);
+			}
+
+			this.out = new OutputStreamWriter(bout, this.encoding);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.kabeja.xml.SAXSerializer#setProperties(java.util.Map)
+	 */
+	@Override
+	public void setProperties(final Map properties) {
+		this.properties = properties;
+
+		if (properties.containsKey(PROPERTY_ENCODING)) { this.encoding = (String) properties.get(PROPERTY_ENCODING); }
+
+		if (properties.containsKey(PROPERTY_GZIP)) {
+			this.gzip = Boolean.getBoolean((String) properties.get(PROPERTY_GZIP));
+		}
+	}
 }

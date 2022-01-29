@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * StartSimulation.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.headless.command;
 
 import java.io.File;
@@ -7,6 +17,7 @@ import msi.gama.headless.core.Experiment;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.model.IModel;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -21,6 +32,9 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class StartSimulation.
+ */
 @symbol (
 		name = IKeywords.STARTSIMULATION,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -32,10 +46,12 @@ import msi.gaml.types.IType;
 		value = { @facet (
 				name = IKeywords.MODEL,
 				type = IType.STRING,
+				doc = @doc ("The path to the model containing the experiment"),
 				optional = false),
 				@facet (
 						name = IKeywords.EXPERIMENT,
 						type = IType.STRING,
+						doc = @doc ("The name of the experiment to run"),
 						optional = false),
 				@facet (
 						name = IKeywords.WITHSEED,
@@ -48,11 +64,26 @@ import msi.gaml.types.IType;
 		omissible = IKeywords.EXPERIMENT)
 public class StartSimulation extends AbstractStatement {
 
+	/**
+	 * Instantiates a new start simulation.
+	 *
+	 * @param desc
+	 *            the desc
+	 */
 	public StartSimulation(final IDescription desc) {
 		super(desc);
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Retrieve model file absolute path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param filename
+	 *            the filename
+	 * @return the string
+	 */
 	private String retrieveModelFileAbsolutePath(final IScope scope, final String filename) {
 		if (filename.charAt(0) == '/') return filename;
 		return new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath() + "/" + filename;

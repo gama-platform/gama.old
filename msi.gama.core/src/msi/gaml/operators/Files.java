@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Files.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Files.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,11 +13,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -26,7 +22,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.compress.utils.IOUtils;
-import org.eclipse.core.internal.utils.FileUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -56,9 +51,10 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings ({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes", "restriction" })
 public class Files {
 
+	/** The Constant WRITE. */
 	public static final String WRITE = "write";
 
 	// @operator (
@@ -71,6 +67,17 @@ public class Files {
 	// comment = "The type of container to pass will depend on the type of file (see the management of files in the
 	// documentation). Can be used to copy files since files are considered as containers. For example: save
 	// file('image_copy.png', file('image.png')); will copy image.png to image_copy.png")
+	/**
+	 * From.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param container
+	 *            the container
+	 * @return the i gama file
+	 */
 	// @no_test
 	public static IGamaFile from(final IScope scope, final String s, final IContainer container) {
 		// WARNING Casting to Modifiable is not safe
@@ -98,11 +105,31 @@ public class Files {
 	// value = " // fileT represents the file \"../includes/Stupid_Cell.Data\""),
 	// @example (
 	// value = " // fileT.contents here contains a matrix storing all the data of the text file") },
+	/**
+	 * From.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return the i gama file
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	// see = { "folder", "new_folder" })
 	public static IGamaFile from(final IScope scope, final String s) throws GamaRuntimeException {
 		return from(scope, s, null);
 	}
 
+	/**
+	 * Exist file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "file_exists",
 			can_be_const = false,
@@ -124,17 +151,24 @@ public class Files {
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_file(final IScope scope, final String s) {
-		if (s == null) return false;
-		if (scope == null)
-			return false;
-		else {
-			final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
-			final File f = new File(path);
+		if (s == null || scope == null) return false;
+		final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
+		final File f = new File(path);
 
-			return f.exists() && !f.isDirectory();
-		}
+		return f.exists() && !f.isDirectory();
 	}
-	
+
+	/**
+	 * Zip files.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param zipfile
+	 *            the zipfile
+	 * @param s
+	 *            the s
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "folder_exists",
 			can_be_const = false,
@@ -156,94 +190,116 @@ public class Files {
 							isExecutable = false) })
 	@no_test
 	public static boolean zip_files(final IScope scope, final String zipfile, final IList<String> s) {
-		if (s == null || s.isEmpty())  return false;
-		if (scope == null)
-			return false;
-		
+		if (s == null || s.isEmpty() || scope == null) return false;
+
 		return true;
 	}
-	
-	
-	private static void extractFolder(IScope scope, String zipFile,String extractFolder) 
-	{
-	    try
-	    {
-	        int BUFFER = 2048;
-	        File file = new File(zipFile);
 
-	        ZipFile zip = new ZipFile(file);
-	        String newPath = extractFolder;
+	/**
+	 * Extract folder.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param zipFile
+	 *            the zip file
+	 * @param extractFolder
+	 *            the extract folder
+	 */
+	private static void extractFolder(final IScope scope, final String zipFile, final String extractFolder) {
+		try {
+			int BUFFER = 2048;
+			File file = new File(zipFile);
 
-	        new File(newPath).mkdir();
-	        Enumeration zipFileEntries = zip.entries();
+			try (ZipFile zip = new ZipFile(file)) {
+				String newPath = extractFolder;
 
-	        // Process each entry
-	        while (zipFileEntries.hasMoreElements())
-	        {
-	            // grab a zip file entry
-	            ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-	            String currentEntry = entry.getName();
+				new File(newPath).mkdir();
+				Enumeration zipFileEntries = zip.entries();
 
-	            File destFile = new File(newPath, currentEntry);
-	            //destFile = new File(newPath, destFile.getName());
-	            File destinationParent = destFile.getParentFile();
+				// Process each entry
+				while (zipFileEntries.hasMoreElements()) {
+					// grab a zip file entry
+					ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+					String currentEntry = entry.getName();
 
-	            // create the parent directory structure if needed
-	            destinationParent.mkdirs();
+					File destFile = new File(newPath, currentEntry);
+					// destFile = new File(newPath, destFile.getName());
+					File destinationParent = destFile.getParentFile();
 
-	            if (!entry.isDirectory())
-	            {
-	                BufferedInputStream is = new BufferedInputStream(zip
-	                .getInputStream(entry));
-	                int currentByte;
-	                // establish buffer for writing file
-	                byte data[] = new byte[BUFFER];
+					// create the parent directory structure if needed
+					destinationParent.mkdirs();
 
-	                // write the current file to disk
-	                FileOutputStream fos = new FileOutputStream(destFile);
-	                BufferedOutputStream dest = new BufferedOutputStream(fos,
-	                BUFFER);
+					if (!entry.isDirectory()) {
+						try (BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry))) {
+							int currentByte;
+							// establish buffer for writing file
+							byte data[] = new byte[BUFFER];
 
-	                // read and write until last byte is encountered
-	                while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-	                    dest.write(data, 0, currentByte);
-	                }
-	                dest.flush();
-	                dest.close();
-	                is.close();
-	            }
+							try (// write the current file to disk
+									FileOutputStream fos = new FileOutputStream(destFile)) {
+								try (BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER)) {
+									// read and write until last byte is encountered
+									while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
+										dest.write(data, 0, currentByte);
+									}
+									dest.flush();
+								}
+							}
+						}
+					}
 
-
-	        }
-	        zip.close();
-	    }
-	    catch (Exception e) 
-	    {
-	        GamaRuntimeException.error("ERROR: "+e.getMessage(), scope);
-	    }
+				}
+			}
+		} catch (Exception e) {
+			GamaRuntimeException.error("ERROR: " + e.getMessage(), scope);
+		}
 
 	}
-	private static void addFolderToZip(File folderOrFile, ZipOutputStream zip, String baseName) throws IOException {
+
+	/**
+	 * Adds the folder to zip.
+	 *
+	 * @param folderOrFile
+	 *            the folder or file
+	 * @param zip
+	 *            the zip
+	 * @param baseName
+	 *            the base name
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	private static void addFolderToZip(final File folderOrFile, final ZipOutputStream zip, final String baseName)
+			throws IOException {
 		File[] files;
 		if (folderOrFile.isDirectory()) {
-	    	 files = folderOrFile.listFiles();
-	    } else {
-	    	files = new File[1];
-	    	files[0] = folderOrFile;
-	    }
-		 for (File file : files) {
-	        if (file.isDirectory()) {
-	            addFolderToZip(file, zip,baseName);
-	        } else {
-	            String name = file.getAbsolutePath().substring(baseName.length());;
-	            ZipEntry zipEntry = new ZipEntry(name);
-	            zip.putNextEntry(zipEntry);
-	            IOUtils.copy(new FileInputStream(file), zip);
-	            zip.closeEntry();
-	        }
-	    }
+			files = folderOrFile.listFiles();
+			if (files == null) return;
+		} else {
+			files = new File[1];
+			files[0] = folderOrFile;
+		}
+		for (File file : files) {
+			if (file.isDirectory()) {
+				addFolderToZip(file, zip, baseName);
+			} else {
+				String name = file.getAbsolutePath().substring(baseName.length());
+				ZipEntry zipEntry = new ZipEntry(name);
+				zip.putNextEntry(zipEntry);
+				IOUtils.copy(new FileInputStream(file), zip);
+				zip.closeEntry();
+			}
+		}
 	}
-	
+
+	/**
+	 * Delete.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "delete_file",
 			can_be_const = false,
@@ -253,38 +309,44 @@ public class Files {
 			value = "delete a file or a folder",
 			examples = { @example (
 					value = "bool delete_file_ok <- delete_file([\"../includes/my_folder\"];",
-					isExecutable = false)})
+					isExecutable = false) })
 	@no_test
 	public static boolean delete(final IScope scope, final String source) {
-		if (source == null ) return false;
-		if (scope == null)
-			return false;
-		else {
-			final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
-			File file = new File(pathSource);
-			if (file.isDirectory() ) {
-				deleteDir(file);	
-			}else {
-				return file.delete();
-			}
-			return !exist_folder(scope, source);
-		}
+		if (source == null || scope == null) return false;
+		final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+		File file = new File(pathSource);
+		if (!file.isDirectory()) return file.delete();
+		deleteDir(file);
+		return !exist_folder(scope, source);
 	}
-	
-	static void  deleteDir(File file) {
+
+	/**
+	 * Delete dir.
+	 *
+	 * @param file
+	 *            the file
+	 */
+	static void deleteDir(final File file) {
 		if (file.isDirectory()) {
 			File[] contents = file.listFiles();
-		    if (contents != null) {
-		        for (File f : contents) {
-		        	if (! java.nio.file.Files.isSymbolicLink(f.toPath())) {
-		                deleteDir(f);
-		            }
-		        }
-		    }
+			if (contents != null) {
+				for (File f : contents) { if (!java.nio.file.Files.isSymbolicLink(f.toPath())) { deleteDir(f); } }
+			}
 		}
 		file.delete();
 	}
-	
+
+	/**
+	 * Unzip.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param destination
+	 *            the destination
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "unzip",
 			can_be_const = false,
@@ -294,20 +356,28 @@ public class Files {
 			value = "Unzip a given zip file into a given folder. Returns true if the file is well unzipped",
 			examples = { @example (
 					value = "bool unzip_ok <- unzip([\"../includes/my_folder\"], \"folder.zip\";",
-					isExecutable = false)})
+					isExecutable = false) })
 	@no_test
 	public static boolean unzip(final IScope scope, final String source, final String destination) {
-		if (source == null || !exist_file(scope, source) || destination == null ) return false;
-		if (scope == null)
-			return false;
-		else {
-			final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
-			final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
-			
-			extractFolder(scope,pathSource,pathDestination);
-			return true;
-		}
+		if (source == null || !exist_file(scope, source) || destination == null || scope == null) return false;
+		final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+		final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+
+		extractFolder(scope, pathSource, pathDestination);
+		return true;
 	}
+
+	/**
+	 * Zip.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param sources
+	 *            the sources
+	 * @param destination
+	 *            the destination
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "zip",
 			can_be_const = false,
@@ -317,31 +387,35 @@ public class Files {
 			value = "Zip a given list of files or folders. Returns true if the files are well zipped",
 			examples = { @example (
 					value = "bool zip_ok <- zip([\"../includes/my_folder\"], \"folder.zip\";",
-					isExecutable = false)})
+					isExecutable = false) })
 	@no_test
 	public static boolean zip(final IScope scope, final IList<String> sources, final String destination) {
-		if (sources == null ||sources.isEmpty() || destination == null) return false;
-		if (scope == null)
-			return false;
-		else {
-			final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
-			try (FileOutputStream fos = new FileOutputStream(pathDestination)){
-				ZipOutputStream zip = new ZipOutputStream( new BufferedOutputStream(fos));
+		if (sources == null || sources.isEmpty() || destination == null || scope == null) return false;
+		final String pathDestination = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+		try (FileOutputStream fos = new FileOutputStream(pathDestination)) {
+			try (ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(fos))) {
 				for (String source : sources) {
 					final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
 					File f = new File(pathSource);
-					addFolderToZip(f,zip, f.getParentFile().getAbsolutePath());	
+					addFolderToZip(f, zip, f.getParentFile().getAbsolutePath());
 				}
-				
-				zip.close();
-			} catch (IOException e) {
-				GamaRuntimeException.error(e.getMessage(), scope);
-			} 
-			return true;
+
+			}
+		} catch (IOException e) {
+			GamaRuntimeException.error(e.getMessage(), scope);
 		}
+		return true;
 	}
-	
-	
+
+	/**
+	 * Exist folder.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return true, if successful
+	 */
 	@operator (
 			value = "folder_exists",
 			can_be_const = false,
@@ -363,17 +437,24 @@ public class Files {
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_folder(final IScope scope, final String s) {
-		if (s == null) return false;
-		if (scope == null)
-			return false;
-		else {
-			final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
-			final File f = new File(path);
+		if (s == null || scope == null) return false;
+		final String path = FileUtils.constructAbsoluteFilePath(scope, s, false);
+		final File f = new File(path);
 
-			return f.exists() && f.isDirectory();
-		}
+		return f.exists() && f.isDirectory();
 	}
 
+	/**
+	 * Folder file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return the i gama file
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.FOLDER,
 			can_be_const = false,
@@ -399,11 +480,35 @@ public class Files {
 		return new GamaFolderFile(scope, s);
 	}
 
+	/**
+	 * Folder file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param modify
+	 *            the modify
+	 * @return the i gama file
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IGamaFile folderFile(final IScope scope, final String s, final boolean modify)
 			throws GamaRuntimeException {
 		return new GamaFolderFile(scope, s, modify);
 	}
 
+	/**
+	 * Writable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param writable
+	 *            the writable
+	 * @return the i gama file
+	 */
 	@operator (
 			value = "writable",
 			category = IOperatorCategory.FILE,
@@ -458,6 +563,19 @@ public class Files {
 		return opRead(scope, scope.getAgent(), s);
 	}
 
+	/**
+	 * Op read.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 * @param s
+	 *            the s
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get",
 			category = IOperatorCategory.CONTAINER,
@@ -481,6 +599,19 @@ public class Files {
 		return g.get(scope, s);
 	}
 
+	/**
+	 * Op read.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 * @param s
+	 *            the s
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "get",
 			category = IOperatorCategory.FILE,
@@ -503,6 +634,17 @@ public class Files {
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
 	}
 
+	/**
+	 * New folder.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param folder
+	 *            the folder
+	 * @return the i gama file
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "new_folder" },
 			index_type = IType.INT,

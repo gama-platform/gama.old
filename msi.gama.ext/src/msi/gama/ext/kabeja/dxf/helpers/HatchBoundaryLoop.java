@@ -1,18 +1,13 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * HatchBoundaryLoop.java, in msi.gama.ext, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.dxf.helpers;
 
 import java.util.ArrayList;
@@ -22,63 +17,75 @@ import java.util.List;
 import msi.gama.ext.kabeja.dxf.Bounds;
 import msi.gama.ext.kabeja.dxf.DXFEntity;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de>Simon Mieth</a>
  *
  */
 public class HatchBoundaryLoop {
-    private List edges = new ArrayList();
-    private boolean outermost = true;
+	
+	/** The edges. */
+	private final List<DXFEntity> edges = new ArrayList<>();
+	
+	/** The outermost. */
+	private boolean outermost = true;
 
-    /**
-     * @return Returns the outermost.
-     */
-    public boolean isOutermost() {
-        return outermost;
-    }
+	/**
+	 * @return Returns the outermost.
+	 */
+	public boolean isOutermost() { return outermost; }
 
-    /**
-     * @param outermost
-     *            The outermost to set.
-     */
-    public void setOutermost(boolean outermost) {
-        this.outermost = outermost;
-    }
+	/**
+	 * @param outermost
+	 *            The outermost to set.
+	 */
+	public void setOutermost(final boolean outermost) { this.outermost = outermost; }
 
-    public Iterator getBoundaryEdgesIterator() {
-        return edges.iterator();
-    }
+	/**
+	 * Gets the boundary edges iterator.
+	 *
+	 * @return the boundary edges iterator
+	 */
+	public Iterator getBoundaryEdgesIterator() { return edges.iterator(); }
 
-    public void addBoundaryEdge(DXFEntity edge) {
-        edges.add(edge);
-    }
+	/**
+	 * Adds the boundary edge.
+	 *
+	 * @param edge the edge
+	 */
+	public void addBoundaryEdge(final DXFEntity edge) {
+		edges.add(edge);
+	}
 
-    public Bounds getBounds() {
-        Bounds bounds = new Bounds();
+	/**
+	 * Gets the bounds.
+	 *
+	 * @return the bounds
+	 */
+	public Bounds getBounds() {
+		Bounds bounds = new Bounds();
 
-        // System.out.println("edges="+edges.size());
-        if (edges.size() > 0) {
-            Iterator i = edges.iterator();
+		// System.out.println("edges="+edges.size());
+		if (edges.size() <= 0) {
+			bounds.setValid(false);
 
-            while (i.hasNext()) {
-                DXFEntity entity = (DXFEntity) i.next();
-                Bounds b = entity.getBounds();
+			return bounds;
+		}
+		Iterator i = edges.iterator();
 
-                if (b.isValid()) {
-                    bounds.addToBounds(b);
-                }
-            }
+		while (i.hasNext()) {
+			DXFEntity entity = (DXFEntity) i.next();
+			Bounds b = entity.getBounds();
 
-            return bounds;
-        } else {
-            bounds.setValid(false);
+			if (b.isValid()) { bounds.addToBounds(b); }
+		}
 
-            return bounds;
-        }
-    }
+		return bounds;
+	}
 
-    public int getEdgeCount() {
-        return this.edges.size();
-    }
+	/**
+	 * Gets the edge count.
+	 *
+	 * @return the edge count
+	 */
+	public int getEdgeCount() { return this.edges.size(); }
 }

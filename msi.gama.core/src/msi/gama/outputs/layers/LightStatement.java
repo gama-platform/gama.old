@@ -3,7 +3,7 @@
  * LightStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -36,6 +36,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * The Class LightStatement.
@@ -184,9 +185,6 @@ public class LightStatement extends AbstractLayerStatement {
 	/** The aspect. */
 	AspectStatement aspect;
 
-	/** The i. */
-	static int i;
-
 	/** The update. */
 	boolean update = true;
 
@@ -200,7 +198,8 @@ public class LightStatement extends AbstractLayerStatement {
 	 */
 	public LightStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		final IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + i++);
+		final IDescription d =
+				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + COUNTER.GET());
 		aspect = new AspectStatement(d);
 	}
 

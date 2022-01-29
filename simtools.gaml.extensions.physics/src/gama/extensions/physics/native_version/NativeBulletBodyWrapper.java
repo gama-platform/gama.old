@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * NativeBulletBodyWrapper.java, in simtools.gaml.extensions.physics, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gama.extensions.physics.native_version;
 
 import static java.lang.Math.max;
@@ -19,6 +29,9 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.Types;
 
+/**
+ * The Class NativeBulletBodyWrapper.
+ */
 /*
  * A rigid body "wrapper" dedicated to GAMA agents. Allows to translate information from/to the agents and their bodies,
  * to reconstruct shapes (from JTS geometries and GAMA 3D additions, but also from AABB envelopes) and to pass commands
@@ -31,9 +44,16 @@ public class NativeBulletBodyWrapper
 		implements INativeBulletPhysicalEntity {
 
 	// Between GAMA coordinates and JBullet coordinates. Some discrepancies
+	/** The quat transfer. */
 	// exist (esp. on spheres, for instance)
 	Quaternion quatTransfer = new Quaternion();
 
+	/**
+	 * Instantiates a new native bullet body wrapper.
+	 *
+	 * @param agent the agent
+	 * @param gateway the gateway
+	 */
 	public NativeBulletBodyWrapper(final IAgent agent, final NativeBulletPhysicalWorld gateway) {
 		super(agent, gateway);
 		setLocation(agent.getLocation());
@@ -155,7 +175,7 @@ public class NativeBulletBodyWrapper
 		Vector3f vectorTransfer = body.getPhysicsLocation(null);
 		agent.setLocation(new GamaPoint(vectorTransfer.x, vectorTransfer.y, vectorTransfer.z - aabbTranslation.z));
 		body.getPhysicsRotation(quatTransfer);
-		var rot = (GamaPair<Double, GamaPoint>) agent.getAttribute(ROTATION);
+		@SuppressWarnings ("unchecked") var rot = (GamaPair<Double, GamaPoint>) agent.getAttribute(ROTATION);
 		if (rot == null) {
 			rot = new GamaPair<>(0d, new GamaPoint(0, 0, 1), Types.FLOAT, Types.POINT);
 			agent.setAttribute(ROTATION, rot);
@@ -185,34 +205,27 @@ public class NativeBulletBodyWrapper
 
 	}
 
-	public Vector3f getTranslation() {
-		return aabbTranslation;
-	}
+	/**
+	 * Gets the translation.
+	 *
+	 * @return the translation
+	 */
+	public Vector3f getTranslation() { return aabbTranslation; }
 
 	@Override
-	public float getMass() {
-		return body.getMass();
-	}
+	public float getMass() { return body.getMass(); }
 
 	@Override
-	public float getFriction() {
-		return body.getFriction();
-	}
+	public float getFriction() { return body.getFriction(); }
 
 	@Override
-	public float getRestitution() {
-		return body.getRestitution();
-	}
+	public float getRestitution() { return body.getRestitution(); }
 
 	@Override
-	public float getLinearDamping() {
-		return body.getLinearDamping();
-	}
+	public float getLinearDamping() { return body.getLinearDamping(); }
 
 	@Override
-	public float getAngularDamping() {
-		return body.getAngularDamping();
-	}
+	public float getAngularDamping() { return body.getAngularDamping(); }
 
 	@Override
 	public GamaPoint getAngularVelocity(final GamaPoint v) {
@@ -235,14 +248,17 @@ public class NativeBulletBodyWrapper
 		body.clearForces();
 	}
 
+	/**
+	 * Update shape.
+	 *
+	 * @param converter the converter
+	 */
 	public void updateShape(final IShapeConverter<CollisionShape, Vector3f> converter) {
 		CollisionShape shape = converter.convertAndTranslate(agent, aabbTranslation, visualTranslation);
 		body.setCollisionShape(shape);
 	}
 
 	@Override
-	public float getContactDamping() {
-		return body.getContactDamping();
-	}
+	public float getContactDamping() { return body.getContactDamping(); }
 
 }

@@ -1,18 +1,13 @@
-/*
-   Copyright 2008 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * DXFStreamLayerFilter.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.parser.dxf.filter;
 
 import java.util.ArrayList;
@@ -25,91 +20,131 @@ import java.util.StringTokenizer;
 import msi.gama.ext.kabeja.parser.DXFValue;
 import msi.gama.ext.kabeja.parser.ParseException;
 
-
+/**
+ * The Class DXFStreamLayerFilter.
+ */
 public class DXFStreamLayerFilter extends DXFStreamEntityFilter {
-    public final static String PROPERTY_LAYERS_EXCLUDE = "layers.exclude";
-    public final static String PROPERTY_LAYERS_INCLUDE = "layers.include";
-    public final static int LAYER_NAME = 8;
-    protected List parseValues = new ArrayList();
-    protected Set exclude = new HashSet();
-    protected Set include = new HashSet();
-    protected String layer = "";
-    boolean findLayer = true;
 
-    public void setProperties(Map properties) {
-        if (properties.containsKey(PROPERTY_LAYERS_INCLUDE)) {
-            this.include.clear();
+	/** The Constant PROPERTY_LAYERS_EXCLUDE. */
+	public final static String PROPERTY_LAYERS_EXCLUDE = "layers.exclude";
 
-            StringTokenizer st = new StringTokenizer((String) properties.get(
-                        PROPERTY_LAYERS_INCLUDE), "|");
+	/** The Constant PROPERTY_LAYERS_INCLUDE. */
+	public final static String PROPERTY_LAYERS_INCLUDE = "layers.include";
 
-            while (st.hasMoreTokens()) {
-                String layer = st.nextToken();
+	/** The Constant LAYER_NAME. */
+	public final static int LAYER_NAME = 8;
 
-                this.include.add(layer);
-            }
-        }
+	/** The parse values. */
+	protected List<ParseValue> parseValues = new ArrayList<>();
 
-        if (properties.containsKey(PROPERTY_LAYERS_EXCLUDE)) {
-            this.exclude.clear();
+	/** The exclude. */
+	protected Set<String> exclude = new HashSet<>();
 
-            StringTokenizer st = new StringTokenizer((String) properties.get(
-                        PROPERTY_LAYERS_EXCLUDE), "|");
+	/** The include. */
+	protected Set<String> include = new HashSet<>();
 
-            while (st.hasMoreTokens()) {
-                this.exclude.add(st.nextToken());
-            }
-        }
-    }
+	/** The layer. */
+	protected String layer = "";
 
-    protected void endEntity() throws ParseException {
-        if (include.contains(this.layer)) {
-            this.outputEntity();
-        } else if (!exclude.contains(this.layer)) {
-            this.outputEntity();
-        }
-    }
+	/** The find layer. */
+	boolean findLayer = true;
 
-    protected void outputEntity() throws ParseException {
-        // give the complete entity to the next handler
-        for (int i = 0; i < this.parseValues.size(); i++) {
-            ParseValue v = (ParseValue) this.parseValues.get(i);
-            this.handler.parseGroup(v.getGroupCode(), v.getDXFValue());
-        }
-    }
+	@Override
+	public void setProperties(final Map properties) {
+		if (properties.containsKey(PROPERTY_LAYERS_INCLUDE)) {
+			this.include.clear();
 
-    protected void startEntity(String type) throws ParseException {
-        this.parseValues.clear();
-        this.findLayer = true;
-    }
+			StringTokenizer st = new StringTokenizer((String) properties.get(PROPERTY_LAYERS_INCLUDE), "|");
 
-    protected void parseEntity(int groupCode, DXFValue value)
-        throws ParseException {
-        if (this.findLayer && (groupCode == LAYER_NAME)) {
-            this.layer = value.getValue();
-            this.findLayer = false;
-        }
+			while (st.hasMoreTokens()) {
+				String layer = st.nextToken();
 
-        //parse values to buffer
-        ParseValue v = new ParseValue(groupCode, value);
-        this.parseValues.add(v);
-    }
+				this.include.add(layer);
+			}
+		}
 
-    private class ParseValue {
-        int groupCode;
-        DXFValue value;
+		if (properties.containsKey(PROPERTY_LAYERS_EXCLUDE)) {
+			this.exclude.clear();
 
-        public ParseValue(int groupCode, DXFValue value) {
-            this.groupCode = groupCode;
-            this.value = value;
-        }
+			StringTokenizer st = new StringTokenizer((String) properties.get(PROPERTY_LAYERS_EXCLUDE), "|");
 
-        public int getGroupCode() {
-            return this.groupCode;
-        }
+			while (st.hasMoreTokens()) { this.exclude.add(st.nextToken()); }
+		}
+	}
 
-        public DXFValue getDXFValue() {
-            return this.value;
-        }
-    }
+	@Override
+	protected void endEntity() throws ParseException {
+		if (include.contains(this.layer) || !exclude.contains(this.layer)) { this.outputEntity(); }
+	}
+
+	/**
+	 * Output entity.
+	 *
+	 * @throws ParseException
+	 *             the parse exception
+	 */
+	protected void outputEntity() throws ParseException {
+		// give the complete entity to the next handler
+		for (Object element : this.parseValues) {
+			ParseValue v = (ParseValue) element;
+			this.handler.parseGroup(v.getGroupCode(), v.getDXFValue());
+		}
+	}
+
+	@Override
+	protected void startEntity(final String type) throws ParseException {
+		this.parseValues.clear();
+		this.findLayer = true;
+	}
+
+	@Override
+	protected void parseEntity(final int groupCode, final DXFValue value) throws ParseException {
+		if (this.findLayer && groupCode == LAYER_NAME) {
+			this.layer = value.getValue();
+			this.findLayer = false;
+		}
+
+		// parse values to buffer
+		ParseValue v = new ParseValue(groupCode, value);
+		this.parseValues.add(v);
+	}
+
+	/**
+	 * The Class ParseValue.
+	 */
+	private static class ParseValue {
+
+		/** The group code. */
+		int groupCode;
+
+		/** The value. */
+		DXFValue value;
+
+		/**
+		 * Instantiates a new parses the value.
+		 *
+		 * @param groupCode
+		 *            the group code
+		 * @param value
+		 *            the value
+		 */
+		public ParseValue(final int groupCode, final DXFValue value) {
+			this.groupCode = groupCode;
+			this.value = value;
+		}
+
+		/**
+		 * Gets the group code.
+		 *
+		 * @return the group code
+		 */
+		public int getGroupCode() { return this.groupCode; }
+
+		/**
+		 * Gets the DXF value.
+		 *
+		 * @return the DXF value
+		 */
+		public DXFValue getDXFValue() { return this.value; }
+	}
 }

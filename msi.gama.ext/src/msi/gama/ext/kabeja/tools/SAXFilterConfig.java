@@ -1,59 +1,74 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * SAXFilterConfig.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.tools;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  *
  */
 public class SAXFilterConfig {
-    private Map properties;
-    private String filterName;
 
-    public SAXFilterConfig(Map properties) {
-        this.properties = properties;
-    }
+	/** The properties. */
+	private final Map<String, String> properties;
 
-    public SAXFilterConfig() {
-        this(new HashMap());
-    }
+	/** The filter name. */
+	private String filterName;
 
-    public Map getProperties() {
-        return this.properties;
-    }
+	/**
+	 * Instantiates a new SAX filter config.
+	 *
+	 * @param properties
+	 *            the properties
+	 */
+	public SAXFilterConfig(final Map<String, String> properties) {
+		this.properties = properties;
+	}
 
-    public void addProperty(String name, String value) {
-        this.properties.put(name, value);
-    }
+	/**
+	 * Instantiates a new SAX filter config.
+	 */
+	public SAXFilterConfig() {
+		this(new HashMap<>());
+	}
 
-    /**
-     * @return Returns the filterName.
-     */
-    public String getFilterName() {
-        return filterName;
-    }
+	/**
+	 * Gets the properties.
+	 *
+	 * @return the properties
+	 */
+	public Map getProperties() { return this.properties; }
 
-    /**
-     * @param filterName The filterName to set.
-     */
-    public void setFilterName(String filterName) {
-        this.filterName = filterName;
-    }
+	/**
+	 * Adds the property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	public void addProperty(final String name, final String value) {
+		this.properties.put(name, value);
+	}
+
+	/**
+	 * @return Returns the filterName.
+	 */
+	public String getFilterName() { return filterName; }
+
+	/**
+	 * @param filterName
+	 *            The filterName to set.
+	 */
+	public void setFilterName(final String filterName) { this.filterName = filterName; }
 }

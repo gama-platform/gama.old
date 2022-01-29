@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gaml.operators.Cast.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v. 1.8.1)
+ * Cast.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,7 +14,6 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -62,6 +60,19 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class Cast {
 
+	/**
+	 * Checks if is A.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.IS },
 			category = { IOperatorCategory.CASTING },
@@ -88,6 +99,17 @@ public class Cast {
 		return type.isAssignableFrom(GamaType.of(a));
 	}
 
+	/**
+	 * Checks if is skill.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param skill
+	 *            the skill
+	 * @return the boolean
+	 */
 	@operator (
 			value = IKeyword.IS_SKILL,
 			category = { IOperatorCategory.CASTING },
@@ -105,21 +127,51 @@ public class Cast {
 		return s.implementsSkill(skill);
 	}
 
+	/**
+	 * As type.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expr
+	 *            the expr
+	 * @return the i type
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IType asType(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		final Object value = expr.value(scope);
 		if (value instanceof String) {
 			final IModel m = scope.getModel();
 			return m.getDescription().getTypeNamed((String) value);
-		} else if (value instanceof ISpecies)
-			return ((ISpecies) value).getDescription().getGamlType();
-		else
-			return expr.getGamlType();
+		}
+		if (value instanceof ISpecies) return ((ISpecies) value).getDescription().getGamlType();
+		return expr.getGamlType();
 	}
 
+	/**
+	 * As graph.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i graph
+	 */
 	public static IGraph asGraph(final IScope scope, final Object val) {
 		return GamaGraphType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * As topology.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i topology
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = IKeyword.TOPOLOGY,
 			content_type = IType.GEOMETRY,
@@ -147,10 +199,32 @@ public class Cast {
 		return GamaTopologyType.staticCast(scope, val, false);
 	}
 
+	/**
+	 * As agent.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (IAgent) Types.AGENT.cast(scope, val, null, false);
 	}
 
+	/**
+	 * As.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param type
+	 *            the type
+	 * @return the object
+	 */
 	@operator (
 			value = IKeyword.AS,
 			type = ITypeProvider.SECOND_DENOTED_TYPE,
@@ -169,65 +243,219 @@ public class Cast {
 		return type.cast(scope, val, null, false);
 	}
 
+	/**
+	 * As bool.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param copy
+	 *            the copy
+	 * @return the boolean
+	 */
 	public static Boolean asBool(final IScope scope, final Object val, final boolean copy) {
 		// copy not passed
 		return GamaBoolType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * As bool.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the boolean
+	 */
 	public static Boolean asBool(final IScope scope, final Object val) {
 		// copy not passed
 		return asBool(scope, val, false);
 	}
 
+	/**
+	 * As color.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param copy
+	 *            the copy
+	 * @return the gama color
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static GamaColor asColor(final IScope scope, final Object val, final boolean copy)
 			throws GamaRuntimeException {
 		// copy not passed
 		return GamaColorType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * As color.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the gama color
+	 */
 	public static GamaColor asColor(final IScope scope, final Object val) {
 		return asColor(scope, val, false);
 	}
 
+	/**
+	 * As float.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the double
+	 */
 	public static Double asFloat(final IScope scope, final Object val) {
 		return GamaFloatType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * As geometry.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param copy
+	 *            the copy
+	 * @return the i shape
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IShape asGeometry(final IScope scope, final Object s, final boolean copy)
 			throws GamaRuntimeException {
 		return GamaGeometryType.staticCast(scope, s, null, copy);
 	}
 
+	/**
+	 * As geometry.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return the i shape
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IShape asGeometry(final IScope scope, final Object s) throws GamaRuntimeException {
 		return asGeometry(scope, s, false);
 	}
 
+	/**
+	 * As int.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the integer
+	 */
 	public static Integer asInt(final IScope scope, final Object val) {
 		return GamaIntegerType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * As pair.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param copy
+	 *            the copy
+	 * @return the gama pair
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static GamaPair asPair(final IScope scope, final Object val, final boolean copy)
 			throws GamaRuntimeException {
 		return GamaPairType.staticCast(scope, val, Types.NO_TYPE, Types.NO_TYPE, copy);
 	}
 
+	/**
+	 * As string.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the string
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static String asString(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaStringType.staticCast(scope, val, false);
 	}
 
+	/**
+	 * As point.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param copy
+	 *            the copy
+	 * @return the gama point
+	 */
 	public static GamaPoint asPoint(final IScope scope, final Object val, final boolean copy) {
 		GamaPoint result = GamaPointType.staticCast(scope, val, copy);
 		return result == null ? null : result;
 	}
 
+	/**
+	 * As point.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the gama point
+	 */
 	public static GamaPoint asPoint(final IScope scope, final Object val) {
 		return asPoint(scope, val, false);
 	}
 
+	/**
+	 * As map.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param copy
+	 *            the copy
+	 * @return the i map
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IMap asMap(final IScope scope, final Object val, final boolean copy) throws GamaRuntimeException {
 		return (IMap) Types.MAP.cast(scope, val, null, copy);
 	}
 
+	/**
+	 * As int.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param string
+	 *            the string
+	 * @param radix
+	 *            the radix
+	 * @return the integer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "as_int",
 			can_be_const = true,
@@ -259,10 +487,32 @@ public class Cast {
 		return GamaIntegerType.staticCast(scope, string, radix, false);
 	}
 
+	/**
+	 * As list.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i list
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IList asList(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaListType.staticCast(scope, val, null, false);
 	}
 
+	/**
+	 * List with.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param size
+	 *            the size
+	 * @param init
+	 *            the init
+	 * @return the i list
+	 */
 	@operator (
 			value = "list_with",
 			content_type = ITypeProvider.TYPE_AT_INDEX + 2,
@@ -280,10 +530,32 @@ public class Cast {
 		return GamaListFactory.create(scope, init, size);
 	}
 
+	/**
+	 * As matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i matrix
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public static IMatrix asMatrix(final IScope scope, final Object val) throws GamaRuntimeException {
 		return asMatrix(scope, val, null);
 	}
 
+	/**
+	 * Matrix with.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param size
+	 *            the size
+	 * @param init
+	 *            the init
+	 * @return the i matrix
+	 */
 	@operator (
 			value = "matrix_with",
 			content_type = ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE,
@@ -297,20 +569,26 @@ public class Cast {
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
 	public static IMatrix matrix_with(final IScope scope, final GamaPoint size, final IExpression init) {
 		if (size == null) throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope);
-		return GamaMatrixType.with(scope, init, (GamaPoint) size);
+		return GamaMatrixType.with(scope, init, size);
 	}
 
+	/**
+	 * As matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param size
+	 *            the size
+	 * @return the i matrix
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "as_matrix",
 			content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE,
-			can_be_const = true, // AD:
-									// was
-									// previously
-									// true
-									// --
-									// see
-									// Issue
-									// 1127
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
@@ -328,6 +606,17 @@ public class Cast {
 		return GamaMatrixType.staticCast(scope, val, size, Types.NO_TYPE, false);
 	}
 
+	/**
+	 * As species.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i species
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.SPECIES, "species_of" },
 			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
@@ -360,6 +649,13 @@ public class Cast {
 		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
 	}
 
+	/**
+	 * To gaml.
+	 *
+	 * @param val
+	 *            the val
+	 * @return the string
+	 */
 	@operator (
 			value = "to_gaml",
 			category = { IOperatorCategory.CASTING },

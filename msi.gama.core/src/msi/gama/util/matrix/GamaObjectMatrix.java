@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.matrix.GamaObjectMatrix.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling
- * and simulation platform (v. 1.8.1)
+ * GamaObjectMatrix.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -34,8 +34,22 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class GamaObjectMatrix.
+ */
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
+	/**
+	 * From.
+	 *
+	 * @param c
+	 *            the c
+	 * @param r
+	 *            the r
+	 * @param m
+	 *            the m
+	 * @return the gama object matrix
+	 */
 	static public GamaObjectMatrix from(final int c, final int r, final IMatrix<?> m) {
 		if (m instanceof GamaFloatMatrix) return new GamaObjectMatrix(c, r, ((GamaFloatMatrix) m).getMatrix());
 		if (m instanceof GamaObjectMatrix)
@@ -49,38 +63,96 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	/** The matrix. */
 	protected Object[] matrix;
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param p
+	 *            the p
+	 * @param contentsType
+	 *            the contents type
+	 */
 	public GamaObjectMatrix(final GamaPoint p, final IType<?> contentsType) {
 		this((int) p.getX(), (int) p.getY(), contentsType);
 	}
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param contentsType
+	 *            the contents type
+	 */
 	public GamaObjectMatrix(final int cols, final int rows, final IType<?> contentsType) {
 		super(cols, rows, contentsType);
 		setMatrix(new Object[cols * rows]);
 	}
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param objects
+	 *            the objects
+	 */
 	public GamaObjectMatrix(final int cols, final int rows, final double[] objects) {
 		this(cols, rows, Types.FLOAT);
 		final int n = Math.min(objects.length, rows * cols);
-		for (int i = 0; i < n; i++) {
-			matrix[i] = objects[i];
-		}
+		for (int i = 0; i < n; i++) { matrix[i] = objects[i]; }
 		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0,
 		// FastMath.min(objects.length, rows * cols));
 	}
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param objects
+	 *            the objects
+	 */
 	public GamaObjectMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows, Types.INT);
 		final int n = Math.min(objects.length, rows * cols);
-		for (int i = 0; i < n; i++) {
-			matrix[i] = objects[i];
-		}
+		for (int i = 0; i < n; i++) { matrix[i] = objects[i]; }
 	}
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param objects
+	 *            the objects
+	 * @param contentsType
+	 *            the contents type
+	 */
 	public GamaObjectMatrix(final int cols, final int rows, final Object[] objects, final IType<?> contentsType) {
 		this(cols, rows, contentsType);
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, Math.min(objects.length, rows * cols));
 	}
 
+	/**
+	 * Instantiates a new gama object matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param objects
+	 *            the objects
+	 * @param preferredSize
+	 *            the preferred size
+	 * @param contentsType
+	 *            the contents type
+	 */
 	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final GamaPoint preferredSize,
 			final IType<?> contentsType) {
 		super(scope, objects, preferredSize, contentsType);
@@ -97,9 +169,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 			}
 		} else {
 			for (int i = 0; i < numRows; i++) {
-				for (int j = 0; j < numCols; j++) {
-					set(scope, j, i, ((List<?>) objects.get(j)).get(i));
-				}
+				for (int j = 0; j < numCols; j++) { set(scope, j, i, ((List<?>) objects.get(j)).get(i)); }
 			}
 		}
 	}
@@ -116,9 +186,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public boolean _contains(final IScope scope, final Object o) {
-		for (int i = 0; i < getMatrix().length; i++) {
-			if (getMatrix()[i].equals(o)) return true;
-		}
+		for (int i = 0; i < getMatrix().length; i++) { if (getMatrix()[i].equals(o)) return true; }
 		return false;
 	}
 
@@ -221,16 +289,14 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	//
 	@Override
 	public boolean _isEmpty(final IScope scope) {
-		for (int i = 0; i < getMatrix().length; i++) {
-			if (getMatrix()[i] != null) return false;
-		}
+		for (int i = 0; i < getMatrix().length; i++) { if (getMatrix()[i] != null) return false; }
 		return true;
 	}
 
 	@Override
 	protected IList<Object> _listValue(final IScope scope, final IType contentsType, final boolean cast) {
 		return cast ? GamaListFactory.create(scope, contentsType, getMatrix())
-				: GamaListFactory.wrap(contentsType, getMatrix());
+				: GamaListFactory.<Object> wrap(contentsType, getMatrix());
 	}
 
 	@Override
@@ -243,9 +309,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	public GamaObjectMatrix _reverse(final IScope scope) throws GamaRuntimeException {
 		final GamaObjectMatrix result = new GamaObjectMatrix(numRows, numCols, getGamlType().getContentType());
 		for (int i = 0; i < numCols; i++) {
-			for (int j = 0; j < numRows; j++) {
-				result.set(scope, j, i, get(scope, i, j));
-			}
+			for (int j = 0; j < numRows; j++) { result.set(scope, j, i, get(scope, i, j)); }
 		}
 		return result;
 	}
@@ -253,11 +317,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public GamaObjectMatrix copy(final IScope scope, final GamaPoint size, final boolean copy) {
 		if (size == null) {
-			if (copy)
-				return new GamaObjectMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length),
-						getGamlType().getContentType());
-			else
-				return this;
+			if (copy) return new GamaObjectMatrix(numCols, numRows, Arrays.copyOf(matrix, matrix.length),
+					getGamlType().getContentType());
+			return this;
 		}
 		return new GamaObjectMatrix((int) size.getX(), (int) size.getY(), Arrays.copyOf(matrix, matrix.length),
 				getGamlType().getContentType());
@@ -270,17 +332,26 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		final GamaObjectMatrix mat = (GamaObjectMatrix) m;
 		return Arrays.equals(this.getMatrix(), mat.getMatrix());
 	}
+
 	//
-	// @Override
-	// public int hashCode() {
-	// return super.hashCode();
-	// }
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(getMatrix());
+	}
 
 	@Override
 	public void _putAll(final IScope scope, final Object o) {
 		fillWith(scope, getGamlType().getContentType().cast(scope, o, null, false));
 	}
 
+	/**
+	 * Fill with.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 */
 	public void fillWith(final IScope scope, final Object o) {
 		// We copy the element with which to fill the matrix if it is a
 		// (possibly) complex value
@@ -376,13 +447,20 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return ImmutableList.copyOf(getMatrix());
 	}
 
-	public Object[] getMatrix() {
-		return matrix;
-	}
+	/**
+	 * Gets the matrix.
+	 *
+	 * @return the matrix
+	 */
+	public Object[] getMatrix() { return matrix; }
 
-	protected void setMatrix(final Object[] matrix) {
-		this.matrix = matrix;
-	}
+	/**
+	 * Sets the matrix.
+	 *
+	 * @param matrix
+	 *            the new matrix
+	 */
+	protected void setMatrix(final Object[] matrix) { this.matrix = matrix; }
 
 	@Override
 	protected void setNthElement(final IScope scope, final int index, final Object value) {
@@ -408,9 +486,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public double[] getFieldData(final IScope scope) {
 		double[] result = new double[matrix.length];
-		for (int i = 0; i < matrix.length; ++i) {
-			result[i] = Cast.asFloat(scope, matrix[i]);
-		}
+		for (int i = 0; i < matrix.length; ++i) { result[i] = Cast.asFloat(scope, matrix[i]); }
 		return result;
 	}
 

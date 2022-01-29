@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * LayerObject.java, in ummisco.gama.opengl, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
- * (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -533,11 +533,7 @@ public class LayerObject {
 	 *            the gl
 	 */
 	public void forceRedraw(final OpenGL gl) {
-		if (layer == null) return;
-//		if (openGLListIndex != null) {
-//			gl.deleteList(openGLListIndex);
-//			openGLListIndex = null;
-//		}
+		if (layer == null) {}
 
 	}
 

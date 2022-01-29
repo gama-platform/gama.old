@@ -1,18 +1,13 @@
-/*
-   Copyright 2005 Simon Mieth
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+/*******************************************************************************************************
+ *
+ * PostProcessManager.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.ext.kabeja.processing;
 
 import java.util.ArrayList;
@@ -21,42 +16,57 @@ import java.util.Map;
 
 import msi.gama.ext.kabeja.dxf.DXFDocument;
 
-
 /**
  * @author <a href="mailto:simon.mieth@gmx.de">Simon Mieth</a>
  *
  */
 public class PostProcessManager {
-    private ArrayList processors = new ArrayList();
 
-    public void addPostProcessor(PostProcessor pp) {
-        processors.add(pp);
-    }
+	/** The processors. */
+	private final ArrayList<PostProcessor> processors = new ArrayList<>();
 
-    public void addPostProcessor(String classname) {
-        try {
-            PostProcessor pp = (PostProcessor) this.getClass().getClassLoader()
-                                                   .loadClass(classname)
-                                                   .newInstance();
-            addPostProcessor(pp);
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+	/**
+	 * Adds the post processor.
+	 *
+	 * @param pp
+	 *            the pp
+	 */
+	public void addPostProcessor(final PostProcessor pp) {
+		processors.add(pp);
+	}
 
-    public void process(DXFDocument doc, Map context) throws ProcessorException {
-        Iterator i = processors.iterator();
+	/**
+	 * Adds the post processor.
+	 *
+	 * @param classname
+	 *            the classname
+	 */
+	public void addPostProcessor(final String classname) {
+		try {
+			PostProcessor pp = (PostProcessor) this.getClass().getClassLoader().loadClass(classname).newInstance();
+			addPostProcessor(pp);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-        while (i.hasNext()) {
-            PostProcessor pp = (PostProcessor) i.next();
-            pp.process(doc, context);
-        }
-    }
+	/**
+	 * Process.
+	 *
+	 * @param doc
+	 *            the doc
+	 * @param context
+	 *            the context
+	 * @throws ProcessorException
+	 *             the processor exception
+	 */
+	public void process(final DXFDocument doc, final Map context) throws ProcessorException {
+		Iterator i = processors.iterator();
+
+		while (i.hasNext()) {
+			PostProcessor pp = (PostProcessor) i.next();
+			pp.process(doc, context);
+		}
+	}
 }
