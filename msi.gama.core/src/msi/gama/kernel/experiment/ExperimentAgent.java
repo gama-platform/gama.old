@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -379,7 +379,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void schedule(final IScope scope) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
-		final ExperimentScheduler sche = getSpecies().getController().getScheduler();
+		final IExperimentScheduler sche = getSpecies().getController().getScheduler();
 		sche.schedule(this, this.ownScope);
 	}
 

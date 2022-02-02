@@ -946,7 +946,7 @@ public class ExecutionScope implements IScope {
 			final IExperimentPlan plan = exp.getSpecies();
 			if (plan != null) {
 				final IExperimentController controller = plan.getController();
-				if (controller != null) return controller.getScheduler().paused || isOnUserHold();
+				if (controller != null) return controller.getScheduler().paused() || isOnUserHold();
 			}
 		}
 		return isOnUserHold();

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GAMA.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -50,31 +49,31 @@ public class GAMA {
 	static {
 		DEBUG.OFF();
 	}
-	
+
 	/** The Constant VERSION_NUMBER. */
 	public final static String VERSION_NUMBER = "1.8.2";
-	
+
 	/** The Constant VERSION. */
 	public final static String VERSION = "GAMA " + VERSION_NUMBER;
-	
+
 	/** The Constant _WARNINGS. */
 	public static final String _WARNINGS = "warnings";
-	
+
 	/** The agent. */
 	private static volatile PlatformAgent agent;
-	
+
 	/** The benchmark agent. */
 	private static Benchmark benchmarkAgent;
-	
+
 	/** The is in headless mode. */
 	private static boolean isInHeadlessMode;
-	
+
 	/** The regular gui. */
 	private static IGui regularGui;
-	
+
 	/** The headless gui. */
 	private static IGui headlessGui = new HeadlessListener();
-	
+
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
@@ -84,9 +83,7 @@ public class GAMA {
 	 *
 	 * @return the controllers
 	 */
-	public static List<IExperimentController> getControllers() {
-		return controllers;
-	}
+	public static List<IExperimentController> getControllers() { return controllers; }
 
 	/**
 	 * Gets the frontmost controller.
@@ -147,7 +144,8 @@ public class GAMA {
 	/**
 	 * Open experiment from gaml file.
 	 *
-	 * @param experiment the experiment
+	 * @param experiment
+	 *            the experiment
 	 */
 	public static void openExperimentFromGamlFile(final IExperimentPlan experiment) {
 		experiment.getController().directOpenExperiment();
@@ -195,7 +193,8 @@ public class GAMA {
 	/**
 	 * Close experiment.
 	 *
-	 * @param experiment the experiment
+	 * @param experiment
+	 *            the experiment
 	 */
 	public static void closeExperiment(final IExperimentPlan experiment) {
 		if (experiment == null) return;
@@ -205,13 +204,13 @@ public class GAMA {
 	/**
 	 * Close all experiments.
 	 *
-	 * @param andOpenModelingPerspective the and open modeling perspective
-	 * @param immediately the immediately
+	 * @param andOpenModelingPerspective
+	 *            the and open modeling perspective
+	 * @param immediately
+	 *            the immediately
 	 */
 	public static void closeAllExperiments(final boolean andOpenModelingPerspective, final boolean immediately) {
-		for (final IExperimentController controller : new ArrayList<>(controllers)) {
-			closeController(controller);
-		}
+		for (final IExperimentController controller : new ArrayList<>(controllers)) { closeController(controller); }
 		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
 		PoolUtils.WriteStats();
 
@@ -220,7 +219,8 @@ public class GAMA {
 	/**
 	 * Close controller.
 	 *
-	 * @param controller the controller
+	 * @param controller
+	 *            the controller
 	 */
 	private static void closeController(final IExperimentController controller) {
 		if (controller == null) return;
@@ -295,9 +295,12 @@ public class GAMA {
 	/**
 	 * Report and throw if needed.
 	 *
-	 * @param scope the scope
-	 * @param g the g
-	 * @param shouldStopSimulation the should stop simulation
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 * @param shouldStopSimulation
+	 *            the should stop simulation
 	 */
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
@@ -316,15 +319,12 @@ public class GAMA {
 		}
 		if (scope != null) { scope.setCurrentError(g); }
 		final boolean isInTryMode = scope != null && scope.isInTryMode();
-		if (isInTryMode)
+		if (isInTryMode) throw g;
+		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
+		if (shouldStop) {
+			if (isInHeadLessMode()) throw g;
+			pauseFrontmostExperiment();
 			throw g;
-		else {
-			final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
-			if (shouldStop) {
-				if (isInHeadLessMode()) throw g;
-				pauseFrontmostExperiment();
-				throw g;
-			}
 		}
 	}
 
@@ -332,27 +332,21 @@ public class GAMA {
 	 * Start pause frontmost experiment.
 	 */
 	public static void startPauseFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) {
-			controller.startPause();
-		}
+		for (final IExperimentController controller : controllers) { controller.startPause(); }
 	}
 
 	/**
 	 * Step frontmost experiment.
 	 */
 	public static void stepFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) {
-			controller.userStep();
-		}
+		for (final IExperimentController controller : controllers) { controller.userStep(); }
 	}
 
 	/**
 	 * Step back frontmost experiment.
 	 */
 	public static void stepBackFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) {
-			controller.stepBack();
-		}
+		for (final IExperimentController controller : controllers) { controller.stepBack(); }
 	}
 
 	/**
@@ -373,9 +367,7 @@ public class GAMA {
 	 * Resume frontmost experiment.
 	 */
 	public static void resumeFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) {
-			controller.userStart();
-		}
+		for (final IExperimentController controller : controllers) { controller.userStart(); }
 	}
 
 	/**
@@ -402,7 +394,7 @@ public class GAMA {
 	public static boolean isPaused() {
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null) return true;
-		return controller.getScheduler().paused;
+		return controller.getScheduler().paused();
 
 	}
 
@@ -419,7 +411,8 @@ public class GAMA {
 	/**
 	 * Copy runtime scope.
 	 *
-	 * @param additionalName the additional name
+	 * @param additionalName
+	 *            the additional name
 	 * @return the i scope
 	 */
 	private static IScope copyRuntimeScope(final String additionalName) {
@@ -459,7 +452,8 @@ public class GAMA {
 	/**
 	 * The Interface InScope.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
 	public interface InScope<T> {
 
@@ -477,7 +471,8 @@ public class GAMA {
 			/**
 			 * Process.
 			 *
-			 * @param scope the scope
+			 * @param scope
+			 *            the scope
 			 */
 			public abstract void process(IScope scope);
 		}
@@ -485,7 +480,8 @@ public class GAMA {
 		/**
 		 * Run.
 		 *
-		 * @param scope the scope
+		 * @param scope
+		 *            the scope
 		 * @return the t
 		 */
 		T run(IScope scope);
@@ -494,8 +490,10 @@ public class GAMA {
 	/**
 	 * Run.
 	 *
-	 * @param <T> the generic type
-	 * @param r the r
+	 * @param <T>
+	 *            the generic type
+	 * @param r
+	 *            the r
 	 * @return the t
 	 */
 	public static <T> T run(final InScope<T> r) {
@@ -523,10 +521,8 @@ public class GAMA {
 	 */
 	public static IGui getGui() {
 		// either a headless listener or a fully configured gui
-		if (isInHeadlessMode || regularGui == null)
-			return headlessGui;
-		else
-			return regularGui;
+		if (isInHeadlessMode || regularGui == null) return headlessGui;
+		return regularGui;
 	}
 
 	/**
@@ -534,42 +530,33 @@ public class GAMA {
 	 *
 	 * @return the headless gui
 	 */
-	public static IGui getHeadlessGui() {
-		return headlessGui;
-	}
+	public static IGui getHeadlessGui() { return headlessGui; }
 
 	/**
 	 * Gets the regular gui.
 	 *
 	 * @return the regular gui
 	 */
-	public static IGui getRegularGui() {
-		return regularGui;
-	}
+	public static IGui getRegularGui() { return regularGui; }
 
 	/**
 	 * @param IGui
 	 *            gui
 	 */
-	public static void setHeadlessGui(final IGui g) {
-		headlessGui = g;
-	}
+	public static void setHeadlessGui(final IGui g) { headlessGui = g; }
 
 	/**
 	 * Sets the regular gui.
 	 *
-	 * @param g the new regular gui
+	 * @param g
+	 *            the new regular gui
 	 */
-	public static void setRegularGui(final IGui g) {
-		regularGui = g;
-	}
+	public static void setRegularGui(final IGui g) { regularGui = g; }
 
 	/**
 	 * @return
 	 */
-	public static boolean isInHeadLessMode() {
-		return isInHeadlessMode;
-	}
+	public static boolean isInHeadLessMode() { return isInHeadlessMode; }
 
 	/**
 	 *
@@ -615,7 +602,8 @@ public class GAMA {
 	/**
 	 * Start benchmark.
 	 *
-	 * @param experiment the experiment
+	 * @param experiment
+	 *            the experiment
 	 */
 	public static void startBenchmark(final IExperimentPlan experiment) {
 		if (experiment.shouldBeBenchmarked()) { benchmarkAgent = new Benchmark(experiment); }
@@ -624,7 +612,8 @@ public class GAMA {
 	/**
 	 * Stop benchmark.
 	 *
-	 * @param experiment the experiment
+	 * @param experiment
+	 *            the experiment
 	 */
 	public static void stopBenchmark(final IExperimentPlan experiment) {
 		if (benchmarkAgent != null) { benchmarkAgent.saveAndDispose(experiment); }
