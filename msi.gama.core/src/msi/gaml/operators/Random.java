@@ -644,19 +644,22 @@ public class Random {
 	public static Integer opRndChoice(final IScope scope, final IList distribution) {
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
 		Double sumElt = 0.0;
-
+		Double minVal = 0.0;
 		for (final Object eltDistrib : distribution) {
 			final Double elt = Cast.asFloat(scope, eltDistrib);
-			if (elt < 0.0) throw GamaRuntimeException
-					.create(new RuntimeException("Distribution elements should be positive."), scope);
+			if (elt < 0.0) {
+				minVal = Math.max(minVal, Math.abs(elt));
+			}
+		//	throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."), scope);
 			normalizedDistribution.add(elt);
 			sumElt = sumElt + elt;
 		}
+		int nb =  normalizedDistribution.size();
+		if (minVal > 0) sumElt += minVal *  nb;
 		if (sumElt == 0.0) throw GamaRuntimeException
 				.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
-
-		for (int i = 0; i < normalizedDistribution.size(); i++) {
-			normalizedDistribution.set(i, normalizedDistribution.get(i) / sumElt);
+		for (int i = 0; i < nb; i++) {
+			normalizedDistribution.set(i,(normalizedDistribution.get(i) +  minVal)/ sumElt);
 		}
 
 		double randomValue = RANDOM(scope).between(0., 1.);
