@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelLibraryTester.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ModelLibraryTester.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.batch;
 
@@ -25,7 +25,6 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -49,7 +48,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	/** The original. */
 	PrintStream original;
-	
+
 	/** The null stream. */
 	PrintStream nullStream;
 
@@ -59,7 +58,6 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	private ModelLibraryTester() {
 		DEBUG.ON();
 	}
-	
 
 	@Override
 	public int start() throws IOException {
@@ -103,10 +101,14 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 	/**
 	 * Test.
 	 *
-	 * @param builder the builder
-	 * @param count the count
-	 * @param code the code
-	 * @param p the p
+	 * @param builder
+	 *            the builder
+	 * @param count
+	 *            the count
+	 * @param code
+	 *            the code
+	 * @param p
+	 *            the p
 	 */
 	public void test(final GamlModelBuilder builder, final int[] count, final int[] code, final URL p) {
 		// DEBUG.OUT(p);
@@ -124,7 +126,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					System.setOut(nullStream);
 					final TestAgent agent = (TestAgent) exp.getAgent();
 					exp.setHeadless(true);
-					exp.getController().getScheduler().paused = false;
+					exp.getController().getScheduler().resume();
 					exp.getAgent().step(agent.getScope());
 					code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);

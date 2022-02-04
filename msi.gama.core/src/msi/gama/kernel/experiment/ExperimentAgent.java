@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -355,7 +355,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
 		final IList<Map<String, Object>> list = GamaListFactory.create(Types.MAP);
-		list.add(ps);
+		list.add(ps.getElements());
 		final IList<? extends IAgent> c = pop.createAgents(ownScope, 1, list, false, scheduleIt);
 		return (SimulationAgent) c.get(0);
 	}
@@ -368,7 +368,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ParametersSet getParameterValues() {
 		final Map<String, IParameter> parameters = getSpecies().getParameters();
 		final ParametersSet ps = new ParametersSet(ownScope, parameters, false);
-		ps.putAll(extraParametersMap);
+		ps.getElements().putAll(extraParametersMap);
 		return ps;
 	}
 
@@ -379,7 +379,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void schedule(final IScope scope) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
-		final ExperimentScheduler sche = getSpecies().getController().getScheduler();
+		final IExperimentScheduler sche = getSpecies().getController().getScheduler();
 		sche.schedule(this, this.ownScope);
 	}
 

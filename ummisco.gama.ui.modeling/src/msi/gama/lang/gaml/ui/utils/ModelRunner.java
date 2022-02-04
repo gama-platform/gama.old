@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelRunner.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ModelRunner.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.utils;
 
@@ -64,11 +64,11 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	/**
 	 * Edits the model internal.
 	 *
-	 * @param eObject the e object
+	 * @param eObject
+	 *            the e object
 	 */
 	private void editModelInternal(final Object eObject) {
-		if (eObject instanceof URI) {
-			final URI uri = (URI) eObject;
+		if (eObject instanceof URI uri) {
 			final Injector injector = ModelingActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
 			final IURIEditorOpener opener = injector.getInstance(IURIEditorOpener.class);
 			opener.open(uri, true);
@@ -78,8 +78,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			final IFile file = workspace.getRoot().getFile(new Path((String) eObject));
 			editModelInternal(file);
-		} else if (eObject instanceof IFile) {
-			final IFile file = (IFile) eObject;
+		} else if (eObject instanceof IFile file) {
 			if (!file.exists()) {
 				DEBUG.LOG("File " + file.getFullPath().toString() + " does not exist in the workspace");
 				return;
@@ -103,17 +102,17 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	public List<TestExperimentSummary> runHeadlessTests(final Object object) {
 		// final StringBuilder sb = new StringBuilder();
 		final IModel model = findModel(object);
-		if (model == null) { return null; }
+		if (model == null) return null;
 		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
-		if (testExpNames.isEmpty()) { return null; }
+		if (testExpNames.isEmpty()) return null;
 		final List<TestExperimentSummary> result = new ArrayList<>();
 		for (final String expName : testExpNames) {
 			final IExperimentPlan exp = GAMA.addHeadlessExperiment(model, expName, new ParametersSet(), null);
 			if (exp != null) {
 				exp.setHeadless(true);
 				final TestAgent agent = (TestAgent) exp.getAgent();
-				exp.getController().getScheduler().paused = false;
+				exp.getController().getScheduler().resume();
 				agent.step(agent.getScope());
 				result.add(((WithTestSummary<TestExperimentSummary>) agent).getSummary());
 				GAMA.closeExperiment(exp);
@@ -127,10 +126,9 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	 * @return
 	 */
 	private IModel findModel(final Object object) {
-		if (object instanceof IModel) { return (IModel) object; }
-		if (object instanceof WrappedGamaFile) { return findModel(((WrappedGamaFile) object).getResource()); }
-		if (object instanceof IFile) {
-			final IFile file = (IFile) object;
+		if (object instanceof IModel) return (IModel) object;
+		if (object instanceof WrappedGamaFile) return findModel(((WrappedGamaFile) object).getResource());
+		if (object instanceof IFile file) {
 			try {
 				if (file.findMaxProblemSeverity(IMarker.PROBLEM, true,
 						IResource.DEPTH_ZERO) == IMarker.SEVERITY_ERROR) {
@@ -143,8 +141,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			final URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
 			return findModel(uri);
 		}
-		if (object instanceof URI) {
-			final URI uri = (URI) object;
+		if (object instanceof URI uri) {
 			final List<GamlCompilationError> errors = new ArrayList<>();
 			final IModel model = GamlModelBuilder.getDefaultInstance().compile(uri, errors);
 			if (model == null) {
@@ -153,8 +150,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			}
 			return model;
 		}
-		if (object instanceof IXtextDocument) {
-			final IXtextDocument doc = (IXtextDocument) object;
+		if (object instanceof IXtextDocument doc) {
 			IModel model = null;
 			try {
 				model = doc.readOnly(state -> GamlModelBuilder.getDefaultInstance().compile(state.getURI(), null));
@@ -171,7 +167,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 	@Override
 	public void runModel(final Object object, final String exp) {
 		final IModel model = findModel(object);
-		if (model == null) { return; }
+		if (model == null) return;
 		GAMA.runGuiExperiment(exp, model);
 	}
 

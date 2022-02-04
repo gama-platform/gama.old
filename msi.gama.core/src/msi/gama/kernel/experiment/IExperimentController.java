@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IExperimentController.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -19,22 +19,22 @@ package msi.gama.kernel.experiment;
  */
 public interface IExperimentController {
 
-	/** The  open. */
+	/** The open. */
 	int _OPEN = 0;
-	
-	/** The  start. */
+
+	/** The start. */
 	int _START = 1;
-	
-	/** The  step. */
+
+	/** The step. */
 	int _STEP = 2;
-	
-	/** The  pause. */
+
+	/** The pause. */
 	int _PAUSE = 3;
-	
-	/** The  reload. */
+
+	/** The reload. */
 	int _RELOAD = 6;
-	
-	/** The  back. */
+
+	/** The back. */
 	int _BACK = 8;
 
 	/**
@@ -45,7 +45,7 @@ public interface IExperimentController {
 	/**
 	 * @return
 	 */
-	ExperimentScheduler getScheduler();
+	IExperimentScheduler getScheduler();
 
 	/**
 	 *

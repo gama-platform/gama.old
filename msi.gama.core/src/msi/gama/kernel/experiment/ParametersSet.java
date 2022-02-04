@@ -11,18 +11,21 @@
 package msi.gama.kernel.experiment;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.GamaFile;
 
 /**
  * The Class ParametersSet.
  */
 @SuppressWarnings({ "rawtypes" })
-public class ParametersSet extends HashMap<String, Object> {
+public class ParametersSet {
 
 	/** The fitness. */
 	private Double fitness;
@@ -30,12 +33,16 @@ public class ParametersSet extends HashMap<String, Object> {
 	/** The current index. */
 	private int currentIndex;
 	
+	private GamaMap<String, Object> elements;
+	
+	
 	/**
 	 * Instantiates a new parameters set.
 	 */
 	public ParametersSet() {
 		fitness = Double.NaN;
 		currentIndex = 0;
+		elements = (GamaMap<String, Object>) GamaMapFactory.create();
 	}
 
 	/**
@@ -44,7 +51,8 @@ public class ParametersSet extends HashMap<String, Object> {
 	 * @param solution the solution
 	 */
 	public ParametersSet(final ParametersSet solution) {
-		this.putAll(solution);
+		elements = (GamaMap<String, Object>) GamaMapFactory.create();
+		elements.putAll(solution.getElements());
 		fitness = solution.fitness;
 		currentIndex = solution.currentIndex;
 	}
@@ -60,6 +68,7 @@ public class ParametersSet extends HashMap<String, Object> {
 	public ParametersSet(final IScope scope, final Map<String, IParameter> variables, final boolean reinit)
 			throws GamaRuntimeException {
 
+		elements = (GamaMap<String, Object>) GamaMapFactory.create();
 		for (final String var : variables.keySet()) {
 			final IParameter varBat = variables.get(var);
 			if (reinit && varBat instanceof IParameter.Batch) {
@@ -82,6 +91,7 @@ public class ParametersSet extends HashMap<String, Object> {
 	 */
 	public ParametersSet(final IScope scope, final Collection<? extends IParameter> parameters, final boolean reinit)
 			throws GamaRuntimeException {
+		elements = (GamaMap<String, Object>) GamaMapFactory.create();
 		for (final IParameter p : parameters) {
 			if (reinit && p instanceof IParameter.Batch) {
 				((IParameter.Batch) p).reinitRandomly(scope);
@@ -92,7 +102,6 @@ public class ParametersSet extends HashMap<String, Object> {
 		currentIndex = 0;
 	}
 
-	@Override
 	public Object put(final String s, final Object o) {
 		// Special case for files as they are not invariant. Their contents must
 		// be invalidated before they are loaded
@@ -100,9 +109,53 @@ public class ParametersSet extends HashMap<String, Object> {
 		if (o instanceof GamaFile) {
 			((GamaFile) o).invalidateContents();
 		}
-		return super.put(s, o);
+		return elements.put(s, o);
+	}
+	
+	public void putAll(final ParametersSet sol) {
+		elements.putAll(sol.elements);
 	}
 
+	public Object get(final String s) {
+		return elements.get(s);
+	}
+	public GamaMap<String, Object> getElements() {
+		return elements;
+	}
 	
+	public Set<Map.Entry<String, Object>> entrySet() {
+		return elements.entrySet();
+	}
+	
+	public Set<String> keySet() {
+		return elements.keySet();
+	}
+	
+	public boolean containsKey(String k ) {
+		return elements.containsKey(k);
+	}
+	
+	public int size() {
+		return elements.size();
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(elements);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ParametersSet other = (ParametersSet) obj;
+		return Objects.equals(elements, other.elements);
+	}
+
 	
 }

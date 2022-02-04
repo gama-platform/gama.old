@@ -38,6 +38,8 @@ public class SelectionBest implements Selection {
 		if (maximize) {
 			Collections.reverse(nextGen);
 		}
-		return nextGen.subList(0, populationDim - 1);
+		if (nextGen.size() > populationDim)
+			return nextGen.subList(0, populationDim - 1);
+		return nextGen;
 	}
 }

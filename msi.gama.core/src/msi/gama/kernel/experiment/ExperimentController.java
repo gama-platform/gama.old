@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentController.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -26,29 +26,31 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	/** The experiment. */
 	private final IExperimentPlan experiment;
-	
+
 	/** The disposing. */
 	private boolean disposing;
-	
+
 	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
-	
+
 	/** The command thread. */
 	public volatile Thread commandThread;
-	
+
 	/** The running. */
 	protected volatile boolean running = true;
-	
+
 	/** The scheduler. */
-	private final ExperimentScheduler scheduler;
+	private final IExperimentScheduler scheduler;
 
 	/**
 	 * Instantiates a new experiment controller.
 	 *
-	 * @param experiment the experiment
+	 * @param experiment
+	 *            the experiment
 	 */
 	public ExperimentController(final IExperimentPlan experiment) {
-		this.scheduler = new ExperimentScheduler(experiment);
+		this.scheduler =
+				experiment.isHeadless() ? new NonThreadedExperimentScheduler() : new ThreadedExperimentScheduler(experiment);
 		commands = new ArrayBlockingQueue<>(10);
 		this.experiment = experiment;
 	}
@@ -91,7 +93,8 @@ public class ExperimentController implements Runnable, IExperimentController {
 	/**
 	 * Offer.
 	 *
-	 * @param command the command
+	 * @param command
+	 *            the command
 	 */
 	public void offer(final int command) {
 		if (isDisposing()) return;
@@ -105,7 +108,8 @@ public class ExperimentController implements Runnable, IExperimentController {
 	/**
 	 * Process user command.
 	 *
-	 * @param command the command
+	 * @param command
+	 *            the command
 	 */
 	protected void processUserCommand(final int command) {
 		final IScope scope = experiment.getExperimentScope();
@@ -151,7 +155,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 			case IExperimentController._RELOAD:
 				experiment.getExperimentScope().getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
-					final boolean wasRunning = !scheduler.paused && !experiment.isAutorun();
+					final boolean wasRunning = !scheduler.paused() && !experiment.isAutorun();
 					scheduler.pause();
 					GAMA.getGui().getStatus(scope).waitStatus("Reloading...");
 					experiment.reload();
@@ -242,7 +246,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	@Override
 	public void startPause() {
-		if (experiment == null) {} else if (scheduler.paused) {
+		if (experiment == null) {} else if (scheduler.paused()) {
 			userStart();
 		} else {
 			userPause();
@@ -257,7 +261,8 @@ public class ExperimentController implements Runnable, IExperimentController {
 	/**
 	 * Close experiment.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
@@ -268,6 +273,6 @@ public class ExperimentController implements Runnable, IExperimentController {
 	}
 
 	@Override
-	public ExperimentScheduler getScheduler() { return scheduler; }
+	public IExperimentScheduler getScheduler() { return scheduler; }
 
 }

@@ -313,14 +313,16 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 * @throws GamaRuntimeException the gama runtime exception
 	 */
 	public void computePopFitnessAll(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
-		List<ParametersSet> sets = new ArrayList<>();
+		List<ParametersSet> solTotest = new ArrayList<>();
 		Map<Chromosome,ParametersSet> paramToCh = GamaMapFactory.create();
 		for (final Chromosome chromosome : population) {
 			ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
-			sets.add(sol );
 			paramToCh.put( chromosome, sol);
+			if (!testedSolutions.containsKey(sol)) {
+				solTotest.add(sol);
+			}
 		}
-		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(sets).entrySet().stream()
+		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
 				.collect(Collectors.toMap(
 						e -> e.getKey(), 
 						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)
@@ -331,8 +333,19 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			if (ps != null) {
 				Double fitness = fitnessRes.get(ps);
 				if (fitness != null) chromosome.setFitness(fitness);
+				else  chromosome.setFitness(testedSolutions.get(ps));
 			}
 				
+		}
+		
+		if (this.improveSolution != null && improveSolution) {
+			for (final Chromosome chromosome : population) {
+				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+				sol = improveSolution(scope, sol, chromosome.getFitness());
+				chromosome.update(scope, sol);
+				final double fitness = testedSolutions.get(sol);
+				chromosome.setFitness(fitness);
+			}
 		}
 		
 		
@@ -402,6 +415,28 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 				});
 	}
+	
+	public Map<ParametersSet, Double>  testSolutions(List<ParametersSet> solutions) {
+		Map<ParametersSet, Double> results = GamaMapFactory.create();
+		solutions.removeIf(a -> a == null);
+		List<ParametersSet> solTotest = new ArrayList<>();
+		for (ParametersSet sol : solutions) {
+			if (testedSolutions.containsKey(sol)) {
+				results.put(sol, testedSolutions.get(sol));
+			} else {
+				solTotest.add(sol);
+			}
+		}
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest)
+				.entrySet().stream().collect(Collectors.toMap(
+						e -> e.getKey(), 
+						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0))
+						);
+		testedSolutions.putAll(res);
+		results.putAll(res);
+		
+		return results;
+	}
 
 	/**
 	 * Improve solution.
@@ -416,29 +451,39 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		ParametersSet bestSol = solution;
 		double bestFitness = currentFitness;
 		while (true) {
-			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, solution);
+			final List<ParametersSet> neighbors = neighborhood.neighbor(scope,solution);
 			if (neighbors.isEmpty()) {
 				break;
 			}
 			ParametersSet bestNeighbor = null;
-
-			for (final ParametersSet neighborSol : neighbors) {
-				if (neighborSol == null) {
-					continue;
+			
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet,Double> result = testSolutions(neighbors);
+				for (ParametersSet p : result.keySet()) {
+					Double neighborFitness = result.get(p);
+					if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
+						bestNeighbor = p;
+						bestFitness = neighborFitness;
+						bestSol = bestNeighbor;
+					}	
 				}
-				final double neighborFitness;
-				if (!testedSolutions.containsKey(neighborSol)) {
-					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
-							.get(IKeyword.FITNESS).get(0);
-					testedSolutions.put(neighborSol, neighborFitness);
-				} else {
-					neighborFitness = testedSolutions.get(neighborSol);
-				}
-
-				if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
-					bestNeighbor = neighborSol;
-					bestFitness = neighborFitness;
-					bestSol = bestNeighbor;
+			} else {
+				for (final ParametersSet neighborSol : neighbors) {
+					if (neighborSol == null) {
+						continue;
+					}
+					Double neighborFitness = testedSolutions.get(neighborSol);
+					if (neighborFitness == null) {
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
+						testedSolutions.put(neighborSol, neighborFitness);
+					}
+					
+					if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
+						bestNeighbor = neighborSol;
+						bestFitness = neighborFitness;
+						bestSol = bestNeighbor;
+					}
+					
 				}
 			}
 			if (bestNeighbor != null) {
@@ -446,6 +491,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			} else {
 				break;
 			}
+			
 		}
 
 		return bestSol;
