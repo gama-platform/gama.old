@@ -132,7 +132,7 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public void setParameter(final String parameterName, final Object value) {
-		if (this.params.containsKey(parameterName)) { this.params.remove(parameterName); }
+	//	if (this.params.containsKey(parameterName)) { this.params.remove(parameterName); }
 		this.params.put(parameterName, value);
 	}
 

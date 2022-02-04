@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -306,7 +307,8 @@ public class BatchAgent extends ExperimentAgent {
 
 		// The values present in the solution are passed to the parameters of
 		// the experiment
-		for (ParametersSet sol : sols) {
+		LinkedHashSet<ParametersSet> sols_u = new LinkedHashSet<>(sols);
+		for (ParametersSet sol : sols_u) {
 			for (int i = 0; i < getSeeds().length; i++) {
 				Map<String, Object> sim = new HashMap<>();
 				sim.put("parameters", sol);
