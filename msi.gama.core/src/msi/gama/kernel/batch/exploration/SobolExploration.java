@@ -87,11 +87,17 @@ import msi.gaml.types.Types;
 				doc = @doc ("The size of the sample for the sobol sequence")
 			),
 			@facet(
-				name = IKeyword.BATCH_OUTPUTS,
-				type = IType.LIST,
-				of = IType.STRING,
-				optional = false,
-				doc = @doc ("The list of output variables to analyse through sobol indexes")
+					name = IKeyword.BATCH_VAR_OUTPUTS,
+					type = IType.LIST,
+					of = IType.STRING,
+					optional = false,
+					doc = @doc ("The list of output variables to analyse through sobol indexes")
+			),
+			@facet(
+					name = IKeyword.BATCH_OUTPUT,
+					type = IType.STRING,
+					optional = true,
+					doc = @doc ("The path to the file where the automatic batch report will be written")
 			),
 			@facet(
 				name = IKeyword.BATCH_REPORT,
@@ -158,6 +164,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		if (solutions.size()!=_sample) {GamaRuntimeException.error("Saltelli sample should be "+_sample+" but is "+solutions.size(), scope);}
 		/* Disable repetitions / repeat argument */
 		currentExperiment.setSeeds(new Double[1]);
+		currentExperiment.setKeepSimulations(false);
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
 		} else {
@@ -181,6 +188,14 @@ public class SobolExploration extends AExplorationAlgorithm {
 			} catch (IOException e) {
 				GamaRuntimeFileException.create(e, scope);
 			} 
+		}
+		
+		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
+			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, outputFilePath.literalValue(), false));
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) f.delete();
+			
 		}
 		
 	}
@@ -325,7 +340,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		this.sobolNumReport = GamaMapFactory.create();
 		
 		List<Map<String,Object>> res_rebuilt = rebuildSimulationResults(scope, res_outputs);
-		// TODO : i don't know why it is not raised ????
+
 		if (res_rebuilt.size() != this._sample || sample * (2 + this.parameters.size() * 2) != _sample) {
 			GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
 		}
@@ -403,7 +418,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 					.findAny().orElse(new ArrayList<>()).size())
 				.sum();
 		if (expected_final_size != _sample) {
-			GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
+			throw GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
 					+" and requested Saltelli samples "+_sample, scope);
 		}
 		List<Map<String, Object>> res = GamaListFactory.create();

@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
+import java.nio.file.Path;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,10 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 	protected IExpression outputsExpression;
 	
 	/** The output variables. */
-	List<String> outputVariables;
+	protected List<String> outputVariables;
+	
+	/** The automatic output batch file */
+	protected IExpression outputFilePath;
 	
 	@Override
 	public void initializeFor(IScope scope, BatchAgent agent) throws GamaRuntimeException {
@@ -63,7 +67,8 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 	 */
 	public AExplorationAlgorithm(final IDescription desc) { 
 		super(desc);
-		outputsExpression = getFacet(IKeyword.BATCH_OUTPUTS);
+		if (hasFacet(IKeyword.BATCH_VAR_OUTPUTS)) {outputsExpression = getFacet(IKeyword.BATCH_VAR_OUTPUTS);}
+		if (hasFacet(IKeyword.BATCH_OUTPUT)) { outputFilePath = getFacet(IKeyword.BATCH_OUTPUT); }
 	}
 
 	@Override

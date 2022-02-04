@@ -85,6 +85,9 @@ public class BatchAgent extends ExperimentAgent {
 	/** The tracked values. */
 	// GENERIC OUTPUTS
 	final Map<String, Object> trackedValues = new HashMap<>();
+	
+	/** Keep simulations between ''runs'' */
+	private boolean simDispose;
 
 	/**
 	 * Instantiates a new batch agent.
@@ -103,7 +106,7 @@ public class BatchAgent extends ExperimentAgent {
 		int innerLoopRepeat = 1;
 		if (expr != null && expr.isConst()) { innerLoopRepeat = Cast.asInt(scope, expr.value(scope)); }
 		setSeeds(new Double[innerLoopRepeat]);
-
+		setKeepSimulations(getSpecies().keepsSimulations());
 		if (getSpecies().hasFacet(IKeyword.UNTIL)) {
 			stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
 		} else {
@@ -340,10 +343,8 @@ public class BatchAgent extends ExperimentAgent {
 				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 				if (mustStop) {
 					pop.unscheduleSimulation(agent);
-					// if (!getSpecies().keepsSimulations()) {
 
-					IMap<String, Object> localRes =
-							manageOutputAndCloseSimulation(agent, ps, false, !getSpecies().keepsSimulations());
+					IMap<String, Object> localRes = manageOutputAndCloseSimulation(agent, ps, false, simDispose);
 
 					if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
 					for (String output : localRes.keySet()) {
@@ -465,13 +466,10 @@ public class BatchAgent extends ExperimentAgent {
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
-						if (!getSpecies().keepsSimulations()) {
-							Map<String, Object> out = manageOutputAndCloseSimulation(agent, currentSolution, true,
-									!getSpecies().keepsSimulations());
-							for (String out_vars : out.keySet()) {
-								if (!outputs.containsKey(out_vars)) { outputs.put(out_vars, GamaListFactory.create()); }
-								outputs.get(out_vars).add(out.get(out_vars));
-							}
+						Map<String, Object> out = manageOutputAndCloseSimulation(agent, currentSolution, true, simDispose);
+						for (String out_vars : out.keySet()) {
+							if (!outputs.containsKey(out_vars)) { outputs.put(out_vars, GamaListFactory.create()); }
+							outputs.get(out_vars).add(out.get(out_vars));
 						}
 					}
 				}
@@ -635,6 +633,11 @@ public class BatchAgent extends ExperimentAgent {
 	 *            the new seeds
 	 */
 	public void setSeeds(final Double[] seeds) { this.seeds = seeds; }
+	
+	/*
+	 * Decide or not to keep simulation between Gama Batch runs (a coherent set of parameter set launched as simulations)
+	 */
+	public void setKeepSimulations(boolean keepSim) { this.simDispose = !keepSim; }
 
 	@Override
 	public void closeSimulations() {

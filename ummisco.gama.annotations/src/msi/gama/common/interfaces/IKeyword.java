@@ -120,7 +120,10 @@ public interface IKeyword {
 	String BATCH = "batch";
 	
 	/** The batch outputs */
-	String BATCH_OUTPUTS = "outputs";
+	String BATCH_VAR_OUTPUTS = "outputs";
+	
+	/** The batch outputs */
+	String BATCH_OUTPUT = "results";
 	
 	/** The batch outputs */
 	String BATCH_REPORT = "report";
