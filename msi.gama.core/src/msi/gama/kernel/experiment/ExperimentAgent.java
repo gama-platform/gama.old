@@ -239,7 +239,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownClock.reset();
 		// We close any simulation that might be running
 		closeSimulations();
-
 		initialize();
 	}
 
@@ -276,7 +275,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			ownScope.getGui().setSelectedAgent(null);
 			ownScope.getGui().setHighlightedAgent(null);
-			ownScope.getGui().getStatus(ownScope).resumeStatus();
+			ownScope.getGui().getStatus().resumeStatus();
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something else in the dynamics of closing/opening
 			ownScope.getGui().closeDialogs(ownScope);
@@ -335,7 +334,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		super.init(scope);
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.init(scope); }
-		scope.getGui().getStatus(scope).informStatus("Experiment ready");
+		scope.getGui().getStatus().informStatus("Experiment ready");
 		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
@@ -379,8 +378,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void schedule(final IScope scope) {
 		scheduled = true;
 		// The experiment agent is scheduled in the global scheduler
-		final IExperimentScheduler sche = getSpecies().getController().getScheduler();
-		sche.schedule(this, this.ownScope);
+		getSpecies().getController().schedule(this);
 	}
 
 	/**
@@ -734,20 +732,19 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	protected void postStep(final IScope scope) {
-		super.postStep(scope);
+		// super.postStep(scope);
 		executer.executeEndActions();
 		executer.executeOneShotActions();
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.step(scope); }
-		ownClock.step(this.ownScope);
+		ownClock.step();
 		informStatus();
 	}
 
 	@Override
 	public void informStatus() {
-		if (!getSpecies().isBatch() && getSimulation() != null) {
-			getScope().getGui().getStatus(getScope()).informStatus(null, "status.clock");
-		}
+		if (isHeadless() || isBatch() || getSimulation() == null) return;
+		ownScope.getGui().getStatus().informStatus(null, "status.clock");
 	}
 
 	/**
@@ -965,5 +962,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean isHeadless() { return getSpecies().isHeadless(); }
+
+	/**
+	 * Checks if is batch.
+	 *
+	 * @return true, if is batch
+	 */
+	public boolean isBatch() { return getSpecies().isBatch(); }
 
 }

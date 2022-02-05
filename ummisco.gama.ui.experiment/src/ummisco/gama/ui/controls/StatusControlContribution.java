@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StatusControlContribution.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * StatusControlContribution.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -51,40 +51,40 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	/** The is updating. */
 	volatile boolean isUpdating;
-	
+
 	/** The label. */
 	FlatButton label;
-	
+
 	/** The popup. */
 	private Popup2 popup;
-	
+
 	/** The state. */
 	int state;
-	
+
 	/** The main task name. */
 	volatile String mainTaskName;
-	
+
 	/** The sub task name. */
 	volatile String subTaskName;
-	
+
 	/** The in sub task. */
 	volatile boolean inSubTask = false;
-	
+
 	/** The in user status. */
 	volatile boolean inUserStatus = false;
-	
+
 	/** The sub task completion. */
 	volatile Double subTaskCompletion;
-	
+
 	/** The Constant WIDTH. */
 	private final static int WIDTH = 400;
-	
+
 	/** The color. */
 	private GamaUIColor color;
-	
+
 	/** The agent index. */
 	int agentIndex; // 0 for experiments, > 0 for simulation(s)
-	
+
 	/** The text. */
 	StringBuilder text = new StringBuilder(2000);
 
@@ -96,9 +96,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 *
 	 * @return single instance of StatusControlContribution
 	 */
-	public static StatusControlContribution getInstance() {
-		return INSTANCE;
-	}
+	public static StatusControlContribution getInstance() { return INSTANCE; }
 
 	/**
 	 * Instantiates a new status control contribution.
@@ -110,7 +108,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	/**
 	 * Instantiates a new status control contribution.
 	 *
-	 * @param id the id
+	 * @param id
+	 *            the id
 	 */
 	public StatusControlContribution(final String id) { // NO_UCD (unused code)
 		super(id);
@@ -123,9 +122,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	@Override
-	public boolean isBusy() {
-		return isUpdating;
-	}
+	public boolean isBusy() { return isUpdating; }
 
 	@Override
 	protected Control createControl(final Composite parent) {
@@ -159,9 +156,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	@Override
-	public boolean isDisposed() {
-		return label.isDisposed();
-	}
+	public boolean isDisposed() { return label.isDisposed(); }
 
 	/**
 	 * Gets the status agent.
@@ -213,9 +208,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		final IAgent[] simulations = pop.toArray();
 
-		for (final IAgent a : simulations) {
-			appendPopupTextFor((SimulationAgent) a, result);
-		}
+		for (final IAgent a : simulations) { appendPopupTextFor((SimulationAgent) a, result); }
 
 		return result;
 	}
@@ -223,14 +216,16 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	/**
 	 * Append popup text for.
 	 *
-	 * @param exp the exp
-	 * @param result the result
+	 * @param exp
+	 *            the exp
+	 * @param result
+	 *            the result
 	 */
 	void appendPopupTextFor(final ITopLevelAgent exp, final PopupText result) {
 		text.setLength(0);
 		text.append(Strings.LN);
 		final SimulationClock clock = exp.getClock();
-		text.append(clock.getInfo()).append(Strings.LN);
+		clock.getInfo(text).append(Strings.LN);
 		text.append("Durations: cycle ").append(clock.getDuration()).append("ms; average ")
 				.append((int) clock.getAverageDuration()).append("ms; total ").append(clock.getTotalDuration())
 				.append("ms");
@@ -249,19 +244,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	@Override
-	public Shell getControllingShell() {
-		return label.getShell();
-	}
+	public Shell getControllingShell() { return label.getShell(); }
 
 	@Override
-	public Point getAbsoluteOrigin() {
-		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
-	}
+	public Point getAbsoluteOrigin() { return label.toDisplay(new Point(label.getLocation().x, label.getSize().y)); }
 
 	@Override
-	public int getPopupWidth() {
-		return label.getSize().x;
-	}
+	public int getPopupWidth() { return label.getSize().x; }
 
 	/**
 	 * Method updateWith()
@@ -343,32 +332,30 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	/**
 	 * Gets the clock message.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the clock message
 	 */
 	private String getClockMessage(final ITopLevelAgent agent) {
 		if (agent == null) return "";
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append(agent.getClock().getInfo());
+		// final StringBuilder text = new StringBuilder(200);
+		text.setLength(0);
+		agent.getClock().getInfo(text);
 		final IExperimentAgent exp = agent.getExperiment();
 		final int nbThreads = exp.getSimulationPopulation().getNumberOfActiveThreads();
 		if (agent.getScope().isOnUserHold()) {
-			sb.append(" (waiting)");
-		} else if (nbThreads > 1) { sb.append(" (" + nbThreads + " threads)"); }
+			text.append(" (waiting)");
+		} else if (nbThreads > 1) { text.append(" (" + nbThreads + " threads)"); }
 		final IExperimentPlan plan = exp.getSpecies();
-		if (plan.shouldBeBenchmarked()) { sb.append(" [benchmarking]"); }
-		return sb.toString();
+		if (plan.shouldBeBenchmarked()) { text.append(" [benchmarking]"); }
+		return text.toString();
 	}
 
 	@Override
-	public int getCurrentState() {
-		return state;
-	}
+	public int getCurrentState() { return state; }
 
 	@Override
-	public boolean isDynamic() {
-		return false;
-	}
+	public boolean isDynamic() { return false; }
 
 	/**
 	 * Method resume()

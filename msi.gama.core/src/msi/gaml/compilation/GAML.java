@@ -33,6 +33,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
 
 import msi.gama.common.interfaces.ISkill;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -267,8 +268,9 @@ public class GAML {
 	 * @return the model context
 	 */
 	public static ModelDescription getModelContext() {
-		if (GAMA.getFrontmostController() == null) return null;
-		return (ModelDescription) GAMA.getFrontmostController().getExperiment().getModel().getDescription();
+		IExperimentPlan experiment = GAMA.getExperiment();
+		if (experiment == null) return null;
+		return (ModelDescription) experiment.getModel().getDescription();
 	}
 
 	/**

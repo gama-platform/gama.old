@@ -435,55 +435,52 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {
-		if (exp.isGui()) {
-			// hideScreen();
-			final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-			if (initializer != null && !initializer.isDone()) { initializer.run(); }
-			WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-			final ExperimentAgent agent = exp.getAgent();
-			final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
-			Symbol layout = manager.getLayout();
-			if (layout == null) { layout = manager; }
-			final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
-			final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
-			final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
-			final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
-			final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
-			final Boolean showControls = layout.getFacetValue(scope, "controls", null);
-			final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
-			boolean showEditors;
-			if (layout.hasFacet("editors")) {
-				showEditors = layout.getFacetValue(scope, "editors", false);
-			} else {
-				showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
-			}
-			WorkbenchHelper.runInUI("Arranging views", 0, m -> {
-				WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
-				if (showConsoles != null && !showConsoles) {
-					hideView(IGui.CONSOLE_VIEW_ID);
-					hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
-				} else {
-					getConsole().showConsoleView(exp.getAgent());
-				}
-				if (showParameters != null && !showParameters) {
-					hideView(IGui.PARAMETER_VIEW_ID);
-				} else {
-					updateParameterView(scope, exp);
-				}
-				if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
-				if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
-				if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
-
-				final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
-				if (sd != null) {
-					sd.keepTabs(keepTabs);
-					sd.keepToolbars(keepToolbars);
-					sd.keepControls(showControls);
-					sd.keepTray(keepTray);
-				}
-			});
-
+		// hideScreen();
+		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
+		if (initializer != null && !initializer.isDone()) { initializer.run(); }
+		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+		final ExperimentAgent agent = exp.getAgent();
+		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
+		Symbol layout = manager.getLayout();
+		if (layout == null) { layout = manager; }
+		final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
+		final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
+		final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
+		final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
+		final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
+		final Boolean showControls = layout.getFacetValue(scope, "controls", null);
+		final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
+		boolean showEditors;
+		if (layout.hasFacet("editors")) {
+			showEditors = layout.getFacetValue(scope, "editors", false);
+		} else {
+			showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 		}
+		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
+			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
+			if (showConsoles != null && !showConsoles) {
+				hideView(IGui.CONSOLE_VIEW_ID);
+				hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
+			} else {
+				getConsole().showConsoleView(exp.getAgent());
+			}
+			if (showParameters != null && !showParameters) {
+				hideView(IGui.PARAMETER_VIEW_ID);
+			} else {
+				updateParameterView(scope, exp);
+			}
+			if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
+			if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
+			if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
+
+			final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
+			if (sd != null) {
+				sd.keepTabs(keepTabs);
+				sd.keepToolbars(keepToolbars);
+				sd.keepControls(showControls);
+				sd.keepTray(keepTray);
+			}
+		});
 
 	}
 
@@ -571,7 +568,7 @@ public class SwtGui implements IGui {
 				PerspectiveHelper.openModelingPerspective(immediately, false);
 			}
 
-			getStatus(scope).neutralStatus("No simulation running");
+			getStatus().neutralStatus("No simulation running");
 		});
 
 	}
@@ -580,7 +577,7 @@ public class SwtGui implements IGui {
 	public String getExperimentState(final String uid) {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller == null) return NONE;
-		if (controller.getScheduler().paused()) return PAUSED;
+		if (controller.isPaused()) return PAUSED;
 		return RUNNING;
 	}
 
@@ -614,9 +611,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IStatusDisplayer getStatus(final IScope scope) {
-		return WorkbenchHelper.getService(IStatusDisplayer.class);
-	}
+	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
 
 	@Override
 	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }

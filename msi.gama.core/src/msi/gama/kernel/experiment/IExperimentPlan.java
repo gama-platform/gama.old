@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IExperimentPlan.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -32,13 +32,13 @@ public interface IExperimentPlan extends ISpecies {
 
 	/** The batch category name. */
 	String BATCH_CATEGORY_NAME = "Exploration method";
-	
+
 	/** The test category name. */
 	String TEST_CATEGORY_NAME = "Configuration of tests";
-	
+
 	/** The explorable category name. */
 	String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
-	
+
 	/** The system category prefix. */
 	String SYSTEM_CATEGORY_PREFIX = "Random number generation";
 
@@ -52,7 +52,8 @@ public interface IExperimentPlan extends ISpecies {
 	/**
 	 * Sets the model.
 	 *
-	 * @param model the new model
+	 * @param model
+	 *            the new model
 	 */
 	void setModel(final IModel model);
 
@@ -101,16 +102,10 @@ public interface IExperimentPlan extends ISpecies {
 	IOutputManager getExperimentOutputs();
 
 	/**
-	 * Checks if is gui.
-	 *
-	 * @return true, if is gui
-	 */
-	boolean isGui();
-
-	/**
 	 * Checks for parameter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return true, if successful
 	 */
 	boolean hasParameter(String name);
@@ -203,7 +198,8 @@ public interface IExperimentPlan extends ISpecies {
 	/**
 	 * Sets the headless.
 	 *
-	 * @param headless the new headless
+	 * @param headless
+	 *            the new headless
 	 */
 	void setHeadless(boolean headless);
 

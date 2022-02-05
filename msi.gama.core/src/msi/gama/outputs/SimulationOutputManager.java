@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationOutputManager.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SimulationOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -72,7 +72,8 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	/**
 	 * Instantiates a new simulation output manager.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public SimulationOutputManager(final IDescription desc) {
 		super(desc);
@@ -80,22 +81,22 @@ public class SimulationOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		scope.getGui().getStatus(scope).waitStatus(" Building outputs ");
+		scope.getGui().getStatus().waitStatus(" Building outputs ");
 		final boolean result = super.init(scope);
 		updateDisplayOutputsName(scope.getSimulation());
-		scope.getGui().getStatus(scope).informStatus(" " + scope.getRoot().getName() + " ready");
+		scope.getGui().getStatus().informStatus(" " + scope.getRoot().getName() + " ready");
 		return result;
 	}
 
 	/**
 	 * Update display outputs name.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 */
 	public void updateDisplayOutputsName(final SimulationAgent agent) {
 		for (final IOutput out : this) {
-			if (out instanceof IDisplayOutput) {
-				final IDisplayOutput display = (IDisplayOutput) out;
+			if (out instanceof IDisplayOutput display) {
 				GAMA.getGui().updateViewTitle(display, agent);
 			}
 		}

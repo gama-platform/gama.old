@@ -43,70 +43,82 @@ public interface IExperimentController {
 	IExperimentPlan getExperiment();
 
 	/**
-	 * @return
+	 *
 	 */
-	IExperimentScheduler getScheduler();
+	default void userStep() {}
 
 	/**
 	 *
 	 */
-	void userStep();
+	default void userStepBack() {}
 
 	/**
 	 *
 	 */
-	void stepBack();
+	default void startPause() {}
 
 	/**
 	 *
 	 */
-	void startPause();
+	default void close() {}
 
 	/**
 	 *
 	 */
-	void close();
+	default void userStart() {}
 
 	/**
 	 *
 	 */
-	void userStart();
+	default void directPause() {}
 
 	/**
 	 *
 	 */
-	void directPause();
+	default void dispose() {}
 
 	/**
 	 *
 	 */
-	void dispose();
+	default void directOpenExperiment() {}
 
 	/**
 	 *
 	 */
-	void directOpenExperiment();
+	default void userReload() {}
 
 	/**
 	 *
 	 */
-	void userReload();
+	default void userPause() {}
 
 	/**
 	 *
 	 */
-	void userPause();
-
-	/**
-	 *
-	 */
-	void userOpen();
+	default void userOpen() {}
 
 	/**
 	 * Checks if is disposing.
 	 *
 	 * @return true, if is disposing
 	 */
-	boolean isDisposing();
+	default boolean isDisposing() { return false; }
+
+	/**
+	 * Checks if is paused.
+	 *
+	 * @return true, if is paused
+	 */
+	default boolean isPaused() { return false; }
+
+	/**
+	 * Schedule.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 */
+	default void schedule(final ExperimentAgent agent) {}
 
 }

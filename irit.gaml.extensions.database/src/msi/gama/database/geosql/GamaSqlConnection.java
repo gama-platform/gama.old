@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaSqlConnection.java, in irit.gaml.extensions.database, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaSqlConnection.java, in irit.gaml.extensions.database, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.database.geosql;
 
@@ -55,34 +55,34 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	/** The Constant MYSQL. */
 	private static final String MYSQL = "mysql";
-	
+
 	/** The Constant POSTGRES. */
 	private static final String POSTGRES = "postgres";
-	
+
 	/** The Constant POSTGIS. */
 	private static final String POSTGIS = "postgis";
-	
+
 	/** The Constant MSSQL. */
 	private static final String MSSQL = "sqlserver";
-	
+
 	/** The Constant SQLITE. */
 	private static final String SQLITE = "spatialite";
-	
+
 	/** The dbtype. */
 	private String dbtype = "";
-	
+
 	/** The host. */
 	private String host = "";
-	
+
 	/** The port. */
 	private String port = "";
-	
+
 	/** The database. */
 	private String database = "";
-	
+
 	/** The user. */
 	private String user = "";
-	
+
 	/** The passwd. */
 	private String passwd = "";
 
@@ -93,7 +93,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Instantiates a new gama sql connection.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public GamaSqlConnection(final IScope scope) {
 		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
@@ -103,8 +104,10 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Instantiates a new gama sql connection.
 	 *
-	 * @param scope the scope
-	 * @param params the params
+	 * @param scope
+	 *            the scope
+	 * @param params
+	 *            the params
 	 */
 	private GamaSqlConnection(final IScope scope, final Map<String, Object> params) {
 		super(scope, FileUtils.constructAbsoluteFilePath(scope, "getfun.shp", false), 0);
@@ -115,7 +118,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Sets the params.
 	 *
-	 * @param scope the new params
+	 * @param scope
+	 *            the new params
 	 */
 	private void setParams(final IScope scope) {
 		setConnectionParameters(scope);
@@ -124,7 +128,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Sets the params.
 	 *
-	 * @param params the params
+	 * @param params
+	 *            the params
 	 */
 	private void setParams(final Map<String, Object> params) {
 		setConnectionParameters(params);
@@ -133,7 +138,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Sets the connection parameters.
 	 *
-	 * @param scope the new connection parameters
+	 * @param scope
+	 *            the new connection parameters
 	 */
 	private void setConnectionParameters(final IScope scope) {
 		final Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
@@ -148,7 +154,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Sets the connection parameters.
 	 *
-	 * @param params the params
+	 * @param params
+	 *            the params
 	 */
 	private void setConnectionParameters(final Map<String, Object> params) {
 		this.dbtype = (String) params.get("dbtype");
@@ -162,14 +169,15 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Creates the connection params.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the map
 	 */
 	// Connect connection parameters with connection attributes of the object
 	private Map<String, Object> createConnectionParams(final IScope scope) {
 		final Map<String, Object> connectionParameters = new HashMap<>();
 
-		if (dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(GamaSqlConnection.POSTGIS)) {
+		if (GamaSqlConnection.POSTGRES.equalsIgnoreCase(dbtype) || GamaSqlConnection.POSTGIS.equalsIgnoreCase(dbtype)) {
 			connectionParameters.put("host", host);
 			connectionParameters.put("dbtype", dbtype);
 			connectionParameters.put("port", port);
@@ -178,14 +186,14 @@ public class GamaSqlConnection extends GamaGisFile {
 			connectionParameters.put("passwd", passwd);
 			// advanced
 
-		} else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MYSQL)) {
+		} else if (GamaSqlConnection.MYSQL.equalsIgnoreCase(dbtype)) {
 			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
 			connectionParameters.put(JDBCDataStoreFactory.HOST.key, host);
 			connectionParameters.put(MySQLDataStoreFactory.PORT.key, Integer.valueOf(port));
 			connectionParameters.put(JDBCDataStoreFactory.DATABASE.key, database);
 			connectionParameters.put(JDBCDataStoreFactory.USER.key, user);
 			connectionParameters.put(JDBCDataStoreFactory.PASSWD.key, passwd);
-		} else if (dbtype.equalsIgnoreCase(GamaSqlConnection.MSSQL)) {
+		} else if (GamaSqlConnection.MSSQL.equalsIgnoreCase(dbtype)) {
 			connectionParameters.put("host", host);
 			connectionParameters.put("dbtype", dbtype);
 			connectionParameters.put("port", port);
@@ -193,7 +201,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			connectionParameters.put("user", user);
 			connectionParameters.put("passwd", passwd);
 
-		} else if (dbtype.equalsIgnoreCase(GamaSqlConnection.SQLITE)) {
+		} else if (GamaSqlConnection.SQLITE.equalsIgnoreCase(dbtype)) {
 			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
 			// String EXTRelativeLocation =
 			// GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
@@ -207,9 +215,11 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Connect.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the data store
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	/*
 	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
@@ -227,32 +237,33 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Close.
 	 *
-	 * @param scope the scope
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	/*
 	 * Close the current connection of of the GamaSqlConnection object
 	 */
 	public void close(final IScope scope) throws GamaRuntimeException {
-		if (dataStore != null) {
-			dataStore.dispose();
-		} else
+		if (dataStore == null)
 			throw GamaRuntimeException.error("The connection to " + this.database + " is not opened ", scope);
+		dataStore.dispose();
 	}
 
 	/**
 	 * Sets the data store.
 	 *
-	 * @param dataStore the new data store
+	 * @param dataStore
+	 *            the new data store
 	 */
-	public void setDataStore(final DataStore dataStore) {
-		this.dataStore = dataStore;
-	}
+	public void setDataStore(final DataStore dataStore) { this.dataStore = dataStore; }
 
 	/**
 	 * Read table.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void readTable(final IScope scope) {
 		final String tableName = (String) scope.getArg("table", IType.STRING);
@@ -263,9 +274,12 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Read table.
 	 *
-	 * @param scope the scope
-	 * @param tableName the table name
-	 * @param filterStr the filter str
+	 * @param scope
+	 *            the scope
+	 * @param tableName
+	 *            the table name
+	 * @param filterStr
+	 *            the filter str
 	 */
 	private void readTable(final IScope scope, final String tableName, final String filterStr) {
 
@@ -280,7 +294,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			// reader = store.getFeatureReader();
 			// final int i = 0;
 			while (reader.hasNext()) {
-				scope.getGui().getStatus(scope).setSubStatusCompletion(index++ / (double) size);
+				scope.getGui().getStatus().setSubStatusCompletion(index++ / (double) size);
 				final Feature feature = reader.next();
 
 				// DEBUG.LOG("Record " + i++ + ": " +
@@ -299,7 +313,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus(scope).endSubStatus("Reading table " + tableName);
+			scope.getGui().getStatus().endSubStatus("Reading table " + tableName);
 		}
 	}
 
@@ -316,7 +330,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	/**
 	 * Read.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void read(final IScope scope) {
 		fillBuffer(scope);
@@ -335,20 +350,24 @@ public class GamaSqlConnection extends GamaGisFile {
 
 		/** The item number. */
 		private final int itemNumber; // Number of records
-		
+
 		/** The env. */
 		private final Envelope3D env;
-		
+
 		/** The features. */
 		private final SimpleFeatureCollection features; // data/recordsets
 
 		/**
 		 * Instantiates a new query info.
 		 *
-		 * @param scope the scope
-		 * @param dStore the d store
-		 * @param tableName the table name
-		 * @param filterStr the filter str
+		 * @param scope
+		 *            the scope
+		 * @param dStore
+		 *            the d store
+		 * @param tableName
+		 *            the table name
+		 * @param filterStr
+		 *            the filter str
 		 */
 		QueryInfo(final IScope scope, final DataStore dStore, final String tableName, final String filterStr) {
 
@@ -404,27 +423,21 @@ public class GamaSqlConnection extends GamaGisFile {
 		 *
 		 * @return the size
 		 */
-		public int getSize() {
-			return itemNumber;
-		}
+		public int getSize() { return itemNumber; }
 
 		/**
 		 * Gets the envelope.
 		 *
 		 * @return the envelope
 		 */
-		public Envelope3D getEnvelope() {
-			return env;
-		}
+		public Envelope3D getEnvelope() { return env; }
 
 		/**
 		 * Gets the record set.
 		 *
 		 * @return the record set
 		 */
-		public SimpleFeatureCollection getRecordSet() {
-			return features;
-		}
+		public SimpleFeatureCollection getRecordSet() { return features; }
 	}// end of class QueryInfo
 
 	@Override

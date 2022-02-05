@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MinimalAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MinimalAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
-import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
@@ -49,13 +48,13 @@ public class MinimalAgent extends AbstractAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation<? extends IAgent> population;
-	
+
 	/** The name. */
 	protected String name;
-	
+
 	/** The geometry. */
 	protected final IShape geometry;
-	
+
 	/** The hash code. */
 	private final int hashCode;
 
@@ -70,9 +69,12 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * Instantiates a new minimal agent.
 	 *
-	 * @param population the population that this agent belongs to.
-	 * @param index the index
-	 * @param geometry the geometry
+	 * @param population
+	 *            the population that this agent belongs to.
+	 * @param index
+	 *            the index
+	 * @param geometry
+	 *            the geometry
 	 */
 	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
 		super(index);
@@ -83,19 +85,10 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	@Override
-	public void setGeometricalType(final Type t) {
-		geometry.setGeometricalType(t);
-	}
+	public IPopulation<? extends IAgent> getPopulation() { return population; }
 
 	@Override
-	public IPopulation<? extends IAgent> getPopulation() {
-		return population;
-	}
-
-	@Override
-	public IShape getGeometry() {
-		return geometry;
-	}
+	public IShape getGeometry() { return geometry; }
 
 	@Override
 	public/* synchronized */void setGeometry(final IShape newGeometry) {
@@ -143,10 +136,8 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public String getName() {
 		if (name == null) { name = super.getName(); }
-		if (dead())
-			return name + " (dead)";
-		else
-			return name;
+		if (dead()) return name + " (dead)";
+		return name;
 	}
 
 	@Override
@@ -249,8 +240,8 @@ public class MinimalAgent extends AbstractAgent {
 		if (!getPopulation().isStepOverriden()) {
 			super.doStep(scope);
 			return !scope.interrupted();
-		} else
-			return scope.execute(getSpecies().getAction(ISpecies.stepActionName), this, null).passed();
+		}
+		return scope.execute(getSpecies().getAction(ISpecies.stepActionName), this, null).passed();
 	}
 
 	/**
@@ -267,8 +258,10 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	/**
-	 * The default step of agents consists in calling the super implementation of doStep() in order to realize the
-	 * default step sequence
+	 * The default step of agents consists in calling the super implementation of step() in order to realize the default
+	 * step sequence
+	 *
+	 * TODO verify this sequence as _step_() is NEVER called (only from GAML if done explicitly)
 	 *
 	 * @param scope
 	 * @return
@@ -277,121 +270,6 @@ public class MinimalAgent extends AbstractAgent {
 			name = ISpecies.stepActionName)
 	public Object _step_(final IScope scope) {
 		return super.step(scope);
-	}
-
-	/**
-	 * Method getArea(). Simply delegates to the geometry
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getArea()
-	 */
-	@Override
-	public Double getArea() {
-		return geometry.getArea();
-	}
-
-	/**
-	 * Method getVolume(). Simply delegates to the geometry
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getVolume()
-	 */
-	@Override
-	public Double getVolume() {
-		return geometry.getVolume();
-	}
-
-	/**
-	 * Method getPerimeter()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getPerimeter()
-	 */
-	@Override
-	public double getPerimeter() {
-		return geometry.getPerimeter();
-	}
-
-	/**
-	 * Method getHoles()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getHoles()
-	 */
-	@Override
-	public IList<GamaShape> getHoles() {
-		return geometry.getHoles();
-	}
-
-	/**
-	 * Method getCentroid()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getCentroid()
-	 */
-	@Override
-	public GamaPoint getCentroid() {
-		return geometry.getCentroid();
-	}
-
-	/**
-	 * Method getExteriorRing()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getExteriorRing()
-	 */
-	@Override
-	public GamaShape getExteriorRing(final IScope scope) {
-		return geometry.getExteriorRing(scope);
-	}
-
-	/**
-	 * Method getWidth()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getWidth()
-	 */
-	@Override
-	public Double getWidth() {
-		return geometry.getWidth();
-	}
-
-	/**
-	 * Method getHeight()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
-	 */
-	@Override
-	public Double getHeight() {
-		return geometry.getHeight();
-	}
-
-	/**
-	 * Method getDepth()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
-	 */
-	@Override
-	public Double getDepth() {
-		return geometry.getDepth();
-	}
-
-	/**
-	 * Method getGeometricEnvelope()
-	 *
-	 * @see msi.gama.metamodel.shape.IGeometricalShape#getGeometricEnvelope()
-	 */
-	@Override
-	public GamaShape getGeometricEnvelope() {
-		return geometry.getGeometricEnvelope();
-	}
-
-	@Override
-	public IList<? extends IShape> getGeometries() {
-		return geometry.getGeometries();
-	}
-
-	/**
-	 * Method isMultiple()
-	 *
-	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
-	 */
-	@Override
-	public boolean isMultiple() {
-		return geometry.isMultiple();
 	}
 
 	@Override

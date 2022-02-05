@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SimulationAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
@@ -172,66 +172,68 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	/** The Constant DURATION. */
 	public static final String DURATION = "duration";
-	
+
 	/** The Constant TOTAL_DURATION. */
 	public static final String TOTAL_DURATION = "total_duration";
-	
+
 	/** The Constant AVERAGE_DURATION. */
 	public static final String AVERAGE_DURATION = "average_duration";
-	
+
 	/** The Constant CYCLE. */
 	public static final String CYCLE = "cycle";
-	
+
 	/** The Constant TIME. */
 	public static final String TIME = "time";
-	
+
 	/** The Constant CURRENT_DATE. */
 	public static final String CURRENT_DATE = "current_date";
-	
+
 	/** The Constant STARTING_DATE. */
 	public static final String STARTING_DATE = "starting_date";
-	
+
 	/** The Constant PAUSED. */
 	public static final String PAUSED = "paused";
-	
+
 	/** The Constant USAGE. */
 	public static final String USAGE = "rng_usage";
 
 	/** The own clock. */
 	final SimulationClock ownClock;
-	
+
 	/** The color. */
 	GamaColor color;
 
 	/** The own scope. */
 	final IScope ownScope = new ExecutionScope(this);
-	
+
 	/** The outputs. */
 	private SimulationOutputManager outputs;
-	
+
 	/** The projection factory. */
 	final ProjectionFactory projectionFactory;
-	
+
 	/** The scheduled. */
 	private Boolean scheduled = false;
-	
+
 	/** The is on user hold. */
 	private volatile boolean isOnUserHold;
-	
+
 	/** The random. */
 	private RandomUtils random;
-	
+
 	/** The executer. */
 	private final ActionExecuter executer;
-	
+
 	/** The topology. */
 	private RootTopology topology;
 
 	/**
 	 * Instantiates a new simulation agent.
 	 *
-	 * @param pop the pop
-	 * @param index the index
+	 * @param pop
+	 *            the pop
+	 * @param index
+	 *            the index
 	 */
 	public SimulationAgent(final IPopulation<? extends IAgent> pop, final int index) {
 		this((SimulationPopulation) pop, index);
@@ -240,9 +242,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Instantiates a new simulation agent.
 	 *
-	 * @param pop the pop
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param pop
+	 *            the pop
+	 * @param index
+	 *            the index
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public SimulationAgent(final SimulationPopulation pop, final int index) throws GamaRuntimeException {
 		super(pop, index);
@@ -275,7 +280,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the topology.
 	 *
-	 * @param topology2 the new topology
+	 * @param topology2
+	 *            the new topology
 	 */
 	public void setTopology(final RootTopology topology2) {
 		if (topology != null) { topology.dispose(); }
@@ -286,8 +292,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the topology.
 	 *
-	 * @param scope the scope
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param shape
+	 *            the shape
 	 */
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
@@ -319,7 +327,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the scheduled.
 	 *
-	 * @param scheduled the new scheduled
+	 * @param scheduled
+	 *            the new scheduled
 	 */
 	public void setScheduled(final Boolean scheduled) { this.scheduled = scheduled; }
 
@@ -340,7 +349,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the color.
 	 *
-	 * @param color the new color
+	 * @param color
+	 *            the new color
 	 */
 	@setter (IKeyword.COLOR)
 	public void setColor(final GamaColor color) { this.color = color; }
@@ -363,7 +373,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		executer.executeEndActions();
 		executer.executeOneShotActions();
 		if (outputs != null) { outputs.step(this.getScope()); }
-		ownClock.step(this.getScope());
+		ownClock.step();
 	}
 
 	@Override
@@ -489,7 +499,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Gets the cycle.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the cycle
 	 */
 	@getter (CYCLE)
@@ -502,7 +513,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Checks if is paused.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is paused
 	 */
 	@getter (PAUSED)
@@ -515,8 +527,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the paused.
 	 *
-	 * @param scope the scope
-	 * @param state the state
+	 * @param scope
+	 *            the scope
+	 * @param state
+	 *            the state
 	 */
 	@setter (PAUSED)
 	public void setPaused(final IScope scope, final boolean state) {
@@ -540,7 +554,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Gets the time step.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the time step
 	 */
 	@getter (
@@ -555,9 +570,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the time step.
 	 *
-	 * @param scope the scope
-	 * @param t the t
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param t
+	 *            the t
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@setter (IKeyword.STEP)
 	public void setTimeStep(final IScope scope, final double t) throws GamaRuntimeException {
@@ -571,7 +589,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Gets the time.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the time
 	 */
 	@getter (TIME)
@@ -584,9 +603,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the time.
 	 *
-	 * @param scope the scope
-	 * @param t the t
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param t
+	 *            the t
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@setter (TIME)
 	public void setTime(final IScope scope, final double t) throws GamaRuntimeException {
@@ -632,8 +654,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the machine time.
 	 *
-	 * @param t the new machine time
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param t
+	 *            the new machine time
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@setter (PlatformAgent.MACHINE_TIME)
 	public void setMachineTime(final Double t) throws GamaRuntimeException {
@@ -643,8 +667,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the current date.
 	 *
-	 * @param d the new current date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param d
+	 *            the new current date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@setter (CURRENT_DATE)
 	public void setCurrentDate(final GamaDate d) throws GamaRuntimeException {
@@ -662,8 +688,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the starting date.
 	 *
-	 * @param d the new starting date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param d
+	 *            the new starting date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@setter (STARTING_DATE)
 	public void setStartingDate(final GamaDate d) throws GamaRuntimeException {
@@ -683,7 +711,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Pause.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -698,7 +727,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Resume.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -713,7 +743,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Halt.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -746,17 +777,16 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public String buildPostfix() {
 		final boolean noName = !GamaPreferences.Interface.CORE_SIMULATION_NAME.getValue();
 		if (!noName) return " (" + getName() + ")";
-		if (getPopulation().size() > 1)
-			return " (S" + getIndex() + ")";
-		else
-			return "";
+		if (getPopulation().size() > 1) return " (S" + getIndex() + ")";
+		return "";
 
 	}
 
 	/**
 	 * Sets the outputs.
 	 *
-	 * @param iOutputManager the new outputs
+	 * @param iOutputManager
+	 *            the new outputs
 	 */
 	public void setOutputs(final IOutputManager iOutputManager) {
 		if (iOutputManager == null) return;
@@ -817,7 +847,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the usage.
 	 *
-	 * @param s the new usage
+	 * @param s
+	 *            the new usage
 	 */
 	@setter (SimulationAgent.USAGE)
 	public void setUsage(final Integer s) {
@@ -843,7 +874,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the seed.
 	 *
-	 * @param s the new seed
+	 * @param s
+	 *            the new seed
 	 */
 	@setter (IKeyword.SEED)
 	public void setSeed(final Double s) {
@@ -870,7 +902,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the rng.
 	 *
-	 * @param newRng the new rng
+	 * @param newRng
+	 *            the new rng
 	 */
 	@setter (IKeyword.RNG)
 	public void setRng(final String newRng) {
@@ -887,14 +920,16 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Sets the random generator.
 	 *
-	 * @param rng the new random generator
+	 * @param rng
+	 *            the new random generator
 	 */
 	public void setRandomGenerator(final RandomUtils rng) { random = rng; }
 
 	/**
 	 * Prepare gui for simulation.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 */
 	public void prepareGuiForSimulation(final IScope s) {
 		s.getGui().clearErrors(s);
@@ -1038,9 +1073,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Update references.
 	 *
-	 * @param scope the scope
-	 * @param list_ref the list ref
-	 * @param sim the sim
+	 * @param scope
+	 *            the scope
+	 * @param list_ref
+	 *            the list ref
+	 * @param sim
+	 *            the sim
 	 */
 	private void updateReferences(final IScope scope, final List<IReference> list_ref, final SimulationAgent sim) {
 		// list_ref.stream().forEach(
@@ -1053,7 +1091,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/**
 	 * Adopt topology of.
 	 *
-	 * @param root the root
+	 * @param root
+	 *            the root
 	 */
 	public void adoptTopologyOf(final SimulationAgent root) {
 		final RootTopology rt = root.getTopology();
