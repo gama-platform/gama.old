@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GeometryDrawer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GeometryDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.geometry;
 
@@ -246,9 +246,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				gl.drawSimpleShape(_vertices, size - 1, /* solid, */clockwise, false, null);
 			}
 		}
-		if (border != null) {
-			gl.drawClosedLine(_vertices, border, -1);
-			applyToInnerGeometries(p, ring -> gl.drawClosedLine(getYNegatedCoordinates(ring), border, -1));
+
+		if (border != null || gl.isWireframe()) {
+			final Color colorToUse = border != null ? border : gl.getCurrentColor();
+			gl.drawClosedLine(_vertices, colorToUse, -1);
+			applyToInnerGeometries(p, ring -> gl.drawClosedLine(getYNegatedCoordinates(ring), colorToUse, -1));
 		}
 	}
 
