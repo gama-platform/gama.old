@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentParameter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentParameter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -119,12 +119,31 @@ import msi.gaml.variables.Variable;
 						name = IKeyword.ENABLES,
 						type = IType.LIST,
 						optional = true,
-						doc = @doc ("a list of global variables whose parameter editors will be enabled when this parameter value is set to true (they are otherwise disabled)")),
+						doc = @doc ("a list of global variables whose parameter editors will be enabled when this parameter value is set to true or to a value that casts to true (they are otherwise disabled)")),
 				@facet (
 						name = IKeyword.DISABLES,
 						type = IType.LIST,
 						optional = true,
-						doc = @doc ("a list of global variables whose parameter editors will be disabled when this parameter value is set to true (they are otherwise enabled)")),
+						doc = @doc ("a list of global variables whose parameter editors will be disabled when this parameter value is set to true or to a value that casts to true (they are otherwise enabled)")),
+				@facet (
+						name = IKeyword.UPDATES,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc ("a list of global variables whose parameter editors will be updated when this parameter value is changed "
+								+ "(their min, max, step and among values will be updated accordingly if they depend on this parameter. "
+								+ "Note that it might lead to some inconsistencies, for instance a parameter value which becomes out of range, "
+								+ "or which does not belong anymore to a list of possible values. In these cases, the value of the affected parameter will not change)")),
+				@facet (
+						name = "in_workspace",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Makes only sense for file parameters. Whether the file selector will be restricted to the workspace or not")),
+				@facet (
+						name = "extensions",
+						type = IType.LIST,
+						of = IType.STRING,
+						optional = true,
+						doc = @doc ("Makes only sense for file parameters. A list of file extensions (like 'gaml', 'shp', etc.) that restricts the choice offered to the users to certain file types (folders not concerned). Default is empty, effectively accepting all files")),
 				@facet (
 						name = "slider",
 						type = IType.BOOL,
@@ -149,7 +168,7 @@ import msi.gaml.variables.Variable;
 						name = IKeyword.AMONG,
 						type = IType.LIST,
 						optional = true,
-						doc = @doc ("the list of possible values")) },
+						doc = @doc ("the list of possible values that this parameter can take")) },
 		omissible = IKeyword.NAME)
 @symbol (
 		name = { IKeyword.PARAMETER },
@@ -179,22 +198,22 @@ import msi.gaml.variables.Variable;
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	/** The undefined. */
-	static Object UNDEFINED = new Object();
+	static final Object UNDEFINED = new Object();
 
 	/** The value. */
 	private Object value = UNDEFINED;
 
 	/** The max value. */
-	Object minValue, maxValue;
+	// Object minValue, maxValue;
 
 	/** The step value. */
-	Object stepValue;
+	// Object stepValue;
 
 	/** The among value. */
-	private List amongValue;
+	// private List amongValue;
 
 	/** The enables. */
-	final private String[] disables, enables;
+	final private String[] disables, enables, extensions, updates;
 
 	/** The unit label. */
 	String varName, title, category, unitLabel;
@@ -216,7 +235,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isExperiment = false;
 
 	/** The on change. */
-	final IExpression init, among, min, max, step, slider, onChange;
+	final IExpression init, among, min, max, step, slider, onChange, inWorkspace;
 
 	/** The listeners. */
 	final List<ParameterChangeListener> listeners = new ArrayList<>();
@@ -248,7 +267,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		step = getFacet(IKeyword.STEP);
 		if (step != null && step.isConst()) { getStepValue(runtimeScope); }
 		among = getFacet(IKeyword.AMONG);
-		if (among != null && among.isConst()) { getAmongValue(runtimeScope); }
+		// if (among != null && among.isConst()) { getAmongValue(runtimeScope); }
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		if (onChange != null) {
 			listeners.add((scope, v) -> {
@@ -258,11 +277,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			});
 
 		}
+		inWorkspace = getFacet("in_workspace");
+
 		slider = getFacet("slider");
-		final IExpressionDescription d = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.DISABLES) : null;
-		final IExpressionDescription e = type.equals(Types.BOOL) ? getDescription().getFacet(IKeyword.ENABLES) : null;
+		final IExpressionDescription d = getDescription().getFacet(IKeyword.DISABLES);
+		final IExpressionDescription e = getDescription().getFacet(IKeyword.ENABLES);
+		final IExpressionDescription f = getDescription().getFacet(IKeyword.EXTENSIONS);
+		final IExpressionDescription g = getDescription().getFacet(IKeyword.UPDATES);
 		disables = d != null ? d.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		enables = e != null ? e.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		extensions = f != null ? f.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		updates = g != null ? g.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		final VariableDescription targetedGlobalVar = findTargetedVar(sd);
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
 		isEditable = !targetedGlobalVar.isNotModifiable();
@@ -350,25 +375,25 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		enables = EMPTY_STRINGS;
 		this.canBeNull = canBeNull;
 		// this.order = p.getDefinitionOrder();
-		this.amongValue = among;
+		// this.amongValue = among;
 		if (among != null) {
 			this.among = new ConstantExpression(among);
 		} else {
 			this.among = null;
 		}
-		this.minValue = p.getMinValue(scope);
+		Object minValue = p.getMinValue(scope);
 		if (minValue != null) {
 			this.min = new ConstantExpression(minValue);
 		} else {
 			min = null;
 		}
-		this.maxValue = p.getMaxValue(scope);
+		Object maxValue = p.getMaxValue(scope);
 		if (maxValue != null) {
 			this.max = new ConstantExpression(maxValue);
 		} else {
 			max = null;
 		}
-		this.stepValue = p.getStepValue(scope);
+		Object stepValue = p.getStepValue(scope);
 		if (stepValue != null) {
 			this.step = new ConstantExpression(stepValue);
 		} else {
@@ -386,6 +411,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		setEditable(p.isEditable());
 		this.isExperiment = p.isDefinedInExperiment();
+		inWorkspace = null;
+		extensions = EMPTY_STRINGS;
+		updates = EMPTY_STRINGS;
 	}
 
 	@Override
@@ -439,7 +467,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the new value
 	 * @return the object
 	 */
-	private Object verifyMin(final Object newValue) {
+	private Object verifyMin(final IScope scope, final Object newValue) {
+		Object minValue = getMinValue(scope);
 		if (minValue instanceof Number && newValue instanceof Number
 				&& compare(((Number) minValue).doubleValue(), ((Number) newValue).doubleValue()) > 0
 				|| minValue instanceof Comparable && newValue instanceof Comparable
@@ -455,7 +484,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the new value
 	 * @return the object
 	 */
-	private Object verifyMax(final Object newValue) {
+	private Object verifyMax(final IScope scope, final Object newValue) {
+		Object maxValue = getMaxValue(scope);
 		if (maxValue instanceof Number && newValue instanceof Number
 				&& compare(((Number) maxValue).doubleValue(), ((Number) newValue).doubleValue()) < 0
 				|| maxValue instanceof Comparable && newValue instanceof Comparable
@@ -473,7 +503,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the val
 	 */
 	public void setAndVerifyValue(final IScope scope, final Object val) {
-		Object newValue = verifyMin(verifyMax(val));
+		Object newValue = verifyMin(scope, verifyMax(scope, val));
 		newValue = filterWithAmong(scope, newValue);
 		if (value != UNDEFINED) {
 			for (final ParameterChangeListener listener : listeners) { listener.changed(scope, newValue); }
@@ -491,7 +521,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 * @return the object
 	 */
 	private Object filterWithAmong(final IScope scope, final Object newValue) {
-		getAmongValue(scope);
+		List amongValue = getAmongValue(scope);
 		if (amongValue == null || amongValue.isEmpty()) return newValue;
 		if (Types.FLOAT.equals(this.getType())) {
 			final double newDouble = Cast.asFloat(scope, newValue);
@@ -508,7 +538,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	@Override
 	public void setValue(final IScope scope, final Object val) {
 		if (val == UNDEFINED) {
-			getAmongValue(scope);
+			List amongValue = getAmongValue(scope);
 			if (amongValue != null) {
 				value = amongValue.get(scope.getRandom().between(0, amongValue.size() - 1));
 			} else if (type.id() == IType.INT || type.id() == IType.FLOAT || type.id() == IType.POINT
@@ -549,6 +579,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 * @return the comparable
 	 */
 	private Comparable drawRandomValue(final IScope scope) {
+		Object minValue = getMinValue(scope);
+		Object maxValue = getMaxValue(scope);
+		Object stepValue = getStepValue(scope);
 		switch (type.id()) {
 			case IType.INT:
 				final int iMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
@@ -595,6 +628,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				}
 				return neighborValues.items();
 			}
+			Object minValue = getMinValue(scope);
+			Object maxValue = getMaxValue(scope);
+			Object stepValue = getStepValue(scope);
 			switch (type.id()) {
 				case IType.INT:
 					final int iMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
@@ -703,26 +739,29 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Comparable getMinValue(final IScope scope) {
-		if (minValue == null && min != null) { minValue = min.value(scope); }
-		return (Comparable) minValue;
+		return min == null ? null : (Comparable) min.value(scope);
+		// if (minValue == null && min != null) { minValue = min.value(scope); }
+		// return (Comparable) minValue;
 	}
 
 	@Override
 	public Comparable getMaxValue(final IScope scope) {
-		if (maxValue == null && max != null) { maxValue = max.value(scope); }
-		return (Comparable) maxValue;
+		return max == null ? null : (Comparable) max.value(scope);
+		// if (maxValue == null && max != null) { maxValue = max.value(scope); }
+		// return (Comparable) maxValue;
 	}
 
 	@Override
 	public List getAmongValue(final IScope scope) {
-		if (amongValue == null && among != null) { amongValue = Cast.asList(scope, among.value(scope)); }
-		return amongValue;
+		if (among != null) return Cast.asList(scope, among.value(scope));
+		return null;
 	}
 
 	@Override
 	public Comparable getStepValue(final IScope scope) {
-		if (stepValue == null && step != null) { stepValue = step.value(scope); }
-		return (Comparable) stepValue;
+		return step == null ? null : (Comparable) step.value(scope);
+		// if (stepValue == null && step != null) { stepValue = step.value(scope); }
+		// return (Comparable) stepValue;
 	}
 
 	@Override
@@ -814,5 +853,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public boolean isDefinedInExperiment() { return isExperiment; }
+
+	@Override
+	public String[] getFileExtensions() { return extensions; }
+
+	@Override
+	public String[] getRefreshment() { return updates; }
+
+	@Override
+	public boolean isWorkspace() {
+		if (inWorkspace == null) return false;
+		return GAMA.run(s -> Cast.asBool(s, inWorkspace.value(s)));
+	}
 
 }

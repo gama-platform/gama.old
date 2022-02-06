@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BooleanEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * BooleanEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
@@ -34,29 +33,33 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	/** The button. */
 	private SwitchButton button;
 
-	/**
-	 * Instantiates a new boolean editor.
-	 *
-	 * @param scope the scope
-	 * @param parent the parent
-	 * @param title the title
-	 * @param value the value
-	 * @param whenModified the when modified
-	 */
-	BooleanEditor(final IScope scope, final EditorsGroup parent, final String title, final boolean value,
-			final EditorListener<Boolean> whenModified) {
-		super(scope, new InputParameter(title, value), whenModified);
-		acceptNull = false;
-		this.createControls(parent);
-	}
+	// /**
+	// * Instantiates a new boolean editor.
+	// *
+	// * @param scope the scope
+	// * @param parent the parent
+	// * @param title the title
+	// * @param value the value
+	// * @param whenModified the when modified
+	// */
+	// BooleanEditor(final IScope scope, final EditorsGroup parent, final String title, final boolean value,
+	// final EditorListener<Boolean> whenModified) {
+	// super(scope, new InputParameter(title, value), whenModified);
+	// acceptNull = false;
+	// this.createControls(parent);
+	// }
 
 	/**
 	 * Instantiates a new boolean editor.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param param the param
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param param
+	 *            the param
+	 * @param l
+	 *            the l
 	 */
 	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
 		super(scope, agent, param, l);
@@ -95,13 +98,9 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	}
 
 	@Override
-	public IType<Boolean> getExpectedType() {
-		return Types.BOOL;
-	}
+	public IType<Boolean> getExpectedType() { return Types.BOOL; }
 
 	@Override
-	protected int[] getToolItems() {
-		return new int[] { REVERT };
-	}
+	protected int[] getToolItems() { return new int[] { REVERT }; }
 
 }

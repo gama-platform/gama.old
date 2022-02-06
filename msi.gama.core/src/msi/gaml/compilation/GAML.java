@@ -329,6 +329,17 @@ public class GAML {
 	}
 
 	/**
+	 * Gets the info.
+	 *
+	 * @param uri
+	 *            the uri
+	 * @return the info
+	 */
+	public static GamlFileInfo getInfo(final URI uri) {
+		return infoProvider.getInfo(uri);
+	}
+
+	/**
 	 * Gets the contents.
 	 *
 	 * @param uri

@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * IntEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IntEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,36 +27,20 @@ public class IntEditor extends NumberEditor<Integer> {
 	/**
 	 * Instantiates a new int editor.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param param the param
-	 * @param canBeNull the can be null
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param param
+	 *            the param
+	 * @param canBeNull
+	 *            the can be null
+	 * @param l
+	 *            the l
 	 */
 	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
 			final EditorListener<Integer> l) {
 		super(scope, agent, param, l, canBeNull);
-	}
-
-	/**
-	 * Instantiates a new int editor.
-	 *
-	 * @param scope the scope
-	 * @param parent the parent
-	 * @param title the title
-	 * @param unit the unit
-	 * @param value the value
-	 * @param min the min
-	 * @param max the max
-	 * @param step the step
-	 * @param whenModified the when modified
-	 * @param canBeNull the can be null
-	 */
-	IntEditor(final IScope scope, final EditorsGroup parent, final String title, final String unit, final Integer value,
-			final Integer min, final Integer max, final Integer step, final EditorListener<Integer> whenModified,
-			final boolean canBeNull) {
-		super(scope, new InputParameter(title, unit, value, min, max, step), whenModified, canBeNull);
-		createControls(parent);
 	}
 
 	@Override
@@ -69,14 +52,14 @@ public class IntEditor extends NumberEditor<Integer> {
 	protected Integer applyPlus() {
 		if (currentValue == null) return 0;
 		final Integer i = currentValue;
-		return i + stepValue.intValue();
+		return i + getStepValue().intValue();
 	}
 
 	@Override
 	protected Integer applyMinus() {
 		if (currentValue == null) return 0;
 		final Integer i = currentValue;
-		return i - stepValue.intValue();
+		return i - getStepValue().intValue();
 	}
 
 	@Override
@@ -84,8 +67,8 @@ public class IntEditor extends NumberEditor<Integer> {
 		final int i = Cast.asInt(getScope(), val);
 		if (getMinValue() != null && i < Cast.asInt(getScope(), getMinValue()))
 			throw GamaRuntimeException.error("Value " + i + " should be greater than " + getMinValue(), getScope());
-		if (maxValue != null && i > Cast.asInt(getScope(), getMaxValue()))
-			throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
+		if (getMaxValue() != null && i > Cast.asInt(getScope(), getMaxValue()))
+			throw GamaRuntimeException.error("Value " + i + " should be smaller than " + getMaxValue(), getScope());
 		return super.modifyValue(i);
 	}
 
@@ -102,14 +85,10 @@ public class IntEditor extends NumberEditor<Integer> {
 	protected Integer normalizeValues() throws GamaRuntimeException {
 		final Integer valueToConsider = getOriginalValue() == null ? 0 : Cast.asInt(getScope(), getOriginalValue());
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
-		minValue = getMinValue() == null ? null : Cast.asInt(getScope(), getMinValue());
-		maxValue = getMaxValue() == null ? null : Cast.asInt(getScope(), getMaxValue());
 		return valueToConsider;
 	}
 
 	@Override
-	public IType<Integer> getExpectedType() {
-		return Types.INT;
-	}
+	public IType<Integer> getExpectedType() { return Types.INT; }
 
 }

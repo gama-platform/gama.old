@@ -24,6 +24,7 @@ global {
 	string a_string ;
 	rgb a_color <- #yellow;
 	file a_fil <- shape_file("../../Data/Data Importation/includes/test.shp");
+	file a_fil2 <- file("../../Data/Data Importation/includes/hab10.asc");
 	list<string> list_of_string <- ["A","B","C"];
 	matrix<string> matrix_of_string <- matrix([["R1C1","R2C1"],["R1C2","R2C2"],["R1C3","R2C3"]]);
 	
@@ -44,6 +45,11 @@ global {
 
 experiment "Show Parameters" type: gui {
 	
+	// Variables can also be declared in the experiment
+	int an_int_to_build_a_list <- 10;
+	string a_string_among_others <- "10";
+	int an_int_with_an_updated_slider <- 2;
+	
 	// Category: Various types	
 	//////////////////////////////////////////////
 	// When min: and max: facets are used, the input chooser for a numerical value appears as a slider. 
@@ -61,7 +67,8 @@ experiment "Show Parameters" type: gui {
 	// For any parameter, if the possible values are described using the among: facet, a ComboBox is used to choose the parameter value.
 	parameter "Choice Box 1" category:"Various types" var: a_string <- "choice1" among: ["choice1","choice2","choice3"];
 	// For a file variable, a FileChooser is used to choose the file. 
-	parameter "File chooser" category:"Various types" var: a_fil ; 
+	parameter "File chooser" category:"Files" var: a_fil ; 
+	parameter "File Chooser (only .asc and .shp)" category: "Files" var: a_fil2 extensions: ["asc","shp"] in_workspace: true;
 	// For both lists and matrices, an list/matrix modifier can be opened to modify the list or matrix.
 	parameter "List parameter" category:"Various types" var: list_of_string ; 
 	parameter "Matrix parameter" category:"Various types" var: matrix_of_string ; 
@@ -79,8 +86,14 @@ experiment "Show Parameters" type: gui {
 	// Category: interactive enable
 	//////////////////////////////////////////////
 	// In the following, when a_boolean_to_enable_parameters is true, it enables the input chooser for multiple_choice.
-	parameter "Activate the following parameter" category:"Activable parameters" var:a_boolean_to_enable_parameters enables: [multiple_choice];
+	parameter "Activate the following parameter" category:"Enable parameters" var:a_boolean_to_enable_parameters enables: [multiple_choice];
 	parameter "Choice Box 2" category:"Activable parameters" var: multiple_choice <- "choice1" among: ["choice1","choice2","choice3"];
+	
+	// Category: interactive update
+	//////////////////////////////////////////////
+	parameter "Update the among and max values of next parameters" category: "Update parameters" var: an_int_to_build_a_list min: 1 updates: [a_string_among_others, an_int_with_an_updated_slider];
+	parameter "A string to choose among updated values" category: "Update parameters" var: a_string_among_others among: (0 to an_int_to_build_a_list) collect string(each);
+	parameter "An int with an updated slider" slider: true category: "Update parameters" var: an_int_with_an_updated_slider min: 0 max: an_int_to_build_a_list;
 	
 	// Category: interaction through button	
 	//////////////////////////////////////////////
@@ -89,6 +102,7 @@ experiment "Show Parameters" type: gui {
 	parameter "Float (with on_change listener)" category:"Interactive" var: float_on_change {write ""+float_on_change;}
 	// A user_command adds a button to the interface in order to call an action or a set of statements when it is clicked.
 	user_command "Display parameter" category: "Interactive" color:#darkblue {ask world {do writing_parameters;}}
+
 	
 	output {}
 }

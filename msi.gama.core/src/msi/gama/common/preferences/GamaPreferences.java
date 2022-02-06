@@ -31,12 +31,14 @@ import org.geotools.referencing.CRS;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
+import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
@@ -92,6 +94,28 @@ public class GamaPreferences {
 		/** The Constant CORE_ASK_OUTDATED. */
 		public static final Pref<Boolean> CORE_ASK_OUTDATED = create("pref_ask_outdated",
 				"Ask before using a workspace created by another version", true, IType.BOOL, false).in(NAME, STARTUP);
+
+		/** The Constant CORE_ASK_REBUILD. */
+		public static final Pref<Boolean> CORE_STARTUP_MODEL =
+				create("pref_startup_model", "Open a model or an experiment at startup", false, IType.BOOL, false)
+						.in(NAME, STARTUP).activates("pref_default_model", "pref_default_experiment");
+		/** The Constant CORE_DEFAULT_MODEL. */
+		public static final Pref<? extends IGamaFile> CORE_DEFAULT_MODEL =
+				create("pref_default_model", "Choose the model to open at startup", (IGamaFile) null, IType.FILE, false)
+						.in(NAME, STARTUP).restrictToWorkspace().withExtensions("gaml", "experiment")
+						.refreshes("pref_default_experiment").activates("pref_default_experiment");
+
+		/** The Constant CORE_DEFAULT_MODEL. */
+		public static final Pref<String> CORE_DEFAULT_EXPERIMENT =
+				create("pref_default_experiment", "Choose the experiment to run at startup", "", IType.STRING, false)
+						.in(NAME, STARTUP).among(() -> {
+							List result = new ArrayList();
+							IGamaFile file = CORE_DEFAULT_MODEL.getValue();
+							if (file == null) return result;
+							result.addAll(
+									GAML.getInfo(FileUtils.getURI(file.getOriginalPath(), null)).getExperiments());
+							return result;
+						});
 		/**
 		 * Menus
 		 */

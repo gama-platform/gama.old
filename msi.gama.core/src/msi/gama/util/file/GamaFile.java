@@ -13,6 +13,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.emf.common.util.URI;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.ext.webb.Webb;
@@ -618,6 +620,13 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		if (isRemote()) { sendToURL(scope); }
 
 	}
+
+	/**
+	 * Gets the URI relative to workspace.
+	 *
+	 * @return the URI relative to workspace
+	 */
+	public URI getURIRelativeToWorkspace() { return FileUtils.getURI(localPath, null); }
 
 	// protected void setPath(final String path) {
 	// this.localPath = path;

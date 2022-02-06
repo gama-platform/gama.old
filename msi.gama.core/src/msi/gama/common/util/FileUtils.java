@@ -254,6 +254,39 @@ public class FileUtils {
 	}
 
 	/**
+	 * Creates the link to external folder.
+	 *
+	 * @param path
+	 *            the path
+	 * @param workspaceResource
+	 *            the workspace resource
+	 * @return the i container
+	 */
+	public static IContainer createLinkToExternalFolder(final String path, final URI workspaceResource) {
+		// Always try to return the full file, without creating a link, if the file
+		// happens to be in the workspace
+		// (manageable by it)
+		final IPath filePath = new Path(path);
+		final IContainer[] resources = ROOT.findContainersForLocation(filePath);
+		if (resources.length > 0) return resources[0];
+
+		final IFolder folder = createExternalFolder(workspaceResource);
+		if (folder == null) return null;
+		// We try to find an existing file linking to this uri (in case it has been
+		// renamed, for instance)
+		IFolder file = findExistingLinkedFolder(folder, path);
+		if (file != null) return file;
+		// We get the file with the same last name
+		// If it already exists, we need to find it a new name as it doesnt point to the
+		// same absolute file
+		String fileName = new Path(path).lastSegment();
+		final int i = fileName.lastIndexOf(URL_SEPARATOR_REPLACEMENT);
+		if (i > -1) { fileName = fileName.substring(i + URL_SEPARATOR_REPLACEMENT.length()); }
+		file = correctlyNamedFolder(folder, fileName);
+		return createLinkedFolder(path, file);
+	}
+
+	/**
 	 * Returns a best guess URI based on the target string and an optional URI specifying from where the relative URI
 	 * should be run. If existingResource is null, then the root of the workspace is used as the relative URI
 	 *
@@ -321,6 +354,26 @@ public class FileUtils {
 		return null;
 	}
 
+	/**
+	 * Gets the folder.
+	 *
+	 * @param path
+	 *            the path
+	 * @param root
+	 *            the root
+	 * @param mustExist
+	 *            the must exist
+	 * @return the folder
+	 */
+	public static IContainer getFolder(final String path, final URI root, final boolean mustExist) {
+		final URI uri = getURI(path, root);
+		if (uri != null) {
+			if (uri.isPlatformResource()) return getWorkspaceFolder(uri);
+			return createLinkToExternalFolder(path, root);
+		}
+		return null;
+	}
+
 	// public static IFile linkAndGetExternalFile(final URI uri, final URI
 	// workspaceResource) {
 	// final String path = URI.decode(uri.isFile() ? uri.toFileString() :
@@ -338,6 +391,33 @@ public class FileUtils {
 	 * @return the i file
 	 */
 	private static IFile createLinkedFile(final String path, final IFile file) {
+		java.net.URI resolvedURI = null;
+		final java.net.URI javaURI = URIUtil.toURI(path);// new java.io.File(path).toURI();
+
+		try {
+			resolvedURI = ROOT.getPathVariableManager().convertToRelative(javaURI, true, null);
+		} catch (final CoreException e1) {
+			resolvedURI = javaURI;
+		}
+		try {
+			file.createLink(resolvedURI, IResource.NONE, null);
+		} catch (final CoreException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return file;
+	}
+
+	/**
+	 * Creates the linked folder.
+	 *
+	 * @param path
+	 *            the path
+	 * @param file
+	 *            the file
+	 * @return the i folder
+	 */
+	private static IFolder createLinkedFolder(final String path, final IFolder file) {
 		java.net.URI resolvedURI = null;
 		final java.net.URI javaURI = URIUtil.toURI(path);// new java.io.File(path).toURI();
 
@@ -375,6 +455,25 @@ public class FileUtils {
 	}
 
 	/**
+	 * Correctly named folder.
+	 *
+	 * @param folder
+	 *            the folder
+	 * @param fileName
+	 *            the file name
+	 * @return the i folder
+	 */
+	private static IFolder correctlyNamedFolder(final IFolder folder, final String fileName) {
+		IFolder file;
+		String fn = fileName;
+		do {
+			file = folder.getFolder(fn);
+			fn = COPY_OF + fn;
+		} while (file.exists());
+		return file;
+	}
+
+	/**
 	 * Find existing linked file.
 	 *
 	 * @param folder
@@ -397,6 +496,35 @@ public class FileUtils {
 				return true;
 
 			}, IResource.DEPTH_INFINITE, IResource.FILE);
+		} catch (final CoreException e1) {
+			e1.printStackTrace();
+		}
+		return result[0];
+	}
+
+	/**
+	 * Find existing linked folder.
+	 *
+	 * @param folder
+	 *            the folder
+	 * @param name
+	 *            the name
+	 * @return the i folder
+	 */
+	private static IFolder findExistingLinkedFolder(final IFolder folder, final String name) {
+		final IFolder[] result = new IFolder[1];
+		try {
+			folder.accept((IResourceVisitor) resource -> {
+				if (resource.isLinked()) {
+					final String p = resource.getLocation().toString();
+					if (p.equals(name)) {
+						result[0] = (IFolder) resource;
+						return false;
+					}
+				}
+				return true;
+
+			}, IResource.DEPTH_INFINITE, IResource.FOLDER);
 		} catch (final CoreException e1) {
 			e1.printStackTrace();
 		}
@@ -448,6 +576,34 @@ public class FileUtils {
 		if (path == null) return null;
 		try {
 			file = ROOT.getFile(path);
+		} catch (final Exception e) {
+			return null;
+		}
+		if (file != null && file.exists()) return file;
+		return null;
+	}
+
+	/**
+	 * Gets the workspace folder.
+	 *
+	 * @param uri
+	 *            the uri
+	 * @return the workspace folder
+	 */
+	public static IFolder getWorkspaceFolder(final URI uri) {
+		final IPath uriAsPath = new Path(URI.decode(uri.toString()));
+		IFolder file;
+		try {
+			file = ROOT.getFolder(uriAsPath);
+		} catch (final Exception e1) {
+			return null;
+		}
+		if (file != null && file.exists()) return file;
+		final String uriAsText = uri.toPlatformString(true);
+		final IPath path = uriAsText != null ? new Path(uriAsText) : null;
+		if (path == null) return null;
+		try {
+			file = ROOT.getFolder(path);
 		} catch (final Exception e) {
 			return null;
 		}

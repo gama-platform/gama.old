@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExpressionBasedEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExpressionBasedEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -34,31 +34,14 @@ public class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	/**
 	 * Instantiates a new expression based editor.
 	 *
-	 * @param scope the scope
-	 * @param variable the variable
-	 */
-	public ExpressionBasedEditor(final IScope scope, final IParameter variable) {
-		super(scope, null, variable, null);
-	}
-
-	/**
-	 * Instantiates a new expression based editor.
-	 *
-	 * @param scope the scope
-	 * @param variable the variable
-	 * @param l the l
-	 */
-	public ExpressionBasedEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
-		super(scope, variable, l);
-	}
-
-	/**
-	 * Instantiates a new expression based editor.
-	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param variable the variable
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param variable
+	 *            the variable
+	 * @param l
+	 *            the l
 	 */
 	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable,
 			final EditorListener<T> l) {
@@ -91,8 +74,6 @@ public class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	}
 
 	@Override
-	protected int[] getToolItems() {
-		return new int[] { REVERT };
-	}
+	protected int[] getToolItems() { return new int[] { REVERT }; }
 
 }

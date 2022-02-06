@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
-import java.util.Arrays;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,10 +32,12 @@ import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
+import msi.gama.util.file.IGamaFile;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -93,21 +93,34 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
-		if (false) { DEBUG.LOG("Arguments received by GAMA : " + Arrays.toString(args)); }
-		if (args.length > 0 && args[0].contains("launcher.defaultAction")
-				&& !args[0].contains("--launcher.defaultAction"))
-			return;
-		if (args.length >= 1) {
-
-			if (args[args.length - 1].endsWith(".gamr")) {
+		DEBUG.LOG("Arguments received by GAMA : " + DEBUG.TO_STRING(args));
+		if (args.length > 0) {
+			int i = 0;
+			if (args[0].contains("--launcher.defaultAction")) { i += 2; }
+			if (i < args.length) {
+				String exp = args[i];
+				if (!exp.endsWith(".gamr")) {
+					WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
+					return;
+				}
 				for (final IEventLayerDelegate delegate : EventLayerStatement.delegates) {
 					if (delegate.acceptSource(null, "launcher")) {
 						delegate.createFrom(null, args[args.length - 1], null);
 					}
 				}
-			} else {
-				WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 			}
+
+		}
+
+		if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue()) {
+			IGamaFile file = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
+			if (file != null && file.exists(null)) {
+				StringBuilder name = new StringBuilder().append(file.getPath(null));
+				String exp = GamaPreferences.Interface.CORE_DEFAULT_EXPERIMENT.getValue();
+				if (exp != null && !exp.isBlank()) { name.append("#").append(exp); }
+				WorkspaceModelsManager.instance.openModelPassedAsArgument(name.toString());
+			}
+
 		}
 	}
 

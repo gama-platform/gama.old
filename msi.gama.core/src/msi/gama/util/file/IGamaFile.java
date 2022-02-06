@@ -1,14 +1,15 @@
 /*******************************************************************************************************
  *
- * IGamaFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IGamaFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
+
+import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -79,23 +80,28 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Sets the writable.
 	 *
-	 * @param scope the scope
-	 * @param w the w
+	 * @param scope
+	 *            the scope
+	 * @param w
+	 *            the w
 	 */
 	void setWritable(IScope scope, final boolean w);
 
 	/**
 	 * Sets the contents.
 	 *
-	 * @param cont the new contents
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param cont
+	 *            the new contents
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	void setContents(final C cont) throws GamaRuntimeException;
 
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i gama file
 	 */
 	@Override
@@ -111,7 +117,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Exists.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
 	 */
 	@getter (
@@ -122,7 +129,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Gets the extension.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the extension
 	 */
 	@getter (
@@ -133,7 +141,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Gets the name.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the name
 	 */
 	@getter (
@@ -144,7 +153,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Gets the path.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the path
 	 */
 	@getter (
@@ -155,9 +165,11 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Gets the contents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the contents
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@getter (IKeyword.CONTENTS)
 	C getContents(IScope scope) throws GamaRuntimeException;
@@ -165,7 +177,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Gets the attributes.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the attributes
 	 */
 	@getter (IKeyword.ATTRIBUTES)
@@ -182,7 +195,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Checks if is folder.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
 	 */
 	@getter (
@@ -193,7 +207,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Checks if is readable.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
 	 */
 	@getter (
@@ -204,7 +219,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Checks if is writable.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
 	 */
 	@getter (
@@ -215,7 +231,8 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Compute envelope.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the envelope 3 D
 	 */
 	Envelope3D computeEnvelope(final IScope scope);
@@ -223,8 +240,10 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Save.
 	 *
-	 * @param scope the scope
-	 * @param parameters the parameters
+	 * @param scope
+	 *            the scope
+	 * @param parameters
+	 *            the parameters
 	 */
 	void save(IScope scope, Facets parameters);
 
@@ -238,8 +257,10 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	/**
 	 * Contains key.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
 	 */
 	@Override
@@ -247,5 +268,12 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 		final C contents = getContents(scope);
 		return contents != null && contents.contains(scope, o);
 	}
+
+	/**
+	 * Gets the URI relative to workspace.
+	 *
+	 * @return the URI relative to workspace
+	 */
+	URI getURIRelativeToWorkspace();
 
 }
