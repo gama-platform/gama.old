@@ -12,6 +12,7 @@ package ummisco.gama.ui.navigator.actions;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.navigator.CommonActionProvider;
@@ -72,15 +73,42 @@ public class GamlActionProvider extends CommonActionProvider {
 		revealAction.setEnabled(true);
 		
 		setStartupAction = new SelectionListenerAction("Set as startup...") {
+			
+			@Override
+			protected boolean updateSelection(IStructuredSelection selection) {
+				if (!super.updateSelection(selection)) return false;
+				setText("Set as startup...");
+				if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue() && selection.getFirstElement() instanceof WrappedSyntacticContent) {
+					String path = FileUtils.constructAbsoluteFilePath(null,
+							((WrappedSyntacticContent) selection.getFirstElement()).getFile().getResource()
+									.getLocation().toOSString(),
+							true);
+					if (path != null) {
+						IGamaFile file_old = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
+						if (file_old != null && file_old.exists(null) && file_old.getOriginalPath().equals(path)) {
+							setText("UnSet as startup...");
+						}
+					}
+				}
+				return true;
+			}
+
 			@Override
 			public void run() {
 				String path = FileUtils.constructAbsoluteFilePath(null,
 						selection.getFile().getResource().getLocation().toOSString(), true);
 				if (path != null) {
-					IGamaFile file = Files.from(null, path);
-					GamaPreferences.Interface.CORE_DEFAULT_MODEL.setValue(null, file);
-					GamaPreferences.Interface.CORE_DEFAULT_MODEL.save();
-					GamaPreferences.Interface.CORE_DEFAULT_EXPERIMENT.set(selection.getElement().getName()).save();
+
+					IGamaFile file_old = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
+					if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue() && file_old != null && file_old.exists(null) && file_old.getOriginalPath().equals(path)) { 
+							GamaPreferences.Interface.CORE_STARTUP_MODEL.set(false).save(); 
+					}else {
+						GamaPreferences.Interface.CORE_STARTUP_MODEL.set(true).save();						
+						IGamaFile file = Files.from(null, path);
+						GamaPreferences.Interface.CORE_DEFAULT_MODEL.setValue(null, file);
+						GamaPreferences.Interface.CORE_DEFAULT_MODEL.save();
+						GamaPreferences.Interface.CORE_DEFAULT_EXPERIMENT.set(selection.getElement().getName()).save();
+					}
 				}
 			}
 
