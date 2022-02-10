@@ -310,8 +310,9 @@ public class BatchAgent extends ExperimentAgent {
 
 		// The values present in the solution are passed to the parameters of
 		// the experiment
-		LinkedHashSet<ParametersSet> sols_u = new LinkedHashSet<>(sols);
-		for (ParametersSet sol : sols_u) {
+		// @Patrick What this set was for ?
+		// LinkedHashSet<ParametersSet> sols_u = new LinkedHashSet<>(sols);
+		for (ParametersSet sol : sols) {
 			for (int i = 0; i < getSeeds().length; i++) {
 				Map<String, Object> sim = new HashMap<>();
 				sim.put("parameters", sol);

@@ -49,6 +49,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -196,6 +197,37 @@ public class SobolExploration extends AExplorationAlgorithm {
 			if (!parent.exists()) { parent.mkdirs(); }
 			if (f.exists()) f.delete();
 			
+			IList<String> outVar = GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, getOutputs().value(scope))); 
+			
+			// Header
+			String res = parameters.stream().map(p -> p.getName()).collect(Collectors.joining(","));
+			res += ","+outVar.stream(scope).joining(",");
+			
+			// Inputs and outputs of simulations
+			for(ParametersSet ps : res_outputs.keySet()) {
+				res += "\n";
+				// Params
+				IList<String> params = GamaListFactory.create();
+				for(Batch b : parameters) { params.add(ps.get(b.getName()).toString()); }
+				String current_params = params.stream(scope).joining(","); 
+				// Outputs
+				Map<String, List<Object>> ps_res = res_outputs.get(ps);
+				
+				int rep_number = ps_res.values().stream().findAny().get().size();
+				// Each replications of a parameter set
+				for (int i = 0; i < rep_number; i++) {
+					final int idx = i;
+					res += current_params+",";
+					res += outVar.stream(scope).map(v -> ps_res.get(v).get(idx)).joining(",");
+					res += "\n";
+				}
+			}
+			
+			try (FileWriter fw = new FileWriter(f, false)) {
+				fw.write(res);
+			} catch (IOException e) {
+				GamaRuntimeFileException.create(e, scope);
+			} 
 		}
 		
 	}
@@ -315,8 +347,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 				set.put(var.getName(), sobolDecomposition>0.5?true:false);
 				return set;
 			default:
-				GamaRuntimeException.error("Trying to add a variable of unknown type "+var.getType().id()+" to a parameter set", scope);
-				return set;
+				throw GamaRuntimeException.error("Trying to add a variable of unknown type "+var.getType().id()+" to a parameter set", scope);
 		}
 	}
 	
@@ -342,7 +373,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		List<Map<String,Object>> res_rebuilt = rebuildSimulationResults(scope, res_outputs);
 
 		if (res_rebuilt.size() != this._sample || sample * (2 + this.parameters.size() * 2) != _sample) {
-			GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
+			throw GamaRuntimeException.error("Sobol analysis carry out less simulation than expected: "+_sample, scope);
 		}
 				
 		for (String v : outputVals) {
