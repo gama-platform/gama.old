@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IKeyword.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IKeyword.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -118,13 +118,13 @@ public interface IKeyword {
 	/** The batch. */
 	// whisker
 	String BATCH = "batch";
-	
+
 	/** The batch outputs */
 	String BATCH_VAR_OUTPUTS = "outputs";
-	
+
 	/** The batch outputs */
 	String BATCH_OUTPUT = "results";
-	
+
 	/** The batch outputs */
 	String BATCH_REPORT = "report";
 
@@ -416,6 +416,12 @@ public interface IKeyword {
 	/** The disables. */
 	String DISABLES = "disables";
 
+	/** The updates. */
+	String UPDATES = "updates";
+
+	/** The extensions. */
+	String EXTENSIONS = "extensions";
+
 	/** The event. */
 	String EVENT = "event";
 
@@ -427,7 +433,7 @@ public interface IKeyword {
 
 	/** The exists. */
 	String EXISTS = "exists";
-	
+
 	/** The explicit. */
 	String EXPLICIT = "explicit";
 
@@ -468,7 +474,7 @@ public interface IKeyword {
 
 	/** The field. */
 	String FIELD = "field";
-	
+
 	/** The fitness. */
 	String FITNESS = "fitness";
 
@@ -953,7 +959,7 @@ public interface IKeyword {
 
 	/** The pso. */
 	String PSO = "pso";
-	
+
 	/** The put. */
 	String PUT = "put";
 
@@ -1106,7 +1112,7 @@ public interface IKeyword {
 
 	/** The sobol exploration method */
 	String SOBOL = "sobol";
-	
+
 	/** The source. */
 	String SOURCE = "source";
 

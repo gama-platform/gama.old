@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
+import msi.gama.common.interfaces.INamed;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaColor;
 import one.util.streamex.StreamEx;
@@ -25,7 +26,7 @@ import ummisco.gama.dev.utils.COUNTER;
  * @param <S>
  *            the generic type
  */
-public abstract class AbstractSummary<S extends WithTestSummary<?>> {
+public abstract class AbstractSummary<S extends WithTestSummary<?>> implements INamed {
 
 	/** The uri. */
 	private final URI uri;

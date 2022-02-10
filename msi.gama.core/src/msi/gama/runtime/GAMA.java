@@ -113,7 +113,7 @@ public class GAMA {
 		if (controller != null) {
 			final IExperimentPlan existingExperiment = controller.getExperiment();
 			if (existingExperiment != null) {
-				controller.getScheduler().pause();
+				controller.directPause();
 				if (!getGui().confirmClose(existingExperiment)) return;
 			}
 		}
@@ -346,7 +346,7 @@ public class GAMA {
 	 * Step back frontmost experiment.
 	 */
 	public static void stepBackFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) { controller.stepBack(); }
+		for (final IExperimentController controller : controllers) { controller.userStepBack(); }
 	}
 
 	/**
@@ -394,7 +394,7 @@ public class GAMA {
 	public static boolean isPaused() {
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null) return true;
-		return controller.getScheduler().paused();
+		return controller.isPaused();
 
 	}
 

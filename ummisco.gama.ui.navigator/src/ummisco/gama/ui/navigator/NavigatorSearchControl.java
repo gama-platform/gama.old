@@ -156,7 +156,11 @@ public class NavigatorSearchControl {
 
 	/** The tree viewer. */
 	CommonViewer treeViewer;
-
+	
+	/** List of expanded elements at the start of a search
+	 * used internally to restore the state before search**/
+	private Object[] expandedElementsBeforeSearch = null;
+	
 	/** The filter. */
 	final NamePatternFilter filter = new NamePatternFilter();
 
@@ -268,6 +272,9 @@ public class NavigatorSearchControl {
 	 * Do search.
 	 */
 	public void doSearch() {
+		if(expandedElementsBeforeSearch == null) {
+			expandedElementsBeforeSearch = treeViewer.getExpandedElements();
+		}
 		treeViewer.getControl().setRedraw(false);
 		filter.reset();
 		if (!Arrays.asList(treeViewer.getFilters()).contains(filter)) {
@@ -288,6 +295,11 @@ public class NavigatorSearchControl {
 			treeViewer.removeFilter(filter);
 		} else {
 			treeViewer.refresh(false);
+		}
+		if(expandedElementsBeforeSearch != null) {
+			treeViewer.collapseAll();
+			treeViewer.setExpandedElements(expandedElementsBeforeSearch);
+			expandedElementsBeforeSearch = null;
 		}
 		treeViewer.getControl().setRedraw(true);
 	}

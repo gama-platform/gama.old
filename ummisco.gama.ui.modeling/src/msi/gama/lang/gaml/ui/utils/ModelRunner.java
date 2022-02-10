@@ -112,7 +112,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			if (exp != null) {
 				exp.setHeadless(true);
 				final TestAgent agent = (TestAgent) exp.getAgent();
-				exp.getController().getScheduler().resume();
+				// exp.getController().getScheduler().resume();
 				agent.step(agent.getScope());
 				result.add(((WithTestSummary<TestExperimentSummary>) agent).getSummary());
 				GAMA.closeExperiment(exp);

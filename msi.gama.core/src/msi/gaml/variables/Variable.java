@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Variable.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Variable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -68,6 +67,10 @@ import msi.gaml.types.Types;
  *
  * FIXME FOR THE MOMENT SPECIES_WIDE CONSTANTS ARE NOT CONSIDERED (TOO MANY THINGS TO CONSIDER AND POSSIBILITIES TO MAKE
  * FALSE POSITIVE)
+ */
+
+/**
+ * The Class Variable.
  */
 @facets (
 		value = { @facet (
@@ -261,20 +264,19 @@ public class Variable extends Symbol implements IVariable {
 			// return;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			final IExpression initExpression = vd.getFacetExpr(INIT);
-			if (amongExpression == null || initExpression == null || !(amongExpression instanceof ListExpression)
-					|| !initExpression.isConst())
-				return;
-			final ListExpression list = (ListExpression) amongExpression;
-			final Object init = initExpression.getConstValue();
-			if (!list.containsValue(init)) {
-				if (list.getElements().length == 0) {
-					vd.error("No value of " + vd.getName() + " can be chosen.", IGamlIssue.NOT_AMONG, AMONG);
-				} else {
-					vd.warning(
-							"The initial value of " + vd.getName()
-									+ " does not belong to the list of possible values. It will be initialized to "
-									+ list.getElements()[0].serialize(true) + " instead.",
-							IGamlIssue.WRONG_VALUE, INIT, String.valueOf(list.getElements()[0].getConstValue()));
+			if (initExpression == null || !initExpression.isConst()) return;
+			if (amongExpression instanceof ListExpression list) {
+				final Object init = initExpression.getConstValue();
+				if (!list.containsValue(init)) {
+					if (list.getElements().length == 0) {
+						vd.error("No value of " + vd.getName() + " can be chosen.", IGamlIssue.NOT_AMONG, AMONG);
+					} else {
+						vd.warning(
+								"The initial value of " + vd.getName()
+										+ " does not belong to the list of possible values. It will be initialized to "
+										+ list.getElements()[0].serialize(true) + " instead.",
+								IGamlIssue.WRONG_VALUE, INIT, String.valueOf(list.getElements()[0].getConstValue()));
+					}
 				}
 			}
 
@@ -306,18 +308,17 @@ public class Variable extends Symbol implements IVariable {
 			// final IType type = null;
 			// final String firstValueFacet = null;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
-			if (amongExpression != null) {
-				if (!vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
-					vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
-							+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
-					return;
-				}
-				if (!amongExpression.isContextIndependant()) {
-					vd.warning(
-							"Facet 'among:' should only be provided with a literal constant list for its definition. Proceed at your own risk with this variable",
-							IGamlIssue.NOT_CONST, AMONG);
-				}
+			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
+				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
+						+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
 			}
+			// AD 6/2/22 Restriction removed:
+			// if (!amongExpression.isContextIndependant()) {
+			// vd.warning(
+			// "Facet 'among:' should only be provided with a literal constant list for its definition. Proceed at your
+			// own risk with this variable",
+			// IGamlIssue.NOT_CONST, AMONG);
+			// }
 		}
 
 		/**
@@ -362,18 +363,20 @@ public class Variable extends Symbol implements IVariable {
 				}
 			}
 			assertValueFacetsTypes(cd, cd.getGamlType());
-			final IExpression min = cd.getFacetExpr(MIN);
-			if (min != null && !min.isConst()) {
-				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
-				return;
-			}
-			final IExpression max = cd.getFacetExpr(MAX);
-			if (max != null && !max.isConst()) {
-				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
-				return;
-			}
+			// AD 6/2/22 Restriction removed: min and max facets are not supposed to be constants anymore in parameters.
+			// Their value can only be updated through the 'updates' facet of another parameter, though
+			// final IExpression min = cd.getFacetExpr(MIN);
+			// if (min != null && !min.isConst()) {
+			// final String p = "Parameter '" + cd.getParameterName() + "' ";
+			// cd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
+			// return;
+			// }
+			// final IExpression max = cd.getFacetExpr(MAX);
+			// if (max != null && !max.isConst()) {
+			// final String p = "Parameter '" + cd.getParameterName() + "' ";
+			// cd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
+			// return;
+			// }
 			final IExpression init = cd.getFacetExpr(INIT);
 
 			if (init == null) {
@@ -382,14 +385,16 @@ public class Variable extends Symbol implements IVariable {
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
-			if (cd.hasFacet(ENABLES) && !cd.getGamlType().equals(Types.BOOL)) {
-				cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
-						IGamlIssue.CONFLICTING_FACETS, ENABLES);
-			}
-			if (cd.hasFacet(DISABLES) && !cd.getGamlType().equals(Types.BOOL)) {
-				cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
-						IGamlIssue.CONFLICTING_FACETS, DISABLES);
-			}
+			// AD 6/2/22 Restriction removed: non-boolean vars can "enable" or "disable" others based on the cast of
+			// their value to bool
+			// if (cd.hasFacet(ENABLES) && !cd.getGamlType().equals(Types.BOOL)) {
+			// cd.warning("The 'enables' facet has no meaning for non-boolean parameters",
+			// IGamlIssue.CONFLICTING_FACETS, ENABLES);
+			// }
+			// if (cd.hasFacet(DISABLES) && !cd.getGamlType().equals(Types.BOOL)) {
+			// cd.warning("The 'disables' facet has no meaning for non-boolean parameters",
+			// IGamlIssue.CONFLICTING_FACETS, DISABLES);
+			// }
 			// AD 15/04/14: special case for files
 			// AD 17/06/16 The restriction is temporarily removed
 			// if (!init.isConst() && init.getType().getType().id() !=

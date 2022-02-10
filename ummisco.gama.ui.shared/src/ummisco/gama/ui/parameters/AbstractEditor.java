@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -17,6 +17,7 @@ import static ummisco.gama.ui.utils.WorkbenchHelper.asyncRun;
 
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.eclipse.swt.SWT;
@@ -73,11 +74,14 @@ public abstract class AbstractEditor<T>
 	protected String name;
 
 	/** The param. */
-	@Nullable protected final IParameter param;
+	@Nonnull protected final IParameter param;
 
-	/** The step value. */
+	/** The different values. */
 	// Values
-	protected T originalValue, currentValue, minValue, maxValue, stepValue;
+	protected T originalValue, currentValue;
+
+	/** The max, min and step values. */
+	protected T minValue, stepValue, maxValue;
 
 	/** The accept null. */
 	// Properties
@@ -113,32 +117,6 @@ public abstract class AbstractEditor<T>
 	 *
 	 * @param scope
 	 *            the scope
-	 * @param l
-	 *            the l
-	 */
-	public AbstractEditor(final IScope scope, final EditorListener<T> l) {
-		this(scope, null, l);
-	}
-
-	/**
-	 * Instantiates a new abstract editor.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param variable
-	 *            the variable
-	 * @param l
-	 *            the l
-	 */
-	public AbstractEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
-		this(scope, null, variable, l);
-	}
-
-	/**
-	 * Instantiates a new abstract editor.
-	 *
-	 * @param scope
-	 *            the scope
 	 * @param a
 	 *            the a
 	 * @param parameter
@@ -147,19 +125,14 @@ public abstract class AbstractEditor<T>
 	 *            the l
 	 */
 	@SuppressWarnings ("unchecked")
-	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nullable final IParameter parameter,
+	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nonnull final IParameter parameter,
 			@Nullable final EditorListener<T> l) {
 		this.scope = scope;
 		param = parameter;
 		agent = a;
-		if (param != null) {
-			name = param.getTitle();
-			expectedType = param.getType();
-			minValue = (T) param.getMinValue(getScope());
-			maxValue = (T) param.getMaxValue(getScope());
-			stepValue = (T) param.getStepValue(getScope());
-		}
-		if (stepValue == null) { stepValue = defaultStepValue(); }
+		name = param.getTitle();
+		expectedType = param.getType();
+		computeMaxMinAndStepValues();
 		listener = l;
 		try {
 			currentValue = originalValue = retrieveValueOfParameter();
@@ -167,6 +140,30 @@ public abstract class AbstractEditor<T>
 			e1.addContext("Impossible to obtain the value of " + name);
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 		}
+	}
+
+	/**
+	 * Compute max min and step values.
+	 */
+	protected void computeMaxMinAndStepValues() {
+		Object o = param.getMinValue(getScope());
+		if (o != null) { minValue = castValueToInnerType(o); }
+		o = param.getMaxValue(getScope());
+		if (o != null) { maxValue = castValueToInnerType(o); }
+		o = param.getStepValue(getScope());
+		if (o != null) { stepValue = castValueToInnerType(o); }
+		if (getStepValue() == null) { stepValue = defaultStepValue(); }
+	}
+
+	/**
+	 * Cast value to inner type.
+	 *
+	 * @param v
+	 *            the v
+	 * @return the t
+	 */
+	protected T castValueToInnerType(final Object v) {
+		return (T) getExpectedType().cast(getScope(), v, null, false);
 	}
 
 	@Override
@@ -218,7 +215,6 @@ public abstract class AbstractEditor<T>
 	@SuppressWarnings ("unchecked")
 	protected T retrieveValueOfParameter() throws GamaRuntimeException {
 		try {
-			if (param == null) return null;
 			Object result;
 			if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
 				result = param.value(scope);
@@ -347,20 +343,19 @@ public abstract class AbstractEditor<T>
 	 * @return the editor control
 	 */
 	EditorControl createEditorControl() {
-		boolean isCombo = param != null && param.getAmongValue(getScope()) != null;
-		boolean isEditable = param != null && param.isEditable() || param == null /* statement */;
+		boolean isCombo = param.getAmongValue(getScope()) != null;
+		boolean isEditable = param.isEditable();
 		if (isEditable) {
 			if (isCombo) {
 				editorControl =
 						new ComboEditorControl(this, composite, getExpectedType(), param.getAmongValue(getScope()));
 			} else {
-				editorControl = new EditorControl(this, createCustomParameterControl(composite));
+				editorControl = new EditorControl<>(this, createCustomParameterControl(composite));
 			}
 		} else {
 			editorControl = new FixedValueEditorControl(this, composite);
 		}
 		editorControl.displayParameterValue();
-		// displayParameterValue();
 		return editorControl;
 	}
 
@@ -492,6 +487,8 @@ public abstract class AbstractEditor<T>
 			asyncRun(() -> {
 				internalModification = true;
 				if (!parent.isDisposed()) {
+					editorControl.updateAmongValues(param.getAmongValue(getScope()));
+					computeMaxMinAndStepValues();
 					editorLabel.signalChanged(isValueModified());
 					editorControl.displayParameterValue();
 					updateToolbar();

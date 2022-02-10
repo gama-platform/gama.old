@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * OpenGL.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * OpenGL.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl;
 
@@ -788,7 +788,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			final int style = number == 4 ? GL2ES3.GL_QUADS : number == -1 ? GL2.GL_POLYGON : GL.GL_TRIANGLES;
 			drawVertices(style, yNegatedVertices, number, clockwise);
 		}
-		drawClosedLine(yNegatedVertices, border, -1);
+		if (border != null || isWireframe()) {
+			final Color colorToUse = border != null ? border : getCurrentColor();
+			drawClosedLine(yNegatedVertices, colorToUse, -1);
+		}
 	}
 
 	/**
@@ -1288,9 +1291,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the new display wireframe
 	 */
 	public void setDisplayWireframe(final boolean wireframe) {
-		if (wireframe == displayIsWireframe) return;
 		displayIsWireframe = wireframe;
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
+		updatePolygonMode();
 	}
 
 	/**
@@ -1300,11 +1302,19 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the new object wireframe
 	 */
 	public void setObjectWireframe(final boolean wireframe) {
-		if (wireframe == objectIsWireframe) return;
 		objectIsWireframe = wireframe;
-		if (!displayIsWireframe) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, wireframe ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
-		}
+		updatePolygonMode();
+	}
+
+	/**
+	 * Sets the polygon mode.
+	 *
+	 * @param wireframe
+	 *            the new polygon mode
+	 */
+	public void updatePolygonMode() {
+		// AD might be a bit costly as setObjectWireFrame() is called for every object...
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
 	}
 
 	/**
@@ -1390,13 +1400,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (index != null) {
 			drawList(index);
 			if (border != null || isWireframe()) {
-				final Color old = swapCurrentColor(border);
-				getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+				final Color colorToUse = border != null ? border : getCurrentColor();
+				final Color old = swapCurrentColor(colorToUse);
+				setObjectWireframe(true);
 				try {
 					drawList(index);
 				} finally {
 					setCurrentColor(old);
-					getGL().glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+					setObjectWireframe(false);
 				}
 			}
 		}
@@ -1413,18 +1424,17 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void drawCachedGeometry(final IShape.Type id, /* final boolean solid, */ final Color border) {
 		if (geometryCache == null || id == null) return;
 		final BuiltInGeometry object = geometryCache.get(id);
-		if (object != null) {
-			object.draw(this);
-			if (border != null) {
-				final Color old = swapCurrentColor(border);
-				final boolean wf = isWireframe();
-				setObjectWireframe(true);
-				try {
-					object.draw(this);
-				} finally {
-					setCurrentColor(old);
-					setObjectWireframe(wf);
-				}
+		if (object == null) return;
+		if (!isWireframe()) { object.draw(this); }
+		if (border != null || isWireframe()) {
+			final Color colorToUse = border != null ? border : getCurrentColor();
+			final Color old = swapCurrentColor(colorToUse);
+			setObjectWireframe(true);
+			try {
+				object.draw(this);
+			} finally {
+				setCurrentColor(old);
+				setObjectWireframe(false);
 			}
 		}
 	}
@@ -1481,7 +1491,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
-		setObjectWireframe(false);
+		// setObjectWireframe(false);
 		if (isPicking) { pickingState.tryPick(object.getAttributes()); }
 	}
 
@@ -1609,7 +1619,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// if (USE_MULTI_SAMPLE) {
 		gl.glEnable(GL.GL_MULTISAMPLE);
 		// Setting the default polygon mode
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+		updatePolygonMode();
 		initializeShapeCache();
 
 	}

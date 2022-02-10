@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LegacyMeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LegacyMeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.mesh;
 
@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
@@ -298,14 +297,14 @@ public class LegacyMeshDrawer extends ObjectDrawer<MeshObject> {
 				ogl.glVertex3d(vertexBuffer.get(one), vertexBuffer.get(two), vertexBuffer.get(three));
 			}
 			if (outputsLines) {
-				ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+				gl.setObjectWireframe(true);
 				for (var index = 0; index < indexBuffer.limit(); index++) {
 					var i = indexBuffer.get(index);
 					gl.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
 							lineColorBuffer.get(i + 1), 1);
 					gl.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
 				}
-				ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				gl.setObjectWireframe(false);
 			}
 		} finally {
 			gl.endDrawing();

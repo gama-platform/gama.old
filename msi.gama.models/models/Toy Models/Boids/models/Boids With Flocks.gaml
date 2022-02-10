@@ -69,7 +69,7 @@ species flock skills: [moving] {
 	reflex disaggregate {
 		geometry buffered_shape <- shape + perception_range;
 		if !(empty(obstacle overlapping buffered_shape)) {
-			release members as: boids in: world;
+			release list<agent>(members) as: boids in: world;
 			do die;
 		}
 
@@ -96,7 +96,7 @@ species flock skills: [moving] {
 				if empty(obstacle overlapping new_shape) {
 					list<boids> released_boids;
 					ask f {
-						release members as: boids in: world returns: released_coms;
+						release list<agent>(members) as: boids in: world returns: released_coms;
 						released_boids <- released_coms;
 						do die;
 					}

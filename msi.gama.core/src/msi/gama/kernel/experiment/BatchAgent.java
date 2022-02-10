@@ -85,7 +85,7 @@ public class BatchAgent extends ExperimentAgent {
 	/** The tracked values. */
 	// GENERIC OUTPUTS
 	final Map<String, Object> trackedValues = new HashMap<>();
-	
+
 	/** Keep simulations between ''runs'' */
 	private boolean simDispose;
 
@@ -241,7 +241,7 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus(scope).informStatus(endStatus());
+		scope.getGui().getStatus().informStatus(endStatus());
 		// Issue #2426: the agent is killed too soon
 		getScope().setInterrupted();
 		// dispose();
@@ -359,7 +359,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 			}
 			// We then verify that the front scheduler has not been paused
-			while (getSpecies().getController().getScheduler().paused() && !dead) {
+			while (getSpecies().getController().isPaused() && !dead) {
 				try {
 					Thread.sleep(100);
 				} catch (final InterruptedException e) {
@@ -468,7 +468,8 @@ public class BatchAgent extends ExperimentAgent {
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
-						Map<String, Object> out = manageOutputAndCloseSimulation(agent, currentSolution, true, simDispose);
+						Map<String, Object> out =
+								manageOutputAndCloseSimulation(agent, currentSolution, true, simDispose);
 						for (String out_vars : out.keySet()) {
 							if (!outputs.containsKey(out_vars)) { outputs.put(out_vars, GamaListFactory.create()); }
 							outputs.get(out_vars).add(out.get(out_vars));
@@ -477,7 +478,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus(getScope())
+					getScope().getGui().getStatus()
 							.setStatus(
 									"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
 											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
@@ -485,7 +486,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				if (++i == 20) { i = 0; }
 				// We then verify that the front scheduler has not been paused
-				while (getSpecies().getController().getScheduler().paused() && !dead) {
+				while (getSpecies().getController().isPaused() && !dead) {
 					try {
 						Thread.sleep(100);
 					} catch (final InterruptedException e) {
@@ -635,11 +636,18 @@ public class BatchAgent extends ExperimentAgent {
 	 *            the new seeds
 	 */
 	public void setSeeds(final Double[] seeds) { this.seeds = seeds; }
-	
-	/*
-	 * Decide or not to keep simulation between Gama Batch runs (a coherent set of parameter set launched as simulations)
+
+	/**
+	 * Sets the keep simulations.
+	 *
+	 * @param keepSim
+	 *            the new keep simulations
 	 */
-	public void setKeepSimulations(boolean keepSim) { this.simDispose = !keepSim; }
+		/*
+		 * Decide or not to keep simulation between Gama Batch runs (a coherent set of parameter set launched as
+		 * simulations)
+		 */
+	public void setKeepSimulations(final boolean keepSim) { this.simDispose = !keepSim; }
 
 	@Override
 	public void closeSimulations() {

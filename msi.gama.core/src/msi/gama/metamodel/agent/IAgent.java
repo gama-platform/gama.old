@@ -1,17 +1,19 @@
 /*******************************************************************************************************
  *
- * IAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IScoped;
@@ -20,6 +22,7 @@ import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,6 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
@@ -81,7 +85,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Sets the peers.
 	 *
-	 * @param peers the new peers
+	 * @param peers
+	 *            the new peers
 	 */
 	@setter (IKeyword.PEERS)
 	void setPeers(IList<IAgent> peers);
@@ -108,7 +113,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	@Override
 	@setter (IKeyword.NAME)
@@ -128,7 +134,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Sets the location.
 	 *
-	 * @param l the l
+	 * @param l
+	 *            the l
 	 * @return the gama point
 	 */
 	@Override
@@ -136,7 +143,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	GamaPoint setLocation(final GamaPoint l);
 
 	/**
-	 * Gets the geometry.
+	 * Gets the getGeometry().
 	 *
 	 * @return the geometry
 	 */
@@ -145,9 +152,10 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	IShape getGeometry();
 
 	/**
-	 * Sets the geometry.
+	 * Sets the getGeometry().
 	 *
-	 * @param newGeometry the new geometry
+	 * @param newGeometry
+	 *            the new geometry
 	 */
 	@Override
 	@setter (IKeyword.SHAPE)
@@ -171,7 +179,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Sets the host.
 	 *
-	 * @param macroAgent the new host
+	 * @param macroAgent
+	 *            the new host
 	 */
 	@setter (IKeyword.HOST)
 	void setHost(final IMacroAgent macroAgent);
@@ -179,7 +188,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Schedule.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	void schedule(IScope scope);
 
@@ -214,8 +224,10 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Checks if is instance of.
 	 *
-	 * @param s the s
-	 * @param direct the direct
+	 * @param s
+	 *            the s
+	 * @param direct
+	 *            the direct
 	 * @return true, if is instance of
 	 */
 	boolean isInstanceOf(final ISpecies s, boolean direct);
@@ -223,20 +235,27 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Gets the direct var value.
 	 *
-	 * @param scope the scope
-	 * @param s the s
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
 	 * @return the direct var value
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
 	/**
 	 * Sets the direct var value.
 	 *
-	 * @param scope the scope
-	 * @param s the s
-	 * @param v the v
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param v
+	 *            the v
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
@@ -269,8 +288,10 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Checks if is instance of.
 	 *
-	 * @param skill the skill
-	 * @param direct the direct
+	 * @param skill
+	 *            the skill
+	 * @param direct
+	 *            the direct
 	 * @return true, if is instance of
 	 */
 	boolean isInstanceOf(String skill, boolean direct);
@@ -305,8 +326,259 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Update with.
 	 *
-	 * @param s the s
-	 * @param sa the sa
+	 * @param s
+	 *            the s
+	 * @param sa
+	 *            the sa
 	 */
 	void updateWith(final IScope s, final SavedAgent sa);
+
+	/***
+	 * All the methods of IShape are delegated by default to getGeometry()
+	 */
+
+	/**
+	 * Method getArea(). Simply delegates to the geometry
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getArea()
+	 */
+	@Override
+	default Double getArea() { return getGeometry().getArea(); }
+
+	/**
+	 * Method getVolume(). Simply delegates to the geometry
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getVolume()
+	 */
+	@Override
+	default Double getVolume() { return getGeometry().getVolume(); }
+
+	/**
+	 * Method getPerimeter()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getPerimeter()
+	 */
+	@Override
+	default double getPerimeter() { return getGeometry().getPerimeter(); }
+
+	/**
+	 * Method getHoles()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getHoles()
+	 */
+	@Override
+	default IList<GamaShape> getHoles() { return getGeometry().getHoles(); }
+
+	/**
+	 * Method getCentroid()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getCentroid()
+	 */
+	@Override
+	default GamaPoint getCentroid() { return getGeometry().getCentroid(); }
+
+	/**
+	 * Method getExteriorRing()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getExteriorRing()
+	 */
+	@Override
+	default GamaShape getExteriorRing(final IScope scope) {
+		return getGeometry().getExteriorRing(scope);
+	}
+
+	/**
+	 * Method getWidth()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getWidth()
+	 */
+	@Override
+	default Double getWidth() { return getGeometry().getWidth(); }
+
+	/**
+	 * Method getHeight()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
+	 */
+	@Override
+	default Double getHeight() { return getGeometry().getHeight(); }
+
+	/**
+	 * Method getDepth()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getDepth()
+	 */
+	@Override
+	default Double getDepth() { return getGeometry().getDepth(); }
+
+	/**
+	 * Method getGeometricEnvelope()
+	 *
+	 * @see msi.gama.metamodel.shape.IGeometricalShape#getGeometricEnvelope()
+	 */
+	@Override
+	default GamaShape getGeometricEnvelope() { return getGeometry().getGeometricEnvelope(); }
+
+	/**
+	 * Gets the geometries.
+	 *
+	 * @return the geometries
+	 */
+	@Override
+	default IList<? extends IShape> getGeometries() { return getGeometry().getGeometries(); }
+
+	/**
+	 * Method isMultiple()
+	 *
+	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
+	 */
+	@Override
+	default boolean isMultiple() { return getGeometry().isMultiple(); }
+
+	/**
+	 * Checks if is point.
+	 *
+	 * @return true, if is point
+	 */
+	@Override
+	default boolean isPoint() { return getGeometry().isPoint(); }
+
+	/**
+	 * Checks if is line.
+	 *
+	 * @return true, if is line
+	 */
+	@Override
+	default boolean isLine() { return getGeometry().isLine(); }
+
+	/**
+	 * @see msi.gama.interfaces.IShape#getInnerGeometry()
+	 */
+	@Override
+	default Geometry getInnerGeometry() { return getGeometry().getInnerGeometry(); }
+
+	/**
+	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
+	 *
+	 * @see msi.gama.interfaces.IShape#getEnvelope()
+	 */
+	@Override
+	default Envelope3D getEnvelope() {
+		final IShape g = getGeometry();
+		return g == null ? null : g.getEnvelope();
+	}
+
+	/**
+	 * @see msi.gama.interfaces.IShape#covers(msi.gama.interfaces.IGeometry)
+	 */
+	@Override
+	default boolean covers(final IShape g) {
+		return getGeometry().covers(g);
+	}
+
+	/**
+	 * @see msi.gama.interfaces.IShape#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
+	 */
+	@Override
+	default double euclidianDistanceTo(final IShape g) {
+		return getGeometry().euclidianDistanceTo(g);
+	}
+
+	/**
+	 * Euclidian distance to.
+	 *
+	 * @param g
+	 *            the g
+	 * @return the double
+	 */
+	@Override
+	default double euclidianDistanceTo(final GamaPoint g) {
+		return getGeometry().euclidianDistanceTo(g);
+	}
+
+	/**
+	 * @see msi.gama.interfaces.IGeometry#intersects(msi.gama.interfaces.IGeometry)
+	 */
+	@Override
+	default boolean intersects(final IShape g) {
+		return getGeometry().intersects(g);
+	}
+
+	/**
+	 * Partially overlaps.
+	 *
+	 * @param g
+	 *            the g
+	 * @return true, if successful
+	 */
+	@Override
+	default boolean partiallyOverlaps(final IShape g) {
+		return getGeometry().partiallyOverlaps(g);
+	}
+
+	/**
+	 * Touches.
+	 *
+	 * @param g
+	 *            the g
+	 * @return true, if successful
+	 */
+	@Override
+	default boolean touches(final IShape g) {
+		return getGeometry().touches(g);
+	}
+
+	/**
+	 * Crosses.
+	 *
+	 * @param g
+	 *            the g
+	 * @return true, if successful
+	 */
+	@Override
+	default boolean crosses(final IShape g) {
+		return getGeometry().crosses(g);
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
+	 */
+	@Override
+	default void setInnerGeometry(final Geometry geom) {
+		getGeometry().setInnerGeometry(geom);
+	}
+
+	/**
+	 * Method getPoints()
+	 *
+	 * @see msi.gama.metamodel.shape.IShape#getPoints()
+	 */
+	@Override
+	default IList<GamaPoint> getPoints() {
+		if (getGeometry() == null) return GamaListFactory.EMPTY_LIST;
+		return getGeometry().getPoints();
+	}
+
+	/**
+	 * Sets the depth.
+	 *
+	 * @param depth
+	 *            the new depth
+	 */
+	@Override
+	default void setDepth(final double depth) {
+		if (getGeometry() == null) return;
+		getGeometry().setDepth(depth);
+	}
+
+	/**
+	 * Sets the geometrical type.
+	 *
+	 * @param t the new geometrical type
+	 */
+	@Override
+	default void setGeometricalType(final Type t) {
+		getGeometry().setGeometricalType(t);
+	}
+
 }

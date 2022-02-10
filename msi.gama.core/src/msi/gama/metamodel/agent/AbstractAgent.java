@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -14,11 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.locationtech.jts.geom.Geometry;
-
 import com.google.common.primitives.Ints;
 
-import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
@@ -72,17 +69,18 @@ public abstract class AbstractAgent implements IAgent {
 
 	/** The index. */
 	private final int index;
-	
+
 	/** The dead. */
 	protected volatile boolean dead = false;
-	
+
 	/** The dying. */
 	protected volatile boolean dying = false;
 
 	/**
 	 * Instantiates a new abstract agent.
 	 *
-	 * @param index the index
+	 * @param index
+	 *            the index
 	 */
 	public AbstractAgent(final int index) {
 		this.index = index;
@@ -93,81 +91,6 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void setAgent(final IAgent agent) {}
-
-	@Override
-	public boolean isPoint() { return getGeometry().isPoint(); }
-
-	@Override
-	public boolean isLine() { return getGeometry().isLine(); }
-
-	/**
-	 * @see msi.gama.interfaces.IShape#getInnerGeometry()
-	 */
-	@Override
-	public Geometry getInnerGeometry() { return getGeometry().getInnerGeometry(); }
-
-	/**
-	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
-	 *
-	 * @see msi.gama.interfaces.IShape#getEnvelope()
-	 */
-	@Override
-	public Envelope3D getEnvelope() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getEnvelope();
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IShape#covers(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean covers(final IShape g) {
-		return getGeometry().covers(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IShape#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public double euclidianDistanceTo(final IShape g) {
-		return getGeometry().euclidianDistanceTo(g);
-	}
-
-	@Override
-	public double euclidianDistanceTo(final GamaPoint g) {
-		return getGeometry().euclidianDistanceTo(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#intersects(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean intersects(final IShape g) {
-		return getGeometry().intersects(g);
-	}
-
-	@Override
-	public boolean partiallyOverlaps(final IShape g) {
-		return getGeometry().partiallyOverlaps(g);
-	}
-
-	@Override
-	public boolean touches(final IShape g) {
-		return getGeometry().touches(g);
-	}
-
-	@Override
-	public boolean crosses(final IShape g) {
-		return getGeometry().crosses(g);
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(org.locationtech.jts.geom.Geometry)
-	 */
-	@Override
-	public void setInnerGeometry(final Geometry geom) {
-		getGeometry().setInnerGeometry(geom);
-	}
 
 	@Override
 	public void dispose() {
@@ -285,7 +208,8 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Inits the sub populations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 */
 	protected boolean initSubPopulations(final IScope scope) {
@@ -295,7 +219,8 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Step sub populations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 */
 	protected boolean stepSubPopulations(final IScope scope) {
@@ -503,9 +428,11 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Prim write.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@action (
 			name = "write",
@@ -526,9 +453,11 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Prim error.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@action (
 			name = IKeyword.ERROR,
@@ -545,9 +474,11 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Prim tell.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@action (
 			name = "tell",
@@ -564,9 +495,11 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Prim die.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@action (
 			name = "die",
@@ -611,26 +544,10 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Sets the defining plugin.
 	 *
-	 * @param plugin the new defining plugin
+	 * @param plugin
+	 *            the new defining plugin
 	 */
 	public void setDefiningPlugin(final String plugin) {}
-
-	/**
-	 * Method getPoints()
-	 *
-	 * @see msi.gama.metamodel.shape.IShape#getPoints()
-	 */
-	@Override
-	public IList<GamaPoint> getPoints() {
-		if (getGeometry() == null) return GamaListFactory.EMPTY_LIST;
-		return getGeometry().getPoints();
-	}
-
-	@Override
-	public void setDepth(final double depth) {
-		if (getGeometry() == null) return;
-		getGeometry().setDepth(depth);
-	}
 
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaPreferencesView.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaPreferencesView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -44,6 +44,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ParameterExpandBar;
@@ -210,31 +211,21 @@ public class GamaPreferencesView {
 	 * @param value
 	 *            the value
 	 */
-	void checkActivables(final Pref e, final Object value) {
-		if (e.getEnablement() != null) {
-			for (final String activable : e.getEnablement()) {
-				final var ed = editors.get(activable);
-				if (ed == null) {
-					if (value instanceof Boolean) {
-						activations.put(activable, (Boolean) value);
-					} else {
-						activations.put(activable, true);
-					}
-				} else if (value instanceof Boolean) {
-					ed.setActive((Boolean) value);
-				} else {
-					ed.setActive(true);
-				}
+	void checkActivables(final Pref e, final Boolean value) {
+		for (final String activable : e.getEnablement()) {
+			final var ed = editors.get(activable);
+			if (ed == null) {
+				activations.put(activable, value);
+			} else {
+				ed.setActive(value);
 			}
 		}
-		if (e.getDisablement() != null && value instanceof Boolean) {
-			for (final String deactivable : e.getDisablement()) {
-				final var ed = editors.get(deactivable);
-				if (ed == null) {
-					activations.put(deactivable, !(Boolean) value);
-				} else {
-					ed.setActive(!(Boolean) value);
-				}
+		for (final String deactivable : e.getDisablement()) {
+			final var ed = editors.get(deactivable);
+			if (ed == null) {
+				activations.put(deactivable, !value);
+			} else {
+				ed.setActive(!(Boolean) value);
 			}
 		}
 	}
@@ -247,12 +238,10 @@ public class GamaPreferencesView {
 	 * @param value
 	 *            the value
 	 */
-	void checkRefreshables(final Pref e, final Object value) {
-		if (e.getRefreshment() != null) {
-			for (final String activable : e.getRefreshment()) {
-				final var ed = editors.get(activable);
-				if (ed != null) { ed.updateWithValueOfParameter(); }
-			}
+	void checkRefreshables(final Pref e) {
+		for (final String activable : e.getRefreshment()) {
+			final var ed = editors.get(activable);
+			if (ed != null) { ed.updateWithValueOfParameter(); }
 		}
 	}
 
@@ -272,12 +261,13 @@ public class GamaPreferencesView {
 		for (final Pref e : list) {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
-			checkActivables(e, e.getValue());
+			checkActivables(e, Cast.asBool(null, e.getValue()));
 			e.onChange(value -> {
 				if (e.acceptChange(value)) {
 					modelValues.put(e.getKey(), value);
-					checkActivables(e, value);
-					checkRefreshables(e, value);
+					Boolean b = Cast.asBool(null, value);
+					checkActivables(e, b);
+					checkRefreshables(e);
 					if (e.isRestartRequired()) { setRestartRequired(); }
 				} else {
 					GamaPreferencesView.this.showError("" + value + " is not accepted for parameter " + e.getKey());

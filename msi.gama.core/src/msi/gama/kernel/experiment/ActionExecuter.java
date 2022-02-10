@@ -1,19 +1,19 @@
 /*******************************************************************************************************
  *
- * ActionExecuter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ActionExecuter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
 import msi.gaml.statements.IExecutable;
 
 /**
@@ -23,26 +23,28 @@ public class ActionExecuter {
 
 	/** The Constant BEGIN. */
 	private static final int BEGIN = 0;
-	
+
 	/** The Constant END. */
 	private static final int END = 1;
-	
+
 	/** The Constant DISPOSE. */
 	private static final int DISPOSE = 2;
-	
+
 	/** The Constant ONE_SHOT. */
 	private static final int ONE_SHOT = 3;
 
 	/** The actions. */
-	@SuppressWarnings ("unchecked") final List<IExecutable>[] actions = new List[4];
-	
+	@SuppressWarnings ("unchecked") final Collection<IExecutable>[] actions =
+			new Collection[] { Collector.getList(), Collector.getList(), Collector.getList(), Collector.getList() };
+
 	/** The scope. */
 	protected final IScope scope;
 
 	/**
 	 * Instantiates a new action executer.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public ActionExecuter(final IScope scope) {
 		this.scope = scope.copy("of ActionExecuter");
@@ -51,24 +53,22 @@ public class ActionExecuter {
 	/**
 	 * Insert action.
 	 *
-	 * @param action the action
-	 * @param type the type
+	 * @param action
+	 *            the action
+	 * @param type
+	 *            the type
 	 * @return the i executable
 	 */
 	private IExecutable insertAction(final IExecutable action, final int type) {
-		List<IExecutable> list = actions[type];
-		if (list == null) {
-			list = new ArrayList<>();
-			actions[type] = list;
-		}
-		if (list.add(action)) { return action; }
+		if (actions[type].add(action)) return action;
 		return null;
 	}
 
 	/**
 	 * Insert dispose action.
 	 *
-	 * @param action the action
+	 * @param action
+	 *            the action
 	 * @return the i executable
 	 */
 	public IExecutable insertDisposeAction(final IExecutable action) {
@@ -78,7 +78,8 @@ public class ActionExecuter {
 	/**
 	 * Insert end action.
 	 *
-	 * @param action the action
+	 * @param action
+	 *            the action
 	 * @return the i executable
 	 */
 	public IExecutable insertEndAction(final IExecutable action) {
@@ -88,7 +89,8 @@ public class ActionExecuter {
 	/**
 	 * Insert one shot action.
 	 *
-	 * @param action the action
+	 * @param action
+	 *            the action
 	 * @return the i executable
 	 */
 	public IExecutable insertOneShotAction(final IExecutable action) {
@@ -99,7 +101,7 @@ public class ActionExecuter {
 	 * Execute end actions.
 	 */
 	public void executeEndActions() {
-		if (scope.interrupted()) { return; }
+		if (scope.interrupted()) return;
 		executeActions(END);
 	}
 
@@ -114,35 +116,29 @@ public class ActionExecuter {
 	 * Execute one shot actions.
 	 */
 	public void executeOneShotActions() {
-		if (scope.interrupted()) { return; }
+		if (scope.interrupted()) return;
 		try {
 			executeActions(ONE_SHOT);
 		} finally {
-			actions[ONE_SHOT] = null;
+			actions[ONE_SHOT].clear();
 		}
 	}
 
 	/**
 	 * Execute actions.
 	 *
-	 * @param type the type
+	 * @param type
+	 *            the type
 	 */
 	private void executeActions(final int type) {
-		if (actions[type] == null) { return; }
-		final int size = actions[type].size();
-		if (size == 0) { return; }
-		final IExecutable[] array = actions[type].toArray(new IExecutable[size]);
-		for (final IExecutable action : array) {
-			if (!scope.interrupted()) {
-				action.executeOn(scope);
-			}
-		}
+		for (final IExecutable action : actions[type]) { if (!scope.interrupted()) { action.executeOn(scope); } }
 	}
 
 	/**
 	 * Execute one action.
 	 *
-	 * @param action the action
+	 * @param action
+	 *            the action
 	 */
 	public synchronized void executeOneAction(final IExecutable action) {
 		final boolean paused = scope.isPaused();
@@ -157,7 +153,7 @@ public class ActionExecuter {
 	 * Execute begin actions.
 	 */
 	public void executeBeginActions() {
-		if (scope.interrupted()) { return; }
+		if (scope.interrupted()) return;
 		executeActions(BEGIN);
 	}
 

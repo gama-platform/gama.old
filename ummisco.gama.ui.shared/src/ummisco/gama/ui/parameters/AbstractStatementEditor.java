@@ -1,18 +1,20 @@
 /*******************************************************************************************************
  *
- * AbstractStatementEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractStatementEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 
+import msi.gama.common.interfaces.INamed;
+import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.controls.FlatButton;
@@ -21,25 +23,29 @@ import ummisco.gama.ui.interfaces.EditorListener;
 /**
  * The Class AbstractStatementEditor.
  *
- * @param <T> the generic type
+ * @param <T>
+ *            the generic type
  */
-public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> {
+public abstract class AbstractStatementEditor<T extends INamed> extends AbstractEditor<Object> {
 
 	/** The text box. */
 	protected FlatButton textBox;
-	
+
 	/** The statement. */
 	T statement;
 
 	/**
 	 * Instantiates a new abstract statement editor.
 	 *
-	 * @param scope the scope
-	 * @param command the command
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param command
+	 *            the command
+	 * @param l
+	 *            the l
 	 */
 	public AbstractStatementEditor(final IScope scope, final T command, final EditorListener<Object> l) {
-		super(scope, l);
+		super(scope, null, new InputParameter(command.getName(), null), l);
 		this.statement = command;
 	}
 
@@ -48,23 +54,18 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 	 *
 	 * @return the statement
 	 */
-	public T getStatement() {
-		return statement;
-	}
+	public T getStatement() { return statement; }
 
 	/**
 	 * Sets the statement.
 	 *
-	 * @param s the new statement
+	 * @param s
+	 *            the new statement
 	 */
-	public void setStatement(final T s) {
-		statement = s;
-	}
+	public void setStatement(final T s) { statement = s; }
 
 	@Override
-	protected final int[] getToolItems() {
-		return new int[0];
-	}
+	protected final int[] getToolItems() { return new int[0]; }
 
 	@Override
 	protected final Object retrieveValueOfParameter() throws GamaRuntimeException {
@@ -97,10 +98,8 @@ public abstract class AbstractStatementEditor<T> extends AbstractEditor<Object> 
 
 	@Override
 	EditorLabel createEditorLabel() {
-		if (!isSubParameter)
-			return super.createEditorLabel();
-		else
-			return new EditorLabel(this, parent, " ", isSubParameter);
+		if (!isSubParameter) return super.createEditorLabel();
+		return new EditorLabel(this, parent, " ", isSubParameter);
 	}
 
 	@Override

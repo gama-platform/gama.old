@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ComboEditorControl.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ComboEditorControl.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -30,7 +30,7 @@ import msi.gaml.types.Types;
 public class ComboEditorControl extends EditorControl<Combo> {
 
 	/** The possible values. */
-	final List possibleValues;
+	List possibleValues;
 
 	/**
 	 * Instantiates a new combo editor control.
@@ -47,6 +47,19 @@ public class ComboEditorControl extends EditorControl<Combo> {
 	ComboEditorControl(final AbstractEditor editor, final Composite parent, final IType expectedType,
 			final List possibleValues) {
 		super(editor, new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN));
+		buildValues(expectedType, possibleValues);
+	}
+
+	/**
+	 * Builds the values.
+	 *
+	 * @param expectedType
+	 *            the expected type
+	 * @param possibleValues
+	 *            the possible values
+	 * @return the string[]
+	 */
+	public void buildValues(final IType expectedType, final List possibleValues) {
 		this.possibleValues = possibleValues;
 		final var valuesAsString = new String[possibleValues.size()];
 		for (var i = 0; i < possibleValues.size(); i++) {
@@ -56,8 +69,6 @@ public class ComboEditorControl extends EditorControl<Combo> {
 				valuesAsString[i] = toGaml(possibleValues.get(i), false);
 			}
 		}
-		// setForeground(isDark() ? VERY_LIGHT_GRAY.color() : BLACK.color());
-		// force text color, see #2601
 		control.setItems(valuesAsString);
 		control.addSelectionListener(new SelectionAdapter() {
 
@@ -75,6 +86,13 @@ public class ComboEditorControl extends EditorControl<Combo> {
 		if (control.isDisposed()) return;
 		Object val = editor.getCurrentValue();
 		control.select(possibleValues.indexOf(val));
+	}
+
+	/**
+	 * Update among values.
+	 */
+	public void updateAmongValues(final List possibleValues) {
+		buildValues(editor.getExpectedType(), possibleValues);
 	}
 
 }

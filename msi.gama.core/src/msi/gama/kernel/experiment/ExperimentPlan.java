@@ -1,16 +1,18 @@
 /*******************************************************************************************************
  *
- * ExperimentPlan.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import static msi.gama.common.interfaces.IKeyword.MEMORIZE;
 import static msi.gama.common.interfaces.IKeyword.TEST;
+import static msi.gama.runtime.GAMA.getGui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -500,8 +502,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				} else {
 					originalSimulationOutputs = (SimulationOutputManager) s;
 				}
-			} else if (s instanceof IParameter.Batch) {
-				final IParameter.Batch pb = (IParameter.Batch) s;
+			} else if (s instanceof IParameter.Batch pb) {
 				if (isBatch() && pb.canBeExplored()) {
 					pb.setEditable(false);
 					addExplorableParameter(pb);
@@ -559,14 +560,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		createAgent(seed);
 		myScope.getGui().prepareForExperiment(myScope, this);
-		agent.schedule(agent.getScope());
-		if (isHeadless()) {
-			// Always auto start in headless mode
-			this.getController().userStart();
-		} else if (isBatch()) {
-			agent.getScope().getGui().getStatus(agent.getScope())
+		IScope scope = agent.getScope();
+		agent.schedule(scope);
+		if (isBatch()) {
+			getGui().getStatus()
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
-			agent.getScope().getGui().updateExperimentState(agent.getScope());
+			getGui().updateExperimentState(scope);
 		}
 	}
 
@@ -583,26 +582,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		open(seed);
 	}
 
-	/*
-	 * @Override public synchronized void open() {
-	 *
-	 * createAgent(); myScope.getGui().prepareForExperiment(myScope, this); agent.schedule(agent.getScope()); if
-	 * (isBatch()) { agent.getScope().getGui().getStatus(agent.getScope()) .informStatus(isTest() ?
-	 * "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
-	 * agent.getScope().getGui().updateExperimentState(agent.getScope()); } }
-	 */
 	@Override
 	public void reload() {
-		// if (isBatch()) {
 		agent.dispose();
 		open();
-		// } else {
-		// agent.reset();
-		// agent.getScope().getGui().getConsole(agent.getScope()).eraseConsole(false);
-		// agent.init(agent.getScope());
-		//
-		// agent.getScope().getGui().updateParameterView(agent.getScope(), this);
-		// }
 	}
 
 	@Override
@@ -618,10 +601,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean isTest() { return TEST.equals(getExperimentType()); }
 
 	@Override
-	public boolean isMemorize() { return IKeyword.MEMORIZE.equals(getExperimentType()); }
-
-	@Override
-	public boolean isGui() { return true; }
+	public boolean isMemorize() { return MEMORIZE.equals(getExperimentType()); }
 
 	@Override
 	public IScope getExperimentScope() { return myScope; }
@@ -830,7 +810,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public IExperimentController getController() {
-		if (controller == null) { controller = new ExperimentController(this); }
+		if (controller == null) {
+			controller = isHeadless ? new HeadlessExperimentController(this) : new ExperimentController(this);
+		}
 		return controller;
 	}
 

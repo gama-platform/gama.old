@@ -200,7 +200,7 @@ species flock
 	}
 	//Reflexe to kill the flock if the boids agents contained is lower than 2
 	reflex dispose when: ((length (members)) < 2) {
-		 release members;
+		 release list<agent>(members);
 		 do die;
 	}
 	//Reflex to merge the flocks too close from each other
@@ -214,7 +214,7 @@ species flock
 		 	 
 		 	list<boids> added_components ;
 		 	loop one_flock over: nearby_flocks {
-		 		release one_flock.members returns: released_boids; 
+		 		release list<agent>(one_flock.members) returns: released_boids; 
 		 		
 		 		loop rb over: released_boids {
 		 			add boids(rb) to: added_components;

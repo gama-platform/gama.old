@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaCSVFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaCSVFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -481,7 +481,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	public void fillBuffer(final IScope scope) {
 		if (getBuffer() != null) return;
 		if (csvSeparator == null || contentsType == null || userSize == null) {
-			scope.getGui().getStatus(scope).beginSubStatus("Opening file " + getName(scope));
+			scope.getGui().getStatus().beginSubStatus("Opening file " + getName(scope));
 			final CSVInfo stats = getInfo(scope, csvSeparator);
 			csvSeparator = csvSeparator == null ? "" + stats.delimiter : csvSeparator;
 			contentsType = contentsType == null ? stats.type : contentsType;
@@ -490,7 +490,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 			// AD We take the decision for the modeler is he/she hasn't
 			// specified if the header must be read or not.
 			hasHeader = hasHeader == null ? stats.header : hasHeader;
-			scope.getGui().getStatus(scope).endSubStatus("");
+			scope.getGui().getStatus().endSubStatus("");
 		}
 		CsvReader reader = null;
 		try {
@@ -541,14 +541,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		double percentage = 0;
 		IMatrix matrix;
 		try {
-			scope.getGui().getStatus(scope).beginSubStatus("Reading file " + getName(scope));
+			scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope));
 			if (t == IType.INT) {
 				matrix = new GamaIntMatrix(userSize);
 				final int[] m = ((GamaIntMatrix) matrix).getMatrix();
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().getStatus(scope).setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 					for (final String s : reader.getValues()) {
 						m[i++] = Cast.asInt(scope, s);
@@ -565,7 +565,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().getStatus(scope).setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 					for (final String s : reader.getValues()) {
 						m[i++] = Cast.asFloat(scope, s);
@@ -582,7 +582,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().getStatus(scope).setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 
 					for (final String s : reader.getValues()) {
@@ -603,7 +603,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 
 			return matrix;
 		} finally {
-			scope.getGui().getStatus(scope).endSubStatus("Reading CSV File");
+			scope.getGui().getStatus().endSubStatus("Reading CSV File");
 		}
 	}
 

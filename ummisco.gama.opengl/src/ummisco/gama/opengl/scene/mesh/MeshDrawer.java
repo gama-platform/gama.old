@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.mesh;
 
@@ -41,11 +41,14 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
  */
 public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
+	/** The Constant BLACK. */
+	static final double[] BLACK = { 0, 0, 0 };
+
 	// ARRAYS
 	/** The data. */
 	// The attribute holding the data
 	private double[] data;
-	
+
 	/** The real indexes. */
 	// The attribute holding the position of the vertex indices (in case of no_data)
 	private int[] realIndexes;
@@ -54,7 +57,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/** The line color buffer. */
 	// The buffers for vertices, normals, textures, colors, line colors
 	private DoubleBuffer vertexBuffer, normalBuffer, texBuffer, colorBuffer, lineColorBuffer;
-	
+
 	/** The index buffer. */
 	// The buffer holding the indices to the points to draw
 	private IntBuffer indexBuffer;
@@ -62,11 +65,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/** The rows. */
 	// The number of columns and rows of the data
 	private int cols, rows;
-	
+
 	/** The max. */
 	// The widht and height of each cell in world coordinates; the minimal and maximal values found in the data
 	private double cx, cy, min, max;
-	
+
 	/** The no data. */
 	// The value representing the absence of data
 	private double noData;
@@ -75,20 +78,20 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/** The with text. */
 	// Flags indicating if the data is to be drawn in wireframe, in grayscale, as triangles and with the value
 	private boolean triangles, withText;
-	
+
 	/** The outputs lines. */
 	// Flags indicating what to output: textures, colors, lines ?
-	private boolean outputsTextures, outputsColors, outputsLines;
+	private boolean outputsTextures, outputsColors, outputsLines, useFillForLines;
 
 	// COLORS
 	/** The line color. */
 	// An array holding the three components of the line color
 	private double[] lineColor;
-	
+
 	/** The rgb. */
 	// An array used for the transfer of colors from the color provider
 	double[] rgb = new double[3];
-	
+
 	/** The fill. */
 	// The provider of color for the vertices
 	private IMeshColorProvider fill;
@@ -99,11 +102,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/** The quad normals. */
 	// The normals used for quads drawing
 	final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
-	
+
 	/** The surface. */
 	// The temporary coordinate sequence used to hold vertices to compute normals
 	final ICoordinates surface = ICoordinates.ofLength(9);
-	
+
 	/** The normal. */
 	// The temporary transfer value for the normal
 	final GamaPoint normal = new GamaPoint();
@@ -111,7 +114,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Instantiates a new mesh drawer.
 	 *
-	 * @param gl the gl
+	 * @param gl
+	 *            the gl
 	 */
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
@@ -131,12 +135,10 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		this.rows = (int) attributes.getXYDimension().y;
 		boolean grayscale = attributes.isGrayscaled();
 		Color line = attributes.getBorder();
+		useFillForLines = line == null && gl.isWireframe() && fill != null;
 		this.fill = attributes.getColorProvider();
-		if (line == null) {
-			lineColor = fill != null ? fill.getColor(0, data[0], min, max, null) : new double[] { 0, 0, 0 };
-		} else {
-			lineColor = new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d };
-		}
+		this.lineColor = line != null
+				? new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d } : BLACK;
 		outputsTextures = gl.isTextured() && !grayscale;
 		outputsColors = (fill != null || grayscale) && !gl.isWireframe();
 		outputsLines = gl.isWireframe() || line != null;
@@ -177,9 +179,17 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
 			indexBuffer = newDirectIntBuffer(lengthM1 * 6);
-			if (outputsLines) { lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
-			if (outputsTextures) { texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8); }
-			if (outputsColors) { colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12); }
+			// AD : fix for #3299. outputsLines and outputsColors can change overtime and it is necessary to maintain
+			// the buffers if the size doesnt change
+			// if (outputsLines) {
+			lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			// }
+			// if (outputsTextures) {
+			texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8);
+			// }
+			// if (outputsColors) {
+			colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			// }
 		} else {
 			vertexBuffer.clear();
 			normalBuffer.clear();
@@ -248,16 +258,25 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Colorize.
 	 *
-	 * @param z the z
-	 * @param x the x
-	 * @param y the y
+	 * @param z
+	 *            the z
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	private void colorize(final double z, final int x, final int y) {
 		// Outputs either a texture coordinate or the color of the vertex
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
 		if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb)); }
 		// If the line color is specified, outputs it
-		if (outputsLines) { lineColorBuffer.put(lineColor); }
+		if (outputsLines) {
+			if (useFillForLines) {
+				lineColorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb));
+			} else {
+				lineColorBuffer.put(lineColor);
+			}
+		}
 	}
 
 	/**
@@ -294,14 +313,14 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			ogl.glVertex3d(vertexBuffer.get(one), vertexBuffer.get(two), vertexBuffer.get(three));
 		}
 		if (outputsLines) {
-			ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+			gl.setObjectWireframe(true);
 			for (var index = 0; index < indexBuffer.limit(); index++) {
 				var i = indexBuffer.get(index);
 				gl.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
 						lineColorBuffer.get(i + 1), 1);
 				gl.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
 			}
-			ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+			gl.setObjectWireframe(false);
 		}
 		gl.endDrawing();
 		ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -345,9 +364,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsLines) {
 				if (!outputsColors) { gl.enable(GLPointerFunc.GL_COLOR_ARRAY); }
 				ogl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
-				ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
+				gl.setObjectWireframe(true);
 				ogl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
-				ogl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+				gl.setObjectWireframe(false);
 			}
 
 		} finally {
@@ -367,7 +386,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Draw labels.
 	 *
-	 * @param gl the gl
+	 * @param gl
+	 *            the gl
 	 */
 	public void drawLabels(final OpenGL gl) {
 		// Draw gridvalue as text inside each cell
@@ -399,9 +419,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Gets the.
 	 *
-	 * @param data the data
-	 * @param x0 the x 0
-	 * @param y0 the y 0
+	 * @param data
+	 *            the data
+	 * @param x0
+	 *            the x 0
+	 * @param y0
+	 *            the y 0
 	 * @return the double
 	 */
 	double get(final double[] data, final int x0, final int y0) {
@@ -413,8 +436,10 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Smooth.
 	 *
-	 * @param data the data
-	 * @param passes the passes
+	 * @param data
+	 *            the data
+	 * @param passes
+	 *            the passes
 	 * @return the double[]
 	 */
 	double[] smooth(final double[] data, final int passes) {

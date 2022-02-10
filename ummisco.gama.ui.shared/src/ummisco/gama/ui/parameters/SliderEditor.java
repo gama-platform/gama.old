@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SliderEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SliderEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -43,11 +43,11 @@ import ummisco.gama.ui.resources.IGamaColors;
 public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<T> {
 
 	/** The nb ints. */
-	final protected int nbInts;
-	
+	protected int nbInts;
+
 	/** The slider. */
 	SimpleSlider slider;
-	
+
 	/** The formatter. */
 	final DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
 
@@ -62,19 +62,32 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		/**
 		 * Instantiates a new int.
 		 *
-		 * @param scope the scope
-		 * @param a the a
-		 * @param variable the variable
-		 * @param l the l
+		 * @param scope
+		 *            the scope
+		 * @param a
+		 *            the a
+		 * @param variable
+		 *            the variable
+		 * @param l
+		 *            the l
 		 */
 		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Integer> l) {
 			super(scope, a, variable, l);
+		}
+
+		@Override
+		protected void computeFormatterParameters() {
+			super.computeFormatterParameters();
 			formatter.setMaximumFractionDigits(0);
 			formatter.setMinimumFractionDigits(0);
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
 			formatter.setGroupingUsed(false);
-			if (stepValue == null) { stepValue = 1; }
+		}
+
+		@Override
+		protected Integer defaultStepValue() {
+			return 1;
 		}
 
 		@Override
@@ -90,24 +103,30 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	public static class Float extends SliderEditor<Double> {
 
 		/** The nb fracs. */
-		final int nbFracs;
+		int nbFracs;
 
 		/**
 		 * Instantiates a new float.
 		 *
-		 * @param scope the scope
-		 * @param a the a
-		 * @param variable the variable
-		 * @param l the l
+		 * @param scope
+		 *            the scope
+		 * @param a
+		 *            the a
+		 * @param variable
+		 *            the variable
+		 * @param l
+		 *            the l
 		 */
 		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Double> l) {
 			super(scope, a, variable, l);
-			if (stepValue == null) {
-				stepValue = (Cast.asFloat(scope, getMaxValue()) - Cast.asFloat(scope, getMinValue())) / 100d;
-			}
+		}
+
+		@Override
+		protected void computeFormatterParameters() {
+			super.computeFormatterParameters();
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
-			final String[] segments = String.valueOf(stepValue).split("\\.");
+			final String[] segments = String.valueOf(getStepValue()).split("\\.");
 			if (segments.length > 1) {
 				nbFracs = segments[1].length();
 			} else {
@@ -116,6 +135,11 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 			formatter.setMaximumFractionDigits(nbFracs);
 			formatter.setMinimumFractionDigits(nbFracs);
 			formatter.setGroupingUsed(false);
+		}
+
+		@Override
+		protected Double defaultStepValue() {
+			return (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue())) / 100d;
 		}
 
 		@Override
@@ -129,21 +153,30 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	/**
 	 * Instantiates a new slider editor.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param variable the variable
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param variable
+	 *            the variable
+	 * @param l
+	 *            the l
 	 */
 	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
 		super(scope, a, variable, l);
-		final int minChars = String.valueOf(Cast.asInt(getScope(), getMinValue())).length();
-		final int maxChars = String.valueOf(Cast.asInt(getScope(), getMaxValue())).length();
-		nbInts = Math.max(minChars, maxChars);
+		computeFormatterParameters();
 	}
 
 	@Override
-	protected int[] getToolItems() {
-		return ITEMS;
+	protected int[] getToolItems() { return ITEMS; }
+
+	/**
+	 * Compute formatter parameters.
+	 */
+	protected void computeFormatterParameters() {
+		final int minChars = String.valueOf(Cast.asInt(getScope(), getMinValue())).length();
+		final int maxChars = String.valueOf(Cast.asInt(getScope(), getMaxValue())).length();
+		nbInts = Math.max(minChars, maxChars);
 	}
 
 	@Override
@@ -167,15 +200,33 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		}
 		slider = new SimpleSlider(comp, left, right, thumb, false);
 
-		if (stepValue != null) {
-			final Double realStep = ((Number) stepValue).doubleValue()
-					/ (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue()));
-			slider.setStep(realStep);
-		}
+		computeSliderStep();
 
 		slider.addPositionChangeListener((s, position) -> modifyAndDisplayValue(computeValue(position)));
 		slider.pack(true);
 		return slider;
+	}
+
+	/**
+	 * Compute slider step.
+	 */
+	private void computeSliderStep() {
+		if (getStepValue() != null) {
+			final Double realStep = ((Number) getStepValue()).doubleValue()
+					/ (Cast.asFloat(getScope(), getMaxValue()) - Cast.asFloat(getScope(), getMinValue()));
+			slider.setStep(realStep);
+		}
+	}
+
+	@Override
+	protected void computeMaxMinAndStepValues() {
+		super.computeMaxMinAndStepValues();
+		if (slider != null) {
+			computeSliderStep();
+			computeFormatterParameters();
+			displayParameterValue();
+			updateToolbar();
+		}
 	}
 
 	@Override
@@ -188,7 +239,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	/**
 	 * Compute value.
 	 *
-	 * @param position the position
+	 * @param position
+	 *            the position
 	 * @return the t
 	 */
 	protected abstract T computeValue(final double position);

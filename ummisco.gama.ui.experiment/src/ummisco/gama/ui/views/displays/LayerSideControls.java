@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayerSideControls.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayerSideControls.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -48,14 +48,10 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.parameters.BooleanEditor;
-import ummisco.gama.ui.parameters.ColorEditor;
+import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
-import ummisco.gama.ui.parameters.FloatEditor;
-import ummisco.gama.ui.parameters.IntEditor;
 import ummisco.gama.ui.parameters.PointEditor;
-import ummisco.gama.ui.parameters.StringEditor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -70,8 +66,10 @@ public class LayerSideControls {
 	/**
 	 * Update if paused.
 	 *
-	 * @param layer the layer
-	 * @param container the container
+	 * @param layer
+	 *            the layer
+	 * @param container
+	 *            the container
 	 */
 	public static void updateIfPaused(final ILayer layer, final IDisplaySurface container) {
 		container.updateDisplay(true);
@@ -80,8 +78,10 @@ public class LayerSideControls {
 	/**
 	 * Fill.
 	 *
-	 * @param parent the parent
-	 * @param view the view
+	 * @param parent
+	 *            the parent
+	 * @param view
+	 *            the view
 	 * @return the composite
 	 */
 	public Composite fill(final Composite parent, final LayeredDisplayView view) {
@@ -137,8 +137,10 @@ public class LayerSideControls {
 	/**
 	 * Fill open GL parameters.
 	 *
-	 * @param viewer the viewer
-	 * @param view the view
+	 * @param viewer
+	 *            the viewer
+	 * @param view
+	 *            the view
 	 */
 	private void fillOpenGLParameters(final ParameterExpandBar viewer, final LayeredDisplayView view) {
 		final EditorsGroup contents = createContentsComposite(viewer);
@@ -166,21 +168,23 @@ public class LayerSideControls {
 
 	/** The camera orientation. */
 	PointEditor cameraPos, cameraTarget, cameraOrientation;
-	
+
 	/** The preset. */
-	StringEditor preset;
-	
+	AbstractEditor preset;
+
 	/** The zoom. */
-	IntEditor zoom;
-	
+	AbstractEditor zoom;
+
 	/** The rotate. */
-	FloatEditor rotate;
+	AbstractEditor rotate;
 
 	/**
 	 * Fill camera parameters.
 	 *
-	 * @param viewer the viewer
-	 * @param view the view
+	 * @param viewer
+	 *            the viewer
+	 * @param view
+	 *            the view
 	 */
 	private void fillCameraParameters(final ParameterExpandBar viewer, final LayeredDisplayView view) {
 		final EditorsGroup contents = createContentsComposite(viewer);
@@ -210,18 +214,18 @@ public class LayerSideControls {
 					ds.updateDisplay(true);
 				});
 
-		cameraPos = EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
+		cameraPos = (PointEditor) EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
 				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraPos(newValue);
 					ds.updateDisplay(true);
 				});
-		cameraTarget = EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
+		cameraTarget = (PointEditor) EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
 				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraLookPos(newValue);
 					ds.updateDisplay(true);
 				});
-		cameraOrientation = EditorFactory.create(scope, contents, "Orientation:", data.getCameraOrientation(),
-				(EditorListener<GamaPoint>) newValue -> {
+		cameraOrientation = (PointEditor) EditorFactory.create(scope, contents, "Orientation:",
+				data.getCameraOrientation(), (EditorListener<GamaPoint>) newValue -> {
 					data.setCameraOrientation(newValue);
 					ds.updateDisplay(true);
 				});
@@ -280,8 +284,10 @@ public class LayerSideControls {
 	/**
 	 * Fill keystone parameters.
 	 *
-	 * @param viewer the viewer
-	 * @param view the view
+	 * @param viewer
+	 *            the viewer
+	 * @param view
+	 *            the view
 	 */
 	private void fillKeystoneParameters(final ParameterExpandBar viewer, final LayeredDisplayView view) {
 		final EditorsGroup contents = createContentsComposite(viewer);
@@ -289,7 +295,7 @@ public class LayerSideControls {
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
 
-		final PointEditor[] point = new PointEditor[4];
+		final AbstractEditor[] point = new AbstractEditor[4];
 		final ICoordinates points = data.getKeystone();
 		int i = 0;
 		for (@SuppressWarnings ("unused") final GamaPoint p : points) {
@@ -340,22 +346,24 @@ public class LayerSideControls {
 	/**
 	 * Fill general parameters.
 	 *
-	 * @param viewer the viewer
-	 * @param view the view
+	 * @param viewer
+	 *            the viewer
+	 * @param view
+	 *            the view
 	 */
 	private void fillGeneralParameters(final ParameterExpandBar viewer, final LayeredDisplayView view) {
 		final EditorsGroup contents = createContentsComposite(viewer);
 		final IDisplaySurface ds = view.getDisplaySurface();
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
-		final BooleanEditor antialias = EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(),
+		final AbstractEditor antialias = EditorFactory.create(scope, contents, "Antialias:", data.isAntialias(),
 				(EditorListener<Boolean>) newValue -> {
 					data.setAntialias(newValue);
 					ds.updateDisplay(true);
 				});
 
-		final ColorEditor background = EditorFactory.create(scope, contents, "Background:", data.getBackgroundColor(),
-				(EditorListener<Color>) newValue -> {
+		final AbstractEditor background = EditorFactory.create(scope, contents, "Background:",
+				data.getBackgroundColor(), (EditorListener<Color>) newValue -> {
 					data.setBackgroundColor(new GamaColor(newValue));
 					ds.updateDisplay(true);
 				});
@@ -372,7 +380,7 @@ public class LayerSideControls {
 
 		if (view.isOpenGL()) {
 			rotate = EditorFactory.create(scope, contents, "Z-axis rotation:", data.getCurrentRotationAboutZ(), null,
-					null, 0.1, false, (EditorListener<Double>) newValue -> {
+					null, 0.1, false, false, (EditorListener<Double>) newValue -> {
 						data.setZRotationAngle(newValue);
 						// ds.updateDisplay(true);
 					});
@@ -419,10 +427,14 @@ public class LayerSideControls {
 	/**
 	 * Creates the item.
 	 *
-	 * @param viewer the viewer
-	 * @param name the name
-	 * @param data the data
-	 * @param contents the contents
+	 * @param viewer
+	 *            the viewer
+	 * @param name
+	 *            the name
+	 * @param data
+	 *            the data
+	 * @param contents
+	 *            the contents
 	 */
 	public static void createItem(final ParameterExpandBar viewer, final String name, final Object data,
 			final Composite contents) {
@@ -438,7 +450,8 @@ public class LayerSideControls {
 	/**
 	 * Creates the contents composite.
 	 *
-	 * @param viewer the viewer
+	 * @param viewer
+	 *            the viewer
 	 * @return the editors group
 	 */
 	public static EditorsGroup createContentsComposite(final ParameterExpandBar viewer) {
@@ -453,9 +466,12 @@ public class LayerSideControls {
 	/**
 	 * Fill layer parameters.
 	 *
-	 * @param viewer the viewer
-	 * @param layer the layer
-	 * @param view the view
+	 * @param viewer
+	 *            the viewer
+	 * @param layer
+	 *            the layer
+	 * @param view
+	 *            the view
 	 */
 	private void fillLayerParameters(final ParameterExpandBar viewer, final ILayer layer,
 			final LayeredDisplayView view) {
@@ -469,16 +485,19 @@ public class LayerSideControls {
 	/**
 	 * Fill.
 	 *
-	 * @param compo the compo
-	 * @param layer the layer
-	 * @param container the container
+	 * @param compo
+	 *            the compo
+	 * @param layer
+	 *            the layer
+	 * @param container
+	 *            the container
 	 */
 	public void fill(final EditorsGroup compo, final ILayer layer, final IDisplaySurface container) {
 
 		final ILayerStatement definition = layer.getDefinition();
 
 		EditorFactory.create(container.getScope(), compo, "Transparency:",
-				layer.getData().getTransparency(container.getScope()), 0.0, 1.0, 0.1, false, newValue -> {
+				layer.getData().getTransparency(container.getScope()), 0.0, 1.0, 0.1, false, true, newValue -> {
 					layer.getData().setTransparency(newValue);
 					updateIfPaused(layer, container);
 				});
@@ -584,8 +603,10 @@ public class LayerSideControls {
 	/**
 	 * Copy camera and keystone definition.
 	 *
-	 * @param scope the scope
-	 * @param data the data
+	 * @param scope
+	 *            the scope
+	 * @param data
+	 *            the data
 	 */
 	private void copyCameraAndKeystoneDefinition(final IScope scope, final LayeredDisplayData data) {
 		if (!GamaPreferences.Displays.OPENGL_CLIPBOARD_CAM.getValue()) return;
@@ -612,8 +633,10 @@ public class LayerSideControls {
 	/**
 	 * Keystone definition to copy.
 	 *
-	 * @param scope the scope
-	 * @param data the data
+	 * @param scope
+	 *            the scope
+	 * @param data
+	 *            the data
 	 * @return the string
 	 */
 	private String keystoneDefinitionToCopy(final IScope scope, final LayeredDisplayData data) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentsParametersList.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentsParametersList.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
 
@@ -23,7 +23,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.UserCommandStatement;
-import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener.Command;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
@@ -37,15 +36,17 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	/** The scope. */
 	final IScope scope;
-	
+
 	/** The activations. */
 	final Map<String, Boolean> activations = new HashMap<>();
 
 	/**
 	 * Instantiates a new experiments parameters list.
 	 *
-	 * @param scope the scope
-	 * @param paramsAndCommands the params and commands
+	 * @param scope
+	 *            the scope
+	 * @param paramsAndCommands
+	 *            the params and commands
 	 */
 	public ExperimentsParametersList(final IScope scope,
 			final Collection<? extends IExperimentDisplayable> paramsAndCommands) {
@@ -74,7 +75,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Gets the editor for var.
 	 *
-	 * @param var the var
+	 * @param var
+	 *            the var
 	 * @return the editor for var
 	 */
 	public IParameterEditor getEditorForVar(final String var) {
@@ -91,36 +93,38 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		for (final IExperimentDisplayable var : params) {
 			final IParameterEditor gp;
-			if (var instanceof IParameter) {
-				final IParameter param = (IParameter) var;
+			if (var instanceof IParameter param) {
 				gp = EditorFactory.getInstance().create(scope, (IAgent) null, param, null);
-				if (param.getType().equals(Types.BOOL)) {
-					final String[] enablements = param.getEnablement();
-					final String[] disablements = param.getDisablement();
-					if (enablements.length > 0) {
-						final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
-						for (final String other : enablements) {
-							activations.put(other, value);
+				final String[] enablements = param.getEnablement();
+				final String[] disablements = param.getDisablement();
+				final String[] refreshments = param.getRefreshment();
+				if (enablements.length > 0) {
+					final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
+					for (final String other : enablements) { activations.put(other, value); }
+					param.addChangedListener((scope, val) -> {
+						for (final String enabled : enablements) {
+							final IParameterEditor ed = getEditorForVar(enabled);
+							if (ed != null) { ed.setActive(Cast.asBool(scope, val)); }
 						}
-						param.addChangedListener((scope, val) -> {
-							for (final String enabled : enablements) {
-								final IParameterEditor ed = getEditorForVar(enabled);
-								if (ed != null) { ed.setActive((Boolean) val); }
-							}
-						});
-					}
-					if (disablements.length > 0) {
-						final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
-						for (final String other : disablements) {
-							activations.put(other, !value);
+					});
+				}
+				if (disablements.length > 0) {
+					final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
+					for (final String other : disablements) { activations.put(other, !value); }
+					param.addChangedListener((scope, val) -> {
+						for (final String disabled : disablements) {
+							final IParameterEditor ed = getEditorForVar(disabled);
+							if (ed != null) { ed.setActive(!Cast.asBool(scope, val)); }
 						}
-						param.addChangedListener((scope, val) -> {
-							for (final String disabled : disablements) {
-								final IParameterEditor ed = getEditorForVar(disabled);
-								if (ed != null) { ed.setActive(!(Boolean) val); }
-							}
-						});
-					}
+					});
+				}
+				if (refreshments.length > 0) {
+					param.addChangedListener((scope, val) -> {
+						for (final String other : refreshments) {
+							final IParameterEditor ed = getEditorForVar(other);
+							if (ed != null) { ed.updateWithValueOfParameter(); }
+						}
+					});
 				}
 			} else {
 				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
@@ -152,9 +156,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public void updateItemValues() {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
-			for (final IParameterEditor gp : entry.getValue().values()) {
-				gp.updateWithValueOfParameter();
-			}
+			for (final IParameterEditor gp : entry.getValue().values()) { gp.updateWithValueOfParameter(); }
 		}
 	}
 

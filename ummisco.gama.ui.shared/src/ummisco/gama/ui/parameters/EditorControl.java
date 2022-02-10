@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * EditorControl.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EditorControl.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
+
+import java.util.List;
 
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
@@ -109,5 +111,10 @@ public class EditorControl<T extends Control> {
 		if (control.isDisposed()) return;
 		editor.displayParameterValue();
 	}
+
+	/**
+	 * Update among values.
+	 */
+	public void updateAmongValues(final List possibleValues) {}
 
 }

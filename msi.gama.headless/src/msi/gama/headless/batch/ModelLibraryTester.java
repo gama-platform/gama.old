@@ -126,7 +126,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 					System.setOut(nullStream);
 					final TestAgent agent = (TestAgent) exp.getAgent();
 					exp.setHeadless(true);
-					exp.getController().getScheduler().resume();
+					// exp.getController().getScheduler().resume();
 					exp.getAgent().step(agent.getScope());
 					code[0] += agent.getSummary().countTestsWith(TestState.FAILED);
 					code[0] += agent.getSummary().countTestsWith(TestState.ABORTED);

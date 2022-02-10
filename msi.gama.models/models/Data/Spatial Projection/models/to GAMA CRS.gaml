@@ -15,7 +15,7 @@ global {
 	
 	init {
 		create building from: building_file;
-		matrix<float> data <- matrix(data_csv_file);
+		matrix<float> data <- matrix<float>(data_csv_file);
 		loop i from: 0 to: data.rows - 1 {
 			point poi_location_WGS84 <- {data[0,i],data[1,i]};
 			point poi_location_GAMA <- point(to_GAMA_CRS(poi_location_WGS84, "EPSG:4326"));

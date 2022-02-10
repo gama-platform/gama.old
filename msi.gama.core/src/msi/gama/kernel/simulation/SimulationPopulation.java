@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationPopulation.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SimulationPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
@@ -43,15 +43,17 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	/** The current simulation. */
 	private SimulationAgent currentSimulation;
-	
+
 	/** The runner. */
 	private final SimulationRunner runner;
 
 	/**
 	 * Instantiates a new simulation population.
 	 *
-	 * @param agent the agent
-	 * @param species the species
+	 * @param agent
+	 *            the agent
+	 * @param species
+	 *            the species
 	 */
 	public SimulationPopulation(final ExperimentAgent agent, final ISpecies species) {
 		super(agent, species);
@@ -104,7 +106,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 
 		for (int i = 0; i < number; i++) {
-			scope.getGui().getStatus(scope).waitStatus("Initializing simulation");
+			scope.getGui().getStatus().waitStatus("Initializing simulation");
 			// Model do not only rely on SimulationAgent
 			final IAgentConstructor<SimulationAgent> constr = species.getDescription().getAgentConstructor();
 
@@ -126,18 +128,25 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	/**
 	 * Inits the simulation.
 	 *
-	 * @param scope the scope
-	 * @param sim the sim
-	 * @param initialValues the initial values
-	 * @param index the index
-	 * @param isRestored the is restored
-	 * @param toBeScheduled the to be scheduled
-	 * @param sequence the sequence
+	 * @param scope
+	 *            the scope
+	 * @param sim
+	 *            the sim
+	 * @param initialValues
+	 *            the initial values
+	 * @param index
+	 *            the index
+	 * @param isRestored
+	 *            the is restored
+	 * @param toBeScheduled
+	 *            the to be scheduled
+	 * @param sequence
+	 *            the sequence
 	 */
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
 			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) {
-		scope.getGui().getStatus(scope).waitStatus("Instantiating agents");
+		scope.getGui().getStatus().waitStatus("Instantiating agents");
 		if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
 
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
@@ -171,9 +180,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	@Override
-	public ExperimentAgent getHost() {
-		return (ExperimentAgent) super.getHost();
-	}
+	public ExperimentAgent getHost() { return (ExperimentAgent) super.getHost(); }
 
 	@Override
 	public SimulationAgent getAgent(final IScope scope, final GamaPoint value) {
@@ -183,11 +190,10 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	/**
 	 * Sets the host.
 	 *
-	 * @param agent the new host
+	 * @param agent
+	 *            the new host
 	 */
-	public void setHost(final ExperimentAgent agent) {
-		host = agent;
-	}
+	public void setHost(final ExperimentAgent agent) { host = agent; }
 
 	@Override
 	public void computeTopology(final IScope scope) throws GamaRuntimeException {
@@ -215,9 +221,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	 *
 	 * @return the number of active threads
 	 */
-	public int getNumberOfActiveThreads() {
-		return runner.getActiveThreads();
-	}
+	public int getNumberOfActiveThreads() { return runner.getActiveThreads(); }
 
 	/**
 	 * @return

@@ -69,6 +69,9 @@ public class Pref<T> implements IParameter {
 	/** The restart required. */
 	boolean restartRequired = false; // by default
 
+	/** The is workspace. */
+	boolean isWorkspace = false;
+
 	/** The initial provider. */
 	ValueProvider<T> initialProvider;
 
@@ -78,8 +81,11 @@ public class Pref<T> implements IParameter {
 	/** The type. */
 	final int type;
 
+	/** The values provider. */
+	ValueProvider<List<T>> valuesProvider;
+
 	/** The values. */
-	List<T> values;
+	// List<T> values;
 
 	/** The max. */
 	Comparable min, max;
@@ -88,7 +94,8 @@ public class Pref<T> implements IParameter {
 	boolean slider = true; // by default
 
 	/** The refreshes. */
-	String[] enables, disables, refreshes;
+	String[] enables = EMPTY_STRINGS, disables = EMPTY_STRINGS, refreshes = EMPTY_STRINGS,
+			fileExtensions = EMPTY_STRINGS;
 
 	/** The listeners. */
 	Set<IPreferenceChangeListener<T>> listeners = new HashSet<>();
@@ -161,7 +168,19 @@ public class Pref<T> implements IParameter {
 	 * @return the pref
 	 */
 	public Pref<T> among(final List<T> v) {
-		this.values = v;
+		this.valuesProvider = () -> v;
+		return this;
+	}
+
+	/**
+	 * Amoing.
+	 *
+	 * @param v
+	 *            the v
+	 * @return the pref
+	 */
+	public Pref<T> among(final ValueProvider<List<T>> v) {
+		this.valuesProvider = v;
 		return this;
 	}
 
@@ -338,7 +357,7 @@ public class Pref<T> implements IParameter {
 	 *
 	 * @return the values
 	 */
-	public List<T> getValues() { return values; }
+	public List<T> getValues() { return valuesProvider == null ? null : valuesProvider.get(); }
 
 	@Override
 	public String getName() { return key; }
@@ -420,7 +439,7 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public List getAmongValue(final IScope scope) {
-		return values;
+		return valuesProvider == null ? null : valuesProvider.get();
 	}
 
 	@Override
@@ -464,12 +483,11 @@ public class Pref<T> implements IParameter {
 	@Override
 	public String[] getDisablement() { return this.disables; }
 
-	/**
-	 * Gets the refreshment.
-	 *
-	 * @return the refreshment
-	 */
+	@Override
 	public String[] getRefreshment() { return this.refreshes; }
+
+	@Override
+	public String[] getFileExtensions() { return this.fileExtensions; }
 
 	/**
 	 * Save.
@@ -535,5 +553,35 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public boolean isDefinedInExperiment() { return false; }
+
+	/**
+	 * Checks if is workspace.
+	 *
+	 * @return true, if is workspace
+	 */
+	@Override
+	public boolean isWorkspace() { return isWorkspace; }
+
+	/**
+	 * Restric to workspace.
+	 *
+	 * @return the pref
+	 */
+	public Pref<T> restrictToWorkspace() {
+		isWorkspace = true;
+		return this;
+	}
+
+	/**
+	 * With extensions.
+	 *
+	 * @param fileExtensions
+	 *            the file extensions
+	 * @return the pref
+	 */
+	public Pref<T> withExtensions(final String... fileExtensions) {
+		this.fileExtensions = fileExtensions;
+		return this;
+	}
 
 }

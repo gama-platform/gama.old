@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ProgressCounter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ProgressCounter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -29,18 +29,20 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	/** The scope. */
 	final IScope scope;
-	
+
 	/** The name. */
 	final String name;
-	
+
 	/** The progress. */
 	float progress;
 
 	/**
 	 * Instantiates a new progress counter.
 	 *
-	 * @param scope the scope
-	 * @param name the name
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
 	 */
 	public ProgressCounter(final IScope scope, final String name) {
 		this.scope = scope;
@@ -52,7 +54,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 	 *
 	 * @return the displayer
 	 */
-	IStatusDisplayer getDisplayer() { return scope.getGui().getStatus(scope); }
+	IStatusDisplayer getDisplayer() { return scope.getGui().getStatus(); }
 
 	@Override
 	public void complete() {
