@@ -255,7 +255,7 @@ species group {
 
 	//Action to do when the group is disaggregated
 	action disaggregate {
-		release members as: ball in: world {
+		release list<agent>(members) as: ball in: world {
 			state <- 'chaos';
 		}
 
