@@ -406,15 +406,25 @@ public class Application implements IApplication {
 			}
 		}
 
-		final Document dd = ExperimentationPlanFactory.buildXmlDocument(selectedJob);
-		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		final Transformer transformer = transformerFactory.newTransformer();
-		final DOMSource source = new DOMSource(dd);
-		final File output = new File(argXMLFile);
-		final StreamResult result = new StreamResult(output);
-		transformer.transform(source, result);
-		DEBUG.ON();
-		DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
+		if ( selectedJob.size() == 0) {
+			DEBUG.ON();
+			DEBUG.ERR(
+				"\n=== ERROR ==="
+				+ "\n\tGAMA is about to generate an empty XML file."
+				+ "\n\tIf you want to run a Batch experiment, please check the \"-batch\" flag."
+			);
+			System.exit(-1);
+		} else {
+			final Document dd = ExperimentationPlanFactory.buildXmlDocument(selectedJob);
+			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			final Transformer transformer = transformerFactory.newTransformer();
+			final DOMSource source = new DOMSource(dd);
+			final File output = new File(argXMLFile);
+			final StreamResult result = new StreamResult(output);
+			transformer.transform(source, result);
+			DEBUG.ON();
+			DEBUG.LOG("Parameter file saved at: " + output.getAbsolutePath());
+		}
 	}
 
 	/**
