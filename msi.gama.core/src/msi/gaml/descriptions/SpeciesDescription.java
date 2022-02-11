@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SpeciesDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SpeciesDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -55,49 +55,56 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SpeciesDescription extends TypeDescription {
-	
+
 	/** The behaviors. */
 	// AD 08/16: Behaviors are now inherited dynamically
 	private IMap<String, StatementDescription> behaviors;
-	
+
 	/** The aspects. */
 	// AD 08/16: Aspects are now inherited dynamically
 	private IMap<String, StatementDescription> aspects;
-	
+
 	/** The micro species. */
 	private IMap<String, SpeciesDescription> microSpecies;
-	
+
 	/** The skills. */
 	protected LinkedHashSet<SkillDescription> skills;
-	
+
 	/** The control. */
 	protected SkillDescription control;
-	
+
 	/** The agent constructor. */
 	private IAgentConstructor agentConstructor;
-	
+
 	/** The species expr. */
 	private SpeciesConstantExpression speciesExpr;
-	
+
 	/** The java base. */
 	protected Class javaBase;
-	
+
 	/** The can use minimal agents. */
 	protected boolean canUseMinimalAgents = true;
-	
+
 	/** The control finalized. */
 	protected boolean controlFinalized;
 
 	/**
 	 * Instantiates a new species description.
 	 *
-	 * @param keyword the keyword
-	 * @param clazz the clazz
-	 * @param macroDesc the macro desc
-	 * @param parent the parent
-	 * @param cp the cp
-	 * @param source the source
-	 * @param facets the facets
+	 * @param keyword
+	 *            the keyword
+	 * @param clazz
+	 *            the clazz
+	 * @param macroDesc
+	 *            the macro desc
+	 * @param parent
+	 *            the parent
+	 * @param cp
+	 *            the cp
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
 	 */
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
@@ -108,14 +115,22 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Instantiates a new species description.
 	 *
-	 * @param keyword the keyword
-	 * @param clazz the clazz
-	 * @param macroDesc the macro desc
-	 * @param parent the parent
-	 * @param cp the cp
-	 * @param source the source
-	 * @param facets the facets
-	 * @param skills the skills
+	 * @param keyword
+	 *            the keyword
+	 * @param clazz
+	 *            the clazz
+	 * @param macroDesc
+	 *            the macro desc
+	 * @param parent
+	 *            the parent
+	 * @param cp
+	 *            the cp
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
+	 * @param skills
+	 *            the skills
 	 */
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
@@ -142,7 +157,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Adds the skill.
 	 *
-	 * @param sk the sk
+	 * @param sk
+	 *            the sk
 	 */
 	protected void addSkill(final SkillDescription sk) {
 		if (sk == null) return;
@@ -173,8 +189,10 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Sets the skills.
 	 *
-	 * @param userDefinedSkills the user defined skills
-	 * @param builtInSkills the built in skills
+	 * @param userDefinedSkills
+	 *            the user defined skills
+	 * @param builtInSkills
+	 *            the built in skills
 	 */
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		/* We try to add the control architecture if any is defined */
@@ -200,8 +218,7 @@ public class SpeciesDescription extends TypeDescription {
 		 */
 		if (userDefinedSkills != null) {
 			final IExpression expr = userDefinedSkills.compile(this);
-			if (expr instanceof ListExpression) {
-				final ListExpression list = (ListExpression) expr;
+			if (expr instanceof ListExpression list) {
 				for (final IExpression exp : list.getElements()) {
 					if (exp instanceof SkillConstantExpression) {
 						final SkillDescription sk = ((ISkill) exp.getConstValue()).getDescription();
@@ -303,8 +320,11 @@ public class SpeciesDescription extends TypeDescription {
 					toAdd = true;
 				}
 				if (toAdd) {
+					// Fixes a problem where built-in attributes were not linked with their declaring class
+					Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
 					final VariableDescription var = (VariableDescription) v.copy(this);
 					addOwnAttribute(var);
+					VariableDescription.CLASS_DEFINITIONS.put(var, c);
 				}
 
 			} else {
@@ -327,8 +347,7 @@ public class SpeciesDescription extends TypeDescription {
 	public IDescription addChild(final IDescription child) {
 		final IDescription desc = super.addChild(child);
 		if (desc == null) return null;
-		if (desc instanceof StatementDescription) {
-			final StatementDescription statement = (StatementDescription) desc;
+		if (desc instanceof StatementDescription statement) {
 			final String kw = desc.getKeyword();
 			if (PRIMITIVE.equals(kw) || ACTION.equals(kw)) {
 				addAction((ActionDescription) statement);
@@ -346,7 +365,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Adds the micro species.
 	 *
-	 * @param sd the sd
+	 * @param sd
+	 *            the sd
 	 */
 	protected void addMicroSpecies(final SpeciesDescription sd) {
 		if (!isModel() && sd.isGrid()) {
@@ -378,7 +398,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Adds the behavior.
 	 *
-	 * @param r the r
+	 * @param r
+	 *            the r
 	 */
 	protected void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
@@ -391,7 +412,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Checks for behavior.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return true, if successful
 	 */
 	public boolean hasBehavior(final String a) {
@@ -402,7 +424,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Gets the behavior.
 	 *
-	 * @param aName the a name
+	 * @param aName
+	 *            the a name
 	 * @return the behavior
 	 */
 	public StatementDescription getBehavior(final String aName) {
@@ -414,7 +437,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Adds the aspect.
 	 *
-	 * @param ce the ce
+	 * @param ce
+	 *            the ce
 	 */
 	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
@@ -430,7 +454,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Gets the aspect.
 	 *
-	 * @param aName the a name
+	 * @param aName
+	 *            the a name
 	 * @return the aspect
 	 */
 	public StatementDescription getAspect(final String aName) {
@@ -482,7 +507,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Checks for aspect.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return true, if successful
 	 */
 	public boolean hasAspect(final String a) {
@@ -496,7 +522,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Gets the micro species.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the micro species
 	 */
 	public SpeciesDescription getMicroSpecies(final String name) {
@@ -533,7 +560,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Sets the agent constructor.
 	 *
-	 * @param agentConstructor the new agent constructor
+	 * @param agentConstructor
+	 *            the new agent constructor
 	 */
 	protected void setAgentConstructor(final IAgentConstructor agentConstructor) {
 		this.agentConstructor = agentConstructor;
@@ -585,7 +613,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Inherit micro species.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	// FIXME HACK !
 	private void inheritMicroSpecies(final SpeciesDescription parent) {
@@ -663,7 +692,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Visit micro species.
 	 *
-	 * @param visitor the visitor
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
@@ -949,7 +979,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * Sets the java base.
 	 *
-	 * @param javaBase the new java base
+	 * @param javaBase
+	 *            the new java base
 	 */
 	protected void setJavaBase(final Class javaBase) { this.javaBase = javaBase; }
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlSyntacticConverter.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlSyntacticConverter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
@@ -262,8 +262,7 @@ public class GamlSyntacticConverter {
 
 		if (stm instanceof S_Assignment) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
-		} else if (stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)) {
-			final S_Definition def = (S_Definition) stm;
+		} else if (stm instanceof S_Definition def && !DescriptionFactory.isStatementProto(keyword)) {
 			// If we define a variable with this statement
 			final TypeRef t = (TypeRef) def.getTkey();
 			if (t != null) { addFacet(elt, TYPE, convExpr(t, errors), errors); }
@@ -292,10 +291,7 @@ public class GamlSyntacticConverter {
 			// Systematically adds the internal function (see #2915) in order to have the right documentation
 			// TODO AD: verify that 'ACTION' is still necessary in that case
 			addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
-			if (e instanceof Function) {
-				// addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
-				final Function f = (Function) e;
-
+			if (e instanceof Function f) {
 				final ExpressionList list = f.getRight();
 				if (list != null) { addFacet(elt, WITH, convExpr(list, errors), errors); }
 
@@ -310,9 +306,7 @@ public class GamlSyntacticConverter {
 			// "action ID {arg ID1 type: type1 default: V1; arg ID2 type:
 			// type2}"
 			convertArgs(((S_Action) stm).getArgs(), elt, errors);
-		} else if (stm instanceof S_Reflex) {
-			// We add the "when" facet to reflexes and inits if necessary
-			final S_Reflex ref = (S_Reflex) stm;
+		} else if (stm instanceof S_Reflex ref) {
 			if (ref.getExpr() != null) { addFacet(elt, WHEN, convExpr(ref.getExpr(), errors), errors); }
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
@@ -712,7 +706,7 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if (target != null) {
-			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(target, ed.getExpression(), true);
+			// GamlResourceServices.getResourceDocumenter().setGamlDocumentation(target, ed.getExpression(), true);
 		}
 		return ed;
 	}
