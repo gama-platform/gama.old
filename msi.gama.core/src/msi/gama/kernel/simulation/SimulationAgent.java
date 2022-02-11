@@ -76,6 +76,10 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
+
+/**
+ * The Class SimulationAgent.
+ */
 @species (
 		name = IKeyword.MODEL,
 		internal = true)
@@ -89,8 +93,7 @@ import msi.gaml.types.IType;
 				name = IKeyword.SEED,
 				type = IType.FLOAT,
 				doc = @doc (
-						value = "The seed of the random number generator",
-						comment = "Each time it is set, the random number generator is reinitialized")),
+						value = "The seed of the random number generator. Each time it is set, the random number generator is reinitialized. WARNING: Setting it to zero actually means that you let GAMA choose a random seed.")),
 		@variable (
 				name = IKeyword.RNG,
 				type = IType.STRING,
