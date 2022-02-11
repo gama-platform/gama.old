@@ -139,7 +139,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	
 	/** The current parameters space. */
 	/* The parameter space defined by the Sobol sequence (Satteli sampling method) */
-	protected List<ParametersSet> currentParametersSpace;
+	protected List<ParametersSet> SatteliSample;
 	
 	/** The res outputs. */
 	/* All the outputs for each simulation */
@@ -161,7 +161,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
-		List<ParametersSet> solutions = currentParametersSpace == null ? buildParameterSets(scope, new ArrayList<>(), 0) : currentParametersSpace;
+		List<ParametersSet> solutions = SatteliSample == null ? buildParameterSets(scope, new ArrayList<>(), 0) : SatteliSample;
 		if (solutions.size()!=_sample) {GamaRuntimeException.error("Saltelli sample should be "+_sample+" but is "+solutions.size(), scope);}
 		/* Disable repetitions / repeat argument */
 		currentExperiment.setSeeds(new Double[1]);
@@ -192,7 +192,8 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 		
 		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, outputFilePath.literalValue(), false));
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
 			final File parent = f.getParentFile();
 			if (!parent.exists()) { parent.mkdirs(); }
 			if (f.exists()) f.delete();
@@ -219,7 +220,6 @@ public class SobolExploration extends AExplorationAlgorithm {
 					final int idx = i;
 					res += current_params+",";
 					res += outVar.stream(scope).map(v -> ps_res.get(v).get(idx)).joining(",");
-					res += "\n";
 				}
 			}
 			
@@ -296,7 +296,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		
 		}
 		
-		currentParametersSpace = sets;
+		SatteliSample = sets;
 		
 		return sets;
 	}
@@ -439,7 +439,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 	
 	/**
 	 * Turn the replication style simulation result given by BatchAgent 
-	 * to fit table style simulation results of MoaeFramework Sobol index computation
+	 * to fit table style simulation results of MoaeFramework Satteli sampling
 	 */
 	private List<Map<String, Object>> rebuildSimulationResults(IScope scope,
 			IMap<ParametersSet, Map<String, List<Object>>> gama_res) {
@@ -452,24 +452,32 @@ public class SobolExploration extends AExplorationAlgorithm {
 			throw GamaRuntimeException.error("There is a mismatch between simulation output size "+expected_final_size
 					+" and requested Saltelli samples "+_sample, scope);
 		}
+		
 		List<Map<String, Object>> res = GamaListFactory.create();
 		
-		for (Map<String, List<Object>> e : gama_res.values()) {
+		for (ParametersSet ps : SatteliSample) {
+			Map<String, List<Object>> replications = gama_res.get(ps);
 			
-			Collection<List<Object>> res_values = e.values(); 
+			 
+			Collection<List<Object>> res_values = replications.values(); 
 			int expected_size = res_values.iterator().next().size();
-			if(res_values.stream().skip(1).anyMatch(v -> v.size()!=expected_size)) {
-				GamaRuntimeException.error("There is strange simulation output in batch experiment "+currentExperiment, scope);
+			
+			@SuppressWarnings("unchecked")
+			Map<String,Object> res_updated = GamaMapFactory.create();
+			if(expected_size == 1) {
+				for (String variable : replications.keySet()) { res_updated.put(variable,replications.get(variable).get(0)); }
+			} else if (expected_size > 1) {
+				if(res_values.stream().skip(1).anyMatch(v -> v.size()!=expected_size)) {
+					throw GamaRuntimeException.error("There is strange simulation output in batch experiment "+currentExperiment, scope);
+				}
+				// TODO remove the first replication
+				for (String variable : replications.keySet()) { res_updated.put(variable,replications.get(variable).remove(0)); }
+				
+			} else {
+				throw GamaRuntimeException.error("Simulation for parameters set "+ps+" has empty results", scope);
 			}
 			
-			for (int i = 0; i < expected_size; i++){
-				@SuppressWarnings("unchecked")
-				Map<String,Object> res_updated = GamaMapFactory.create();
-				for (String variable : e.keySet()) {
-					res_updated.put(variable, e.get(variable).get(i));
-				}
-				res.add(res_updated);
-			}
+			res.add(res_updated);
 			
 		}
 		
