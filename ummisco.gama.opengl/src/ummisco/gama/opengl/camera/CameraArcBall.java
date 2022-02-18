@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CameraArcBall.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CameraArcBall.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
 
@@ -35,7 +35,10 @@ public class CameraArcBall extends AbstractCamera {
 		super(renderer);
 	}
 
-	@Override
+	/**
+	 * Update cartesian coordinates from angles.
+	 */
+	// @Override
 	public void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
@@ -48,7 +51,7 @@ public class CameraArcBall extends AbstractCamera {
 		final double sinT = Math.sin(factorT);
 		final double cosP = Math.cos(factorP);
 		final double sinP = Math.sin(factorP);
-		final double radius = getDistance();
+		final double radius = distance;
 		setPosition(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y, radius * cosP + target.z);
 		// See #2854 -- see if putting this here does not restrict the moves using the mouse
 		if (flipped) {
@@ -58,6 +61,10 @@ public class CameraArcBall extends AbstractCamera {
 		}
 	}
 
+	/**
+	 * Update spherical coordinates from locations.
+	 */
+	// @Override
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
 
@@ -67,7 +74,7 @@ public class CameraArcBall extends AbstractCamera {
 		theta = Maths.toDeg * Math.atan2(p.y, p.x);
 		// See issue on camera_pos
 		if (theta == 0) { theta = -90; }
-		phi = Maths.toDeg * Math.acos(p.z / getDistance());
+		phi = Maths.toDeg * Math.acos(p.z / distance);
 	}
 
 	/**
@@ -106,12 +113,12 @@ public class CameraArcBall extends AbstractCamera {
 		final double y_translation_in_world = theta_vect_y_norm + phi_vect_y_norm;
 		final double z_translation_in_world = theta_vect_z_norm + phi_vect_z_norm;
 
-		setPosition(position.x - x_translation_in_world * getDistance() / 1000,
-				position.y - y_translation_in_world * getDistance() / 1000,
-				position.z - z_translation_in_world * getDistance() / 1000);
-		setTarget(target.x - x_translation_in_world * getDistance() / 1000,
-				target.y - y_translation_in_world * getDistance() / 1000,
-				target.z - z_translation_in_world * getDistance() / 1000);
+		setPosition(position.x - x_translation_in_world * distance / 1000,
+				position.y - y_translation_in_world * distance / 1000,
+				position.z - z_translation_in_world * distance / 1000);
+		setTarget(target.x - x_translation_in_world * distance / 1000,
+				target.y - y_translation_in_world * distance / 1000,
+				target.z - z_translation_in_world * distance / 1000);
 
 		updateSphericalCoordinatesFromLocations();
 	}
@@ -333,7 +340,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public Double zoomLevel() {
-		return getRenderer().getMaxEnvDim() * getInitialZFactor() / getDistance();
+		return getRenderer().getMaxEnvDim() * getInitialZFactor() / distance;
 	}
 
 	@Override
@@ -342,12 +349,18 @@ public class CameraArcBall extends AbstractCamera {
 		updateCartesianCoordinatesFromAngles();
 	}
 
+	/**
+	 * Zoom.
+	 *
+	 * @param in
+	 *            the in
+	 */
+	// @Override
 	@Override
 	public void zoom(final boolean in) {
 		if (keystoneMode) return;
-		final double step =
-				getDistance() != 0d ? getDistance() / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
-		setDistance(getDistance() + (in ? -step : step));
+		final double step = distance != 0d ? distance / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
+		setDistance(distance + (in ? -step : step));
 		// zoom(zoomLevel());
 		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
 	}
@@ -480,10 +493,13 @@ public class CameraArcBall extends AbstractCamera {
 		renderer.getOpenGLHelper().setRotationMode(ctrlPressed && cameraInteraction);
 	}
 
-	@Override
-	public double getDistance() { return distance; }
-
-	@Override
+	/**
+	 * Sets the distance.
+	 *
+	 * @param distance
+	 *            the new distance
+	 */
+	// @Override
 	public void setDistance(final double distance) { this.distance = distance; }
 
 }// End of Class CameraArcBall

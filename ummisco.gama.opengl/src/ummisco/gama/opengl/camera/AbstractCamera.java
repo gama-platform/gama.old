@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractCamera.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractCamera.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
 
@@ -22,6 +22,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
+import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -173,13 +174,14 @@ public abstract class AbstractCamera implements ICamera {
 		cameraInteraction = !data.cameraInteractionDisabled();
 		updateSphericalCoordinatesFromLocations();
 		if (initialized) {
-			// if (flipped) {
-			// setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
-			// -(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
-			// } else {
-			// setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
-			// -Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
-			// }
+			// AD Added here to recompute the upVector in case the lookAt and UpVector are aligned... See #3279
+			if (flipped) {
+				setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
+						-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
+			} else {
+				setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+						-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
+			}
 			drawRotationHelper();
 		}
 
@@ -187,11 +189,26 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	/**
+	 * Update spherical coordinates from locations.
+	 */
+	protected abstract void updateSphericalCoordinatesFromLocations();
+
+	/**
 	 * Draw rotation helper.
 	 */
 	protected abstract void drawRotationHelper();
 
-	@Override
+	/**
+	 * Sets the position.
+	 *
+	 * @param xPos
+	 *            the x pos
+	 * @param yPos
+	 *            the y pos
+	 * @param zPos
+	 *            the z pos
+	 */
+	// @Override
 	public void setPosition(final double xPos, final double yPos, final double zPos) {
 		position.setLocation(xPos, yPos, zPos);
 		getRenderer().getData().setCameraPos(new GamaPoint(position));
@@ -212,10 +229,20 @@ public abstract class AbstractCamera implements ICamera {
 		getRenderer().getData().setCameraLookPos(new GamaPoint(target));
 	}
 
-	@Override
+	/**
+	 * Sets the up vector.
+	 *
+	 * @param xPos
+	 *            the x pos
+	 * @param yPos
+	 *            the y pos
+	 * @param zPos
+	 *            the z pos
+	 */
+	// @Override
 	public void setUpVector(final double xPos, final double yPos, final double zPos) {
 		upVector.setLocation(xPos, yPos, zPos);
-		// DEBUG.OUT("Upvector modified as " + upVector);
+		// DEBUG.OUT("setUpVector modified as " + upVector);
 		getRenderer().getData().setCameraOrientation(new GamaPoint(upVector));
 	}
 
@@ -233,6 +260,7 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public void animate() {
 		// TODO : Y and Z seem to be exchanged... Probably something to look at (see #3221)
+		// DEBUG.OUT("Animate: upVector = " + upVector);
 		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
 				upVector.z);
 	}
@@ -306,6 +334,14 @@ public abstract class AbstractCamera implements ICamera {
 	protected final void internalMouseScrolled(final int count) {
 		zoom(count > 0);
 	}
+
+	/**
+	 * Zoom.
+	 *
+	 * @param in
+	 *            the in
+	 */
+	protected abstract void zoom(boolean in);
 
 	/**
 	 * Method mouseMove()
@@ -1027,7 +1063,13 @@ public abstract class AbstractCamera implements ICamera {
 
 	}
 
-	@Override
+	/**
+	 * Sets the initial Z factor corrector.
+	 *
+	 * @param corrector
+	 *            the new initial Z factor corrector
+	 */
+	// @Override
 	public void setInitialZFactorCorrector(final double corrector) { zCorrector = corrector; }
 
 	/**

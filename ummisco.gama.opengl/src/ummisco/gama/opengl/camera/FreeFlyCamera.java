@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FreeFlyCamera.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FreeFlyCamera.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
 
@@ -44,7 +44,10 @@ public class FreeFlyCamera extends AbstractCamera {
 		initialize();
 	}
 
-	@Override
+	/**
+	 * Update cartesian coordinates from angles.
+	 */
+	// @Override
 	public void updateCartesianCoordinatesFromAngles() {
 		if (phi > 89) {
 			this.phi = 89;
@@ -57,9 +60,6 @@ public class FreeFlyCamera extends AbstractCamera {
 				up.x * forward.y - up.y * forward.x).normalized());
 		setTarget(forward.plus(position));
 	}
-
-	@Override
-	public double getDistance() { return position.minus(target).norm(); }
 
 	@Override
 	public void animate() {
@@ -137,6 +137,13 @@ public class FreeFlyCamera extends AbstractCamera {
 		updateCartesianCoordinatesFromAngles();
 	}
 
+	/**
+	 * Zoom.
+	 *
+	 * @param in
+	 *            the in
+	 */
+	// @Override
 	@Override
 	public void zoom(final boolean in) {
 		final float step = Math.abs(getPosition().getZ() != 0 ? (float) position.getZ() / 10 : 0.1f);
@@ -144,11 +151,6 @@ public class FreeFlyCamera extends AbstractCamera {
 		setPosition(getPosition().plus(in ? vector : vector.negated()));
 		setTarget(forward.plus(getPosition()));
 		getRenderer().getData().setZoomLevel(zoomLevel(), true, false);
-	}
-
-	@Override
-	public void setDistance(final double distance) {
-		// ??
 	}
 
 	@Override
@@ -206,5 +208,11 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	protected void drawRotationHelper() {}
+
+	@Override
+	protected void updateSphericalCoordinatesFromLocations() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

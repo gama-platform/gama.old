@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
@@ -246,31 +246,8 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	}
 
 	@Override
-	public void zoom(final boolean in) {
-		if (camera != null) { camera.zoom(in); }
-
-	}
-
-	@Override
 	public void zoomFocus(final Envelope3D env) {
 		if (camera != null) { camera.zoomFocus(env); }
-	}
-
-	@Override
-	public void setPosition(final double x, final double d, final double e) {
-		if (camera != null) { camera.setPosition(x, d, e); }
-	}
-
-	@Override
-	public void setUpVector(final double i, final double j, final double k) {
-		if (camera != null) { camera.setUpVector(i, j, k); }
-
-	}
-
-	@Override
-	public double getDistance() {
-		if (camera != null) return camera.getDistance();
-		return 0d;
 	}
 
 	/**
@@ -279,22 +256,6 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	public void dispose() {
 		getCanvas().removeCameraListeners(this);
 		camera = null;
-	}
-
-	@Override
-	public void setInitialZFactorCorrector(final double factor) {
-		if (camera != null) { camera.setInitialZFactorCorrector(factor); }
-
-	}
-
-	@Override
-	public void setDistance(final double distance) {
-		if (camera != null) { camera.setDistance(distance); }
-	}
-
-	@Override
-	public void updateCartesianCoordinatesFromAngles() {
-		if (camera != null) { camera.updateCartesianCoordinatesFromAngles(); }
 	}
 
 	@Override

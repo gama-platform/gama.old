@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ICamera.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ICamera.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.camera;
 
@@ -27,18 +27,20 @@ import msi.gama.metamodel.shape.GamaPoint;
  */
 public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener,
 		MouseTrackListener, MouseWheelListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.KeyListener {
-	
+
 	/**
 	 * The Interface CameraPreset.
 	 */
 	@FunctionalInterface
-	public interface CameraPreset { 
- /**
-  * Apply to.
-  *
-  * @param camera the camera
-  */
- void applyTo(AbstractCamera camera); }
+	public interface CameraPreset {
+		/**
+		 * Apply to.
+		 *
+		 * @param camera
+		 *            the camera
+		 */
+		void applyTo(AbstractCamera camera);
+	}
 
 	// Positions
 
@@ -80,13 +82,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	// Commands
 
 	/**
-	 * Sets the distance.
-	 *
-	 * @param distance the new distance
-	 */
-	void setDistance(final double distance);
-
-	/**
 	 * Initialize.
 	 */
 	void initialize();
@@ -119,7 +114,8 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	/**
 	 * Apply preset.
 	 *
-	 * @param preset the preset
+	 * @param preset
+	 *            the preset
 	 */
 	void applyPreset(String preset);
 
@@ -135,64 +131,17 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	/**
 	 * Zoom.
 	 *
-	 * @param in the in
-	 */
-	void zoom(boolean in);
-
-	/**
-	 * Zoom.
-	 *
-	 * @param level the level
+	 * @param level
+	 *            the level
 	 */
 	void zoom(double level);
 
 	/**
 	 * Zoom focus.
 	 *
-	 * @param env the env
+	 * @param env
+	 *            the env
 	 */
 	void zoomFocus(Envelope3D env);
-
-	/**
-	 * Sets the position.
-	 *
-	 * @param x the x
-	 * @param d the d
-	 * @param e the e
-	 */
-	void setPosition(double x, double d, double e);
-
-	/**
-	 * Sets the up vector.
-	 *
-	 * @param i the i
-	 * @param j the j
-	 * @param k the k
-	 */
-	void setUpVector(double i, double j, double k);
-
-	/**
-	 * Gets the distance.
-	 *
-	 * @return the distance
-	 */
-	double getDistance();
-
-	/**
-	 * Update cartesian coordinates from angles.
-	 */
-	void updateCartesianCoordinatesFromAngles();
-
-	/**
-	 * Update spherical coordinates from locations.
-	 */
-	default void updateSphericalCoordinatesFromLocations() {}
-
-	/**
-	 * Sets the initial Z factor corrector.
-	 *
-	 * @param factor the new initial Z factor corrector
-	 */
-	void setInitialZFactorCorrector(double factor);
 
 }
