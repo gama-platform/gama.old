@@ -11,6 +11,7 @@
 package msi.gama.lang.gaml.indexer;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,6 +94,30 @@ public class GamlResourceIndexer {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Gets the import object.
+	 *
+	 * @param m
+	 *            the m
+	 * @param modelURI
+	 *            the model URI
+	 * @param importUri
+	 *            the import uri
+	 * @return the import object
+	 */
+	public static Import getImportObject(final EObject m, final URI modelURI, final URI importUri) {
+		for (final Import e : ((Model) m).getImports()) {
+			final String u = e.getImportURI();
+			if (u != null) {
+				URI uri = URI.createURI(u, true);
+				uri = GamlResourceServices.properlyEncodedURI(uri.resolve(modelURI));
+				if (uri.equals(importUri)) return e;
+			}
+		}
+		return null;
+
 	}
 
 	/**
@@ -240,6 +265,28 @@ public class GamlResourceIndexer {
 	public static Map<URI, String> allImportsOf(final URI uri) {
 		// DEBUG.OUT("Computing all labeled imports for " + uri.lastSegment());
 		return index.sortedDepthFirstSearchWithLabels(GamlResourceServices.properlyEncodedURI(uri));
+	}
+
+	/**
+	 * Mark multiple imports. Returns the map of imports that are imported several times. Keys are the double imports,
+	 * values the direct import that imports it
+	 *
+	 * @param uri
+	 *            the uri
+	 * @return the list
+	 */
+	public static Map<URI, URI> collectMultipleImportsOf(final GamlResource r) {
+		Map<URI, URI> result = Collections.EMPTY_MAP;
+		Set<URI> uris = directImportsOf(r.getURI());
+		for (URI uri : uris) {
+			for (URI imported : allImportsOf(uri).keySet()) {
+				if (uris.contains(imported)) {
+					if (result == Collections.EMPTY_MAP) { result = new HashMap<>(); }
+					result.put(imported, uri);
+				}
+			}
+		}
+		return result;
 	}
 
 }

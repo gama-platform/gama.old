@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlResource.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlResource.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -63,10 +64,10 @@ public class GamlResource extends LazyLinkingResource {
 
 	/** The memoize description. */
 	private static boolean MEMOIZE_DESCRIPTION = false;
-	
+
 	/** The description. */
 	ModelDescription description;
-	
+
 	/** The element. */
 	ISyntacticElement element;
 
@@ -75,9 +76,7 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 * @return the validation context
 	 */
-	public ValidationContext getValidationContext() {
-		return GamlResourceServices.getValidationContext(this);
-	}
+	public ValidationContext getValidationContext() { return GamlResourceServices.getValidationContext(this); }
 
 	/**
 	 * Checks for semantic errors.
@@ -89,9 +88,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	@Override
-	public String getEncoding() {
-		return "UTF-8";
-	}
+	public String getEncoding() { return "UTF-8"; }
 
 	@Override
 	public String toString() {
@@ -101,8 +98,10 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Update with.
 	 *
-	 * @param model the model
-	 * @param newState the new state
+	 * @param model
+	 *            the model
+	 * @param newState
+	 *            the new state
 	 */
 	public void updateWith(final ModelDescription model, final boolean newState) {
 		GamlResourceServices.updateState(getURI(), model, newState, GamlResourceServices.getValidationContext(this));
@@ -114,9 +113,7 @@ public class GamlResource extends LazyLinkingResource {
 	 * @return the syntactic contents
 	 */
 	public ISyntacticElement getSyntacticContents() {
-		if (element == null) {
-			setElement(GamlResourceServices.buildSyntacticContents(this));
-		}
+		if (element == null) { setElement(GamlResourceServices.buildSyntacticContents(this)); }
 		return element;
 	}
 
@@ -129,7 +126,8 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Builds the model description.
 	 *
-	 * @param resources the resources
+	 * @param resources
+	 *            the resources
 	 * @return the model description
 	 */
 	private ModelDescription buildModelDescription(final LinkedHashMultimap<String, GamlResource> resources) {
@@ -172,8 +170,10 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Invalidate.
 	 *
-	 * @param r the r
-	 * @param s the s
+	 * @param r
+	 *            the r
+	 * @param s
+	 *            the s
 	 */
 	public void invalidate(final GamlResource r, final String s) {
 		GamlCompilationError error = null;
@@ -192,7 +192,7 @@ public class GamlResource extends LazyLinkingResource {
 	 * @return the model description
 	 */
 	public ModelDescription buildCompleteDescription() {
-		if (MEMOIZE_DESCRIPTION && description != null) { return description; }
+		if (MEMOIZE_DESCRIPTION && description != null) return description;
 		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
 		if (hasErrors() || hasSemanticErrors()) {
 			setDescription(null);
@@ -204,6 +204,13 @@ public class GamlResource extends LazyLinkingResource {
 		if (model == null) {
 			invalidate(this, "Impossible to validate " + URI.decode(getURI().lastSegment()) + " (check the logs)");
 		}
+		Map<URI, URI> doubleImports = GamlResourceIndexer.collectMultipleImportsOf(this);
+		doubleImports.forEach((imported, importer) -> {
+			String s = imported.lastSegment() + " is already imported by " + importer.lastSegment();
+			EObject o = GamlResourceIndexer.getImportObject(getContents().get(0), getURI(), imported);
+			GamlCompilationError error = new GamlCompilationError(s, IGamlIssue.GENERAL, o, false, true);
+			getValidationContext().add(error);
+		});
 		setDescription(model);
 		return model;
 	}
@@ -267,27 +274,24 @@ public class GamlResource extends LazyLinkingResource {
 	/**
 	 * Sets the description.
 	 *
-	 * @param model the new description
+	 * @param model
+	 *            the new description
 	 */
 	private void setDescription(final ModelDescription model) {
-		if (!MEMOIZE_DESCRIPTION) { return; }
-		if (model == description) { return; }
-		if (description != null) {
-			description.dispose();
-		}
+		if (!MEMOIZE_DESCRIPTION || model == description) return;
+		if (description != null) { description.dispose(); }
 		description = model;
 	}
 
 	/**
 	 * Sets the element.
 	 *
-	 * @param model the new element
+	 * @param model
+	 *            the new element
 	 */
 	private void setElement(final ISyntacticElement model) {
-		if (model == element) { return; }
-		if (element != null) {
-			element.dispose();
-		}
+		if (model == element) return;
+		if (element != null) { element.dispose(); }
 		element = model;
 	}
 
@@ -313,16 +317,14 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	@Override
-	public OnChangeEvictingCache getCache() {
-		return (OnChangeEvictingCache) super.getCache();
-	}
+	public OnChangeEvictingCache getCache() { return (OnChangeEvictingCache) super.getCache(); }
 
 	@Override
 	protected void doLinking() {
 		// If the imports are not correctly updated, we cannot proceed
 		final EObject faulty = GamlResourceIndexer.updateImports(this);
 		if (faulty != null) {
-			System.out.println(getURI() + " cannot import " + faulty);
+			// DEBUG.OUT(getURI() + " cannot import " + faulty);
 			final EAttribute attribute = getContents().get(0) instanceof Model ? GamlPackage.Literals.IMPORT__IMPORT_URI
 					: GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI;
 			getErrors().add(new EObjectDiagnosticImpl(Severity.ERROR, IGamlIssue.IMPORT_ERROR,
