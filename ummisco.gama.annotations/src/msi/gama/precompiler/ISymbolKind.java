@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ISymbolKind.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ISymbolKind.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler;
 
@@ -103,12 +103,15 @@ public interface ISymbolKind {
 	/** The platform. */
 	int PLATFORM = 16;
 
-	/** The   number. */
+	/** The number. */
 	// Update this variable when adding a kind of symbol
 	int __NUMBER__ = 17;
 
 	/** The template menu. */
 	String[] TEMPLATE_MENU = { "Species", "Model", "Statement", "Behavior", "Parameter", "Output", "Layer", "Skill",
 			"Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator", "" };
+
+	/** The Constant STATEMENTS_WITH_ATTRIBUTES. */
+	Set<Integer> STATEMENTS_CONTAINING_ATTRIBUTES = new HashSet<>(Arrays.asList(SPECIES, EXPERIMENT, OUTPUT, MODEL));
 
 }

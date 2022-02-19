@@ -58,7 +58,6 @@ import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -129,14 +128,14 @@ import msi.gaml.statements.Facets;
  */
 public class GamlSyntacticConverter {
 
-	/** The Constant builder. */
+	/** The builder of proto-expressions (not yet compiled). */
 	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	/** The synthetic action. */
 	private static int SYNTHETIC_ACTION = 0;
 
 	/**
-	 * Gets the absolute container folder path of.
+	 * Gets the absolute folder path of the resource passed in arguments. Used to get the path to the model files
 	 *
 	 * @param r
 	 *            the r
@@ -158,15 +157,11 @@ public class GamlSyntacticConverter {
 
 	}
 
-	/** The Constant STATEMENTS_WITH_ATTRIBUTES. */
-	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
-			Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
-
 	/**
-	 * Builds the syntactic contents.
+	 * Builds the syntactic contents of the root object passed to it.
 	 *
 	 * @param root
-	 *            the root
+	 *            the root : either a standalone block, an experiment file or a model
 	 * @param errors
 	 *            the errors
 	 * @return the i syntactic element
@@ -191,8 +186,8 @@ public class GamlSyntacticConverter {
 		final List<String> prgm = collectPragmas(m);
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
-		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
-				EGaml.getInstance().hasChildren(m), path/* , imps */);
+		final SyntacticModelElement model =
+				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.getInstance().hasChildren(m), path);
 		if (prgm != null) { model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm)); }
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getInstance().getStatementsOf(m), errors);
@@ -232,7 +227,7 @@ public class GamlSyntacticConverter {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		if (p == null) return true;
 		final int kind = p.getKind();
-		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
+		return !ISymbolKind.STATEMENTS_CONTAINING_ATTRIBUTES.contains(kind);
 	}
 
 	/**
@@ -254,8 +249,9 @@ public class GamlSyntacticConverter {
 				"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
 		keyword = convertKeyword(keyword, upper.getKeyword());
 
+		final boolean upperContainsAttributes = !doesNotDefineAttributes(upper.getKeyword());
 		final boolean isVar = stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)
-				&& !doesNotDefineAttributes(upper.getKeyword()) && !EGaml.getInstance().hasChildren(stm);
+				&& upperContainsAttributes && !EGaml.getInstance().hasChildren(stm);
 
 		final ISyntacticElement elt = isVar ? SyntacticFactory.createVar(keyword, ((S_Definition) stm).getName(), stm)
 				: SyntacticFactory.create(keyword, stm, EGaml.getInstance().hasChildren(stm));
@@ -266,7 +262,7 @@ public class GamlSyntacticConverter {
 			// If we define a variable with this statement
 			final TypeRef t = (TypeRef) def.getTkey();
 			if (t != null) { addFacet(elt, TYPE, convExpr(t, errors), errors); }
-			if (t != null && doesNotDefineAttributes(upper.getKeyword())) {
+			if (t != null && !upperContainsAttributes) {
 				// Translation of "type var ..." to "let var type: type ..." if
 				// we are not in a
 				// top-level statement (i.e. not in the declaration of a species
@@ -764,7 +760,6 @@ public class GamlSyntacticConverter {
 	 */
 	private final IExpressionDescription findExpr(final HeadlessExperiment stm, final Set<Diagnostic> errors) {
 		if (stm == null) return null;
-		// The order below should be important
 		return convertToLabel(stm, EGaml.getInstance().getNameOf(stm));
 
 	}
