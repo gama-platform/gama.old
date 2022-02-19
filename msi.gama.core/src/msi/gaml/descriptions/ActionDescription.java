@@ -221,7 +221,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				final StringBuilder sb1 = new StringBuilder(100);
 				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b>, type ")
 						.append(desc.getGamlType());
-				if (desc.hasFacet(IKeyword.DEFAULT)) {
+				if (desc.hasFacet(IKeyword.DEFAULT) && desc.getFacetExpr(IKeyword.DEFAULT) != null) {
 					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
 							.append(")</i>");
 				}

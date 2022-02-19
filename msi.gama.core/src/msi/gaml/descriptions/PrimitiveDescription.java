@@ -116,7 +116,7 @@ public class PrimitiveDescription extends ActionDescription {
 
 				String name = desc.getName();
 				sb1.append("<li><b>").append(Strings.TAB).append(name).append("</b>, type ").append(desc.getGamlType());
-				if (desc.hasFacet(IKeyword.DEFAULT)) {
+				if (desc.hasFacet(IKeyword.DEFAULT) && desc.getFacetExpr(IKeyword.DEFAULT) != null) {
 					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
 							.append(")</i>");
 				}
@@ -220,12 +220,6 @@ public class PrimitiveDescription extends ActionDescription {
 	 */
 	@Override
 	public void setDefiningPlugin(final String plugin) { this.plugin = plugin; }
-
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// meta.put(GamlProperties.PLUGINS, plugin);
-	// meta.put(GamlProperties.ACTIONS, getName());
-	// }
 
 	@Override
 	public void dispose() {
