@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GlobalVariableExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GlobalVariableExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -34,10 +34,14 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	/**
 	 * Creates the.
 	 *
-	 * @param n the n
-	 * @param type the type
-	 * @param notModifiable the not modifiable
-	 * @param world the world
+	 * @param n
+	 *            the n
+	 * @param type
+	 *            the type
+	 * @param notModifiable
+	 *            the not modifiable
+	 * @param world
+	 *            the world
 	 * @return the i expression
 	 */
 	public static IExpression create(final String n, final IType<?> type, final boolean notModifiable,
@@ -56,10 +60,14 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	/**
 	 * Instantiates a new global variable expression.
 	 *
-	 * @param n the n
-	 * @param type the type
-	 * @param notModifiable the not modifiable
-	 * @param world the world
+	 * @param n
+	 *            the n
+	 * @param type
+	 *            the type
+	 * @param notModifiable
+	 *            the not modifiable
+	 * @param world
+	 *            the world
 	 */
 	protected GlobalVariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
@@ -85,18 +93,15 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final String name = getName();
 		// We first try in the 'normal' scope (so that regular global vars are still accessed by agents of micro-models,
 		// see #2238)
-		if (scope.hasAccessToGlobalVar(name))
-			return scope.getGlobalVarValue(name);
-		else {
-			final IAgent microAgent = scope.getAgent();
-			if (microAgent != null) {
-				final IScope agentScope = microAgent.getScope();
-				if (agentScope != null) {
-					final ITopLevelAgent root = agentScope.getRoot();
-					if (root != null) {
-						final IScope globalScope = root.getScope();
-						if (globalScope != null) return globalScope.getGlobalVarValue(getName());
-					}
+		if (scope.hasAccessToGlobalVar(name)) return scope.getGlobalVarValue(name);
+		final IAgent microAgent = scope.getAgent();
+		if (microAgent != null) {
+			final IScope agentScope = microAgent.getScope();
+			if (agentScope != null) {
+				final ITopLevelAgent root = agentScope.getRoot();
+				if (root != null) {
+					final IScope globalScope = root.getScope();
+					if (globalScope != null) return globalScope.getGlobalVarValue(getName());
 				}
 			}
 		}
@@ -118,8 +123,13 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	@Override
 	public String getTitle() {
 		final IDescription desc = getDefinitionDescription();
-		final boolean isParameter =
-				desc == null ? false : desc.getSpeciesContext().getAttribute(getName()).isParameter();
+		boolean isParameter;
+		if (desc != null) {
+			VariableDescription vd = desc.getSpeciesContext().getAttribute(getName());
+			isParameter = vd != null && vd.isParameter();
+		} else {
+			isParameter = false;
+		}
 		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName()
 				+ " of type " + getGamlType().getTitle();
 	}
@@ -129,11 +139,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		final IDescription desc = getDefinitionDescription();
 		String doc = null;
 		String s = "Type " + type.getTitle();
-		if (desc != null) {
-			final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
-			if (var != null) { doc = var.getBuiltInDoc(); }
-		} else
-			return s;
+		if (desc == null) return s;
+		final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
+		if (var != null) { doc = var.getBuiltInDoc(); }
 		if (doc != null) { s += "<br>" + doc; }
 		final String quality =
 				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
