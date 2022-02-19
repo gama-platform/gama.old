@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ActionDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ActionDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -35,21 +35,26 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	/** The is abstract. */
 	protected final boolean isAbstract;
-	
+
 	/** The is synthetic. */
 	protected final boolean isSynthetic;
-	
+
 	/** The Constant NULL_ARGS. */
 	public static final Arguments NULL_ARGS = new Arguments();
 
 	/**
 	 * Instantiates a new action description.
 	 *
-	 * @param keyword the keyword
-	 * @param superDesc the super desc
-	 * @param cp the cp
-	 * @param source the source
-	 * @param facets the facets
+	 * @param keyword
+	 *            the keyword
+	 * @param superDesc
+	 *            the super desc
+	 * @param cp
+	 *            the cp
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
 	 */
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
@@ -87,8 +92,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Verify args.
 	 *
-	 * @param caller the caller
-	 * @param args the args
+	 * @param caller
+	 *            the caller
+	 * @param args
+	 *            the args
 	 * @return true, if successful
 	 */
 	@SuppressWarnings ("rawtypes")
@@ -174,7 +181,8 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Contains arg.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return true, if successful
 	 */
 	public boolean containsArg(final String s) {
@@ -206,9 +214,9 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	 * @return the arg documentation
 	 */
 	public String getArgDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
 
 		if (getArgNames().size() > 0) {
+			final StringBuilder sb = new StringBuilder(200);
 			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
 				final StringBuilder sb1 = new StringBuilder(100);
 				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b>, type ")
@@ -224,8 +232,9 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			sb.append("Arguments accepted: ").append("<br/><ul>");
 			for (final String a : args) { sb.append(a); }
 			sb.append("</ul><br/>");
+			return sb.toString();
 		}
-		return sb.toString();
+		return "";
 	}
 
 	// @Override
