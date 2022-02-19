@@ -14,6 +14,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -22,6 +24,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.types.IType;
 
 /**
  * The Class OutputManager.
@@ -33,6 +36,13 @@ import msi.gaml.factories.DescriptionFactory;
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
 		concept = {})
+@facets (@facet (
+		name = IKeyword.AUTOSAVE,
+		type = { IType.BOOL, IType.STRING },
+		optional = true,
+		doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
+				+ "Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")))
+
 @inside (
 		kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
 @doc (
@@ -77,6 +87,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	 */
 	public SimulationOutputManager(final IDescription desc) {
 		super(desc);
+
 	}
 
 	@Override
@@ -96,9 +107,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	 */
 	public void updateDisplayOutputsName(final SimulationAgent agent) {
 		for (final IOutput out : this) {
-			if (out instanceof IDisplayOutput display) {
-				GAMA.getGui().updateViewTitle(display, agent);
-			}
+			if (out instanceof IDisplayOutput display) { GAMA.getGui().updateViewTitle(display, agent); }
 		}
 
 	}

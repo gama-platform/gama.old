@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayeredDisplayView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayeredDisplayView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -38,6 +38,7 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.SnapshotMaker;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
@@ -445,7 +446,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public void takeSnapshot() {
-		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), WorkbenchHelper.displaySizeOf(surfaceComposite));
+		Rectangle dim = WorkbenchHelper.displaySizeOf(surfaceComposite);
+		java.awt.Rectangle r = new java.awt.Rectangle(dim.x, dim.y, dim.width, dim.height);
+		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), r);
 	}
 
 	/**

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractOutputManager.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -18,12 +18,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 
 /**
  * Class AbstractOutputManager.
@@ -34,12 +38,19 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
+	/** The autosave. */
+	final IExpression autosave;
+
+	/**
+	 * Properties
+	 */
+
 	/** The layout. */
 	LayoutStatement layout;
-	
+
 	/** The outputs. */
 	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
-	
+
 	/** The virtual outputs. */
 	protected final IMap<String, IOutput> virtualOutputs = GamaMapFactory.create();
 
@@ -49,16 +60,16 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/**
 	 * Instantiates a new abstract output manager.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
+		autosave = desc.getFacetExpr(IKeyword.AUTOSAVE);
 	}
 
 	@Override
-	public Map<String, ? extends IOutput> getOutputs() {
-		return outputs;
-	}
+	public Map<String, ? extends IOutput> getOutputs() { return outputs; }
 
 	@Override
 	public Iterator<IOutput> iterator() {
@@ -95,9 +106,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		try {
 			// AD: explicit addition of an ArrayList to prevent dispose errors
 			// (when outputs remove themselves from the list)
-			for (final IOutput output : new ArrayList<>(outputs.values())) {
-				output.dispose();
-			}
+			for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
 			clear();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -114,7 +123,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void remove(final IOutput o) {
-		if (!(o instanceof AbstractOutput)) { return; }
+		if (!(o instanceof AbstractOutput)) return;
 		if (((AbstractOutput) o).isUserCreated()) {
 			o.dispose();
 			outputs.values().remove(o);
@@ -128,57 +137,42 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		for (final ISymbol s : commands) {
 			if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
-			} else if (s instanceof IOutput) {
-				final IOutput o = (IOutput) s;
+			} else if (s instanceof IOutput o) {
 				add(o);
 				o.setUserCreated(false);
-				if (o instanceof LayeredDisplayOutput) {
-					((LayeredDisplayOutput) o).setIndex(displayIndex++);
-				}
+				if (o instanceof LayeredDisplayOutput) { ((LayeredDisplayOutput) o).setIndex(displayIndex++); }
 			}
 		}
 	}
 
 	@Override
 	public void forceUpdateOutputs() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.update();
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.update(); }
 	}
 
 	@Override
 	public void pause() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.setPaused(true);
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.setPaused(true); }
 	}
 
 	@Override
 	public void resume() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.setPaused(false);
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.setPaused(false); }
 	}
 
 	@Override
 	public void synchronize() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.setSynchronized(true);
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.setSynchronized(true); }
 	}
 
 	@Override
 	public void unSynchronize() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.setSynchronized(false);
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.setSynchronized(false); }
 	}
 
 	@Override
 	public void close() {
-		for (final IDisplayOutput o : getDisplayOutputs()) {
-			o.close();
-		}
+		for (final IDisplayOutput o : getDisplayOutputs()) { o.close(); }
 	}
 
 	@Override
@@ -195,17 +189,26 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
 		boolean oneOutputAutosaving = false;
+
 		for (final IOutput output : ImmutableList.copyOf(this)) {
-			if (!open(scope, output)) { return false; }
-			if (output instanceof IDisplayOutput) {
-				if (((IDisplayOutput) output).isAutoSave()) {
-					oneOutputAutosaving = true;
-				}
+			if (!open(scope, output)) return false;
+			if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
+				oneOutputAutosaving = true;
 			}
 		}
-		if (oneOutputAutosaving) {
-			synchronize();
+		if (autosave != null) {
+			boolean isAutosaving = false;
+			String autosavingPath = null;
+			oneOutputAutosaving = true;
+			if (autosave.getGamlType().equals(Types.STRING)) {
+				isAutosaving = true;
+				autosavingPath = Cast.asString(scope, autosave.value(scope));
+			} else {
+				isAutosaving = Cast.asBool(scope, autosave.value(scope));
+			}
+			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, autosavingPath); }
 		}
+		if (oneOutputAutosaving) { synchronize(); }
 
 		return true;
 	}
@@ -213,20 +216,17 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/**
 	 * Sets the layout.
 	 *
-	 * @param layout the new layout
+	 * @param layout
+	 *            the new layout
 	 */
-	public void setLayout(final LayoutStatement layout) {
-		this.layout = layout;
-	}
+	public void setLayout(final LayoutStatement layout) { this.layout = layout; }
 
 	/**
 	 * Gets the layout.
 	 *
 	 * @return the layout
 	 */
-	public LayoutStatement getLayout() {
-		return layout;
-	}
+	public LayoutStatement getLayout() { return layout; }
 
 	@Override
 	public boolean open(final IScope scope, final IOutput output) {
@@ -250,8 +250,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/**
 	 * Initial step.
 	 *
-	 * @param scope the scope
-	 * @param output the output
+	 * @param scope
+	 *            the scope
+	 * @param output
+	 *            the output
 	 * @return true, if successful
 	 */
 	protected boolean initialStep(final IScope scope, final IOutput output) {
@@ -261,17 +263,31 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean step(final IScope scope) {
 		outputs.forEach((name, each) -> {
-			if (each.isRefreshable() && each.getScope().step(each).passed()) {
-				each.update();
-			}
+			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
 		});
-		// final List<IOutput> copy = new ArrayList<>(outputs.values());
-		// final Iterable<IOutput> filtered =
-		// Iterables.filter(copy, each -> each.isRefreshable() && each.getScope().step(each).passed());
-		// for (final IOutput o : filtered) {
-		// o.update();
-		// }
+		if (autosave != null) {
+			boolean isAutosaving = false;
+			String autosavingPath = null;
+			if (autosave.getGamlType().equals(Types.STRING)) {
+				isAutosaving = true;
+				autosavingPath = Cast.asString(scope, autosave.value(scope));
+			} else {
+				isAutosaving = Cast.asBool(scope, autosave.value(scope));
+			}
+			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, autosavingPath); }
+		}
+
 		return true;
+	}
+
+	/**
+	 * Take snapshot.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
+	public void takeSnapshot(final IScope scope) {
+
 	}
 
 }

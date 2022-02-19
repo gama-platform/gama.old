@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayeredDisplayDecorator.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayeredDisplayDecorator.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -130,9 +130,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				e -> toggleSideControls());
 		toggleOverlay =
 				new GamaCommand("display.overlay2", "Toggle overlay " + format(COMMAND, 'O'), e -> toggleOverlay());
-		takeSnapshot =
-				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "	", e -> SnapshotMaker.getInstance()
-						.doSnapshot(view.getDisplaySurface(), WorkbenchHelper.displaySizeOf(view.surfaceComposite)));
+		takeSnapshot = new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "	", e -> view.takeSnapshot());
 		toggleFullScreen = new GamaCommand("display.fullscreen2", "Toggle fullscreen ESC", e -> toggleFullScreen());
 		toggleInteractiveConsole = new GamaCommand("display.presentation2",
 				"Toggle interactive console " + format(COMMAND, 'K'), e -> toggleInteractiveConsole());
