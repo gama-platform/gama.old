@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelScene.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ModelScene.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -117,7 +117,8 @@ public class ModelScene {
 
 		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		gl.setZIncrement(zIncrement);
-
+		// AD called here so that it is inside the keystone drawing. See #3285
+		gl.rotateModel();
 		layers.forEach((name, layer) -> {
 			if (layer != null && !layer.isInvalid()) {
 				try {

@@ -1512,7 +1512,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		resetMatrix(GLMatrixFunc.GL_PROJECTION);
 		updatePerspective(gl);
 		resetMatrix(GLMatrixFunc.GL_MODELVIEW);
-		rotateModel();
+		// AD removed from here and put in ModelScene.draw() so that it is inside the keystone drawing. See #3285
+		// rotateModel();
 		return endScene;
 	}
 
