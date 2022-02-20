@@ -20,6 +20,7 @@ import com.google.common.collect.Iterators;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
@@ -188,29 +189,41 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
-		boolean oneOutputAutosaving = false;
-
+		boolean atLeastOneOutputAutosaving = false;
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 			if (!open(scope, output)) return false;
 			if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
-				oneOutputAutosaving = true;
+				atLeastOneOutputAutosaving = true;
 			}
 		}
+		atLeastOneOutputAutosaving |= evaluateAutoSave(scope);
+		if (atLeastOneOutputAutosaving) { synchronize(); }
+
+		return true;
+	}
+
+	/**
+	 * Evaluate auto save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	private boolean evaluateAutoSave(final IScope scope) throws GamaRuntimeException {
+		boolean isAutosaving = false;
 		if (autosave != null) {
-			boolean isAutosaving = false;
-			String autosavingPath = null;
-			oneOutputAutosaving = true;
+			String path = null;
 			if (autosave.getGamlType().equals(Types.STRING)) {
-				isAutosaving = true;
-				autosavingPath = Cast.asString(scope, autosave.value(scope));
+				path = Cast.asString(scope, autosave.value(scope));
+				isAutosaving = path != null && !path.isBlank();
 			} else {
 				isAutosaving = Cast.asBool(scope, autosave.value(scope));
 			}
-			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, autosavingPath); }
+			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, path); }
 		}
-		if (oneOutputAutosaving) { synchronize(); }
-
-		return true;
+		return isAutosaving;
 	}
 
 	/**

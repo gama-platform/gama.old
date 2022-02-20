@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayeredDisplayOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayeredDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -272,14 +272,17 @@ import msi.gaml.types.IType;
 						name = IKeyword.AUTOSAVE,
 						type = { IType.BOOL, IType.POINT, IType.STRING },
 						optional = true,
-						doc = @doc ("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions. Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")), },
+						doc = @doc ("Allows to save this display on disk. This facet accepts bool, point or string values. "
+								+ "If it is false or nil, nothing happens. 'true' will save it at a resolution of 500x500 with a standard name "
+								+ "(containing the name of the model, display, resolution, cycle and time). A non-nil point will change that resolution. A non-nil string will keep 500x500 and change the filename "
+								+ "(if it is not dynamically built, the previous file will be erased). Note that setting autosave to true in a display will synchronize all the displays defined in the experiment")), },
 		omissible = IKeyword.NAME)
 @inside (
 		symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @validator (InfoValidator.class)
 @serializer (DisplaySerializer.class)
 @doc (
-		value = "A display refers to a independent and mobile part of the interface that can display species, images, texts or charts.",
+		value = "A display refers to an independent and mobile part of the interface that can display species, images, texts or charts.",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = @example (

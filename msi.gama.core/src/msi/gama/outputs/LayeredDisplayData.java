@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayeredDisplayData.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayeredDisplayData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -25,6 +25,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gaml.descriptions.IDescription;
@@ -1066,18 +1067,7 @@ public class LayeredDisplayData {
 		setEnvHeight(env.getHeight());
 		env.dispose();
 
-		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
-		if (auto != null) {
-			if (auto.getGamlType().equals(Types.POINT)) {
-				setAutosave(true);
-				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
-			} else if (auto.getGamlType().equals(Types.STRING)) {
-				setAutosave(true);
-				setAutosavePath(Cast.asString(scope, auto.value(scope)));
-			} else {
-				setAutosave(Cast.asBool(scope, auto.value(scope)));
-			}
-		}
+		updateAutoSave(scope, facets.getExpr(IKeyword.AUTOSAVE));
 		final IExpression toolbar = facets.getExpr(IKeyword.TOOLBAR);
 		if (toolbar != null) {
 			if (toolbar.getGamlType() == Types.BOOL) {
@@ -1237,6 +1227,31 @@ public class LayeredDisplayData {
 	}
 
 	/**
+	 * Update auto save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param auto
+	 *            the auto
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	private void updateAutoSave(final IScope scope, final IExpression auto) throws GamaRuntimeException {
+		if (auto == null) return;
+		if (auto.getGamlType().equals(Types.POINT)) {
+			GamaPoint result = Cast.asPoint(scope, auto.value(scope));
+			setAutosave(result != null);
+			setImageDimension(result);
+		} else if (auto.getGamlType().equals(Types.STRING)) {
+			String result = Cast.asString(scope, auto.value(scope));
+			setAutosave(result != null && !result.isBlank());
+			setAutosavePath(result);
+		} else {
+			setAutosave(Cast.asBool(scope, auto.value(scope)));
+		}
+	}
+
+	/**
 	 * Sets the z far.
 	 *
 	 * @param zF
@@ -1264,18 +1279,7 @@ public class LayeredDisplayData {
 	 *            the facets
 	 */
 	public void update(final IScope scope, final Facets facets) {
-		final IExpression auto = facets.getExpr(IKeyword.AUTOSAVE);
-		if (auto != null) {
-			if (auto.getGamlType().equals(Types.POINT)) {
-				setAutosave(true);
-				setImageDimension(Cast.asPoint(scope, auto.value(scope)));
-			} else if (auto.getGamlType().equals(Types.STRING)) {
-				setAutosave(true);
-				setAutosavePath(Cast.asString(scope, auto.value(scope)));
-			} else {
-				setAutosave(Cast.asBool(scope, auto.value(scope)));
-			}
-		}
+		updateAutoSave(scope, facets.getExpr(IKeyword.AUTOSAVE));
 		// /////////////// dynamic Lighting ///////////////////
 
 		if (!constantBackground) {
