@@ -61,9 +61,6 @@ public class LayeredDisplayData {
 		/** The camera target. */
 		CAMERA_TARGET,
 
-		/** The camera orientation. */
-		CAMERA_ORIENTATION,
-
 		/** The camera preset. */
 		CAMERA_PRESET,
 
@@ -254,7 +251,7 @@ public class LayeredDisplayData {
 	private GamaPoint cameraLookPos = null;
 
 	/** The camera orientation. */
-	private GamaPoint cameraOrientation = null;
+	private final GamaPoint cameraOrientation = null;
 
 	/** The preset camera. */
 	private String presetCamera = "";
@@ -295,7 +292,6 @@ public class LayeredDisplayData {
 	 * Overlay
 	 */
 
-	// private boolean isDisplayingScale = GamaPreferences.Displays.CORE_SCALE.getValue();
 	private int fullScreen = -1;
 
 	/**
@@ -384,21 +380,6 @@ public class LayeredDisplayData {
 	 *            the ortho to set
 	 */
 	public void setOrtho(final boolean ortho) { this.ortho = ortho; }
-
-	// /**
-	// * @return the displayScale
-	// */
-	// public boolean isDisplayScale() {
-	// return isDisplayingScale;
-	// }
-
-	// /**
-	// * @param displayScale
-	// * the displayScale to set
-	// */
-	// public void setDisplayScale(final boolean displayScale) {
-	// this.isDisplayingScale = displayScale;
-	// }
 
 	/**
 	 * @return the showfps
@@ -629,13 +610,6 @@ public class LayeredDisplayData {
 	public boolean isCameraLookAtDefined() { return cameraLookPos != null; }
 
 	/**
-	 * Checks if is camera up vector defined.
-	 *
-	 * @return true, if is camera up vector defined
-	 */
-	public boolean isCameraUpVectorDefined() { return getCameraOrientation() != null; }
-
-	/**
 	 * @return the cameraPos
 	 */
 	public GamaPoint getCameraPos() { return cameraPos; }
@@ -677,28 +651,6 @@ public class LayeredDisplayData {
 		}
 
 		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
-	}
-
-	/**
-	 * @return the cameraUpVector
-	 */
-	public GamaPoint getCameraOrientation() { return cameraOrientation; }
-
-	/**
-	 * @param cameraOrientation
-	 *            the cameraUpVector to set
-	 */
-	public void setCameraOrientation(final GamaPoint point) {
-		if (point == null) return;
-		final GamaPoint c = point;
-		if (cameraOrientation != null) {
-			if (c.equals(cameraOrientation)) return;
-			cameraOrientation.setLocation(c);
-		} else {
-			cameraOrientation = new GamaPoint(c);
-		}
-
-		notifyListeners(Changes.CAMERA_ORIENTATION, cameraOrientation);
 	}
 
 	/**
@@ -836,7 +788,6 @@ public class LayeredDisplayData {
 	public void setZRotationAngle(final double val) {
 		zRotationAngleDelta = val;
 		currentRotationAboutZ = val;
-		// notifyListeners(Changes.ROTATION, val);
 	}
 
 	/**
@@ -1156,15 +1107,6 @@ public class LayeredDisplayData {
 			}
 		}
 
-		// Set the up vector of the opengl Camera (see gluPerspective)
-		final IExpression cameraUp = facets.getExpr(IKeyword.CAMERA_ORIENTATION);
-		if (cameraUp != null) {
-			final GamaPoint location = Cast.asPoint(scope, cameraUp.value(scope));
-			location.setY(-location.getY()); // y component need to be reverted
-			setCameraOrientation(location);
-		}
-
-		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraLens = facets.getExpr(IKeyword.CAMERA_LENS);
 		if (cameraLens != null) {
 			final int lens = Cast.asInt(scope, cameraLens.value(scope));

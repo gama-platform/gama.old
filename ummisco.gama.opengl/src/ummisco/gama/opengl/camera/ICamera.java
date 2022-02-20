@@ -102,11 +102,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	void updateTarget();
 
 	/**
-	 * Update orientation.
-	 */
-	void updateOrientation();
-
-	/**
 	 * Animate.
 	 */
 	void animate();

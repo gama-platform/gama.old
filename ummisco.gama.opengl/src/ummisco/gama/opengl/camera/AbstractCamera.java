@@ -37,7 +37,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public abstract class AbstractCamera implements ICamera {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The renderer. */
@@ -75,7 +75,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected final GamaPoint upVector = new GamaPoint(0, 0, 0);
 
 	/** The initial up vector. */
-	protected GamaPoint initialPosition, initialTarget, initialUpVector;
+	protected GamaPoint initialPosition, initialTarget;
 
 	/** The theta. */
 	protected double theta;
@@ -85,7 +85,6 @@ public abstract class AbstractCamera implements ICamera {
 
 	/** The flipped. */
 	protected boolean flipped = false;
-	// protected double upVectorAngle;
 
 	/** The keyboard sensivity. */
 	private final double _keyboardSensivity = 1d;
@@ -132,10 +131,6 @@ public abstract class AbstractCamera implements ICamera {
 	 */
 	public AbstractCamera(final IOpenGLRenderer renderer2) {
 		this.renderer = renderer2;
-		// LayeredDisplayData data = renderer.getData();
-		// if (!data.isCameraUpVectorDefined() && !data.getCameraOrientation().equals(UP_Z)) {
-		setUpVector(0.0, 0.0, 1.0);
-		// }
 		glu = new GLU();
 	}
 
@@ -163,27 +158,11 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public void updateOrientation() {
-		// DEBUG.OUT("Upvector updatd as " + upVector);
-		upVector.setLocation(renderer.getData().getCameraOrientation());
-	}
-
-	@Override
 	public void update() {
 		final LayeredDisplayData data = renderer.getData();
 		cameraInteraction = !data.cameraInteractionDisabled();
 		updateSphericalCoordinatesFromLocations();
-		if (initialized) {
-			// AD Added here to recompute the upVector in case the lookAt and UpVector are aligned... See #3279
-			if (flipped) {
-				setUpVector(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
-						-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
-			} else {
-				setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
-						-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
-			}
-			drawRotationHelper();
-		}
+		if (initialized) { drawRotationHelper(); }
 
 		initialized = true;
 	}
@@ -229,23 +208,6 @@ public abstract class AbstractCamera implements ICamera {
 		getRenderer().getData().setCameraLookPos(new GamaPoint(target));
 	}
 
-	/**
-	 * Sets the up vector.
-	 *
-	 * @param xPos
-	 *            the x pos
-	 * @param yPos
-	 *            the y pos
-	 * @param zPos
-	 *            the z pos
-	 */
-	// @Override
-	public void setUpVector(final double xPos, final double yPos, final double zPos) {
-		upVector.setLocation(xPos, yPos, zPos);
-		// DEBUG.OUT("setUpVector modified as " + upVector);
-		getRenderer().getData().setCameraOrientation(new GamaPoint(upVector));
-	}
-
 	/* -------Get commands--------- */
 
 	@Override
@@ -259,8 +221,14 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void animate() {
-		// TODO : Y and Z seem to be exchanged... Probably something to look at (see #3221)
-		// DEBUG.OUT("Animate: upVector = " + upVector);
+
+		// Completely recomputer the up-vector
+		double tr = theta * Maths.toRad;
+		double pr = phi * Maths.toRad;
+		upVector.x = flipped ? -(-Math.cos(tr) * Math.cos(pr)) : -Math.cos(tr) * Math.cos(pr);
+		upVector.y = flipped ? -(-Math.sin(tr) * Math.cos(pr)) : -Math.sin(tr) * Math.cos(pr);
+		upVector.z = flipped ? -Math.sin(pr) : Math.sin(pr);
+
 		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x, upVector.y,
 				upVector.z);
 	}
@@ -681,8 +649,6 @@ public abstract class AbstractCamera implements ICamera {
 	// zPos:" + position.z);
 	// DEBUG.LOG("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:"
 	// + target.z);
-	// DEBUG.LOG("upX" + upVector.x + " upY:" + upVector.y + " upZ:" +
-	// upVector.z);
 	// DEBUG.LOG("_phi " + phi + " _theta " + theta);
 	// }
 

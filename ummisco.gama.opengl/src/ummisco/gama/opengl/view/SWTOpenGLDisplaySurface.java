@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SWTOpenGLDisplaySurface.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SWTOpenGLDisplaySurface.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
@@ -714,9 +714,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				break;
 			case CAMERA_POS:
 				renderer.getCameraHelper().updatePosition();
-				break;
-			case CAMERA_ORIENTATION:
-				renderer.getCameraHelper().updateOrientation();
 				break;
 			case CAMERA_TARGET:
 				renderer.getCameraHelper().updateTarget();

@@ -1,19 +1,17 @@
 /*******************************************************************************************************
  *
- * CameraOrientationUnitExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CameraOrientationUnitExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.units;
 
-import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gaml.types.Types;
@@ -38,11 +36,7 @@ public class CameraOrientationUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public GamaPoint _value(final IScope sc) {
-		if (sc == null || !sc.isGraphics()) {
-			IDisplaySurface surface = GAMA.getGui().getFrontmostDisplaySurface();
-			if (surface != null) return surface.getData().getCameraOrientation().clone();
-			return null;
-		}
+		if (sc == null || !sc.isGraphics()) return null;
 		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IGraphics g = scope.getGraphics();
 		if (g.is2D()) return null;

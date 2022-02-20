@@ -70,7 +70,7 @@ experiment "3D view" type: gui {
 	
 	output {
 		layout #split;
-		display "Flow" type: opengl background: #white camera_location: {90.0,184.4875,144.4624} camera_target: {90.0,67.5,0.0} camera_orientation: {0.0,0.7771,0.6293} antialias: false {
+		display "Flow" type: opengl background: #white camera_location: {90.0,184.4875,144.4624} camera_target: {90.0,67.5,0.0}  antialias: false {
 			graphics world {
 				draw "Scale: " + z_scale color: #cadetblue font: font("Helvetica", 18, #bold) at: {world.location.x, -10, 25} anchor: #center depth: 2 rotate: -90::{1,0,0};
 				draw aabb wireframe: true color: #lightblue;

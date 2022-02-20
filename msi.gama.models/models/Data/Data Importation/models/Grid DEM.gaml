@@ -131,39 +131,39 @@ experiment "Meshes" type: gui {
 
 	output {
 		layout #split toolbars: false;
-		display "Large file, rectangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Large file, rectangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh europe wireframe: true border: #green refresh: false size: {1,1,0.2};
 		}
 		
-		display "Large file, triangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Large file, triangles, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh europe grayscale: true triangulation: true smooth: true refresh: false size: {1,1,0.2};
 		}
 		
-		display "Large file, triangles, smooth, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Large file, triangles, smooth, wireframe and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh europe wireframe: true triangulation: true border: #green refresh: false size: {1,1,0.2} smooth: true;
 		}
 
-		display "Triangles, grayscale, lines, colored and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Triangles, grayscale, lines, colored and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh grid_data size: {1, 1, 0.75}  triangulation: true border: #yellow color: #violet;
 		}
 
-		display "Triangles, textured, no scale" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Triangles, textured, no scale" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh grid_data texture: texture triangulation: true;
 		}
 		
-		display "Triangles, textured and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Triangles, textured and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh grid_data texture: texture triangulation: true scale: 0.75;
 		}
 		
-		display "Triangles, textured, smooth and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Triangles, textured, smooth and scaled" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh grid_data texture: texture smooth: true triangulation: true size: {1, 1, 0.75};
 		}
 		
-		display "Triangles, textured, scaled, with labels" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} camera_orientation: {0.0,0.7071,0.7071}{
+		display "Triangles, textured, scaled, with labels" type: opengl draw_env: false camera_location: {100.0,269.7056,169.7056} camera_target: {100.0,100.0,0.0} {
 			mesh grid_data texture: texture triangulation: true size: {1, 1, 0.5} text: true;
 		}
 
-		display "Large file, trianges, grayscale, scaled" type: opengl draw_env: false camera_location: {119.8782,301.7184,408.395} camera_target: {119.8782,-3.3383,103.3383} camera_orientation: {0.0,0.7071,0.7071} {
+		display "Large file, trianges, grayscale, scaled" type: opengl draw_env: false camera_location: {119.8782,301.7184,408.395} camera_target: {119.8782,-3.3383,103.3383}  {
 			mesh dem_file grayscale: true triangulation: true scale: 2.0;
 	}
 

@@ -87,7 +87,6 @@ public class LayerSideControls {
 	public Composite fill(final Composite parent, final LayeredDisplayView view) {
 
 		final Composite column = new Composite(parent, SWT.NONE);
-		// column.setBackground(IGamaColors.WHITE.color());
 		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
 		column.setLayoutData(data);
 		final GridLayout layout = new GridLayout(2, false);
@@ -95,7 +94,6 @@ public class LayerSideControls {
 		column.setLayout(layout);
 
 		final Composite viewersComposite = new Composite(parent, SWT.None);
-		// viewersComposite.setBackground(IGamaColors.WHITE.color());
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		viewersComposite.setLayoutData(data);
 		viewersComposite.setLayout(new GridLayout(1, true));
@@ -167,7 +165,7 @@ public class LayerSideControls {
 	}
 
 	/** The camera orientation. */
-	PointEditor cameraPos, cameraTarget, cameraOrientation;
+	PointEditor cameraPos, cameraTarget;
 
 	/** The preset. */
 	AbstractEditor preset;
@@ -202,7 +200,6 @@ public class LayerSideControls {
 			preset.setActive(!newValue);
 			cameraPos.setActive(!newValue);
 			cameraTarget.setActive(!newValue);
-			cameraOrientation.setActive(!newValue);
 			zoom.setActive(!newValue);
 			data.disableCameraInteractions(newValue);
 		});
@@ -224,15 +221,9 @@ public class LayerSideControls {
 					data.setCameraLookPos(newValue);
 					ds.updateDisplay(true);
 				});
-		cameraOrientation = (PointEditor) EditorFactory.create(scope, contents, "Orientation:",
-				data.getCameraOrientation(), (EditorListener<GamaPoint>) newValue -> {
-					data.setCameraOrientation(newValue);
-					ds.updateDisplay(true);
-				});
 		preset.setActive(!cameraLocked);
 		cameraPos.setActive(!cameraLocked);
 		cameraTarget.setActive(!cameraLocked);
-		cameraOrientation.setActive(!cameraLocked);
 		zoom.setActive(!cameraLocked);
 		data.addListener((p, v) -> {
 			switch (p) {
@@ -244,11 +235,6 @@ public class LayerSideControls {
 				case CAMERA_TARGET:
 					cameraTarget.getParam().setValue(scope, data.getCameraTarget());
 					cameraTarget.updateWithValueOfParameter();
-					copyCameraAndKeystoneDefinition(scope, data);
-					break;
-				case CAMERA_ORIENTATION:
-					cameraOrientation.getParam().setValue(scope, data.getCameraOrientation());
-					cameraOrientation.updateWithValueOfParameter();
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_PRESET:
@@ -625,8 +611,8 @@ public class LayerSideControls {
 				.append(new GamaPoint(cameraPos.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
 		text.append(" ").append(IKeyword.CAMERA_TARGET).append(": ")
 				.append(new GamaPoint(cameraTarget.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
-		text.append(" ").append(IKeyword.CAMERA_ORIENTATION).append(": ")
-				.append(new GamaPoint(cameraOrientation.getCurrentValue()).withPrecision(4).serialize(false));
+		// text.append(" ").append(IKeyword.CAMERA_ORIENTATION).append(": ")
+		// .append(new GamaPoint(cameraOrientation.getCurrentValue()).withPrecision(4).serialize(false));
 		return text.toString();
 	}
 

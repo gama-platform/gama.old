@@ -222,13 +222,15 @@ import msi.gaml.types.IType;
 						name = IKeyword.CAMERA_ORIENTATION,
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the orientation of the 'up-vector' of the camera")),
+						doc = @doc (
+								deprecated = "This facet is not used anymore. The orientation of the camera is computed automatically by GAMA",
+								value = "Allows to define the orientation of the 'up-vector' of the camera")),
 				@facet (
 						name = "camera_up_vector",
 						type = IType.POINT,
 						optional = true,
 						doc = @doc (
-								deprecated = "Use 'camera_orientation' instead",
+								deprecated = "This facet is not used anymore. The orientation of the camera is computed automatically by GAMA",
 								value = "Allows to define the orientation of the 'up-vector' of the camera")),
 				@facet (
 						name = IKeyword.CAMERA_LENS,

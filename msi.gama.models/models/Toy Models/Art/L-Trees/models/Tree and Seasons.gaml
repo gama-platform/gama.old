@@ -401,7 +401,7 @@ species fruit {
 
 experiment "Random" type: gui autorun: true {
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false fullscreen: true camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0} camera_orientation: {0.0,0.7071,0.7071}   {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false fullscreen: true camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0}    {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -422,7 +422,7 @@ experiment "4 simulations" type: gui autorun: true {
 	}
 
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0} camera_orientation: {0.0,0.7071,0.7071}  {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0}   {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -439,7 +439,7 @@ experiment L_Tri type: gui autorun: true {
 	float minimum_cycle_duration <- 0.0005;
 	float seed <- 0.05387546426306633;
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: true camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0} camera_orientation: {0.0,0.7071,0.7071}   {
+		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: true camera_location: {50.0,249.6629,199.6559} camera_target: {50.0,50.0,0.0}   {
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;

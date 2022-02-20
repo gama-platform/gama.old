@@ -44,34 +44,34 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 		PRESETS.put("Choose...", c -> {});
 		PRESETS.put("From top", c -> {
 			c.setPosition(c.getTarget().x, c.getTarget().y, c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			c.setUpVector(0, 1, 0);
+			// c.setUpVector(0, 1, 0);
 		});
 		PRESETS.put("From left", c -> {
 			c.setPosition(c.getTarget().x - c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y, 0);
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 		PRESETS.put("From up left", c -> {
 			c.setPosition(c.getTarget().x - c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y,
 					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 		PRESETS.put("From right", c -> {
 			c.setPosition(c.getTarget().x + c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y, 0);
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 		PRESETS.put("From up right", c -> {
 			c.setPosition(c.getTarget().x + c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y,
 					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 		PRESETS.put("From front", c -> {
 			c.setPosition(c.getTarget().x, c.getTarget().y - c.getRenderer().getEnvHeight() * c.getInitialZFactor(), 0);
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 		PRESETS.put("From up front", c -> {
 			c.setPosition(c.getTarget().x, c.getTarget().y - c.getRenderer().getEnvHeight() * c.getInitialZFactor(),
 					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			c.setUpVector(0, 0, 1);
+			// c.setUpVector(0, 0, 1);
 		});
 
 	}
@@ -110,10 +110,13 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 		if (camera != null) { camera.updatePosition(); }
 	}
 
-	@Override
-	public void updateOrientation() {
-		if (camera != null) { camera.updateOrientation(); }
-	}
+	/**
+	 * Update orientation.
+	 */
+	// @Override
+	// public void updateOrientation() {
+	// if (camera != null) { camera.updateOrientation(); }
+	// }
 
 	@Override
 	public void updateTarget() {
@@ -193,7 +196,12 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 		return UNDEFINED;
 	}
 
-	@Override
+	/**
+	 * Gets the orientation.
+	 *
+	 * @return the orientation
+	 */
+	// @Override
 	public GamaPoint getOrientation() {
 		if (camera != null) return camera.getOrientation();
 		return UNDEFINED;

@@ -105,7 +105,7 @@ species water skills: [dynamic_body] {
 experiment "3D View" type: gui {
 	output { 
 		//The initial orientation of the display makes water drops 'fall' slightly towards the user... calling (hopefully) from immediate action!
-		display Flow type: opengl background: #black draw_env: false camera_location: {50,300,150} camera_target: {dim/2,dim/2,10} camera_orientation: {0,1,0}{
+		display Flow type: opengl background: #black draw_env: false camera_location: {50,300,150} camera_target: {dim/2,dim/2,10} {
 			species water {draw shape color: color;}
 			species wall refresh: false {draw shape texture: image_file("../images/marble2.jpg");}
 			species pillarAndFloor refresh: false {draw shape texture: image_file("../images/marble.jpg");}

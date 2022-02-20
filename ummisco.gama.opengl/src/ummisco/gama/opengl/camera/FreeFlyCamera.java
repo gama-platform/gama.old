@@ -109,13 +109,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void setUpVector(final double xPos, final double yPos, final double zPos) {
-		// Not allowed for this camera
-	}
-
-	@Override
 	public void initialize() {
-		upVector.setLocation(up);
 		final LayeredDisplayData data = getRenderer().getData();
 		final double envWidth = data.getEnvWidth();
 		final double envHeight = data.getEnvHeight();
@@ -214,5 +208,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public GamaPoint getOrientation() { return up; }
 
 }

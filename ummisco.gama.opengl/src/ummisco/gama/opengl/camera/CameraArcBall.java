@@ -53,12 +53,6 @@ public class CameraArcBall extends AbstractCamera {
 		final double sinP = Math.sin(factorP);
 		final double radius = distance;
 		setPosition(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y, radius * cosP + target.z);
-		// See #2854 -- see if putting this here does not restrict the moves using the mouse
-		if (flipped) {
-			setUpVector(-(-cosT * cosP), -(-sinT * cosP), -sinP);
-		} else {
-			setUpVector(-cosT * cosP, -sinT * cosP, sinP);
-		}
 	}
 
 	/**
@@ -67,10 +61,8 @@ public class CameraArcBall extends AbstractCamera {
 	// @Override
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
-
 		final GamaPoint p = position.minus(target);
 		setDistance(p.norm());
-
 		theta = Maths.toDeg * Math.atan2(p.y, p.x);
 		// See issue on camera_pos
 		if (theta == 0) { theta = -90; }
@@ -96,9 +88,6 @@ public class CameraArcBall extends AbstractCamera {
 		final double theta_vect_x_norm = theta_vect_x * theta_vect_ratio;
 		final double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
 		final double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
-
-		setUpVector(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
-				-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
 
 		final double phi_vect_x = Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad);
 		final double phi_vect_y = Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad);
@@ -222,7 +211,6 @@ public class CameraArcBall extends AbstractCamera {
 					phi = 0;
 					theta = -90.00;
 				}
-				if (data.isCameraUpVectorDefined()) { updateOrientation(); }
 				updateSphericalCoordinatesFromLocations();
 			} else {
 				final double envWidth = data.getEnvWidth();
@@ -236,11 +224,9 @@ public class CameraArcBall extends AbstractCamera {
 			}
 			initialPosition = new GamaPoint(position);
 			initialTarget = new GamaPoint(target);
-			initialUpVector = new GamaPoint(upVector);
 		} else {
 			data.setCameraPos(initialPosition);
 			data.setCameraLookPos(initialTarget);
-			data.setCameraOrientation(initialUpVector);
 		}
 	}
 
