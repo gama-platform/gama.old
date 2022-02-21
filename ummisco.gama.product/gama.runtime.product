@@ -42,6 +42,8 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
+--illegal-access=warn
+--add-opens java.base/java.lang=ALL-UNNAMED
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread 
          -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -72,7 +74,6 @@
    </launcher>
 
    <vm>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-15</macos>
    </vm>
 
    <license>
