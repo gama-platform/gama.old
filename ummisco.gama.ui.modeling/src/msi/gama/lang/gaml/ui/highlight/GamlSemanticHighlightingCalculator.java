@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlSemanticHighlightingCalculator.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlSemanticHighlightingCalculator.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
@@ -74,7 +74,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 
 	/** The acceptor. */
 	private IHighlightedPositionAcceptor acceptor;
-	
+
 	/** The done. */
 	Set<INode> done = new HashSet<>();
 
@@ -84,9 +84,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		if (resource == null) return;
 		acceptor = arg1;
 		final var root = resource.getAllContents();
-		while (root.hasNext()) {
-			process(root.next());
-		}
+		while (root.hasNext()) { process(root.next()); }
 		done.clear();
 		highlightTasks(resource, acceptor);
 	}
@@ -94,20 +92,21 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Highlight tasks.
 	 *
-	 * @param resource the resource
-	 * @param acceptor the acceptor
+	 * @param resource
+	 *            the resource
+	 * @param acceptor
+	 *            the acceptor
 	 */
 	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
 		final var tasks = taskFinder.findTasks(resource);
-		for (final Task task : tasks) {
-			acceptor.addPosition(task.getOffset(), task.getTagLength(), TASK_ID);
-		}
+		for (final Task task : tasks) { acceptor.addPosition(task.getOffset(), task.getTagLength(), TASK_ID); }
 	}
 
 	/**
 	 * Process.
 	 *
-	 * @param object the object
+	 * @param object
+	 *            the object
 	 */
 	void process(final EObject object) {
 		if (object == null) return;
@@ -117,8 +116,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Process.
 	 *
-	 * @param object the object
-	 * @param clazz the clazz
+	 * @param object
+	 *            the object
+	 * @param clazz
+	 *            the clazz
 	 */
 	void process(final EObject object, final EClass clazz) {
 		final var id = clazz.getClassifierID();
@@ -191,7 +192,8 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Find name of.
 	 *
-	 * @param o the o
+	 * @param o
+	 *            the o
 	 * @return the string
 	 */
 	private String findNameOf(final EObject o) {
@@ -205,9 +207,12 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Sets the style.
 	 *
-	 * @param obj the obj
-	 * @param s the s
-	 * @param position the position
+	 * @param obj
+	 *            the obj
+	 * @param s
+	 *            the s
+	 * @param position
+	 *            the position
 	 * @return true, if successful
 	 */
 	private final boolean setStyle(final EObject obj, final String s, final int position) {
@@ -236,8 +241,10 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Sets the style.
 	 *
-	 * @param s the s
-	 * @param n the n
+	 * @param s
+	 *            the s
+	 * @param n
+	 *            the n
 	 * @return true, if successful
 	 */
 	private final boolean setStyle(final String s, final INode n) {
@@ -252,10 +259,14 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Sets the style.
 	 *
-	 * @param obj the obj
-	 * @param s the s
-	 * @param text the text
-	 * @param all the all
+	 * @param obj
+	 *            the obj
+	 * @param s
+	 *            the s
+	 * @param text
+	 *            the text
+	 * @param all
+	 *            the all
 	 * @return true, if successful
 	 */
 	private final boolean setStyle(final EObject obj, final String s, final String text, final boolean all) {
@@ -280,21 +291,24 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	/**
 	 * Equals facet or string.
 	 *
-	 * @param text the text
-	 * @param s the s
+	 * @param text
+	 *            the text
+	 * @param s
+	 *            the s
 	 * @return true, if successful
 	 */
 	boolean equalsFacetOrString(final String text, final String s) {
+		if (s == null || text == null) return false;
 		if (s.equals(text)) return true;
 		final var length = s.length();
-		final var first = s.charAt(0);
+		if (length == 0) return false;
 		final var last = s.charAt(length - 1);
 		switch (last) {
 			case ':':
 				return text.equals(s.substring(0, length - 1));
 			case '\"':
 			case '\'':
-				return first == last && text.equals(s.substring(1, length - 1));
+				return s.charAt(0) == last && text.equals(s.substring(1, length - 1));
 
 		}
 		return false;
