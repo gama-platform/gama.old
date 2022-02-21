@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AxesLayerObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AxesLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -83,7 +83,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	public AxesLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
 		// Addition to fix #2227
-		scale.setLocation(DEFAULT_SCALE);
+		currentList.scale.setLocation(DEFAULT_SCALE);
 		final double max = renderer.getMaxEnvDim();
 		arrow = (GamaShape) buildCone3D(max / 20, max / 8, ORIGIN);
 		dirs = new GamaPoint[] { new GamaPoint(max / 2, 0, 0), new GamaPoint(0, max / 2, 0),
@@ -94,7 +94,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	@Override
 	public void setScale(final GamaPoint s) {
 		if (s == null) {
-			scale = DEFAULT_SCALE;
+			currentList.scale.setLocation(DEFAULT_SCALE);
 		} else {
 			super.setScale(s);
 		}

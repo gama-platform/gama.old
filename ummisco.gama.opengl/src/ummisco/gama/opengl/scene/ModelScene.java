@@ -334,7 +334,7 @@ public class ModelScene {
 	 * Layer offset changed.
 	 */
 	public void layerOffsetChanged() {
-		layers.forEach((name, layer) -> { if (layer.canSplit()) { layer.computeOffset(); } });
+		layers.forEach((name, layer) -> { if (layer.canSplit()) { layer.recomputeOffset(); } });
 
 	}
 

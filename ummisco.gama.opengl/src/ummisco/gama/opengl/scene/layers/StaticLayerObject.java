@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StaticLayerObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * StaticLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -29,7 +29,8 @@ public class StaticLayerObject extends LayerObject {
 		/**
 		 * Instantiates a new world.
 		 *
-		 * @param renderer the renderer
+		 * @param renderer
+		 *            the renderer
 		 */
 		public World(final IOpenGLRenderer renderer) {
 			super(renderer);
@@ -41,23 +42,19 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
-		public void computeScale() {}
+		public void computeScale(final Trace list) {}
 
 		@Override
-		public void computeOffset() {}
+		public void computeOffset(final Trace list) {}
 
 		@Override
-		public boolean isLightInteraction() {
-			return false;
-		}
+		public boolean isLightInteraction() { return false; }
 
 		@Override
 		public void draw(final OpenGL gl) {
-			if (renderer.getPickingHelper().isPicking()) { return; }
+			if (renderer.getPickingHelper().isPicking()) return;
 
-			if (currentList.isEmpty()) {
-				fillWithObjects(currentList);
-			}
+			if (currentList.isEmpty()) { fillWithObjects(currentList); }
 
 			gl.suspendZTranslation();
 			final boolean previous = gl.setLighting(false);
@@ -68,14 +65,13 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
-		protected boolean isPickable() {
-			return false;
-		}
+		protected boolean isPickable() { return false; }
 
 		/**
 		 * Fill with objects.
 		 *
-		 * @param list the list
+		 * @param list
+		 *            the list
 		 */
 		public abstract void fillWithObjects(List<AbstractObject<?, ?>> list);
 	}
@@ -83,16 +79,15 @@ public class StaticLayerObject extends LayerObject {
 	/**
 	 * Instantiates a new static layer object.
 	 *
-	 * @param renderer the renderer
+	 * @param renderer
+	 *            the renderer
 	 */
 	public StaticLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer, null);
 	}
 
 	@Override
-	public boolean isStatic() {
-		return true;
-	}
+	public boolean isStatic() { return true; }
 
 	@Override
 	public void clear(final OpenGL gl) {}

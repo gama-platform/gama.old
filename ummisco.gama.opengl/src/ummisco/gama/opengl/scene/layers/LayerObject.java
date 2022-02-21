@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * LayerObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -57,11 +56,64 @@ public class LayerObject {
 	/** The Constant NULL_SCALE. */
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 
-	/** The offset. */
-	volatile GamaPoint offset = new GamaPoint(NULL_OFFSET);
+	/**
+	 * The Class Trace.
+	 */
+	class Trace extends ArrayList<AbstractObject<?, ?>> {
+		/** The offset. */
+		final GamaPoint offset = new GamaPoint(NULL_OFFSET);
+		/** The scale. */
+		final GamaPoint scale = new GamaPoint(NULL_SCALE);
 
-	/** The scale. */
-	volatile GamaPoint scale = new GamaPoint(NULL_SCALE);
+		/**
+		 * Instantiates a new trace.
+		 */
+		Trace() {
+			computeOffset();
+			computeScale();
+		}
+
+		/**
+		 * Compute scale.
+		 *
+		 * @return the gama point
+		 */
+		public void computeScale() {
+			LayerObject.this.computeScale(this);
+		}
+
+		/**
+		 * Compute offset.
+		 *
+		 * @return the gama point
+		 */
+		public void computeOffset() {
+			LayerObject.this.computeOffset(this);
+		}
+
+		/**
+		 * Gets the offset.
+		 *
+		 * @return the offset
+		 */
+		public GamaPoint getOffset() { return offset; }
+
+		/**
+		 * Gets the scale.
+		 *
+		 * @return the scale
+		 */
+		public GamaPoint getScale() { return scale; }
+
+		/**
+		 * As array.
+		 *
+		 * @return the abstract object[]
+		 */
+		public AbstractObject[] asArray() {
+			return toArray(new AbstractObject[size()]);
+		}
+	}
 
 	/** The alpha. */
 	protected volatile Double alpha = 1d;
@@ -82,10 +134,10 @@ public class LayerObject {
 	protected final IOpenGLRenderer renderer;
 
 	/** The traces. */
-	protected final LinkedList<List<AbstractObject<?, ?>>> traces;
+	protected final LinkedList<Trace> traces;
 
 	/** The current list. */
-	protected List<AbstractObject<?, ?>> currentList;
+	protected Trace currentList;
 
 	/** The open GL list index. */
 	protected volatile Integer openGLListIndex;
@@ -104,9 +156,7 @@ public class LayerObject {
 	public LayerObject(final IOpenGLRenderer renderer2, final ILayer layer) {
 		this.renderer = renderer2;
 		this.layer = layer;
-		computeOffset();
-		computeScale();
-		currentList = newCurrentList();
+		currentList = new Trace();
 		if (layer != null && layer.getData().getTrace() != null || renderer.useShader()) {
 			traces = new LinkedList();
 			traces.add(currentList);
@@ -118,10 +168,10 @@ public class LayerObject {
 	/**
 	 * Compute scale.
 	 */
-	public void computeScale() {
+	public void computeScale(final Trace list) {
 		double zScale = layer.getData().getSize().getZ();
 		if (zScale <= 0) { zScale = 1; }
-		scale.setLocation(renderer.getLayerWidth() / renderer.getWidth(),
+		list.scale.setLocation(renderer.getLayerWidth() / renderer.getWidth(),
 				renderer.getLayerHeight() / renderer.getHeight(), zScale);
 
 	}
@@ -129,12 +179,13 @@ public class LayerObject {
 	/**
 	 * Compute offset.
 	 */
-	public void computeOffset() {
+	public void computeOffset(final Trace list) {
 		final IScope scope = renderer.getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.POSITION);
 
 		if (expr != null) {
 			final boolean containsPixels = expr.findAny(e -> e instanceof PixelUnitExpression);
+			GamaPoint offset = list.offset;
 			offset.setLocation(Cast.asPoint(scope, expr.value(scope)));
 			if (Math.abs(offset.x) <= 1 && !containsPixels) { offset.x *= renderer.getEnvWidth(); }
 			if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
@@ -142,16 +193,16 @@ public class LayerObject {
 			if (offset.y < 0) { offset.y = renderer.getEnvHeight() - offset.y; }
 
 		}
-		increaseZ();
+		increaseZ(list);
 	}
 
 	/**
 	 * Increase Z.
 	 */
-	protected void increaseZ() {
+	protected void increaseZ(final Trace list) {
 		double currentZLayer = renderer.getMaxEnvDim() * layer.getData().getPosition().getZ();
 		currentZLayer += layer.getData().getAddedElevation() * renderer.getMaxEnvDim();
-		offset.z = currentZLayer;
+		list.offset.z = currentZLayer;
 	}
 
 	/**
@@ -160,16 +211,6 @@ public class LayerObject {
 	 * @return true, if is light interaction
 	 */
 	public boolean isLightInteraction() { return true; }
-
-	/**
-	 * New current list.
-	 *
-	 * @return the list
-	 */
-	protected List newCurrentList() {
-		return new ArrayList();
-		// return /* Collections.synchronizedList( */new ArrayList()/* ) */;
-	}
 
 	/**
 	 * Checks if is pickable.
@@ -186,7 +227,14 @@ public class LayerObject {
 	 */
 	public void draw(final OpenGL gl) {
 		if (isInvalid()) return;
-		prepareDrawing(gl);
+		if (hasDepth()) {
+			gl.getGL().glEnable(GL.GL_DEPTH_TEST);
+		} else {
+			// Addition to fix #2228 and #2222
+			gl.suspendZTranslation();
+			gl.getGL().glDisable(GL.GL_DEPTH_TEST);
+		}
+		gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW);
 		try {
 			doDrawing(gl);
 		} finally {
@@ -219,13 +267,20 @@ public class LayerObject {
 	 * @param gl
 	 *            the gl
 	 */
-	protected void prepareDrawing(final OpenGL gl) {
-		gl.getGL().glEnable(GL.GL_DEPTH_TEST);
-		gl.push(GLMatrixFunc.GL_MODELVIEW);
-		final GamaPoint nonNullOffset = getOffset();
-		gl.translateBy(nonNullOffset.x, -nonNullOffset.y, nonNullOffset.z);
-		final GamaPoint nonNullScale = getScale();
+	protected void prepareDrawing(final OpenGL gl, final Trace list) {
+		final GamaPoint nonNullOffset = list.getOffset();
+		gl.translateBy(nonNullOffset.x, -nonNullOffset.y, hasDepth() ? nonNullOffset.z : 0);
+		final GamaPoint nonNullScale = list.getScale();
 		gl.scaleBy(nonNullScale.x, nonNullScale.y, nonNullScale.z);
+	}
+
+	/**
+	 * Enable depth test.
+	 *
+	 * @return true, if successful
+	 */
+	protected boolean hasDepth() {
+		return true;
 	}
 
 	/**
@@ -254,7 +309,7 @@ public class LayerObject {
 				delta = size == 0 ? 0 : 1d / size;
 			}
 			double alpha = 0d;
-			for (final List<AbstractObject<?, ?>> list : traces) {
+			for (final Trace list : traces) {
 				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
 				drawObjects(gl, list, alpha, picking);
 			}
@@ -275,10 +330,10 @@ public class LayerObject {
 	 * @param picking
 	 *            the picking
 	 */
-	protected final void drawObjects(final OpenGL gl, final List<AbstractObject<?, ?>> list, final double alpha,
-			final boolean picking) {
+	protected final void drawObjects(final OpenGL gl, final Trace list, final double alpha, final boolean picking) {
+		prepareDrawing(gl, list);
 		gl.setCurrentObjectAlpha(alpha);
-		for (final AbstractObject object : list) { gl.getDrawerFor(object.type).draw(object, picking); }
+		for (final AbstractObject object : list.asArray()) { gl.getDrawerFor(object.type).draw(object, picking); }
 	}
 
 	/**
@@ -300,32 +355,19 @@ public class LayerObject {
 	public void setAlpha(final Double a) { alpha = a; }
 
 	/**
-	 * Gets the offset.
-	 *
-	 * @return the offset
-	 */
-	public GamaPoint getOffset() { return offset == null ? NULL_OFFSET : offset; }
-
-	/**
 	 * Sets the offset.
 	 *
 	 * @param offset
 	 *            the new offset
 	 */
 	public void setOffset(final GamaPoint offset) {
+
 		if (offset != null) {
-			this.offset = new GamaPoint(offset);
+			currentList.offset.setLocation(offset);
 		} else {
-			this.offset = null;
+			currentList.offset.setLocation(NULL_OFFSET);
 		}
 	}
-
-	/**
-	 * Gets the scale.
-	 *
-	 * @return the scale
-	 */
-	public GamaPoint getScale() { return scale == null ? NULL_SCALE : scale; }
 
 	/**
 	 * Sets the scale.
@@ -333,7 +375,9 @@ public class LayerObject {
 	 * @param scale
 	 *            the new scale
 	 */
-	public void setScale(final GamaPoint scale) { this.scale = new GamaPoint(scale); }
+	public void setScale(final GamaPoint scale) {
+		currentList.scale.setLocation(scale);
+	}
 
 	/**
 	 * Adds the string.
@@ -444,7 +488,7 @@ public class LayerObject {
 			isFading = getFading();
 			final int size = traces.size();
 			for (int i = 0, n = size - sizeLimit; i < n; i++) { traces.poll(); }
-			currentList = newCurrentList();
+			currentList = new Trace();
 			traces.offer(currentList);
 		} else {
 			currentList.clear();
@@ -535,6 +579,13 @@ public class LayerObject {
 	public void forceRedraw(final OpenGL gl) {
 		if (layer == null) {}
 
+	}
+
+	/**
+	 * Recompute offset.
+	 */
+	public void recomputeOffset() {
+		computeOffset(currentList);
 	}
 
 }

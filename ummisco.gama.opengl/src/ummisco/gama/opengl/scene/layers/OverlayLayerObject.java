@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * OverlayLayerObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * OverlayLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -47,8 +46,8 @@ public class OverlayLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void computeScale() {
-		scale.setLocation(0.9, 0.9, 1);
+	public void computeScale(final Trace list) {
+		list.scale.setLocation(0.9, 0.9, 1);
 	}
 
 	/**
@@ -79,15 +78,14 @@ public class OverlayLayerObject extends LayerObject {
 	@Override
 	public boolean isOverlay() { return true; }
 
+	/**
+	 * Increase Z.
+	 */
 	@Override
-	protected void increaseZ() {}
+	protected void increaseZ(final Trace list) {}
 
 	@Override
-	protected void prepareDrawing(final OpenGL gl) {
-		gl.getGL().glDisable(GL.GL_DEPTH_TEST);
-		// Addition to fix #2228 and #2222
-		gl.suspendZTranslation();
-		//
+	protected void prepareDrawing(final OpenGL gl, final Trace list) {
 		final double viewHeight = gl.getViewHeight();
 		final double viewWidth = gl.getViewWidth();
 		final double viewRatio = viewWidth / (viewHeight == 0 ? 1 : viewHeight);
@@ -100,18 +98,19 @@ public class OverlayLayerObject extends LayerObject {
 		} else {
 			gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
 		}
-		gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW);
-		// gl.push(GLMatrixFunc.GL_MODELVIEW);
-		final GamaPoint nonNullOffset = getOffset();
-		gl.translateBy(nonNullOffset.x, -nonNullOffset.y, 0);
-		final GamaPoint nonNullScale = getScale();
-		gl.scaleBy(nonNullScale.x, nonNullScale.y, nonNullScale.z);
+		super.prepareDrawing(gl, list);
+		addFrame(gl);
+	}
+
+	@Override
+	protected boolean hasDepth() {
+		return false;
 	}
 
 	@Override
 	protected void doDrawing(final OpenGL gl) {
 		if (!renderer.getPickingHelper().isPicking()) {
-			addFrame(gl);
+
 			drawObjects(gl, currentList, alpha, false);
 		}
 	}
