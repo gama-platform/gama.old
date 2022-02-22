@@ -14,6 +14,6 @@
 	<classpathentry kind="lib" path="ext/jSerialComm-1.3.11.jar"/>
 	<classpathentry kind="lib" path="ext/arduino.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
