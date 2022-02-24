@@ -23,7 +23,6 @@ Export-Package: org.eclipse.paho.client.mqttv3,
    msi.gama.metamodel.agent,
    msi.gama.runtime,
    ummisco.gama.network.common",
- ummisco.gama.network.test;uses:="msi.gaml.skills",
  ummisco.gama.network.udp;
   uses:="msi.gama.extensions.messaging,
    msi.gama.metamodel.agent,

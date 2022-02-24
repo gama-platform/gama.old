@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package ummisco.gama.network.test;
+package ummisco.gaml.extensions.music;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

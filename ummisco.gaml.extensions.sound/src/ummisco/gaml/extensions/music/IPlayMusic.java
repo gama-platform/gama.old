@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package ummisco.gama.network.test;
+package ummisco.gaml.extensions.music;
 
 /**
  * The Interface IPlayMusic.
