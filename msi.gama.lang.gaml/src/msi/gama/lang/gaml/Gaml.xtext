@@ -215,7 +215,7 @@ TypeFacetKey:
 
 
 SpecialFacetKey:
-	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "layout:" | 
+	'camera:' | 'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "layout:" | 
 	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
 ActionFacetKey:

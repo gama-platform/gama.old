@@ -4319,113 +4319,119 @@ ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
 	leaveRule();
 }:
 	(
+		kw='camera:'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getCameraKeyword_0());
+		}
+		    |
 		kw='data:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getDataKeyword_0());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getDataKeyword_1());
 		}
 		    |
 		(
 			kw='when'
 			{
 				$current.merge(kw);
-				newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getWhenKeyword_1_0());
+				newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getWhenKeyword_2_0());
 			}
 			kw=':'
 			{
 				$current.merge(kw);
-				newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getColonKeyword_1_1());
+				newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getColonKeyword_2_1());
 			}
 		)
 		    |
 		kw='const:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getConstKeyword_2());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getConstKeyword_3());
 		}
 		    |
 		kw='value:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getValueKeyword_3());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getValueKeyword_4());
 		}
 		    |
 		kw='topology:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getTopologyKeyword_4());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getTopologyKeyword_5());
 		}
 		    |
 		kw='item:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getItemKeyword_5());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getItemKeyword_6());
 		}
 		    |
 		kw='init:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getInitKeyword_6());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getInitKeyword_7());
 		}
 		    |
 		kw='message:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getMessageKeyword_7());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getMessageKeyword_8());
 		}
 		    |
 		kw='control:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getControlKeyword_8());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getControlKeyword_9());
 		}
 		    |
 		kw='layout:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getLayoutKeyword_9());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getLayoutKeyword_10());
 		}
 		    |
 		kw='environment:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getEnvironmentKeyword_10());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getEnvironmentKeyword_11());
 		}
 		    |
 		kw='text:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getTextKeyword_11());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getTextKeyword_12());
 		}
 		    |
 		kw='image:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getImageKeyword_12());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getImageKeyword_13());
 		}
 		    |
 		kw='using:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_13());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_14());
 		}
 		    |
 		kw='parameter:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getParameterKeyword_14());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getParameterKeyword_15());
 		}
 		    |
 		kw='aspect:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_15());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_16());
 		}
 		    |
 		kw='light:'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getLightKeyword_16());
+			newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getLightKeyword_17());
 		}
 	)
 ;

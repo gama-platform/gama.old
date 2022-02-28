@@ -54,4 +54,5 @@ Export-Package: msi.gama.lang.gaml.ide,
 Bundle-Activator: ummisco.gama.ui.modeling.internal.ModelingActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.ui.modeling
-Import-Package: msi.gama.headless.core
+Import-Package: msi.gama.headless.core,
+ org.apache.log4j

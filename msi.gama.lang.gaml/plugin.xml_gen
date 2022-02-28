@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 	<extension point="org.eclipse.emf.ecore.generated_package">
-		<package 
+		<package
 			uri = "http://www.gama.msi/lang/gaml/Gaml"
 			class = "msi.gama.lang.gaml.gaml.GamlPackage"
 			genModel = "model/generated/Gaml.genmodel" />
