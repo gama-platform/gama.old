@@ -106,10 +106,10 @@ experiment "3D view" type: gui {
 	parameter "Show legend" var: show_legend <- true;
 	output {
 		
-		display "3D" type: opengl draw_env: false background: #black camera_location: {49.7973,137.5162,95.6058} camera_target: {50.2918,44.9051,6.1638} antialias: false {
+		display "3D" type: opengl draw_env: false background: #black camera:#from_up_front antialias: false {
 			graphics title {
 				if (show_legend) {
-					draw "Average height " + (patches mean_of each.grid_value) with_precision 2 + " / # of lava agents " + length(lava) color: #cadetblue font: title at: {world.location.x, 100, patches max_of each.grid_value + 10} anchor: #center depth: 2 rotate: -20::{1,0,0};
+					draw "Average height " + (patches mean_of each.grid_value) with_precision 2 + " / # of lava agents " + length(lava) color: #white font: title at: {world.location.x, 100, patches max_of each.grid_value + 10} anchor: #center depth: 2 rotate: -20::{1,0,0};
 				}
 			}
 			//The terrain is represented as a field (but could be equally represented as a grid		

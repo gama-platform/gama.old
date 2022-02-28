@@ -59,18 +59,23 @@ species water skills: [dynamic_body] {
 
 experiment "3D view" type: gui {
 	
+	string camera_loc <- #from_above;
+	int distance <- 200;
+	
 	action _init_ {
 		create simulation with: [z_scale::0.3];
 		create simulation with: [z_scale::1.0];
 		create simulation with: [z_scale::2.0];
 		create simulation with: [z_scale::3.0];
 	} 
-	
-	parameter "Number of water agents per cycle" var: number_of_water_units;
+	parameter "Location of the camera" var: camera_loc among: [#from_above, #from_up_left, #from_up_right, #from_up_front];
+	parameter "Distance of the camera" var: distance min: 1 max: 1000 slider: true;
+ 	parameter "Number of water agents per cycle" var: number_of_water_units;
 	
 	output {
 		layout #split;
-		display "Flow" type: opengl background: #white camera_location: {90.0,184.4875,144.4624} camera_target: {90.0,67.5,0.0}  antialias: false {
+		display "Flow" type: opengl background: #white   antialias: false {
+			camera default location: camera_loc distance: distance dynamic: true;
 			graphics world {
 				draw "Scale: " + z_scale color: #cadetblue font: font("Helvetica", 18, #bold) at: {world.location.x, -10, 25} anchor: #center depth: 2 rotate: -90::{1,0,0};
 				draw aabb wireframe: true color: #lightblue;

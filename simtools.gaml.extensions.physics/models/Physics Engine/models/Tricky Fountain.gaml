@@ -65,7 +65,7 @@ global parent: physical_world {
 	//is of course not implemented here, but left as a future exercise ! 
 	reflex compute_gravity {
 		point p <- #camera_location - #camera_target;
-		p <- {p.x = 0 ? 1 : p.x, p.y = 0 ? 1 : p.y, p.z = 0 ? 1 : p.z};
+		p <- {p.x = 0 ? 1 : p.x, p.y = 0 ? -1 : -p.y, p.z = 0 ? 1 : p.z};
 		point g <- {0, -1 / (p.y) * signum(p.z), -2 / abs(p.z)};
 		gravity <- g / norm(g) * 9.81;
 	}
@@ -105,7 +105,8 @@ species water skills: [dynamic_body] {
 experiment "3D View" type: gui {
 	output { 
 		//The initial orientation of the display makes water drops 'fall' slightly towards the user... calling (hopefully) from immediate action!
-		display Flow type: opengl background: #black draw_env: false camera_location: {50,300,150} camera_target: {dim/2,dim/2,10} {
+		display Flow type: opengl background: #black draw_env: false  {
+			camera default location: {50,300,150} target: {dim/2,dim/2,10};
 			species water {draw shape color: color;}
 			species wall refresh: false {draw shape texture: image_file("../images/marble2.jpg");}
 			species pillarAndFloor refresh: false {draw shape texture: image_file("../images/marble.jpg");}

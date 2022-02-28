@@ -113,7 +113,7 @@ species people skills: [moving]
 
 	}
 
-	aspect base
+	aspect default
 	{
 		draw sphere(3) color: color;
 	}
@@ -152,9 +152,9 @@ experiment road_traffic type: gui
 	{
 		display city_display type: opengl 
 		{
-			species building aspect: base refresh: true;
-			species road aspect: base ;
-			species people aspect: base;
+			species building aspect: base refresh: false;
+			species road aspect: base refresh: false;
+			species people refresh: true;
 		}
 	}
 
@@ -194,7 +194,7 @@ experiment road_traffic_multi_layer type: gui
 		{
 			species road aspect: base;
 			species building aspect: base position: { 0, 0, 0.25 };
-			species people aspect: base position: { 0, 0, 0.5 };
+			species people position: { 0, 0, 0.5 };
 		}
 	}
 }

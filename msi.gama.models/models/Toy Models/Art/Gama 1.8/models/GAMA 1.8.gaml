@@ -49,7 +49,6 @@ global control: fsm {
 		runners <- list(runner);
 	}
 
-
 	action one_step {
 		ask runners {
 			do goto target: target speed: 2 * size / #s;
@@ -57,7 +56,6 @@ global control: fsm {
 
 		runners <- runners select (each.location != each.target.location);
 	}
-
 
 	init {
 		ask (list(background) every 16) {
@@ -70,20 +68,24 @@ global control: fsm {
 				my_shape <- cube(rnd(size, size * 2));
 				depth <- rnd(size * 2);
 			}
+
 		}
-        ask runner {
-				my_shape <- cube(rnd(size, size * 2));
-				depth <- rnd(size * 2);
+
+		ask runner {
+			my_shape <- cube(rnd(size, size * 2));
+			depth <- rnd(size * 2);
 		}
+
 		transition to: phase1 when: cycle = 10;
 	}
 
-	state phase1{
+	state phase1 {
 		enter {
 			ask runner {
 				my_shape <- cube(rnd(size, size * 2));
 				depth <- rnd(size * 2);
 			}
+
 			do load_image("../includes/logo.png");
 		}
 
@@ -125,18 +127,23 @@ global control: fsm {
 				if (flip(0.2)) {
 					do die;
 				}
+
 			}
+
 			ask (runner select (each.color = yellow)) {
 				create people with: (location: location);
 				do die;
 			}
+
 			ask (runner select (each.color = orange)) {
 				create roads with: (location: location);
 				do die;
 			}
+
 			ask runner {
 				target <- one_of(town_file.contents);
 			}
+
 			runners <- list(runner);
 		}
 
@@ -147,9 +154,9 @@ global control: fsm {
 			}
 
 		}
+
 		runners <- runners select (each.location != each.target.location);
-	} 	
-	}
+	} }
 
 grid background width: 297 height: 297;
 
@@ -162,6 +169,7 @@ species roads skills: [moving] {
 		if (location = target.location) {
 			my_shape <- target + size / 8;
 		}
+
 	}
 
 	aspect default {
@@ -171,20 +179,22 @@ species roads skills: [moving] {
 }
 
 species people skills: [moving] {
-	
-	init{
-		target<-one_of(road_file.contents);
+
+	init {
+		target <- one_of(road_file.contents);
 	}
+
 	geometry target;
 	rgb color;
-	
-	reflex move when:target != nil {
+
+	reflex move when: target != nil {
 		do goto on: the_graph target: target speed: 2 * size / #s;
 		if (location = target.location) {
-			target<-one_of(road_file.contents);
+			target <- one_of(road_file.contents);
 		}
+
 	}
-	
+
 	aspect default {
 		draw circle(size / 4) color: yellow at: location + {0, 0, size};
 	}
@@ -198,10 +208,10 @@ species runner skills: [moving] {
 	float depth;
 }
 
-experiment "Run me !" type: gui  autorun: true {
+experiment "Run me !" type: gui autorun: true {
 	output {
-		display "1.8" type: opengl fullscreen: true toolbar: #black background: #black draw_env: false 
-			camera_location: {1298.0375, 3277.2938, 2177.5545} camera_target: {1261.3366, 1174.7007, 0.0} {
+		display "1.8" type: opengl fullscreen: true toolbar: #black background: #black draw_env: false {
+			camera default location: {1298.0375, 3277.2938, 2177.5545} target: {1261.3366, 1174.7007, 0.0};
 			species roads;
 			species runner {
 				draw my_shape at: location depth: depth color: color;

@@ -16,7 +16,7 @@ model pool3D
 global parent: physical_world {
 	// The dynamics of the agents is a bit different if we use the native (3.0.x) or Java version (2.8.x) of Bullet
 	bool use_native_library <- false;
-	string library <- "box2D";
+	string library <- "bullet";
 	//All the physical characteristics of the balls can be accessed here and modified at will by the user
 	float ball_damping <- 0.05 min: 0.0 max: 1.0 on_change: {ask ball {damping<-ball_damping;}};
 	float ball_restitution <- 0.8  min: 0.0 max: 1.0 on_change: {ask ball {restitution<-ball_restitution;}};
@@ -150,14 +150,14 @@ species ball skills: [dynamic_body] {
 	}
 
 	aspect default {
-		draw shape color: color;
+		draw  sphere(5) color: color;
 		draw aabb wireframe: true border: #lightblue;
 
 	}
 
 }
 
-experiment "Play !" type: gui autorun: true {
+experiment "Play !" type: gui autorun: true   {
 	parameter "Ball Restitution" var: ball_restitution category: "Ball properties" ;
 	parameter "Ball Damping (natural deceleration)" var: ball_damping category: "Ball properties" ;
 	parameter "Ball Friction" var: ball_friction category: "Ball properties" ;
@@ -178,7 +178,8 @@ experiment "Play !" type: gui autorun: true {
 	}
 	
 	output {
-		display Pool type: opengl  background: #white draw_env: false  camera_location: {100.0,400.0,300.0} camera_target: {width/2,height/2,-20.0}  {
+		display Pool type: opengl antialias: false {
+			camera default location: {100.0,400.0,300.0} target: {width/2,height/2,-20.0};
 			graphics user {
 				if (white != nil) and (target != nil) {
 					draw line(white, target) color: #white end_arrow: 3;
@@ -203,9 +204,8 @@ experiment "Play !" type: gui autorun: true {
 			species ground refresh: false {
 				draw shape texture: image_file("../images/mat.jpg");
 				draw aabb wireframe: true border: #lightblue;
-				
 			}
-			species wall refresh: false;
+			species wall refresh:false;
 			species ball;
 		}
 
