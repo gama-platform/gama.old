@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IShape.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IShape.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -39,6 +38,10 @@ import msi.gaml.types.IType;
  * @since 16 avr. 2011
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
  *
+ */
+
+/**
+ * The Interface IShape.
  */
 @vars ({ @variable (
 		name = "area",
@@ -101,10 +104,10 @@ import msi.gaml.types.IType;
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
 public interface IShape extends ILocated, IValue, IAttributed {
-	
+
 	/** The jts types. */
 	Map<String, Type> JTS_TYPES = GamaMapFactory.createUnordered();
-	
+
 	/** The threed types. */
 	Set<Type> THREED_TYPES = new HashSet<>();
 
@@ -112,83 +115,84 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 * The Enum Type.
 	 */
 	enum Type {
-		
+
 		/** The box. */
 		BOX("3D"),
-		
+
 		/** The circle. */
 		CIRCLE("3D"),
-		
+
 		/** The cone. */
 		CONE("3D"),
-		
+
 		/** The cube. */
 		CUBE("3D"),
-		
+
 		/** The square. */
 		SQUARE("3D"),
-		
+
 		/** The rounded. */
 		ROUNDED(""),
-		
+
 		/** The cylinder. */
 		CYLINDER("3D"),
-		
+
 		/** The gridline. */
 		GRIDLINE(""),
-		
+
 		/** The linearring. */
 		LINEARRING("LinearRing"),
-		
+
 		/** The linestring. */
 		LINESTRING("LineString"),
-		
+
 		/** The multilinestring. */
 		MULTILINESTRING("MultiLineString"),
-		
+
 		/** The multipoint. */
 		MULTIPOINT("MultiPoint"),
-		
+
 		/** The multipolygon. */
 		MULTIPOLYGON("MultiPolygon"),
-		
+
 		/** The null. */
 		NULL(""),
-		
+
 		/** The plan. */
 		PLAN("3D"),
-		
+
 		/** The point. */
 		POINT("Point"),
-		
+
 		/** The polygon. */
 		POLYGON("Polygon"),
-		
+
 		/** The polyhedron. */
 		POLYHEDRON("3D"),
-		
+
 		/** The polyplan. */
 		POLYPLAN("3D"),
-		
+
 		/** The pyramid. */
 		PYRAMID("3D"),
-		
+
 		/** The sphere. */
 		SPHERE("3D"),
-		
+
 		/** The teapot. */
 		TEAPOT("3D"),
-		
+
 		/** The linecylinder. */
 		LINECYLINDER("3D"),
-		
+
 		/** The threed file. */
 		THREED_FILE("");
 
 		/**
 		 * Instantiates a new type.
 		 *
-		 * @param name the name
+		 * @param name
+		 *            the name
 		 */
 		Type(final String name) {
 			if (name.isEmpty()) return;
@@ -206,7 +210,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i shape
 	 */
 	@Override
@@ -215,15 +220,17 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Covers.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return true, if successful
 	 */
 	boolean covers(IShape g);
-	
+
 	/**
 	 * Partially overlaps.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return true, if successful
 	 */
 	boolean partiallyOverlaps(IShape g);
@@ -231,7 +238,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Touches.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return true, if successful
 	 */
 	boolean touches(IShape g);
@@ -239,7 +247,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Crosses.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return true, if successful
 	 */
 	boolean crosses(IShape g);
@@ -252,7 +261,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Euclidian distance to.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return the double
 	 */
 	double euclidianDistanceTo(GamaPoint g);
@@ -260,7 +270,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Euclidian distance to.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return the double
 	 */
 	double euclidianDistanceTo(IShape g);
@@ -305,7 +316,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Intersects.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return true, if successful
 	 */
 	boolean intersects(IShape g);
@@ -327,28 +339,32 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Sets the agent.
 	 *
-	 * @param agent the new agent
+	 * @param agent
+	 *            the new agent
 	 */
 	void setAgent(IAgent agent);
 
 	/**
 	 * Sets the geometry.
 	 *
-	 * @param g the new geometry
+	 * @param g
+	 *            the new geometry
 	 */
 	void setGeometry(IShape g);
 
 	/**
 	 * Sets the inner geometry.
 	 *
-	 * @param intersection the new inner geometry
+	 * @param intersection
+	 *            the new inner geometry
 	 */
 	void setInnerGeometry(Geometry intersection);
 
 	/**
 	 * Sets the depth.
 	 *
-	 * @param depth the new depth
+	 * @param depth
+	 *            the new depth
 	 */
 	void setDepth(double depth);
 
@@ -412,7 +428,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Gets the exterior ring.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the exterior ring
 	 */
 	@getter ("contour")
@@ -441,6 +458,13 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 */
 	@getter ("depth")
 	Double getDepth();
+
+	/**
+	 * Gets the max dimension.
+	 *
+	 * @return the max dimension
+	 */
+	default Double getMaxDimension() { return Math.max(Math.max(getHeight(), getWidth()), getDepth()); }
 
 	/**
 	 * Gets the geometric envelope.
@@ -481,7 +505,8 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	/**
 	 * Sets the geometrical type.
 	 *
-	 * @param t the new geometrical type
+	 * @param t
+	 *            the new geometrical type
 	 */
 	void setGeometricalType(Type t);
 
