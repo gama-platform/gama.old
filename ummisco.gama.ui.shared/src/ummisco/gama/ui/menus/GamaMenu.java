@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMenu.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMenu.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.menus;
 
@@ -31,8 +31,10 @@ public abstract class GamaMenu {
 	/**
 	 * Separate.
 	 *
-	 * @param parent the parent
-	 * @param s the s
+	 * @param parent
+	 *            the parent
+	 * @param s
+	 *            the s
 	 * @return the menu item
 	 */
 	public static MenuItem separate(final Menu parent, final String s) {
@@ -45,7 +47,8 @@ public abstract class GamaMenu {
 	/**
 	 * Separate.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the menu item
 	 */
 	public static MenuItem separate(final Menu parent) {
@@ -58,8 +61,10 @@ public abstract class GamaMenu {
 	/**
 	 * Creates the item.
 	 *
-	 * @param m the m
-	 * @param style the style
+	 * @param m
+	 *            the m
+	 * @param style
+	 *            the style
 	 * @return the menu item
 	 */
 	public static MenuItem createItem(final Menu m, final int style) {
@@ -76,7 +81,8 @@ public abstract class GamaMenu {
 	/**
 	 * Sep.
 	 *
-	 * @param m the m
+	 * @param m
+	 *            the m
 	 */
 	public final void sep(final Menu m) {
 		createItem(m, SWT.SEPARATOR);
@@ -85,8 +91,10 @@ public abstract class GamaMenu {
 	/**
 	 * Sep.
 	 *
-	 * @param m the m
-	 * @param s the s
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
 	 */
 	protected final void sep(final Menu m, final String s) {
 		final MenuItem me = createItem(m, SWT.NONE);
@@ -97,8 +105,10 @@ public abstract class GamaMenu {
 	/**
 	 * Title.
 	 *
-	 * @param m the m
-	 * @param s the s
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
 	 */
 	protected final void title(final Menu m, final String s) {
 		sep(m);
@@ -109,8 +119,10 @@ public abstract class GamaMenu {
 	/**
 	 * Action.
 	 *
-	 * @param s the s
-	 * @param listener the listener
+	 * @param s
+	 *            the s
+	 * @param listener
+	 *            the listener
 	 * @return the menu item
 	 */
 	protected final MenuItem action(final String s, final SelectionListener listener) {
@@ -120,9 +132,12 @@ public abstract class GamaMenu {
 	/**
 	 * Action.
 	 *
-	 * @param s the s
-	 * @param listener the listener
-	 * @param image the image
+	 * @param s
+	 *            the s
+	 * @param listener
+	 *            the listener
+	 * @param image
+	 *            the image
 	 * @return the menu item
 	 */
 	protected final MenuItem action(final String s, final SelectionListener listener, final Image image) {
@@ -132,9 +147,12 @@ public abstract class GamaMenu {
 	/**
 	 * Action.
 	 *
-	 * @param m the m
-	 * @param s the s
-	 * @param listener the listener
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
+	 * @param listener
+	 *            the listener
 	 * @return the menu item
 	 */
 	public final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
@@ -144,29 +162,35 @@ public abstract class GamaMenu {
 	/**
 	 * Action.
 	 *
-	 * @param m the m
-	 * @param s the s
-	 * @param listener the listener
-	 * @param image the image
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
+	 * @param listener
+	 *            the listener
+	 * @param image
+	 *            the image
 	 * @return the menu item
 	 */
 	public static MenuItem action(final Menu m, final String s, final SelectionListener listener, final Image image) {
 		final MenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
 		action.addSelectionListener(listener);
-		if (image != null) {
-			action.setImage(image);
-		}
+		if (image != null) { action.setImage(image); }
 		return action;
 	}
 
 	/**
 	 * Check.
 	 *
-	 * @param m the m
-	 * @param s the s
-	 * @param select the select
-	 * @param listener the listener
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
+	 * @param select
+	 *            the select
+	 * @param listener
+	 *            the listener
 	 * @return the menu item
 	 */
 	protected final MenuItem check(final Menu m, final String s, final boolean select,
@@ -177,11 +201,16 @@ public abstract class GamaMenu {
 	/**
 	 * Check.
 	 *
-	 * @param m the m
-	 * @param s the s
-	 * @param select the select
-	 * @param listener the listener
-	 * @param image the image
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
+	 * @param select
+	 *            the select
+	 * @param listener
+	 *            the listener
+	 * @param image
+	 *            the image
 	 * @return the menu item
 	 */
 	public static final MenuItem check(final Menu m, final String s, final boolean select,
@@ -190,16 +219,15 @@ public abstract class GamaMenu {
 		action.setText(s);
 		action.setSelection(select);
 		action.addSelectionListener(listener);
-		if (image != null) {
-			action.setImage(image);
-		}
+		if (image != null) { action.setImage(image); }
 		return action;
 	}
 
 	/**
 	 * Sub.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the menu
 	 */
 	protected final Menu sub(final String s) {
@@ -209,8 +237,10 @@ public abstract class GamaMenu {
 	/**
 	 * Sub.
 	 *
-	 * @param parent the parent
-	 * @param s the s
+	 * @param parent
+	 *            the parent
+	 * @param s
+	 *            the s
 	 * @return the menu
 	 */
 	public final Menu sub(final Menu parent, final String s) {
@@ -220,17 +250,18 @@ public abstract class GamaMenu {
 	/**
 	 * Sub.
 	 *
-	 * @param parent the parent
-	 * @param s the s
-	 * @param t the t
+	 * @param parent
+	 *            the parent
+	 * @param s
+	 *            the s
+	 * @param t
+	 *            the t
 	 * @return the menu
 	 */
 	public static Menu sub(final Menu parent, final String s, final String t) {
 		final MenuItem item = createItem(parent, SWT.CASCADE);
 		item.setText(s);
-		if (t != null) {
-			item.setToolTipText(t);
-		}
+		if (t != null) { item.setToolTipText(t); }
 		final Menu m = new Menu(item);
 		item.setMenu(m);
 		return m;
@@ -241,17 +272,27 @@ public abstract class GamaMenu {
 	 */
 	public void reset() {
 		if (mainMenu != null && !mainMenu.isDisposed()) {
-			for (final MenuItem item : mainMenu.getItems()) {
-				item.dispose();
-			}
+			for (final MenuItem item : mainMenu.getItems()) { item.dispose(); }
 		}
 	}
 
 	/**
 	 * Open.
 	 *
-	 * @param c the c
-	 * @param trigger the trigger
+	 * @param trigger
+	 *            the trigger
+	 */
+	public void open(final SelectionEvent trigger) {
+		if (trigger.widget instanceof Control c) { this.open(c, trigger); }
+	}
+
+	/**
+	 * Open.
+	 *
+	 * @param c
+	 *            the c
+	 * @param trigger
+	 *            the trigger
 	 */
 	public void open(final Control c, final SelectionEvent trigger) {
 		open(c, trigger, 0);
@@ -260,11 +301,32 @@ public abstract class GamaMenu {
 	/**
 	 * Open.
 	 *
-	 * @param c the c
-	 * @param trigger the trigger
-	 * @param verticalOffset the vertical offset
+	 * @param c
+	 *            the c
+	 * @param trigger
+	 *            the trigger
+	 * @param verticalOffset
+	 *            the vertical offset
 	 */
 	public void open(final Control c, final SelectionEvent trigger, final int verticalOffset) {
+
+		open(c, trigger, verticalOffset, 0);
+	}
+
+	/**
+	 * Open.
+	 *
+	 * @param c
+	 *            the c
+	 * @param trigger
+	 *            the trigger
+	 * @param verticalOffset
+	 *            the vertical offset
+	 * @param horizontalOffset
+	 *            the horizontal offset
+	 */
+	public void open(final Control c, final SelectionEvent trigger, final int verticalOffset,
+			final int horizontalOffset) {
 
 		if (mainMenu == null || mainMenu.isDisposed() || mainMenu.getItemCount() == 0) {
 			mainMenu = new Menu(c.getShell(), SWT.POP_UP);
@@ -272,7 +334,7 @@ public abstract class GamaMenu {
 		}
 
 		final Point point = c.toDisplay(new Point(trigger.x, trigger.y));
-		mainMenu.setLocation(point.x, point.y + verticalOffset);
+		mainMenu.setLocation(point.x + horizontalOffset, point.y + verticalOffset);
 		mainMenu.setVisible(true);
 	}
 
