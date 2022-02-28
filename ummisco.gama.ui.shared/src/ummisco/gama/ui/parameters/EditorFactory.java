@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import java.util.List;
+import java.util.Collection;
 
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
@@ -243,7 +243,7 @@ public class EditorFactory {
 	 * @return the string editor
 	 */
 	public static AbstractEditor choose(final IScope scope, final EditorsGroup parent, final String title,
-			final String value, final List<String> among, final EditorListener<String> whenModified) {
+			final String value, final Collection<String> among, final EditorListener<String> whenModified) {
 		AbstractEditor ed =
 				instance.create(scope, null, new InputParameter(title, value, Types.STRING, among), whenModified);
 		ed.createControls(parent);
