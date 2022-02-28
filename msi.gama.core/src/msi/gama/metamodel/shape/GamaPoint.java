@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaPoint.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaPoint.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -72,8 +71,10 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Instantiates a new gama point.
 	 *
-	 * @param x the x
-	 * @param y the y
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	public GamaPoint(final double x, final double y) {
 		setLocation(x, y, 0d);
@@ -82,9 +83,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Instantiates a new gama point.
 	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param z the z
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
 	 */
 	public GamaPoint(final double x, final double y, final double z) {
 		setLocation(x, y, z);
@@ -93,7 +97,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Instantiates a new gama point.
 	 *
-	 * @param coord the coord
+	 * @param coord
+	 *            the coord
 	 */
 	public GamaPoint(final Coordinate coord) {
 		if (coord == null) {
@@ -106,7 +111,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Smaller than.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return true, if successful
 	 */
 	public boolean smallerThan(final GamaPoint other) {
@@ -116,7 +122,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Smaller than or equal to.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return true, if successful
 	 */
 	public boolean smallerThanOrEqualTo(final GamaPoint other) {
@@ -126,7 +133,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Bigger than.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return true, if successful
 	 */
 	public boolean biggerThan(final GamaPoint other) {
@@ -136,7 +144,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Bigger than or equal to.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return true, if successful
 	 */
 	public boolean biggerThanOrEqualTo(final GamaPoint other) {
@@ -152,9 +161,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Sets the location.
 	 *
-	 * @param x the x
-	 * @param y the y
-	 * @param z the z
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
+	 * @param z
+	 *            the z
 	 * @return the gama point
 	 */
 	public GamaPoint setLocation(final double x, final double y, final double z) {
@@ -185,51 +197,35 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	}
 
 	@Override
-	public void setX(final double xx) {
-		x = xx;
-	}
+	public void setX(final double xx) { x = xx; }
 
 	@Override
-	public void setY(final double yy) {
-		y = yy;
-	}
+	public void setY(final double yy) { y = yy; }
 
 	@Override
-	public void setZ(final double zz) {
-		z = Double.isNaN(zz) ? 0.0d : zz;
-	}
+	public void setZ(final double zz) { z = Double.isNaN(zz) ? 0.0d : zz; }
 
 	@Override
 	@getter (IKeyword.X)
-	public double getX() {
-		return x;
-	}
+	public double getX() { return x; }
 
 	@Override
 	@getter (IKeyword.Y)
-	public double getY() {
-		return y;
-	}
+	public double getY() { return y; }
 
 	@Override
 	@getter (IKeyword.Z)
-	public double getZ() {
-		return z;
-	}
+	public double getZ() { return z; }
 
 	@Override
-	public boolean isPoint() {
-		return true;
-	}
+	public boolean isPoint() { return true; }
 
 	@Override
-	public boolean isLine() {
-		return false;
-	}
+	public boolean isLine() { return false; }
 
 	@Override
 	public String toString() {
-		return "location[" + x + ";" + y + ";" + z + "]";
+		return "{" + x + "," + y + "," + z + "}";
 	}
 
 	@Override
@@ -238,9 +234,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	}
 
 	@Override
-	public GamaPoint getLocation() {
-		return this;
-	}
+	public GamaPoint getLocation() { return this; }
 
 	@Override
 	public String stringValue(final IScope scope) {
@@ -250,7 +244,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Adds the.
 	 *
-	 * @param loc the loc
+	 * @param loc
+	 *            the loc
 	 * @return the gama point
 	 */
 	public GamaPoint add(final GamaPoint loc) {
@@ -263,9 +258,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Adds the.
 	 *
-	 * @param ax the ax
-	 * @param ay the ay
-	 * @param az the az
+	 * @param ax
+	 *            the ax
+	 * @param ay
+	 *            the ay
+	 * @param az
+	 *            the az
 	 * @return the gama point
 	 */
 	public GamaPoint add(final double ax, final double ay, final double az) {
@@ -278,7 +276,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Subtract.
 	 *
-	 * @param loc the loc
+	 * @param loc
+	 *            the loc
 	 * @return the gama point
 	 */
 	public GamaPoint subtract(final GamaPoint loc) {
@@ -291,7 +290,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Multiply by.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the gama point
 	 */
 	public GamaPoint multiplyBy(final double value) {
@@ -304,7 +304,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Divide by.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the gama point
 	 */
 	public GamaPoint divideBy(final double value) {
@@ -320,9 +321,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	}
 
 	@Override
-	public GamaShape getGeometry() {
-		return GamaGeometryType.createPoint(this);
-	}
+	public GamaShape getGeometry() { return GamaGeometryType.createPoint(this); }
 
 	/*
 	 * (non-Javadoc)
@@ -338,17 +337,13 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.interfaces.IGeometry#getInnerGeometry()
 	 */
 	@Override
-	public Geometry getInnerGeometry() {
-		return GeometryUtils.GEOMETRY_FACTORY.createPoint(this);
-	}
+	public Geometry getInnerGeometry() { return GeometryUtils.GEOMETRY_FACTORY.createPoint(this); }
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
 	 */
 	@Override
-	public Envelope3D getEnvelope() {
-		return Envelope3D.of((Coordinate) this);
-	}
+	public Envelope3D getEnvelope() { return Envelope3D.of((Coordinate) this); }
 
 	@Override
 	public boolean equals(final Object o) {
@@ -426,9 +421,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.interfaces.IGeometry#getAgent()
 	 */
 	@Override
-	public IAgent getAgent() {
-		return null;
-	}
+	public IAgent getAgent() { return null; }
 
 	/**
 	 * @see msi.gama.interfaces.IGeometry#setAgent(msi.gama.interfaces.IAgent)
@@ -457,9 +450,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	// }
 
 	@Override
-	public IMap<String, Object> getOrCreateAttributes() {
-		return GamaMapFactory.create();
-	}
+	public IMap<String, Object> getOrCreateAttributes() { return GamaMapFactory.create(); }
 
 	@Override
 	public Object getAttribute(final String key) {
@@ -480,14 +471,13 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricalType()
 	 */
 	@Override
-	public Type getGeometricalType() {
-		return Type.POINT;
-	}
+	public Type getGeometricalType() { return Type.POINT; }
 
 	/**
 	 * Times.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the gama point
 	 */
 	public GamaPoint times(final double d) {
@@ -497,7 +487,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Divided by.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the gama point
 	 */
 	public GamaPoint dividedBy(final double d) {
@@ -507,7 +498,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Minus.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return the gama point
 	 */
 	public GamaPoint minus(final GamaPoint other) {
@@ -517,9 +509,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Minus.
 	 *
-	 * @param ax the ax
-	 * @param ay the ay
-	 * @param az the az
+	 * @param ax
+	 *            the ax
+	 * @param ay
+	 *            the ay
+	 * @param az
+	 *            the az
 	 * @return the gama point
 	 */
 	public GamaPoint minus(final double ax, final double ay, final double az) {
@@ -529,7 +524,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Plus.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 * @return the gama point
 	 */
 	public GamaPoint plus(final GamaPoint other) {
@@ -539,9 +535,12 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Plus.
 	 *
-	 * @param ax the ax
-	 * @param ay the ay
-	 * @param az the az
+	 * @param ax
+	 *            the ax
+	 * @param ay
+	 *            the ay
+	 * @param az
+	 *            the az
 	 * @return the gama point
 	 */
 	public GamaPoint plus(final double ax, final double ay, final double az) {
@@ -611,8 +610,10 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Dot product.
 	 *
-	 * @param v1 the v 1
-	 * @param v2 the v 2
+	 * @param v1
+	 *            the v 1
+	 * @param v2
+	 *            the v 2
 	 * @return the double
 	 */
 	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
@@ -622,8 +623,10 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * Cross.
 	 *
-	 * @param v1 the v 1
-	 * @param v2 the v 2
+	 * @param v1
+	 *            the v 1
+	 * @param v2
+	 *            the v 2
 	 * @return the gama point
 	 */
 	public final static GamaPoint cross(final GamaPoint v1, final GamaPoint v2) {
@@ -658,9 +661,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
-	public IType getGamlType() {
-		return Types.POINT;
-	}
+	public IType getGamlType() { return Types.POINT; }
 
 	/**
 	 * Method getArea()
@@ -668,9 +669,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getArea()
 	 */
 	@Override
-	public Double getArea() {
-		return 0d;
-	}
+	public Double getArea() { return 0d; }
 
 	/**
 	 * Method getVolume()
@@ -678,9 +677,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getVolume()
 	 */
 	@Override
-	public Double getVolume() {
-		return 0d;
-	}
+	public Double getVolume() { return 0d; }
 
 	/**
 	 * Method getPerimeter()
@@ -688,9 +685,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
 	 */
 	@Override
-	public double getPerimeter() {
-		return 0;
-	}
+	public double getPerimeter() { return 0; }
 
 	/**
 	 * Method getHoles()
@@ -698,9 +693,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getHoles()
 	 */
 	@Override
-	public IList<GamaShape> getHoles() {
-		return GamaListFactory.EMPTY_LIST;
-	}
+	public IList<GamaShape> getHoles() { return GamaListFactory.EMPTY_LIST; }
 
 	/**
 	 * Method getCentroid()
@@ -708,9 +701,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getCentroid()
 	 */
 	@Override
-	public GamaPoint getCentroid() {
-		return this;
-	}
+	public GamaPoint getCentroid() { return this; }
 
 	/**
 	 * Method getExteriorRing()
@@ -728,9 +719,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getWidth()
 	 */
 	@Override
-	public Double getWidth() {
-		return 0d;
-	}
+	public Double getWidth() { return 0d; }
 
 	/**
 	 * Method getHeight()
@@ -738,9 +727,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getHeight()
 	 */
 	@Override
-	public Double getHeight() {
-		return 0d;
-	}
+	public Double getHeight() { return 0d; }
 
 	/**
 	 * Method getDepth()
@@ -748,9 +735,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getDepth()
 	 */
 	@Override
-	public Double getDepth() {
-		return null;
-	}
+	public Double getDepth() { return null; }
 
 	/**
 	 * Method getGeometricEnvelope()
@@ -758,9 +743,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 	 */
 	@Override
-	public GamaShape getGeometricEnvelope() {
-		return new GamaShape(this);
-	}
+	public GamaShape getGeometricEnvelope() { return new GamaShape(this); }
 
 	/**
 	 * Method getGeometries()
@@ -768,9 +751,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getGeometries()
 	 */
 	@Override
-	public IList<? extends IShape> getGeometries() {
-		return GamaListFactory.wrap(Types.GEOMETRY, new GamaShape(this));
-	}
+	public IList<? extends IShape> getGeometries() { return GamaListFactory.wrap(Types.GEOMETRY, new GamaShape(this)); }
 
 	/**
 	 * Method isMultiple()
@@ -778,9 +759,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#isMultiple()
 	 */
 	@Override
-	public boolean isMultiple() {
-		return false;
-	}
+	public boolean isMultiple() { return false; }
 
 	@Override
 	public double getOrdinate(final int i) {
@@ -821,7 +800,8 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	/**
 	 * With precision.
 	 *
-	 * @param i the i
+	 * @param i
+	 *            the i
 	 * @return the gama point
 	 */
 	public GamaPoint withPrecision(final int i) {
@@ -868,6 +848,15 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	@Override
 	public boolean intersects(final Coordinate env) {
 		return this.equals3D(env);
+	}
+
+	/**
+	 * Rounded.
+	 *
+	 * @return the gamap point
+	 */
+	public GamaPoint rounded() {
+		return new GamaPoint(Math.round(x), Math.round(y), Math.round(z));
 	}
 
 }
