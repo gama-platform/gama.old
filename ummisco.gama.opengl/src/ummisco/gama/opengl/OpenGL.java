@@ -1531,7 +1531,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @return true, if is continuous rotation active
 	 */
 	private boolean isContinuousRotationActive() {
-		return getData().isContinuousRotationOn() && !getData().cameraInteractionDisabled();
+		return getData().isContinuousRotationOn() && !getData().isLocked();
 	}
 
 	/**

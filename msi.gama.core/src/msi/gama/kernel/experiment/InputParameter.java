@@ -1,15 +1,17 @@
 /*******************************************************************************************************
  *
- * InputParameter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * InputParameter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import msi.gama.runtime.IScope;
@@ -73,10 +75,10 @@ public class InputParameter extends ParameterAdapter {
 	 * @param among
 	 *            the among
 	 */
-	public InputParameter(final String name, final Object value, final IType type, final List among) {
+	public InputParameter(final String name, final Object value, final IType type, final Collection among) {
 		super(name, type.id());
 		this.value = value;
-		this.among = among;
+		this.among = among == null ? null : new ArrayList(among);
 	}
 
 	/**

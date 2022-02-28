@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SceneHelper.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SceneHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
@@ -20,10 +20,9 @@ import ummisco.gama.opengl.scene.ModelScene;
 
 /**
  * Class SceneHelper. Manages the interactions between the updating and the rendering tasks by keeping hold of three
- * different scenes: - A back scene, which is updated by the simulation - A front scene, which is displayed by the
- * renderer - A static scene, which maintains the static layers shared by these two scenes
- *
- * And making the appropriate swtiches between them when appropriate (beginning and end of udpate, mainly)
+ * different scenes: (1) A back scene, which is updated by the simulation - A front scene, which is displayed by the
+ * renderer; (2) A static scene, which maintains the static layers shared by these two scenes. Makes the appropriate
+ * switches between them when appropriate (beginning and end of udpate, mainly)
  *
  * @author drogoul
  * @since 8 avr. 2015

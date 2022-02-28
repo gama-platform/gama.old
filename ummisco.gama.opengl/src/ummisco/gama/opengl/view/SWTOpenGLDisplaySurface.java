@@ -288,8 +288,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
-		// if (renderer.getData().cameraInteractionDisabled()) return;
-		// renderer.getCameraHelper().zoom(true);
+		if (renderer.getData().isLocked()) return;
+		renderer.getCameraHelper().zoom(true);
 	}
 
 	/**
@@ -299,8 +299,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
-		// if (renderer.getData().cameraInteractionDisabled()) return;
-		// renderer.getCameraHelper().zoom(false);
+		if (renderer.getData().isLocked()) return;
+		renderer.getCameraHelper().zoom(false);
 	}
 
 	/**
@@ -314,7 +314,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// return;
 		renderer.getCameraHelper().initialize();
 		output.getData().resetZRotation();
-		output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true, true);
+		output.getData().setZoomLevel(renderer.getCameraHelper().zoomLevel(), true, true);
+		// output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true, true);
 		zoomFit = true;
 
 	}
@@ -334,6 +335,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
+		// TODO Remove
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the
 		// maxExtent of the shape?
@@ -518,6 +520,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {
+		// TODO REMOVE !
 		new Thread(
 				() -> WorkbenchHelper.asyncRun(() -> renderer.getCameraHelper().zoomFocus(a.getEnvelope().yNegated())))
 						.start();
@@ -695,9 +698,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (renderer == null) return;
 		switch (property) {
 
-			case CHANGE_CAMERA:
-				renderer.getCameraHelper().setupCamera();
-				break;
+			// case CHANGE_CAMERA:
+			// renderer.getCameraHelper().setupCamera();
+			// break;
 			case SPLIT_LAYER:
 				final double gap = (Double) value;
 				// if (DEBUG.IS_ON()) {
@@ -712,15 +715,15 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.getSceneHelper().layerOffsetChanged();
 
 				break;
-			case CAMERA_POS:
-				renderer.getCameraHelper().updatePosition();
-				break;
-			case CAMERA_TARGET:
-				renderer.getCameraHelper().updateTarget();
-				break;
-			case CAMERA_PRESET:
-				renderer.getCameraHelper().applyPreset((String) value);
-				break;
+			// case CAMERA_POS:
+			// renderer.getCameraHelper().updatePosition();
+			// break;
+			// case CAMERA_TARGET:
+			// renderer.getCameraHelper().updateTarget();
+			// break;
+			// case CAMERA_PRESET:
+			// renderer.getCameraHelper().applyPreset((String) value);
+			// break;
 			case ZOOM:
 				renderer.getCameraHelper().zoom((Double) value);
 				break;

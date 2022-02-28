@@ -1,107 +1,209 @@
 /*******************************************************************************************************
  *
- * CameraDefinition.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CameraDefinition.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.statements.draw.AttributeHolder;
+import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The Class CameraDefinition.
+ * The Class CameraDefinition. Holds and updates the position, target and lens of a camera from the GAML definition in
+ * the "camera" statement.
  */
-@symbol (
-		name = IKeyword.CAMERA,
-		kind = ISymbolKind.LAYER,
-		with_sequence = false,
-		unique_in_context = false,
-		concept = { IConcept.CAMERA, IConcept.DISPLAY, IConcept.THREED })
-@inside (
-		symbols = IKeyword.DISPLAY)
-@facets (
-		value = { @facet (
-				name = IKeyword.NAME,
-				type = IType.STRING,
-				optional = false,
-				doc = @doc ("The name of the camera")),
-				@facet (
-						name = IKeyword.LOCATION,
-						type = IType.POINT,
-						optional = true,
-						doc = @doc ("The location of the camera in the world")),
-				@facet (
-						name = IKeyword.LOOK_AT,
-						type = IType.POINT,
-						optional = true,
-						doc = @doc ("The location that the camera is looking")),
-				@facet (
-						name = IKeyword.UP_VECTOR,
-						type = IType.POINT,
-						optional = true,
-						doc = @doc ("The up-vector of the camera.")) },
-		omissible = IKeyword.NAME)
-@doc (
-		value = "`" + IKeyword.CAMERA
-				+ "` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. ",
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.IMAGE, IKeyword.POPULATION, })
-public class CameraDefinition extends AbstractLayerStatement {
+public class CameraDefinition extends AttributeHolder implements ICameraDefinition {
 
-	/** The up vector expr. */
-	final IExpression locationExpr, lookAtExpr, upVectorExpr;
-	
-	/** The up vector. */
-	GamaPoint location, lookAt, upVector;
+	static {
+		DEBUG.ON();
+	}
+
+	/** The current. */
+	GenericCameraDefinition current;
+
+	/** The location. */
+	Attribute<Object> locationAttribute;
+
+	/** The initial location attribute. */
+	final Attribute<Object> initialLocationAttribute;
+
+	/** The target. */
+	Attribute<GamaPoint> targetAttribute;
+
+	/** The initial target attribute. */
+	final Attribute<GamaPoint> initialTargetAttribute;
+
+	/** The distance. */
+	Attribute<Double> distanceAttribute;
+
+	/** The initial distance. */
+	final Attribute<Double> initialDistanceAttribute;
+
+	/** The lens. */
+	Attribute<Integer> lens;
+
+	/** The interaction. */
+	Attribute<Boolean> locked;
+
+	/** The dynamic. */
+	Attribute<Boolean> dynamic;
 
 	/**
 	 * Instantiates a new camera definition.
 	 *
-	 * @param desc the desc
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param symbol
+	 *            the symbol
 	 */
-	public CameraDefinition(final IDescription desc) throws GamaRuntimeException {
-		super(desc);
-		locationExpr = getFacet(IKeyword.LOCATION);
-		lookAtExpr = getFacet(IKeyword.LOOK_AT);
-		upVectorExpr = getFacet(IKeyword.UP_VECTOR);
+	@SuppressWarnings ("unchecked")
+	public CameraDefinition(final CameraStatement symbol) {
+		super(symbol);
+		initialLocationAttribute = locationAttribute = create(IKeyword.LOCATION, Types.NO_TYPE, null);
+		initialTargetAttribute = targetAttribute = create(IKeyword.TARGET, Types.POINT, null);
+		initialDistanceAttribute = distanceAttribute = create("distance", Types.FLOAT, null);
+		lens = create("lens", Types.INT, 45);
+		locked = create("locked", Types.BOOL, false);
+		dynamic = create("dynamic", Types.BOOL, false);
 	}
 
 	@Override
-	public LayerType getType(final LayeredDisplayOutput output) {
-		return LayerType.OVERLAY;
+	public void reset() {
+		locationAttribute = initialLocationAttribute;
+		targetAttribute = initialTargetAttribute;
+		distanceAttribute = initialDistanceAttribute;
+		current.reset();
 	}
 
 	@Override
-	protected boolean _init(final IScope scope) {
-		return true;
+	public void refresh(final IScope scope) {
+		super.refresh(scope);
+		if (!isDynamic() && current != null) return;
+		// First we determine the target.
+		GamaPoint target = targetAttribute.get();
+		if (target == null) { target = scope.getSimulation().getCentroid(); }
+		// Then we determine the location
+		Object temp = locationAttribute.get();
+		GamaPoint location;
+		boolean noLocation = temp == null;
+		if (noLocation) { temp = GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue(); }
+
+		if (temp instanceof String pos) {
+			// If it is a symbolic position
+			double w = scope.getSimulation().getWidth();
+			double h = scope.getSimulation().getHeight();
+			double max = Math.max(w, h) * 1.2;
+			location = computeLocation(pos, target, w, -h, max);
+		} else {
+			location = Cast.asPoint(scope, temp);
+		}
+		// We negate the Y ordinate coming from GAML
+		target = target.yNegated();
+		// The location should be a point now and we negate it as well
+		location = location.yNegated();
+		// We determine the distance and apply it to the location if it is explicitly defined or if no location has been
+		// defined
+		Double d = distanceAttribute.get();
+		if (d != null) {
+			GamaPoint vector = location.minus(target).normalized().times(d);
+			location = target.plus(vector);
+		}
+
+		if (current == null) {
+			current = new GenericCameraDefinition(getName(), location, target);
+		} else {
+			current.setLocation(location);
+			current.setTarget(target);
+		}
+		if (d != null) { current.setDistance(d); }
+	}
+
+	/**
+	 * Checks if is dynamic.
+	 *
+	 * @return the boolean
+	 */
+	public Boolean isDynamic() { return dynamic.get(); }
+
+	@Override
+	public GamaPoint getLocation() { return current.getLocation(); }
+
+	/**
+	 * Sets the location.Comes from the OpenGL world, where the Y axis is reversed, so we store it as an attribute (to
+	 * be evaluated later) where we make sure the Y ordinate is negated
+	 *
+	 * @param loc
+	 *            the loc
+	 * @return true, if changed
+	 */
+	@Override
+	public boolean setLocation(final GamaPoint loc) {
+		if (!isInteractive() || loc == null) return false;
+		locationAttribute = new ConstantAttribute<>(loc.yNegated());
+		return current.setLocation(loc);
+	}
+
+	/**
+	 * Sets the target. Comes from the OpenGL world, where the Y axis is reversed, so we store it as an attribute (to be
+	 * evaluated later) where we make sure the Y ordinate is negated
+	 *
+	 * @param loc
+	 *            the loc
+	 * @return true, if successful
+	 */
+	@Override
+	public boolean setTarget(final GamaPoint loc) {
+		if (!isInteractive() || loc == null) return false;
+		targetAttribute = new ConstantAttribute<>(loc.yNegated());
+		return current.setTarget(loc);
+	}
+
+	/**
+	 * Sets the lens.
+	 *
+	 * @param lens
+	 *            the new lens
+	 */
+	@Override
+	public void setLens(final Integer lens) { this.lens = new ConstantAttribute<>(lens == null ? 45 : lens); }
+
+	@Override
+	public GamaPoint getTarget() { return current.getTarget(); }
+
+	@Override
+	public Integer getLens() { return lens.get(); }
+
+	@Override
+	public Boolean isInteractive() { return !locked.get() && !isDynamic(); }
+
+	/**
+	 * Sets the interactive.
+	 *
+	 * @param b
+	 *            the new interactive
+	 */
+	@Override
+	public void setInteractive(final Boolean b) { this.locked = new ConstantAttribute<>(b == null ? false : !b); }
+
+	@Override
+	public boolean setDistance(final Double d) {
+		if (!isInteractive() || d == null) return false;
+		distanceAttribute = new ConstantAttribute<>(d);
+		return current.setDistance(d);
 	}
 
 	@Override
-	protected boolean _step(final IScope scope) {
-		location = locationExpr == null ? null : Cast.asPoint(scope, locationExpr.value(scope));
-		lookAt = lookAtExpr == null ? null : Cast.asPoint(scope, lookAtExpr.value(scope));
-		upVector = upVectorExpr == null ? null : Cast.asPoint(scope, upVectorExpr.value(scope));
-		return true;
-	}
+	public Double getDistance() { return current.getDistance(); }
 
+	@Override
+	public String getName() { return symbol.getName(); }
 }

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IUnits.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IUnits.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -16,6 +15,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.ICameraDefinition;
 import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -64,7 +64,7 @@ public interface IUnits {
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("Midpoint solver")) String Midpoint = "Midpoint";
-	
+
 	/** The Gill. */
 	@constant (
 			value = "Gill",
@@ -85,7 +85,7 @@ public interface IUnits {
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("dp853 solver")) String dp853 = "dp853";
-	
+
 	/** The Adams bashforth. */
 	@constant (
 			value = "AdamsBashforth",
@@ -106,14 +106,14 @@ public interface IUnits {
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("DormandPrince54 solver")) String DormandPrince54 = "DormandPrince54";
-	
+
 	/** The Gragg bulirsch stoer. */
 	@constant (
 			value = "GraggBulirschStoer",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("GraggBulirschStoer solver")) String GraggBulirschStoer = "GraggBulirschStoer";
-	
+
 	/** The Higham hall 54. */
 	@constant (
 			value = "HighamHall54",
@@ -129,49 +129,49 @@ public interface IUnits {
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.EQUATION, IConcept.CONSTANT },
 			doc = @doc ("FloydWarshall shortest path computation algorithm")) String FloydWarshall = "FloydWarshall";
-	
+
 	/** The Bellmann ford. */
 	@constant (
 			value = "BellmannFord",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("BellmannFord shortest path computation algorithm")) String BellmannFord = "BellmannFord";
-	
+
 	/** The Dijkstra. */
 	@constant (
 			value = "Dijkstra",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("Dijkstra shortest path computation algorithm")) String Dijkstra = "Dijkstra";
-	
+
 	/** The A star. */
 	@constant (
 			value = "AStar",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("AStar shortest path computation algorithm")) String AStar = "AStar";
-	
+
 	/** The NBA star. */
 	@constant (
 			value = "NBAStar",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("NBAStar shortest path computation algorithm")) String NBAStar = "NBAStar";
-	
+
 	/** The NBA star approx. */
 	@constant (
 			value = "NBAStarApprox",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("NBAStarApprox shortest path computation algorithm")) String NBAStarApprox = "NBAStarApprox";
-	
+
 	/** The Delta stepping. */
 	@constant (
 			value = "DeltaStepping",
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("DeltaStepping shortest path computation algorithm")) String DeltaStepping = "DeltaStepping";
-	
+
 	/** The CH bidirectional dijkstra. */
 	@constant (
 			value = "CHBidirectionalDijkstra",
@@ -179,7 +179,7 @@ public interface IUnits {
 			concept = { IConcept.GRAPH, IConcept.CONSTANT },
 			doc = @doc ("CHBidirectionalDijkstra shortest path computation algorithm")) String CHBidirectionalDijkstra =
 					"CHBidirectionalDijkstra";
-	
+
 	/** The Bidirectional dijkstra. */
 	@constant (
 			value = "BidirectionalDijkstra",
@@ -330,14 +330,14 @@ public interface IUnits {
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
 			doc = @doc ("This constant represents the absence of a predefined layout")) int none = 0;
-	
+
 	/** The stack. */
 	@constant (
 			value = "stack",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
 			doc = @doc ("This constant represents a layout where all display views are stacked")) int stack = 1;
-	
+
 	/** The split. */
 	@constant (
 			value = "split",
@@ -345,7 +345,7 @@ public interface IUnits {
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
 			doc = @doc ("This constant represents a layout where all display views are split in a grid-like structure")) int split =
 					2;
-	
+
 	/** The horizontal. */
 	@constant (
 			value = "horizontal",
@@ -353,7 +353,7 @@ public interface IUnits {
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
 			doc = @doc ("This constant represents a layout where all display views are aligned horizontally")) int horizontal =
 					3;
-	
+
 	/** The vertical. */
 	@constant (
 			value = "vertical",
@@ -438,7 +438,7 @@ public interface IUnits {
 			concept = { IConcept.GRAPHIC, IConcept.GRAPHIC_UNIT },
 			doc = @doc ("This unit, only available when running aspects or declaring displays,  returns a dynamic value instead of a fixed one. px (or pixels), returns the value of one pixel on the current view in terms of model units.")) double pixels =
 					1d, px = pixels;
-	
+
 	/** The display width. */
 	@constant (
 			value = "display_width",
@@ -485,7 +485,7 @@ public interface IUnits {
 			category = { IConstantCategory.CONSTANT },
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding the value to convert radians into degrees")) double to_deg = 180d / Math.PI;
-	
+
 	/** The to rad. */
 	@constant (
 			value = "to_rad",
@@ -500,7 +500,7 @@ public interface IUnits {
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding a Not-a-Number (NaN) value of type float (Java Double.POSITIVE_INFINITY)")) double nan =
 					Double.NaN;
-	
+
 	/** The infinity. */
 	@constant (
 			value = "infinity",
@@ -508,7 +508,7 @@ public interface IUnits {
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding the positive infinity of type float (Java Double.POSITIVE_INFINITY)")) double infinity =
 					Double.POSITIVE_INFINITY;
-	
+
 	/** The min float. */
 	@constant (
 			value = "min_float",
@@ -516,7 +516,7 @@ public interface IUnits {
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding the smallest positive nonzero value of type float (Java Double.MIN_VALUE)")) double min_float =
 					Double.MIN_VALUE;
-	
+
 	/** The max float. */
 	@constant (
 			value = "max_float",
@@ -524,7 +524,7 @@ public interface IUnits {
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding the largest positive finite value of type float (Java Double.MAX_VALUE)")) double max_float =
 					Double.MAX_VALUE;
-	
+
 	/** The min int. */
 	@constant (
 			value = "min_int",
@@ -532,7 +532,7 @@ public interface IUnits {
 			concept = { IConcept.CONSTANT },
 			doc = @doc ("A constant holding the minimum value an int can have (Java Integer.MIN_VALUE)")) int min_int =
 					Integer.MIN_VALUE;
-	
+
 	/** The max int. */
 	@constant (
 			value = "max_int",
@@ -914,7 +914,7 @@ public interface IUnits {
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
 			doc = { @doc ("square mile unit") }) double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
-	
+
 	/** The current error. */
 	/*
 	 * Others
@@ -930,12 +930,18 @@ public interface IUnits {
 	/**
 	 * Adds the.
 	 *
-	 * @param name the name
-	 * @param value the value
-	 * @param doc the doc
-	 * @param deprec the deprec
-	 * @param isTime the is time
-	 * @param names the names
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 * @param doc
+	 *            the doc
+	 * @param deprec
+	 *            the deprec
+	 * @param isTime
+	 *            the is time
+	 * @param names
+	 *            the names
 	 * @return the object
 	 */
 	@SuppressWarnings ("rawtypes")
@@ -954,6 +960,31 @@ public interface IUnits {
 	 * Initialize.
 	 */
 	static void init() {
+		String documentation = "";
+		for (final Field f : ICameraDefinition.class.getDeclaredFields()) {
+			Object v;
+			try {
+				v = f.get(ICameraDefinition.class);
+			} catch (IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+				return;
+
+			}
+			final constant annotation = f.getAnnotation(constant.class);
+
+			String deprecated = null;
+			if (annotation != null) {
+				final doc[] ds = annotation.doc();
+				if (ds != null && ds.length > 0) {
+					final doc d = ds[0];
+					documentation = d.value();
+					deprecated = d.deprecated();
+					if (deprecated.isEmpty()) { deprecated = null; }
+				}
+			}
+			add(f.getName(), v, documentation, deprecated, false, null);
+		}
+
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
 			final String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "
@@ -978,22 +1009,21 @@ public interface IUnits {
 				String[] names = null;
 				final constant annotation = f.getAnnotation(constant.class);
 				boolean isTime = false;
-				StringBuilder documentation =
-						new StringBuilder("Its value is ").append(Cast.toGaml(v)).append(". </b>");
+				documentation = "Its value is " + Cast.toGaml(v) + ". </b>";
 				String deprecated = null;
 				if (annotation != null) {
 					names = annotation.altNames();
 					final doc[] ds = annotation.doc();
 					if (ds != null && ds.length > 0) {
 						final doc d = ds[0];
-						documentation.append(d.value());
+						documentation += d.value();
 						deprecated = d.deprecated();
 						if (deprecated.isEmpty()) { deprecated = null; }
 					}
 					final String[] e = annotation.category();
 					isTime = Arrays.asList(e).contains(IConstantCategory.TIME);
 				}
-				add(f.getName(), v, documentation.toString(), deprecated, isTime, names);
+				add(f.getName(), v, documentation, deprecated, isTime, names);
 
 			} catch (final IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();

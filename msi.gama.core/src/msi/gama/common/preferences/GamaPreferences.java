@@ -32,6 +32,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.FileUtils;
+import msi.gama.outputs.layers.ICameraDefinition;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -603,6 +604,11 @@ public class GamaPreferences {
 		/** The Constant OPENGL_NUM_KEYS_CAM. */
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
 				"Use Numeric Keypad (2,4,6,8) for camera interaction", true, IType.BOOL, true).in(NAME, RENDERING);
+
+		/** The Constant OPENGL_DEFAULT_CAM. */
+		public static final Pref<String> OPENGL_DEFAULT_CAM =
+				create("pref_display_camera", "Default camera to use when none is specified", "From above", IType.STRING,
+						true).among(ICameraDefinition.PRESETS).in(NAME, RENDERING);
 
 		/** The Constant OPENGL_CLIPBOARD_CAM. */
 		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",

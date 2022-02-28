@@ -1,19 +1,13 @@
 /*******************************************************************************************************
  *
- * ICamera.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * ICamera.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.camera;
-
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.MouseWheelListener;
+package msi.gama.common.interfaces;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -25,22 +19,7 @@ import msi.gama.metamodel.shape.GamaPoint;
  * @since 5 sept. 2013
  *
  */
-public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListener, MouseMoveListener,
-		MouseTrackListener, MouseWheelListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.KeyListener {
-
-	/**
-	 * The Interface CameraPreset.
-	 */
-	@FunctionalInterface
-	public interface CameraPreset {
-		/**
-		 * Apply to.
-		 *
-		 * @param camera
-		 *            the camera
-		 */
-		void applyTo(AbstractCamera camera);
-	}
+public interface ICamera {
 
 	// Positions
 
@@ -92,27 +71,9 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	void update();
 
 	/**
-	 * Update position.
-	 */
-	void updatePosition();
-
-	/**
-	 * Update target.
-	 */
-	void updateTarget();
-
-	/**
 	 * Animate.
 	 */
 	void animate();
-
-	/**
-	 * Apply preset.
-	 *
-	 * @param preset
-	 *            the preset
-	 */
-	void applyPreset(String preset);
 
 	// Zoom
 

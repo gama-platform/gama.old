@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGLCanvas.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaGLCanvas.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
@@ -41,7 +41,7 @@ import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.FLAGS;
-import ummisco.gama.opengl.camera.ICamera;
+import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.IDelegateEventsToParent;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -357,7 +357,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @param camera
 	 *            the camera
 	 */
-	public void addCameraListeners(final ICamera camera) {
+	public void addCameraListeners(final IMultiListener camera) {
 
 		WorkbenchHelper.asyncRun(() -> {
 			if (isDisposed() || canvas.isDisposed()) return;
@@ -371,8 +371,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			addMouseMoveListener(camera);
 			addMouseWheelListener(camera);
 			addMouseTrackListener(camera);
-			if (drawable instanceof Window) {
-				Window w = (Window) drawable;
+			if (drawable instanceof Window w) {
 				w.addKeyListener(camera);
 				w.addMouseListener(camera);
 			}
@@ -385,7 +384,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @param camera
 	 *            the camera
 	 */
-	public void removeCameraListeners(final ICamera camera) {
+	public void removeCameraListeners(final IMultiListener camera) {
 		WorkbenchHelper.asyncRun(() -> {
 			if (isDisposed() || canvas.isDisposed()) return;
 			canvas.removeKeyListener(camera);
@@ -398,8 +397,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			removeMouseMoveListener(camera);
 			removeMouseWheelListener(camera);
 			removeMouseTrackListener(camera);
-			if (drawable instanceof Window) {
-				Window w = (Window) drawable;
+			if (drawable instanceof Window w) {
 				w.removeKeyListener(camera);
 				w.removeMouseListener(camera);
 			}

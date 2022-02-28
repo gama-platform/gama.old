@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="ummisco/gama/opengl/utils/VertexArrayHandler.java|ummisco/gama/opengl/scene/DEMObject.java|ummisco/gama/opengl/shaders/|ummisco/gama/opengl/view/shaders/" kind="src" path="src"/>
+	<classpathentry excluding="ummisco/gama/opengl/utils/VertexArrayHandler.java|ummisco/gama/opengl/scene/DEMObject.java|ummisco/gama/opengl/shaders/|ummisco/gama/opengl/view/shaders/|ummisco/gama/opengl/camera/FreeFlyCameraToRemove.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml">
 		<attributes>
 			<attribute name="optional" value="true"/>

@@ -12,9 +12,14 @@ package msi.gama.outputs;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import com.google.common.base.Objects;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
@@ -24,10 +29,13 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.GenericCameraDefinition;
+import msi.gama.outputs.layers.ICameraDefinition;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
@@ -232,9 +240,6 @@ public class LayeredDisplayData {
 	/** The ortho. */
 	private boolean ortho = false;
 
-	/** The disable camera interaction. */
-	private boolean disableCameraInteraction = false; // "fixed_camera" facet
-
 	/** The is showing FPS. */
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 
@@ -244,29 +249,23 @@ public class LayeredDisplayData {
 	/** The is light on. */
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
 
-	/** The camera pos. */
-	private GamaPoint cameraPos = null;
+	/** The camera definitions. */
+	private final Map<String, ICameraDefinition> cameraDefinitions = new LinkedHashMap<>();
 
-	/** The camera look pos. */
-	private GamaPoint cameraLookPos = null;
+	/** The current camera. */
+	private ICameraDefinition cameraDefinition;
+	//
+	// /** The preset camera. */
+	// private String cameraName = IKeyword.DEFAULT;
 
-	/** The camera orientation. */
-	private final GamaPoint cameraOrientation = null;
-
-	/** The preset camera. */
-	private String presetCamera = "";
-
-	/** The camera lens. */
-	private int cameraLens = 45;
+	/** The camera name expression. */
+	private IExpression cameraNameExpression;
 
 	/** The split distance. */
 	private Double splitDistance;
 
 	/** The is rotating. */
 	private boolean isRotating;
-
-	/** The is using arc ball camera. */
-	private boolean isUsingArcBallCamera = true;
 
 	/** The is splitting layers. */
 	private boolean isSplittingLayers;
@@ -277,11 +276,8 @@ public class LayeredDisplayData {
 	/** The constant ambient light. */
 	private boolean constantAmbientLight = true;
 
-	/** The constant camera. */
-	private boolean constantCamera = true;
-
 	/** The constant camera look. */
-	private boolean constantCameraLook = true;
+	// private final boolean constantCameraLook = true;
 
 	/** The z near. */
 	private double zNear = -1.0;
@@ -571,8 +567,8 @@ public class LayeredDisplayData {
 	 * @param disableCamInteract
 	 *            the disable cam interact
 	 */
-	public void disableCameraInteractions(final boolean disableCamInteract) {
-		this.disableCameraInteraction = disableCamInteract;
+	public void setLocked(final boolean disableCamInteract) {
+		cameraDefinition.setInteractive(!disableCamInteract);
 	}
 
 	/**
@@ -580,9 +576,7 @@ public class LayeredDisplayData {
 	 *
 	 * @return true, if successful
 	 */
-	public boolean cameraInteractionDisabled() {
-		return disableCameraInteraction;
-	}
+	public boolean isLocked() { return !cameraDefinition.isInteractive(); }
 
 	/**
 	 * @return the ambientLightColor
@@ -596,75 +590,49 @@ public class LayeredDisplayData {
 	public void setAmbientLightColor(final GamaColor ambientLightColor) { this.ambientColor = ambientLightColor; }
 
 	/**
-	 * Checks if is camera pos defined.
-	 *
-	 * @return true, if is camera pos defined
-	 */
-	public boolean isCameraPosDefined() { return cameraPos != null; }
-
-	/**
-	 * Checks if is camera look at defined.
-	 *
-	 * @return true, if is camera look at defined
-	 */
-	public boolean isCameraLookAtDefined() { return cameraLookPos != null; }
-
-	/**
 	 * @return the cameraPos
 	 */
-	public GamaPoint getCameraPos() { return cameraPos; }
+	public GamaPoint getCameraPos() { return cameraDefinition.getLocation(); }
 
 	/**
 	 * @param cameraPos
 	 *            the cameraPos to set
 	 */
 	public void setCameraPos(final GamaPoint point) {
-		if (point == null) return;
-		final GamaPoint c = point;
-		if (cameraPos != null) {
-			if (c.equals(cameraPos)) return;
-			cameraPos.setLocation(c);
-		} else {
-			cameraPos = new GamaPoint(c);
-		}
-
-		notifyListeners(Changes.CAMERA_POS, cameraPos);
+		if (cameraDefinition.setLocation(point)) { notifyListeners(Changes.CAMERA_POS, point); }
 	}
 
 	/**
 	 * @return the cameraLookPos
 	 */
-	public GamaPoint getCameraTarget() { return cameraLookPos; }
+	public GamaPoint getCameraTarget() { return cameraDefinition.getTarget(); }
 
 	/**
 	 * @param cameraLookPos
 	 *            the cameraLookPos to set
 	 */
-	public void setCameraLookPos(final GamaPoint point) {
-		if (point == null) return;
-		final GamaPoint c = point;
-		if (cameraLookPos != null) {
-			if (c.equals(cameraLookPos)) return;
-			cameraLookPos.setLocation(c);
-		} else {
-			cameraLookPos = new GamaPoint(c);
-		}
-
-		notifyListeners(Changes.CAMERA_TARGET, cameraLookPos);
+	public void setCameraTarget(final GamaPoint point) {
+		if (cameraDefinition.setTarget(point)) { notifyListeners(Changes.CAMERA_TARGET, point); }
 	}
 
 	/**
 	 * @return the cameraLens
 	 */
-	public int getCameralens() { return cameraLens; }
+	public int getCameralens() { return cameraDefinition.getLens(); }
 
 	/**
-	 * @param cameraLens
-	 *            the cameraLens to set
+	 * Gets the preset camera.
+	 *
+	 * @return the preset camera
 	 */
-	public void setCameraLens(final int cameraLens) {
-		if (this.cameraLens != cameraLens) { this.cameraLens = cameraLens; }
-	}
+	public String getCameraName() { return cameraDefinition.getName(); }
+
+	/**
+	 * Gets the camera names.
+	 *
+	 * @return the camera names
+	 */
+	public Collection<String> getCameraNames() { return cameraDefinitions.keySet(); }
 
 	/**
 	 * @return the displayType
@@ -807,7 +775,7 @@ public class LayeredDisplayData {
 	/**
 	 * @return
 	 */
-	public boolean isArcBallCamera() { return isUsingArcBallCamera; }
+	// public boolean isArcBallCamera() { return isUsingArcBallCamera; }
 
 	/**
 	 * Sets the arc ball camera.
@@ -815,10 +783,10 @@ public class LayeredDisplayData {
 	 * @param c
 	 *            the new arc ball camera
 	 */
-	public void setArcBallCamera(final boolean c) {
-		isUsingArcBallCamera = c;
-		notifyListeners(Changes.CHANGE_CAMERA, c);
-	}
+	// public void setArcBallCamera(final boolean c) {
+	// isUsingArcBallCamera = c;
+	// notifyListeners(Changes.CHANGE_CAMERA, c);
+	// }
 
 	/**
 	 * @return
@@ -947,24 +915,6 @@ public class LayeredDisplayData {
 	public boolean isKeystoneDefined() { return !keystone.equals(KEYSTONE_IDENTITY); }
 
 	/**
-	 * Sets the preset camera.
-	 *
-	 * @param newValue
-	 *            the new preset camera
-	 */
-	public void setPresetCamera(final String newValue) {
-		presetCamera = newValue;
-		notifyListeners(Changes.CAMERA_PRESET, newValue);
-	}
-
-	/**
-	 * Gets the preset camera.
-	 *
-	 * @return the preset camera
-	 */
-	public String getPresetCamera() { return presetCamera; }
-
-	/**
 	 * Checks if is toolbar visible.
 	 *
 	 * @return true, if is toolbar visible
@@ -1042,9 +992,6 @@ public class LayeredDisplayData {
 		final IExpression ortho = facets.getExpr(IKeyword.ORTHOGRAPHIC_PROJECTION);
 		if (ortho != null) { setOrtho(Cast.asBool(scope, ortho.value(scope))); }
 
-		final IExpression fixed_cam = facets.getExpr(IKeyword.CAMERA_INTERACTION);
-		if (fixed_cam != null) { disableCameraInteractions(!Cast.asBool(scope, fixed_cam.value(scope))); }
-
 		final IExpression keystone_exp = facets.getExpr(IKeyword.KEYSTONE);
 		if (keystone_exp != null) {
 			@SuppressWarnings ("unchecked") final List<GamaPoint> val =
@@ -1107,11 +1054,10 @@ public class LayeredDisplayData {
 			}
 		}
 
-		final IExpression cameraLens = facets.getExpr(IKeyword.CAMERA_LENS);
-		if (cameraLens != null) {
-			final int lens = Cast.asInt(scope, cameraLens.value(scope));
-			setCameraLens(lens);
-		}
+		initializePresetCameraDefinitions();
+		cameraNameExpression = facets.getExpr(IKeyword.CAMERA);
+		setCameraNameFromGaml(cameraNameExpression != null ? Cast.asString(scope, cameraNameExpression.value(scope))
+				: IKeyword.DEFAULT);
 
 		final IExpression fs = facets.getExpr(IKeyword.FULLSCREEN);
 		if (fs != null) {
@@ -1148,24 +1094,51 @@ public class LayeredDisplayData {
 
 		final IExpression antialias = facets.getExpr("antialias");
 		if (antialias != null) { setAntialias(Cast.asBool(scope, antialias.value(scope))); }
+	}
 
-		final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
-		if (camera != null) {
-			final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
-			location.y = -location.y; // y component need to be reverted
-			setCameraPos(location);
-			constantCamera = camera.isConst();
-			// cameraFix = true;
+	/**
+	 * Initialize preset camera definitions.
+	 */
+	private void initializePresetCameraDefinitions() {
+		double w = getEnvWidth();
+		double h = getEnvHeight();
+		double max = Math.max(w, h) * getDistanceCoefficient();
+		GamaPoint target = new GamaPoint(w / 2, -h / 2, 0); // Y negated
+		for (String preset : ICameraDefinition.PRESETS) {
+			addCameraDefinition(new GenericCameraDefinition(preset, target, getEnvWidth(), getEnvHeight(), max));
 		}
+		cameraDefinitions.putIfAbsent(IKeyword.DEFAULT,
+				cameraDefinitions.get(GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue()));
+	}
 
-		final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
-		if (cameraLook != null) {
-			final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
-			location.setY(-location.getY()); // y component need to be reverted
-			setCameraLookPos(location);
-			constantCameraLook = cameraLook.isConst();
-		}
+	/**
+	 * Sets the preset camera.
+	 *
+	 * @param newValue
+	 *            the new preset camera
+	 */
+	public void setCameraNameFromGaml(final String newValue) {
+		if (cameraDefinition != null && Objects.equal(newValue, cameraDefinition.getName())) return;
+		resetCamera();
+		cameraDefinition = cameraDefinitions.get(newValue);
+		if (cameraDefinition == null) { cameraDefinition = cameraDefinitions.get(IKeyword.DEFAULT); }
+		notifyListeners(Changes.CAMERA_PRESET, newValue);
+	}
 
+	/**
+	 * Sets the preset camera.
+	 *
+	 * @param newValue
+	 *            the new preset camera
+	 */
+	public void setCameraNameFromUser(final String newValue) {
+		if (cameraDefinition != null && Objects.equal(newValue, cameraDefinition.getName())) return;
+		// We force the camera name to remain the same by modifying the expression
+		cameraNameExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
+		// resetCamera();
+		cameraDefinition = cameraDefinitions.get(newValue);
+		if (cameraDefinition == null) { cameraDefinition = cameraDefinitions.get(IKeyword.DEFAULT); }
+		notifyListeners(Changes.CAMERA_PRESET, newValue);
 	}
 
 	/**
@@ -1221,6 +1194,13 @@ public class LayeredDisplayData {
 	 *            the facets
 	 */
 	public void update(final IScope scope, final Facets facets) {
+
+		if (cameraNameExpression != null) {
+			setCameraNameFromGaml(Cast.asString(scope, cameraNameExpression.value(scope)));
+		}
+
+		if (cameraDefinition != null) { cameraDefinition.refresh(scope); }
+
 		updateAutoSave(scope, facets.getExpr(IKeyword.AUTOSAVE));
 		// /////////////// dynamic Lighting ///////////////////
 
@@ -1240,32 +1220,6 @@ public class LayeredDisplayData {
 					final int meanValue = Cast.asInt(scope, light.value(scope));
 					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
-			}
-		}
-
-		// /////////////////// dynamic camera ///////////////////
-		if (!constantCamera) {
-			final IExpression camera = facets.getExpr(IKeyword.CAMERA_LOCATION);
-			if (camera != null) {
-				final GamaPoint location = Cast.asPoint(scope, camera.value(scope));
-				if (location != null) {
-					location.y = -location.y; // y component need to be
-				}
-				// reverted
-				setCameraPos(location);
-			}
-			// graphics.setCameraPosition(getCameraPos());
-		}
-
-		if (!constantCameraLook) {
-			final IExpression cameraLook = facets.getExpr(IKeyword.CAMERA_TARGET);
-			if (cameraLook != null) {
-				final GamaPoint location = Cast.asPoint(scope, cameraLook.value(scope));
-				if (location != null) {
-					location.setY(-location.getY()); // y component need to be
-				}
-				// reverted
-				setCameraLookPos(location);
 			}
 		}
 
@@ -1291,5 +1245,48 @@ public class LayeredDisplayData {
 	 * @return true, if is open GL
 	 */
 	public boolean isOpenGL() { return isOpenGL; }
+
+	/**
+	 * Gets the distance coefficient.
+	 *
+	 * @return the distance coefficient
+	 */
+	public double getDistanceCoefficient() { return isDrawEnv() ? 1.46 : 1.2; }
+
+	/**
+	 * Reset camera.
+	 */
+	public void resetCamera() {
+		if (cameraDefinition != null) { cameraDefinition.reset(); }
+	}
+
+	/**
+	 * Gets the distance.
+	 *
+	 * @return the distance
+	 */
+	public double getDistance() { return cameraDefinition.getDistance(); }
+
+	/**
+	 * Sets the distance.
+	 *
+	 * @param distance
+	 *            the new distance
+	 */
+	public void setDistance(final double distance) {
+		cameraDefinition.setDistance(distance);
+	}
+
+	/**
+	 * Adds the camera definition.
+	 *
+	 * @param name
+	 *            the name
+	 * @param definition
+	 *            the definition
+	 */
+	public void addCameraDefinition(final ICameraDefinition definition) {
+		cameraDefinitions.putIfAbsent(definition.getName(), definition);
+	}
 
 }

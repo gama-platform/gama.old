@@ -40,7 +40,7 @@ public class CameraOrientationUnitExpression extends UnitConstantExpression {
 		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IGraphics g = scope.getGraphics();
 		if (g.is2D()) return null;
-		return ((IGraphics.ThreeD) g).getCameraOrientation().clone();
+		return ((IGraphics.ThreeD) g).getCameraOrientation().yNegated();
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -30,7 +30,7 @@ public abstract class AbstractLayer implements ILayer {
 	private String name;
 
 	/** The has been drawn once. */
-	boolean hasBeenDrawnOnce;
+	volatile boolean hasBeenDrawnOnce;
 
 	/** The data. */
 	private final ILayerData data;
@@ -68,6 +68,13 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	/**
+	 * Sets the has been drawn once.
+	 */
+	public void setHasBeenDrawnOnce() {
+		hasBeenDrawnOnce = true;
+	}
+
+	/**
 	 * Draw.
 	 *
 	 * @param scope
@@ -93,11 +100,15 @@ public abstract class AbstractLayer implements ILayer {
 	 *
 	 * @param g
 	 *            the IGraphics instance on which we draw
-	 * @return true if ok to draw, false otherwise
+	 * @return false if ok to draw, true otherwise
 	 */
 	protected boolean shouldNotDraw(final IGraphics g) {
-		return !getData().isVisible()
-				|| hasBeenDrawnOnce && (!g.is2D() && !getData().isDynamic() || g.isNotReadyToUpdate());
+		if (!getData().isVisible() || g.isNotReadyToUpdate()) return true;
+		if (hasBeenDrawnOnce) {
+			if (g.is2D()) return false;
+			if (!getData().isDynamic()) return true;
+		}
+		return false;
 	}
 
 	/**

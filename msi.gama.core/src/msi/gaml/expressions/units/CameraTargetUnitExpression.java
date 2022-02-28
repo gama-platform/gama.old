@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CameraTargetUnitExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CameraTargetUnitExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.units;
 
@@ -37,13 +37,13 @@ public class CameraTargetUnitExpression extends UnitConstantExpression {
 	public GamaPoint _value(final IScope sc) {
 		if (sc == null || !sc.isGraphics()) {
 			IDisplaySurface surface = GAMA.getGui().getFrontmostDisplaySurface();
-			if (surface != null) return surface.getData().getCameraTarget().clone();
+			if (surface != null) return surface.getData().getCameraTarget().yNegated();
 			return null;
 		}
 		IGraphicsScope scope = (IGraphicsScope) sc;
 		final IGraphics g = scope.getGraphics();
 		if (g.is2D()) return null;
-		return ((IGraphics.ThreeD) g).getCameraTarget().clone();
+		return ((IGraphics.ThreeD) g).getCameraTarget().yNegated();
 	}
 
 	@Override

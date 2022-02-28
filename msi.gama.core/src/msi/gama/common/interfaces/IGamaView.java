@@ -1,17 +1,13 @@
 /*******************************************************************************************************
  *
- * IGamaView.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IGamaView.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
-
-import java.util.Collections;
-import java.util.List;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -230,13 +226,6 @@ public interface IGamaView {
 		 *            the new index
 		 */
 		void setIndex(int i);
-
-		/**
-		 * Gets the camera names.
-		 *
-		 * @return the camera names
-		 */
-		default List<String> getCameraNames() { return Collections.EMPTY_LIST; }
 
 		/**
 		 * Take snapshot.

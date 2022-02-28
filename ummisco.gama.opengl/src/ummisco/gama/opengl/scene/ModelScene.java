@@ -156,8 +156,7 @@ public class ModelScene {
 	 * @return true, if successful
 	 */
 	public boolean cannotAdd() {
-		if (currentLayer == null) return true;
-		return currentLayer.isStatic() && currentLayer.isLocked();
+		return currentLayer == null;
 	}
 
 	/**

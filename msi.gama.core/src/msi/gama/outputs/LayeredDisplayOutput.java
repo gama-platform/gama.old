@@ -12,6 +12,7 @@ package msi.gama.outputs;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
@@ -25,8 +26,9 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
-import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
+import msi.gama.outputs.LayeredDisplayOutput.DisplayValidator;
 import msi.gama.outputs.layers.AbstractLayerStatement;
+import msi.gama.outputs.layers.CameraStatement;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.OverlayStatement;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
@@ -52,6 +54,7 @@ import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -194,29 +197,43 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc (
 								value = "Allows to show/hide a representation of the lights. Default is false.")),
+
+				/// CAMERA FACETS
+				@facet (
+						name = IKeyword.CAMERA,
+						type = { IType.STRING },
+						optional = true,
+						doc = @doc ("Allows to define the name of the camera to use. Default value is 'default'. "
+								+ "Accepted values are (1) the name of one of the cameras defined using the 'camera' statement or "
+								+ "(2) one of the preset cameras, accessible using constants: #from_above, #from_left, #from_right, "
+								+ "#from_up_left, #from_up_right, #from_front, #from_up_front")),
 				@facet (
 						name = "camera_pos",
 						type = { IType.POINT, IType.AGENT },
 						optional = true,
 						doc = @doc (
-								deprecated = "Use 'camera_location' instead",
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'location:' facet to it",
 								value = "Allows to define the position of the camera")),
 				@facet (
 						name = IKeyword.CAMERA_LOCATION,
 						type = { IType.POINT, IType.AGENT },
 						optional = true,
-						doc = @doc ("Allows to define the location of the camera, the origin being the center of the model")),
+						doc = @doc (
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'location:' facet to it",
+								value = "Allows to define the location of the camera, the origin being the center of the model")),
 				@facet (
 						name = IKeyword.CAMERA_TARGET,
 						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the target of the camera (what does it look at)")),
+						doc = @doc (
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'target:' facet to it",
+								value = "Allows to define the target of the camera (what does it look at)")),
 				@facet (
 						name = "camera_look_pos",
 						type = IType.POINT,
 						optional = true,
 						doc = @doc (
-								deprecated = "Use 'camera_target' instead",
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'target:' facet to it",
 								value = "Allows to define the direction of the camera")),
 				@facet (
 						name = IKeyword.CAMERA_ORIENTATION,
@@ -237,12 +254,18 @@ import msi.gaml.types.IType;
 						internal = true,
 						type = IType.INT,
 						optional = true,
-						doc = @doc ("Allows to define the lens of the camera")),
+						doc = @doc (
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'lens:' facet to it",
+								value = "Allows to define the lens of the camera")),
 				@facet (
 						name = IKeyword.CAMERA_INTERACTION,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
+						doc = @doc (
+								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'locked:' facet to it",
+								value = "If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
+
+				/// END CAMERA FACETS
 				@facet (
 						name = "use_shader",
 						type = IType.BOOL,
@@ -281,7 +304,7 @@ import msi.gaml.types.IType;
 		omissible = IKeyword.NAME)
 @inside (
 		symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@validator (InfoValidator.class)
+@validator (DisplayValidator.class)
 @serializer (DisplaySerializer.class)
 @doc (
 		value = "A display refers to an independent and mobile part of the interface that can display species, images, texts or charts.",
@@ -308,6 +331,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	/** The layers. */
 	private final List<AbstractLayerStatement> layers;
+
+	/** The cameras. */
+	private final List<CameraStatement> cameras;
 
 	/** The surface. */
 	protected IDisplaySurface surface;
@@ -354,7 +380,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	/**
 	 * The Class InfoValidator.
 	 */
-	public static class InfoValidator implements IDescriptionValidator<IDescription> {
+	public static class DisplayValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -391,7 +417,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 			final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
-					CAMERA_LENS, "z_near", "z_far");
+					CAMERA_LENS, "z_near", "z_far", IKeyword.CAMERA);
 			if (!isOpenGLWanted && camera != null) {
 				d.warning(
 						"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
@@ -407,14 +433,40 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				});
 
 			}
-			// AD: addressing the deprecation of camera_up_vector, camera_look_pos and camera_pos
-			IExpressionDescription c = d.getFacet("camera_up_vector");
-			if (c != null) { d.setFacet(CAMERA_ORIENTATION, c); }
-			c = d.getFacet("camera_look_pos");
-			if (c != null) { d.setFacet(CAMERA_TARGET, c); }
-			c = d.getFacet("camera_pos");
-			if (c != null) { d.setFacet(CAMERA_LOCATION, c); }
-			d.removeFacets("camera_pos", "camera_look_pos", "camera_up_vector");
+			// AD: addressing the deprecation of camera_location, camera_target, camera_orientation, camera_up_vector,
+			// camera_look_pos and camera_pos
+			// IExpressionDescription up = d.getFacet("camera_up_vector");
+			// if (target == null) { target = d.getFacet(CAMERA_ORIENTATION); }
+			IExpressionDescription target = d.getFacet("camera_look_pos");
+			if (target == null) { target = d.getFacet(CAMERA_TARGET); }
+			IExpressionDescription location = d.getFacet("camera_pos");
+			if (location == null) { location = d.getFacet(CAMERA_LOCATION); }
+			IExpressionDescription lens = d.getFacet(CAMERA_LENS);
+			IExpressionDescription locked = d.getFacet(CAMERA_INTERACTION);
+			String lockedString = locked == null ? "false" : locked.equalsString("true") ? "false" : "true";
+
+			// d.removeFacets("camera_pos", "camera_look_pos", "camera_up_vector",CAMERA_LOCATION,
+			// CAMERA_TARGET,CAMERA_ORIENTATION);
+			// Creating a default camera
+			if (target != null || location != null || lens != null) {
+				for (IDescription c : d.getChildrenWithKeyword(CAMERA)) {
+					if (DEFAULT.equals(c.getName())) {
+						d.warning(
+								"A camera named 'default' already exists. Rename it to enable GAMA to relocate the camera settings found here",
+								IGamlIssue.SHADOWS_NAME);
+						return;
+					}
+				}
+				IDescription cam =
+						DescriptionFactory.create(CAMERA, d, NAME, "\"" + DEFAULT + "\"", "locked", lockedString);
+				cam.validate();
+				d.replaceChildrenWith(Iterables.concat(d.getOwnChildren(), Collections.singleton(cam)));
+				if (target != null) { cam.getFacets().put(TARGET, target); }
+				if (location != null) { cam.getFacets().put(LOCATION, location); }
+				if (lens != null) { cam.getFacets().put("lens", lens); }
+
+			}
+
 		}
 
 		/**
@@ -464,9 +516,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	 */
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
-
 		if (hasFacet(IKeyword.TYPE)) { getData().setDisplayType(getLiteral(IKeyword.TYPE)); }
 		layers = new ArrayList<>();
+		cameras = new ArrayList<>();
 	}
 
 	/**
@@ -476,16 +528,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	 */
 	public IOverlayProvider<OverlayInfo> getOverlayProvider() { return overlayInfo; }
 
-	// @Override
-	// public boolean shouldOpenAsynchronously() {
-	// // OpenGL views need to be opened synchronously
-	// return !getData().isOpenGL();
-	// }
-
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		final boolean result = super.init(scope);
 		if (!result) return false;
+		for (CameraStatement s : cameras) {
+			getData().addCameraDefinition(s.getDefinition());
+			s.init(scope);
+		}
 		getData().initWith(getScope(), description);
 
 		for (final ILayerStatement layer : getLayers()) {
@@ -572,10 +622,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<AbstractLayerStatement> list = new ArrayList<>();
 		for (final ISymbol s : commands) {
-			if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
-				overlayInfo = (OverlayStatement) s;
+			if (s instanceof CameraStatement) {
+				cameras.add((CameraStatement) s);
+			} else {
+				if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
+					overlayInfo = (OverlayStatement) s;
+				}
+				list.add((AbstractLayerStatement) s);
 			}
-			list.add((AbstractLayerStatement) s);
 
 		}
 		setLayers(list);

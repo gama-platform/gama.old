@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * OpenGLDisplayView.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * OpenGLDisplayView.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -20,7 +19,6 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
-import ummisco.gama.opengl.renderer.helpers.CameraHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 /**
@@ -92,9 +90,6 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
-	public List<String> getCameraNames() { return new ArrayList<>(CameraHelper.PRESETS.keySet()); }
-
-	@Override
 	public void toggleFullScreen() {
 		hideCanvas();
 		super.toggleFullScreen();
@@ -123,6 +118,31 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	@Override
 	public void focusCanvas() {
 		getGLCanvas().setFocus();
+	}
+
+	@Override
+	public Collection<String> getCameraNames() { return getOutput().getData().getCameraNames(); }
+
+	@Override
+	public void setCameraName(final String p) {
+		getOutput().getData().setCameraNameFromUser(p);
+		this.getDisplaySurface().renderer.getCameraHelper().applyPreset(p);
+	}
+
+	@Override
+	public boolean hasCameras() {
+		return true;
+	}
+
+	@Override
+	public String getCameraName() { return getOutput().getData().getCameraName(); }
+
+	@Override
+	public boolean isCameraLocked() { return getOutput().getData().isLocked(); }
+
+	@Override
+	public void toggleCamera() {
+		getOutput().getData().setLocked(!getOutput().getData().isLocked());
 	}
 
 }

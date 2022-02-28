@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IToolbarDecoratedView.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IToolbarDecoratedView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
@@ -21,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchSite;
 
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -45,30 +48,29 @@ public interface IToolbarDecoratedView {
 	/**
 	 * Creates the tool items.
 	 *
-	 * @param tb the tb
+	 * @param tb
+	 *            the tb
 	 */
 	void createToolItems(GamaToolbar2 tb);
 
 	/**
-	 * Adds the state listener.
+	 * Adds the state listener. ✓ Unicode: U+2713, UTF-8: E2 9C 93
 	 *
-	 * @param listener the listener
+	 * @param listener
+	 *            the listener
 	 */
 	default void addStateListener(final StateListener listener) {}
 
 	/**
-	 * The listener interface for receiving state events.
-	 * The class that is interested in processing a state
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addStateListener<code> method. When
-	 * the state event occurs, that object's appropriate
-	 * method is invoked.
+	 * The listener interface for receiving state events. The class that is interested in processing a state event
+	 * implements this interface, and the object created with that class is registered with a component using the
+	 * component's <code>addStateListener<code> method. When the state event occurs, that object's appropriate method is
+	 * invoked.
 	 *
 	 * @see StateEvent
 	 */
 	public interface StateListener {
-		
+
 		/**
 		 * Update to reflect state.
 		 */
@@ -131,7 +133,7 @@ public interface IToolbarDecoratedView {
 	 * The Interface Colorizable.
 	 */
 	public interface Colorizable extends IToolbarDecoratedView {
-		
+
 		/**
 		 * Gets the color labels.
 		 *
@@ -142,7 +144,8 @@ public interface IToolbarDecoratedView {
 		/**
 		 * Gets the color.
 		 *
-		 * @param index the index
+		 * @param index
+		 *            the index
 		 * @return the color
 		 */
 		GamaUIColor getColor(int index);
@@ -150,8 +153,10 @@ public interface IToolbarDecoratedView {
 		/**
 		 * Sets the color.
 		 *
-		 * @param index the index
-		 * @param c the c
+		 * @param index
+		 *            the index
+		 * @param c
+		 *            the c
 		 */
 		void setColor(int index, GamaUIColor c);
 	}
@@ -160,7 +165,7 @@ public interface IToolbarDecoratedView {
 	 * The Interface CSVExportable.
 	 */
 	public interface CSVExportable extends IToolbarDecoratedView {
-		
+
 		/**
 		 * Save as CSV.
 		 */
@@ -171,7 +176,7 @@ public interface IToolbarDecoratedView {
 	 * The Interface LogExportable.
 	 */
 	public interface LogExportable extends IToolbarDecoratedView {
-		
+
 		/**
 		 * Save as log.
 		 */
@@ -205,7 +210,7 @@ public interface IToolbarDecoratedView {
 	 * The Interface Zoomable.
 	 */
 	public interface Zoomable extends IToolbarDecoratedView {
-		
+
 		/**
 		 * Zoom in.
 		 */
@@ -230,6 +235,49 @@ public interface IToolbarDecoratedView {
 		 * @return true if the scroll triggers the zooming
 		 */
 		boolean zoomWhenScrolling();
+
+		/**
+		 * Gets the camera names.
+		 *
+		 * @return the camera names
+		 */
+		default Collection<String> getCameraNames() { return Collections.EMPTY_LIST; }
+
+		/**
+		 * Sets the camera name.
+		 *
+		 * @param p
+		 *            the new camera name
+		 */
+		default void setCameraName(final String p) {}
+
+		/**
+		 * Checks for cameras.
+		 *
+		 * @return true, if successful
+		 */
+		default boolean hasCameras() {
+			return false;
+		}
+
+		/**
+		 * Gets the camera name.
+		 *
+		 * @return the camera name
+		 */
+		default String getCameraName() { return GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue(); }
+
+		/**
+		 * Checks if is camera locked.
+		 *
+		 * @return true, if is camera locked
+		 */
+		default boolean isCameraLocked() { return false; }
+
+		/**
+		 * Toggle camera.
+		 */
+		default void toggleCamera() {}
 
 	}
 

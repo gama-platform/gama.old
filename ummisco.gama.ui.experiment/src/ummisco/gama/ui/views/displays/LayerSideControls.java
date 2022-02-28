@@ -168,13 +168,16 @@ public class LayerSideControls {
 	PointEditor cameraPos, cameraTarget;
 
 	/** The preset. */
-	AbstractEditor preset;
+	// AbstractEditor preset;
 
 	/** The zoom. */
 	AbstractEditor zoom;
 
 	/** The rotate. */
 	AbstractEditor rotate;
+
+	/** The lock. */
+	// AbstractEditor lock;
 
 	/**
 	 * Fill camera parameters.
@@ -190,26 +193,26 @@ public class LayerSideControls {
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
 
-		EditorFactory.create(scope, contents, "FreeFly Camera", !data.isArcBallCamera(),
-				(EditorListener<Boolean>) val -> {
-					ds.runAndUpdate(() -> { data.setArcBallCamera(!val); });
+		// EditorFactory.create(scope, contents, "FreeFly Camera", !data.isArcBallCamera(),
+		// (EditorListener<Boolean>) val -> {
+		// ds.runAndUpdate(() -> { data.setArcBallCamera(!val); });
+		//
+		// });
+		// boolean cameraLocked = data.isLocked();
+		// lock = EditorFactory.create(scope, contents, "Lock camera:", cameraLocked,
+		// (EditorListener<Boolean>) newValue -> {
+		// cameraPos.setActive(!newValue);
+		// cameraTarget.setActive(!newValue);
+		// zoom.setActive(!newValue);
+		// data.setLocked(newValue);
+		// });
 
-				});
-		final boolean cameraLocked = data.cameraInteractionDisabled();
-		EditorFactory.create(scope, contents, "Lock camera:", cameraLocked, (EditorListener<Boolean>) newValue -> {
-			preset.setActive(!newValue);
-			cameraPos.setActive(!newValue);
-			cameraTarget.setActive(!newValue);
-			zoom.setActive(!newValue);
-			data.disableCameraInteractions(newValue);
-		});
-
-		preset = EditorFactory.choose(scope, contents, "Preset camera:", "Choose...", view.getCameraNames(),
-				(EditorListener<String>) newValue -> {
-					if (newValue.isEmpty()) return;
-					data.setPresetCamera(newValue);
-					ds.updateDisplay(true);
-				});
+		// preset = EditorFactory.choose(scope, contents, "Choose camera:", data.getCameraName(), data.getCameraNames(),
+		// (EditorListener<String>) newValue -> {
+		// if (newValue.isEmpty()) return;
+		// data.setCameraName(newValue);
+		// ds.updateDisplay(true);
+		// });
 
 		cameraPos = (PointEditor) EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
 				(EditorListener<GamaPoint>) newValue -> {
@@ -218,13 +221,13 @@ public class LayerSideControls {
 				});
 		cameraTarget = (PointEditor) EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
 				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraLookPos(newValue);
+					data.setCameraTarget(newValue);
 					ds.updateDisplay(true);
 				});
-		preset.setActive(!cameraLocked);
-		cameraPos.setActive(!cameraLocked);
-		cameraTarget.setActive(!cameraLocked);
-		zoom.setActive(!cameraLocked);
+		// preset.setActive(true);
+		// cameraPos.setActive(!cameraLocked);
+		// cameraTarget.setActive(!cameraLocked);
+		// zoom.setActive(!cameraLocked);
 		data.addListener((p, v) -> {
 			switch (p) {
 				case CAMERA_POS:
@@ -238,9 +241,17 @@ public class LayerSideControls {
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_PRESET:
-					preset.getParam().setValue(scope, "Choose...");
-					preset.updateWithValueOfParameter();
+					// preset.getParam().setValue(scope, "Choose...");
+					// preset.updateWithValueOfParameter();
+					boolean locked = data.isLocked();
+					// lock.getParam().setValue(scope, locked);
+					// lock.updateWithValueOfParameter();
 					copyCameraAndKeystoneDefinition(scope, data);
+					WorkbenchHelper.asyncRun(() -> {
+						cameraPos.setActive(!locked);
+						cameraTarget.setActive(!locked);
+						zoom.setActive(!locked);
+					});
 					break;
 
 				default:
@@ -607,12 +618,12 @@ public class LayerSideControls {
 	 * @return the string
 	 */
 	private String cameraDefinitionToCopy() {
-		StringBuilder text = new StringBuilder(IKeyword.CAMERA_LOCATION).append(": ")
-				.append(new GamaPoint(cameraPos.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
-		text.append(" ").append(IKeyword.CAMERA_TARGET).append(": ")
-				.append(new GamaPoint(cameraTarget.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
-		// text.append(" ").append(IKeyword.CAMERA_ORIENTATION).append(": ")
-		// .append(new GamaPoint(cameraOrientation.getCurrentValue()).withPrecision(4).serialize(false));
+		StringBuilder text =
+				new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION).append(": ").append(
+						new GamaPoint(cameraPos.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
+		text.append(" ").append(IKeyword.TARGET).append(": ")
+				.append(new GamaPoint(cameraTarget.getCurrentValue()).yNegated().withPrecision(4).serialize(false))
+				.append(";");
 		return text.toString();
 	}
 

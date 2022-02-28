@@ -10,23 +10,20 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.ICamera;
 import msi.gama.metamodel.shape.GamaPoint;
-import ummisco.gama.opengl.camera.CameraArcBall;
-import ummisco.gama.opengl.camera.FreeFlyCamera;
-import ummisco.gama.opengl.camera.ICamera;
+import ummisco.gama.opengl.camera.AbstractCamera;
+import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
 /**
  * The Class CameraHelper.
  */
-public class CameraHelper extends AbstractRendererHelper implements ICamera {
+public class CameraHelper extends AbstractRendererHelper implements ICamera, IMultiListener {
 
 	/** The Constant UNDEFINED. */
 	public final static GamaPoint UNDEFINED = new GamaPoint();
@@ -34,47 +31,8 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	/** The Constant NULL_POINT. */
 	public final static GamaPoint NULL_POINT = new GamaPoint();
 
-	/** The presets. */
-	public static Map<String, CameraPreset> PRESETS = new LinkedHashMap<>();
-
 	/** The camera. */
-	ICamera camera;
-
-	static {
-		PRESETS.put("Choose...", c -> {});
-		PRESETS.put("From top", c -> {
-			c.setPosition(c.getTarget().x, c.getTarget().y, c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			// c.setUpVector(0, 1, 0);
-		});
-		PRESETS.put("From left", c -> {
-			c.setPosition(c.getTarget().x - c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y, 0);
-			// c.setUpVector(0, 0, 1);
-		});
-		PRESETS.put("From up left", c -> {
-			c.setPosition(c.getTarget().x - c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y,
-					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			// c.setUpVector(0, 0, 1);
-		});
-		PRESETS.put("From right", c -> {
-			c.setPosition(c.getTarget().x + c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y, 0);
-			// c.setUpVector(0, 0, 1);
-		});
-		PRESETS.put("From up right", c -> {
-			c.setPosition(c.getTarget().x + c.getRenderer().getEnvWidth() * c.getInitialZFactor(), c.getTarget().y,
-					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			// c.setUpVector(0, 0, 1);
-		});
-		PRESETS.put("From front", c -> {
-			c.setPosition(c.getTarget().x, c.getTarget().y - c.getRenderer().getEnvHeight() * c.getInitialZFactor(), 0);
-			// c.setUpVector(0, 0, 1);
-		});
-		PRESETS.put("From up front", c -> {
-			c.setPosition(c.getTarget().x, c.getTarget().y - c.getRenderer().getEnvHeight() * c.getInitialZFactor(),
-					c.getRenderer().getMaxEnvDim() * c.getInitialZFactor());
-			// c.setUpVector(0, 0, 1);
-		});
-
-	}
+	AbstractCamera camera;
 
 	/**
 	 * Instantiates a new camera helper.
@@ -90,37 +48,21 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	 * Setup camera.
 	 */
 	public final void setupCamera() {
-		if (!getData().isArcBallCamera()) {
-			camera = new FreeFlyCamera(getRenderer());
-		} else {
-			camera = new CameraArcBall(getRenderer());
-		}
+		camera = new AbstractCamera(getRenderer());
 		camera.initialize();
 		camera.update();
 
 	}
 
-	@Override
-	public void applyPreset(final String value) {
-		if (camera != null) { camera.applyPreset(value); }
-	}
-
-	@Override
-	public void updatePosition() {
-		if (camera != null) { camera.updatePosition(); }
-	}
-
 	/**
-	 * Update orientation.
+	 * Apply preset.
+	 *
+	 * @param value
+	 *            the value
 	 */
 	// @Override
-	// public void updateOrientation() {
-	// if (camera != null) { camera.updateOrientation(); }
-	// }
-
-	@Override
-	public void updateTarget() {
-		if (camera != null) { camera.updateTarget(); }
+	public void applyPreset(final String value) {
+		if (camera != null) { camera.applyPreset(value); }
 	}
 
 	@Override
@@ -133,57 +75,117 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 		if (camera != null) { camera.update(); }
 	}
 
+	/**
+	 * Key pressed.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void keyPressed(final KeyEvent e) {
 		if (camera != null) { camera.keyPressed(e); }
 	}
 
+	/**
+	 * Key released.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		if (camera != null) { camera.keyReleased(e); }
 	}
 
+	/**
+	 * Mouse double click.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseDoubleClick(final MouseEvent e) {
 		if (camera != null) { camera.mouseDoubleClick(e); }
 
 	}
 
+	/**
+	 * Mouse down.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseDown(final MouseEvent e) {
 		if (camera != null) { camera.mouseDown(e); }
 
 	}
 
+	/**
+	 * Mouse up.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseUp(final MouseEvent e) {
 		if (camera != null) { camera.mouseUp(e); }
 	}
 
+	/**
+	 * Mouse move.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseMove(final MouseEvent e) {
 		if (camera != null) { camera.mouseMove(e); }
 
 	}
 
+	/**
+	 * Mouse enter.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseEnter(final MouseEvent e) {
 		if (camera != null) { camera.mouseEnter(e); }
 
 	}
 
+	/**
+	 * Mouse exit.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseExit(final MouseEvent e) {
 		if (camera != null) { camera.mouseExit(e); }
 
 	}
 
+	/**
+	 * Mouse hover.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseHover(final MouseEvent e) {
 		if (camera != null) { camera.mouseHover(e); }
 
 	}
 
+	/**
+	 * Mouse scrolled.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseScrolled(final MouseEvent e) {
 		if (camera != null) { camera.mouseScrolled(e); }
@@ -201,7 +203,7 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 	 *
 	 * @return the orientation
 	 */
-	// @Override
+	@Override
 	public GamaPoint getOrientation() {
 		if (camera != null) return camera.getOrientation();
 		return UNDEFINED;
@@ -266,54 +268,124 @@ public class CameraHelper extends AbstractRendererHelper implements ICamera {
 		camera = null;
 	}
 
+	/**
+	 * Mouse clicked.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseClicked(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseClicked(e); }
 	}
 
+	/**
+	 * Mouse entered.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseEntered(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseEntered(e); }
 	}
 
+	/**
+	 * Mouse exited.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseExited(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseExited(e); }
 	}
 
+	/**
+	 * Mouse pressed.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mousePressed(e); }
 	}
 
+	/**
+	 * Mouse released.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseReleased(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseReleased(e); }
 	}
 
+	/**
+	 * Mouse moved.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseMoved(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseMoved(e); }
 	}
 
+	/**
+	 * Mouse dragged.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseDragged(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseDragged(e); }
 	}
 
+	/**
+	 * Mouse wheel moved.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent e) {
 		if (camera != null) { camera.mouseWheelMoved(e); }
 	}
 
+	/**
+	 * Key pressed.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void keyPressed(final com.jogamp.newt.event.KeyEvent e) {
 		if (camera != null) { camera.keyPressed(e); }
 	}
 
+	/**
+	 * Key released.
+	 *
+	 * @param e
+	 *            the e
+	 */
 	@Override
 	public void keyReleased(final com.jogamp.newt.event.KeyEvent e) {
 		if (camera != null) { camera.keyReleased(e); }
+	}
+
+	/**
+	 * Zoom.
+	 *
+	 * @param b
+	 *            the b
+	 */
+	public void zoom(final boolean b) {
+		if (camera != null) { camera.zoom(b); }
 	}
 
 }

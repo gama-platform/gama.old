@@ -125,7 +125,7 @@ public class LayerObject {
 	volatile boolean isInvalid;
 
 	/** The locked. */
-	volatile boolean locked;
+	private volatile boolean locked;
 
 	/** The is animated. */
 	volatile boolean isAnimated;
@@ -157,11 +157,16 @@ public class LayerObject {
 		this.renderer = renderer2;
 		this.layer = layer;
 		currentList = new Trace();
-		if (layer != null && layer.getData().getTrace() != null || renderer.useShader()) {
-			traces = new LinkedList();
-			traces.add(currentList);
-		} else {
+		if (layer == null) {
 			traces = null;
+		} else {
+			Integer number = layer.getData().getTrace();
+			if (number == null || number == 0) {
+				traces = null;
+			} else {
+				traces = new LinkedList();
+				traces.add(currentList);
+			}
 		}
 	}
 
@@ -341,10 +346,7 @@ public class LayerObject {
 	 *
 	 * @return true, if is static
 	 */
-	public boolean isStatic() {
-		if (layer == null) return true;
-		return !layer.getData().isDynamic();
-	}
+	public boolean isStatic() { return layer == null || !layer.getData().isDynamic(); }
 
 	/**
 	 * Sets the alpha.
@@ -361,7 +363,6 @@ public class LayerObject {
 	 *            the new offset
 	 */
 	public void setOffset(final GamaPoint offset) {
-
 		if (offset != null) {
 			currentList.offset.setLocation(offset);
 		} else {
@@ -568,17 +569,6 @@ public class LayerObject {
 	 */
 	public boolean canSplit() {
 		return true;
-	}
-
-	/**
-	 * Force redraw.
-	 *
-	 * @param gl
-	 *            the gl
-	 */
-	public void forceRedraw(final OpenGL gl) {
-		if (layer == null) {}
-
 	}
 
 	/**

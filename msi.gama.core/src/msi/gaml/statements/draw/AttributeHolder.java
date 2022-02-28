@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AttributeHolder.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AttributeHolder.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -14,13 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * A class that facilitates the development of classes holding attributes declared in symbols' facets
@@ -30,15 +28,15 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public abstract class AttributeHolder {
 
-//	static {
-//		DEBUG.OFF();
-//	}
+	// static {
+	// DEBUG.OFF();
+	// }
 
 	/** The attributes. */
 	final Map<String, Attribute<?>> attributes = new HashMap<>(10);
 
 	/** The symbol. */
-	final ISymbol symbol;
+	protected final ISymbol symbol;
 
 	/**
 	 * The Interface Attribute.
@@ -244,9 +242,8 @@ public abstract class AttributeHolder {
 	 *            the scope
 	 * @return the attribute holder
 	 */
-	public AttributeHolder refresh(final IScope scope) {
+	public void refresh(final IScope scope) {
 		attributes.forEach((name, attribute) -> { attribute.refresh(name, scope); });
-		return this;
 	}
 
 	/**
