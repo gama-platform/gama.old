@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentOutputManager.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -94,7 +94,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ExperimentOutputManager extends AbstractOutputManager {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/**
@@ -109,7 +109,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	/**
 	 * Instantiates a new experiment output manager.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public ExperimentOutputManager(final IDescription desc) {
 		super(desc);
@@ -117,19 +118,13 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		// scope.getGui().hideScreen();
 		// DEBUG.OUT("ExperimentOutputManager init");
 		final Symbol layoutDefinition = layout == null ? this : layout;
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
 		final Object layoutObject =
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 		super.init(scope);
-
 		scope.getGui().applyLayout(scope, layoutObject);
-		// scope.getGui().showScreen();
-		if (scope.getExperiment().getSpecies().isAutorun()) {
-			GAMA.startFrontmostExperiment();
-		}
 		return true;
 	}
 
@@ -137,7 +132,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	// #1273) -- Conflicts with Issue #2204
 	@Override
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		if (scope.getExperiment().getSpecies().isBatch()) { return true; }
+		if (scope.getExperiment().getSpecies().isBatch()) return true;
 		return super.initialStep(scope, output);
 	}
 

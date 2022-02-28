@@ -276,7 +276,9 @@ public class ExperimentController implements IExperimentController {
 		this.agent = agent;
 		scope = agent.getScope();
 		try {
-			if (!scope.init(agent).passed()) { scope.setInterrupted(); }
+			if (!scope.init(agent).passed()) {
+				scope.setInterrupted();
+			} else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);

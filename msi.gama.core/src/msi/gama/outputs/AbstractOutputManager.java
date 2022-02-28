@@ -293,14 +293,4 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return true;
 	}
 
-	/**
-	 * Take snapshot.
-	 *
-	 * @param scope
-	 *            the scope
-	 */
-	public void takeSnapshot(final IScope scope) {
-
-	}
-
 }
