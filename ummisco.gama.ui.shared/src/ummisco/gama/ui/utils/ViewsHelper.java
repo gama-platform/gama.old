@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ViewsHelper.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ViewsHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
@@ -166,11 +166,13 @@ public class ViewsHelper {
 	 * @return the i display surface
 	 */
 	public static IDisplaySurface frontmostDisplaySurface() {
-		IViewPart view = findFrontmostGamaViewUnderMouse();
-		if (view instanceof IGamaView.Display) return ((IGamaView.Display) view).getDisplaySurface();
-		List<IDisplaySurface> surfaces = allDisplaySurfaces();
-		if (surfaces.size() == 0) return null;
-		return surfaces.get(0);
+		return WorkbenchHelper.run(() -> {
+			IViewPart view = findFrontmostGamaViewUnderMouse();
+			if (view instanceof IGamaView.Display) return ((IGamaView.Display) view).getDisplaySurface();
+			List<IDisplaySurface> surfaces = allDisplaySurfaces();
+			if (surfaces.size() == 0) return null;
+			return surfaces.get(0);
+		});
 	}
 
 	/**
