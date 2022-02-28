@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaToolbar2.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaToolbar2.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -144,7 +144,7 @@ public class GamaToolbar2 extends Composite {
 	protected void checkSubclass() {}
 
 	/**
-	 * Sep.
+	 * Sep. Width is not used anymore
 	 *
 	 * @param width
 	 *            the n
@@ -153,8 +153,17 @@ public class GamaToolbar2 extends Composite {
 	 * @return the tool item
 	 */
 	public ToolItem sep(final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
+		return sep(side);
+	}
 
-		// item.setWidth(width);
+	/**
+	 * Sep.
+	 *
+	 * @param side
+	 *            the side
+	 * @return the tool item
+	 */
+	public ToolItem sep(final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR);
 	}
 
