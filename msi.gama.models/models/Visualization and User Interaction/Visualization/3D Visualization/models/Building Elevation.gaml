@@ -150,7 +150,7 @@ experiment road_traffic type: gui
 	}
 	output
 	{
-		display city_display type: opengl 
+		display city_display type: opengl camera: #isometric
 		{
 			species building aspect: base refresh: false;
 			species road aspect: base refresh: false;

@@ -96,7 +96,8 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 		GamaPoint location;
 		boolean noLocation = temp == null;
 		if (noLocation) { temp = GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue(); }
-
+		// We negate the Y ordinate coming from GAML
+		target = target.yNegated();
 		if (temp instanceof String pos) {
 			// If it is a symbolic position
 			double w = scope.getSimulation().getWidth();
@@ -105,11 +106,10 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 			location = computeLocation(pos, target, w, -h, max);
 		} else {
 			location = Cast.asPoint(scope, temp);
+			// The location should be a point now and we negate it as well
+			location = location.yNegated();
 		}
-		// We negate the Y ordinate coming from GAML
-		target = target.yNegated();
-		// The location should be a point now and we negate it as well
-		location = location.yNegated();
+
 		// We determine the distance and apply it to the location if it is explicitly defined or if no location has been
 		// defined
 		Double d = distanceAttribute.get();

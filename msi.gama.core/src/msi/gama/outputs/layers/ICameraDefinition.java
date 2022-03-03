@@ -73,10 +73,17 @@ public interface ICameraDefinition extends INamed {
 			doc = @doc ("Represent the position of the camera, in front and slightly above the scene")) String from_up_front =
 					"From up front";
 
+	/** The from left. */
+	@constant (
+			value = "isometric",
+			category = IOperatorCategory.THREED,
+			doc = @doc ("Represent the position of the camera, on the left of the scene")) String isometric =
+					"Isometric";
+
 	/** The presets. */
-	String[] PRESETS =
-			List.of(from_above, from_left, from_right, from_front, from_up_left, from_up_right, from_up_front)
-					.toArray(new String[7]);
+	String[] PRESETS = List
+			.of(from_above, from_left, from_right, from_front, from_up_left, from_up_right, from_up_front, isometric)
+			.toArray(new String[7]);
 
 	/**
 	 * Gets the location.
@@ -173,15 +180,15 @@ public interface ICameraDefinition extends INamed {
 	 * Computes the location of a camera based on a symbolic position, a target and boundarises .
 	 *
 	 * @param pos
-	 *            the pos
+	 *            the symbolic position
 	 * @param target
-	 *            the target
+	 *            the target - y-negated already
 	 * @param maxX
-	 *            the w
+	 *            the dimension on the x axis > 0
 	 * @param maxY
-	 *            the h
+	 *            the dimension on the y axis > 0
 	 * @param maxZ
-	 *            the max
+	 *            the dimension on the z axis > 0
 	 * @return the gama point
 	 */
 	default GamaPoint computeLocation(final String pos, final GamaPoint target, final double maxX, final double maxY,
@@ -194,6 +201,7 @@ public interface ICameraDefinition extends INamed {
 			case from_up_right -> new GamaPoint(target.x + maxX, target.y - maxY / 1000, maxZ);
 			case from_front -> new GamaPoint(target.x, target.y - maxY, 0);
 			case from_up_front -> new GamaPoint(target.x, target.y - maxY, maxZ);
+			case isometric -> new GamaPoint(target.x + maxZ, -maxZ + target.y, maxZ / 1.2);
 			default -> new GamaPoint(target.x, target.y, maxZ); // FROM_ABOVE
 		};
 	}
