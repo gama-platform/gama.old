@@ -177,7 +177,7 @@ experiment "Meshes" type: gui {
 		}
 
 		display "Large file, trianges, grayscale, scaled" type: opengl draw_env: false {
-			camera "default" location: {119.8782, 301.7184, 408.395} target: {119.8782, 301.7184, 408.395};
+			camera 'default' location: {104.7273,233.3361,685.4581} target: {100.135,-29.7603,0.0};
 			mesh dem_file grayscale: true triangulation: true scale: 2.0;
 		}
 
