@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TextDrawer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * TextDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.text;
 
@@ -101,19 +101,19 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 
 	/** The face vertex buffer. */
 	// Buffers
-	final DoubleBuffer faceVertexBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
+	DoubleBuffer faceVertexBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
 
 	/** The face texture buffer. */
-	final DoubleBuffer faceTextureBuffer = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3);
+	DoubleBuffer faceTextureBuffer = newDirectDoubleBuffer(BUFFER_SIZE * 2 / 3);
 
 	/** The indices. */
 	int[] indices = new int[1000]; // Indices of the "move_to" or "close"
 
 	/** The side normal buffer. */
-	private final DoubleBuffer sideNormalBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
+	private DoubleBuffer sideNormalBuffer = newDirectDoubleBuffer(BUFFER_SIZE);
 
 	/** The side quads buffer. */
-	private final DoubleBuffer sideQuadsBuffer = newDirectDoubleBuffer(BUFFER_SIZE); // Contains the sides
+	private DoubleBuffer sideQuadsBuffer = newDirectDoubleBuffer(BUFFER_SIZE); // Contains the sides
 
 	/** The border. */
 	// Properties
@@ -350,7 +350,9 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+		faceVertexBuffer = faceTextureBuffer = sideNormalBuffer = sideQuadsBuffer = null;
+	}
 
 	/**
 	 * Draw side.

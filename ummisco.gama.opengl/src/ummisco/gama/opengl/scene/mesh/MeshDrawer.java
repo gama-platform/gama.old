@@ -123,6 +123,16 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	@Override
+	public void dispose() {
+		surface.setTo(0);
+		fill = null;
+		data = null;
+		realIndexes = null;
+		vertexBuffer = normalBuffer = texBuffer = colorBuffer = lineColorBuffer = null;
+		indexBuffer = null;
+	}
+
+	@Override
 	protected void _draw(final MeshObject object) {
 
 		var attributes = object.getAttributes();
@@ -466,6 +476,4 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		return output;
 	}
 
-	@Override
-	public void dispose() {}
 }
