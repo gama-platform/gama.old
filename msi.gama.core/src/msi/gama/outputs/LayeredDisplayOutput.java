@@ -282,7 +282,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.ROTATE,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("Set the angle for the rotation around the Z axis")),
+						doc = @doc ("Set the angle for the rotation around the Z axis in degrees")),
 				@facet (
 						name = "z_near",
 						type = IType.FLOAT,

@@ -137,7 +137,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copyForGraphics("in opengl display"));
 		renderer = createRenderer();
-		renderer.setDisplaySurface(this);
 		animator = new GamaGLCanvas(parent, renderer).getAnimator();
 		layerManager = new LayerManager(this, output);
 		temp_focus = output.getFacet(IKeyword.FOCUS);
@@ -150,7 +149,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @return the i open GL renderer
 	 */
 	protected IOpenGLRenderer createRenderer() {
-		return new JOGLRenderer();
+		return new JOGLRenderer(this);
 	}
 
 	@Override

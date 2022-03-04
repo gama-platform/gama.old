@@ -120,7 +120,7 @@ public class OverlayLayerObject extends LayerObject {
 
 	@Override
 	protected void stopDrawing(final OpenGL gl) {
-		super.stopDrawing(gl);
+		// super.stopDrawing(gl);
 		// Addition to fix #2228 and #2222
 		gl.resumeZTranslation();
 		// gl.getGL().glEnable(GL.GL_DEPTH_TEST);

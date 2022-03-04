@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * AbstractRendererHelper.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractRendererHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.outputs.LayeredDisplayData;
 import ummisco.gama.opengl.OpenGL;
@@ -38,15 +37,20 @@ public abstract class AbstractRendererHelper {
 	}
 
 	/** The renderer. */
-	private final IOpenGLRenderer renderer;
+	protected final IOpenGLRenderer renderer;
+
+	/** The data. */
+	protected final LayeredDisplayData data;
 
 	/**
 	 * Instantiates a new abstract renderer helper.
 	 *
-	 * @param renderer the renderer
+	 * @param renderer
+	 *            the renderer
 	 */
 	public AbstractRendererHelper(final IOpenGLRenderer renderer) {
 		this.renderer = renderer;
+		this.data = renderer.getData();
 	}
 
 	/**
@@ -61,7 +65,7 @@ public abstract class AbstractRendererHelper {
 	 *
 	 * @return the data
 	 */
-	protected LayeredDisplayData getData() { return renderer.getData(); }
+	protected LayeredDisplayData getData() { return data; }
 
 	/**
 	 * Gets the gl.
@@ -103,14 +107,14 @@ public abstract class AbstractRendererHelper {
 	 *
 	 * @return the z near
 	 */
-	public double getZNear() { return renderer.getData().getzNear(); }
+	public double getZNear() { return data.getzNear(); }
 
 	/**
 	 * Gets the z far.
 	 *
 	 * @return the z far
 	 */
-	public double getZFar() { return renderer.getData().getzFar(); }
+	public double getZFar() { return data.getzFar(); }
 
 	/**
 	 * Initialize.

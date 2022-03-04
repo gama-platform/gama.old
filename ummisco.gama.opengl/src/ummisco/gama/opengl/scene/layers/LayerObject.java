@@ -239,7 +239,7 @@ public class LayerObject {
 			gl.suspendZTranslation();
 			gl.getGL().glDisable(GL.GL_DEPTH_TEST);
 		}
-		gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW);
+		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		try {
 			doDrawing(gl);
 		} finally {

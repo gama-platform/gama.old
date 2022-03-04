@@ -68,19 +68,19 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/** The keystone helper. */
 	// Helpers
-	private final KeystoneHelper keystoneHelper = createKeystoneHelper();
+	private final KeystoneHelper keystoneHelper;
 
 	/** The picking helper. */
-	private final PickingHelper pickingHelper = new PickingHelper(this);
+	private final PickingHelper pickingHelper;
 
 	/** The light helper. */
-	private final LightHelper lightHelper = new LightHelper(this);
+	private final LightHelper lightHelper;
 
 	/** The camera helper. */
-	private final CameraHelper cameraHelper = new CameraHelper(this);
+	private final CameraHelper cameraHelper;
 
 	/** The scene helper. */
-	private final SceneHelper sceneHelper = createSceneHelper();
+	private final SceneHelper sceneHelper;
 
 	/** The open GL. */
 	// OpenGL back-end
@@ -93,6 +93,21 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	/** The canvas. */
 	// Canvas
 	protected GamaGLCanvas canvas;
+
+	/**
+	 * Instantiates a new JOGL renderer.
+	 *
+	 * @param surface
+	 *            the surface
+	 */
+	public JOGLRenderer(final IDisplaySurface surface) {
+		setDisplaySurface(surface);
+		keystoneHelper = createKeystoneHelper();
+		pickingHelper = new PickingHelper(this);
+		lightHelper = new LightHelper(this);
+		cameraHelper = new CameraHelper(this);
+		sceneHelper = createSceneHelper();
+	}
 
 	@Override
 	public void setDisplaySurface(final IDisplaySurface d) {
