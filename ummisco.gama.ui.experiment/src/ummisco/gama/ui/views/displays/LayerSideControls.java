@@ -214,14 +214,14 @@ public class LayerSideControls {
 		// ds.updateDisplay(true);
 		// });
 
-		cameraPos = (PointEditor) EditorFactory.create(scope, contents, "Position:", data.getCameraPos(),
+		cameraPos = (PointEditor) EditorFactory.create(scope, contents, "Position:", data.getCameraPos().yNegated(),
 				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraPos(newValue);
+					data.setCameraPos(newValue.yNegated());
 					ds.updateDisplay(true);
 				});
-		cameraTarget = (PointEditor) EditorFactory.create(scope, contents, "Target:", data.getCameraTarget(),
+		cameraTarget = (PointEditor) EditorFactory.create(scope, contents, "Target:", data.getCameraTarget().yNegated(),
 				(EditorListener<GamaPoint>) newValue -> {
-					data.setCameraTarget(newValue);
+					data.setCameraTarget(newValue.yNegated());
 					ds.updateDisplay(true);
 				});
 		// preset.setActive(true);
@@ -231,12 +231,12 @@ public class LayerSideControls {
 		data.addListener((p, v) -> {
 			switch (p) {
 				case CAMERA_POS:
-					cameraPos.getParam().setValue(scope, data.getCameraPos());
+					cameraPos.getParam().setValue(scope, data.getCameraPos().yNegated());
 					cameraPos.updateWithValueOfParameter();
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_TARGET:
-					cameraTarget.getParam().setValue(scope, data.getCameraTarget());
+					cameraTarget.getParam().setValue(scope, data.getCameraTarget().yNegated());
 					cameraTarget.updateWithValueOfParameter();
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
@@ -618,12 +618,10 @@ public class LayerSideControls {
 	 * @return the string
 	 */
 	private String cameraDefinitionToCopy() {
-		StringBuilder text =
-				new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION).append(": ").append(
-						new GamaPoint(cameraPos.getCurrentValue()).yNegated().withPrecision(4).serialize(false));
+		StringBuilder text = new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION)
+				.append(": ").append(new GamaPoint(cameraPos.getCurrentValue()).withPrecision(4).serialize(false));
 		text.append(" ").append(IKeyword.TARGET).append(": ")
-				.append(new GamaPoint(cameraTarget.getCurrentValue()).yNegated().withPrecision(4).serialize(false))
-				.append(";");
+				.append(new GamaPoint(cameraTarget.getCurrentValue()).withPrecision(4).serialize(false)).append(";");
 		return text.toString();
 	}
 
