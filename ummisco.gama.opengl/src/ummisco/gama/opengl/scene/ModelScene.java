@@ -116,10 +116,10 @@ public class ModelScene {
 	public void draw(final OpenGL gl) {
 
 		gl.push(GLMatrixFunc.GL_MODELVIEW);
-		gl.setZIncrement(zIncrement);
+		gl.setZIncrement(renderer.getData().isOrtho() ? 0D : zIncrement);
 		// AD called here so that it is inside the keystone drawing. See #3285
 		gl.rotateModel();
-		layers.forEach((name, layer) -> {
+		for (LayerObject layer : layers.values()) {
 			if (layer != null && !layer.isInvalid()) {
 				try {
 					layer.lock();
@@ -129,7 +129,8 @@ public class ModelScene {
 					r.printStackTrace();
 				}
 			}
-		});
+		}
+
 		gl.setZIncrement(0);
 		rendered = true;
 		IDisplaySynchronizer sync = gl.getRenderer().getSurface().synchronizer;

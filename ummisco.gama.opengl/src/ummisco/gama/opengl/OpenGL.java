@@ -430,14 +430,16 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			} catch (final BufferOverflowException e) {
 				DEBUG.ERR("Buffer overflow exception");
 			}
+		} else if (aspect >= 1.0) {
+			gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 		} else {
-			if (aspect >= 1.0) {
-				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
-			} else {
-				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
-			}
-			gl.glTranslated(0d, 0d, maxDim * 0.05);
+			gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim * 10, -maxDim * 10);
 		}
+
+		// else {
+		// gl.glOrtho(-maxDim, maxDim, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
+		// }
+		gl.glTranslated(0d, 0d, maxDim * 0.2);
 		getRenderer().getCameraHelper().animate();
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ShapeExecuter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ShapeExecuter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -22,7 +22,6 @@ import static msi.gaml.types.GamaFileType.createFile;
 import static msi.gaml.types.GamaGeometryType.buildArrow;
 
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
@@ -49,26 +48,30 @@ class ShapeExecuter extends DrawExecuter {
 
 	/** The begin arrow. */
 	final IExpression endArrow, beginArrow;
-	
+
 	/** The constant shape. */
 	final IShape constantShape;
-	
+
 	/** The constant begin. */
 	final Double constantEnd, constantBegin;
-	
+
 	/** The has arrows. */
 	final boolean hasArrows;
-	
+
 	/** The center. */
 	final GamaPoint center = new GamaPoint();
 
 	/**
 	 * Instantiates a new shape executer.
 	 *
-	 * @param item the item
-	 * @param beginArrow the begin arrow
-	 * @param endArrow the end arrow
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param item
+	 *            the item
+	 * @param beginArrow
+	 *            the begin arrow
+	 * @param endArrow
+	 *            the end arrow
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
 			throws GamaRuntimeException {
@@ -145,7 +148,7 @@ class ShapeExecuter extends DrawExecuter {
 			final Envelope3D e = shape.getEnvelope();
 			try {
 				final Envelope visible = gr.getVisibleRegion();
-				if ((visible != null) && !visible.intersects(e)) return null;
+				if (visible != null && !visible.intersects(e)) return null;
 			} finally {
 				e.dispose();
 			}
@@ -160,9 +163,12 @@ class ShapeExecuter extends DrawExecuter {
 	/**
 	 * Compute attributes.
 	 *
-	 * @param scope the scope
-	 * @param data the data
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param data
+	 *            the data
+	 * @param shape
+	 *            the shape
 	 * @return the drawing attributes
 	 */
 	DrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
@@ -212,37 +218,42 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	/** The temp arrow list. */
-	private final List<Geometry> tempArrowList = new ArrayList<>();
+	// private final List<Geometry> tempArrowList = new ArrayList<>();
 
 	/**
 	 * Adds the arrows.
 	 *
-	 * @param scope the scope
-	 * @param g1 the g 1
-	 * @param fill the fill
+	 * @param scope
+	 *            the scope
+	 * @param g1
+	 *            the g 1
+	 * @param fill
+	 *            the fill
 	 * @return the geometry
 	 */
 	private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
+		if (g1 == null) return g1;
 		final GamaPoint[] points = getPointsOf(g1);
 		final int size = points.length;
 		if (size < 2) return g1;
-		tempArrowList.clear();
-		tempArrowList.add(g1);
 		Geometry end = null, begin = null;
 		if (endArrow != null || constantEnd != null) {
 			final double width = constantEnd == null ? asFloat(scope, endArrow.value(scope)) : constantEnd;
 			if (width > 0) {
 				end = buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill).getInnerGeometry();
-				tempArrowList.add(end);
 			}
 		}
 		if (beginArrow != null || constantBegin != null) {
 			final double width = constantBegin == null ? asFloat(scope, beginArrow.value(scope)) : constantBegin;
 			if (width > 0) {
 				begin = buildArrow(points[1], points[0], width, width + width / 3, fill).getInnerGeometry();
-				tempArrowList.add(begin);
 			}
 		}
-		return GEOMETRY_FACTORY.createGeometryCollection(tempArrowList.toArray(new Geometry[tempArrowList.size()]));
+		if (end == null) {
+			if (begin == null) return g1;
+			return GEOMETRY_FACTORY.createCollection(g1, begin);
+		}
+		if (begin == null) return GEOMETRY_FACTORY.createCollection(g1, end);
+		return g1;
 	}
 }
