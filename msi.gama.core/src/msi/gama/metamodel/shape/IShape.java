@@ -464,7 +464,9 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 *
 	 * @return the max dimension
 	 */
-	default Double getMaxDimension() { return Math.max(Math.max(getHeight(), getWidth()), getDepth()); }
+	default Double getMaxDimension() {
+		return Math.max(Math.max(getHeight(), getWidth()), getDepth() == null ? 0d : getDepth());
+	}
 
 	/**
 	 * Gets the geometric envelope.

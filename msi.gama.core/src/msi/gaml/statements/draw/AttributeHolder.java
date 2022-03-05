@@ -60,6 +60,7 @@ public abstract class AttributeHolder {
 		 * @return the v
 		 */
 		V get();
+
 	}
 
 	/**
@@ -313,8 +314,9 @@ public abstract class AttributeHolder {
 	 * @return the attribute
 	 */
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final IExpression exp, final T type,
-			final V def, final Function<IExpression, V> constCaster) {
+			final V def, final Function<IExpression, V> cc) {
 		Attribute<V> result;
+		Function<IExpression, V> constCaster = cc == null ? e -> type.cast(null, e.getConstValue(), null, true) : cc;
 		// AD 10/12/19 Changed because it was creating problems with constant
 		// boolean values meant to indicate the presence or absence of the property
 		// see #2902 and #2913
@@ -325,7 +327,6 @@ public abstract class AttributeHolder {
 		}
 		attributes.put(facet, result);
 		return result;
-
 	}
 
 	/**

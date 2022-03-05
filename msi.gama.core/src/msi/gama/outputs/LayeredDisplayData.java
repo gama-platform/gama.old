@@ -31,6 +31,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.GenericCameraDefinition;
 import msi.gama.outputs.layers.ICameraDefinition;
+import msi.gama.outputs.layers.RotationDefinition;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -212,21 +213,12 @@ public class LayeredDisplayData {
 	/** The zoom level. */
 	private Double zoomLevel = INITIAL_ZOOM;
 
-	/** The lights. */
-	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
-
 	/** The Constant KEYSTONE_IDENTITY. */
 	public static final ICoordinates KEYSTONE_IDENTITY =
 			ICoordinates.ofLength(4).setTo(0d, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0);
 
 	/** The keystone. */
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
-
-	/** The z rotation angle delta. */
-	private double zRotationAngleDelta = 0;
-
-	/** The current rotation about Z. */
-	private double currentRotationAboutZ = 0;
 
 	/** The is open GL. */
 	private boolean isOpenGL;
@@ -246,26 +238,8 @@ public class LayeredDisplayData {
 	/** The is drawing environment. */
 	private boolean isDrawingEnvironment = GamaPreferences.Displays.CORE_DRAW_ENV.getValue();
 
-	/** The is light on. */
-	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-
-	/** The camera definitions. */
-	private final Map<String, ICameraDefinition> cameraDefinitions = new LinkedHashMap<>();
-
-	/** The current camera. */
-	private ICameraDefinition cameraDefinition;
-	//
-	// /** The preset camera. */
-	// private String cameraName = IKeyword.DEFAULT;
-
-	/** The camera name expression. */
-	private IExpression cameraNameExpression;
-
 	/** The split distance. */
 	private Double splitDistance;
-
-	/** The is rotating. */
-	private boolean isRotating;
 
 	/** The is splitting layers. */
 	private boolean isSplittingLayers;
@@ -273,27 +247,16 @@ public class LayeredDisplayData {
 	/** The constant background. */
 	private boolean constantBackground = true;
 
-	/** The constant ambient light. */
-	private boolean constantAmbientLight = true;
-
-	/** The constant camera look. */
-	// private final boolean constantCameraLook = true;
-
 	/** The z near. */
 	private double zNear = -1.0;
 
 	/** The z far. */
 	private double zFar = -1.0;
-	/**
-	 * Overlay
-	 */
 
+	/** The full screen. */
 	private int fullScreen = -1;
 
-	/**
-	 *
-	 */
-
+	/** The highlight listener. */
 	IPreferenceAfterChangeListener<GamaColor> highlightListener = this::setHighlightColor;
 
 	/**
@@ -418,223 +381,6 @@ public class LayeredDisplayData {
 	public void setDrawEnv(final boolean drawEnv) { this.isDrawingEnvironment = drawEnv; }
 
 	/**
-	 * @return the isLightOn
-	 */
-	public boolean isLightOn() { return isLightOn; }
-
-	/**
-	 * @param isLightOn
-	 *            the isLightOn to set
-	 */
-	public void setLightOn(final boolean isLightOn) { this.isLightOn = isLightOn; }
-
-	/**
-	 * Gets the diffuse lights.
-	 *
-	 * @return the diffuse lights
-	 */
-	// Change lights to a possibly null structure instead of generating an array for each data
-	public List<LightPropertiesStructure> getDiffuseLights() {
-		final ArrayList<LightPropertiesStructure> result = new ArrayList<>();
-		for (final LightPropertiesStructure lightProp : lights) {
-			if (lightProp != null) {
-				// TODO : check if the light is active
-				result.add(lightProp);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Sets the light active.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param value
-	 *            the value
-	 */
-	public void setLightActive(final int lightId, final boolean value) {
-		if (lights[lightId] == null) { lights[lightId] = new LightPropertiesStructure(); }
-		lights[lightId].id = lightId;
-		lights[lightId].active = value;
-	}
-
-	/**
-	 * Sets the light type.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param type
-	 *            the type
-	 */
-	public void setLightType(final int lightId, final String type) {
-		if (type.compareTo("direction") == 0) {
-			lights[lightId].type = LightPropertiesStructure.TYPE.DIRECTION;
-		} else if (type.compareTo("point") == 0) {
-			lights[lightId].type = LightPropertiesStructure.TYPE.POINT;
-		} else {
-			lights[lightId].type = LightPropertiesStructure.TYPE.SPOT;
-		}
-	}
-
-	/**
-	 * Sets the light position.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param position
-	 *            the position
-	 */
-	public void setLightPosition(final int lightId, final GamaPoint position) {
-		lights[lightId].position = position;
-	}
-
-	/**
-	 * Sets the light direction.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param direction
-	 *            the direction
-	 */
-	public void setLightDirection(final int lightId, final GamaPoint direction) {
-		lights[lightId].direction = direction;
-	}
-
-	/**
-	 * Sets the diffuse light color.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param color
-	 *            the color
-	 */
-	public void setDiffuseLightColor(final int lightId, final GamaColor color) {
-		lights[lightId].color = color;
-	}
-
-	/**
-	 * Sets the spot angle.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param angle
-	 *            the angle
-	 */
-	public void setSpotAngle(final int lightId, final float angle) {
-		lights[lightId].spotAngle = angle;
-	}
-
-	/**
-	 * Sets the linear attenuation.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param linearAttenuation
-	 *            the linear attenuation
-	 */
-	public void setLinearAttenuation(final int lightId, final float linearAttenuation) {
-		lights[lightId].linearAttenuation = linearAttenuation;
-	}
-
-	/**
-	 * Sets the quadratic attenuation.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param quadraticAttenuation
-	 *            the quadratic attenuation
-	 */
-	public void setQuadraticAttenuation(final int lightId, final float quadraticAttenuation) {
-		lights[lightId].quadraticAttenuation = quadraticAttenuation;
-	}
-
-	/**
-	 * Sets the draw light.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param value
-	 *            the value
-	 */
-	public void setDrawLight(final int lightId, final boolean value) {
-		lights[lightId].drawLight = value;
-	}
-
-	/**
-	 * Disable camera interactions.
-	 *
-	 * @param disableCamInteract
-	 *            the disable cam interact
-	 */
-	public void setLocked(final boolean disableCamInteract) {
-		cameraDefinition.setInteractive(!disableCamInteract);
-	}
-
-	/**
-	 * Camera interaction disabled.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean isLocked() { return !cameraDefinition.isInteractive(); }
-
-	/**
-	 * @return the ambientLightColor
-	 */
-	public Color getAmbientLightColor() { return ambientColor; }
-
-	/**
-	 * @param ambientLightColor
-	 *            the ambientLightColor to set
-	 */
-	public void setAmbientLightColor(final GamaColor ambientLightColor) { this.ambientColor = ambientLightColor; }
-
-	/**
-	 * @return the cameraPos
-	 */
-	public GamaPoint getCameraPos() { return cameraDefinition.getLocation(); }
-
-	/**
-	 * @param cameraPos
-	 *            the cameraPos to set
-	 */
-	public void setCameraPos(final GamaPoint point) {
-		if (cameraDefinition.setLocation(point)) { notifyListeners(Changes.CAMERA_POS, point); }
-	}
-
-	/**
-	 * @return the cameraLookPos
-	 */
-	public GamaPoint getCameraTarget() { return cameraDefinition.getTarget(); }
-
-	/**
-	 * @param cameraLookPos
-	 *            the cameraLookPos to set
-	 */
-	public void setCameraTarget(final GamaPoint point) {
-		if (cameraDefinition.setTarget(point)) { notifyListeners(Changes.CAMERA_TARGET, point); }
-	}
-
-	/**
-	 * @return the cameraLens
-	 */
-	public int getCameralens() { return cameraDefinition.getLens(); }
-
-	/**
-	 * Gets the preset camera.
-	 *
-	 * @return the preset camera
-	 */
-	public String getCameraName() { return cameraDefinition.getName(); }
-
-	/**
-	 * Gets the camera names.
-	 *
-	 * @return the camera names
-	 */
-	public Collection<String> getCameraNames() { return cameraDefinitions.keySet(); }
-
-	/**
 	 * @return the displayType
 	 */
 	public String getDisplayType() { return displayType; }
@@ -722,71 +468,6 @@ public class LayeredDisplayData {
 		isAntialiasing = a;
 		notifyListeners(Changes.ANTIALIAS, a);
 	}
-
-	/**
-	 * @return
-	 */
-	public boolean isContinuousRotationOn() { return isRotating; }
-
-	/**
-	 * Sets the continuous rotation.
-	 *
-	 * @param r
-	 *            the new continuous rotation
-	 */
-	public void setContinuousRotation(final boolean r) {
-		isRotating = r;
-		if (r && zRotationAngleDelta == 0) { zRotationAngleDelta = 0.2; }
-		if (!r) { zRotationAngleDelta = 0; }
-	}
-
-	/**
-	 * Gets the current rotation about Z.
-	 *
-	 * @return the current rotation about Z
-	 */
-	public double getCurrentRotationAboutZ() { return currentRotationAboutZ; }
-
-	/**
-	 * Sets the z rotation angle.
-	 *
-	 * @param val
-	 *            the new z rotation angle
-	 */
-	public void setZRotationAngle(final double val) {
-		zRotationAngleDelta = val;
-		currentRotationAboutZ = val;
-	}
-
-	/**
-	 * Increment Z rotation.
-	 */
-	public void incrementZRotation() {
-		currentRotationAboutZ += zRotationAngleDelta;
-	}
-
-	/**
-	 * Reset Z rotation.
-	 */
-	public void resetZRotation() {
-		currentRotationAboutZ = zRotationAngleDelta;
-	}
-
-	/**
-	 * @return
-	 */
-	// public boolean isArcBallCamera() { return isUsingArcBallCamera; }
-
-	/**
-	 * Sets the arc ball camera.
-	 *
-	 * @param c
-	 *            the new arc ball camera
-	 */
-	// public void setArcBallCamera(final boolean c) {
-	// isUsingArcBallCamera = c;
-	// notifyListeners(Changes.CHANGE_CAMERA, c);
-	// }
 
 	/**
 	 * @return
@@ -999,11 +680,7 @@ public class LayeredDisplayData {
 			if (val.size() >= 4) { setKeystone(val); }
 		}
 
-		final IExpression rotate_exp = facets.getExpr(IKeyword.ROTATE);
-		if (rotate_exp != null) {
-			final double val = Cast.asFloat(scope, rotate_exp.value(scope));
-			setZRotationAngle(val);
-		}
+		initRotationFacets(scope, facets);
 
 		final IExpression lightOn = facets.getExpr(IKeyword.IS_LIGHT_ON);
 		if (lightOn != null) { setLightOn(Cast.asBool(scope, lightOn.value(scope))); }
@@ -1097,51 +774,6 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * Initialize preset camera definitions.
-	 */
-	private void initializePresetCameraDefinitions() {
-		double w = getEnvWidth();
-		double h = getEnvHeight();
-		double max = Math.max(w, h) * getDistanceCoefficient();
-		GamaPoint target = new GamaPoint(w / 2, -h / 2, 0); // Y negated
-		for (String preset : ICameraDefinition.PRESETS) {
-			addCameraDefinition(new GenericCameraDefinition(preset, target, getEnvWidth(), getEnvHeight(), max));
-		}
-		cameraDefinitions.putIfAbsent(IKeyword.DEFAULT,
-				cameraDefinitions.get(GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue()));
-	}
-
-	/**
-	 * Sets the preset camera.
-	 *
-	 * @param newValue
-	 *            the new preset camera
-	 */
-	public void setCameraNameFromGaml(final String newValue) {
-		if (cameraDefinition != null && Objects.equal(newValue, cameraDefinition.getName())) return;
-		resetCamera();
-		cameraDefinition = cameraDefinitions.get(newValue);
-		if (cameraDefinition == null) { cameraDefinition = cameraDefinitions.get(IKeyword.DEFAULT); }
-		notifyListeners(Changes.CAMERA_PRESET, newValue);
-	}
-
-	/**
-	 * Sets the preset camera.
-	 *
-	 * @param newValue
-	 *            the new preset camera
-	 */
-	public void setCameraNameFromUser(final String newValue) {
-		if (cameraDefinition != null && Objects.equal(newValue, cameraDefinition.getName())) return;
-		// We force the camera name to remain the same by modifying the expression
-		cameraNameExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
-		// resetCamera();
-		cameraDefinition = cameraDefinitions.get(newValue);
-		if (cameraDefinition == null) { cameraDefinition = cameraDefinitions.get(IKeyword.DEFAULT); }
-		notifyListeners(Changes.CAMERA_PRESET, newValue);
-	}
-
-	/**
 	 * Update auto save.
 	 *
 	 * @param scope
@@ -1199,7 +831,8 @@ public class LayeredDisplayData {
 			setCameraNameFromGaml(Cast.asString(scope, cameraNameExpression.value(scope)));
 		}
 
-		if (cameraDefinition != null) { cameraDefinition.refresh(scope); }
+		if (camera != null) { camera.refresh(scope); }
+		if (rotation != null) { rotation.refresh(scope); }
 
 		updateAutoSave(scope, facets.getExpr(IKeyword.AUTOSAVE));
 		// /////////////// dynamic Lighting ///////////////////
@@ -1246,36 +879,20 @@ public class LayeredDisplayData {
 	 */
 	public boolean isOpenGL() { return isOpenGL; }
 
-	/**
-	 * Gets the distance coefficient.
-	 *
-	 * @return the distance coefficient
-	 */
-	public double getDistanceCoefficient() { return isDrawEnv() ? 1.46 : 1.2; }
+	// ************************************************************************************************
+	// ************************************************************************************************
+	// * CAMERA
+	// ************************************************************************************************
+	// ************************************************************************************************
 
-	/**
-	 * Reset camera.
-	 */
-	public void resetCamera() {
-		if (cameraDefinition != null) { cameraDefinition.reset(); }
-	}
+	/** The camera definitions. */
+	private final Map<String, ICameraDefinition> cameraDefinitions = new LinkedHashMap<>();
 
-	/**
-	 * Gets the distance.
-	 *
-	 * @return the distance
-	 */
-	public double getDistance() { return cameraDefinition.getDistance(); }
+	/** The current camera. */
+	private ICameraDefinition camera;
 
-	/**
-	 * Sets the distance.
-	 *
-	 * @param distance
-	 *            the new distance
-	 */
-	public void setDistance(final double distance) {
-		cameraDefinition.setDistance(distance);
-	}
+	/** The camera name expression. */
+	private IExpression cameraNameExpression;
 
 	/**
 	 * Adds the camera definition.
@@ -1289,4 +906,406 @@ public class LayeredDisplayData {
 		cameraDefinitions.putIfAbsent(definition.getName(), definition);
 	}
 
+	/**
+	 * Gets the distance coefficient.
+	 *
+	 * @return the distance coefficient
+	 */
+	public double getCameraDistanceCoefficient() { return isDrawEnv() ? 1.46 : 1.2; }
+
+	/**
+	 * Reset camera.
+	 */
+	public void resetCamera() {
+		if (camera != null) { camera.reset(); }
+	}
+
+	/**
+	 * Gets the distance.
+	 *
+	 * @return the distance
+	 */
+	public double getCameraDistance() { return camera.getDistance(); }
+
+	/**
+	 * Sets the distance.
+	 *
+	 * @param distance
+	 *            the new distance
+	 */
+	public void setCameraDistance(final double distance) {
+		camera.setDistance(distance);
+	}
+
+	/**
+	 * Initialize preset camera definitions.
+	 */
+	private void initializePresetCameraDefinitions() {
+		double w = getEnvWidth();
+		double h = getEnvHeight();
+		double max = Math.max(w, h) * getCameraDistanceCoefficient();
+		GamaPoint target = new GamaPoint(w / 2, -h / 2, 0); // Y negated
+		for (String preset : ICameraDefinition.PRESETS) {
+			addCameraDefinition(new GenericCameraDefinition(preset, target, getEnvWidth(), getEnvHeight(), max));
+		}
+		cameraDefinitions.putIfAbsent(IKeyword.DEFAULT,
+				cameraDefinitions.get(GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue()));
+	}
+
+	/**
+	 * Sets the preset camera.
+	 *
+	 * @param newValue
+	 *            the new preset camera
+	 */
+	public void setCameraNameFromGaml(final String newValue) {
+		if (camera != null && Objects.equal(newValue, camera.getName())) return;
+		resetCamera();
+		camera = cameraDefinitions.get(newValue);
+		if (camera == null) { camera = cameraDefinitions.get(IKeyword.DEFAULT); }
+		notifyListeners(Changes.CAMERA_PRESET, newValue);
+	}
+
+	/**
+	 * Sets the preset camera.
+	 *
+	 * @param newValue
+	 *            the new preset camera
+	 */
+	public void setCameraNameFromUser(final String newValue) {
+		if (camera != null && Objects.equal(newValue, camera.getName())) return;
+		// We force the camera name to remain the same by modifying the expression
+		cameraNameExpression = GAML.getExpressionFactory().createConst(newValue, Types.STRING);
+		// resetCamera();
+		camera = cameraDefinitions.get(newValue);
+		if (camera == null) { camera = cameraDefinitions.get(IKeyword.DEFAULT); }
+		notifyListeners(Changes.CAMERA_PRESET, newValue);
+	}
+
+	/**
+	 * @return the cameraPos
+	 */
+	public GamaPoint getCameraPos() { return camera.getLocation(); }
+
+	/**
+	 * @param cameraPos
+	 *            the cameraPos to set
+	 */
+	public void setCameraPos(final GamaPoint point) {
+		if (camera.setLocation(point)) { notifyListeners(Changes.CAMERA_POS, point); }
+	}
+
+	/**
+	 * @return the cameraLookPos
+	 */
+	public GamaPoint getCameraTarget() { return camera.getTarget(); }
+
+	/**
+	 * @param cameraLookPos
+	 *            the cameraLookPos to set
+	 */
+	public void setCameraTarget(final GamaPoint point) {
+		if (camera.setTarget(point)) { notifyListeners(Changes.CAMERA_TARGET, point); }
+	}
+
+	/**
+	 * @return the cameraLens
+	 */
+	public int getCameraLens() { return camera.getLens(); }
+
+	/**
+	 * Gets the preset camera.
+	 *
+	 * @return the preset camera
+	 */
+	public String getCameraName() { return camera.getName(); }
+
+	/**
+	 * Gets the camera names.
+	 *
+	 * @return the camera names
+	 */
+	public Collection<String> getCameraNames() { return cameraDefinitions.keySet(); }
+
+	/**
+	 * Disable camera interactions.
+	 *
+	 * @param disableCamInteract
+	 *            the disable cam interact
+	 */
+	public void setCameraLocked(final boolean disableCamInteract) {
+		camera.setInteractive(!disableCamInteract);
+	}
+
+	/**
+	 * Camera interaction disabled.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean isCameraLocked() { return !camera.isInteractive(); }
+
+	// ************************************************************************************************
+	// ************************************************************************************************
+	// * ROTATION
+	// ************************************************************************************************
+	// ************************************************************************************************
+
+	/** The rotation. */
+	RotationDefinition rotation;
+
+	/**
+	 * Inits the rotation facets.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param facets
+	 *            the facets
+	 */
+	private void initRotationFacets(final IScope scope, final Facets facets) {
+		final IExpression rotate_exp = facets.getExpr(IKeyword.ROTATE);
+		if (rotate_exp != null) {
+			final double val = Cast.asFloat(scope, rotate_exp.value(scope));
+			setRotationAngle(val);
+		}
+	}
+
+	/**
+	 * Sets the rotation.
+	 *
+	 * @param rotation
+	 *            the new rotation
+	 */
+	public void setRotation(final RotationDefinition rotation) { this.rotation = rotation; }
+
+	/**
+	 * @return
+	 */
+	public boolean isContinuousRotationOn() { return rotation != null && rotation.isDynamic(); }
+
+	/**
+	 * Sets the continuous rotation.
+	 *
+	 * @param r
+	 *            the new continuous rotation
+	 */
+	public void setContinuousRotation(final boolean r) {
+		if (rotation != null) { rotation.setDynamic(r); }
+	}
+
+	/**
+	 * Gets the current rotation about Z.
+	 *
+	 * @return the current rotation about Z
+	 */
+	public double getRotationAngle() { return rotation == null ? 0d : rotation.getCurrentAngle(); }
+
+	/**
+	 * Checks for rotation.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean hasRotation() {
+		return rotation != null && rotation.getAngleDelta() != 0d && !rotation.getAxis().isNull();
+	}
+
+	/**
+	 * Sets the z rotation angle.
+	 *
+	 * @param val
+	 *            the new z rotation angle
+	 */
+	public void setRotationAngle(final double val) {
+		if (rotation != null) { rotation.setAngle(val); }
+	}
+
+	/**
+	 * Gets the rotation center.
+	 *
+	 * @return the rotation center
+	 */
+	public GamaPoint getRotationCenter() { return rotation != null ? rotation.getCenter().yNegated() : null; }
+
+	/**
+	 * Gets the rotation axis.
+	 *
+	 * @return the rotation axis
+	 */
+	public GamaPoint getRotationAxis() { return rotation != null ? rotation.getAxis().yNegated() : null; }
+
+	/**
+	 * Reset Z rotation.
+	 */
+	public void resetRotation() {
+		if (rotation != null) { rotation.reset(); }
+	}
+
+	// ************************************************************************************************
+	// ************************************************************************************************
+	// * LIGHT
+	// ************************************************************************************************
+	// ************************************************************************************************
+
+	/** The is light on. */
+	private boolean isLightOn = true;
+
+	/** The constant ambient light. */
+	private boolean constantAmbientLight = true;
+
+	/** The lights. */
+	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
+
+	/**
+	 * @return the isLightOn
+	 */
+	public boolean isLightOn() { return isLightOn; }
+
+	/**
+	 * @param isLightOn
+	 *            the isLightOn to set
+	 */
+	public void setLightOn(final boolean isLightOn) { this.isLightOn = isLightOn; }
+
+	/**
+	 * Gets the diffuse lights.
+	 *
+	 * @return the diffuse lights
+	 */
+	// Change lights to a possibly null structure instead of generating an array for each data
+	public List<LightPropertiesStructure> getDiffuseLights() {
+		final ArrayList<LightPropertiesStructure> result = new ArrayList<>();
+		for (final LightPropertiesStructure lightProp : lights) {
+			if (lightProp != null) {
+				// TODO : check if the light is active
+				result.add(lightProp);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Sets the light active.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param value
+	 *            the value
+	 */
+	public void setLightActive(final int lightId, final boolean value) {
+		if (lights[lightId] == null) { lights[lightId] = new LightPropertiesStructure(); }
+		lights[lightId].id = lightId;
+		lights[lightId].active = value;
+	}
+
+	/**
+	 * Sets the light type.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param type
+	 *            the type
+	 */
+	public void setLightType(final int lightId, final String type) {
+		if (type.compareTo("direction") == 0) {
+			lights[lightId].type = LightPropertiesStructure.TYPE.DIRECTION;
+		} else if (type.compareTo("point") == 0) {
+			lights[lightId].type = LightPropertiesStructure.TYPE.POINT;
+		} else {
+			lights[lightId].type = LightPropertiesStructure.TYPE.SPOT;
+		}
+	}
+
+	/**
+	 * Sets the light position.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param position
+	 *            the position
+	 */
+	public void setLightPosition(final int lightId, final GamaPoint position) {
+		lights[lightId].position = position;
+	}
+
+	/**
+	 * Sets the light direction.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param direction
+	 *            the direction
+	 */
+	public void setLightDirection(final int lightId, final GamaPoint direction) {
+		lights[lightId].direction = direction;
+	}
+
+	/**
+	 * Sets the diffuse light color.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param color
+	 *            the color
+	 */
+	public void setDiffuseLightColor(final int lightId, final GamaColor color) {
+		lights[lightId].color = color;
+	}
+
+	/**
+	 * Sets the spot angle.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param angle
+	 *            the angle
+	 */
+	public void setSpotAngle(final int lightId, final float angle) {
+		lights[lightId].spotAngle = angle;
+	}
+
+	/**
+	 * Sets the linear attenuation.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param linearAttenuation
+	 *            the linear attenuation
+	 */
+	public void setLinearAttenuation(final int lightId, final float linearAttenuation) {
+		lights[lightId].linearAttenuation = linearAttenuation;
+	}
+
+	/**
+	 * Sets the quadratic attenuation.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param quadraticAttenuation
+	 *            the quadratic attenuation
+	 */
+	public void setQuadraticAttenuation(final int lightId, final float quadraticAttenuation) {
+		lights[lightId].quadraticAttenuation = quadraticAttenuation;
+	}
+
+	/**
+	 * Sets the draw light.
+	 *
+	 * @param lightId
+	 *            the light id
+	 * @param value
+	 *            the value
+	 */
+	public void setDrawLight(final int lightId, final boolean value) {
+		lights[lightId].drawLight = value;
+	}
+
+	/**
+	 * @return the ambientLightColor
+	 */
+	public Color getAmbientLightColor() { return ambientColor; }
+
+	/**
+	 * @param ambientLightColor
+	 *            the ambientLightColor to set
+	 */
+	public void setAmbientLightColor(final GamaColor ambientLightColor) { this.ambientColor = ambientLightColor; }
 }

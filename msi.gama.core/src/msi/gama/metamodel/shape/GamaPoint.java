@@ -859,4 +859,11 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return new GamaPoint(Math.round(x), Math.round(y), Math.round(z));
 	}
 
+	/**
+	 * Checks if is null.
+	 *
+	 * @return true, if is null
+	 */
+	public boolean isNull() { return x == 0d && y == 0d && z == 0d; }
+
 }

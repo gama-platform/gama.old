@@ -417,7 +417,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (!getData().isOrtho()) {
 			try {
 				double fW, fH;
-				final double fovY = getData().getCameralens();
+				final double fovY = getData().getCameraLens();
 				if (aspect > 1.0) {
 					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
 					fW = fH * aspect;
@@ -1532,21 +1532,25 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 * @return true, if is continuous rotation active
 	 */
-	private boolean isContinuousRotationActive() {
-		return getData().isContinuousRotationOn() && !getData().isLocked();
-	}
+	// private boolean isContinuousRotationActive() {
+	// return getData().isContinuousRotationOn() && !getData().isLocked();
+	// }
 
 	/**
 	 * Rotate model.
 	 */
 	public void rotateModel() {
-		if (isContinuousRotationActive()) { getData().incrementZRotation(); }
-		if (getData().getCurrentRotationAboutZ() != 0d) {
-			final double env_width = getWorldWidth();
-			final double env_height = getWorldHeight();
-			translateBy(env_width / 2, -env_height / 2, 0d);
-			rotateBy(getData().getCurrentRotationAboutZ(), 0, 0, 1);
-			translateBy(-env_width / 2, +env_height / 2, 0d);
+		// if (!getData().isLocked()) { getData().incrementZRotation(); }
+		if (getData().hasRotation()) {
+			GamaPoint c = getData().getRotationCenter();
+			translateBy(c.x, c.y, c.z);
+			GamaPoint p = getData().getRotationAxis();
+			if (p == null) {
+				rotateBy(getData().getRotationAngle(), 0, 0, 1);
+			} else {
+				rotateBy(getData().getRotationAngle(), p.x, p.y, p.z);
+			}
+			translateBy(-c.x, -c.y, -c.z);
 		}
 	}
 

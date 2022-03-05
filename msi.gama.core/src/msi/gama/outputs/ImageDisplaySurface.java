@@ -355,14 +355,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public GamaPoint getModelCoordinates() { return null; }
 
 	/**
-	 * Method followAgent()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public void followAgent(final IAgent a) {}
-
-	/**
 	 * Method getZoomLevel()
 	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()

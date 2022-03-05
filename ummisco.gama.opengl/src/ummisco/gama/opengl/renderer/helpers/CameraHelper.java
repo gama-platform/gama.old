@@ -144,7 +144,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final double sinT = Math.sin(factorT);
 		final double cosP = Math.cos(factorP);
 		final double sinP = Math.sin(factorP);
-		final double radius = data.getDistance();
+		final double radius = data.getCameraDistance();
 		GamaPoint target = getTarget();
 		data.setCameraPos(new GamaPoint(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y,
 				radius * cosP + target.z));
@@ -160,7 +160,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		theta = Maths.toDeg * Math.atan2(p.y, p.x);
 		// See issue on camera_pos
 		if (theta == 0) { theta = -90; }
-		phi = Maths.toDeg * Math.acos(p.z / data.getDistance());
+		phi = Maths.toDeg * Math.acos(p.z / data.getCameraDistance());
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final double y_translation_in_world = theta_vect_y_norm + phi_vect_y_norm;
 		GamaPoint position = getPosition();
 		GamaPoint target = getTarget();
-		Double distance = data.getDistance();
+		Double distance = data.getCameraDistance();
 		data.setCameraPos(new GamaPoint(position.x - x_translation_in_world * distance / 1000,
 				position.y - y_translation_in_world * distance / 1000, position.z));
 		data.setCameraTarget(new GamaPoint(target.x - x_translation_in_world * distance / 1000,
@@ -252,7 +252,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	public void animate() {
 
-		if (!data.isLocked()) {
+		if (!data.isCameraLocked()) {
 			// And we animate it if the keyboard is invoked
 			if (isForward()) {
 				if (ctrlPressed) {
@@ -391,7 +391,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public final void mouseScrolled(final MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			if (!data.isLocked()) { internalMouseScrolled(e.count); }
+			if (!data.isCameraLocked()) { internalMouseScrolled(e.count); }
 			return false;
 		});
 
@@ -400,7 +400,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public final void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			if (!data.isLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
+			if (!data.isCameraLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
 			return false;
 		});
 	}
@@ -523,7 +523,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		if (!buttonPressed) return;
 		final GamaPoint newPoint = new GamaPoint(x, y);
-		if (!data.isLocked() && isCtrl) {
+		if (!data.isCameraLocked() && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
 			final int vertMovement = (int) (newPoint.y - lastMousePressedPosition.y);
 			// if (flipped) {
@@ -586,7 +586,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
 			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
 			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);
-		} else if (!data.isLocked()) {
+		} else if (!data.isCameraLocked()) {
 			int horizMovement = (int) (x - lastMousePressedPosition.x);
 			int vertMovement = (int) (y - lastMousePressedPosition.y);
 			if (flipped) {
@@ -736,7 +736,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			} else if (renderer.getSurface().canTriggerContextualMenu()) {
 				renderer.getPickingHelper().setPicking(true);
 			}
-		} else if (button == 2 && !data.isLocked()) { // mouse wheel
+		} else if (button == 2 && !data.isCameraLocked()) { // mouse wheel
 			resetPivot();
 		} else if (isShift && isViewInXYPlan()) { startROI(); }
 		// else {
@@ -905,7 +905,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
-				boolean cameraInteraction = !data.isLocked();
+				boolean cameraInteraction = !data.isCameraLocked();
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
@@ -968,7 +968,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
-				boolean cameraInteraction = !data.isLocked();
+				boolean cameraInteraction = !data.isCameraLocked();
 				switch (e.getKeySymbol()) {
 					// We need to register here all the keystrokes used in the Workbench and on the view, as they might
 					// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
@@ -1168,7 +1168,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
-				boolean cameraInteraction = !data.isLocked();
+				boolean cameraInteraction = !data.isCameraLocked();
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT: // turns left (scene rotates right)
 						if (cameraInteraction) { strafeLeft = false; }
@@ -1210,7 +1210,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					setShiftPressed(!e.isShiftDown());
 					return true;
 				}
-				boolean cameraInteraction = !data.isLocked();
+				boolean cameraInteraction = !data.isCameraLocked();
 				switch (e.getKeyCode()) {
 
 					case com.jogamp.newt.event.KeyEvent.VK_LEFT: // turns left (scene rotates right)
@@ -1249,7 +1249,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * @return the double
 	 */
 	public Double zoomLevel() {
-		return getRenderer().getMaxEnvDim() * data.getDistanceCoefficient() / data.getDistance();
+		return getMaxEnvDim() * data.getCameraDistanceCoefficient() / data.getCameraDistance();
 	}
 
 	/**
@@ -1259,7 +1259,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the level
 	 */
 	public void zoom(final double level) {
-		data.setDistance(getRenderer().getMaxEnvDim() * data.getDistanceCoefficient() / level);
+		data.setCameraDistance(getMaxEnvDim() * data.getCameraDistanceCoefficient() / level);
 		updateCartesianCoordinatesFromAngles();
 		/**
 		 * Zoom.
@@ -1278,9 +1278,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	// @Override
 	public void zoom(final boolean in) {
 		if (keystoneMode) return;
-		Double distance = data.getDistance();
+		Double distance = data.getCameraDistance();
 		final double step = distance != 0d ? distance / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
-		data.setDistance(distance + (in ? -step : step));
+		data.setCameraDistance(distance + (in ? -step : step));
 		// zoom(zoomLevel());
 		data.setZoomLevel(zoomLevel(), true, false);
 	}
@@ -1296,9 +1296,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		// REDO it entirely
 		final double extent = env.maxExtent();
 		if (extent == 0) {
-			data.setDistance(env.getMaxZ() + getRenderer().getMaxEnvDim() / 10);
+			data.setCameraDistance(env.getMaxZ() + getMaxEnvDim() / 10);
 		} else {
-			data.setDistance(extent * 1.5);
+			data.setCameraDistance(extent * 1.5);
 		}
 		final GamaPoint centre = env.centre();
 		// we suppose y is already negated
@@ -1313,7 +1313,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * Draw rotation helper.
 	 */
 	protected void drawRotationHelper() {
-		renderer.getOpenGLHelper().setRotationMode(ctrlPressed && !data.isLocked());
+		renderer.getOpenGLHelper().setRotationMode(ctrlPressed && !data.isCameraLocked());
 		/**
 		 * Sets the distance.
 		 *

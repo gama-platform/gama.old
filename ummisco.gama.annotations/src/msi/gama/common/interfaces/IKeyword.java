@@ -1050,6 +1050,9 @@ public interface IKeyword {
 	/** The rotate. */
 	String ROTATE = "rotate";
 
+	/** The rotation. */
+	String ROTATION = "rotation";
+
 	/** The save. */
 	String SAVE = "save";
 

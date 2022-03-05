@@ -287,7 +287,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomIn() {
-		if (renderer.getData().isLocked()) return;
+		if (renderer.getData().isCameraLocked()) return;
 		renderer.getCameraHelper().zoom(true);
 	}
 
@@ -298,7 +298,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void zoomOut() {
-		if (renderer.getData().isLocked()) return;
+		if (renderer.getData().isCameraLocked()) return;
 		renderer.getCameraHelper().zoom(false);
 	}
 
@@ -312,7 +312,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// if (renderer.getData().cameraInteractionDisabled())
 		// return;
 		renderer.getCameraHelper().initialize();
-		output.getData().resetZRotation();
+		output.getData().resetRotation();
 		output.getData().setZoomLevel(renderer.getCameraHelper().zoomLevel(), true, true);
 		// output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true, true);
 		zoomFit = true;
@@ -510,20 +510,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final GamaPoint pp = getModelCoordinatesFrom(x, y, null, null);
 		return scope.getRoot().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
 				renderer.getMaxEnvDim() / 100, Different.with());
-	}
-
-	/**
-	 * Method followAgent()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public void followAgent(final IAgent a) {
-		// TODO REMOVE !
-		new Thread(
-				() -> WorkbenchHelper.asyncRun(() -> renderer.getCameraHelper().zoomFocus(a.getEnvelope().yNegated())))
-						.start();
-
 	}
 
 	/**

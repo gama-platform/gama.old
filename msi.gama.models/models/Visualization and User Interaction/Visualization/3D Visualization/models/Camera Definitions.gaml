@@ -59,7 +59,8 @@ experiment Display type: gui autorun: true {
 			camera "default" target: {cos(first(object).heading) * 10 + p.x, sin(first(object).heading) * 10 + p.y, 0} location: {p.x, p.y, p.z + 10/factor} dynamic: true;
 		}
 
-		display "From right" parent: shared {
+		display "Rotating from right" parent: shared {
+			rotation angle: 1.0 axis: {0,1,0} dynamic: true;
 			camera "default" location: #from_right distance: 40 / factor target: {w, p.y, 0} dynamic: true;
 		}
 		display "Isometric" parent: shared {

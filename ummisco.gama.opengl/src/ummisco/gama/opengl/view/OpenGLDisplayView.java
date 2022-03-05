@@ -138,11 +138,11 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	public String getCameraName() { return getOutput().getData().getCameraName(); }
 
 	@Override
-	public boolean isCameraLocked() { return getOutput().getData().isLocked(); }
+	public boolean isCameraLocked() { return getOutput().getData().isCameraLocked(); }
 
 	@Override
 	public void toggleCamera() {
-		getOutput().getData().setLocked(!getOutput().getData().isLocked());
+		getOutput().getData().setCameraLocked(!getOutput().getData().isCameraLocked());
 	}
 
 }

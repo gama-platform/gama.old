@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NullDisplaySurface.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * NullDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -225,14 +225,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	// public boolean isSynchronized() {
 	// return false;
 	// }
-
-	/**
-	 * Method followAgent()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public void followAgent(final IAgent a) {}
 
 	/**
 	 * Method getZoomLevel()

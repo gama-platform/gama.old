@@ -193,27 +193,6 @@ public class LayerSideControls {
 		final IScope scope = ds.getScope();
 		final LayeredDisplayData data = ds.getData();
 
-		// EditorFactory.create(scope, contents, "FreeFly Camera", !data.isArcBallCamera(),
-		// (EditorListener<Boolean>) val -> {
-		// ds.runAndUpdate(() -> { data.setArcBallCamera(!val); });
-		//
-		// });
-		// boolean cameraLocked = data.isLocked();
-		// lock = EditorFactory.create(scope, contents, "Lock camera:", cameraLocked,
-		// (EditorListener<Boolean>) newValue -> {
-		// cameraPos.setActive(!newValue);
-		// cameraTarget.setActive(!newValue);
-		// zoom.setActive(!newValue);
-		// data.setLocked(newValue);
-		// });
-
-		// preset = EditorFactory.choose(scope, contents, "Choose camera:", data.getCameraName(), data.getCameraNames(),
-		// (EditorListener<String>) newValue -> {
-		// if (newValue.isEmpty()) return;
-		// data.setCameraName(newValue);
-		// ds.updateDisplay(true);
-		// });
-
 		cameraPos = (PointEditor) EditorFactory.create(scope, contents, "Position:", data.getCameraPos().yNegated(),
 				(EditorListener<GamaPoint>) newValue -> {
 					data.setCameraPos(newValue.yNegated());
@@ -224,10 +203,6 @@ public class LayerSideControls {
 					data.setCameraTarget(newValue.yNegated());
 					ds.updateDisplay(true);
 				});
-		// preset.setActive(true);
-		// cameraPos.setActive(!cameraLocked);
-		// cameraTarget.setActive(!cameraLocked);
-		// zoom.setActive(!cameraLocked);
 		data.addListener((p, v) -> {
 			switch (p) {
 				case CAMERA_POS:
@@ -241,11 +216,7 @@ public class LayerSideControls {
 					copyCameraAndKeystoneDefinition(scope, data);
 					break;
 				case CAMERA_PRESET:
-					// preset.getParam().setValue(scope, "Choose...");
-					// preset.updateWithValueOfParameter();
-					boolean locked = data.isLocked();
-					// lock.getParam().setValue(scope, locked);
-					// lock.updateWithValueOfParameter();
+					boolean locked = data.isCameraLocked();
 					copyCameraAndKeystoneDefinition(scope, data);
 					WorkbenchHelper.asyncRun(() -> {
 						cameraPos.setActive(!locked);
@@ -376,19 +347,10 @@ public class LayerSideControls {
 				});
 
 		if (view.isOpenGL()) {
-			rotate = EditorFactory.create(scope, contents, "Z-axis rotation:", data.getCurrentRotationAboutZ(), null,
-					null, 0.1, false, false, (EditorListener<Double>) newValue -> {
-						data.setZRotationAngle(newValue);
-						// ds.updateDisplay(true);
-					});
+			rotate = EditorFactory.create(scope, contents, "Rotation angle:", data.getRotationAngle(), null, null, 0.1,
+					false, false, (EditorListener<Double>) newValue -> { data.setRotationAngle(newValue); });
 			EditorFactory.create(scope, contents, "Continuous rotation", data.isContinuousRotationOn(),
-					(EditorListener<Boolean>) val -> {
-						ds.runAndUpdate(() -> {
-							data.setContinuousRotation(val);
-
-						});
-
-					});
+					(EditorListener<Boolean>) val -> { ds.runAndUpdate(() -> { data.setContinuousRotation(val); }); });
 		}
 		createItem(viewer, "General", null, contents);
 

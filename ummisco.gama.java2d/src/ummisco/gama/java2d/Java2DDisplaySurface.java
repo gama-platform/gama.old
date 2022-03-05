@@ -722,14 +722,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Collection<IEventLayerListener> getLayerListeners() { return listeners; }
 
-	/**
-	 * Method followAgent()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
-	 */
-	@Override
-	public void followAgent(final IAgent a) {}
-
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
 		// DEBUG.OUT("-- Java2D surface set bounds to " + arg0 + " " + arg1 + " | " + arg2 + " " + arg3);

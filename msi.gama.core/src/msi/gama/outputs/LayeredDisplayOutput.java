@@ -32,6 +32,7 @@ import msi.gama.outputs.layers.CameraStatement;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.OverlayStatement;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
+import msi.gama.outputs.layers.RotationStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -282,7 +283,9 @@ import msi.gaml.types.IType;
 						name = IKeyword.ROTATE,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("Set the angle for the rotation around the Z axis in degrees")),
+						doc = @doc (
+								deprecated = "use the 'rotation' statement instead and passe the value to 'angle:' to achieve the same effect",
+								value = "Set the angle for the rotation around the Z axis in degrees")),
 				@facet (
 						name = "z_near",
 						type = IType.FLOAT,
@@ -334,6 +337,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	/** The cameras. */
 	private final List<CameraStatement> cameras;
+
+	/** The rotation. */
+	private RotationStatement rotation;
 
 	/** The surface. */
 	protected IDisplaySurface surface;
@@ -532,6 +538,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		final boolean result = super.init(scope);
 		if (!result) return false;
+		if (rotation != null) {
+			getData().setRotation(rotation.getDefinition());
+			rotation.init(scope);
+		}
 		for (CameraStatement s : cameras) {
 			getData().addCameraDefinition(s.getDefinition());
 			s.init(scope);
@@ -622,12 +632,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<AbstractLayerStatement> list = new ArrayList<>();
 		for (final ISymbol s : commands) {
-			if (s instanceof CameraStatement) {
-				cameras.add((CameraStatement) s);
+			if (s instanceof CameraStatement cs) {
+				cameras.add(cs);
+			} else if (s instanceof RotationStatement rs) {
+				rotation = rs;
 			} else {
-				if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
-					overlayInfo = (OverlayStatement) s;
-				}
+				if (s instanceof OverlayStatement os && os.hasInfo()) { overlayInfo = os; }
 				list.add((AbstractLayerStatement) s);
 			}
 
