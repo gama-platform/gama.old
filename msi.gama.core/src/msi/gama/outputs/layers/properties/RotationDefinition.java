@@ -8,14 +8,13 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.properties;
 
-import static msi.gama.common.interfaces.IKeyword.CENTER;
+import static msi.gama.common.interfaces.IKeyword.LOCATION;
 
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
-import msi.gaml.statements.draw.AttributeHolder;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -23,14 +22,14 @@ import ummisco.gama.dev.utils.DEBUG;
  * The Class CameraDefinition. Holds and updates the position, target and lens of a camera from the GAML definition in
  * the "camera" statement.
  */
-public class RotationDefinition extends AttributeHolder {
+public class RotationDefinition extends AbstractDefinition {
 
 	static {
 		DEBUG.ON();
 	}
 
 	/** The location. */
-	final Attribute<GamaPoint> centerAttribute;
+	final Attribute<GamaPoint> locationAttribute;
 
 	/** The target. */
 	final Attribute<GamaPoint> axisAttribute;
@@ -41,9 +40,6 @@ public class RotationDefinition extends AttributeHolder {
 	/** The initial angle. */
 	final Attribute<Double> initialAngleAttribute;
 
-	/** The dynamic. */
-	Attribute<Boolean> dynamic;
-
 	/**
 	 * Instantiates a new camera definition.
 	 *
@@ -53,20 +49,16 @@ public class RotationDefinition extends AttributeHolder {
 	@SuppressWarnings ("unchecked")
 	public RotationDefinition(final RotationStatement symbol) {
 		super(symbol);
-		centerAttribute = create(CENTER,
-				symbol.hasFacet(CENTER) ? symbol.getFacet(CENTER) : scope -> scope.getSimulation().getCentroid(),
+		locationAttribute = create(LOCATION,
+				symbol.hasFacet(LOCATION) ? symbol.getFacet(LOCATION) : scope -> scope.getSimulation().getCentroid(),
 				Types.POINT, null, null);
 		axisAttribute = create("axis", Types.POINT, Rotation3D.PLUS_K);
 		angleAttribute = initialAngleAttribute = create("angle", Types.FLOAT, 0d);
-		dynamic = create("dynamic", Types.BOOL, false);
 	}
 
 	@Override
-	public void refresh(final IScope scope) {
-		super.refresh(scope);
-		if (dynamic.get()) {
-			angleAttribute = new ConstantAttribute<>(angleAttribute.get() + initialAngleAttribute.get());
-		}
+	public void update(final IScope scope) {
+		angleAttribute = new ConstantAttribute<>(angleAttribute.get() + initialAngleAttribute.get());
 	}
 
 	/**
@@ -88,6 +80,7 @@ public class RotationDefinition extends AttributeHolder {
 	 *
 	 * @return the boolean
 	 */
+	@Override
 	public Boolean isDynamic() { return dynamic.get(); }
 
 	/**
@@ -95,7 +88,7 @@ public class RotationDefinition extends AttributeHolder {
 	 *
 	 * @return the center
 	 */
-	public GamaPoint getCenter() { return centerAttribute.get(); }
+	public GamaPoint getCenter() { return locationAttribute.get(); }
 
 	/**
 	 * Gets the axis.
@@ -107,9 +100,9 @@ public class RotationDefinition extends AttributeHolder {
 	/**
 	 * Reset.
 	 */
+	@Override
 	public void reset() {
 		angleAttribute = initialAngleAttribute;
-
 	}
 
 	/**
@@ -127,5 +120,8 @@ public class RotationDefinition extends AttributeHolder {
 	 *            the new dynamic
 	 */
 	public void setDynamic(final boolean r) { dynamic = new ConstantAttribute<>(r); }
+
+	@Override
+	protected boolean getDefaultDynamicValue() { return false; }
 
 }

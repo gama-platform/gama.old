@@ -118,8 +118,9 @@ experiment specular_light type: gui {
 	output {
 		layout #split;
 
-		display "OpenGL" type: opengl background:#black ambient_light: 20 {
-			light 1 active:button type: point position: {7, 7, 48} color: #white draw_light: true;
+		display "OpenGL" type: opengl background:#black  {
+			light #ambient intensity: 20;
+			light #regular active:button type: #point location: {7, 7, 48} intensity: #white show: true;
 			species sphere_species aspect: base;
 			species cube_species aspect: base;
 			species cylinder_species aspect: base;

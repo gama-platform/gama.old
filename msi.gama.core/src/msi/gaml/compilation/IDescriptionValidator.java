@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IDescriptionValidator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IDescriptionValidator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -65,6 +65,23 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 	}
 
 	/**
+	 * Swap.
+	 *
+	 * @param desc
+	 *            the desc
+	 * @param oldFacet
+	 *            the old
+	 * @param newFacet
+	 *            the next
+	 */
+	default void swap(final IDescription desc, final String oldFacet, final String newFacet) {
+		if (desc.hasFacet(oldFacet)) {
+			desc.setFacet(newFacet, desc.getFacet(oldFacet));
+			desc.removeFacets(oldFacet);
+		}
+	}
+
+	/**
 	 * The Class Assert.
 	 */
 	public static class Assert {
@@ -72,36 +89,40 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 		/**
 		 * Types are compatible for assignment.
 		 *
-		 * @param facetName the facet name
-		 * @param context the context
-		 * @param receiverDescription the receiver description
-		 * @param receiverType the receiver type
-		 * @param assigned the assigned
+		 * @param facetName
+		 *            the facet name
+		 * @param context
+		 *            the context
+		 * @param receiverDescription
+		 *            the receiver description
+		 * @param receiverType
+		 *            the receiver type
+		 * @param assigned
+		 *            the assigned
 		 */
 		public static void typesAreCompatibleForAssignment(final String facetName, final IDescription context,
 				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned) {
-			if (assigned == null) { return; }
+			if (assigned == null) return;
 			// IExpression expr1 = receiver.getExpression();
 			final IExpression expr2 = assigned.getExpression();
-			if (expr2 == null) { return; }
+			if (expr2 == null) return;
 			// IType receiverType = expr1.getType();
 			final IType assignedType = expr2.getGamlType();
 
 			// AD: 6/9/13 special case for int and float (see Issue 590) and for
 			// empty lists and maps
-			if (expr2 != IExpressionFactory.NIL_EXPR
+			if ((expr2 != IExpressionFactory.NIL_EXPR
 					&& !assignedType.getGamlType().isTranslatableInto(receiverType.getGamlType())
-					|| Types.intFloatCase(receiverType, assignedType)) {
-				if (!Types.isEmptyContainerCase(receiverType, expr2)) {
-					final EObject target = assigned.getTarget();
-					final String msg = receiverDescription + " of type " + receiverType.getGamlType()
-							+ " is assigned a value of type " + assignedType.getGamlType()
-							+ ", which will be casted to " + receiverType.getGamlType();
-					if (target == null) {
-						context.warning(msg, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
-					} else {
-						context.warning(msg, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
-					}
+					|| Types.intFloatCase(receiverType, assignedType))
+					&& !Types.isEmptyContainerCase(receiverType, expr2)) {
+				final EObject target = assigned.getTarget();
+				final String msg = receiverDescription + " of type " + receiverType.getGamlType()
+						+ " is assigned a value of type " + assignedType.getGamlType() + ", which will be casted to "
+						+ receiverType.getGamlType();
+				if (target == null) {
+					context.warning(msg, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
+				} else {
+					context.warning(msg, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
 				}
 			}
 			// Contents Type
@@ -109,16 +130,15 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 				final IType receiverContentType = receiverType.getContentType();
 				IType<?> contentType = assignedType.getContentType();
 				// Special cases for the empty lists and maps
-				if (Types.isEmptyContainerCase(receiverType, expr2)) { return; }
+				if (Types.isEmptyContainerCase(receiverType, expr2)) return;
 				// AD: 28/4/14 special case for variables of type species<xxx>
-				if (expr2 != IExpressionFactory.NIL_EXPR && receiverType.getGamlType().id() == IType.SPECIES) {
-					if (!contentType.isTranslatableInto(receiverContentType)) {
-						context.error(
-								"Impossible assignment: " + contentType.getSpeciesName() + " is not a sub-species of "
-										+ receiverContentType.getSpeciesName(),
-								IGamlIssue.WRONG_TYPE, assigned.getTarget());
-						return;
-					}
+				if ((expr2 != IExpressionFactory.NIL_EXPR && receiverType.getGamlType().id() == IType.SPECIES)
+						&& !contentType.isTranslatableInto(receiverContentType)) {
+					context.error(
+							"Impossible assignment: " + contentType.getSpeciesName() + " is not a sub-species of "
+									+ receiverContentType.getSpeciesName(),
+							IGamlIssue.WRONG_TYPE, assigned.getTarget());
+					return;
 				}
 
 				// Special case for maps and lists of pairs (Issue 846)
@@ -149,7 +169,8 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 		/**
 		 * Name is valid.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 * @return true, if successful
 		 */
 		public static boolean nameIsValid(final IDescription cd) {
@@ -157,7 +178,8 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 			if (name == null) {
 				cd.error("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
 				return false;
-			} else if (RESERVED.contains(name)) {
+			}
+			if (RESERVED.contains(name)) {
 				final String type = "It cannot be used as a "
 						+ (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) + " name.";
 				cd.error(name + " is a reserved keyword. " + type + " Reserved keywords are: " + RESERVED,

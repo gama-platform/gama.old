@@ -1,26 +1,27 @@
 /*******************************************************************************************************
  *
- * LightHelper.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LightHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
+import static com.jogamp.opengl.fixedfunc.GLLightingFunc.GL_LIGHT0;
+
 import java.awt.Color;
-import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES1;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.LayeredDisplayData;
-import msi.gama.outputs.LightPropertiesStructure;
-import msi.gama.util.GamaColor;
+import msi.gama.outputs.layers.properties.ILightDefinition;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 
@@ -32,182 +33,143 @@ public class LightHelper extends AbstractRendererHelper {
 	/**
 	 * Instantiates a new light helper.
 	 *
-	 * @param renderer the renderer
+	 * @param renderer
+	 *            the renderer
 	 */
 	public LightHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
 	}
 
-	// public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
-
 	/**
 	 * Sets the ambiant light.
 	 *
-	 * @param gl the gl
-	 * @param ambientLightValue the ambient light value
+	 * @param gl
+	 *            the gl
+	 * @param intensity
+	 *            the ambient light value
 	 */
-	public void setAmbiantLight(final OpenGL gl, final Color ambientLightValue) {
-		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
-				ambientLightValue.getBlue() / 255.0f, 1.0f };
-		gl.getGL().glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmbientValue, 0);
+	public void setAmbientLight(final ILightDefinition light) {
+		Color c = !light.isActive() ? Color.black : light.getIntensity();
+		final float[] array = { c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f };
+		getGL().glLightModelfv(GL2ES1.GL_LIGHT_MODEL_AMBIENT, array, 0);
 	}
 
 	@Override
 	public void initialize() {
-		final OpenGL gl = getOpenGL();
-		final LayeredDisplayData data = getData();
 		// ambient
-		setAmbiantLight(gl, data.getAmbientLightColor());
-		// deactivate diffuse light for the light0
-		data.setLightActive(0, true);
-		data.setLightType(0, "direction");
-		// default value for diffuse light
-		boolean useDefaultValueForLight1 = true;
-		for (final LightPropertiesStructure lightProp : data.getDiffuseLights()) {
-			if (lightProp.id == 1) {
-				useDefaultValueForLight1 = false;
-			}
-		}
-		if (useDefaultValueForLight1) {
-			data.setLightActive(1, true);
-			// directional light
-			data.setLightType(1, "direction");
-			data.setLightDirection(1, new GamaPoint(0.5, 0.5, -1));
-			if (getRenderer().useShader()) {
-				data.setDiffuseLightColor(1, new GamaColor(255, 255, 255, 255));
-			} else {
-				data.setDiffuseLightColor(1, new GamaColor(127, 127, 127, 255));
-			}
-		}
-
+		setAmbientLight(data.getLights().get(ILightDefinition.ambient));
 		// set material properties which will be assigned by glColor
-
-		gl.getGL().glColorMaterial(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
-		gl.getGL().glLightModelf(GL2.GL_LIGHT_MODEL_TWO_SIDE, GL2.GL_TRUE);
-		// // enable color tracking
-		gl.getGL().glEnable(GL2.GL_COLOR_MATERIAL);
+		getGL().glColorMaterial(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT_AND_DIFFUSE);
+		getGL().glLightModelf(GL2ES1.GL_LIGHT_MODEL_TWO_SIDE, GL.GL_TRUE);
+		getGL().glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
 	}
 
 	/**
 	 * Update diffuse light value.
 	 *
-	 * @param openGL the open GL
+	 * @param openGL
+	 *            the open GL
 	 */
 	public void updateDiffuseLightValue(final OpenGL openGL) {
-		// final GL2 gl = openGL.getGL();
-		final List<LightPropertiesStructure> lightPropertiesList = getData().getDiffuseLights();
+		setAmbientLight(data.getLights().get(ILightDefinition.ambient));
+		final GL2 gl = getGL();
 		final double size = getMaxEnvDim() / 20;
 		final double worldWidth = getRenderer().getEnvWidth();
 		final double worldHeight = getRenderer().getEnvHeight();
-		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
-			if (lightProperties.active) {
-				openGL.getGL().glEnable(GL2.GL_LIGHT0 + lightProperties.id);
-				// GET AND SET ALL THE PROPERTIES OF THE LIGHT
-				// Get the type of light (direction / point / spot)
-				final LightPropertiesStructure.TYPE type = lightProperties.type;
-				// Get and set the color (the diffuse color)
-				final float[] diffuseColor =
-						{ lightProperties.color.getRed() / 255.0f, lightProperties.color.getGreen() / 255.0f,
-								lightProperties.color.getBlue() / 255.0f, lightProperties.color.getAlpha() / 255.0f };
-				openGL.getGL().glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_DIFFUSE, diffuseColor, 0);
-				// Get and set the position
-				// the 4th value of the position determines weather of not the
-				// distance object-light has to be computed
+		getData().getLights().forEach((name, light) -> {
+			if (ILightDefinition.ambient.equals(name)) return;
+			int id = GL_LIGHT0 + light.getId();
+			if (light.isActive()) {
+				String type = light.getType();
+				Color c = light.getIntensity();
+				gl.glEnable(id);
+				final float[] color =
+						{ c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, c.getAlpha() / 255.0f };
+				openGL.getGL().glLightfv(id, GLLightingFunc.GL_DIFFUSE, color, 0);
 				float[] lightPosition;
-				if (type == LightPropertiesStructure.TYPE.DIRECTION) {
-					lightPosition = new float[] { -(float) lightProperties.direction.x,
-							(float) lightProperties.direction.y, -(float) lightProperties.direction.z, 0 };
+				if (ILightDefinition.direction.equals(type)) {
+					GamaPoint p = light.getDirection();
+					lightPosition = new float[] { -(float) p.x, (float) p.y, -(float) p.z, 0 };
 				} else {
-					lightPosition = new float[] { (float) lightProperties.position.x,
-							-(float) lightProperties.position.y, (float) lightProperties.position.z, 1 };
+					GamaPoint p = light.getLocation();
+					lightPosition = new float[] { (float) p.x, -(float) p.y, (float) p.z, 1 };
 				}
-				openGL.getGL().glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_POSITION, lightPosition, 0);
+				gl.glLightfv(id, GLLightingFunc.GL_POSITION, lightPosition, 0);
 				// Get and set the attenuation (if it is not a direction light)
-				if (type != LightPropertiesStructure.TYPE.DIRECTION) {
-					final float linearAttenuation = lightProperties.linearAttenuation;
-					final float quadraticAttenuation = lightProperties.quadraticAttenuation;
-					openGL.getGL().glLightf(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_LINEAR_ATTENUATION,
-							linearAttenuation);
-					openGL.getGL().glLightf(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_QUADRATIC_ATTENUATION,
-							quadraticAttenuation);
+				if (!ILightDefinition.direction.equals(type)) {
+					final double l = light.getLinearAttenuation();
+					final double q = light.getQuadraticAttenuation();
+					gl.glLightf(id, GLLightingFunc.GL_LINEAR_ATTENUATION, (float) l);
+					gl.glLightf(id, GLLightingFunc.GL_QUADRATIC_ATTENUATION, (float) q);
 				}
 				// Get and set spot properties (if the light is a spot light)
-				if (type == LightPropertiesStructure.TYPE.SPOT) {
-					final float[] spotLight = { (float) lightProperties.direction.x,
-							-(float) lightProperties.direction.y, (float) lightProperties.direction.z };
-					openGL.getGL().glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_DIRECTION, spotLight, 0);
-					final float spotAngle = lightProperties.spotAngle;
-					openGL.getGL().glLightf(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_CUTOFF, spotAngle);
+				if (ILightDefinition.spot.equals(type)) {
+					GamaPoint p = light.getDirection();
+					float[] spotLight = { (float) p.x, -(float) p.y, (float) p.z, 0 };
+					gl.glLightfv(id, GLLightingFunc.GL_SPOT_DIRECTION, spotLight, 0);
+					final double spotAngle = light.getAngle();
+					gl.glLightf(id, GLLightingFunc.GL_SPOT_CUTOFF, (float) spotAngle);
 				}
-
-				// DRAW THE LIGHT IF NEEDED
-				if (lightProperties.drawLight && lightProperties.id != 0) {
+				if (light.isDrawing()) {
 					// disable the lighting during the time the light is drawn
 					final boolean previous = openGL.setLighting(false);
-					drawLight(openGL, size, worldWidth, worldHeight, lightProperties, lightPosition);
+					drawLight(openGL, size, worldWidth, worldHeight, light, lightPosition);
 					openGL.setLighting(previous);
 				}
 			} else {
-				openGL.getGL().glDisable(GL2.GL_LIGHT0 + lightProperties.id);
+				gl.glDisable(id);
 			}
-		}
+		});
+
 	}
 
 	/**
 	 * Draw light.
 	 *
-	 * @param openGL the open GL
-	 * @param size the size
-	 * @param worldWidth the world width
-	 * @param worldHeight the world height
-	 * @param lightProperties the light properties
-	 * @param lightPosition the light position
+	 * @param openGL
+	 *            the open GL
+	 * @param size
+	 *            the size
+	 * @param worldWidth
+	 *            the world width
+	 * @param worldHeight
+	 *            the world height
+	 * @param light
+	 *            the light properties
+	 * @param pos
+	 *            the light position
 	 */
 	private void drawLight(final OpenGL openGL, final double size, final double worldWidth, final double worldHeight,
-			final LightPropertiesStructure lightProperties, final float[] lightPosition) {
+			final ILightDefinition light, final float[] pos) {
 
 		// save the current color to re-set it at the end of this
 		// part
-		final Color currentColor = openGL.swapCurrentColor(lightProperties.color);
+		final Color currentColor = openGL.swapCurrentColor(light.getIntensity());
 		// change the current color to the light color (the
 		// representation of the color will have the same color as
 		// the light in itself)
 		final GLUT glut = new GLUT();
-		final double x = lightProperties.direction.x;
-		final double y = -lightProperties.direction.y;
-		final double z = lightProperties.direction.z;
-		final double norm = Math.sqrt(x * x + y * y + z * z);
-		final double zNorm = z / norm;
-		final double xNorm = x / norm;
-		final double yNorm = y / norm;
-		final LightPropertiesStructure.TYPE type = lightProperties.type;
-		if (type == LightPropertiesStructure.TYPE.POINT) {
+		GamaPoint dir = light.getDirection();
+		GamaPoint dirNorm = dir.normalized();
+		final String type = light.getType();
+		if (type == ILightDefinition.point) {
 			openGL.pushMatrix();
-			openGL.translateBy(lightPosition[0], lightPosition[1], lightPosition[2]);
+			openGL.translateBy(pos[0], pos[1], pos[2]);
 			glut.glutSolidSphere(size, 16, 16);
 			openGL.popMatrix();
-		} else if (type == LightPropertiesStructure.TYPE.SPOT) {
+		} else if (type == ILightDefinition.spot) {
 			openGL.pushMatrix();
-			openGL.translateBy(lightPosition[0], lightPosition[1], lightPosition[2]);
-
-			final double baseSize = Math.sin(Math.toRadians(lightProperties.spotAngle)) * size;
-
-			// see :
-			// http://opengl.developpez.com/tutoriels/opengl-tutorial/17-les-rotations-quaternions/
-			// init vector : {0,0,-1}
-			// dest vector : {x,y,z}
+			openGL.translateBy(pos[0], pos[1], pos[2]);
+			final double baseSize = Math.sin(Math.toRadians(light.getAngle())) * size;
 			// compute angle
 			int flag = 1;
-			if (zNorm < 0) {
-				flag = -1;
-			}
-			final double cosAngle = flag * zNorm;
+			if (dirNorm.z < 0) { flag = -1; }
+			final double cosAngle = flag * dirNorm.z;
 			// compute axis : dest vect init
-			double[] axis = new double[3];
+			GamaPoint axis = new GamaPoint(0, 0, -1);
 			final double angle = Math.acos(flag * cosAngle);
-			axis = CrossProduct(new double[] { 0, 0, -1 }, new double[] { x, y, z });
-
-			openGL.rotateBy(Math.toDegrees(-angle) + 180, axis[0], axis[1], axis[2]);
+			axis = GamaPoint.cross(axis, dir);
+			openGL.rotateBy(Math.toDegrees(-angle) + 180, axis.x, axis.y, axis.z);
 			openGL.translateBy(0, 0, -size);
 			glut.glutSolidCone(baseSize, size, 16, 16);
 			openGL.popMatrix();
@@ -217,12 +179,11 @@ public class LightHelper extends AbstractRendererHelper {
 			final int maxJ = 3;
 			for (int i = 0; i < maxI; i++) {
 				for (int j = 0; j < maxJ; j++) {
-					final double[] beginPoint =
-							new double[] { i * worldWidth / maxI, -j * worldHeight / maxJ, size * 10 };
-					final double[] endPoint = new double[] { i * worldWidth / maxI + xNorm * size * 3,
-							-(j * worldHeight / maxJ) - yNorm * size * 3, size * 10 + zNorm * size * 3 };
+					final double[] beginPoint = { i * worldWidth / maxI, -j * worldHeight / maxJ, size * 10 };
+					final double[] endPoint = { i * worldWidth / maxI + dirNorm.x * size * 3,
+							-(j * worldHeight / maxJ) - dirNorm.y * size * 3, size * 10 + dirNorm.z * size * 3 };
 					// draw the lines
-					openGL.beginDrawing(GL2.GL_LINES);
+					openGL.beginDrawing(GL.GL_LINES);
 					openGL.drawVertex(0, beginPoint[0], beginPoint[1], beginPoint[2]);
 					openGL.drawVertex(0, endPoint[0], endPoint[1], endPoint[2]);
 					openGL.endDrawing();
@@ -239,28 +200,12 @@ public class LightHelper extends AbstractRendererHelper {
 	}
 
 	/**
-	 * Cross product.
-	 *
-	 * @param vect1 the vect 1
-	 * @param vect2 the vect 2
-	 * @return the double[]
-	 */
-	public static double[] CrossProduct(final double[] vect1, final double[] vect2) {
-		final double[] result = new double[3];
-		result[0] = vect1[1] * vect2[2] - vect1[2] * vect2[1];
-		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
-		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
-		return result;
-	}
-
-	/**
 	 * Draw.
 	 */
 	public void draw() {
 		if (isActive()) {
 			final OpenGL openGL = getOpenGL();
 			openGL.pushMatrix();
-			setAmbiantLight(openGL, getData().getAmbientLightColor());
 			updateDiffuseLightValue(openGL);
 			openGL.popMatrix();
 		}
@@ -271,8 +216,6 @@ public class LightHelper extends AbstractRendererHelper {
 	 *
 	 * @return true, if is active
 	 */
-	public boolean isActive() {
-		return getData().isLightOn();
-	}
+	public boolean isActive() { return getData().isLightOn(); }
 
 }

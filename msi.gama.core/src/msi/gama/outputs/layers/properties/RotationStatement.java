@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * CameraStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * RotationStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -8,10 +8,11 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.properties;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,59 +29,38 @@ import msi.gaml.types.IType;
  * The Class CameraDefinition.
  */
 @symbol (
-		name = IKeyword.CAMERA,
+		name = IKeyword.ROTATION,
 		kind = ISymbolKind.LAYER,
 		with_sequence = false,
-		unique_in_context = false,
+		unique_in_context = true,
 		concept = { IConcept.CAMERA, IConcept.DISPLAY, IConcept.THREED })
 @inside (
 		symbols = IKeyword.DISPLAY)
 @facets (
-		value = { @facet (
-				name = IKeyword.NAME,
-				type = IType.LABEL,
-				optional = false,
-				doc = @doc ("The name of the camera. Either a string or a plain label. Will be used to populate a menu with the other camera presets. "
-						+ "Can provide a value to the 'camera:' facet of the display, which specifies which camera to use."
-						+ "Using the name 'default' will make it the default of the surrounding display")),
+		value = {
 
 				@facet (
 						name = "dynamic",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("If true, the location, distance and target are automatically recomputed every step. Default is false. When true, will also set 'locked' to true, to avoid interferences from users")),
-
-				@facet (
-						name = "distance",
-						type = { IType.FLOAT },
-						optional = true,
-						doc = @doc ("If the 'location:' facet is not defined, defines the distance (in world units) that separates the camera from its target. "
-								+ "If 'location:' is defined, especially if it is using a symbolic position, allows to specify the distance to keep from the target. "
-								+ "If neither 'location:' or 'distance:' is defined, the default distance is the maximum between the width and the height of the world")),
+						doc = @doc ("If true, the rotation is applied every step. Default is false.")),
 				@facet (
 						name = IKeyword.LOCATION,
-						type = { IType.POINT, IType.STRING },
+						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the location of the camera in the world, i.e. from where it looks at its target. If 'distance:' is specified, the final location is translated on the target-camera axis to respect the distance. "
-								+ "Can be a (possibly dynamically computed) point or a symbolic position (#from_above, #from_left, #from_right, #from_up_right, #from_up_left, #from_front, #from_up_front) that will be dynamically recomputed if the target moves"
-								+ "If 'location:' is not defined, it will be that of the default camera (#from_top, #from_left...) defined in the preferences.")),
+						doc = @doc ("Allows to define the center of the rotation. Defaut value is not specified is the center of mass of the world (i.e. {width/2, height/2, max(width, height) / 2})")),
 				@facet (
-						name = IKeyword.TARGET,
-						type = { IType.POINT, IType.AGENT, IType.GEOMETRY },
+						name = "axis",
+						type = IType.POINT,
 						optional = true,
-						doc = @doc ("Allows to define the target of the camera (what does it look at). It can be a point (in world coordinates), a geometry or an agent, in which case its (possibly dynamic) location it used as the target. "
+						doc = @doc ("The axis of rotation, defined by a vector. Default is {0,0,1} (rotation around the z axis)"
 								+ "This facet can be complemented by 'distance:' and/or 'location:' to specify from where the target is looked at. If 'target:' is not defined, the default target is the centroid of the world shape. ")),
 				@facet (
-						name = "lens",
+						name = "angle",
 						type = { IType.FLOAT, IType.INT },
-						optional = true,
-						doc = @doc ("Allows to define the lens -- field of view in degrees -- of the camera. Between 0 and 360. Defaults to 45°")),
-				@facet (
-						name = "locked",
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc ("If true, the user cannot modify the camera location and target by interacting with the display. It is automatically set when the camera is dynamic, so that the display can 'follow' the coordinates; but it can also be used with fixed coordinates to 'focus' the display on a specific scene")), },
-		omissible = IKeyword.NAME)
+						optional = false,
+						doc = @doc ("Defines the angle of rotation around the axis. No default defined. ")) },
+		omissible = "angle")
 @doc (
 		value = "`" + IKeyword.CAMERA
 				+ "` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. "
@@ -90,10 +70,10 @@ import msi.gaml.types.IType;
 				+ "camera 'my_camera' locked: true location: #from_up_front target: people(0); will continuously follow the first agent of the people species from the up-front position. ",
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 				IKeyword.IMAGE, IKeyword.POPULATION, })
-public class CameraStatement extends AbstractLayerStatement {
+public class RotationStatement extends AbstractLayerStatement {
 
 	/** The definition. */
-	final CameraDefinition definition;
+	final RotationDefinition definition;
 
 	/**
 	 * Instantiates a new camera statement.
@@ -103,14 +83,14 @@ public class CameraStatement extends AbstractLayerStatement {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	public CameraStatement(final IDescription desc) throws GamaRuntimeException {
+	public RotationStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		definition = new CameraDefinition(this);
+		definition = new RotationDefinition(this);
 	}
 
 	@Override
 	public LayerType getType(final LayeredDisplayOutput output) {
-		return LayerType.CAMERA;
+		return LayerType.ROTATION;
 	}
 
 	@Override
@@ -130,5 +110,5 @@ public class CameraStatement extends AbstractLayerStatement {
 	 *
 	 * @return the definition
 	 */
-	public CameraDefinition getDefinition() { return definition; }
+	public RotationDefinition getDefinition() { return definition; }
 }

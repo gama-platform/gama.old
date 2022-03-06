@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaColor.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -69,14 +68,15 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 	/** The Constant colors. */
 	public final static Map<String, GamaColor> colors = GamaMapFactory.createUnordered();
-	
+
 	/** The Constant int_colors. */
 	public final static Map<Integer, GamaColor> int_colors = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Gets the int.
 	 *
-	 * @param rgb the rgb
+	 * @param rgb
+	 *            the rgb
 	 * @return the int
 	 */
 	public static GamaColor getInt(final int rgb) {
@@ -91,7 +91,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Gets the named.
 	 *
-	 * @param rgb the rgb
+	 * @param rgb
+	 *            the rgb
 	 * @return the named
 	 */
 	public static GamaColor getNamed(final String rgb) {
@@ -133,8 +134,10 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 		/**
 		 * Instantiates a new named gama color.
 		 *
-		 * @param n the n
-		 * @param c the c
+		 * @param n
+		 *            the n
+		 * @param c
+		 *            the c
 		 */
 		NamedGamaColor(final String n, final int[] c) {
 			// c must be of length 4.
@@ -162,7 +165,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Normalize.
 	 *
-	 * @param rgbComp the rgb comp
+	 * @param rgbComp
+	 *            the rgb comp
 	 * @return the int
 	 */
 	private static int normalize(final int rgbComp) {
@@ -172,7 +176,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Normalize.
 	 *
-	 * @param transp the transp
+	 * @param transp
+	 *            the transp
 	 * @return the int
 	 */
 	// returns a value between 0 and 255 from a double between 0 and 1
@@ -183,7 +188,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param c the c
+	 * @param c
+	 *            the c
 	 */
 	public GamaColor(final Color c) {
 		super(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
@@ -192,8 +198,10 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param c the c
-	 * @param alpha the alpha
+	 * @param c
+	 *            the c
+	 * @param alpha
+	 *            the alpha
 	 */
 	public GamaColor(final Color c, final int alpha) {
 		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
@@ -202,8 +210,10 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param c the c
-	 * @param alpha the alpha
+	 * @param c
+	 *            the c
+	 * @param alpha
+	 *            the alpha
 	 */
 	public GamaColor(final Color c, final double alpha) {
 		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
@@ -212,7 +222,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param awtRGB the awt RGB
+	 * @param awtRGB
+	 *            the awt RGB
 	 */
 	protected GamaColor(final int awtRGB) {
 		super(awtRGB, true);
@@ -221,9 +232,12 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
 	 */
 	public GamaColor(final int r, final int g, final int b) {
 		this(normalize(r), normalize(g), normalize(b), 255);
@@ -233,10 +247,14 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
-	 * @param t the t
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param t
+	 *            the t
 	 */
 	public GamaColor(final int r, final int g, final int b, final int t) {
 		// t between 0 and 255
@@ -246,10 +264,14 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
-	 * @param t the t
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param t
+	 *            the t
 	 */
 	public GamaColor(final double r, final double g, final double b, final double t) {
 		// t between 0 and 1
@@ -259,10 +281,14 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Instantiates a new gama color.
 	 *
-	 * @param r the r
-	 * @param g the g
-	 * @param b the b
-	 * @param t the t
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param t
+	 *            the t
 	 */
 	public GamaColor(final int r, final int g, final int b, final double t) {
 		// t between 0 and 1
@@ -337,9 +363,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @return the brighter
 	 */
 	@getter (IKeyword.BRIGHTER)
-	public GamaColor getBrighter() {
-		return new GamaColor(super.brighter());
-	}
+	public GamaColor getBrighter() { return new GamaColor(super.brighter()); }
 
 	/**
 	 * Gets the darker.
@@ -347,9 +371,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @return the darker
 	 */
 	@getter (IKeyword.DARKER)
-	public GamaColor getDarker() {
-		return new GamaColor(super.darker());
-	}
+	public GamaColor getDarker() { return new GamaColor(super.darker()); }
 
 	@Override
 	public GamaColor copy(final IScope scope) {
@@ -359,8 +381,10 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Merge.
 	 *
-	 * @param c1 the c 1
-	 * @param c2 the c 2
+	 * @param c1
+	 *            the c 1
+	 * @param c2
+	 *            the c 2
 	 * @return the gama color
 	 */
 	public static GamaColor merge(final GamaColor c1, final GamaColor c2) {
@@ -371,7 +395,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Compare rgb to.
 	 *
-	 * @param c2 the c 2
+	 * @param c2
+	 *            the c 2
 	 * @return the int
 	 */
 	public int compareRgbTo(final Color c2) {
@@ -381,7 +406,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Compare luminescence to.
 	 *
-	 * @param c2 the c 2
+	 * @param c2
+	 *            the c 2
 	 * @return the int
 	 */
 	public int compareLuminescenceTo(final Color c2) {
@@ -392,7 +418,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Compare brightness to.
 	 *
-	 * @param c2 the c 2
+	 * @param c2
+	 *            the c 2
 	 * @return the int
 	 */
 	public int compareBrightnessTo(final Color c2) {
@@ -404,7 +431,8 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Compare luma to.
 	 *
-	 * @param c2 the c 2
+	 * @param c2
+	 *            the c 2
 	 * @return the int
 	 */
 	public int compareLumaTo(final Color c2) {
@@ -423,18 +451,24 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
-	public IType<?> getGamlType() {
-		return Types.COLOR;
-	}
+	public IType<?> getGamlType() { return Types.COLOR; }
 
 	/**
 	 * With alpha.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the gama color
 	 */
 	public GamaColor withAlpha(final double d) {
 		return new GamaColor(getRed(), getGreen(), getBlue(), d);
 	}
+
+	/**
+	 * Checks if is zero.
+	 *
+	 * @return true, if is zero
+	 */
+	public boolean isZero() { return getRed() == 0 && getGreen() == 0 && getBlue() == 0; }
 
 }

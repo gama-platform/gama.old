@@ -39,7 +39,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisplaySynchronizer;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -57,8 +56,6 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -105,9 +102,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	/** The menu manager. */
 	protected DisplaySurfaceMenu menuManager;
-
-	/** The temp focus. */
-	protected IExpression temp_focus;
+	//
+	// /** The temp focus. */
+	// protected IExpression temp_focus;
 
 	/** The scope. */
 	IGraphicsScope scope;
@@ -139,7 +136,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		animator = new GamaGLCanvas(parent, renderer).getAnimator();
 		layerManager = new LayerManager(this, output);
-		temp_focus = output.getFacet(IKeyword.FOCUS);
+		// temp_focus = output.getFacet(IKeyword.FOCUS);
 		animator.start();
 	}
 
@@ -261,13 +258,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 			// EXPERIMENTAL
 
-			if (temp_focus != null) {
-				final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()));
-				if (geometry != null) {
-					temp_focus = null;
-					focusOn(geometry);
-				}
-			}
+			// if (temp_focus != null) {
+			// final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()));
+			// if (geometry != null) {
+			// temp_focus = null;
+			// focusOn(geometry);
+			// }
+			// }
 			if (force && oldState) { animator.pause(); }
 		} finally {
 			alreadyUpdating = false;
@@ -334,7 +331,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
-		// TODO Remove
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the
 		// maxExtent of the shape?

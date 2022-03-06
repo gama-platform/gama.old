@@ -112,7 +112,8 @@ experiment main type: gui {
 				data "infected" value: nb_people_infected color: #red;
 			}
 		}
-		display view3D type: opengl ambient_light: 80 {
+		display view3D type: opengl antialias: false {
+			light #ambient intensity: 80;
 			image "../includes/luneray.jpg" refresh: false; 
 			species building aspect: geom3D refresh: false;
 			species road aspect: geom3D refresh: false;

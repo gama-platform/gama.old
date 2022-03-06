@@ -28,11 +28,12 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
 import msi.gama.outputs.LayeredDisplayOutput.DisplayValidator;
 import msi.gama.outputs.layers.AbstractLayerStatement;
-import msi.gama.outputs.layers.CameraStatement;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.OverlayStatement;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
-import msi.gama.outputs.layers.RotationStatement;
+import msi.gama.outputs.layers.properties.CameraStatement;
+import msi.gama.outputs.layers.properties.LightStatement;
+import msi.gama.outputs.layers.properties.RotationStatement;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -95,7 +96,9 @@ import msi.gaml.types.IType;
 						name = IKeyword.FOCUS,
 						type = IType.GEOMETRY,
 						optional = true,
-						doc = @doc ("the geometry (or agent) on which the display will (dynamically) focus")),
+						doc = @doc (
+								deprecated = "Use 'camera default target: the_agent' to achieve the same effect",
+								value = "the geometry (or agent) on which the display will (dynamically) focus")),
 				// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 				@facet (
 						name = IKeyword.TYPE,
@@ -136,14 +139,15 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Indicates, when using a boolean value, whether or not the display should cover the whole screen (default is false). If an integer is passed, specifies also the screen to use: 0 for the primary monitor, 1 for the secondary one, and so on and so forth. If the monitor is not available, the first one is used")),
 
-				@facet (
-						name = IKeyword.ZFIGHTING,
-						internal = true,
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc (
-								deprecated = "now done automatically by default",
-								value = "Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
+				// @facet (
+				// name = IKeyword.ZFIGHTING,
+				// internal = true,
+				// type = IType.BOOL,
+				// optional = true,
+				// doc = @doc (
+				// deprecated = "now done automatically by default",
+				// value = "Allows to alleviate a problem where agents at the same z would overlap each other in random
+				// ways")),
 				@facet (
 						name = IKeyword.SCALE,
 						type = { IType.BOOL, IType.FLOAT },
@@ -168,18 +172,22 @@ import msi.gaml.types.IType;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
+
+				/// LIGHT FACETS
 				@facet (
 						name = IKeyword.AMBIENT_LIGHT,
 						type = { IType.INT, IType.COLOR },
 						optional = true,
-						doc = @doc ("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(127,127,127,255)")),
+						doc = @doc (
+								deprecated = "Define a statement 'light #ambient intensity: ...;' instead",
+								value = "Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(127,127,127,255)")),
 				@facet (
 						name = IKeyword.DIFFUSE_LIGHT,
 						type = { IType.INT, IType.COLOR },
 						optional = true,
 						doc = @doc (
 								value = "Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (127,127,127,255)",
-								deprecated = "Use statement \"light\" instead")),
+								deprecated = "Use statement \"light\" instead to define a new light and its intensity")),
 				@facet (
 						name = IKeyword.DIFFUSE_LIGHT_POS,
 						type = IType.POINT,
@@ -197,6 +205,7 @@ import msi.gaml.types.IType;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (
+								deprecated = "Define it in the various 'light' statements instead with 'show: true/false'",
 								value = "Allows to show/hide a representation of the lights. Default is false.")),
 
 				/// CAMERA FACETS
@@ -267,13 +276,13 @@ import msi.gaml.types.IType;
 								value = "If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
 
 				/// END CAMERA FACETS
-				@facet (
-						name = "use_shader",
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc (
-								value = "Used to invoke the new OpenGL architecture",
-								deprecated = "If the coresponding plugin has been installed, use 'display type: opengl2' instead")),
+				// @facet (
+				// name = "use_shader",
+				// type = IType.BOOL,
+				// optional = true,
+				// doc = @doc (
+				// value = "Used to invoke the new OpenGL architecture",
+				// deprecated = "If the coresponding plugin has been installed, use 'display type: opengl2' instead")),
 				@facet (
 						name = IKeyword.KEYSTONE,
 						type = IType.CONTAINER,
@@ -337,6 +346,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	/** The cameras. */
 	private final List<CameraStatement> cameras;
+
+	/** The lights. */
+	private final List<LightStatement> lights;
 
 	/** The rotation. */
 	private RotationStatement rotation;
@@ -525,6 +537,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (hasFacet(IKeyword.TYPE)) { getData().setDisplayType(getLiteral(IKeyword.TYPE)); }
 		layers = new ArrayList<>();
 		cameras = new ArrayList<>();
+		lights = new ArrayList<>();
 	}
 
 	/**
@@ -544,6 +557,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		for (CameraStatement s : cameras) {
 			getData().addCameraDefinition(s.getDefinition());
+			s.init(scope);
+		}
+		for (LightStatement s : lights) {
+			getData().addLightDefinition(s.getDefinition());
 			s.init(scope);
 		}
 		getData().initWith(getScope(), description);
@@ -636,6 +653,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				cameras.add(cs);
 			} else if (s instanceof RotationStatement rs) {
 				rotation = rs;
+			} else if (s instanceof LightStatement ls) {
+				lights.add(ls);
 			} else {
 				if (s instanceof OverlayStatement os && os.hasInfo()) { overlayInfo = os; }
 				list.add((AbstractLayerStatement) s);

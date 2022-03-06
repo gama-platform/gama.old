@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
-import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,9 +27,12 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.GenericCameraDefinition;
-import msi.gama.outputs.layers.ICameraDefinition;
-import msi.gama.outputs.layers.RotationDefinition;
+import msi.gama.outputs.layers.properties.GenericCameraDefinition;
+import msi.gama.outputs.layers.properties.GenericLightDefinition;
+import msi.gama.outputs.layers.properties.ICameraDefinition;
+import msi.gama.outputs.layers.properties.ILightDefinition;
+import msi.gama.outputs.layers.properties.LightDefinition;
+import msi.gama.outputs.layers.properties.RotationDefinition;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -170,9 +171,9 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private GamaColor backgroundColor = GamaPreferences.Displays.CORE_BACKGROUND.getValue();
-
-	/** The ambient color. */
-	private GamaColor ambientColor = new GamaColor(64, 64, 64, 255);
+	//
+	// /** The ambient color. */
+	// private GamaColor ambientColor = new GamaColor(64, 64, 64, 255);
 
 	/** The highlight color. */
 	private GamaColor highlightColor = GamaPreferences.Displays.CORE_HIGHLIGHT.getValue();
@@ -684,52 +685,52 @@ public class LayeredDisplayData {
 
 		final IExpression lightOn = facets.getExpr(IKeyword.IS_LIGHT_ON);
 		if (lightOn != null) { setLightOn(Cast.asBool(scope, lightOn.value(scope))); }
+		//
+		// final IExpression light2 = facets.getExpr(IKeyword.DIFFUSE_LIGHT);
+		// // this facet is deprecated...
+		// if (light2 != null) {
+		// setLightActive(1, true);
+		// if (light2.getGamlType().equals(Types.COLOR)) {
+		// setDiffuseLightColor(1, Cast.asColor(scope, light2.value(scope)));
+		// } else {
+		// final int meanValue = Cast.asInt(scope, light2.value(scope));
+		// setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
+		// }
+		// }
+		//
+		// final IExpression light3 = facets.getExpr(IKeyword.DIFFUSE_LIGHT_POS);
+		// // this facet is deprecated...
+		// if (light3 != null) {
+		// setLightActive(1, true);
+		// setLightDirection(1, Cast.asPoint(scope, light3.value(scope)));
+		// }
 
-		final IExpression light2 = facets.getExpr(IKeyword.DIFFUSE_LIGHT);
-		// this facet is deprecated...
-		if (light2 != null) {
-			setLightActive(1, true);
-			if (light2.getGamlType().equals(Types.COLOR)) {
-				setDiffuseLightColor(1, Cast.asColor(scope, light2.value(scope)));
-			} else {
-				final int meanValue = Cast.asInt(scope, light2.value(scope));
-				setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
-			}
-		}
-
-		final IExpression light3 = facets.getExpr(IKeyword.DIFFUSE_LIGHT_POS);
-		// this facet is deprecated...
-		if (light3 != null) {
-			setLightActive(1, true);
-			setLightDirection(1, Cast.asPoint(scope, light3.value(scope)));
-		}
-
-		final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
-		if (drawLights != null && Cast.asBool(scope, drawLights.value(scope)) == true) {
-			// set the drawLight attribute to true for all the already
-			// existing light
-			for (int i = 0; i < 8; i++) {
-				boolean lightAlreadyCreated = false;
-				for (final LightPropertiesStructure lightProp : getDiffuseLights()) {
-					if (lightProp.id == i) {
-						lightProp.drawLight = true;
-						lightAlreadyCreated = true;
-					}
-				}
-				// if the light does not exist yet, create it by using the
-				// method "setLightActive", and set the drawLight attr to
-				// true.
-				if (!lightAlreadyCreated) {
-					if (i < 2) {
-						setLightActive(i, true);
-					} else {
-						setLightActive(i, false);
-					}
-					setDrawLight(i, true);
-				}
-				lightAlreadyCreated = false;
-			}
-		}
+		// final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
+		// if (drawLights != null && Cast.asBool(scope, drawLights.value(scope)) == true) {
+		// // set the drawLight attribute to true for all the already
+		// // existing light
+		// for (int i = 0; i < 8; i++) {
+		// boolean lightAlreadyCreated = false;
+		// for (final LightPropertiesStructure lightProp : getDiffuseLights()) {
+		// if (lightProp.id == i) {
+		// lightProp.drawLight = true;
+		// lightAlreadyCreated = true;
+		// }
+		// }
+		// // if the light does not exist yet, create it by using the
+		// // method "setLightActive", and set the drawLight attr to
+		// // true.
+		// if (!lightAlreadyCreated) {
+		// if (i < 2) {
+		// setLightActive(i, true);
+		// } else {
+		// setLightActive(i, false);
+		// }
+		// setDrawLight(i, true);
+		// }
+		// lightAlreadyCreated = false;
+		// }
+		// }
 
 		initializePresetCameraDefinitions();
 		cameraNameExpression = facets.getExpr(IKeyword.CAMERA);
@@ -757,20 +758,24 @@ public class LayeredDisplayData {
 			setBackgroundColor(Cast.asColor(scope, color.value(scope)));
 			constantBackground = color.isConst();
 		}
-
-		final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
-		if (light != null) {
-			if (light.getGamlType().equals(Types.COLOR)) {
-				setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
-			} else {
-				final int meanValue = Cast.asInt(scope, light.value(scope));
-				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-			}
-			constantAmbientLight = light.isConst();
-		}
+		//
+		// final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
+		// if (light != null) {
+		// if (light.getGamlType().equals(Types.COLOR)) {
+		// setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
+		// } else {
+		// final int meanValue = Cast.asInt(scope, light.value(scope));
+		// setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+		// }
+		// constantAmbientLight = light.isConst();
+		// }
 
 		final IExpression antialias = facets.getExpr("antialias");
 		if (antialias != null) { setAntialias(Cast.asBool(scope, antialias.value(scope))); }
+
+		if (camera != null) { camera.refresh(scope); }
+		if (rotation != null) { rotation.refresh(scope); }
+		lights.forEach((s, l) -> l.refresh(scope));
 	}
 
 	/**
@@ -833,6 +838,7 @@ public class LayeredDisplayData {
 
 		if (camera != null) { camera.refresh(scope); }
 		if (rotation != null) { rotation.refresh(scope); }
+		lights.forEach((s, l) -> l.refresh(scope));
 
 		updateAutoSave(scope, facets.getExpr(IKeyword.AUTOSAVE));
 		// /////////////// dynamic Lighting ///////////////////
@@ -842,18 +848,6 @@ public class LayeredDisplayData {
 			final IExpression color = facets.getExpr(IKeyword.BACKGROUND);
 			if (color != null) { setBackgroundColor(Cast.asColor(scope, color.value(scope))); }
 
-		}
-
-		if (!constantAmbientLight) {
-			final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
-			if (light != null) {
-				if (light.getGamlType().equals(Types.COLOR)) {
-					setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
-				} else {
-					final int meanValue = Cast.asInt(scope, light.value(scope));
-					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-				}
-			}
 		}
 
 	}
@@ -1148,11 +1142,16 @@ public class LayeredDisplayData {
 	/** The is light on. */
 	private boolean isLightOn = true;
 
-	/** The constant ambient light. */
-	private boolean constantAmbientLight = true;
+	/** The light index. */
+	private int lightIndex = 1;
 
 	/** The lights. */
-	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
+	private final Map<String, ILightDefinition> lights = new LinkedHashMap<>() {
+		{
+			put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1, 127));
+			put(ILightDefinition.regular, new GenericLightDefinition(ILightDefinition.regular, 0, 127));
+		}
+	};
 
 	/**
 	 * @return the isLightOn
@@ -1170,142 +1169,19 @@ public class LayeredDisplayData {
 	 *
 	 * @return the diffuse lights
 	 */
-	// Change lights to a possibly null structure instead of generating an array for each data
-	public List<LightPropertiesStructure> getDiffuseLights() {
-		final ArrayList<LightPropertiesStructure> result = new ArrayList<>();
-		for (final LightPropertiesStructure lightProp : lights) {
-			if (lightProp != null) {
-				// TODO : check if the light is active
-				result.add(lightProp);
-			}
-		}
-		return result;
-	}
+	public Map<String, ILightDefinition> getLights() { return lights; }
 
 	/**
-	 * Sets the light active.
+	 * Adds the light definition.
 	 *
-	 * @param lightId
-	 *            the light id
-	 * @param value
-	 *            the value
+	 * @param definition
+	 *            the definition
 	 */
-	public void setLightActive(final int lightId, final boolean value) {
-		if (lights[lightId] == null) { lights[lightId] = new LightPropertiesStructure(); }
-		lights[lightId].id = lightId;
-		lights[lightId].active = value;
+	public void addLightDefinition(final LightDefinition definition) {
+		String name = definition.getName();
+		int index = lights.containsKey(name) ? lights.get(name).getId() : lightIndex++;
+		definition.setId(index);
+		lights.put(name, definition);
 	}
 
-	/**
-	 * Sets the light type.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param type
-	 *            the type
-	 */
-	public void setLightType(final int lightId, final String type) {
-		if (type.compareTo("direction") == 0) {
-			lights[lightId].type = LightPropertiesStructure.TYPE.DIRECTION;
-		} else if (type.compareTo("point") == 0) {
-			lights[lightId].type = LightPropertiesStructure.TYPE.POINT;
-		} else {
-			lights[lightId].type = LightPropertiesStructure.TYPE.SPOT;
-		}
-	}
-
-	/**
-	 * Sets the light position.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param position
-	 *            the position
-	 */
-	public void setLightPosition(final int lightId, final GamaPoint position) {
-		lights[lightId].position = position;
-	}
-
-	/**
-	 * Sets the light direction.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param direction
-	 *            the direction
-	 */
-	public void setLightDirection(final int lightId, final GamaPoint direction) {
-		lights[lightId].direction = direction;
-	}
-
-	/**
-	 * Sets the diffuse light color.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param color
-	 *            the color
-	 */
-	public void setDiffuseLightColor(final int lightId, final GamaColor color) {
-		lights[lightId].color = color;
-	}
-
-	/**
-	 * Sets the spot angle.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param angle
-	 *            the angle
-	 */
-	public void setSpotAngle(final int lightId, final float angle) {
-		lights[lightId].spotAngle = angle;
-	}
-
-	/**
-	 * Sets the linear attenuation.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param linearAttenuation
-	 *            the linear attenuation
-	 */
-	public void setLinearAttenuation(final int lightId, final float linearAttenuation) {
-		lights[lightId].linearAttenuation = linearAttenuation;
-	}
-
-	/**
-	 * Sets the quadratic attenuation.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param quadraticAttenuation
-	 *            the quadratic attenuation
-	 */
-	public void setQuadraticAttenuation(final int lightId, final float quadraticAttenuation) {
-		lights[lightId].quadraticAttenuation = quadraticAttenuation;
-	}
-
-	/**
-	 * Sets the draw light.
-	 *
-	 * @param lightId
-	 *            the light id
-	 * @param value
-	 *            the value
-	 */
-	public void setDrawLight(final int lightId, final boolean value) {
-		lights[lightId].drawLight = value;
-	}
-
-	/**
-	 * @return the ambientLightColor
-	 */
-	public Color getAmbientLightColor() { return ambientColor; }
-
-	/**
-	 * @param ambientLightColor
-	 *            the ambientLightColor to set
-	 */
-	public void setAmbientLightColor(final GamaColor ambientLightColor) { this.ambientColor = ambientLightColor; }
 }

@@ -32,7 +32,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.FileUtils;
-import msi.gama.outputs.layers.ICameraDefinition;
+import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;

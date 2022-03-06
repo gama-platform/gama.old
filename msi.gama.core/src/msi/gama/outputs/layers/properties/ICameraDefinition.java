@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.properties;
 
 import java.util.List;
 

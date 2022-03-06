@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExpressionControl.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExpressionControl.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -53,28 +53,28 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	/** The text. */
 	private final Text text;
-	
+
 	/** The editor. */
 	private final ExpressionBasedEditor<Object> editor;
-	
+
 	/** The current value. */
 	private Object currentValue;
-	
+
 	/** The current exception. */
 	protected Exception currentException;
-	
+
 	/** The evaluate expression. */
 	final boolean evaluateExpression;
-	
+
 	/** The host agent. */
 	private final IAgent hostAgent;
-	
+
 	/** The scope. */
 	private final IScope scope;
-	
+
 	/** The expected type. */
 	private final IType<?> expectedType;
-	
+
 	/** The tooltip listener. */
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
@@ -87,13 +87,20 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * Instantiates a new expression control.
 	 *
-	 * @param scope the scope
-	 * @param comp the comp
-	 * @param ed the ed
-	 * @param agent the agent
-	 * @param expectedType the expected type
-	 * @param controlStyle the control style
-	 * @param evaluate the evaluate
+	 * @param scope
+	 *            the scope
+	 * @param comp
+	 *            the comp
+	 * @param ed
+	 *            the ed
+	 * @param agent
+	 *            the agent
+	 * @param expectedType
+	 *            the expected type
+	 * @param controlStyle
+	 *            the control style
+	 * @param evaluate
+	 *            the evaluate
 	 */
 	public ExpressionControl(final IScope scope, final Composite comp, final ExpressionBasedEditor ed,
 			final IAgent agent, final IType<?> expectedType, final int controlStyle, final boolean evaluate) {
@@ -209,7 +216,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 					editor.modifyValue(evaluateExpression
 							? StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false)) : value);
 				} else {
-					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
+					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, null, false) : value);
 				}
 				editor.updateToolbar();
 
@@ -223,8 +230,10 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * Creates the text box.
 	 *
-	 * @param comp the comp
-	 * @param controlStyle the control style
+	 * @param comp
+	 *            the comp
+	 * @param controlStyle
+	 *            the control style
 	 * @return the text
 	 */
 	protected Text createTextBox(final Composite comp, final int controlStyle) {
@@ -266,9 +275,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 *
 	 * @return the control
 	 */
-	public Text getControl() {
-		return text;
-	}
+	public Text getControl() { return text; }
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {}
@@ -290,13 +297,13 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	/**
 	 * Checks if is OK.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the boolean
 	 */
 	private Boolean isOK(final Object value) {
-		if (evaluateExpression)
-			return expectedType.canBeTypeOf(scope, value);
-		else if (value instanceof IExpression)
+		if (evaluateExpression) return expectedType.canBeTypeOf(scope, value);
+		if (value instanceof IExpression)
 			return expectedType.isAssignableFrom(((IExpression) value).getGamlType());
 		else
 			return false;
@@ -307,24 +314,18 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 *
 	 * @return the host agent
 	 */
-	IAgent getHostAgent() {
-		return hostAgent == null ? editor == null ? null : editor.getAgent() : hostAgent;
-	}
+	IAgent getHostAgent() { return hostAgent == null ? editor == null ? null : editor.getAgent() : hostAgent; }
 
 	/**
 	 * @return the currentValue
 	 */
-	protected Object getCurrentValue() {
-		return currentValue;
-	}
+	protected Object getCurrentValue() { return currentValue; }
 
 	/**
 	 * @param currentValue
 	 *            the currentValue to set
 	 */
-	protected void setCurrentValue(final Object currentValue) {
-		this.currentValue = currentValue;
-	}
+	protected void setCurrentValue(final Object currentValue) { this.currentValue = currentValue; }
 
 	/**
 	 * @param currentValue2

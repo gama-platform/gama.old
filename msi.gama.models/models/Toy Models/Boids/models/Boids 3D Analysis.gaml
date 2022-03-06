@@ -463,8 +463,8 @@ experiment "Multiple views" type: gui {
 		}
 
 		display FirstPerson type: opengl antialias: false {
-			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 10} target:
-			{cos(first(boids).heading) * first(boids).speed + int(first(boids).location.x), sin(first(boids).heading) * first(boids).speed + int(first(boids).location.y), 10};
+			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 5} target:
+			{cos(first(boids).heading) * first(boids).speed + int(first(boids).location.x), sin(first(boids).heading) * first(boids).speed + int(first(boids).location.y), 5};
 			image 'background' file: file_path_to_ocean;
 			species obstacle;
 			species boids aspect: dynamicColor transparency: 0.2;

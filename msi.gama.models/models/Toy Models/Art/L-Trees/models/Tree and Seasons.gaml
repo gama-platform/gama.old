@@ -378,7 +378,7 @@ species fruit {
 	aspect default {
 		if (season.current_season = "spring") {
 			draw line([base, end], 0.1) color: season.leaf_color;
-			draw circle(1 * sin(180 * season.current_day / season.season_duration)) at: end color: °pink border: °pink;
+			draw circle(1 * sin(180 * season.current_day / season.season_duration)) at: end color: #pink border: #pink;
 		} else if (season.current_season = "summer") {
 			draw line([base, end], 0.1) color: season.leaf_color;
 			draw sphere(1 * sin(90 * season.current_day / season.season_duration)) at: end color: season.fruit_color border: season.fruit_color;
@@ -401,7 +401,8 @@ species fruit {
 
 experiment "Random" type: gui autorun: true {
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false fullscreen: true {
+		display 'Tree' type: opengl background: season.sky_color draw_env: false toolbar: false fullscreen: true {
+			light #ambient intensity: 150;
 			camera default location: {50.0,250,200} target: {50.0,50.0,0.0};
 			species branch aspect: default;
 			species leaf aspect: default;
@@ -423,7 +424,8 @@ experiment "4 simulations" type: gui autorun: true {
 	}
 
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: false {
+		display 'Tree' type: opengl background: season.sky_color draw_env: false toolbar: false {
+			light #ambient intensity: 150;	
 			camera default location: {50.0,250,200} target: {50.0,50.0,0.0};
 			species branch aspect: default;
 			species leaf aspect: default;
@@ -441,7 +443,9 @@ experiment L_Tri type: gui autorun: true {
 	float minimum_cycle_duration <- 0.0005;
 	float seed <- 0.05387546426306633;
 	output {
-		display 'Tree' type: opengl background: season.sky_color ambient_light: 150 draw_env: false toolbar: true {
+		display 'Tree' type: opengl background: season.sky_color draw_env: false toolbar: true {
+			light #ambient intensity:0;
+			light #regular intensity: 120;
 			camera default location: {50.0,250,200} target: {50.0,50.0,0.0};
 			species branch aspect: default;
 			species leaf aspect: default;

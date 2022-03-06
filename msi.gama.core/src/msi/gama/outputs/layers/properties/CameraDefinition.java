@@ -8,14 +8,13 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs.layers;
+package msi.gama.outputs.layers.properties;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.AttributeHolder;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -23,7 +22,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * The Class CameraDefinition. Holds and updates the position, target and lens of a camera from the GAML definition in
  * the "camera" statement.
  */
-public class CameraDefinition extends AttributeHolder implements ICameraDefinition {
+public class CameraDefinition extends AbstractDefinition implements ICameraDefinition {
 
 	static {
 		DEBUG.ON();
@@ -56,9 +55,6 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 	/** The interaction. */
 	Attribute<Boolean> locked;
 
-	/** The dynamic. */
-	Attribute<Boolean> dynamic;
-
 	/**
 	 * Instantiates a new camera definition.
 	 *
@@ -73,7 +69,6 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 		initialDistanceAttribute = distanceAttribute = create("distance", Types.FLOAT, null);
 		lens = create("lens", Types.INT, 45);
 		locked = create("locked", Types.BOOL, false);
-		dynamic = create("dynamic", Types.BOOL, false);
 	}
 
 	@Override
@@ -85,9 +80,7 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 	}
 
 	@Override
-	public void refresh(final IScope scope) {
-		super.refresh(scope);
-		if (!isDynamic() && current != null) return;
+	public void update(final IScope scope) {
 		// First we determine the target.
 		GamaPoint target = targetAttribute.get();
 		if (target == null) { target = scope.getSimulation().getCentroid(); }
@@ -103,7 +96,7 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 			double w = scope.getSimulation().getWidth();
 			double h = scope.getSimulation().getHeight();
 			double max = Math.max(w, h) * 1.2;
-			location = computeLocation(pos, target, w, -h, max);
+			location = computeLocation(pos, target, w, h, max);
 		} else {
 			location = Cast.asPoint(scope, temp);
 			// The location should be a point now and we negate it as well
@@ -132,7 +125,6 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 	 *
 	 * @return the boolean
 	 */
-	public Boolean isDynamic() { return dynamic.get(); }
 
 	@Override
 	public GamaPoint getLocation() { return current.getLocation(); }
@@ -206,4 +198,12 @@ public class CameraDefinition extends AttributeHolder implements ICameraDefiniti
 
 	@Override
 	public String getName() { return symbol.getName(); }
+
+	@Override
+	protected boolean getDefaultDynamicValue() { return false; }
+
+	@Override
+	protected boolean shouldRefresh() {
+		return super.shouldRefresh() || current == null;
+	}
 }

@@ -120,7 +120,7 @@ species people skills: [moving]
 
 }
 
-experiment road_traffic type: gui
+experiment "Road Traffic" type: gui
 {
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS';
@@ -150,8 +150,8 @@ experiment road_traffic type: gui
 	}
 	output
 	{
-		display city_display type: opengl camera: #isometric
-		{
+		display city_display type: opengl light: true
+		{	
 			species building aspect: base refresh: false;
 			species road aspect: base refresh: false;
 			species people refresh: true;
@@ -160,7 +160,7 @@ experiment road_traffic type: gui
 
 }
 
-experiment road_traffic_multi_layer type: gui
+experiment "Multiple Layers" type: gui
 {
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS';

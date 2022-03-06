@@ -52,7 +52,6 @@ import org.locationtech.jts.geom.Envelope;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -72,8 +71,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.PlatformHelper;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
@@ -118,8 +115,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	/** The menu manager. */
 	protected DisplaySurfaceMenu menuManager;
 
-	/** The temp focus. */
-	protected IExpression temp_focus;
+	// /** The temp focus. */
+	// protected IExpression temp_focus;
 
 	/** The render lock. */
 	Semaphore renderLock = new Semaphore(1);
@@ -165,7 +162,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copyForGraphics("in java2D display"));
 		output.getData().addListener(this);
-		temp_focus = output.getFacet(IKeyword.FOCUS);
+		// temp_focus = output.getFacet(IKeyword.FOCUS);
 		setDoubleBuffered(true);
 		setIgnoreRepaint(true);
 		setLayout(new BorderLayout());
@@ -511,14 +508,14 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		gg.setGraphics2D(g2d);
 		gg.setUntranslatedGraphics2D((Graphics2D) g);
 		layerManager.drawLayersOn(gg);
-		if (temp_focus != null) {
-			final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
-			temp_focus = null;
-			focusOn(geometry);
-			rendered = true;
-			synchronizer.signalRenderingIsFinished();
-			return;
-		}
+		// if (temp_focus != null) {
+		// final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
+		// temp_focus = null;
+		// focusOn(geometry);
+		// rendered = true;
+		// synchronizer.signalRenderingIsFinished();
+		// return;
+		// }
 
 		// TODO Verify that the following expressions should not be also included in the "focus" block
 		g2d.dispose();

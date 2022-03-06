@@ -209,8 +209,13 @@ experiment "Classic" type: gui {
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model';
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display';
 	parameter 'Display state of agents:' var: display_state category: 'Display';
+	
+	
+	
 	output {
-		display Ants type: opengl synchronized: true antialias: false {
+		display Ants type: opengl synchronized: true antialias: false  {
+			light #ambient intensity: 127;
+			light #regular intensity: 127;
 			image terrain refresh: false;
 			agents "Grid" transparency: 0.4 value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info;
@@ -226,11 +231,10 @@ experiment "3D View" type: gui {
 	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 	output {
-		display Ants3D type: opengl show_fps: true antialias: false {
+		display Ants3D type: opengl show_fps: true antialias: false{
 			grid ant_grid elevation: grid_values triangulation: true texture: terrain refresh: false;
 			agents "Trail" transparency: 0.7 position: {0.05, 0.05, 0.02} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05, 0.025} size: {0.9, 0.9} aspect: threeD;
-			light 1 type: point color: #white position: {world.shape.width * 0.5 - world.shape.width * 1.5, world.shape.width * 0.5, world.shape.width} draw_light: false;
 		}
 
 	}
@@ -248,6 +252,7 @@ experiment "3 Simulations" type: gui {
 		create ants_model with: [ants_number::200, evaporation_per_cycle::100, diffusion_rate::0.2];
 		create ants_model with: [ants_number::10, evaporation_per_cycle::72, diffusion_rate::0.6];
 	}
+
 
 	permanent {
 		display Comparison background: #white {

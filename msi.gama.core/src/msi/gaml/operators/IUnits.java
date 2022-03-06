@@ -15,8 +15,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.layers.ICameraDefinition;
 import msi.gama.outputs.layers.MouseEventLayerDelegate;
+import msi.gama.outputs.layers.properties.ICameraDefinition;
+import msi.gama.outputs.layers.properties.ILightDefinition;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.IConcept;
@@ -960,30 +961,9 @@ public interface IUnits {
 	 * Initialize.
 	 */
 	static void init() {
-		String documentation = "";
-		for (final Field f : ICameraDefinition.class.getDeclaredFields()) {
-			Object v;
-			try {
-				v = f.get(ICameraDefinition.class);
-			} catch (IllegalArgumentException | IllegalAccessException e1) {
-				e1.printStackTrace();
-				return;
-
-			}
-			final constant annotation = f.getAnnotation(constant.class);
-
-			String deprecated = null;
-			if (annotation != null) {
-				final doc[] ds = annotation.doc();
-				if (ds != null && ds.length > 0) {
-					final doc d = ds[0];
-					documentation = d.value();
-					deprecated = d.deprecated();
-					if (deprecated.isEmpty()) { deprecated = null; }
-				}
-			}
-			add(f.getName(), v, documentation, deprecated, false, null);
-		}
+		browse(ICameraDefinition.class);
+		browse(ILightDefinition.class);
+		browse(IUnits.class);
 
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
@@ -1002,31 +982,44 @@ public interface IUnits {
 			final String doc = "standard materials.";
 			add(entry.getKey(), m, doc, null, false, null);
 		}
+	}
 
-		for (final Field f : IUnits.class.getDeclaredFields()) {
+	/**
+	 * Browse.
+	 *
+	 * @param cc
+	 *            the cc
+	 * @throws SecurityException
+	 *             the security exception
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 */
+	static void browse(final Class cc) {
+		String[] names = null;
+		boolean isTime = false;
+		String deprecated = null;
+		Object value = null;
+		for (final Field f : cc.getDeclaredFields()) {
 			try {
-				final Object v = f.get(IUnits.class);
-				String[] names = null;
-				final constant annotation = f.getAnnotation(constant.class);
-				boolean isTime = false;
-				documentation = "Its value is " + Cast.toGaml(v) + ". </b>";
-				String deprecated = null;
-				if (annotation != null) {
-					names = annotation.altNames();
-					final doc[] ds = annotation.doc();
-					if (ds != null && ds.length > 0) {
-						final doc d = ds[0];
-						documentation += d.value();
-						deprecated = d.deprecated();
-						if (deprecated.isEmpty()) { deprecated = null; }
-					}
-					final String[] e = annotation.category();
-					isTime = Arrays.asList(e).contains(IConstantCategory.TIME);
+				value = f.get(cc);
+			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e1) {
+				e1.printStackTrace();
+				continue;
+			}
+			final constant annotation = f.getAnnotation(constant.class);
+			if (annotation != null) {
+				names = annotation.altNames();
+				StringBuilder documentation =
+						new StringBuilder("Its value is <b>").append(Cast.toGaml(value)).append(". </b><p/>");
+				final doc[] ds = annotation.doc();
+				if (ds != null && ds.length > 0) {
+					final doc d = ds[0];
+					documentation.append(d.value());
+					deprecated = d.deprecated();
+					if (deprecated.isEmpty()) { deprecated = null; }
+					isTime = Arrays.asList(annotation.category()).contains(IConstantCategory.TIME);
 				}
-				add(f.getName(), v, documentation, deprecated, isTime, names);
-
-			} catch (final IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
+				add(f.getName(), value, documentation.toString(), deprecated, isTime, names);
 			}
 		}
 	}

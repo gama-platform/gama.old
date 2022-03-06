@@ -21,7 +21,7 @@ species object skills: [moving] {
 	}
 
 	aspect default {
-		draw sphere(1) at: location color: °white border: #gray;
+		draw sphere(5) at: location color: °white border: #gray;
 	}
 
 }
@@ -39,29 +39,24 @@ experiment Display type: gui autorun: true {
 			image "../includes/wood.jpg";
 			species object;
 		}
-
-		display "Changing every 500" parent: shared camera: [#from_up_front, #from_up_left,#from_up_right, #from_above, #from_front, #from_left, #from_right] at ((cycle/500) mod 7) { 
+		display "Changing every 500" parent: shared camera: [#from_up_front, #from_up_left, #from_up_right, #from_above, #from_front, #from_left, #from_right] at ((cycle / 500) mod 7) {
 		}
-
-		display "Fixed location" parent: shared {
-			camera "default" locked: true location: {w / 2, h * 2,  w / factor} target: {w / 2, h / 2, 0} dynamic: true;
+		display "Fixed location" parent: shared camera: "fixed" {
+			camera "fixed" locked: true location: {w / 2, h * 2, w / factor} target: {w / 2, h / 2, 0} dynamic: true;
 		}
-
 		display "Dynamic location" parent: shared {
-			camera "default" location: {w * cos(cycle), w * sin(cycle), w / factor} target: {w / 2, h / 2, 0} dynamic: true;
+			camera default location: {w * cos(cycle), w * sin(cycle), w / factor} target: {w / 2, h / 2, 0} dynamic: true;
 		}
-
 		display "Follow object" parent: shared {
-			camera "default" target: p distance: 150 / factor location: #from_above dynamic: true;
+			camera default target: p distance: 150 / factor location: #from_above dynamic: true;
 		}
-
 		display "First person" parent: shared {
-			camera "default" target: {cos(first(object).heading) * 10 + p.x, sin(first(object).heading) * 10 + p.y, 0} location: {p.x, p.y, p.z + 10/factor} dynamic: true;
+			camera default dynamic: true location: {int(first(object).location.x), int(first(object).location.y), 5/factor} target:
+			{cos(first(object).heading) * first(object).speed + int(first(object).location.x), sin(first(object).heading) * first(object).speed + int(first(object).location.y), 5/factor};
 		}
-
-		display "Rotating from right" parent: shared {
+		display "Camera & rotation" parent: shared {
 			rotation angle: 1.0 axis: {0,1,0} dynamic: true;
-			camera "default" location: #from_right distance: 40 / factor target: {w, p.y, 0} dynamic: true;
+			camera default location: #from_right distance: 40 / factor target: {w, p.y, 0} dynamic: true;
 		}
 		display "Isometric" parent: shared {
 			camera default location: #isometric target: {p.x, p.y, 0} dynamic: true;

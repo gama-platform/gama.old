@@ -208,6 +208,7 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    msi.gama.metamodel.topology.grid",
  msi.gama.outputs.layers.charts,
+ msi.gama.outputs.layers.properties,
  msi.gama.runtime;
   uses:="msi.gama.common.util,
    msi.gaml.expressions,

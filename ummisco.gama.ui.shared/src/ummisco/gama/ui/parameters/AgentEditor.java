@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AgentEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AgentEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -41,10 +41,14 @@ public class AgentEditor extends ExpressionBasedEditor {
 	/**
 	 * Instantiates a new agent editor.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param param the param
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param param
+	 *            the param
+	 * @param l
+	 *            the l
 	 */
 	AgentEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
 		super(scope, agent, param, l);
@@ -71,7 +75,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 		}, GamaIcons.create(IGamaIcons.MENU_AGENT).image(), "Choose");
 
 		final Menu dropMenu = new Menu(shell);
-		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : null);
+		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : getAgent());
 		if (a != null) {
 			final IAgentMenuFactory factory = WorkbenchHelper.getService(IAgentMenuFactory.class);
 			if (factory != null) {
@@ -87,9 +91,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 	}
 
 	@Override
-	public IType getExpectedType() {
-		return getScope().getType(species);
-	}
+	public IType getExpectedType() { return getScope().getType(species); }
 
 	/**
 	 * Method getToolItems()
@@ -97,16 +99,11 @@ public class AgentEditor extends ExpressionBasedEditor {
 	 * @see ummisco.gama.ui.parameters.AbstractEditor#getToolItems()
 	 */
 	@Override
-	protected int[] getToolItems() {
-		return new int[] { INSPECT, CHANGE, REVERT };
-	}
+	protected int[] getToolItems() { return new int[] { INSPECT, CHANGE, REVERT }; }
 
 	@Override
 	protected void applyInspect() {
-		if (currentValue instanceof IAgent) {
-			final IAgent a = (IAgent) currentValue;
-			if (!a.dead()) { getScope().getGui().setSelectedAgent(a); }
-		}
+		if ((currentValue instanceof IAgent a) && !a.dead()) { getScope().getGui().setSelectedAgent(a); }
 
 	}
 

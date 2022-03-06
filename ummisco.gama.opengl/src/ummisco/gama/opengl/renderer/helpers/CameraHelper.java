@@ -1323,16 +1323,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	}
 
 	/**
-	 * Sets the distance.
-	 *
-	 * @param distance
-	 *            the new distance
+	 * Hook.
 	 */
-	// @Override
-	// public void setDistance(final double distance) {
-	// data.setDistance(distance);
-	// }
-
 	public void hook() {
 		getCanvas().addCameraListeners(this);
 	}
