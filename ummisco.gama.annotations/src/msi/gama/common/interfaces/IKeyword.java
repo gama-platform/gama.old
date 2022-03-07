@@ -19,9 +19,6 @@ package msi.gama.common.interfaces;
  */
 public interface IKeyword {
 
-	/** The origin. */
-	String ORIGIN = "**origin**";
-
 	/** The dot. */
 	String _DOT = ".";
 
@@ -46,14 +43,17 @@ public interface IKeyword {
 	/** The all. */
 	String ALL = "all";
 
-	/** The anchor. */
-	String ANCHOR = "anchor";
-
-	/** The ambient light. */
-	String AMBIENT_LIGHT = "ambient_light";
+	/** The alpha. */
+	String ALPHA = "alpha";
 
 	/** The among. */
 	String AMONG = "among";
+
+	/** The anchor. */
+	String ANCHOR = "anchor";
+
+	/** The angle. */
+	String ANGLE = "angle";
 
 	/** The annealing. */
 	String ANNEALING = "annealing";
@@ -82,9 +82,6 @@ public interface IKeyword {
 	/** The aspect. */
 	String ASPECT = "aspect";
 
-	/** The asset3d. */
-	String ASSET3D = "asset3D";
-
 	/** The at. */
 	String AT = "at";
 
@@ -94,11 +91,11 @@ public interface IKeyword {
 	/** The author. */
 	String AUTHOR = "author";
 
-	/** The autosave. */
-	String AUTOSAVE = "autosave";
-
 	/** The autorun. */
 	String AUTORUN = "autorun";
+
+	/** The autosave. */
+	String AUTOSAVE = "autosave";
 
 	/** The avoid mask. */
 	String AVOID_MASK = "avoid_mask";
@@ -109,18 +106,14 @@ public interface IKeyword {
 	/** The background. */
 	String BACKGROUND = "background";
 
+	/** The bands. */
+	String BANDS = "bands";
+
 	/** The bar. */
 	String BAR = "bar";
 
-	/** The box whisker. */
-	String BOX_WHISKER = "box_whisker"; // new type of
-										// chart: box and
 	/** The batch. */
-	// whisker
 	String BATCH = "batch";
-
-	/** The batch outputs */
-	String BATCH_VAR_OUTPUTS = "outputs";
 
 	/** The batch outputs */
 	String BATCH_OUTPUT = "results";
@@ -128,18 +121,26 @@ public interface IKeyword {
 	/** The batch outputs */
 	String BATCH_REPORT = "report";
 
+	/** The batch outputs */
+	String BATCH_VAR_OUTPUTS = "outputs";
+
 	/** The behavior. */
 	String BEHAVIOR = "behavior";
 
-	/** The behaviors. */
-	String BEHAVIORS = "behaviors";
-
 	/** The benchmark. */
-	// public static final String BITMAP = "bitmap";
 	String BENCHMARK = "benchmark";
+
+	/** The bool. */
+	String BOOL = "bool";
+
+	/** The border. */
+	String BORDER = "border";
 
 	/** The bounds. */
 	String BOUNDS = "bounds";
+
+	/** The box whisker. */
+	String BOX_WHISKER = "box_whisker";
 
 	/** The break. */
 	String BREAK = "break";
@@ -153,21 +154,6 @@ public interface IKeyword {
 	/** The camera. */
 	String CAMERA = "camera";
 
-	/** The camera location. */
-	String CAMERA_LOCATION = "camera_location";
-
-	/** The camera target. */
-	String CAMERA_TARGET = "camera_target";
-
-	/** The camera orientation. */
-	String CAMERA_ORIENTATION = "camera_orientation";
-
-	/** The camera lens. */
-	String CAMERA_LENS = "camera_lens";
-
-	/** The camera interaction. */
-	String CAMERA_INTERACTION = "camera_interaction";
-
 	/** The capture. */
 	String CAPTURE = "capture";
 
@@ -177,11 +163,11 @@ public interface IKeyword {
 	/** The category. */
 	String CATEGORY = "category";
 
-	/** The cell width. */
-	String CELL_WIDTH = "cell_width";
-
 	/** The cell height. */
 	String CELL_HEIGHT = "cell_height";
+
+	/** The cell width. */
+	String CELL_WIDTH = "cell_width";
 
 	/** The cellular. */
 	String CELLULAR = "cellular";
@@ -228,20 +214,20 @@ public interface IKeyword {
 	/** The const. */
 	String CONST = "const";
 
+	/** The container. */
+	String CONTAINER = "container";
+
 	/** The contents. */
 	String CONTENTS = "contents";
 
-	/** The contribute. */
-	String CONTRIBUTE = "contribute";
+	/** The continue. */
+	String CONTINUE = "continue";
 
 	/** The control. */
 	String CONTROL = "control";
 
 	/** The convolution. */
 	String CONVOLUTION = "convolution";
-
-	/** The continue. */
-	String CONTINUE = "continue";
 
 	/** The create. */
 	String CREATE = "create";
@@ -251,6 +237,9 @@ public interface IKeyword {
 
 	/** The current state. */
 	String CURRENT_STATE = "currentState";
+
+	/** The cycle length. */
+	String CYCLE_LENGTH = "cycle_length";
 
 	/** The damper. */
 	String DAMPER = "damper";
@@ -266,41 +255,39 @@ public interface IKeyword {
 
 	/** The default. */
 	String DEFAULT = "default";
-	// public static final String DEFAULT_EXP = "default";
-	// public static final String DEM = "dem";
+
 	/** The depth. */
-	// public static final String DEPENDS_ON = "depends_on";
 	String DEPTH = "depth";
+
+	/** The description. */
+	String DESCRIPTION = "description";
 
 	/** The destination. */
 	String DESTINATION = "destination";
 
-	/** The diffusion. */
-	String DIFFUSION = "diffusion";
+	/** The dif2. */
+	String DIF2 = "diff2";
+
+	/** The diff. */
+	String DIFF = "diff";
 
 	/** The diffuse. */
 	String DIFFUSE = "diffuse";
 
-	/** The diffuse light. */
-	String DIFFUSE_LIGHT = "diffuse_light";
-
-	/** The diffuse light pos. */
-	String DIFFUSE_LIGHT_POS = "diffuse_light_pos";
+	/** The diffusion. */
+	String DIFFUSION = "diffusion";
 
 	/** The direction. */
 	String DIRECTION = "direction";
 
+	/** The directory. */
+	String DIRECTORY = "directory";
+
+	/** The disables. */
+	String DISABLES = "disables";
+
 	/** The display. */
 	String DISPLAY = "display";
-
-	/** The display gl. */
-	String DISPLAY_GL = "graphdisplaygl";
-
-	/** The display graph. */
-	String DISPLAY_GRAPH = "graphdisplay";
-
-	/** The distance cache. */
-	String DISTANCE_CACHE = "distance_cache_enabled";
 
 	/** The divide. */
 	String DIVIDE = "/";
@@ -314,18 +301,6 @@ public interface IKeyword {
 	/** The draw. */
 	String DRAW = "draw";
 
-	/** The drawenv. */
-	String DRAWENV = "draw_env";
-
-	/** The draw diffuse light. */
-	String DRAW_DIFFUSE_LIGHT = "draw_diffuse_light";
-
-	/** The draw light. */
-	String DRAW_LIGHT = "draw_light";
-
-	/** The elevation. */
-	String ELEVATION = "elevation";
-
 	/** The dynamic. */
 	String DYNAMIC = "dynamic";
 
@@ -338,17 +313,20 @@ public interface IKeyword {
 	/** The edge species. */
 	String EDGE_SPECIES = "edge_species";
 
+	/** The elevation. */
+	String ELEVATION = "elevation";
+
 	/** The else. */
 	String ELSE = "else";
 
 	/** The empty. */
 	String EMPTY = "empty";
 
-	/** The wireframe. */
-	String WIREFRAME = "wireframe";
-
-	/** The border. */
-	String BORDER = "border";
+	/** The enables. */
+	/*
+	 *
+	 */
+	String ENABLES = "enables";
 
 	/** The enter. */
 	String ENTER = "enter";
@@ -362,8 +340,11 @@ public interface IKeyword {
 	/** The equals. */
 	String EQUALS = "equals";
 
-	/** The gama. */
-	String GAMA = "gama";
+	/** The equation. */
+	String EQUATION = "equation";
+
+	/** The equation left. */
+	String EQUATION_LEFT = "left";
 
 	/** The equation op. */
 	/*
@@ -371,62 +352,14 @@ public interface IKeyword {
 	 */
 	String EQUATION_OP = "=";
 
-	/** The equation left. */
-	String EQUATION_LEFT = "left";
-
 	/** The equation right. */
 	String EQUATION_RIGHT = "right";
 
-	/** The equation. */
-	String EQUATION = "equation";
-
-	/** The simultaneously. */
-	String SIMULTANEOUSLY = "simultaneously";
-
-	/** The solver. */
-	String SOLVER = "solver";
-
-	/** The solve. */
-	String SOLVE = "solve";
-
-	/** The time initial. */
-	String TIME_INITIAL = "t0";
-
-	/** The time final. */
-	String TIME_FINAL = "tf";
-
-	/** The cycle length. */
-	String CYCLE_LENGTH = "cycle_length";
-
-	/** The diff. */
-	String DIFF = "diff";
-
-	/** The dif2. */
-	String DIF2 = "diff2";
-
-	/** The zero. */
-	String ZERO = "internal_zero_order_equation";
-
-	/** The enables. */
-	/*
-	 *
-	 */
-	String ENABLES = "enables";
-
-	/** The disables. */
-	String DISABLES = "disables";
-
-	/** The updates. */
-	String UPDATES = "updates";
-
-	/** The extensions. */
-	String EXTENSIONS = "extensions";
+	/** The error. */
+	String ERROR = "error";
 
 	/** The event. */
 	String EVENT = "event";
-
-	/** The error. */
-	String ERROR = "error";
 
 	/** The exhaustive. */
 	String EXHAUSTIVE = "exhaustive";
@@ -434,19 +367,20 @@ public interface IKeyword {
 	/** The exists. */
 	String EXISTS = "exists";
 
-	/** The explicit. */
-	String EXPLICIT = "explicit";
-
 	/** The experiment. */
 	String EXPERIMENT = "experiment";
 
+	/** The explicit. */
+	String EXPLICIT = "explicit";
+
 	/** The exploded. */
-	// public static final String EXPERIMENTATOR = "experimentator";
 	String EXPLODED = "exploded";
 
 	/** The extension. */
-	// public static final String EXPORT = "export";
 	String EXTENSION = "extension";
+
+	/** The extensions. */
+	String EXTENSIONS = "extensions";
 
 	/** The fading. */
 	String FADING = "fading";
@@ -454,29 +388,23 @@ public interface IKeyword {
 	/** The false. */
 	String FALSE = "false";
 
+	/** The field. */
+	String FIELD = "field";
+
 	/** The file. */
 	String FILE = "file";
-
-	/** The folder. */
-	String FOLDER = "folder";
-
-	/** The directory. */
-	String DIRECTORY = "directory";
 
 	/** The files. */
 	String FILES = "files";
 
-	/** The output file. */
-	String OUTPUT_FILE = "output_file";
-
 	/** The fill with. */
 	String FILL_WITH = "fill_with";
 
-	/** The field. */
-	String FIELD = "field";
-
 	/** The fitness. */
 	String FITNESS = "fitness";
+
+	/** The float. */
+	String FLOAT = "float";
 
 	/** The focus. */
 	String FOCUS = "focus";
@@ -484,11 +412,17 @@ public interface IKeyword {
 	/** The focus on. */
 	String FOCUS_ON = "focus_on";
 
+	/** The folder. */
+	String FOLDER = "folder";
+
 	/** The font. */
 	String FONT = "font";
 
 	/** The footer. */
 	String FOOTER = "footer";
+
+	/** The fragment. */
+	String FRAGMENT = "fragment";
 
 	/** The framerate. */
 	String FRAMERATE = "framerate";
@@ -502,11 +436,14 @@ public interface IKeyword {
 	/** The fsm. */
 	String FSM = "fsm";
 
+	/** The fullscreen. */
+	String FULLSCREEN = "fullscreen";
+
 	/** The function. */
 	String FUNCTION = "function";
 
-	/** The fullscreen. */
-	String FULLSCREEN = "fullscreen";
+	/** The gama. */
+	String GAMA = "gama";
 
 	/** The gap. */
 	String GAP = "gap";
@@ -516,6 +453,9 @@ public interface IKeyword {
 
 	/** The genetic. */
 	String GENETIC = "genetic";
+
+	/** The geometry. */
+	String GEOMETRY = "geometry";
 
 	/** The gis. */
 	String GIS = "gis";
@@ -547,17 +487,14 @@ public interface IKeyword {
 	/** The grid population. */
 	String GRID_POPULATION = "display_grid";
 
+	/** The grid value. */
+	String GRID_VALUE = "grid_value";
+
 	/** The grid x. */
 	String GRID_X = "grid_x";
 
 	/** The grid y. */
 	String GRID_Y = "grid_y";
-
-	/** The grid value. */
-	String GRID_VALUE = "grid_value";
-
-	/** The bands. */
-	String BANDS = "bands";
 
 	/** The group. */
 	String GROUP = "group";
@@ -628,17 +565,29 @@ public interface IKeyword {
 	/** The inspect. */
 	String INSPECT = "inspect";
 
+	/** The int. */
+	String INT = "int";
+
+	/** The internal. */
+	String INTERNAL = "_internal_";
+
 	/** The internal function. */
 	String INTERNAL_FUNCTION = "internal_function";
+
+	/** The invoke. */
+	String INVOKE = "invoke";
 
 	/** The is. */
 	String IS = "is";
 
-	/** The isfolder. */
-	String ISFOLDER = "is_folder";
-
 	/** The is light on. */
 	String IS_LIGHT_ON = "light";
+
+	/** The is skill. */
+	String IS_SKILL = "is_skill";
+
+	/** The isfolder. */
+	String ISFOLDER = "is_folder";
 
 	/** The isnot. */
 	String ISNOT = "is_not";
@@ -648,9 +597,6 @@ public interface IKeyword {
 
 	/** The its. */
 	String ITS = "its";
-
-	/** The fragment. */
-	String FRAGMENT = "fragment";
 
 	/** The java. */
 	String JAVA = "java";
@@ -671,11 +617,7 @@ public interface IKeyword {
 	String KEYSTONE = "keystone";
 
 	/** The kill. */
-	// public static final String KEYWORD = "keyword";
 	String KILL = "kill";
-
-	/** The overlay. */
-	String OVERLAY = "overlay";
 
 	/** The layout. */
 	String LAYOUT = "layout";
@@ -689,29 +631,40 @@ public interface IKeyword {
 	/** The let. */
 	String LET = "let";
 
+	/** The lighted. */
+	String LIGHTED = "lighted";
+
 	/** The line. */
 	String LINE = "line";
-
-	/** The lines. */
-	String LINES = "lines";
 
 	/** The linear attenuation. */
 	String LINEAR_ATTENUATION = "linear_attenuation";
 
+	/** The lines. */
+	String LINES = "lines";
+
+	/**
+	 * TYPES
+	 */
+	String LIST = "list";
+
 	/** The location. */
 	String LOCATION = "location";
-
-	/** The loop. */
-	String LOOP = "loop";
 
 	/** The look at. */
 	String LOOK_AT = "look_at";
 
+	/** The loop. */
+	String LOOP = "loop";
+
+	/** The map. */
+	String MAP = "map";
+
 	/** The mapping. */
 	String MAPPING = "mapping";
 
-	/** The material. */
-	String MATERIAL = "material";
+	/** The mask. */
+	String MASK = "mask";
 
 	/** The match. */
 	String MATCH = "match";
@@ -725,8 +678,11 @@ public interface IKeyword {
 	/** The match regex. */
 	String MATCH_REGEX = "match_regex";
 
-	/** The mask. */
-	String MASK = "mask";
+	/** The material. */
+	String MATERIAL = "material";
+
+	/** The matrix. */
+	String MATRIX = "matrix";
 
 	/** The max. */
 	String MAX = "max";
@@ -743,11 +699,11 @@ public interface IKeyword {
 	/** The mersenne. */
 	String MERSENNE = "mersenne";
 
-	/** The message. */
-	String MESSAGE = "message";
-
 	/** The mesh. */
 	String MESH = "mesh";
+
+	/** The message. */
+	String MESSAGE = "message";
 
 	/** The method. */
 	String METHOD = "method";
@@ -785,17 +741,11 @@ public interface IKeyword {
 	/** The monitor. */
 	String MONITOR = "monitor";
 
-	/** The mouse down. */
-	String MOUSE_DOWN = "mouse_down";
-
-	/** The mouse up. */
-	String MOUSE_UP = "mouse_up";
-
 	/** The mouse clicked. */
 	String MOUSE_CLICKED = "mouse_click";
 
-	/** The mouse moved. */
-	String MOUSE_MOVED = "mouse_move";
+	/** The mouse down. */
+	String MOUSE_DOWN = "mouse_down";
 
 	/** The mouse entered. */
 	String MOUSE_ENTERED = "mouse_enter";
@@ -806,17 +756,23 @@ public interface IKeyword {
 	/** The mouse menu. */
 	String MOUSE_MENU = "mouse_menu";
 
-	/** The moving skill. */
-	String MOVING_SKILL = "moving";
+	/** The mouse moved. */
+	String MOUSE_MOVED = "mouse_move";
+
+	/** The mouse up. */
+	String MOUSE_UP = "mouse_up";
 
 	/** The moving 3d skill. */
 	String MOVING_3D_SKILL = "moving3D";
 
-	/** The multiply. */
-	String MULTIPLY = "*";
+	/** The moving skill. */
+	String MOVING_SKILL = "moving";
 
 	/** The multicore. */
 	String MULTICORE = "multicore";
+
+	/** The multiply. */
+	String MULTIPLY = "*";
 
 	/** The my. */
 	String MY = "my";
@@ -830,14 +786,20 @@ public interface IKeyword {
 	/** The name. */
 	String NAME = "name";
 
-	/** The neighbours. */
-	String NEIGHBOURS = "neighbours";
+	/** The nb cols. */
+	String NB_COLS = "nb_cols";
+
+	/** The nb rows. */
+	String NB_ROWS = "nb_rows";
 
 	/** The neighbors. */
 	String NEIGHBORS = "neighbors";
 
-	/** The node. */
-	String NODE = "node";
+	/** The neighbours. */
+	String NEIGHBOURS = "neighbours";
+
+	/** The no experiment. */
+	String NO_EXPERIMENT = "no_experiment";
 
 	/** The no info. */
 	String NO_INFO = "no_info";
@@ -845,20 +807,14 @@ public interface IKeyword {
 	/** The no warning. */
 	String NO_WARNING = "no_warning";
 
-	/** The no experiment. */
-	String NO_EXPERIMENT = "no_experiment";
+	/** The node. */
+	String NODE = "node";
 
 	/** The null. */
 	String NULL = "nil";
 
 	/** The number. */
 	String NUMBER = "number";
-
-	/** The nb cols. */
-	String NB_COLS = "nb_cols";
-
-	/** The nb rows. */
-	String NB_ROWS = "nb_rows";
 
 	/** The of. */
 	String OF = "of";
@@ -868,6 +824,9 @@ public interface IKeyword {
 
 	/** The on change. */
 	String ON_CHANGE = "on_change";
+
+	/** The open. */
+	String OPEN = "open";
 
 	/** The open exp. */
 	String OPEN_EXP = "(";
@@ -881,6 +840,9 @@ public interface IKeyword {
 	/** The optional. */
 	String OPTIONAL = "optional";
 
+	/** The origin. */
+	String ORIGIN = "**origin**";
+
 	/** The orthographic projection. */
 	String ORTHOGRAPHIC_PROJECTION = "orthographic_projection";
 
@@ -890,14 +852,29 @@ public interface IKeyword {
 	/** The output. */
 	String OUTPUT = "output";
 
+	/** The output file. */
+	String OUTPUT_FILE = "output_file";
+
 	/** The over. */
 	String OVER = "over";
+	/** The overlay. */
+	String OVERLAY = "overlay";
 
 	/** The overwrite. */
 	String OVERWRITE = "overwrite";
 
+	/** The pair. */
+	String PAIR = "pair";
+
+	/** The parallel. */
+	// "
+	String PARALLEL = "parallel";
+
 	/** The parameter. */
 	String PARAMETER = "parameter";
+
+	/** The parameters. */
+	String PARAMETERS = "parameters";
 
 	/** The params. */
 	String PARAMS = "params";
@@ -915,11 +892,7 @@ public interface IKeyword {
 	String PEERS = "peers";
 
 	/** The permanent. */
-	String PERMANENT = "permanent"; // "show" // "front_end"
-									// // "presentation" //
-	/** The parallel. */
-	// "
-	String PARALLEL = "parallel";
+	String PERMANENT = "permanent";
 
 	/** The perspective. */
 	String PERSPECTIVE = "perspective";
@@ -933,8 +906,14 @@ public interface IKeyword {
 	/** The places. */
 	String PLACES = "places";
 
+	/** The platform. */
+	String PLATFORM = "platform";
+
 	/** The plus. */
 	String PLUS = "+";
+
+	/** The point. */
+	String POINT = "point";
 
 	/** The population. */
 	String POPULATION = "display_population";
@@ -990,6 +969,9 @@ public interface IKeyword {
 	/** The readable. */
 	String READABLE = "readable";
 
+	/** The real speed. */
+	String REAL_SPEED = "real_speed";
+
 	/** The reflectivity. */
 	String REFLECTIVITY = "reflectivity";
 
@@ -1032,6 +1014,9 @@ public interface IKeyword {
 	/** The rewrite. */
 	String REWRITE = "rewrite";
 
+	/** The rgb. */
+	String RGB = "rgb";
+
 	/** The right. */
 	String RIGHT = "right";
 
@@ -1044,14 +1029,14 @@ public interface IKeyword {
 	/** The roll. */
 	String ROLL = "roll";
 
-	/** The rounded. */
-	String ROUNDED = "rounded";
-
 	/** The rotate. */
 	String ROTATE = "rotate";
 
 	/** The rotation. */
 	String ROTATION = "rotation";
+
+	/** The rounded. */
+	String ROUNDED = "rounded";
 
 	/** The save. */
 	String SAVE = "save";
@@ -1083,9 +1068,6 @@ public interface IKeyword {
 	/** The self. */
 	String SELF = "self";
 
-	/** The super. */
-	String SUPER = "super";
-
 	/** The series. */
 	String SERIES = "series";
 
@@ -1095,14 +1077,17 @@ public interface IKeyword {
 	/** The shape. */
 	String SHAPE = "shape";
 
-	/** The showfps. */
-	String SHOWFPS = "show_fps";
+	/** The show. */
+	String SHOW = "show";
 
 	/** The simulation. */
 	String SIMULATION = "simulation";
 
 	/** The simulations. */
 	String SIMULATIONS = "simulations";
+
+	/** The simultaneously. */
+	String SIMULTANEOUSLY = "simultaneously";
 
 	/** The size. */
 	String SIZE = "size";
@@ -1113,8 +1098,17 @@ public interface IKeyword {
 	/** The skills. */
 	String SKILLS = "skills";
 
+	/** The smooth. */
+	String SMOOTH = "smooth";
+
 	/** The sobol exploration method */
 	String SOBOL = "sobol";
+
+	/** The solve. */
+	String SOLVE = "solve";
+
+	/** The solver. */
+	String SOLVER = "solver";
 
 	/** The source. */
 	String SOURCE = "source";
@@ -1122,20 +1116,11 @@ public interface IKeyword {
 	/** The species. */
 	String SPECIES = "species";
 
-	/** The specular. */
-	String SPECULAR = "specular";
-
 	/** The speed. */
 	String SPEED = "speed";
 
-	/** The real speed. */
-	String REAL_SPEED = "real_speed";
-
 	/** The spline. */
 	String SPLINE = "spline";
-
-	/** The spot angle. */
-	String SPOT_ANGLE = "spot_angle";
 
 	/** The stack. */
 	String STACK = "stack";
@@ -1158,11 +1143,14 @@ public interface IKeyword {
 	/** The stop sound. */
 	String STOP_SOUND = "stop_sound";
 
-	/** The strategy. */
-	String STRATEGY = "scheduling_strategy";
+	/** The string. */
+	String STRING = "string";
 
 	/** The style. */
 	String STYLE = "style";
+
+	/** The super. */
+	String SUPER = "super";
 
 	/** The switch. */
 	String SWITCH = "switch";
@@ -1170,14 +1158,17 @@ public interface IKeyword {
 	/** The synthetic. */
 	String SYNTHETIC = "__synthetic__";
 
+	/** The synthetic resources prefix. */
+	String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
+
+	/** The table. */
+	String TABLE = "table";
+
 	/** The tabu. */
 	String TABU = "tabu";
 
 	/** The target. */
 	String TARGET = "target";
-
-	/** The targets. */
-	String TARGETS = "scheduling_targets";
 
 	/** The tesselation. */
 	String TESSELATION = "tesselation";
@@ -1200,27 +1191,26 @@ public interface IKeyword {
 	/** The three d. */
 	String THREE_D = "3d";
 
-	/** The times. */
-	String TIMES = "times";
+	/** The time final. */
+	String TIME_FINAL = "tf";
+
+	/** The time initial. */
+	String TIME_INITIAL = "t0";
 
 	/** The time series. */
-	String TIME_SERIES = "time_series"; // hqnghi facet for
+	String TIME_SERIES = "time_series";
 
-	/** The table. */
-	// continuous Chart
-	String TABLE = "table";
-
-	/** The description. */
-	String DESCRIPTION = "description";
-
-	/** The parameters. */
-	String PARAMETERS = "parameters";
+	/** The times. */
+	String TIMES = "times";
 
 	/** The title. */
 	String TITLE = "title";
 
 	/** The to. */
 	String TO = "to";
+
+	/** The toolbar. */
+	String TOOLBAR = "toolbar";
 
 	/** The topology. */
 	String TOPOLOGY = "topology";
@@ -1249,20 +1239,32 @@ public interface IKeyword {
 	/** The unit. */
 	String UNIT = "unit";
 
+	/** The unknown. */
+	String UNKNOWN = "unknown";
+
 	/** The until. */
 	String UNTIL = "until";
 
 	/** The update. */
 	String UPDATE = "update";
 
-	/** The up vector. */
-	String UP_VECTOR = "up_vector";
+	/** The updates. */
+	String UPDATES = "updates";
+
+	/** The user command. */
+	String USER_COMMAND = "user_command";
+
+	/** The user confirm. */
+	String USER_CONFIRM = "user_confirm";
 
 	/** The user controlled. */
 	String USER_CONTROLLED = "user_controlled";
 
-	/** The user command. */
-	String USER_COMMAND = "user_command";
+	/** The user first. */
+	String USER_FIRST = "user_first";
+
+	/** The user init. */
+	String USER_INIT = "user_init";
 
 	/** The user input. */
 	String USER_INPUT = "user_input";
@@ -1270,23 +1272,11 @@ public interface IKeyword {
 	/** The user input dialog. */
 	String USER_INPUT_DIALOG = "user_input_dialog";
 
-	/** The user confirm. */
-	String USER_CONFIRM = "user_confirm";
-
-	/** The wizard. */
-	String WIZARD = "wizard";
-
-	/** The wizard page. */
-	String WIZARD_PAGE = "wizard_page";
+	/** The user last. */
+	String USER_LAST = "user_last";
 
 	/** The user only. */
 	String USER_ONLY = "user_only";
-
-	/** The user first. */
-	String USER_FIRST = "user_first";
-
-	/** The user last. */
-	String USER_LAST = "user_last";
 
 	/** The user panel. */
 	String USER_PANEL = "user_panel";
@@ -1333,20 +1323,26 @@ public interface IKeyword {
 	/** The when. */
 	String WHEN = "when";
 
-	/** The whisker. */
-	String WHISKER = "whisker"; // new type of datachart
-
 	/** The while. */
 	String WHILE = "while";
+
+	/** The whisker. */
+	String WHISKER = "whisker";
 
 	/** The width. */
 	String WIDTH = "width";
 
-	/** The lighted. */
-	String LIGHTED = "lighted";
+	/** The wireframe. */
+	String WIREFRAME = "wireframe";
 
 	/** The with. */
 	String WITH = "with";
+
+	/** The wizard. */
+	String WIZARD = "wizard";
+
+	/** The wizard page. */
+	String WIZARD_PAGE = "wizard_page";
 
 	/** The world agent name. */
 	String WORLD_AGENT_NAME = "world";
@@ -1360,18 +1356,17 @@ public interface IKeyword {
 	/** The x. */
 	String X = "x";
 
-	/** The xml. */
-	String XML = "xml";
-
-	/** The xy. */
-	// public static final String XOR = "xor";
-	String XY = "xy";
-
 	/** The x labels. */
 	String X_LABELS = "x_serie_labels";
 
 	/** The x serie. */
 	String X_SERIE = "x_serie";
+
+	/** The xml. */
+	String XML = "xml";
+
+	/** The xy. */
+	String XY = "xy";
 
 	/** The y. */
 	String Y = "y";
@@ -1385,89 +1380,13 @@ public interface IKeyword {
 	/** The z. */
 	String Z = "z";
 
-	/** The zfighting. */
-	String ZFIGHTING = "z_fighting";
-
-	/** The methods. */
-	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL };
+	/** The zero. */
+	String ZERO = "internal_zero_order_equation";
 
 	/** The event type. */
 	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 
-	/** The user init. */
-	String USER_INIT = "user_init";
+	/** The methods. */
+	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL };
 
-	/** The is skill. */
-	// public static final String AS_SKILL = "as_skill";
-	String IS_SKILL = "is_skill";
-
-	/**
-	 * TYPES
-	 */
-	String LIST = "list";
-
-	/** The map. */
-	String MAP = "map";
-
-	/** The bool. */
-	String BOOL = "bool";
-
-	/** The float. */
-	String FLOAT = "float";
-
-	/** The int. */
-	String INT = "int";
-
-	/** The string. */
-	String STRING = "string";
-
-	/** The point. */
-	String POINT = "point";
-
-	/** The pair. */
-	String PAIR = "pair";
-
-	/** The unknown. */
-	String UNKNOWN = "unknown";
-
-	/** The matrix. */
-	String MATRIX = "matrix";
-
-	/** The rgb. */
-	String RGB = "rgb";
-
-	/** The container. */
-	String CONTAINER = "container";
-
-	/** The geometry. */
-	String GEOMETRY = "geometry";
-
-	/** The open. */
-	/*
-	 * files
-	 */
-	String OPEN = "open"; // TODO "launch", or "open", or
-							// "sysopen" ? This opens a file
-							// with an
-	/** The alpha. */
-	// external progam
-	String ALPHA = "alpha";
-
-	/** The internal. */
-	String INTERNAL = "_internal_";
-
-	/** The synthetic resources prefix. */
-	String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
-
-	/** The platform. */
-	String PLATFORM = "platform";
-
-	/** The invoke. */
-	String INVOKE = "invoke";
-
-	/** The toolbar. */
-	String TOOLBAR = "toolbar";
-
-	/** The smooth. */
-	String SMOOTH = "smooth";
 }

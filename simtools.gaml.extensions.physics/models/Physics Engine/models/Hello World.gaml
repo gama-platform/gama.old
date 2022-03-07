@@ -60,7 +60,7 @@ species ball skills: [dynamic_body] {
 
 experiment Display type: gui {
 	output {	
-		display Falling  type: opengl background:rgb(128,128,128) draw_env:false{
+		display Falling  type: opengl background:rgb(128,128,128) axes:false{
 			graphics World refresh: false{
 				 draw shape color: #white;
 			}

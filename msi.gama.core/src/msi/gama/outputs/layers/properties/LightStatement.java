@@ -47,12 +47,12 @@ import msi.gaml.types.IType;
 		omissible = IKeyword.NAME,
 		value = { @facet (
 				name = IKeyword.NAME,
-				type = IType.LABEL,
+				type = IType.STRING,
 				optional = false,
 				doc = @doc ("The name of the light source, must be unique (otherwise the last definition prevails). "
-						+ "Either a string or a plain label. Will be used to populate a menu where light sources can be easily turned on and off"
-						+ "Using the name #ambient will allow to redefine or control the ambient light intensity and presence"
-						+ "Using the name 'default' will replace the default directional light of the surrounding display")),
+						+ "Will be used to populate a menu where light sources can be easily turned on and off. Special names can be used:"
+						+ "Using the special constant #ambient will allow to redefine or control the ambient light intensity and presence"
+						+ "Using the special constant #default will replace the default directional light of the surrounding display")),
 				@facet (
 						name = IKeyword.POSITION,
 						type = IType.POINT,
@@ -76,7 +76,7 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("the direction of the light (only for direction and spot light). (default value : {0.5,0.5,-1})")),
 				@facet (
-						name = IKeyword.SPOT_ANGLE,
+						name = "spot_angle",
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc (
@@ -90,7 +90,7 @@ import msi.gaml.types.IType;
 								deprecated = "use 'intensity:' instead",
 								value = "")),
 				@facet (
-						name = IKeyword.DRAW_LIGHT,
+						name = "draw_light",
 						type = { IType.BOOL },
 						optional = true,
 						doc = @doc (
@@ -134,16 +134,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("If true, draws the light source. (default value if not specified : false).")),
 				@facet (
-						name = "dynamic",
+						name = IKeyword.DYNAMIC,
 						type = { IType.BOOL },
 						optional = true,
 						doc = @doc ("specify if the parameters of the light need to be updated every cycle or treated as constants. (default value : true).")) })
 @doc (
 		value = "`light` allows to define diffusion lights in your 3D display. They must be given a name, which will help track them in the UI. Two names have however special meanings: #ambient, "
-				+ "which designates the ambient luminosity and color of the scene (with a default intensity of (127,127,127,255)) and #regular, "
+				+ "which designates the ambient luminosity and color of the scene (with a default intensity of (127,127,127,255)) and #default, "
 				+ "which designates the default directional light applied to a scene (with a default medium intensity of (127,127,127,255) in the direction given by (0.5,0.5,1)). Redefining a light named #ambient or #regular "
-				+ "will then modify these default lights (for example changing their color or decactivating them). To be more precise, and given all the default values of the facets, the existence of these two lights is effectively equivalent to redefining:"
-				+ "light #ambient intensity: 127; light #regular type: #direction intensity: 127 direction: {0.5,0.5,-1};",
+				+ "will then modify these default lights (for example changing their color or deactivating them). To be more precise, and given all the default values of the facets, the existence of these two lights is effectively equivalent to redefining:"
+				+ "light #ambient intensity: 127; light #default type: #direction intensity: 127 direction: {0.5,0.5,-1};",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (
@@ -174,13 +174,13 @@ public class LightStatement extends AbstractLayerStatement {
 			// Taking care of deprecations
 			swap(desc, IKeyword.POSITION, IKeyword.LOCATION);
 			swap(desc, IKeyword.COLOR, "intensity");
-			swap(desc, IKeyword.SPOT_ANGLE, "angle");
-			swap(desc, IKeyword.UPDATE, "dynamic");
-			swap(desc, IKeyword.DRAW_LIGHT, "show");
+			swap(desc, "spot_angle", IKeyword.ANGLE);
+			swap(desc, IKeyword.UPDATE, IKeyword.DYNAMIC);
+			swap(desc, "draw_light", "show");
 
 			final IExpressionDescription position = desc.getFacet(IKeyword.LOCATION);
 			final IExpressionDescription direction = desc.getFacet(IKeyword.DIRECTION);
-			final IExpressionDescription spotAngle = desc.getFacet("angle");
+			final IExpressionDescription spotAngle = desc.getFacet(IKeyword.ANGLE);
 			final IExpressionDescription linearAttenuation = desc.getFacet(IKeyword.LINEAR_ATTENUATION);
 			final IExpressionDescription quadraticAttenuation = desc.getFacet(IKeyword.QUADRATIC_ATTENUATION);
 
@@ -235,17 +235,38 @@ public class LightStatement extends AbstractLayerStatement {
 		definition = new LightDefinition(this);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 */
 	@Override
 	protected boolean _init(final IScope scope) {
 		definition.refresh(scope);
 		return true;
 	}
 
+	/**
+	 * Gets the type.
+	 *
+	 * @param output
+	 *            the output
+	 * @return the type
+	 */
 	@Override
 	public LayerType getType(final LayeredDisplayOutput output) {
 		return LayerType.LIGHT;
 	}
 
+	/**
+	 * Step.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 */
 	@Override
 	protected boolean _step(final IScope scope) {
 		definition.refresh(scope);

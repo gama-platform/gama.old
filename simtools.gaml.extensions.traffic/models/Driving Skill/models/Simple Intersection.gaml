@@ -218,7 +218,7 @@ species car skills: [advanced_driving] {
 experiment simple_intersection  type: gui {
 
 	output {
-		display city type: opengl background: #black synchronized: true draw_env: false{
+		display city type: opengl background: #black synchronized: true axes: false{
 			species road aspect: base_ligne;
 			species intersection aspect: base;
 			species car ;

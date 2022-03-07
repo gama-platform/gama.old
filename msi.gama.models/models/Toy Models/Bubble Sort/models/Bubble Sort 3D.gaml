@@ -109,7 +109,7 @@ species cells{
 
 experiment Display type: gui {
 	output {
-		display View1 type:opengl draw_env:false{
+		display View1 type:opengl axes:false{
 			species cells transparency:0.1;
 			graphics "di"{
 			 draw "black(0,0,0)" at:{0,0,0} color:°black perspective:false;

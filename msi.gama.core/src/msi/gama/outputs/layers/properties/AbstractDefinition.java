@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.outputs.layers.properties;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.statements.draw.AttributeHolder;
@@ -34,7 +35,7 @@ public abstract class AbstractDefinition extends AttributeHolder {
 	 */
 	public AbstractDefinition(final ISymbol symbol) {
 		super(symbol);
-		dynamic = create("dynamic", Types.BOOL, getDefaultDynamicValue());
+		dynamic = create(IKeyword.DYNAMIC, Types.BOOL, getDefaultDynamicValue());
 	}
 
 	/**
@@ -63,7 +64,7 @@ public abstract class AbstractDefinition extends AttributeHolder {
 
 	@Override
 	public final void refresh(final IScope scope) {
-		dynamic.refresh("dynamic", scope);
+		dynamic.refresh(IKeyword.DYNAMIC, scope);
 		if (shouldRefresh()) {
 			super.refresh(scope);
 			this.update(scope);

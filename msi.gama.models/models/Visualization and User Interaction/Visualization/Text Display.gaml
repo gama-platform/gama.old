@@ -21,7 +21,7 @@ experiment Strings {
 
 	output {
 		layout #split;
-		display "Strings" type: opengl  synchronized: true draw_env: false {
+		display "Strings" type: opengl  synchronized: true axes: false {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 5;

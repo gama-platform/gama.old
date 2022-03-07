@@ -113,7 +113,7 @@ public class LightDefinition extends AbstractDefinition implements ILightDefinit
 	public String getName() { return symbol.getName(); }
 
 	@Override
-	public int getId() { return regular.equals(getName()) ? 0 : id; }
+	public int getId() { return IKeyword.DEFAULT.equals(getName()) ? 0 : id; }
 
 	/**
 	 * Sets the id.

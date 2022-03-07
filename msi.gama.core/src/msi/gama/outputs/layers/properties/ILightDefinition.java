@@ -41,11 +41,6 @@ public interface ILightDefinition extends INamed {
 			category = IOperatorCategory.THREED,
 			doc = @doc ("Represent the 'ambient' type of light")) String ambient = "Ambient light";
 
-	/** The regular. */
-	@constant (
-			value = "regular",
-			category = IOperatorCategory.THREED,
-			doc = @doc ("Represent the 'regular' -- default -- type of light")) String regular = "Regular light source";
 	/** The direction. */
 	@constant (
 			value = "direction",

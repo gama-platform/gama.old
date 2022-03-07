@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
@@ -964,6 +965,8 @@ public interface IUnits {
 		browse(ICameraDefinition.class);
 		browse(ILightDefinition.class);
 		browse(IUnits.class);
+
+		add(IKeyword.DEFAULT, IKeyword.DEFAULT, "Default value for cameras and lights", null, false, null);
 
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();

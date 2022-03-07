@@ -660,7 +660,7 @@ public class LayeredDisplayData {
 				toolbarColor = Cast.asColor(scope, toolbar.value(scope));
 			}
 		}
-		final IExpression fps = facets.getExpr(IKeyword.SHOWFPS);
+		final IExpression fps = facets.getExpr("show_fps");
 		if (fps != null) { setShowfps(Cast.asBool(scope, fps.value(scope))); }
 
 		final IExpression nZ = facets.getExpr("z_near");
@@ -668,7 +668,7 @@ public class LayeredDisplayData {
 
 		final IExpression fZ = facets.getExpr("z_far");
 		if (fZ != null) { setZFar(Cast.asFloat(scope, fZ.value(scope))); }
-		final IExpression denv = facets.getExpr(IKeyword.DRAWENV);
+		final IExpression denv = facets.getExpr("draw_env", "axes");
 		if (denv != null) { setDrawEnv(Cast.asBool(scope, denv.value(scope))); }
 
 		final IExpression ortho = facets.getExpr(IKeyword.ORTHOGRAPHIC_PROJECTION);
@@ -1149,7 +1149,7 @@ public class LayeredDisplayData {
 	private final Map<String, ILightDefinition> lights = new LinkedHashMap<>() {
 		{
 			put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1, 127));
-			put(ILightDefinition.regular, new GenericLightDefinition(ILightDefinition.regular, 0, 127));
+			put(IKeyword.DEFAULT, new GenericLightDefinition(IKeyword.DEFAULT, 0, 127));
 		}
 	};
 

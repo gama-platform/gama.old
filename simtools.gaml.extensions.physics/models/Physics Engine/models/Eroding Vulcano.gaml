@@ -106,7 +106,7 @@ experiment "3D view" type: gui {
 	parameter "Show legend" var: show_legend <- true;
 	output {
 		
-		display "3D" type: opengl draw_env: false background: #black camera:#from_up_front antialias: false {
+		display "3D" type: opengl axes: false background: #black camera:#from_up_front antialias: false {
 			graphics title {
 				if (show_legend) {
 					draw "Average height " + (patches mean_of each.grid_value) with_precision 2 + " / # of lava agents " + length(lava) color: #white font: title at: {world.location.x, 100, patches max_of each.grid_value + 10} anchor: #center depth: 2 rotate: -20::{1,0,0};

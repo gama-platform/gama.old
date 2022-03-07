@@ -75,7 +75,7 @@ experiment "3D view" type: gui {
 	output {
 		layout #split;
 		display "Flow" type: opengl background: #white   antialias: false {
-			camera default location: camera_loc distance: distance dynamic: true;
+			camera #default location: camera_loc distance: distance dynamic: true;
 			graphics world {
 				draw "Scale: " + z_scale color: #cadetblue font: font("Helvetica", 18, #bold) at: {world.location.x, -10, 25} anchor: #center depth: 2 rotate: -90::{1,0,0};
 				draw aabb wireframe: true color: #lightblue;

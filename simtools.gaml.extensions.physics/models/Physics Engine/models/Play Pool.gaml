@@ -179,7 +179,7 @@ experiment "Play !" type: gui autorun: true   {
 	
 	output {
 		display Pool type: opengl antialias: false {
-			camera default location: {100.0,400.0,300.0} target: {width/2,height/2,-20.0};
+			camera #default location: {100.0,400.0,300.0} target: {width/2,height/2,-20.0};
 			graphics user {
 				if (white != nil) and (target != nil) {
 					draw line(white, target) color: #white end_arrow: 3;

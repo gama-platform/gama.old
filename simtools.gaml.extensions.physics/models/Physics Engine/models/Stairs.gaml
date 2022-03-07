@@ -84,7 +84,7 @@ species ball skills: [dynamic_body] {
 
 experiment Stairs type: gui {
 	output {
-		display "Climb" type: opengl draw_env: false {
+		display "Climb" type: opengl axes: false {
 			graphics ground {
 				draw shape color: rgb(122, 140, 70, 255);
 				//draw aabb wireframe: true color: #blue;

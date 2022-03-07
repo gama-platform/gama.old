@@ -215,7 +215,7 @@ experiment "Classic" type: gui {
 	output {
 		display Ants type: opengl synchronized: true antialias: false  {
 			light #ambient intensity: 127;
-			light #regular intensity: 127;
+			light #default intensity: 127;
 			image terrain refresh: false;
 			agents "Grid" transparency: 0.4 value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info;
@@ -269,7 +269,7 @@ experiment "3 Simulations" type: gui {
 
 	output {
 		layout #split editors: false consoles: false toolbars: true tabs: false tray: false;
-		display Ants background: color type: opengl toolbar: color draw_env: false {
+		display Ants background: color type: opengl toolbar: color axes: false {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.5 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05} size: {0.9, 0.9} aspect: icon;

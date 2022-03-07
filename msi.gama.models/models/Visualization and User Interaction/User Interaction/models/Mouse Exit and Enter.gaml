@@ -35,7 +35,7 @@ species eyes {
 
 experiment Run {
 	output {
-		display Eyes type: opengl draw_env: false {
+		display Eyes type: opengl axes: false {
 			graphics face {
 				draw circle(60) color: #gamaorange;
 			}

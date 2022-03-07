@@ -120,7 +120,7 @@ experiment specular_light type: gui {
 
 		display "OpenGL" type: opengl background:#black  {
 			light #ambient intensity: 20;
-			light #regular active:button type: #point location: {7, 7, 48} intensity: #white show: true;
+			light #default active:button type: #point location: {7, 7, 48} intensity: #white show: true;
 			species sphere_species aspect: base;
 			species cube_species aspect: base;
 			species cylinder_species aspect: base;

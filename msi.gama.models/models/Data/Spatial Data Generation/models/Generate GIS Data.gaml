@@ -481,7 +481,7 @@ experiment generateGISdata type: gui autorun: true{
 		gama.pref_gis_default_crs <- crs;
 	}
 	output {
-		display map type: opengl draw_env: false{
+		display map type: opengl axes: false{
 			image file_exists(exporting_path + "satellite.png")? (exporting_path + "satellite.png") : default_background_image  transparency: 0.2 refresh: false;
 			species OSM_agent;
 			graphics "google map building" {

@@ -156,16 +156,23 @@ import msi.gaml.types.IType;
 								value = "Allows to display a scale bar in the overlay. Accepts true/false or an unit name",
 								deprecated = "Not functional anymore. Scale is now displayed by default")),
 				@facet (
-						name = IKeyword.SHOWFPS,
+						name = "show_fps",
 						internal = true,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Allows to enable/disable the drawing of the number of frames per second")),
 				@facet (
-						name = IKeyword.DRAWENV,
+						name = "axes",
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
+				@facet (
+						name = "draw_env",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc (
+								deprecated = "Use 'axes' instead",
+								value = "Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
 				@facet (
 						name = IKeyword.ORTHOGRAPHIC_PROJECTION,
 						internal = true,
@@ -175,21 +182,21 @@ import msi.gaml.types.IType;
 
 				/// LIGHT FACETS
 				@facet (
-						name = IKeyword.AMBIENT_LIGHT,
+						name = "ambient_light",
 						type = { IType.INT, IType.COLOR },
 						optional = true,
 						doc = @doc (
 								deprecated = "Define a statement 'light #ambient intensity: ...;' instead",
 								value = "Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(127,127,127,255)")),
 				@facet (
-						name = IKeyword.DIFFUSE_LIGHT,
+						name = "diffuse_light",
 						type = { IType.INT, IType.COLOR },
 						optional = true,
 						doc = @doc (
 								value = "Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (127,127,127,255)",
-								deprecated = "Use statement \"light\" instead to define a new light and its intensity")),
+								deprecated = "Use statement \"light\" instead with a #point or #direction light, to define a new light and its intensity")),
 				@facet (
-						name = IKeyword.DIFFUSE_LIGHT_POS,
+						name = "diffuse_light_pos",
 						type = IType.POINT,
 						optional = true,
 						doc = @doc (
@@ -199,9 +206,9 @@ import msi.gaml.types.IType;
 						name = IKeyword.IS_LIGHT_ON,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Allows to enable/disable the light. Default is true")),
+						doc = @doc ("Allows to enable/disable the light at once. Default is true")),
 				@facet (
-						name = IKeyword.DRAW_DIFFUSE_LIGHT,
+						name = "draw_diffuse_light",
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (
@@ -211,12 +218,12 @@ import msi.gaml.types.IType;
 				/// CAMERA FACETS
 				@facet (
 						name = IKeyword.CAMERA,
-						type = { IType.STRING },
+						type = IType.STRING,
 						optional = true,
 						doc = @doc ("Allows to define the name of the camera to use. Default value is 'default'. "
 								+ "Accepted values are (1) the name of one of the cameras defined using the 'camera' statement or "
 								+ "(2) one of the preset cameras, accessible using constants: #from_above, #from_left, #from_right, "
-								+ "#from_up_left, #from_up_right, #from_front, #from_up_front")),
+								+ "#from_up_left, #from_up_right, #from_front, #from_up_front, #isometric")),
 				@facet (
 						name = "camera_pos",
 						type = { IType.POINT, IType.AGENT },
@@ -225,14 +232,14 @@ import msi.gaml.types.IType;
 								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'location:' facet to it",
 								value = "Allows to define the position of the camera")),
 				@facet (
-						name = IKeyword.CAMERA_LOCATION,
+						name = "camera_location",
 						type = { IType.POINT, IType.AGENT },
 						optional = true,
 						doc = @doc (
 								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'location:' facet to it",
 								value = "Allows to define the location of the camera, the origin being the center of the model")),
 				@facet (
-						name = IKeyword.CAMERA_TARGET,
+						name = "camera_target",
 						type = IType.POINT,
 						optional = true,
 						doc = @doc (
@@ -246,7 +253,7 @@ import msi.gaml.types.IType;
 								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'target:' facet to it",
 								value = "Allows to define the direction of the camera")),
 				@facet (
-						name = IKeyword.CAMERA_ORIENTATION,
+						name = "camera_orientation",
 						type = IType.POINT,
 						optional = true,
 						doc = @doc (
@@ -260,7 +267,7 @@ import msi.gaml.types.IType;
 								deprecated = "This facet is not used anymore. The orientation of the camera is computed automatically by GAMA",
 								value = "Allows to define the orientation of the 'up-vector' of the camera")),
 				@facet (
-						name = IKeyword.CAMERA_LENS,
+						name = "camera_lens",
 						internal = true,
 						type = IType.INT,
 						optional = true,
@@ -268,7 +275,7 @@ import msi.gaml.types.IType;
 								deprecated = "Define a separate camera instead in the body of the display using the 'camera' statement and attach the 'lens:' facet to it",
 								value = "Allows to define the lens of the camera")),
 				@facet (
-						name = IKeyword.CAMERA_INTERACTION,
+						name = "camera_interaction",
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (
@@ -434,13 +441,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
 			}
 
-			final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
-					CAMERA_LENS, "z_near", "z_far", IKeyword.CAMERA);
-			if (!isOpenGLWanted && camera != null) {
-				d.warning(
-						"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
-						IGamlIssue.UNUSED, camera);
-			}
+			// final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
+			// CAMERA_LENS, "z_near", "z_far", IKeyword.CAMERA);
+			// if (!isOpenGLWanted && camera != null) {
+			// d.warning(
+			// "camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the
+			// default zoom and position.",
+			// IGamlIssue.UNUSED, camera);
+			// }
 
 			// AD: addressing the deprecation of the "trace:" facet
 			final IExpressionDescription trace = d.getFacet(TRACE);
@@ -456,11 +464,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// IExpressionDescription up = d.getFacet("camera_up_vector");
 			// if (target == null) { target = d.getFacet(CAMERA_ORIENTATION); }
 			IExpressionDescription target = d.getFacet("camera_look_pos");
-			if (target == null) { target = d.getFacet(CAMERA_TARGET); }
+			if (target == null) { target = d.getFacet("camera_target"); }
 			IExpressionDescription location = d.getFacet("camera_pos");
-			if (location == null) { location = d.getFacet(CAMERA_LOCATION); }
-			IExpressionDescription lens = d.getFacet(CAMERA_LENS);
-			IExpressionDescription locked = d.getFacet(CAMERA_INTERACTION);
+			if (location == null) { location = d.getFacet("camera_location"); }
+			IExpressionDescription lens = d.getFacet("camera_lens");
+			IExpressionDescription locked = d.getFacet("camera_interaction");
 			String lockedString = locked == null ? "false" : locked.equalsString("true") ? "false" : "true";
 
 			// d.removeFacets("camera_pos", "camera_look_pos", "camera_up_vector",CAMERA_LOCATION,

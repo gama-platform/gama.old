@@ -26,19 +26,19 @@ experiment "Shared Zoom Example" model: 'Building Elevation.gaml' type: gui {
 
 		layout #split;
 		display "1" parent: base {
-			camera default location: #isometric target: building at target1 distance: distance dynamic: true;
+			camera #default location: #isometric target: building at target1 distance: distance dynamic: true;
 		}
 
 		display "2" parent: base {
-			camera default target: building at target2 distance: distance dynamic: true;
+			camera #default target: building at target2 distance: distance dynamic: true;
 		}
 
 		display "3" parent: base {
-			camera default target: building at target3 distance: distance dynamic: true;
+			camera #default target: building at target3 distance: distance dynamic: true;
 		}
 
 		display "4" parent: base {
-			camera default target: building at target4 distance: distance dynamic: true;
+			camera #default target: building at target4 distance: distance dynamic: true;
 		}
 
 	}

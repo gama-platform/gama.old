@@ -43,7 +43,7 @@ experiment "Simplify this ! " {
 	
 	output {
 		layout #split consoles: false tray: false tabs: false controls: false editors: false toolbars: false navigator: false;
-		display my_display type:opengl draw_env: false { 
+		display my_display type:opengl axes: false { 
 			species shapes {
 				draw shape color: #red;
 			}

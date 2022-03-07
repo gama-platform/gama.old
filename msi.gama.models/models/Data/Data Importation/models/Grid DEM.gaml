@@ -136,47 +136,47 @@ experiment "Grids" type: gui {
 experiment "Meshes" type: gui {
 	output {
 		layout #split toolbars: false;
-		display "Large file, rectangles, wireframe and scaled" type: opengl draw_env: false {
+		display "Large file, rectangles, wireframe and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh europe wireframe: true border: #green refresh: false size: {1, 1, 0.2};
 		}
 
-		display "Large file, triangles, wireframe and scaled" type: opengl draw_env: false {
+		display "Large file, triangles, wireframe and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh europe grayscale: true triangulation: true smooth: true refresh: false size: {1, 1, 0.2};
 		}
 
-		display "Large file, triangles, smooth, wireframe and scaled" type: opengl draw_env: false {
+		display "Large file, triangles, smooth, wireframe and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh europe wireframe: true triangulation: true border: #green refresh: false size: {1, 1, 0.2} smooth: true;
 		}
 
-		display "Triangles, grayscale, lines, colored and scaled" type: opengl draw_env: false {
+		display "Triangles, grayscale, lines, colored and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh grid_data size: {1, 1, 0.75} triangulation: true border: #yellow color: #violet;
 		}
 
-		display "Triangles, textured, no scale" type: opengl draw_env: false {
+		display "Triangles, textured, no scale" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh grid_data texture: texture triangulation: true;
 		}
 
-		display "Triangles, textured and scaled" type: opengl draw_env: false {
+		display "Triangles, textured and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh grid_data texture: texture triangulation: true scale: 0.75;
 		}
 
-		display "Triangles, textured, smooth and scaled" type: opengl draw_env: false {
+		display "Triangles, textured, smooth and scaled" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh grid_data texture: texture smooth: true triangulation: true size: {1, 1, 0.75};
 		}
 
-		display "Triangles, textured, scaled, with labels" type: opengl draw_env: false {
+		display "Triangles, textured, scaled, with labels" type: opengl axes: false {
 			camera "default" location: {100.0, 269.7056, 169.7056} target: {100.0, 100.0, 0.0};
 			mesh grid_data texture: texture triangulation: true size: {1, 1, 0.5} text: true;
 		}
 
-		display "Large file, trianges, grayscale, scaled" type: opengl draw_env: false {
+		display "Large file, trianges, grayscale, scaled" type: opengl axes: false {
 			camera 'default' location: {104.7273,233.3361,685.4581} target: {100.135,-29.7603,0.0};
 			mesh dem_file grayscale: true triangulation: true scale: 2.0;
 		}

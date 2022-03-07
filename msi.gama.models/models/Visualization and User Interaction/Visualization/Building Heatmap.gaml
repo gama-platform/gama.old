@@ -26,11 +26,11 @@ global {
 experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
-		display HeatmapPalette type: opengl draw_env: false background: #black {
+		display HeatmapPalette type: opengl axes: false background: #black {
 			// The field is displayed  without 3D rendering, a palettre of cold to warm colors and a smoothness of 4 (meaning three passes of box blur are being done to "spread" the values)
 			mesh heatmap scale: 0 color: palette([ #black, #cyan, #yellow, #yellow, #red, #red, #red]) smooth: 4 ;
 		}
-		display HeatmapGradient type: opengl draw_env: false background: #black {
+		display HeatmapGradient type: opengl axes: false background: #black {
 			species building refresh: false {
 				draw shape border: #white wireframe: true width: 3;
 			}

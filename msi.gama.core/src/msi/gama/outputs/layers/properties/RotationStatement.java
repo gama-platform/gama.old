@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
 		value = {
 
 				@facet (
-						name = "dynamic",
+						name = IKeyword.DYNAMIC,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("If true, the rotation is applied every step. Default is false.")),

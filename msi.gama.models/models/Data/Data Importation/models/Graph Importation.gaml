@@ -55,7 +55,7 @@ global {
 
 experiment import_graph type: gui {
 	output {
-		display graph_display type: opengl draw_env: false{
+		display graph_display type: opengl axes: false{
 			graphics "graph " {
 				
 				loop v over: g.vertices {

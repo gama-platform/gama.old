@@ -44,22 +44,22 @@ experiment Display type: gui autorun: true {
 		display "Fixed location" parent: shared camera: "fixed" {
 			camera "fixed" locked: true location: {w / 2, h * 2, w / factor} target: {w / 2, h / 2, 0} dynamic: true;
 		}
-		display "Dynamic location" parent: shared {
-			camera default location: {w * cos(cycle), w * sin(cycle), w / factor} target: {w / 2, h / 2, 0} dynamic: true;
+		display "Dynamic location" parent: shared camera: #default {
+			camera #default location: {w * cos(cycle), w * sin(cycle), w / factor} target: {w / 2, h / 2, 0} dynamic: true;
 		}
 		display "Follow object" parent: shared {
-			camera default target: p distance: 150 / factor location: #from_above dynamic: true;
+			camera #default target: p distance: 150 / factor location: #from_above dynamic: true;
 		}
 		display "First person" parent: shared {
-			camera default dynamic: true location: {int(first(object).location.x), int(first(object).location.y), 5/factor} target:
+			camera #default dynamic: true location: {int(first(object).location.x), int(first(object).location.y), 5/factor} target:
 			{cos(first(object).heading) * first(object).speed + int(first(object).location.x), sin(first(object).heading) * first(object).speed + int(first(object).location.y), 5/factor};
 		}
 		display "Camera & rotation" parent: shared {
 			rotation angle: 1.0 axis: {0,1,0} dynamic: true;
-			camera default location: #from_right distance: 40 / factor target: {w, p.y, 0} dynamic: true;
+			camera #default location: #from_right distance: 40 / factor target: {w, p.y, 0} dynamic: true;
 		}
 		display "Isometric" parent: shared {
-			camera default location: #isometric target: {p.x, p.y, 0} dynamic: true;
+			camera #default location: #isometric target: {p.x, p.y, 0} dynamic: true;
 		}
 
 

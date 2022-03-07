@@ -74,19 +74,19 @@ experiment clustering type: gui {
 	
 	output {
 		layout #split;
-		display general_graph type: opengl draw_env: false{
+		display general_graph type: opengl axes: false{
 			species edge_agent ;
 			species node_agent ;
 		}
-		display cluster_girvan_newman type: opengl draw_env: false{
+		display cluster_girvan_newman type: opengl axes: false{
 			species edge_agent ;
 			species node_agent aspect: color_cluster_gn ;
 		}
-		display cluster_k_spanning_tree type: opengl draw_env: false{
+		display cluster_k_spanning_tree type: opengl axes: false{
 			species edge_agent ;
 			species node_agent aspect: color_cluster_stc ;
 		}
-		display cluster_label_propagation type: opengl draw_env: false{
+		display cluster_label_propagation type: opengl axes: false{
 			species edge_agent ;
 			species node_agent aspect: color_cluster_lpc ;
 		}

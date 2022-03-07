@@ -210,8 +210,8 @@ species runner skills: [moving] {
 
 experiment "Run me !" type: gui autorun: true {
 	output {
-		display "1.8" type: opengl fullscreen: true toolbar: #black background: #black draw_env: false {
-			camera default location: {1298.0375, 3277.2938, 2177.5545} target: {1261.3366, 1174.7007, 0.0};
+		display "1.8" type: opengl fullscreen: true toolbar: #black background: #black axes: false {
+			camera #default location: {1298.0375, 3277.2938, 2177.5545} target: {1261.3366, 1174.7007, 0.0};
 			species roads;
 			species runner {
 				draw my_shape at: location depth: depth color: color;

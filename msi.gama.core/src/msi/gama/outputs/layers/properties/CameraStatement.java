@@ -13,8 +13,6 @@ package msi.gama.outputs.layers.properties;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayerStatement;
-import msi.gama.outputs.layers.ILayerStatement;
-import msi.gama.outputs.layers.ILayerStatement.LayerType;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -41,14 +39,14 @@ import msi.gaml.types.IType;
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
-				type = IType.LABEL,
+				type = IType.STRING,
 				optional = false,
-				doc = @doc ("The name of the camera. Either a string or a plain label. Will be used to populate a menu with the other camera presets. "
+				doc = @doc ("The name of the camera. Will be used to populate a menu with the other camera presets. "
 						+ "Can provide a value to the 'camera:' facet of the display, which specifies which camera to use."
-						+ "Using the name 'default' will make it the default of the surrounding display")),
+						+ "Using the special constant #default will make it the default of the surrounding display")),
 
 				@facet (
-						name = "dynamic",
+						name = IKeyword.DYNAMIC,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("If true, the location, distance and target are automatically recomputed every step. Default is false. When true, will also set 'locked' to true, to avoid interferences from users")),
@@ -87,7 +85,7 @@ import msi.gaml.types.IType;
 @doc (
 		value = "`" + IKeyword.CAMERA
 				+ "` allows the modeler to define a camera. The display will then be able to choose among the camera defined (either within this statement or globally in GAMA) in a dynamic way. "
-				+ "Several preset cameras are provided and accessible in the preferences (to choose the default) or in GAML using the keywords #from_above, #from_left, #from_right, #from_up_right, #from_up_left, #from_front, #from_up_front."
+				+ "Several preset cameras are provided and accessible in the preferences (to choose the default) or in GAML using the keywords #from_above, #from_left, #from_right, #from_up_right, #from_up_left, #from_front, #from_up_front, #isometric."
 				+ "These cameras are unlocked (so that they can be manipulated by the user), look at the center of the world from a symbolic position, and the distance between this position and the target is equal to the maximum of the width and height of the world's shape. "
 				+ "These preset cameras can be reused when defining new cameras, since their names can become symbolic positions for them. For instance: camera 'my_camera' location: #from_top distance: 10; will lower (or extend) the distance between the camera and the center of the world to 10. "
 				+ "camera 'my_camera' locked: true location: #from_up_front target: people(0); will continuously follow the first agent of the people species from the up-front position. ",
