@@ -32,6 +32,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.distance.DistanceOp;
+import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.google.common.collect.Ordering;
 
@@ -52,6 +54,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -303,17 +306,28 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final boolean usesVN, final boolean indiv, final boolean useNeighborsCache, final String optimizer)
 			throws GamaRuntimeException {
 		this(scope, gfiles.firstValue(scope), isTorus, usesVN, indiv, useNeighborsCache, optimizer);
-		GamaGridFile gfile = gfiles.firstValue(scope);
+		// GamaGridFile gfile = gfiles.firstValue(scope);
 
 		this.nbBands = gfiles.size();
 		bands = new ArrayList<>();
-		String initCRS = new ArrayList<>(gfile.getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0).toString();
+		// See #3306 : initCRS was never used to compute the location and had an error it its computation
+
+		// String initCRS = null;
+		// IProjection proj = gfile.getGis(scope);
+		// CoordinateReferenceSystem crs = proj.getInitialCRS(scope);
+		// ReferenceIdentifier[] ids = crs.getIdentifiers().toArray(new ReferenceIdentifier[0]);
+		// if (ids.length > 0) { initCRS = ids[0].toString(); }
+
 		List<String> crsF = new ArrayList<>();
 		List<Envelope3D> envF = new ArrayList<>();
 
 		for (int j = 1; j < gfiles.size(); j++) {
-			crsF.add(new ArrayList<>(gfiles.get(j).getGis(scope).getInitialCRS(scope).getIdentifiers()).get(0)
-					.toString());
+			String taCRS = null;
+			IProjection proj = gfiles.get(j).getGis(scope);
+			CoordinateReferenceSystem crs = proj.getInitialCRS(scope);
+			ReferenceIdentifier[] ids = crs.getIdentifiers().toArray(new ReferenceIdentifier[0]);
+			if (ids.length > 0) { taCRS = ids[0].toString(); }
+			crsF.add(taCRS);
 			envF.add(gfiles.get(j).computeEnvelope(scope));
 		}
 
@@ -324,8 +338,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final GamaGridFile gfile2 = gfiles.get(j);
 				String taCRS = crsF.get(j - 1);
 				GamaPoint loc = matrix[i].getLocation();
-
-				if (initCRS != null && taCRS != null) {
+				// See #3306 : initCRS was never used to compute the location
+				if (/* initCRS != null && */ taCRS != null) {
 					loc = Projections.transform_CRS(scope, loc, taCRS).getLocation();
 				}
 				final Double v = gfile2.valueOf(scope, loc);
