@@ -35,9 +35,23 @@ public class GenericLightDefinition implements ILightDefinition {
 	 *            the id.
 	 */
 	public GenericLightDefinition(final String name, final int id, final int intensity) {
+		this(name, id, new GamaColor(intensity, intensity, intensity, 255));
+	}
+
+	/**
+	 * Instantiates a new generic light definition.
+	 *
+	 * @param name
+	 *            the name.
+	 * @param id
+	 *            the id.
+	 * @param intensity
+	 *            the intensity.
+	 */
+	public GenericLightDefinition(final String name, final int id, final GamaColor intensity) {
 		this.name = name;
 		this.id = id;
-		this.intensity = new GamaColor(intensity, intensity, intensity, 255);
+		this.intensity = intensity;
 	}
 
 	@Override

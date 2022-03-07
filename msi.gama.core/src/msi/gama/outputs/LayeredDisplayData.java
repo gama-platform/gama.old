@@ -758,17 +758,18 @@ public class LayeredDisplayData {
 			setBackgroundColor(Cast.asColor(scope, color.value(scope)));
 			constantBackground = color.isConst();
 		}
-		//
-		// final IExpression light = facets.getExpr(IKeyword.AMBIENT_LIGHT);
-		// if (light != null) {
-		// if (light.getGamlType().equals(Types.COLOR)) {
-		// setAmbientLightColor(Cast.asColor(scope, light.value(scope)));
-		// } else {
-		// final int meanValue = Cast.asInt(scope, light.value(scope));
-		// setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-		// }
-		// constantAmbientLight = light.isConst();
-		// }
+
+		final IExpression light = facets.getExpr("ambient_light");
+		if (light != null) {
+			GamaColor intensity;
+			if (light.getGamlType().equals(Types.COLOR)) {
+				intensity = Cast.asColor(scope, light.value(scope));
+			} else {
+				final int meanValue = Cast.asInt(scope, light.value(scope));
+				intensity = new GamaColor(meanValue, meanValue, meanValue, 255);
+			}
+			lights.put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1, intensity));
+		}
 
 		final IExpression antialias = facets.getExpr("antialias");
 		if (antialias != null) { setAntialias(Cast.asBool(scope, antialias.value(scope))); }
