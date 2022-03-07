@@ -62,7 +62,6 @@ import ummisco.gama.opengl.renderer.caches.ITextureCache;
 import ummisco.gama.opengl.renderer.caches.TextureCache2;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper;
 import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
-import ummisco.gama.opengl.renderer.helpers.PickingHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
@@ -137,7 +136,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	private int viewWidth, viewHeight;
 
 	/** The picking state. */
-	private final PickingHelper pickingState;
+	// private final PickingHelper pickingState;
 
 	/** The texture cache. */
 	// Textures
@@ -236,7 +235,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		super(renderer);
 		glut = new GLUT();
 		glu = new GLU();
-		pickingState = renderer.getPickingHelper();
+		// pickingState = renderer.getPickingHelper();
 		geometryCache = new GeometryCache(renderer);
 		glTesselatorDrawer = (final double[] ordinates) -> { tobj.gluTessVertex(ordinates, 0, ordinates); };
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, this);
@@ -1494,7 +1493,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
 		// setObjectWireframe(false);
-		if (isPicking) { pickingState.tryPick(object.getAttributes()); }
+		if (isPicking) { renderer.getPickingHelper().tryPick(object.getAttributes()); }
 	}
 
 	/**
