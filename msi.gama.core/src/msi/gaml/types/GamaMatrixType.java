@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMatrixType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMatrixType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -27,6 +27,7 @@ import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IField;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
@@ -49,11 +50,16 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
 	 */
 	public static IMatrix staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
@@ -62,11 +68,10 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		final GamaPoint size = param instanceof GamaPoint ? (GamaPoint) param : null;
 
 		if (size == null) {
-			// if (obj instanceof IFieldMatrixProvider && contentType.id() == IType.FLOAT)
-			// return ((IFieldMatrixProvider) obj).getField(scope);
 			if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, copy);
 			return with(scope, obj, new GamaPoint(1, 1), contentType);
-		} else if (size.x <= 0 || size.y < 0)
+		}
+		if (size.x <= 0 || size.y < 0)
 			throw GamaRuntimeException.error("Dimensions of a matrix should be positive.", scope);
 
 		if (obj instanceof IContainer) return ((IContainer) obj).matrixValue(scope, contentType, size, copy);
@@ -83,21 +88,22 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * From.
 	 *
-	 * @param scope the scope
-	 * @param list the list
-	 * @param desiredType the desired type
-	 * @param preferredSize the preferred size
+	 * @param scope
+	 *            the scope
+	 * @param list
+	 *            the list
+	 * @param desiredType
+	 *            the desired type
+	 * @param preferredSize
+	 *            the preferred size
 	 * @return the i matrix
 	 */
 	public static IMatrix from(final IScope scope, final IList list, final IType desiredType,
 			final GamaPoint preferredSize) {
 		if (list == null || list.isEmpty()) return new GamaObjectMatrix(0, 0, desiredType);
-		if (desiredType.id() == IType.INT)
-			return new GamaIntMatrix(scope, list, preferredSize);
-		else if (desiredType.id() == IType.FLOAT)
-			return new GamaFloatMatrix(scope, list, preferredSize);
-		else
-			return new GamaObjectMatrix(scope, list, preferredSize, desiredType);
+		if (desiredType.id() == IType.INT) return new GamaIntMatrix(scope, list, preferredSize);
+		if (desiredType.id() == IType.FLOAT) return new GamaFloatMatrix(scope, list, preferredSize);
+		return new GamaObjectMatrix(scope, list, preferredSize, desiredType);
 
 	}
 
@@ -117,7 +123,11 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	public static IMatrix from(final IScope scope, final IMatrix matrix, final IType desiredType,
 			final GamaPoint preferredSize, final boolean copy) {
 		final IType contentsType = matrix.getGamlType().getContentType();
-		if (!GamaType.requiresCasting(desiredType, contentsType)) return matrix.copy(scope, preferredSize, copy);
+		if (!GamaType.requiresCasting(desiredType, contentsType)) {
+			if (matrix instanceof IField f) return GamaFloatMatrix.from(scope, f);
+			return matrix.copy(scope, preferredSize, copy);
+		}
+
 		int cols, rows;
 		if (preferredSize == null) {
 			cols = matrix.getCols(scope);
@@ -134,9 +144,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			default:
 				final GamaObjectMatrix m = GamaObjectMatrix.from(cols, rows, matrix);
 				final Object[] array = m.getMatrix();
-				for (int i = 0; i < array.length; i++) {
-					array[i] = desiredType.cast(scope, array[i], null, false);
-				}
+				for (int i = 0; i < array.length; i++) { array[i] = desiredType.cast(scope, array[i], null, false); }
 				return m;
 		}
 
@@ -145,11 +153,15 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * With.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param p the p
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param p
+	 *            the p
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IMatrix with(final IScope scope, final IExpression val, final GamaPoint p)
 			throws GamaRuntimeException {
@@ -159,10 +171,14 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * With.
 	 *
-	 * @param scope the scope
-	 * @param fillExpr the fill expr
-	 * @param cols the cols
-	 * @param rows the rows
+	 * @param scope
+	 *            the scope
+	 * @param fillExpr
+	 *            the fill expr
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
 	 * @return the i matrix
 	 */
 	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
@@ -175,9 +191,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				if (fillExpr.isConst()) {
 					Arrays.fill(dd, Cast.asFloat(scope, fillExpr.value(scope)));
 				} else {
-					GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
-						dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
-					}));
+					GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel()
+							.forEach(i -> { dd[i] = Cast.asFloat(scope, fillExpr.value(scope)); }));
 				}
 				break;
 			case IType.INT:
@@ -186,9 +201,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				if (fillExpr.isConst()) {
 					Arrays.fill(ii, Cast.asInt(scope, fillExpr.value(scope)));
 				} else {
-					GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
-						ii[i] = Cast.asInt(scope, fillExpr.value(scope));
-					}));
+					GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel()
+							.forEach(i -> { ii[i] = Cast.asInt(scope, fillExpr.value(scope)); }));
 				}
 				break;
 			default:
@@ -197,10 +211,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				if (fillExpr.isConst()) {
 					Arrays.fill(contents, fillExpr.value(scope));
 				} else {
-					GamaExecutorService
-							.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
-								contents[i] = fillExpr.value(scope);
-							}));
+					GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel()
+							.forEach(i -> { contents[i] = fillExpr.value(scope); }));
 				}
 		}
 		return result;
@@ -209,12 +221,17 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * With.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param p the p
-	 * @param contentsType the contents type
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param p
+	 *            the p
+	 * @param contentsType
+	 *            the contents type
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p, final IType contentsType)
 			throws GamaRuntimeException {
@@ -224,13 +241,19 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	/**
 	 * With object.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param cols the cols
-	 * @param rows the rows
-	 * @param contentsType the contents type
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param contentsType
+	 *            the contents type
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IMatrix withObject(final IScope scope, final Object val, final int cols, final int rows,
 			final IType contentsType) throws GamaRuntimeException {
@@ -238,7 +261,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			final GamaIntMatrix matrix = new GamaIntMatrix(cols, rows);
 			matrix.setAllValues(scope, Types.INT.cast(scope, val, null, false));
 			return matrix;
-		} else if (contentsType == Types.FLOAT || val instanceof Double) {
+		}
+		if (contentsType == Types.FLOAT || val instanceof Double) {
 			final GamaFloatMatrix matrix = new GamaFloatMatrix(cols, rows);
 			matrix.setAllValues(scope, Types.FLOAT.cast(scope, val, null, false));
 			return matrix;
@@ -249,14 +273,10 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	}
 
 	@Override
-	public IType getKeyType() {
-		return Types.POINT;
-	}
+	public IType getKeyType() { return Types.POINT; }
 
 	@Override
-	public boolean isFixedLength() {
-		return true;
-	}
+	public boolean isFixedLength() { return true; }
 
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
@@ -267,12 +287,11 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final IExpression[] array = ((ListExpression) exp).getElements();
 				if (array.length == 0) return Types.NO_TYPE;
 				return array[0].getGamlType().getContentType();
-			} else if (exp instanceof MapExpression) {
-				final IExpression[] array = ((MapExpression) exp).valuesArray();
-				if (array.length == 0) return Types.NO_TYPE;
-				return array[0].getGamlType().getContentType();
-			} else
-				return cType.getContentType();
+			}
+			if (!(exp instanceof MapExpression)) return cType.getContentType();
+			final IExpression[] array = ((MapExpression) exp).valuesArray();
+			if (array.length == 0) return Types.NO_TYPE;
+			return array[0].getGamlType().getContentType();
 		}
 		if (Types.CONTAINER.isAssignableFrom(itemType)) return itemType.getContentType();
 		return itemType;

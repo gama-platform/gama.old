@@ -108,7 +108,6 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		this.noDataValue = noDataValue;
 		numCols = cols;
 		numRows = rows;
-		this.noDataValue = noDataValue;
 		bands.add(this);
 	}
 
@@ -200,8 +199,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		int index = -1;
 		if (at instanceof Integer) {
 			index = (Integer) at;
-		} else if (at instanceof IList) {
-			IList list = (IList) at;
+		} else if (at instanceof IList list) {
 			index = (Integer) list.get(1) * numCols + (Integer) list.get(0);
 		} else if (at instanceof GamaPoint) { index = getIndex((GamaPoint) at); }
 		if (index > -1 && index < matrix.length) { matrix[index] = value; }
@@ -429,8 +427,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		if (other instanceof GamaFloatMatrix) {
-			GamaFloatMatrix nm = (GamaFloatMatrix) other;
+		if (other instanceof GamaFloatMatrix nm) {
 			for (int i = 0; i < matrix.length; i++) { matrix[i] += nm.matrix[i]; }
 		}
 		return this;
@@ -448,8 +445,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Override
 	public GamaField minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		if (other instanceof GamaFloatMatrix) {
-			GamaFloatMatrix nm = (GamaFloatMatrix) other;
+		if (other instanceof GamaFloatMatrix nm) {
 			for (int i = 0; i < matrix.length; i++) { matrix[i] -= nm.matrix[i]; }
 		}
 		return this;
