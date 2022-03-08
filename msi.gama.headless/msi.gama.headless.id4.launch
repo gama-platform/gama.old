@@ -19,14 +19,13 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.JAVA_COMMAND" value="java"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/16.0.1"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17.0.1"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog  -v  /Applications/Gama.app/Contents/headless/samples/predatorPrey.xml   /tmp/out"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <booleanAttribute key="pde.generated.config" value="false"/>
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="msi.gama.application.product"/>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="com.google.guava*21.0.0.v20170206-1425@default:default"/>
         <setEntry value="com.google.guava*27.1.0.v20190517-1946@default:default"/>
         <setEntry value="com.google.inject@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>

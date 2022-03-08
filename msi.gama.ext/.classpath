@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="moeaframework-2.13.jar" sourcepath="moeaframework-2.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="svgsalamander1.1.1/svgSalamander-v1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/antlr4-runtime-4.8-1.jar"/>
@@ -136,15 +142,11 @@
 	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.7.3.jar" sourcepath="streamex/streamex-0.7.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-core-1.18.1.jar" sourcepath="jts 1.18.1/jts-core-1.18.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.18.1/jts-io-common-1.18.1.jar"/>
-	<classpathentry kind="lib" path="geotools/gt-http-commons-25.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="geotools/gt-http-commons-25.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="Java-WebSocket-1.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="slf4j-api-2.0.0-alpha1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -10,14 +10,26 @@
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +142,7 @@ public class Application implements IApplication {
 	/** The processor queue. */
 	public SimulationRuntime processorQueue;
 
+	public GamaWebSocketServer socketServer;
 	/**
 	 * Show version.
 	 */
@@ -222,7 +235,7 @@ public class Application implements IApplication {
 		}
 		if (args.contains(SOCKET_PARAMETER)) {
 			size = size - 2;
-			mustContainOutFolder = false;
+			mustContainOutFolder = mustContainInFile = false;
 
 			// Change value only if function should apply parameter
 			this.socket = apply ? Integer.parseInt(after(args, SOCKET_PARAMETER)) : -1;
@@ -354,6 +367,8 @@ public class Application implements IApplication {
 			runGamlSimulation(args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
+		} else if (args.contains(SOCKET_PARAMETER)) { 
+			createSocketServer();
 		} else {
 			runSimulation(args);
 		}
@@ -603,4 +618,25 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
+	
+	public void createSocketServer() throws UnknownHostException {			
+		socketServer = new GamaWebSocketServer(this.socket,this);
+		socketServer.start();
+		System.out.println("ChatServer started on port: " + socketServer.getPort());
+		System.setOut(new WebSocketPrintStream(System.out, socketServer));
+		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+		try {
+
+			while (true) {
+				String in = sysin.readLine();
+				socketServer.broadcast(in);
+				if (in.equals("exit")) {
+					socketServer.stop(1000);
+					break;
+				}
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 }
