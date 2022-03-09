@@ -35,11 +35,14 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -54,13 +57,25 @@ import msi.gama.headless.core.GamaHeadlessException;
 /**
  * A simple WebSocketServer implementation. Keeps track of a "chatroom".
  */
-public class GamaWebSocketServer extends WebSocketServer { 
-	private Application app;
-	public GamaWebSocketServer(int port, Application ap) throws UnknownHostException {
-		super(new InetSocketAddress(port)); 
-		app=ap;
-	}
+interface Endpoint {
+	void onOpen(WebSocket socket);
+	void onMessage(GamaWebSocketServer server, WebSocket socket, String message);
+	// add other event handlers here
+}
 
+public class GamaWebSocketServer extends WebSocketServer {
+	Map<String, Endpoint> endpoints = Collections.synchronizedMap(new HashMap<>());
+	Map<WebSocket, Endpoint> saved_endpoints = Collections.synchronizedMap(new HashMap<>());
+
+	private Application app;
+
+	public GamaWebSocketServer(int port, Application ap) throws UnknownHostException {
+		super(new InetSocketAddress(port));
+		app = ap;
+	}
+	public Application getDefaultApp() {
+		return app;
+	}
 	public GamaWebSocketServer(InetSocketAddress address) {
 		super(address);
 	}
@@ -83,6 +98,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
 																			// connected
 		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+		
+		
+
+		String path = URI.create(handshake.getResourceDescriptor()).getPath();
+		Endpoint endpoint = endpoints.get(path);
+		if(endpoint != null) {
+			saved_endpoints.put(conn, endpoint);
+			endpoint.onOpen(conn);
+		}
 	}
 
 	@Override
@@ -93,22 +117,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-    broadcast(message);
-		System.out.println(conn + ": " + message);
-		if(message.equals("run")) {
-			try {
-				app.runGamlSimulation (Arrays.asList("-gaml","C:\\GAMA\\headless\\samples\\toto" ,"prey_predatorExp","C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (GamaHeadlessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		saved_endpoints.get(conn).onMessage(this,conn,message);
 	}
 
 	@Override

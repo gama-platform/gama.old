@@ -43,33 +43,10 @@
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-  <script>
-  $( function() {
-    $( ".column" ).sortable({
-      connectWith: ".column",
-      handle: ".portlet-header",
-      cancel: ".portlet-toggle",
-      placeholder: "portlet-placeholder ui-corner-all"
-    }).resizable({
-      grid: 100
-    });
- 
-    $( ".portlet" )
-      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-      .find( ".portlet-header" )
-        .addClass( "ui-widget-header ui-corner-all" )
-        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
- 
-    $( ".portlet-toggle" ).on( "click", function() {
-      var icon = $( this );
-      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-    });
-  } );
-  </script>
+	
 </head>
 <body>
-<div class="column">
+<div class="column" id="col1">
  
   <div class="portlet">
     <div class="portlet-header">Controller</div>
@@ -84,6 +61,7 @@
 		  Experiment:</td><td>
 		  <input type="text" name="message"></td></tr>
 		  <tr><td colspan=2>
+		  <input type="button" onclick="addWidget()" value="Add">
 		  <input type="submit" value="Load">
 		  <input type="submit" value="Compile">
 		  <input type="submit" value="Launch"></td></tr>
@@ -134,10 +112,114 @@
  
  
 <script>
+
+  init();
+  function rehook(){
+  
+  $( function() {
+    $( ".column" ).sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    }).resizable({
+      grid: 100
+    });
+ 
+    $( ".portlet" )
+      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )		
+		;
+ 
+    $( ".portlet-toggle" ).on( "click", function() {
+	
+      var icon = $( this );
+	  console.log(icon);
+      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+	
+    });
+    $( ".portlet-close" ).on( "click", function() {
+	  $(this).parent().parent().remove();
+    });
+	} );
+  }
+  function init(){
+  
+  $( function() {
+    $( ".column" ).sortable({
+      connectWith: ".column",
+      handle: ".portlet-header",
+      cancel: ".portlet-toggle",
+      placeholder: "portlet-placeholder ui-corner-all"
+    }).resizable({
+      grid: 100
+    });
+ 
+    $( ".portlet" )
+      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
+      .find( ".portlet-header" )
+        .addClass( "ui-widget-header ui-corner-all" )		
+        .prepend( "<span class='ui-icon ui-icon-closethick portlet-close'></span>")
+        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>")
+		;
+ 
+    $( ".portlet-toggle" ).on( "click", function() {
+	
+      var icon = $( this );
+	  console.log(icon);
+      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
+      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
+	
+    });
+    $( ".portlet-close" ).on( "click", function() {
+	  $(this).parent().parent().remove();
+    });
+  } );
+  }
+function addWidget(){
+   var tag = document.createElement("div");
+   
+   tag.className="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all";
+   var phead = document.createElement("div");//.createTextNode("Tutorix is the best e-learning platform");
+   phead.className="portlet-header ui-sortable-handle ui-widget-header ui-corner-all";
+   phead.textContent  = "Widget";
+   var pspan = document.createElement("span");
+   pspan.className="ui-icon ui-icon-closethick portlet-close";
+   phead.insertBefore(pspan,phead.firstChild);
+   var pspan1 = document.createElement("span");
+   pspan1.className="ui-icon ui-icon-minusthick portlet-toggle";
+   phead.appendChild(pspan1);
+   var pcont = document.createElement("div");
+   pcont.className="portlet-content";
+   pcont.textContent  = "Widget content";
+   tag.appendChild(phead);
+   tag.appendChild(pcont);
+   
+   /*
+   
+   
+   var tag = document.createElement("div");
+   
+   tag.className="portlet";
+   var phead = document.createElement("div");//.createTextNode("Tutorix is the best e-learning platform");
+   phead.className="portlet-header";
+   phead.textContent  = "Widget";
+   var pcont = document.createElement("div");
+   pcont.className="portlet-content";
+   pcont.textContent  = "Widget content";
+   tag.appendChild(phead);
+   tag.appendChild(pcont);
+   */
+	document.getElementById("col1").appendChild(tag);
+	
+rehook();
+}
 $.fn.scrollBottom = function() {
   return $(this).scrollTop($(this)[0].scrollHeight);
 };
-let socket = new WebSocket("ws://localhost:6868");
+let socket = new WebSocket("ws://localhost:6868/launch");
 
 		socket.binaryType = 'arraybuffer';
 // send message from the form

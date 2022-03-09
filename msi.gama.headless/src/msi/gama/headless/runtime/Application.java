@@ -621,6 +621,8 @@ public class Application implements IApplication {
 	
 	public void createSocketServer() throws UnknownHostException {			
 		socketServer = new GamaWebSocketServer(this.socket,this);
+		socketServer.endpoints.put("/compile", new CompileEndPoint());
+		socketServer.endpoints.put("/launch", new LaunchEndPoint());
 		socketServer.start();
 		System.out.println("ChatServer started on port: " + socketServer.getPort());
 		System.setOut(new WebSocketPrintStream(System.out, socketServer));
