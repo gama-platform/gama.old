@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ImageLayerStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ImageLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -53,6 +53,11 @@ import msi.gaml.types.IType;
 				type = { IType.STRING, IType.FILE },
 				optional = true,
 				doc = @doc ("the name/path of the image (in the case of a raster image)")),
+				@facet (
+						name = IKeyword.ROTATE,
+						type = { IType.FLOAT },
+						optional = true,
+						doc = @doc ("Defines the angle of rotation of this layer, in degrees, around the z-axis.")),
 				@facet (
 						name = IKeyword.POSITION,
 						type = IType.POINT,

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * AxisAngle.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AxisAngle.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.common.geometry;
@@ -55,14 +54,15 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	/**
 	 * Instantiates a new axis angle.
 	 *
-	 * @param angle the angle
+	 * @param angle
+	 *            the angle
 	 */
 	public AxisAngle(final Double angle) {
 		this.angle = angle == null ? 0 : angle.doubleValue();
 	}
 
 	/**
-	 * Constructs and initializes an AxisAngle4d to (0,0,1,0).
+	 * Instantiates a new axis angle.
 	 */
 	public AxisAngle() {
 		axis.setLocation(0, 0, 0);
@@ -88,7 +88,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 * @return true or false
 	 */
 	public boolean equals(final AxisAngle a1) {
-		if (a1 == null) { return false; }
+		if (a1 == null) return false;
 		return axis.equals(a1.axis) && this.angle == a1.angle;
 
 	}
@@ -103,7 +103,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 */
 	@Override
 	public boolean equals(final Object o1) {
-		if (o1 instanceof AxisAngle) { return equals((AxisAngle) o1); }
+		if (o1 instanceof AxisAngle) return equals((AxisAngle) o1);
 		return false;
 	}
 
@@ -149,9 +149,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 *
 	 * @return the angle, in degrees.
 	 */
-	public final double getAngle() {
-		return angle;
-	}
+	public final double getAngle() { return angle; }
 
 	/**
 	 * Set the axis angle, in degrees.<br>
@@ -161,9 +159,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 *            The angle to set, in degrees.
 	 *
 	 */
-	public final void setAngle(final double angle) {
-		this.angle = angle;
-	}
+	public final void setAngle(final double angle) { this.angle = angle; }
 
 	/**
 	 * Get value of <i>x</i> coordinate.
@@ -171,9 +167,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 * @return the <i>x</i> coordinate.
 	 *
 	 */
-	public double getX() {
-		return axis.x;
-	}
+	public double getX() { return axis.x; }
 
 	/**
 	 * Set a new value for <i>x</i> coordinate.
@@ -182,9 +176,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 *            the <i>x</i> coordinate.
 	 *
 	 */
-	public final void setX(final double x) {
-		axis.x = x;
-	}
+	public final void setX(final double x) { axis.x = x; }
 
 	/**
 	 * Get value of <i>y</i> coordinate.
@@ -192,9 +184,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 * @return the <i>y</i> coordinate.
 	 *
 	 */
-	public final double getY() {
-		return axis.y;
-	}
+	public final double getY() { return axis.y; }
 
 	/**
 	 * Set a new value for <i>y</i> coordinate.
@@ -203,9 +193,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 *            the <i>y</i> coordinate.
 	 *
 	 */
-	public final void setY(final double y) {
-		axis.y = y;
-	}
+	public final void setY(final double y) { axis.y = y; }
 
 	/**
 	 * Get value of <i>z</i> coordinate.
@@ -213,9 +201,7 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 * @return the <i>z</i> coordinate.
 	 *
 	 */
-	public double getZ() {
-		return axis.z;
-	}
+	public double getZ() { return axis.z; }
 
 	/**
 	 * Set a new value for <i>z</i> coordinate.
@@ -224,17 +210,13 @@ public class AxisAngle implements java.io.Serializable, Cloneable {
 	 *            the <i>z</i> coordinate.
 	 *
 	 */
-	public final void setZ(final double z) {
-		axis.z = z;
-	}
+	public final void setZ(final double z) { axis.z = z; }
 
 	/**
 	 * Gets the Axis around which the rotation is done.
 	 *
 	 * @return the Axis around which the rotation is done
 	 */
-	public GamaPoint getAxis() {
-		return axis;
-	}
+	public GamaPoint getAxis() { return axis; }
 
 }

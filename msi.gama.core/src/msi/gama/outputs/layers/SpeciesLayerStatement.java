@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SpeciesLayerStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SpeciesLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -67,6 +67,11 @@ import msi.gaml.types.IType;
 				type = IType.POINT,
 				optional = true,
 				doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+				@facet (
+						name = IKeyword.ROTATE,
+						type = { IType.FLOAT },
+						optional = true,
+						doc = @doc ("Defines the angle of rotation of this layer, in degrees, around the z-axis.")),
 				@facet (
 						name = IKeyword.SELECTABLE,
 						type = { IType.BOOL },
@@ -240,7 +245,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		species = Cast.asSpecies(scope, getFacet(IKeyword.SPECIES).value(scope));
 		if (species == null && hostSpecies != null) { species = hostSpecies.getMicroSpecies(getName()); }
 		if (species == null) throw GamaRuntimeException.error("not a suitable species to display: " + getName(), scope);
-		if (super._init(scope) && (microSpeciesLayers != null)) {
+		if (super._init(scope) && microSpeciesLayers != null) {
 			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
 				microLayer.hostSpecies = species;
 				if (!scope.init(microLayer).passed()) return false;

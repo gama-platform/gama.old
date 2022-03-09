@@ -235,4 +235,11 @@ public interface ILayerData {
 	 */
 	void setVisible(Boolean b);
 
+	/**
+	 * The rotation around the z-axis
+	 *
+	 * @return the rotation of the layer, in degrees, around the z-axis
+	 */
+	Double getRotation();
+
 }

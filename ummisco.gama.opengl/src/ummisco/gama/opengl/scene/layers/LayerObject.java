@@ -18,6 +18,8 @@ import org.locationtech.jts.geom.Geometry;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
+import msi.gama.common.geometry.AxisAngle;
+import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
@@ -56,6 +58,9 @@ public class LayerObject {
 	/** The Constant NULL_SCALE. */
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 
+	/** The Constant NULL_ROTATION. */
+	final static AxisAngle NULL_ROTATION = new AxisAngle(0d);
+
 	/**
 	 * The Class Trace.
 	 */
@@ -65,12 +70,16 @@ public class LayerObject {
 		/** The scale. */
 		final GamaPoint scale = new GamaPoint(NULL_SCALE);
 
+		/** The rotation. */
+		AxisAngle rotation = NULL_ROTATION;
+
 		/**
 		 * Instantiates a new trace.
 		 */
 		Trace() {
 			computeOffset();
 			computeScale();
+			computeRotation();
 		}
 
 		/**
@@ -92,6 +101,13 @@ public class LayerObject {
 		}
 
 		/**
+		 * Compute rotation.
+		 */
+		public void computeRotation() {
+			LayerObject.this.computeRotation(this);
+		}
+
+		/**
 		 * Gets the offset.
 		 *
 		 * @return the offset
@@ -104,6 +120,13 @@ public class LayerObject {
 		 * @return the scale
 		 */
 		public GamaPoint getScale() { return scale; }
+
+		/**
+		 * Gets the rotation.
+		 *
+		 * @return the rotation
+		 */
+		public AxisAngle getRotation() { return rotation; }
 
 		/**
 		 * As array.
@@ -168,6 +191,21 @@ public class LayerObject {
 				traces.add(currentList);
 			}
 		}
+	}
+
+	/**
+	 * Compute rotation.
+	 *
+	 * @param trace
+	 *            the trace
+	 */
+	public void computeRotation(final Trace trace) {
+		AxisAngle oldRotation = trace.rotation;
+		// if vectors are different... (not computed for the moment)
+		// if angles are different
+		Double newAngleInDeg = layer.getData().getRotation();
+		if (newAngleInDeg.equals(oldRotation.getAngle())) return;
+		trace.rotation = new AxisAngle(Rotation3D.PLUS_K, newAngleInDeg);
 	}
 
 	/**
@@ -277,6 +315,16 @@ public class LayerObject {
 		gl.translateBy(nonNullOffset.x, -nonNullOffset.y, hasDepth() ? nonNullOffset.z : 0);
 		final GamaPoint nonNullScale = list.getScale();
 		gl.scaleBy(nonNullScale.x, nonNullScale.y, nonNullScale.z);
+		final AxisAngle nonNullRotation = list.getRotation();
+
+		// Rotation
+		double x = nonNullOffset.x + renderer.getEnvWidth() * nonNullScale.x / 2;
+		double y = nonNullOffset.y + renderer.getEnvHeight() * nonNullScale.y / 2;
+
+		gl.translateBy(x, -y, 0d);
+		GamaPoint p = nonNullRotation.getAxis();
+		gl.rotateBy(nonNullRotation.getAngle(), p.x, p.y, p.z);
+		gl.translateBy(-x, y, 0d);
 	}
 
 	/**

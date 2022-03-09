@@ -51,6 +51,17 @@ public class OverlayLayerObject extends LayerObject {
 	}
 
 	/**
+	 * Compute rotation.
+	 *
+	 * @param trace
+	 *            the trace
+	 */
+	@Override
+	public void computeRotation(final Trace trace) {
+		// trace.rotation = NULL_ROTATION;
+	}
+
+	/**
 	 * Adds the frame.
 	 *
 	 * @param gl

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FrameLayerObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FrameLayerObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.layers;
 
@@ -34,7 +34,8 @@ public class FrameLayerObject extends StaticLayerObject.World {
 	/**
 	 * Instantiates a new frame layer object.
 	 *
-	 * @param renderer the renderer
+	 * @param renderer
+	 *            the renderer
 	 */
 	public FrameLayerObject(final IOpenGLRenderer renderer) {
 		super(renderer);
@@ -50,4 +51,13 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		list.add(geomObj);
 	}
+
+	/**
+	 * Compute rotation.
+	 *
+	 * @param trace
+	 *            the trace
+	 */
+	@Override
+	public void computeRotation(final Trace trace) {}
 }

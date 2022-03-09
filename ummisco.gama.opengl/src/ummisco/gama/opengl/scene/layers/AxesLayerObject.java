@@ -158,4 +158,13 @@ public class AxesLayerObject extends StaticLayerObject.World {
 		list.add(new GeometryObject(shape.getInnerGeometry(), att));
 	}
 
+	/**
+	 * Compute rotation.
+	 *
+	 * @param trace
+	 *            the trace
+	 */
+	@Override
+	public void computeRotation(final Trace trace) {}
+
 }

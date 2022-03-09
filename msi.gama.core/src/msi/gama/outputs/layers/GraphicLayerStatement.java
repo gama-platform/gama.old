@@ -47,6 +47,11 @@ import ummisco.gama.dev.utils.COUNTER;
 				optional = true,
 				doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
 				@facet (
+						name = IKeyword.ROTATE,
+						type = { IType.FLOAT },
+						optional = true,
+						doc = @doc ("Defines the angle of rotation of this layer, in degrees, around the z-axis.")),
+				@facet (
 						name = IKeyword.TRACE,
 						type = { IType.BOOL, IType.INT },
 						optional = true,

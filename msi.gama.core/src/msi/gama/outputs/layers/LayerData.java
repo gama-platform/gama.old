@@ -12,6 +12,7 @@ package msi.gama.outputs.layers;
 import static msi.gama.common.interfaces.IKeyword.FADING;
 import static msi.gama.common.interfaces.IKeyword.POSITION;
 import static msi.gama.common.interfaces.IKeyword.REFRESH;
+import static msi.gama.common.interfaces.IKeyword.ROTATE;
 import static msi.gama.common.interfaces.IKeyword.SELECTABLE;
 import static msi.gama.common.interfaces.IKeyword.SIZE;
 import static msi.gama.common.interfaces.IKeyword.TRACE;
@@ -61,6 +62,9 @@ public class LayerData extends AttributeHolder implements ILayerData {
 
 	/** The visible region. */
 	Envelope visibleRegion;
+
+	/** The rotation. */
+	final Attribute<Double> rotation;
 
 	/** The size. */
 	Attribute<GamaPoint> size;
@@ -114,6 +118,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		transparency =
 				create(TRANSPARENCY, (scope, exp) -> Math.min(Math.max(Cast.asFloat(scope, exp.value(scope)), 0d), 1d),
 						FLOAT, 0d, e -> Math.min(Math.max(Cast.asFloat(null, e.getConstValue()), 0d), 1d));
+		rotation = create(ROTATE, FLOAT, 0d);
 
 	}
 
@@ -182,6 +187,9 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	 */
 	@Override
 	public Integer getTrace() { return trace.get(); }
+
+	@Override
+	public Double getRotation() { return rotation.get(); }
 
 	/**
 	 * Method getFading()
