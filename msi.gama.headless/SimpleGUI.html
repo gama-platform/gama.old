@@ -1,260 +1,253 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GAMA Web UI</title>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
-  <style>
-  body {
-    min-width: 520px;
-  }
-  .column {
-    width:480px;
-    float: left;
-    padding-bottom: 100px;
-  }
-  #resizable { width: 150px; height: 150px; padding: 0.5em; }
-  #resizable h3 { text-align: center; margin: 0; }
-  .portlet {
-    margin: 0 1em 1em 0;
-    padding: 0.3em;
-  }
-  .portlet-header {
-    padding: 0.2em 0.3em;
-    margin-bottom: 0.5em;
-    position: relative;
-  }
-  .portlet-toggle {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    margin-top: -8px;
-  }
-  .portlet-content {
-    padding: 0.4em;
-  }
-  .portlet-placeholder {
-    border: 1px dotted black;
-    margin: 0 1em 1em 0;
-    height: 50px;
-  }
-  </style>
-  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>GAMA Web UI</title>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css">
+	<style>
+		.dialog_form th {
+			text-align: left;
+		}
+
+		.dialog_form textarea,
+		.dialog_form input[type=text] {
+			width: 320px;
+		}
+
+		#dialog_window_minimized_container {
+			position: fixed;
+			bottom: 0px;
+			left: 0px;
+		}
+
+		.dialog_window_minimized {
+			float: left;
+			padding: 5px 10px;
+			font-size: 12px;
+			cursor: pointer;
+			margin-right: 2px;
+			display: none;
+		}
+
+		.dialog_window_minimized .ui-icon {
+			display: inline-block !important;
+			position: relative;
+			top: 3px;
+			cursor: pointer;
+		}
+
+		.ui-dialog .ui-dialog-titlebar-minimize {
+			height: 18px;
+			width: 19px;
+			padding: 1px;
+			position: absolute;
+			right: 23px;
+			top: 9px;
+		}
+
+		.ui-dialog .ui-dialog-titlebar-minimize .ui-icon {
+			display: block;
+			margin: 1px;
+		}
+
+		.ui-dialog .ui-dialog-titlebar-minimize:hover,
+		.ui-dialog .ui-dialog-titlebar-minimize:focus {
+			padding: 0;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
 </head>
+
 <body>
-<div class="column" id="col1">
- 
-  <div class="portlet">
-    <div class="portlet-header">Controller</div>
-    <div class="portlet-content">
-			
-		 <!-- message form -->
-		<form name="publish">
-		<table><tr><td>
-		  Model:</td><td>
-		  <input type="text" name="message"></td></tr>
-		  <tr><td>
-		  Experiment:</td><td>
-		  <input type="text" name="message"></td></tr>
-		  <tr><td colspan=2>
-		  <input type="button" onclick="addWidget()" value="Add">
-		  <input type="submit" value="Load">
-		  <input type="submit" value="Compile">
-		  <input type="submit" value="Launch"></td></tr>
-		  <tr><td colspan=2>
-		  <input type="submit" value="Play">
-		  <input type="submit" value="Pause">
-		  <input type="submit" value="Close"></td></tr>
-		  </table>
-		</form>
-		<!-- div with messages -->
-		<div id="errors"></div>
-	</div>
-  </div>
-  
- 
-  <div class="portlet">
-    <div class="portlet-header">Console</div>
-    <div class="portlet-content">
-		<textarea  rows="24" cols="50" id="console"></textarea>
-	</div>
-  </div>
-</div>
- 
-<div class="column">
 
- 
-  <div class="portlet">
-    <div class="portlet-header">Displays</div>
-    <div class="portlet-content">
-				  <img id="image_out"></<img> </div>
-  </div>
- 
-</div>
- 
-<div class="column">
- 
-  <div class="portlet">
-    <div class="portlet-header">Parameters</div>
-    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-  </div>
- 
-  <div class="portlet">
-    <div class="portlet-header">Inspector</div>
-    <div class="portlet-content">Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div>
-  </div>
- 
-</div>
- 
- 
-<script>
+	<div id="dialog_window_minimized_container"></div>
+	<div id="dialog_window_1" class="dialog_window" title="Create a new <code>Dialog</code> Widget">
+		<h3>Create a new <code>Dialog</code> Widget</h3>
+		<table class="dialog_form">
+			<tr>
+				<th>Widget Title</th>
+			</tr>
+			<tr>
+				<td><input type="text" id="new_window_title" /></td>
+			</tr>
+			<tr>
+				<th>
+					Widget Content
+				</th>
+			</tr>
+			<tr>
+				<td>
+					<textarea id="new_window_content"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					Widget Buttons
+				</th>
+			</tr>
+			<tr>
+				<td id="buttonlist">
+					<input type="checkbox" id="alertbutton" /><label for="alertbutton">ALERT</label>
+					<input type="checkbox" id="closebutton" /><label for="closebutton">CLOSE</label>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<button id="create_button">Create a new Widget</button>
+	<script>
 
-  init();
-  function rehook(){
-  
-  $( function() {
-    $( ".column" ).sortable({
-      connectWith: ".column",
-      handle: ".portlet-header",
-      cancel: ".portlet-toggle",
-      placeholder: "portlet-placeholder ui-corner-all"
-    }).resizable({
-      grid: 100
-    });
- 
-    $( ".portlet" )
-      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-      .find( ".portlet-header" )
-        .addClass( "ui-widget-header ui-corner-all" )		
-		;
- 
-    $( ".portlet-toggle" ).on( "click", function() {
-	
-      var icon = $( this );
-	  console.log(icon);
-      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-	
-    });
-    $( ".portlet-close" ).on( "click", function() {
-	  $(this).parent().parent().remove();
-    });
-	} );
-  }
-  function init(){
-  
-  $( function() {
-    $( ".column" ).sortable({
-      connectWith: ".column",
-      handle: ".portlet-header",
-      cancel: ".portlet-toggle",
-      placeholder: "portlet-placeholder ui-corner-all"
-    }).resizable({
-      grid: 100
-    });
- 
-    $( ".portlet" )
-      .addClass( "ui-widget ui-widget-content ui-helper-clearfix ui-corner-all" )
-      .find( ".portlet-header" )
-        .addClass( "ui-widget-header ui-corner-all" )		
-        .prepend( "<span class='ui-icon ui-icon-closethick portlet-close'></span>")
-        .prepend( "<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>")
-		;
- 
-    $( ".portlet-toggle" ).on( "click", function() {
-	
-      var icon = $( this );
-	  console.log(icon);
-      icon.toggleClass( "ui-icon-minusthick ui-icon-plusthick" );
-      icon.closest( ".portlet" ).find( ".portlet-content" ).toggle();
-	
-    });
-    $( ".portlet-close" ).on( "click", function() {
-	  $(this).parent().parent().remove();
-    });
-  } );
-  }
-function addWidget(){
-   var tag = document.createElement("div");
-   
-   tag.className="portlet ui-widget ui-widget-content ui-helper-clearfix ui-corner-all";
-   var phead = document.createElement("div");//.createTextNode("Tutorix is the best e-learning platform");
-   phead.className="portlet-header ui-sortable-handle ui-widget-header ui-corner-all";
-   phead.textContent  = "Widget";
-   var pspan = document.createElement("span");
-   pspan.className="ui-icon ui-icon-closethick portlet-close";
-   phead.insertBefore(pspan,phead.firstChild);
-   var pspan1 = document.createElement("span");
-   pspan1.className="ui-icon ui-icon-minusthick portlet-toggle";
-   phead.appendChild(pspan1);
-   var pcont = document.createElement("div");
-   pcont.className="portlet-content";
-   pcont.textContent  = "Widget content";
-   tag.appendChild(phead);
-   tag.appendChild(pcont);
-   
-   /*
-   
-   
-   var tag = document.createElement("div");
-   
-   tag.className="portlet";
-   var phead = document.createElement("div");//.createTextNode("Tutorix is the best e-learning platform");
-   phead.className="portlet-header";
-   phead.textContent  = "Widget";
-   var pcont = document.createElement("div");
-   pcont.className="portlet-content";
-   pcont.textContent  = "Widget content";
-   tag.appendChild(phead);
-   tag.appendChild(pcont);
-   */
-	document.getElementById("col1").appendChild(tag);
-	
-rehook();
-}
-$.fn.scrollBottom = function() {
-  return $(this).scrollTop($(this)[0].scrollHeight);
-};
-let socket = new WebSocket("ws://localhost:6868/launch");
+		var _init = $.ui.dialog.prototype._init;
+		$.ui.dialog.prototype._init = function () {
+			_init.apply(this, arguments);
+
+			var dialog_element = this;
+			var dialog_id = this.uiDialogTitlebar.next().attr('id');
+
+			this.uiDialogTitlebar.append('<a href="#" id="' + dialog_id +
+				'-minbutton" class="ui-dialog-titlebar-minimize ui-corner-all">' +
+				'<span class="ui-icon ui-icon-minusthick"></span></a>');
+
+			$('#dialog_window_minimized_container').append(
+				'<div class="dialog_window_minimized ui-widget ui-state-default ui-corner-all" id="' +
+				dialog_id + '_minimized">' + this.uiDialogTitlebar.find('.ui-dialog-title').text() +
+				'<span class="ui-icon ui-icon-newwin"></div>');
+
+			$('#' + dialog_id + '-minbutton').hover(function () {
+				$(this).addClass('ui-state-hover');
+			}, function () {
+				$(this).removeClass('ui-state-hover');
+			}).click(function () {
+				dialog_element.close();
+				$('#' + dialog_id + '_minimized').show();
+			});
+
+			$('#' + dialog_id + '_minimized').click(function () {
+				$(this).hide();
+				dialog_element.open();
+			});
+		};
+
+		$(document).ready(function () {
+			$('#create_button').button().click(function () {
+				var create_dialog = $('#dialog_window_1');
+				var create_button = $(this);
+				if (create_dialog.dialog('isOpen')) {
+					create_button.button('option', 'label', 'Create a new Widget');
+					create_dialog.dialog('close');
+				} else {
+					create_button.button('option', 'label', 'Close Widget');
+					create_dialog.dialog('open');
+				}
+			});
+
+			$('#dialog_window_1').dialog({
+				width: 'auto',
+				height: 'auto',
+				autoOpen: false,
+				buttons: [
+					{
+						text: 'Create',
+						click: create1
+					}
+				]
+			});
+			$('#buttonlist').buttonset();
+		});
+		function create1() {
+			var div_count = $('.dialog_window').length + 1;
+			var div_id = 'dialog_window_' + div_count;
+			var div_title = $('#new_window_title').val();
+			var div_content = $('#new_window_content').val();
+			var buttons = new Array();
+			if ($('#alertbutton').is(':checked')) {
+				buttons.push({
+					text: 'ALERT',
+					click: function () {
+						alert('ALERTING from Dialog Widnow: ' + div_title);
+					}
+				});
+			}
+
+			if ($('#closebutton').is(':checked')) {
+				buttons.push({
+					text: 'CLOSE',
+					click: function () {
+						$('#' + div_id).dialog('close');
+					}
+				});
+			}
+
+			$('body').append('<div class="dialog_window" id="' + div_id + '">' + div_content + '</div>');
+
+			var dialog = $('#' + div_id).dialog({
+				width: 'auto',
+				height: 'auto',
+				title: div_title,
+				autoOpen: true,
+				buttons: buttons
+			});
+		}
+		$.fn.scrollBottom = function () {
+			return $(this).scrollTop($(this)[0].scrollHeight);
+		};
+		initDefaultWidget();
+		function initDefaultWidget() {
+			$('#new_window_title').val("Controller");
+			$('#new_window_content').val('<form name="publish"><table><tr><td>  Model:</td><td>  <input type="text" name="message"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" name="message"></td></tr>  <tr><td colspan=2>  <input type="button" onclick="addWidget()" value="Add">  <input type="submit" value="Load">  <input type="submit" value="Compile">  <input type="submit" value="Launch"></td></tr>  <tr><td colspan=2>  <input type="submit" value="Play">  <input type="submit" value="Pause">  <input type="submit" value="Close"></td></tr>  </table></form>');
+			create1();
+			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
+			$('#new_window_title').val("Display"); $('#new_window_content').val('<img id="image_out" style="width:480px"/>');
+			create1();
+			$('#' + 'dialog_window_3').parent().css({ left: 400, top: 50 });
+			$('#new_window_title').val("Console"); $('#new_window_content').val('<textarea  rows="24" cols="36" id="console"></textarea>');
+			create1();
+			$('#' + 'dialog_window_4').parent().css({ left: 8, top: 250 });
+
+			$('#new_window_title').val('');
+			$('#new_window_content').val('');
+		}
+		let socket = new WebSocket("ws://localhost:6868/launch");
 
 		socket.binaryType = 'arraybuffer';
-// send message from the form
-document.forms.publish.onsubmit = function() {
-//setInterval(function(){ 
-//  socket.send(""); }, 100);
-  let outgoingMessage = this.message.value;
+		// send message from the form
+		document.forms.publish.onsubmit = function () {
+			//setInterval(function(){ 
+			//  socket.send(""); }, 100);
+			let outgoingMessage = this.message.value;
 
-  socket.send("run");
-  return false;
-};
+			socket.send("run");
+			return false;
+		};
 
-// message received - show the message in div#messages
-socket.onmessage = function(event) {
-  let message = event.data;
-//console.log(message);
-// $('#console').append(message+"\n");//.scrollBottom();
+		// message received - show the message in div#messages
+		socket.onmessage = function (event) {
+			let message = event.data;
+			//console.log(message);
+			// $('#console').append(message+"\n");//.scrollBottom();
 
-if(typeof event.data == "object"){
+			if (typeof event.data == "object") {
 
-      var bytes = new Uint8Array(event.data);
-      var data = "";
-      var len = bytes.byteLength;
-      for (var i = 0; i < len; ++i) {
-      	data += String.fromCharCode(bytes[i]);
-      }
-      var img = document.getElementById("image_out");
-      img.src = "data:image/png;base64,"+window.btoa(data);
-	 
-}else{
-$('#console').append(message+"\n");
-}
-}
- 
+				var bytes = new Uint8Array(event.data);
+				var data = "";
+				var len = bytes.byteLength;
+				for (var i = 0; i < len; ++i) {
+					data += String.fromCharCode(bytes[i]);
+				}
+				var img = document.getElementById("image_out");
+				img.src = "data:image/png;base64," + window.btoa(data);
 
-</script>
+			} else {
+				$('#console').append(message + "\n");
+			}
+		}
+
+
+	</script>
 </body>
+
 </html>
