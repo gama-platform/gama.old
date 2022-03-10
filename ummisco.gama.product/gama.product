@@ -35,14 +35,14 @@
 -Xmn1024m
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
---add-opens java.base/java.lang=ALL-UNNAMED
 -Dosgi.locking=none
 -Dosgi.checkConfiguration=false
 -Declipse.log.level=ERROR
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.retryAttempts=10
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
--Dno_logging=true
+-Denable_logging=true -Duse_old_animator=false -Duse_old_sync_strategy=true -Duse_global_preference_store=true -Duse_precise_autoscale=false -Dread_only=false -Duse_old_tabs=true -Duse_legacy_drawers=false -Duse_delayed_resize=false -Duse_native_opengl_window=true 
+--add-opens java.base/java.lang=ALL-UNNAMED
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread 
          -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -66,6 +66,9 @@
          <bmp/>
       </win>
    </launcher>
+
+   <vm>
+   </vm>
 
    <license>
         <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
@@ -269,8 +272,8 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.8.2" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="version" value="1.8.2" />
       <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
