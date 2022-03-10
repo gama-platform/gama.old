@@ -36,7 +36,7 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	private final ArrayList<ExperimentJobThread> started;
 
 	/** The allocated processor. */
-	private final int allocatedProcessor;
+	private int allocatedProcessor;
 
 	/** The is trace kept. */
 	private boolean isTraceKept;
@@ -156,6 +156,12 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 				closeSimulation(this);
 			}
 		}
+
+	}
+
+	@Override
+	public void setNumberOfThreads(final int numberOfThread) {
+		this.allocatedProcessor = numberOfThread;
 
 	}
 

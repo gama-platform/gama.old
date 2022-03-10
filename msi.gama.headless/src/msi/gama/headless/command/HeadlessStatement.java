@@ -13,7 +13,7 @@ package msi.gama.headless.command;
 import java.io.File;
 
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.runtime.LocalSimulationRuntime;
+import msi.gama.headless.runtime.ExecutorBasedSimulationRuntime;
 import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -101,7 +101,7 @@ public class HeadlessStatement extends AbstractStatement {
 	 */
 	public HeadlessStatement(final IDescription desc) {
 		super(desc);
-		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
+		processorQueue = new ExecutorBasedSimulationRuntime(this.numberOfThread);
 	}
 
 	/**

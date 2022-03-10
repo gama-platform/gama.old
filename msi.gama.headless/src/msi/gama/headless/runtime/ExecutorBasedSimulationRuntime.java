@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * LocalSimulationRuntime.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * ExecutorBasedSimulationRuntime.java, in msi.gama.headless, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -67,6 +67,25 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	public ExecutorBasedSimulationRuntime() {
 		this(UNDEFINED_QUEUE_SIZE);
 	}
+
+	/**
+	 * Sets the number of threads.
+	 *
+	 * @param n
+	 *            the new number of threads
+	 */
+	@Override
+	public void setNumberOfThreads(final int n) {
+		if (n == executor.getMaximumPoolSize()) return;
+		executor.setMaximumPoolSize(n);
+	}
+
+	/**
+	 * Gets the number of threads.
+	 *
+	 * @return the number of threads
+	 */
+	public int getNumberOfThreads() { return executor.getMaximumPoolSize(); }
 
 	/**
 	 * Instantiates a new local simulation runtime.

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Application.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Application.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
@@ -16,20 +16,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -77,19 +68,19 @@ public class Application implements IApplication {
 
 	/** The Constant HELP_PARAMETER. */
 	final public static String HELP_PARAMETER = "-help";
-	
+
 	/** The Constant GAMA_VERSION. */
 	final public static String GAMA_VERSION = "-version";
 
 	/** The Constant CONSOLE_PARAMETER. */
 	final public static String CONSOLE_PARAMETER = "-c";
-	
+
 	/** The Constant VERBOSE_PARAMETER. */
 	final public static String VERBOSE_PARAMETER = "-v";
-	
+
 	/** The Constant THREAD_PARAMETER. */
 	final public static String THREAD_PARAMETER = "-hpc";
-	
+
 	/** The Constant SOCKET_PARAMETER. */
 	final public static String SOCKET_PARAMETER = "-socket";
 
@@ -98,51 +89,53 @@ public class Application implements IApplication {
 
 	/** The Constant VALIDATE_LIBRARY_PARAMETER. */
 	final public static String VALIDATE_LIBRARY_PARAMETER = "-validate";
-	
+
 	/** The Constant TEST_LIBRARY_PARAMETER. */
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
-	
+
 	/** The Constant BUILD_XML_PARAMETER. */
 	final public static String BUILD_XML_PARAMETER = "-xml";
-	
+
 	/** The Constant CHECK_MODEL_PARAMETER. */
 	final public static String CHECK_MODEL_PARAMETER = "-check";
-	
+
 	/** The Constant RUN_LIBRARY_PARAMETER. */
 	final public static String RUN_LIBRARY_PARAMETER = "-runLibrary";
 
 	/** The Constant BATCH_PARAMETER. */
 	// -> Code still exist, but not documented nor use
 	final public static String BATCH_PARAMETER = "-batch";
-	
+
 	/** The Constant GAML_PARAMETER. */
 	final public static String GAML_PARAMETER = "-gaml";
-	
+
 	/** The Constant WRITE_XMI. */
 	final public static String WRITE_XMI = "-write-xmi";
 
 	/** The head less simulation. */
 	public static boolean headLessSimulation = false;
-	
-	/** The number of thread. */
-	public int numberOfThread = -1;
-	
+
+	// /** The number of thread. */
+	// public int numberOfThread = -1;
+
 	/** The socket. */
 	public int socket = -1;
-	
+
 	/** The console mode. */
 	public boolean consoleMode = false;
-	
+
 	/** The tunneling mode. */
 	public boolean tunnelingMode = false;
-	
+
 	/** The verbose. */
 	public boolean verbose = false;
-	
-	/** The processor queue. */
-	public SimulationRuntime processorQueue;
 
+	/** The processor queue. */
+	public final SimulationRuntime processorQueue = new ExecutorBasedSimulationRuntime();
+
+	/** The socket server. */
 	public GamaWebSocketServer socketServer;
+
 	/**
 	 * Show version.
 	 */
@@ -188,7 +181,8 @@ public class Application implements IApplication {
 	/**
 	 * Check parameters.
 	 *
-	 * @param args the args
+	 * @param args
+	 *            the args
 	 * @return true, if successful
 	 */
 	private boolean checkParameters(final List<String> args) {
@@ -198,8 +192,10 @@ public class Application implements IApplication {
 	/**
 	 * Check parameters.
 	 *
-	 * @param args the args
-	 * @param apply the apply
+	 * @param args
+	 *            the args
+	 * @param apply
+	 *            the apply
 	 * @return true, if successful
 	 */
 	private boolean checkParameters(final List<String> args, final boolean apply) {
@@ -244,8 +240,8 @@ public class Application implements IApplication {
 			size = size - 2;
 
 			// Change value only if function should apply parameter
-			this.numberOfThread =
-					apply ? Integer.parseInt(after(args, THREAD_PARAMETER)) : SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+			processorQueue.setNumberOfThreads(
+					apply ? Integer.parseInt(after(args, THREAD_PARAMETER)) : SimulationRuntime.UNDEFINED_QUEUE_SIZE);
 		}
 
 		// Commands
@@ -294,8 +290,10 @@ public class Application implements IApplication {
 	/**
 	 * Show error.
 	 *
-	 * @param errorCode the error code
-	 * @param path the path
+	 * @param errorCode
+	 *            the error code
+	 * @param path
+	 *            the path
 	 * @return true, if successful
 	 */
 	private static boolean showError(final int errorCode, final String path) {
@@ -334,14 +332,14 @@ public class Application implements IApplication {
 		// With GAMA run
 		// ========================
 		HeadlessSimulationLoader.preloadGAMA();
+
 		DEBUG.OFF();
 
 		// Debug runner
 		if (args.contains(VALIDATE_LIBRARY_PARAMETER)) return ModelLibraryValidator.getInstance().start();
 		if (args.contains(TEST_LIBRARY_PARAMETER)) return ModelLibraryTester.getInstance().start();
-		if (args.contains(RUN_LIBRARY_PARAMETER))
-			return ModelLibraryRunner.getInstance().start();
-		else if (args.contains(CHECK_MODEL_PARAMETER)) {
+		if (args.contains(RUN_LIBRARY_PARAMETER)) return ModelLibraryRunner.getInstance().start();
+		if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
 			// else if (args.contains(WRITE_XMI)) {
 			// String outputDir = "all-resources";
@@ -367,7 +365,7 @@ public class Application implements IApplication {
 			runGamlSimulation(args);
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
-		} else if (args.contains(SOCKET_PARAMETER)) { 
+		} else if (args.contains(SOCKET_PARAMETER)) {
 			createSocketServer();
 		} else {
 			runSimulation(args);
@@ -379,8 +377,10 @@ public class Application implements IApplication {
 	/**
 	 * After.
 	 *
-	 * @param args the args
-	 * @param arg the arg
+	 * @param args
+	 *            the args
+	 * @param arg
+	 *            the arg
 	 * @return the string
 	 */
 	public String after(final List<String> args, final String arg) {
@@ -392,11 +392,16 @@ public class Application implements IApplication {
 	/**
 	 * Builds the XML.
 	 *
-	 * @param arg the arg
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws TransformerException the transformer exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @param arg
+	 *            the arg
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws TransformerException
+	 *             the transformer exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public void buildXML(final List<String> arg)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
@@ -421,13 +426,10 @@ public class Application implements IApplication {
 			}
 		}
 
-		if ( selectedJob.size() == 0) {
+		if (selectedJob.size() == 0) {
 			DEBUG.ON();
-			DEBUG.ERR(
-				"\n=== ERROR ==="
-				+ "\n\tGAMA is about to generate an empty XML file."
-				+ "\n\tIf you want to run a Batch experiment, please check the \"-batch\" flag."
-			);
+			DEBUG.ERR("\n=== ERROR ===" + "\n\tGAMA is about to generate an empty XML file."
+					+ "\n\tIf you want to run a Batch experiment, please check the \"-batch\" flag.");
 			System.exit(-1);
 		} else {
 			final Document dd = ExperimentationPlanFactory.buildXmlDocument(selectedJob);
@@ -445,12 +447,18 @@ public class Application implements IApplication {
 	/**
 	 * Builds the XML for model library.
 	 *
-	 * @param modelPaths the model paths
-	 * @param outputPath the output path
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws TransformerException the transformer exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @param modelPaths
+	 *            the model paths
+	 * @param outputPath
+	 *            the output path
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws TransformerException
+	 *             the transformer exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public void buildXMLForModelLibrary(final ArrayList<File> modelPaths, final String outputPath)
 			throws ParserConfigurationException, TransformerException, IOException, GamaHeadlessException {
@@ -476,12 +484,14 @@ public class Application implements IApplication {
 	/**
 	 * Run XML for model library.
 	 *
-	 * @param xmlPath the xml path
-	 * @throws FileNotFoundException the file not found exception
+	 * @param xmlPath
+	 *            the xml path
+	 * @throws FileNotFoundException
+	 *             the file not found exception
 	 */
 	public void runXMLForModelLibrary(final String xmlPath) throws FileNotFoundException {
 
-		processorQueue = new LocalSimulationRuntime();
+		// processorQueue = new ExecutorBasedSimulationRuntime();
 		final Reader in = new Reader(xmlPath);
 		in.parseXmlFile();
 		this.buildAndRunSimulation(in.getSimulation());
@@ -499,12 +509,15 @@ public class Application implements IApplication {
 	/**
 	 * Run simulation.
 	 *
-	 * @param args the args
-	 * @throws FileNotFoundException the file not found exception
-	 * @throws InterruptedException the interrupted exception
+	 * @param args
+	 *            the args
+	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 * @throws InterruptedException
+	 *             the interrupted exception
 	 */
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
+		// processorQueue.setNumberOfThreads(this.numberOfThread);
 
 		Reader in = null;
 		if (this.verbose && !this.tunnelingMode) { DEBUG.ON(); }
@@ -525,7 +538,8 @@ public class Application implements IApplication {
 	/**
 	 * Builds the and run simulation.
 	 *
-	 * @param sims the sims
+	 * @param sims
+	 *            the sims
 	 */
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
 		final Iterator<ExperimentJob> it = sims.iterator();
@@ -605,22 +619,27 @@ public class Application implements IApplication {
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.setBufferedWriter(new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml"));
-
+		int numberOfThreads;
 		if (args.contains(THREAD_PARAMETER)) {
-			this.numberOfThread = Integer.parseInt(after(args, THREAD_PARAMETER));
+			numberOfThreads = Integer.parseInt(after(args, THREAD_PARAMETER));
 		} else {
-			numberOfThread = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
+			numberOfThreads = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
 		}
-		processorQueue = new LocalSimulationRuntime(this.numberOfThread);
+		processorQueue.setNumberOfThreads(numberOfThreads);
 
 		processorQueue.pushSimulation(selectedJob);
 
 		System.exit(0);
 	}
 
-	
-	public void createSocketServer() throws UnknownHostException {			
-		socketServer = new GamaWebSocketServer(this.socket,this);
+	/**
+	 * Creates the socket server.
+	 *
+	 * @throws UnknownHostException
+	 *             the unknown host exception
+	 */
+	public void createSocketServer() throws UnknownHostException {
+		socketServer = new GamaWebSocketServer(this.socket, this);
 		socketServer.endpoints.put("/compile", new CompileEndPoint());
 		socketServer.endpoints.put("/launch", new LaunchEndPoint());
 		socketServer.start();
@@ -632,12 +651,12 @@ public class Application implements IApplication {
 			while (true) {
 				String in = sysin.readLine();
 				socketServer.broadcast(in);
-				if (in.equals("exit")) {
+				if ("exit".equals(in)) {
 					socketServer.stop(1000);
 					break;
 				}
 			}
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}

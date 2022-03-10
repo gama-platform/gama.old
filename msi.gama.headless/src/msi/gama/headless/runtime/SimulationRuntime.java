@@ -67,4 +67,12 @@ public interface SimulationRuntime {
 	 */
 	boolean isPerformingSimulation();
 
+	/**
+	 * Sets the number of threads.
+	 *
+	 * @param numberOfThread
+	 *            the new number of threads
+	 */
+	void setNumberOfThreads(int numberOfThread);
+
 }
