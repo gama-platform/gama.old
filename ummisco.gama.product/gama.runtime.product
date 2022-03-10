@@ -53,6 +53,9 @@
 -Duse_delayed_resize=false 
 -Duse_native_opengl_window=true 
 --add-opens java.base/java.lang=ALL-UNNAMED
+--add-exports java.base/java.lang=ALL-UNNAMED
+--add-exports java.desktop/sun.awt=ALL-UNNAMED
+--add-exports java.desktop/sun.java2d=ALL-UNNAMED
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread 
          -Dorg.eclipse.swt.internal.carbon.smallFonts
