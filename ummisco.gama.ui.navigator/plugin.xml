@@ -58,6 +58,9 @@
                   </or>
                </and>
                <objectClass
+               		 name="ummisco.gama.ui.navigator.contents.Tag">
+               </objectClass>
+               <objectClass
                      name="ummisco.gama.ui.navigator.contents.WrappedFolder">
                </objectClass>
                <objectClass

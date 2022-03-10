@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedGamaFile.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WrappedGamaFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -31,6 +31,7 @@ import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IExpressionDescription;
+import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaIcons;
 
@@ -41,15 +42,17 @@ public class WrappedGamaFile extends WrappedFile {
 
 	/** The is experiment. */
 	boolean isExperiment;
-	
+
 	/** The uri problems. */
 	IMap<String, Integer> uriProblems;
 
 	/**
 	 * Instantiates a new wrapped gama file.
 	 *
-	 * @param root the root
-	 * @param wrapped the wrapped
+	 * @param root
+	 *            the root
+	 * @param wrapped
+	 *            the wrapped
 	 */
 	public WrappedGamaFile(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
@@ -66,9 +69,7 @@ public class WrappedGamaFile extends WrappedFile {
 			for (final IMarker marker : markers) {
 				final String s = marker.getAttribute("URI_KEY", "UNKNOWN");
 				final int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-				if (uriProblems == null) {
-					uriProblems = GamaMapFactory.createUnordered();
-				}
+				if (uriProblems == null) { uriProblems = GamaMapFactory.createUnordered(); }
 				uriProblems.put(s, severity);
 			}
 		} catch (final CoreException ce) {}
@@ -87,14 +88,12 @@ public class WrappedGamaFile extends WrappedFile {
 
 	@Override
 	public Object[] getNavigatorChildren() {
-		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED) { return getFileChildren(); }
+		if (NavigatorContentProvider.FILE_CHILDREN_ENABLED) return getFileChildren();
 		return EMPTY;
 	}
 
 	@Override
-	public boolean isGamaFile() {
-		return true;
-	}
+	public boolean isGamaFile() { return true; }
 
 	@Override
 	public int countModels() {
@@ -121,16 +120,15 @@ public class WrappedGamaFile extends WrappedFile {
 	/**
 	 * Checks for tag.
 	 *
-	 * @param tag the tag
+	 * @param tag
+	 *            the tag
 	 * @return true, if successful
 	 */
 	public boolean hasTag(final String tag) {
 		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 		// DEBUG.LOG("Tags of " + getName() + ": " + ((GamlFileInfo) metaData).getTags());
 		if (metaData instanceof GamlFileInfo) {
-			for (final String t : ((GamlFileInfo) metaData).getTags()) {
-				if (t.contains(tag)) { return true; }
-			}
+			for (final String t : ((GamlFileInfo) metaData).getTags()) { if (t.contains(tag)) return true; }
 		}
 		return false;
 	}
@@ -138,39 +136,28 @@ public class WrappedGamaFile extends WrappedFile {
 	@Override
 	public Object[] getFileChildren() {
 		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
-		if (metaData instanceof GamlFileInfo) {
-			final GamlFileInfo info = (GamlFileInfo) metaData;
+		if (metaData instanceof GamlFileInfo info) {
 			final List<VirtualContent<?>> l = new ArrayList<>();
 			final String path = getResource().getFullPath().toOSString();
 			final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
 			if (element != null) {
-				if (!GamlFileExtension.isExperiment(path)) {
-					l.add(new WrappedModelContent(this, element));
-				}
+				if (!GamlFileExtension.isExperiment(path)) { l.add(new WrappedModelContent(this, element)); }
 				element.visitExperiments(exp -> {
 					final IExpressionDescription d = exp.getExpressionAt(IKeyword.VIRTUAL);
-					if (d == null || !d.equalsString("true")) {
-						l.add(new WrappedExperimentContent(this, exp));
-					}
+					if (d == null || !d.equalsString("true")) { l.add(new WrappedExperimentContent(this, exp)); }
 				});
 			}
 			if (!info.getImports().isEmpty()) {
 				final Category wf = new Category(this, info.getImports(), "Imports");
-				if (wf.getNavigatorChildren().length > 0) {
-					l.add(wf);
-				}
+				if (wf.getNavigatorChildren().length > 0) { l.add(wf); }
 			}
 			if (!info.getUses().isEmpty()) {
 				final Category wf = new Category(this, info.getUses(), "Uses");
-				if (wf.getNavigatorChildren().length > 0) {
-					l.add(wf);
-				}
+				if (wf.getNavigatorChildren().length > 0) { l.add(wf); }
 			}
 			if (!info.getTags().isEmpty()) {
-				final Tags wf = new Tags(this, info.getTags(), "Tags");
-				if (wf.getNavigatorChildren().length > 0) {
-					l.add(wf);
-				}
+				final Tags wf = new Tags(this, StreamEx.of(info.getTags()).toMap(s -> null), "Tags", true);
+				if (wf.getNavigatorChildren().length > 0) { l.add(wf); }
 			}
 			return l.toArray();
 		}
@@ -180,15 +167,15 @@ public class WrappedGamaFile extends WrappedFile {
 	/**
 	 * Gets the URI problem.
 	 *
-	 * @param uri the uri
+	 * @param uri
+	 *            the uri
 	 * @return the URI problem
 	 */
 	public int getURIProblem(final URI uri) {
 
-		if (uri == null) { return -1; }
-		if (uriProblems == null) { return -1; }
+		if (uri == null || uriProblems == null) return -1;
 		final String fragment = uri.toString();
-		final int[] severity = new int[] { -1 };
+		final int[] severity = { -1 };
 		uriProblems.forEachPair((s, arg1) -> {
 			if (s.startsWith(fragment)) {
 				severity[0] = arg1;

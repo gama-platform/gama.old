@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WrappedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
+import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
@@ -39,21 +40,23 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	/** The file parent. */
 	WrappedFile fileParent;
-	
+
 	/** The is shape file. */
 	boolean isShapeFile;
-	
+
 	/** The is shape file support. */
 	boolean isShapeFileSupport;
-	
+
 	/** The image. */
 	Image image;
 
 	/**
 	 * Instantiates a new wrapped file.
 	 *
-	 * @param root the root
-	 * @param wrapped the wrapped
+	 * @param root
+	 *            the root
+	 * @param wrapped
+	 *            the wrapped
 	 */
 	public WrappedFile(final WrappedContainer<?> root, final IFile wrapped) {
 		super(root, wrapped);
@@ -128,11 +131,14 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile p = getResource();
 		try {
 			final IContainer folder = p.getParent();
-			final List<WrappedFile> sub = new ArrayList<>();
+			final List<VirtualContent> sub = new ArrayList<>();
 			for (final IResource r : folder.members()) {
-				if (r instanceof IFile && isSupport(p, (IFile) r)) {
-					sub.add((WrappedFile) getManager().findWrappedInstanceOf(r));
-				}
+				if (r instanceof IFile && isSupport(p, (IFile) r)) { sub.add(getManager().findWrappedInstanceOf(r)); }
+			}
+			final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
+			if (metaData instanceof ShapeInfo info && !info.getAttributes().isEmpty()) {
+				final Tags wf = new Tags(this, info.getAttributes(), "Attributes", false);
+				if (wf.getNavigatorChildren().length > 0) { sub.add(wf); }
 			}
 			return sub.toArray();
 		} catch (final CoreException e) {

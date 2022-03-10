@@ -1,20 +1,21 @@
 /*******************************************************************************************************
  *
- * Tags.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Tags.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
+import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -29,15 +30,20 @@ import ummisco.gama.ui.resources.IGamaColors;
 public class Tags extends VirtualContent<WrappedFile> {
 
 	/** The tags. */
-	final Collection<String> tags;
+	final Map<String, String> tags;
+
+	/** The search. */
+	final boolean search;
 
 	/**
 	 * @param root
 	 * @param name
 	 */
-	public Tags(final WrappedFile root, final Collection<String> object, final String name) {
+	public Tags(final WrappedFile root, final Map<String, String> object, final String name,
+			final boolean doubleClickForSearching) {
 		super(root, name);
 		tags = object;
+		search = doubleClickForSearching;
 	}
 
 	/**
@@ -50,14 +56,6 @@ public class Tags extends VirtualContent<WrappedFile> {
 		return !tags.isEmpty();
 	}
 
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getSmallFont(); // by default
-	// }
-
-	@Override
-	public WrappedFile getParent() { return super.getParent(); }
-
 	/**
 	 * Method getNavigatorChildren()
 	 *
@@ -66,7 +64,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	@Override
 	public Object[] getNavigatorChildren() {
 		if (tags.isEmpty()) return EMPTY;
-		return tags.stream().map(each -> new Tag(this, each)).toArray();
+		return StreamEx.ofKeys(tags).map(each -> new Tag(this, each, tags.get(each), search)).toArray();
 	}
 
 	/**

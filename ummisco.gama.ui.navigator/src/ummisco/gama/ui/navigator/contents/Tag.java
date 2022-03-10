@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Tag.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Tag.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -22,12 +22,20 @@ import org.eclipse.swt.graphics.Image;
  */
 public class Tag extends VirtualContent<Tags> {
 
+	/** The search. */
+	private final boolean search;
+
+	/** The suffix. */
+	private final String suffix;
+
 	/**
 	 * @param root
 	 * @param name
 	 */
-	public Tag(final Tags root, final String wrapped) {
+	public Tag(final Tags root, final String wrapped, final String suffix, final boolean search) {
 		super(root, wrapped);
+		this.search = search;
+		this.suffix = suffix;
 	}
 
 	/**
@@ -39,11 +47,6 @@ public class Tag extends VirtualContent<Tags> {
 	public boolean hasChildren() {
 		return false;
 	}
-
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getNavigLinkFont(); // by default
-	// }
 
 	/**
 	 * Method getNavigatorChildren()
@@ -61,16 +64,6 @@ public class Tag extends VirtualContent<Tags> {
 	@Override
 	public Image getImage() { return null; }
 
-	/**
-	 * Method getColor()
-	 *
-	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
-	 */
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-	// }
-
 	@Override
 	public boolean handleDoubleClick() {
 		return true;
@@ -83,7 +76,7 @@ public class Tag extends VirtualContent<Tags> {
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {
-		// sb.append(suffix);
+		if (suffix != null) { sb.append(suffix); }
 	}
 
 	@Override
