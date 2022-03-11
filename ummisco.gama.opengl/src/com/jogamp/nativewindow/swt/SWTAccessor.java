@@ -356,7 +356,6 @@ public class SWTAccessor {
 				_gtk_version = GTK_VERSION(field_OS_gtk_version.getInt(null));
 				m1 = cGTK.getDeclaredMethod(str_gtk_widget_realize, handleType);
 				if (_gtk_version.compareTo(GTK_VERSION_2_14_0) >= 0) {
-					m4 = cGTK.getDeclaredMethod(str_gtk_widget_get_window, handleType);
 					if (SWT.getVersion() < SWT_VERSION_4_21) {
 						m4 = cGTK.getDeclaredMethod(str_gtk_widget_get_window, handleType);
 					} else {
