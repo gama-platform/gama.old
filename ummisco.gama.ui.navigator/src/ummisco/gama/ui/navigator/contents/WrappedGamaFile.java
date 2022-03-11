@@ -156,7 +156,8 @@ public class WrappedGamaFile extends WrappedFile {
 				if (wf.getNavigatorChildren().length > 0) { l.add(wf); }
 			}
 			if (!info.getTags().isEmpty()) {
-				final Tags wf = new Tags(this, StreamEx.of(info.getTags()).toMap(s -> null), "Tags", true);
+				final Tags wf =
+						new Tags(this, StreamEx.of(info.getTags()).toMap(s -> "Double-click to search"), "Tags", true);
 				if (wf.getNavigatorChildren().length > 0) { l.add(wf); }
 			}
 			return l.toArray();
