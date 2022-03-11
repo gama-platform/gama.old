@@ -76,7 +76,6 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	 */
 	@Override
 	public void setNumberOfThreads(final int n) {
-		if (n == executor.getMaximumPoolSize()) return;
 		executor.setMaximumPoolSize(n);
 	}
 
