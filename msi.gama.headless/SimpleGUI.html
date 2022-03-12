@@ -198,53 +198,116 @@
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('<form name="publish"><table><tr><td>  Model:</td><td>  <input type="text" name="message"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" name="message"></td></tr>  <tr><td colspan=2>  <input type="button" onclick="addWidget()" value="Add">  <input type="submit" value="Load">  <input type="submit" value="Compile">  <input type="submit" value="Launch"></td></tr>  <tr><td colspan=2>  <input type="submit" value="Play">  <input type="submit" value="Pause">  <input type="submit" value="Close"></td></tr>  </table></form>');
+			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="run()">  <input type="button" value="Pause">  <input type="button" value="Stop"></td></tr>  </table><div id="errors"></div>');
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
-			$('#new_window_title').val("Display"); $('#new_window_content').val('<img id="image_out" style="width:480px"/>');
+
+
+			$('#new_window_title').val("Display"); $('#new_window_content').val('<img id="image_out"></img>');
 			create1();
 			$('#' + 'dialog_window_3').parent().css({ left: 400, top: 50 });
+
+
+
 			$('#new_window_title').val("Console"); $('#new_window_content').val('<textarea  rows="24" cols="36" id="console"></textarea>');
 			create1();
-			$('#' + 'dialog_window_4').parent().css({ left: 8, top: 250 });
+			$('#' + 'dialog_window_4').parent().css({ left: 8, top: 280 });
 
 			$('#new_window_title').val('');
 			$('#new_window_content').val('');
 		}
-		let socket = new WebSocket("ws://localhost:6868/launch");
+		var socket;
+		function connect() {
+			if (!socket) {
+				socket = new WebSocket("ws://localhost:6868/launch");
+				socket.addEventListener('open', (event) => {
+					$('#errors').text('Socket connected!');
+				});
 
-		socket.binaryType = 'arraybuffer';
+			}
+		}
+		function disconnect() {
+			$('#errors').text('Socket closed!');
+			if (socket) {
+				clearInterval(interval_id);
+
+				socket.close();
+				socket = null;
+			}
+		}
 		// send message from the form
-		document.forms.publish.onsubmit = function () {
+		var exp_compiled;
+		var exp_id = 0;
+		function compile() {
 			//setInterval(function(){ 
-			//  socket.send(""); }, 100);
-			let outgoingMessage = this.message.value;
+			//  socket.send(""); }, 100);  
+			if (socket && socket.readyState === 1) {
+				socket.binaryType = 'string';
+				socket.send("compile@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
+				socket.onmessage = function (event) {
+					exp_compiled = event.data;
+					console.log(exp_compiled);
+				}
+			} else { $('#errors').text("Socket is not ready!"); }
 
-			socket.send("run");
+			// message received - show the message in div#messages
+			return false;
+		};
+		var sk;
+		var interval_id;
+		// send message from the form
+		function run() {
+			//setInterval(function(){ 
+			//  socket.send(""); }, 100);  
+			if (socket && socket.readyState === 1) {
+				socket.binaryType = "arraybuffer";
+				// socket.send(exp_compiled);
+				socket.send("run@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
+				sk = new WebSocket("ws://localhost:6868/output");
+				sk.binaryType = "arraybuffer";
+				sk.addEventListener('open', (event) => {
+
+					interval_id = setInterval(
+						function () {
+							sk.send("output@" + exp_id + "@main_display");
+						}, 1000);
+				});
+				sk.onmessage = function (event) {
+					let message = event.data;
+					if (typeof event.data == "object") {
+						var bytes = new Uint8Array(event.data);
+						var data = "";
+						var len = bytes.byteLength;
+						for (var i = 0; i < len; ++i) {
+							data += String.fromCharCode(bytes[i]);
+						}
+						var img = document.getElementById("image_out");
+						img.src = "data:image/png;base64," + window.btoa(data);
+
+					}
+				}
+				socket.onmessage = function (event) {
+					let message = event.data;
+					// console.log(message);
+					// $('#console').append(message+"\n");//.scrollBottom();
+
+					if (typeof event.data == "object") {
+
+
+					} else {
+						if (message.startsWith("exp@")) {
+							exp_id = message.substring(4);
+						}
+						$('#console').append(message + "\n");
+					}
+				}
+			} else { $('#errors').text("Socket is not ready!"); }
+
+			// message received - show the message in div#messages
 			return false;
 		};
 
-		// message received - show the message in div#messages
-		socket.onmessage = function (event) {
-			let message = event.data;
-			//console.log(message);
-			// $('#console').append(message+"\n");//.scrollBottom();
 
-			if (typeof event.data == "object") {
-
-				var bytes = new Uint8Array(event.data);
-				var data = "";
-				var len = bytes.byteLength;
-				for (var i = 0; i < len; ++i) {
-					data += String.fromCharCode(bytes[i]);
-				}
-				var img = document.getElementById("image_out");
-				img.src = "data:image/png;base64," + window.btoa(data);
-
-			} else {
-				$('#console').append(message + "\n");
-			}
-		}
 
 
 	</script>
