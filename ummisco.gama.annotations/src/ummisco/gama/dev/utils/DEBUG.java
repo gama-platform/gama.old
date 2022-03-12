@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DEBUG.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DEBUG.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.dev.utils;
 
@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.lang.StackWalker;
 
 /**
  * A simple and generic debugging/logging class that can be turned on / off on a class basis.
@@ -449,8 +448,6 @@ public class DEBUG {
 	public static String METHOD() {
 		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
 		return frame == null ? "no calling method" : frame.getMethodName();
-		// return String.format("caller: %s#%s, %s", frame.getClassName(), frame.getMethodName(),
-		// frame.getLineNumber());
 	}
 
 	/**
@@ -461,8 +458,18 @@ public class DEBUG {
 	public static String CALLER() {
 		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
 		return frame == null ? "no one" : frame.getClassName();
-		// return String.format("caller: %s#%s, %s", frame.getClassName(), frame.getMethodName(),
-		// frame.getLineNumber());
+	}
+
+	/**
+	 * Stack.
+	 */
+	public static void STACK() {
+		LOG(PAD("--- Stack trace ", 80, '-'));
+		STACK_WALKER.walk(stream1 -> {
+			stream1.skip(2).forEach(s -> LOG("> " + s));
+			return null;
+		});
+		LINE();
 	}
 
 }
