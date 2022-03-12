@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AWTDisplayView.java, in ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AWTDisplayView.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.java2d;
 
@@ -45,6 +45,11 @@ public class AWTDisplayView extends LayeredDisplayView {
 	@Override
 	public void focusCanvas() {
 		WorkbenchHelper.asyncRun(() -> centralPanel.forceFocus());
+	}
+
+	@Override
+	protected boolean canBeSynchronized() {
+		return true;
 	}
 
 }

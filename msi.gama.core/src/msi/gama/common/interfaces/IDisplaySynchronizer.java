@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IDisplaySynchronizer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IDisplaySynchronizer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -20,7 +20,7 @@ package msi.gama.common.interfaces;
 public interface IDisplaySynchronizer {
 	/**
 	 * Allows any object calling this method to release the thread waiting for the scene to be rendered (called by the
-	 * rendering processes or when this surface is disposed)
+	 * rendering processes or when this surface is disposed). Nothing to do by default
 	 */
 	void signalRenderingIsFinished();
 
@@ -48,5 +48,13 @@ public interface IDisplaySynchronizer {
 	 * Signal surface is realized.
 	 */
 	void signalSurfaceIsRealized();
+
+	/**
+	 * Sets the surface.
+	 *
+	 * @param displaySurface
+	 *            the new surface
+	 */
+	void setSurface(IDisplaySurface displaySurface);
 
 }

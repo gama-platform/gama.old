@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FLAGS.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FLAGS.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.dev.utils;
 
@@ -63,16 +63,15 @@ public class FLAGS {
 
 	/**
 	 * For debugging purposes, see #3164. True by default until bugs on Linux regarding the use of multiple threads in
-	 * UI processes are solved.
+	 * UI processes are solved. Update 12/03/22: now false by default, tested on Ubuntu
 	 */
-	public static final boolean USE_OLD_ANIMATOR =
-			get("use_old_animator", true /* System.getProperty("os.name").contains("Linux") */);
+	// public static final boolean USE_OLD_ANIMATOR = get("use_old_animator", false);
 
 	/**
 	 * Used in LayeredDisplayView. True to use a combination of wait(), notify() and Thread.sleep() for synchronizing
 	 * displays with the simulation or false to use semaphores (reduces the time spent between frames). False by default
 	 */
-	public static final boolean USE_OLD_SYNC_STRATEGY = get("use_old_sync_strategy", false);
+	// public static final boolean USE_OLD_SYNC_STRATEGY = get("use_old_sync_strategy", false);
 
 	/**
 	 * Used in GamaPreferences, true to save the preferences in the global (managed by the JRE) preference store or
@@ -105,18 +104,17 @@ public class FLAGS {
 	public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
 
 	/**
-	 * Used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195. If true,
-	 * makes the workbench window resize its views asynchronously. True by default on macOS. Could prove useful also in
-	 * other environments, for instance in the presence of slow graphic cards/computers.
+	 * Originally used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195.
+	 * If true, makes the workbench window resize its views asynchronously. Could prove useful in all environments, for
+	 * instance in the presence of slow graphic cards/computers. False by default
 	 */
-	public static final boolean USE_DELAYED_RESIZE =
-			get("use_delayed_resize", System.getProperty("os.name").contains("Mac"));
+	public static final boolean USE_DELAYED_RESIZE = get("use_delayed_resize", false);
 
 	/**
 	 * Used in JOGL displays, esp. ummisco.gama.opengl.view.SWTOpenGLDisplaySurface to create a NEWT window instead of a
-	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.) but so are
-	 * incompatibilities.
+	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.), and only a
+	 * few glitches remain (esp. on macOS). True by defautl
 	 */
-	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", false);
+	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
 
 }

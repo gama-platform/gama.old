@@ -145,4 +145,9 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 		getOutput().getData().setCameraLocked(!getOutput().getData().isCameraLocked());
 	}
 
+	@Override
+	protected boolean canBeSynchronized() {
+		return getGLCanvas().getNEWTWindow().isVisible();
+	}
+
 }

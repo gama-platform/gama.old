@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * SWTLayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SWTLayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
@@ -34,7 +33,6 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The listener interface for receiving SWTLayeredDisplayMulti events. The class that is interested in processing a
@@ -78,12 +76,12 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 			if (!viewOk) return false;
 			final boolean controlOk = control != null && !control.isDisposed();
 			if (!controlOk) return false;
-			final boolean surfaceOk = surface != null && !surface.isDisposed();
-			if (!control.isFocusControl()) { control.forceFocus(); }
-			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
-				WorkbenchHelper.getPage().activate(deco.view);
-			}
-			return surfaceOk;
+			// Removed to prevent views from stealing the focus w/o control
+			// if (!control.isFocusControl()) { control.forceFocus(); }
+			// if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
+			// WorkbenchHelper.getPage().activate(deco.view);
+			// }
+			return surface != null && !surface.isDisposed();
 		};
 
 		control.addKeyListener(this);
@@ -113,14 +111,14 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void keyPressed(final KeyEvent e) {
 		if (!ok.get()) return;
-		//DEBUG.OUT("Key pressed " + e);
+		// DEBUG.OUT("Key pressed " + e);
 		delegate.keyPressed(e.character);
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		if (!ok.get()) return;
-		//DEBUG.OUT("Key released " + e);
+		// DEBUG.OUT("Key released " + e);
 		delegate.keyReleased(e.keyCode, GamaKeyBindings.ctrl(e));
 	}
 
@@ -150,7 +148,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void mouseMove(final MouseEvent e) {
 		if (!ok.get()) return;
-		//DEBUG.OUT("Mouse move " + e);
+		// DEBUG.OUT("Mouse move " + e);
 		delegate.mouseMove(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
@@ -162,14 +160,14 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void mouseDown(final MouseEvent e) {
 		if (!ok.get()) return;
-		//DEBUG.OUT("Mouse down " + e);
+		// DEBUG.OUT("Mouse down " + e);
 		delegate.mouseDown(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
 	@Override
 	public void mouseUp(final MouseEvent e) {
 		if (!ok.get()) return;
-		//DEBUG.OUT("Mouse up " + e);
+		// DEBUG.OUT("Mouse up " + e);
 		delegate.mouseUp(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 

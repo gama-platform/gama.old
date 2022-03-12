@@ -1,17 +1,20 @@
 /*******************************************************************************************************
  *
- * SwingControl.java, in ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SwingControl.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JApplet;
 import javax.swing.LayoutFocusTraversalPolicy;
@@ -89,14 +92,35 @@ public abstract class SwingControl extends Composite {
 			// WorkbenchHelper.runInUI("Opening Java2D display", 400, m -> {
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
-				// EventQueue.invokeLater(() -> {
+
+				frame.setAlwaysOnTop(false);
+				frame.setAutoRequestFocus(false);
+				// frame.setFocusable(false);
+				// frame.setFocusableWindowState(false);
 				applet = new JApplet();
+				// applet.setFocusable(false);
 				if (PlatformHelper.isWindows()) { applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()); }
 				final Java2DDisplaySurface surface = createSwingComponent();
 				applet.getRootPane().getContentPane().add(surface);
 				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
-				// });
+				if (PlatformHelper.isMac()) {
+					MouseListener ml = new MouseAdapter() {
+
+						@Override
+						public void mouseExited(final MouseEvent e) {
+							if (surface.isFocusOwner() && !surface.contains(e.getPoint())) {
+								frame.setVisible(false);
+								frame.setVisible(true);
+								WorkbenchHelper.asyncRun(() -> getShell().forceActive());
+							}
+
+						}
+
+					};
+					applet.addMouseListener(ml);
+					surface.addMouseListener(ml);
+				}
 			});
 			// SwingControl.this.getParent().layout(true, true);
 

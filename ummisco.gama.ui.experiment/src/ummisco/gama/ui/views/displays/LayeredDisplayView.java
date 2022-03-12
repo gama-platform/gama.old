@@ -32,6 +32,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
@@ -74,7 +75,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public LayeredDisplayDecorator decorator;
 
 	/** The synchronizer. */
-	public final LayeredDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
+	public final IDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
+	// FLAGS.USE_OLD_SYNC_STRATEGY?new LayeredDisplayLegacySynchronizer():new LayeredDisplayNewSynchronizer();
 
 	/** The disposed. */
 	public volatile boolean disposed = false;
@@ -395,8 +397,18 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			updateThread.start();
 		}
 		synchronizer.authorizeViewUpdate();
-		if (!inInitPhase && out.isSynchronized()) { synchronizer.waitForRenderingToBeFinished(); }
+		if (!inInitPhase && out.isSynchronized() && canBeSynchronized()) {
+			synchronizer.waitForRenderingToBeFinished();
+		}
 	}
+
+	/**
+	 * Can be synchronized. Returns true if this can be synchronized: for instance, on macOS, hiding an OpenGL view will
+	 * prevent it from rendering, and the simulation should not wait for this invisible visualisation.
+	 *
+	 * @return true, if successful
+	 */
+	protected abstract boolean canBeSynchronized();
 
 	@Override
 	public boolean zoomWhenScrolling() {

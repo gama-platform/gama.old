@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExpandableItemsView.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExpandableItemsView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -242,7 +242,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 
 	@Override
 	public void setFocus() {
-		if (viewer != null) { viewer.setFocus(); }
+		if (viewer != null && viewer.isVisible()) { viewer.setFocus(); }
 	}
 
 	@Override

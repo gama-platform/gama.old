@@ -29,9 +29,11 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -114,8 +116,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	LayeredDisplayDecorator(final LayeredDisplayView view) {
 		this.view = view;
 		createCommands();
-		// final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-		// ps.addPartListener(overlayListener);
+		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+		ps.addPartListener(overlayListener);
 
 	}
 
@@ -163,9 +165,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-
 			if (ok(partRef)) {
 				DEBUG.OUT("Part Activated:" + partRef.getTitle());
+				DEBUG.STACK();
 				WorkbenchHelper.asyncRun(() -> {
 					if (overlay != null) { overlay.display(); }
 					view.showCanvas();
@@ -180,21 +182,24 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 		@Override
 		public void partDeactivated(final IWorkbenchPartReference partRef) {
-
-			if (ok(partRef) && !view.surfaceComposite.isVisible()) {
-				DEBUG.OUT("Part Deactivated:" + partRef.getTitle());
-				WorkbenchHelper.asyncRun(() -> {
-					if (overlay != null) { overlay.hide(); }
-					view.hideCanvas();
-				});
-			}
+			// On macOS, this event is wrongly sent when tabs are not displayed for the views and another display is
+			// selected
+			// if (PlatformHelper.isMac() && !PerspectiveHelper.keepTabs()) return;
+			// if (ok(partRef)) {
+			// DEBUG.OUT("Part Deactivated:" + partRef.getTitle());
+			// WorkbenchHelper.asyncRun(() -> {
+			// if (overlay != null) { overlay.hide(); }
+			// view.hideCanvas();
+			// });
+			// }
 		}
 
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
-			// This event is wrongly sent when tabs are not displayed for the views
-
-			if (ok(partRef) && !view.surfaceComposite.isVisible()) {
+			// On macOS, this event is wrongly sent when tabs are not displayed for the views and another display is
+			// selected
+			if (PlatformHelper.isMac() && !PerspectiveHelper.keepTabs()) return;
+			if (ok(partRef)) {
 				DEBUG.OUT("Part hidden:" + partRef.getTitle());
 				WorkbenchHelper.asyncRun(() -> {
 					if (overlay != null) { overlay.hide(); }
@@ -205,7 +210,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 		@Override
 		public void partVisible(final IWorkbenchPartReference partRef) {
-
 			if (ok(partRef)) {
 				DEBUG.OUT("Part Visible:" + partRef.getTitle());
 				WorkbenchHelper.asyncRun(() -> {
@@ -582,8 +586,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		// FIXME Remove the listeners
 		try {
 			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
-			// final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-			// if (ps != null) { ps.removePartListener(overlayListener); }
+			final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			if (ps != null) { ps.removePartListener(overlayListener); }
 		} catch (final Exception e) {
 
 		}
