@@ -358,6 +358,11 @@ public class ExperimentJob implements IExperimentJob {
 		this.experimentID = experimentID;
 	}
 
+	
+	public ListenedVariable[] getListenedVariables() {
+		return listenedVariables;
+	}
+	
 	/**
 	 * Export variables.
 	 */

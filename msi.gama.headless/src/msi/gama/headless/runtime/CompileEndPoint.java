@@ -1,12 +1,8 @@
 package msi.gama.headless.runtime;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
 
 import org.java_websocket.WebSocket;
-
-import msi.gama.headless.core.GamaHeadlessException;
 
 public class CompileEndPoint implements Endpoint{
 
@@ -18,6 +14,12 @@ public class CompileEndPoint implements Endpoint{
 	@Override
 	public void onMessage(GamaWebSocketServer server, WebSocket socket, String message) {
 		socket.send(message);
+		
+	}
+
+	@Override
+	public void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer message) {
+		// TODO Auto-generated method stub
 		
 	}
 	

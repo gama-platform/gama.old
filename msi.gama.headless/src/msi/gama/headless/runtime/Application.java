@@ -366,7 +366,7 @@ public class Application implements IApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			createSocketServer();
+			GamaWebSocketServer.newInstance(this.socket, this);
 		} else {
 			runSimulation(args);
 		}
@@ -632,32 +632,4 @@ public class Application implements IApplication {
 		System.exit(0);
 	}
 
-	/**
-	 * Creates the socket server.
-	 *
-	 * @throws UnknownHostException
-	 *             the unknown host exception
-	 */
-	public void createSocketServer() throws UnknownHostException {
-		socketServer = new GamaWebSocketServer(this.socket, this);
-		socketServer.endpoints.put("/compile", new CompileEndPoint());
-		socketServer.endpoints.put("/launch", new LaunchEndPoint());
-		socketServer.start();
-		System.out.println("ChatServer started on port: " + socketServer.getPort());
-		System.setOut(new WebSocketPrintStream(System.out, socketServer));
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-		try {
-
-			while (true) {
-				String in = sysin.readLine();
-				socketServer.broadcast(in);
-				if ("exit".equals(in)) {
-					socketServer.stop(1000);
-					break;
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
 }

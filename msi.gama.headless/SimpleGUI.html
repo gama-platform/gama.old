@@ -253,7 +253,6 @@
 			// message received - show the message in div#messages
 			return false;
 		};
-		var sk;
 		var interval_id;
 		// send message from the form
 		function run() {
@@ -263,7 +262,7 @@
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
 				socket.send("run@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
-				sk = new WebSocket("ws://localhost:6868/output");
+				var sk = new WebSocket("ws://localhost:6868/output");
 				sk.binaryType = "arraybuffer";
 				sk.addEventListener('open', (event) => {
 

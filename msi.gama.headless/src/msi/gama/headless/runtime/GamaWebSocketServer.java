@@ -24,27 +24,16 @@ package msi.gama.headless.runtime;
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -52,15 +41,18 @@ import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.runtime.LocalSimulationRuntime.ExperimentJobThread;
 
 /**
  * A simple WebSocketServer implementation. Keeps track of a "chatroom".
  */
 interface Endpoint {
 	void onOpen(WebSocket socket);
+
 	void onMessage(GamaWebSocketServer server, WebSocket socket, String message);
-	// add other event handlers here
+
+	void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer message);
 }
 
 public class GamaWebSocketServer extends WebSocketServer {
@@ -68,42 +60,73 @@ public class GamaWebSocketServer extends WebSocketServer {
 	Map<WebSocket, Endpoint> saved_endpoints = Collections.synchronizedMap(new HashMap<>());
 
 	private Application app;
+	/** The instance. */
+	private static GamaWebSocketServer instance;
+	/** The simulations. */
+	final Map<String, ExperimentJob> simulations = new HashMap<>();
+	private static WebSocketPrintStream bufferStream;
 
-	public GamaWebSocketServer(int port, Application ap) throws UnknownHostException {
+	public GamaWebSocketServer(int port, Application a) {
 		super(new InetSocketAddress(port));
-		app = ap;
+		app = a;
 	}
+
 	public Application getDefaultApp() {
 		return app;
 	}
-	public GamaWebSocketServer(InetSocketAddress address) {
-		super(address);
+
+	/**
+	 * Gets the single instance of GamaWebSocketServer.
+	 *
+	 * @return single instance of GamaWebSocketServer
+	 */
+	public static GamaWebSocketServer newInstance(final int p, final Application a) {
+		if (instance == null) {
+			createSocketServer(p, a);
+		}
+		return instance;
 	}
 
-	public GamaWebSocketServer(int port, Draft_6455 draft) {
-		super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
+	/**
+	 * Creates the socket server.
+	 *
+	 * @throws UnknownHostException the unknown host exception
+	 */
+	public static void createSocketServer(final int port, final Application a) {
+		instance = new GamaWebSocketServer(port, a);
+		instance.endpoints.put("/compile", new CompileEndPoint());
+		instance.endpoints.put("/launch", new LaunchEndPoint());
+		instance.endpoints.put("/output", new OutputEndPoint());
+		instance.start();
+		System.out.println("ChatServer started on port: " + instance.getPort());
+		bufferStream = new WebSocketPrintStream(System.out, instance);
+//		System.setOut(bufferStream);
+		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+		try {
+
+			while (true) {
+				String in = sysin.readLine();
+				instance.broadcast(in);
+				if ("exit".equals(in)) {
+					instance.stop(1000);
+					break;
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		conn.send("Welcome " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the server!"); // This
-																													// method
-																													// sends
-																													// a
-																													// message
-																													// to
-																													// the
-																													// new
-																													// client
+		conn.send("Welcome " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the server!");
 		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
 																			// connected
 		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		
-		
 
 		String path = URI.create(handshake.getResourceDescriptor()).getPath();
 		Endpoint endpoint = endpoints.get(path);
-		if(endpoint != null) {
+		if (endpoint != null) {
 			saved_endpoints.put(conn, endpoint);
 			endpoint.onOpen(conn);
 		}
@@ -117,34 +140,14 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-		saved_endpoints.get(conn).onMessage(this,conn,message);
+		saved_endpoints.get(conn).onMessage(this, conn, message);
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
-		broadcast(message.array());
-		System.out.println(conn + ": " + message);
-	}
-
-	public static void main(String[] args) throws InterruptedException, IOException {
-		int port = 8887; // 843 flash policy port
-		try {
-			port = Integer.parseInt(args[0]);
-		} catch (Exception ex) {
-		}
-		GamaWebSocketServer s = new GamaWebSocketServer(new InetSocketAddress(port));
-		s.start();
-		System.out.println("ChatServer started on port: " + s.getPort());
-
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-		while (true) {
-			String in = sysin.readLine();
-			s.broadcast(in);
-			if (in.equals("exit")) {
-				s.stop(1000);
-				break;
-			}
-		}
+		saved_endpoints.get(conn).onMessage(this, conn, message);
+//		broadcast(message.array());
+//		System.out.println(conn + ": " + message);
 	}
 
 	@Override
@@ -159,8 +162,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 	@Override
 	public void onStart() {
 		System.out.println("Server started!");
-		setConnectionLostTimeout(0);
-		setConnectionLostTimeout(100);
+//		setConnectionLostTimeout(0);
+//		setConnectionLostTimeout(100);
 	}
 
 }
