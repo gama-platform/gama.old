@@ -197,9 +197,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
 			// On macOS, this event is wrongly sent when tabs are not displayed for the views and another display is
-			// selected
-			// The same happens on Linux
-			if ((PlatformHelper.isMac() || PlatformHelper.isLinux())&& !PerspectiveHelper.keepTabs()) return;
+			// selected. After tests, the same happens on Linux and Windows -- so the test is generalized.
+			if (/* (PlatformHelper.isMac() || PlatformHelper.isLinux()) && */ !PerspectiveHelper.keepTabs()) return;
 			if (ok(partRef)) {
 				DEBUG.OUT("Part hidden:" + partRef.getTitle());
 				WorkbenchHelper.asyncRun(() -> {
