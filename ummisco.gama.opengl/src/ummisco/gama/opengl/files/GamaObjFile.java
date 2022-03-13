@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaObjFile.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaObjFile.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.files;
 
@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -58,50 +59,50 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	/** The set of vertex. */
 	public final ArrayList<double[]> setOfVertex = new ArrayList<>();
-	
+
 	/** The set of vertex normals. */
 	private final ArrayList<double[]> setOfVertexNormals = new ArrayList<>();
-	
+
 	/** The set of vertex textures. */
 	private final ArrayList<double[]> setOfVertexTextures = new ArrayList<>();
-	
+
 	/** The faces. */
 	private final ArrayList<int[]> faces = new ArrayList<>();
-	
+
 	/** The faces texs. */
 	private final ArrayList<int[]> facesTexs = new ArrayList<>();
-	
+
 	/** The faces norms. */
 	private final ArrayList<int[]> facesNorms = new ArrayList<>();
-	
+
 	/** The mat timings. */
 	private final ArrayList<String[]> matTimings = new ArrayList<>();
-	
+
 	/** The materials. */
 	private MtlLoader materials;
 	// private int objectList;
 	/** The toppoint. */
 	// private int numPolys = 0;
 	public double toppoint = 0f;
-	
+
 	/** The bottompoint. */
 	public double bottompoint = 0f;
-	
+
 	/** The leftpoint. */
 	public double leftpoint = 0f;
-	
+
 	/** The rightpoint. */
 	public double rightpoint = 0f;
-	
+
 	/** The farpoint. */
 	public double farpoint = 0f;
-	
+
 	/** The nearpoint. */
 	public double nearpoint = 0f;
-	
+
 	/** The mtl path. */
 	private final String mtlPath;
-	
+
 	/** The loaded. */
 	boolean loaded = false;
 
@@ -123,10 +124,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Instantiates a new gama obj file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param initRotation the init rotation
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param initRotation
+	 *            the init rotation
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@doc (
 			value = "This file constructor allows to read an obj file and apply an init rotation to it. The rotation"
@@ -143,9 +148,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Instantiates a new gama obj file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param mtlPath the mtl path
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param mtlPath
+	 *            the mtl path
 	 */
 	@doc (
 			value = "This file constructor allows to read an obj file, using a specific mlt file",
@@ -159,10 +167,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Instantiates a new gama obj file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param mtlPath the mtl path
-	 * @param initRotation the init rotation
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param mtlPath
+	 *            the mtl path
+	 * @param initRotation
+	 *            the init rotation
 	 */
 	@doc (
 			value = "This file constructor allows to read an obj file, using a specific mlt file, and apply an init rotation to it. The rotation"
@@ -202,8 +214,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Load object.
 	 *
-	 * @param scope the scope
-	 * @param forDrawing the for drawing
+	 * @param scope
+	 *            the scope
+	 * @param forDrawing
+	 *            the for drawing
 	 */
 	public void loadObject(final IScope scope, final boolean forDrawing) {
 
@@ -220,11 +234,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Load object.
 	 *
-	 * @param br the br
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @param br
+	 *            the br
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public void loadObject(final BufferedReader br) throws IOException {
-		if (loaded) { return; }
+		if (loaded) return;
 		int facecounter = 0;
 		boolean firstpass = true;
 		String newline;
@@ -234,12 +250,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 				// LOADS VERTEX COORDINATES
 				if (newline.startsWith("v ")) {
-					newline = newline.substring(2, newline.length());
+					newline = newline.substring(2);
 					final StringTokenizer st = new StringTokenizer(newline, " ");
 					final double coords[] = new double[st.countTokens()];
-					for (int i = 0; st.hasMoreTokens(); i++) {
-						coords[i] = Double.parseDouble(st.nextToken());
-					}
+					for (int i = 0; st.hasMoreTokens(); i++) { coords[i] = Double.parseDouble(st.nextToken()); }
 
 					if (firstpass) {
 						rightpoint = coords[0];
@@ -250,24 +264,12 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						farpoint = coords[2];
 						firstpass = false;
 					}
-					if (coords[0] > rightpoint) {
-						rightpoint = coords[0];
-					}
-					if (coords[0] < leftpoint) {
-						leftpoint = coords[0];
-					}
-					if (coords[1] > toppoint) {
-						toppoint = coords[1];
-					}
-					if (coords[1] < bottompoint) {
-						bottompoint = coords[1];
-					}
-					if (coords[2] > nearpoint) {
-						nearpoint = coords[2];
-					}
-					if (coords[2] < farpoint) {
-						farpoint = coords[2];
-					}
+					if (coords[0] > rightpoint) { rightpoint = coords[0]; }
+					if (coords[0] < leftpoint) { leftpoint = coords[0]; }
+					if (coords[1] > toppoint) { toppoint = coords[1]; }
+					if (coords[1] < bottompoint) { bottompoint = coords[1]; }
+					if (coords[2] > nearpoint) { nearpoint = coords[2]; }
+					if (coords[2] < farpoint) { farpoint = coords[2]; }
 					setOfVertex.add(coords);
 				} else
 
@@ -275,11 +277,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				if (newline.startsWith("vt")) {
 					final double coords[] = new double[4];
 					// final String coordstext[] = new String[4];
-					newline = newline.substring(3, newline.length());
+					newline = newline.substring(3);
 					final StringTokenizer st = new StringTokenizer(newline, " ");
-					for (int i = 0; st.hasMoreTokens(); i++) {
-						coords[i] = Double.parseDouble(st.nextToken());
-					}
+					for (int i = 0; st.hasMoreTokens(); i++) { coords[i] = Double.parseDouble(st.nextToken()); }
 
 					setOfVertexTextures.add(coords);
 				} else
@@ -288,19 +288,15 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				if (newline.startsWith("vn")) {
 					final double coords[] = new double[4];
 					// final String coordstext[] = new String[4];
-					newline = newline.substring(3, newline.length());
+					newline = newline.substring(3);
 					final StringTokenizer st = new StringTokenizer(newline, " ");
-					for (int i = 0; st.hasMoreTokens(); i++) {
-						coords[i] = Double.parseDouble(st.nextToken());
-					}
-
+					for (int i = 0; st.hasMoreTokens(); i++) { coords[i] = Double.parseDouble(st.nextToken()); }
 					setOfVertexNormals.add(coords);
 				} else
-
 				// LOADS FACES COORDINATES
 				if (newline.startsWith("f ")) {
 					facecounter++;
-					newline = newline.substring(2, newline.length());
+					newline = newline.substring(2);
 					final StringTokenizer st = new StringTokenizer(newline, " ");
 					final int count = st.countTokens();
 					final int v[] = new int[count];
@@ -308,12 +304,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					final int vn[] = new int[count];
 					for (int i = 0; i < count; i++) {
 						final char chars[] = st.nextToken().toCharArray();
-						final StringBuffer sb = new StringBuffer();
+						final StringBuilder sb = new StringBuilder();
 						char lc = 'x';
 						for (final char c : chars) {
-							if (c == '/' && lc == '/') {
-								sb.append('0');
-							}
+							if (c == '/' && lc == '/') { sb.append('0'); }
 							lc = c;
 							sb.append(lc);
 						}
@@ -343,9 +337,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						&& newline.charAt(3) == 'l' && newline.charAt(4) == 'i' && newline.charAt(5) == 'b') {
 					// String[] coordstext = new String[3];
 					// coordstext = newline.split("\\s+");
-					if (mtlPath != null) {
-						loadMaterials();
-					}
+					if (mtlPath != null) { loadMaterials(); }
 				} else
 
 				// USES MATERIALS
@@ -448,22 +440,20 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				final String mapd = materials.getMapd(nextmatname);
 				if (mapKa != null || mapKd != null || mapd != null) {
 					File f = new File(mtlPath);
-					String path = f.getAbsolutePath().replace(f.getName(), "");
+					StringBuilder path = new StringBuilder().append(f.getAbsolutePath().replace(f.getName(), ""));
 					if (mapd != null) {
-						path += mapd;
+						path.append(mapd);
 					} else if (mapKa != null) {
-						path += mapKa;
-					} else if (mapKd != null) {
-						path += mapKd;
-					}
-					f = new File(path);
+						path.append(mapKa);
+					} else if (mapKd != null) { path.append(mapKd); }
+					f = new File(path.toString());
 					if (f.exists()) {
 						// Solves Issue #1951. Asynchronous loading of textures
 						// was not possible when displaying the file
 						texture = gl.getTexture(f, false, true);
 						gl.setCurrentTextures(texture.getTextureObject(), texture.getTextureObject());
-						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
-						texture.setTexParameteri(gl.getGL(), GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 					}
 
 				}
@@ -481,7 +471,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 			//// Quad Begin Header ////
 			final int polytype =
-					tempfaces.length == 3 ? GL.GL_TRIANGLES : tempfaces.length == 4 ? GL2.GL_QUADS : GL2.GL_POLYGON;
+					tempfaces.length == 3 ? GL.GL_TRIANGLES : tempfaces.length == 4 ? GL2ES3.GL_QUADS : GL2.GL_POLYGON;
 			gl.beginDrawing(polytype);
 			////////////////////////////
 
@@ -496,21 +486,15 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			final double[] arrayOfVertices = new double[tempfaces.length * 3];
 			for (int w = 0; w < tempfaces.length; w++) {
 				final double[] ordinates = setOfVertex.get(tempfaces[w] - 1);
-				for (int k = 0; k < 3; k++) {
-					arrayOfVertices[w * 3 + k] = ordinates[k];
-				}
+				for (int k = 0; k < 3; k++) { arrayOfVertices[w * 3 + k] = ordinates[k]; }
 			}
 			final ICoordinates coords = ICoordinates.ofLength(tempfaces.length + 1);
 			coords.setTo(arrayOfVertices);
 			coords.completeRing();
 
-			if (!hasNormals) {
-				gl.setNormal(coords, !coords.isClockwise());
-			}
+			if (!hasNormals) { gl.setNormal(coords, !coords.isClockwise()); }
 			for (int w = 0; w < tempfaces.length; w++) {
-				if (tempfaces[w] == 0) {
-					continue;
-				}
+				if (tempfaces[w] == 0) { continue; }
 				final boolean hasNormal = norms[w] != 0;
 				final boolean hasTex = texs[w] != 0;
 				if (hasNormal) {
@@ -537,6 +521,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 		if (texture != null) {
 			gl.disableTextures();
+			texture.destroy(gl.getGL());
 			texture = null;
 		}
 		// gl.glEndList();

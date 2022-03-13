@@ -464,6 +464,7 @@ public class DEBUG {
 	 * Stack.
 	 */
 	public static void STACK() {
+		if (!ENABLE_LOGGING || !IS_ON(findCallingClassName())) return;
 		LOG(PAD("--- Stack trace ", 80, '-'));
 		STACK_WALKER.walk(stream1 -> {
 			stream1.skip(2).forEach(s -> LOG("> " + s));
