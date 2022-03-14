@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FIPASkill.java, in msi.gaml.extensions.fipa, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FIPASkill.java, in msi.gaml.extensions.fipa, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.extensions.fipa;
 
@@ -514,7 +514,9 @@ public class FIPASkill extends MessagingSkill {
 							type = IType.LIST,
 							optional = false,
 							doc = @doc ("The content of the replying message")) },
-			doc = @doc ("Reply a message with an 'end_conversation' peprformative message. This message marks the end of a conversation. In a 'no-protocol' conversation, it is the responsible of the modeler to explicitly send this message to mark the end of a conversation/interaction protocol."))
+			doc = @doc ("Reply a message with an 'end_conversation' peprformative message. This message marks the end of a conversation. "
+					+ "In a 'no-protocol' conversation, it is the responsible of the modeler to explicitly send this message to mark the end of a conversation/interaction protocol. "
+					+ "Please note that if the contents of the messages of the conversation are not read, then this command has no effect (i.e. it  must be read by at least one of the agents in the conversation)"))
 	public Object primEndConversation(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if (originals == null || originals.size() == 0) throw GamaRuntimeException.error("No message to reply", scope);
