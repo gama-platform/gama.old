@@ -12,11 +12,15 @@ staleLabel: "🤖 Slate"
 #exemptLabels:
 #  - pinned
 #  - security
-# Only issues/PRs with ALL these labels are checked
-only-labels: "👍 Fix to be tested"
+# Only issues/PRs with ANY of these labels are checked
+any-labels: 
+  - "👍 Fix to be tested"
+# Order to get issues/PRs
+ascending: true
 # Remove stale label from issues on updates/comments
 remove-issue-stale-when-updated: true
 # Remove stale label from PRs on updates/comments
 remove-pr-stale-when-updated: true
 # Dry-run
+operations-per-run: 0
 debug-only: true
