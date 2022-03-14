@@ -10,15 +10,11 @@ model BuildingHeatmap
 import "3D Visualization/models/Building Elevation.gaml"
 
 global {
-	int size <- 300;
+	int size <- 400;
 	field heatmap <- field(size, size);
 	reflex update {
 		ask people {
-			loop i from: -(size/100) to: size/100 step: 2 {
-				loop j from:  -(size/100) to: size/100 step: 2 {
-					heatmap[location + {i, j}] <- heatmap[location + {i, j}] + 5 / (abs(i) + 1);
-				}
-			}
+			heatmap[location] <- heatmap[location] + 10;
 		}
 	}
 }
@@ -27,10 +23,10 @@ experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
 		display HeatmapPalette type: opengl axes: false background: #black {
-			// The field is displayed  without 3D rendering, a palettre of cold to warm colors and a smoothness of 4 (meaning three passes of box blur are being done to "spread" the values)
-			mesh heatmap scale: 0 color: palette([ #black, #cyan, #yellow, #yellow, #red, #red, #red]) smooth: 4 ;
+			// The field is displayed  without 3D rendering, a palettre of warm colors and a smoothness of 3 (meaning three passes of box blur are being done to "spread" the values)
+			mesh heatmap scale: 0 color: palette([ #black, #yellow, #yellow, #orange, #orange, #red, #red]) smooth: 3 ;
 		}
-		display HeatmapGradient type: opengl axes: false background: #black {
+		display HeatmapGradient type: opengl axes: false background: #black camera: #from_up_front {
 			species building refresh: false {
 				draw shape border: #white wireframe: true width: 3;
 			}
@@ -42,9 +38,9 @@ experiment "Show heatmap" type: gui {
 			species people {
 				draw circle(1) color: #white at: {location.x, location.y};
 			}
-			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 2 (meaning three passes of box blur are being done to "spread" the values). The colors are provided by a gradient with three stops
-			mesh heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.1, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth: 2 ;
-		}
+			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 1 (meaning one passe of box blur are being done to "spread" the values). The colors are provided by a gradient with three stops
+			mesh heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.1, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth: 1 ;
+		 }
 		
 
 	}

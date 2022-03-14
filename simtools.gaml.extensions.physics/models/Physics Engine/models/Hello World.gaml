@@ -11,8 +11,8 @@ model FallingHelloWorld
 
 
 global parent: physical_world {
-	float restitution <- 0.0; // the "bounciness" of the world
-	float friction <- 0.5; // the deceleration it imposes on other objects
+	float restitution <- 0.8; // the "bounciness" of the world
+	float friction <- 0.2; // the deceleration it imposes on other objects
 	int environment_size <- 500; 
 	int max_substeps <-0;
 	float step <- 0.006; 

@@ -15,7 +15,7 @@ global {
 	// Initialize the emiter cell as the cell at the center of the word
 	reflex new_Value {
 		
-		cells[any_point_in(circle(25))] <- (40);
+		cells[any_point_in(circle(25))] <- (100);
 	}
 	reflex diff {
 		// Declare a diffusion on the grid "cells", with a uniform matrix of diffusion. 
@@ -25,8 +25,8 @@ global {
 
 experiment diffusion type: gui {
 	output {
-		display uniform_diffusion_in_8_neighbors_grid type: opengl synchronized: true {
-			mesh cells color: #green triangulation: true scale: 1  ;
+		display uniform_diffusion_in_8_neighbors_grid type: opengl synchronized: true camera:#from_up_front axes: false {
+			mesh cells color: #green triangulation: true scale: 1 smooth: true ;
 		}
 	}
 }
