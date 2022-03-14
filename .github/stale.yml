@@ -3,7 +3,7 @@
 # Full configuration documentation : https://github.com/actions/stale#all-options
 # =======================
 # Number of days of inactivity before an issue becomes stale
-daysUntilStale: 60
+daysUntilStale: 0
 # Number of days of inactivity before a stale issue is closed
 daysUntilClose: 7
 # Label to use when marking an issue as stale
@@ -18,3 +18,5 @@ only-labels: "👍 Fix to be tested"
 remove-issue-stale-when-updated: true
 # Remove stale label from PRs on updates/comments
 remove-pr-stale-when-updated: true
+# Dry-run
+debug-only: false
