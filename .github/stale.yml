@@ -19,4 +19,4 @@ remove-issue-stale-when-updated: true
 # Remove stale label from PRs on updates/comments
 remove-pr-stale-when-updated: true
 # Dry-run
-debug-only: false
+debug-only: true
