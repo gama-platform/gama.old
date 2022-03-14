@@ -57,6 +57,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -610,7 +611,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				final GeoTiffReader store = new GeoTiffReader(getFile(scope));
 				return store.getCoordinateReferenceSystem();
 			} catch (final DataSourceException e) {
-				e.printStackTrace();
+				GAMA.reportError(scope, GamaRuntimeException.warning("Problem when reading the CRS of the " + this.getOriginalPath() +" file", scope), false);
 			}
 		}
 
