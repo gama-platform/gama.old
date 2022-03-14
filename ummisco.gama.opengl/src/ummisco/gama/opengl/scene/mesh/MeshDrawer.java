@@ -119,7 +119,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
-		// layerAlpha = gl.getCurrentObjectAlpha();
 	}
 
 	@Override
@@ -134,9 +133,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	@Override
 	protected void _draw(final MeshObject object) {
-
 		var attributes = object.getAttributes();
-
 		var minMax = object.getObject().getMinMax(null);
 		max = minMax[1];
 		min = minMax[0];
@@ -444,7 +441,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/**
-	 * Smooth.
+	 * Smooth. If we have a complete field (i.e. no "no data" cells) we opt for the super-fast gaussian blur. If not we
+	 * go back to the slow, but robust, 3x3 convolution
 	 *
 	 * @param data
 	 *            the data
@@ -453,9 +451,22 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * @return the double[]
 	 */
 	double[] smooth(final double[] data, final int passes) {
-		if (passes == 0) return data;
+		return passes == 0 || data == null ? data : noData == IField.NO_NO_DATA ? efficientGaussianBlur(data, passes)
+				: convolution(data, passes);
+	}
+
+	/**
+	 * Convolution. Slow, but can take into account the noData value
+	 *
+	 * @param data
+	 *            the data
+	 * @param passes
+	 *            the passes
+	 * @return the double[]
+	 */
+	private double[] convolution(final double[] data, final int passes) {
 		var input = data;
-		var output = data.clone();
+		var output = new double[input.length];
 		for (var i = 0; i < passes; i++) {
 			for (var y = 0; y < rows; ++y) {
 				for (var x = 0; x < cols; ++x) {
@@ -474,6 +485,109 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			input = output;
 		}
 		return output;
+	}
+
+	/**
+	 *
+	 * See http://blog.ivank.net/fastest-gaussian-blur.html
+	 *
+	 *
+	 * Efficient approximation of a Gaussian Blur
+	 *
+	 * @param scl
+	 *            the scl
+	 * @param tcl
+	 *            the tcl
+	 * @param sigma
+	 *            the standard deviation
+	 */
+	double[] efficientGaussianBlur(final double[] scl, final int sigma) {
+		final var result = scl.clone();
+		int nbBoxes = 3;
+		var wIdeal = Math.sqrt(12 * sigma * sigma / nbBoxes + 1); // Ideal averaging filter width
+		double wl = Math.floor(wIdeal);
+		if (wl % 2 == 0) { wl--; }
+		double wu = wl + 2;
+		var mIdeal = (12 * sigma * sigma - nbBoxes * wl * wl - 4 * nbBoxes * wl - 3 * nbBoxes) / (-4 * wl - 4);
+		var m = Math.round(mIdeal);
+		double[] sizes = new double[nbBoxes];
+		for (var i = 0; i < nbBoxes; i++) { sizes[i] = i < m ? wl : wu; } // number of "boxes"
+		var boxes = sizes;
+		int r = (int) Math.round((boxes[0] - 1) / 2);
+		boxBlurHorizontal(result, r);
+		boxBlurVertical(result, r);
+		r = (int) Math.round((boxes[1] - 1) / 2);
+		boxBlurHorizontal(result, r);
+		boxBlurVertical(result, r);
+		r = (int) Math.round((boxes[2] - 1) / 2);
+		boxBlurHorizontal(result, r);
+		boxBlurVertical(result, r);
+		return result;
+	}
+
+	/**
+	 * Box blur operating vertically
+	 */
+	void boxBlurVertical(final double[] scl, final int r) {
+		double iarr = 1d / (r + r + 1);
+		for (var i = 0; i < rows; i++) {
+			var ti = i * cols;
+			var li = ti;
+			var ri = ti + r;
+			var fv = scl[ti];
+			var lv = scl[ti + cols - 1];
+			var val = (r + 1) * fv;
+			for (var j = 0; j < r; j++) { val += scl[ti + j]; }
+			for (var j = 0; j <= r; j++) {
+				val += scl[ri++] - fv;
+				scl[ti++] = val * iarr;
+			}
+			for (var j = r + 1; j < cols - r; j++) {
+				val += scl[ri++] - scl[li++];
+				scl[ti++] = val * iarr;
+			}
+			for (var j = cols - r; j < cols; j++) {
+				val += lv - scl[li++];
+				scl[ti++] = val * iarr;
+			}
+		}
+	}
+
+	/**
+	 * Box blur operating horizontally
+	 *
+	 * @return the function
+	 */
+	void boxBlurHorizontal(final double[] scl, final int r) {
+		double iarr = 1d / (r + r + 1);
+		for (var i = 0; i < cols; i++) {
+			var ti = i;
+			var li = ti;
+			var ri = ti + r * cols;
+			var fv = scl[ti];
+			var lv = scl[ti + cols * (rows - 1)];
+			var val = (r + 1) * fv;
+			for (var j = 0; j < r; j++) { val += scl[ti + j * rows]; }
+			for (var j = 0; j <= r; j++) {
+				val += scl[ri] - fv;
+				scl[ti] = val * iarr;
+				ri += cols;
+				ti += cols;
+			}
+			for (var j = r + 1; j < rows - r; j++) {
+				val += scl[ri] - scl[li];
+				scl[ti] = val * iarr;
+				li += cols;
+				ri += cols;
+				ti += cols;
+			}
+			for (var j = rows - r; j < rows; j++) {
+				val += lv - scl[li];
+				scl[ti] = val * iarr;
+				li += cols;
+				ti += cols;
+			}
+		}
 	}
 
 }
