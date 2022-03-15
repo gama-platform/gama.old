@@ -16,7 +16,6 @@
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,msi.gaml.extensions.fipa"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.gaml.extensions.physics"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.gaml.extensions.traffic"/>
-<project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,simtools.graphanalysis.fr"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.annotations"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.audio"/>
 <project reference="1.0,https://github.com/gama-platform/gama.git,GAMA_1.8.2,ummisco.gama.feature.core"/>
