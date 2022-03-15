@@ -341,9 +341,26 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			}
 		}
 		return inEnv;
-
 	}
 
+	@Override
+	public IList<IShape> getCellsOverlapping(final IScope scope, final IShape shape) {
+		computeDimensions(scope);
+		Envelope3D env = Envelope3D.of(shape);
+		IList<IShape> inEnv = GamaListFactory.create(Types.GEOMETRY);
+		GamaPoint p = new GamaPoint();
+		for (double i = env.getMinX(); i < env.getMaxX(); i += cellDimensions.x) {
+			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
+				p.setLocation(i, j, 0);
+				IShape s = getCellShapeAt(scope, p);
+				if( (s!=null) && (s.intersects(shape)) ){
+					inEnv.add(s);
+				}
+			}
+		}
+		return inEnv;
+	}	
+	
 	@Override
 	public IList<GamaPoint> getLocationsIntersecting(final IScope scope, final IShape shape) {
 		computeDimensions(scope);

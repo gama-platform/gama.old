@@ -271,7 +271,7 @@ public class GamaFieldType extends GamaMatrixType {
 	}
 
 	/**
-	 * Gets the shapes from geometry.
+	 * Gets the shapes from geometry (cells with a point inside the geometry).
 	 *
 	 * @param scope the scope
 	 * @param field the field
@@ -284,10 +284,33 @@ public class GamaFieldType extends GamaMatrixType {
 			content_type = IType.GEOMETRY,
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
-			doc = { @doc ("Returns the list of 'cells' that 'intersect' with the geometry passed in argument. The cells are ordered by their x-, then y-coordinates") })
+			doc = { @doc ("Returns the list of 'cells' that 'intersect' with the geometry passed in argument. "
+					+ "(Intersection is understood as the cell center is insside the geometry; if the  geometry is a polyline or a point, results will not be accurate."
+					+ "The cells are ordered by their x-, then y-coordinates") })
 	public static IList<IShape> getShapesFromGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getCellsIntersecting(scope, shape);
 	}
+	
+	/**
+	 * Gets the shapes from geometry (cells overlapping the geometry).
+	 *
+	 * @param scope the scope
+	 * @param field the field
+	 * @param shape the shape
+	 * @return the shapes from geometry
+	 */
+	@operator (
+			value = "cells_overlapping",
+			can_be_const = false,
+			content_type = IType.GEOMETRY,
+			category = { IOperatorCategory.GRID },
+			concept = { IConcept.GRID },
+			doc = { @doc ("Returns the list of 'cells' that 'overlap' the geometry passed in argument. "
+					+ "It is much less efficient than the cells_in operator, but is relevant is a polynie or a point. "
+					+ "The cells are ordered by their x-, then y-coordinates") })
+	public static IList<IShape> getShapesOverGeometry(final IScope scope, final IField field, final IShape shape) {
+		return field.getCellsOverlapping(scope, shape);
+	}	
 
 	/**
 	 * Gets the values from geometry.

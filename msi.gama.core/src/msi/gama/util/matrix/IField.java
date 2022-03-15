@@ -178,6 +178,16 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	IList<IShape> getCellsIntersecting(IScope scope, IShape shape);
 
 	/**
+	 * Returns a list of the 'cells' (rectangle shapes) that overlap the geometry passed in parameter
+	 *
+	 * @param scope
+	 * @param shape
+	 * @return
+	 */
+	IList<IShape> getCellsOverlapping(IScope scope, IShape shape);
+	
+	
+	/**
 	 * Gets the locations intersecting.
 	 *
 	 * @param scope the scope
