@@ -1527,7 +1527,7 @@ public class Stats {
 	 *
 	 *
 	 * @param scope
-	 * @param x
+	 * @param x 
 	 * @return
 	 */
 	@operator (

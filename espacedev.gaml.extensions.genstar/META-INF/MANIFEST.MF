@@ -6,16 +6,20 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: espacedev.gaml.extensions.genstar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: msi.gama.core;bundle-version="1.8.2",
- msi.gama.ext;bundle-version="1.8.2"
-Bundle-ClassPath: lib/genstar-core-1.0.4.jar,
- lib/genstar-gospl-1.0.4.jar,
- lib/genstar-spll-1.0.4.jar,
- lib/poi-ooxml-3.9.jar,
- .,
- lib/log4j-api-2.7.jar, 
- lib/log4j-core-2.7.jar,
- lib/opencsv-2.3.jar
-Export-Package: espacedev.gaml.extensions.genstar.generator,
+ msi.gama.ext;bundle-version="1.8.2",
+ org.apache.commons.io;bundle-version="2.8.0",
+ org.apache.log4j;bundle-version="1.2.15"
+Bundle-ClassPath: .,
+ lib/jackson-annotations-2.13.2.jar,
+ lib/jackson-core-2.13.2.jar,
+ lib/opencsv-2.3.jar,
+ lib/jackson-databind-2.13.2.jar,
+ lib/poi-ooxml-3.9.jar
+Export-Package: com.fasterxml.jackson.annotation,
+ com.fasterxml.jackson.databind,
+ espacedev.gaml.extensions.genstar.generator,
  espacedev.gaml.extensions.genstar.statement,
  espacedev.gaml.extensions.genstar.type,
- espacedev.gaml.extensions.genstar.utils
+ espacedev.gaml.extensions.genstar.utils,
+ org.apache.poi,
+ org.apache.poi.ss.usermodel
