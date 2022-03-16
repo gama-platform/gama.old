@@ -2,47 +2,41 @@ package msi.gama.headless.runtime;
 /*
  * Copyright (c) 2010-2020 Nathan Rajlich
  *
- *  Permission is hereby granted, free of charge, to any person
- *  obtaining a copy of this software and associated documentation
- *  files (the "Software"), to deal in the Software without
- *  restriction, including without limitation the rights to use,
- *  copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the
- *  Software is furnished to do so, subject to the following
- *  conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be
- *  included in all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- *  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- *  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- *  OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.java_websocket.WebSocket;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.headless.job.ExperimentJob;
-import msi.gama.headless.runtime.LocalSimulationRuntime.ExperimentJobThread;
 
 /**
  * A simple WebSocketServer implementation. Keeps track of a "chatroom".
@@ -81,16 +75,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @return single instance of GamaWebSocketServer
 	 */
 	public static GamaWebSocketServer newInstance(final int p, final Application a) {
-		if (instance == null) {
-			createSocketServer(p, a);
-		}
+		if (instance == null) { createSocketServer(p, a); }
 		return instance;
 	}
 
 	/**
 	 * Creates the socket server.
 	 *
-	 * @throws UnknownHostException the unknown host exception
+	 * @throws UnknownHostException
+	 *             the unknown host exception
 	 */
 	public static void createSocketServer(final int port, final Application a) {
 		instance = new GamaWebSocketServer(port, a);
@@ -100,7 +93,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 		instance.start();
 		System.out.println("ChatServer started on port: " + instance.getPort());
 		bufferStream = new WebSocketPrintStream(System.out, instance);
-//		System.setOut(bufferStream);
+		// System.setOut(bufferStream);
+
 		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
 		try {
 
@@ -146,8 +140,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
 		saved_endpoints.get(conn).onMessage(this, conn, message);
-//		broadcast(message.array());
-//		System.out.println(conn + ": " + message);
+		// broadcast(message.array());
+		// System.out.println(conn + ": " + message);
 	}
 
 	@Override
@@ -162,8 +156,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 	@Override
 	public void onStart() {
 		System.out.println("Server started!");
-//		setConnectionLostTimeout(0);
-//		setConnectionLostTimeout(100);
+		// setConnectionLostTimeout(0);
+		// setConnectionLostTimeout(100);
 	}
 
 }

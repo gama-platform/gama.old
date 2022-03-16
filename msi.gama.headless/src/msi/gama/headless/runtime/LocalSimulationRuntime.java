@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.IExperimentJob;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -27,13 +27,13 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	}
 
 	/** The simulations. */
-	private final Map<String, ExperimentJobThread> simulations;
+	private final Map<String, IExperimentJobThread> simulations;
 
 	/** The queue. */
-	private final ArrayList<ExperimentJobThread> queue;
+	private final ArrayList<IExperimentJobThread> queue;
 
 	/** The started. */
-	private final ArrayList<ExperimentJobThread> started;
+	private final ArrayList<IExperimentJobThread> started;
 
 	/** The allocated processor. */
 	private int allocatedProcessor;
@@ -78,8 +78,8 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	}
 
 	@Override
-	public void pushSimulation(final ExperimentJob s) {
-		final ExperimentJobThread f = new ExperimentJobThread(s);
+	public void pushSimulation(final IExperimentJob s) {
+		final IExperimentJobThread f = new IExperimentJobThread(s);
 		simulations.put(s.getExperimentID(), f);
 		if (started.size() < allocatedProcessor) {
 			this.startSimulation(f);
@@ -94,7 +94,7 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	 * @param s
 	 *            the s
 	 */
-	private void startSimulation(final ExperimentJobThread s) {
+	private void startSimulation(final IExperimentJobThread s) {
 		started.add(s);
 		s.start();
 		// this.notifyListener();
@@ -106,14 +106,14 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	 * @param s
 	 *            the s
 	 */
-	public void closeSimulation(final ExperimentJobThread s) {
+	public void closeSimulation(final IExperimentJobThread s) {
 		started.remove(s);
 		if (queue.size() > 0) {
-			final ExperimentJobThread p = queue.get(0);
+			final IExperimentJobThread p = queue.get(0);
 			queue.remove(p);
 			this.startSimulation(p);
 		}
-		if (!this.isTraceKept) { simulations.remove(s.getExperimentJob().getExperimentID()); }
+		if (!this.isTraceKept) { simulations.remove(s.getIExperimentJob().getExperimentID()); }
 		// this.notifyListener();
 	}
 
@@ -121,19 +121,19 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 	public boolean isPerformingSimulation() { return started.size() > 0 || queue.size() > 0; }
 
 	/**
-	 * The Class ExperimentJobThread.
+	 * The Class IExperimentJobThread.
 	 */
-	class ExperimentJobThread extends Thread {
+	class IExperimentJobThread extends Thread {
 
 		/** The si. */
-		private ExperimentJob si = null;
+		private IExperimentJob si = null;
 
 		/**
 		 * Gets the experiment job.
 		 *
 		 * @return the experiment job
 		 */
-		ExperimentJob getExperimentJob() { return si; }
+		IExperimentJob getIExperimentJob() { return si; }
 
 		/**
 		 * Instantiates a new experiment job thread.
@@ -141,7 +141,7 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 		 * @param sim
 		 *            the sim
 		 */
-		public ExperimentJobThread(final ExperimentJob sim) {
+		public IExperimentJobThread(final IExperimentJob sim) {
 			si = sim;
 		}
 

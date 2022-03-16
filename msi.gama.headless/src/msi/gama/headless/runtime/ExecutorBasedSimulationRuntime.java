@@ -14,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.IExperimentJob;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -32,7 +32,7 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	static class OwnRunnable implements Runnable {
 
 		/** The sim. */
-		final ExperimentJob sim;
+		final IExperimentJob sim;
 
 		/**
 		 * Instantiates a new own runnable.
@@ -40,7 +40,7 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 		 * @param s
 		 *            the s
 		 */
-		OwnRunnable(final ExperimentJob s) {
+		OwnRunnable(final IExperimentJob s) {
 			sim = s;
 		}
 
@@ -102,7 +102,7 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	}
 
 	@Override
-	public void pushSimulation(final ExperimentJob s) {
+	public void pushSimulation(final IExperimentJob s) {
 		executor.execute(new OwnRunnable(s));
 	}
 

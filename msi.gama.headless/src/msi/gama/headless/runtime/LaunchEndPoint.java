@@ -27,8 +27,10 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.job.Output;
 import msi.gama.headless.script.ExperimentationPlanFactory;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class LaunchEndPoint.
@@ -40,77 +42,11 @@ public class LaunchEndPoint implements Endpoint {
 		socket.send("You have connected to chat");
 	}
 
-	
-
-	public void runGamlSimulation(final GamaWebSocketServer server, final ByteBuffer compiledModel)
-			throws IOException, GamaHeadlessException { 
-		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
-		ObjectInput in = null;
-		ExperimentJob selectedJob = null;
-		try {
-			in = new ObjectInputStream(bis);
-			Object o = in.readObject();
-			selectedJob = (ExperimentJob) o;
-		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
-
-	}
-	
-	
-
-	/**
-	 * Run gaml simulation.
-	 *
-	 * @param server the server
-	 * @param message   the args
-	 * @throws IOException           Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
-	 */
-	public void runGamlSimulation(final GamaWebSocketServer server,WebSocket socket, final List<String> args)
-			throws IOException, GamaHeadlessException {
-		final String pathToModel = args.get(args.size() - 1);
-
-		if (!GamlFileExtension.isGaml(pathToModel)) {
-			System.exit(-1);
-		}
-		final String argExperimentName = args.get(args.size() - 2);
-		final String argGamlFile = args.get(args.size() - 1);
-
-		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile);
-		ExperimentJob selectedJob = null;
-		for (final IExperimentJob j : jb) {
-			if (j.getExperimentName().equals(argExperimentName)) {
-				selectedJob = (ExperimentJob) j;
-				break;
-			}
-		}
-		if (selectedJob == null)
-			return;
-		Globals.OUTPUT_PATH = args.get(args.size() - 3); 
-
-		server.simulations.put(selectedJob.getExperimentID(), selectedJob);
-		socket.send("exp@"+selectedJob.getExperimentID());
-		server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
-	}
-	
-
 	public void compileGamlSimulation(final WebSocket socket, final List<String> args)
 			throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
-		if (!GamlFileExtension.isGaml(pathToModel)) {
-			System.exit(-1);
-		}
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
@@ -122,9 +58,7 @@ public class LaunchEndPoint implements Endpoint {
 				break;
 			}
 		}
-		if (selectedJob == null)
-			return;
-
+		if (selectedJob == null) return;
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream out = null;
@@ -144,18 +78,120 @@ public class LaunchEndPoint implements Endpoint {
 
 	}
 
+	public void runModelSimulation(final GamaWebSocketServer server, final ByteBuffer compiledModel)
+			throws IOException, GamaHeadlessException {
+		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
+		ObjectInput in = null;
+		ExperimentJob selectedJob = null;
+		try {
+			in = new ObjectInputStream(bis);
+			Object o = in.readObject();
+			selectedJob = (ExperimentJob) o;
+		} catch (ClassNotFoundException ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				if (in != null) { in.close(); }
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
+
+	}
+
+	/**
+	 * Run gaml simulation.
+	 *
+	 * @param server
+	 *            the server
+	 * @param message
+	 *            the args
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
+	 */
+	public void launchGamlSimulation(final GamaWebSocketServer server, WebSocket socket, final List<String> args)
+			throws IOException, GamaHeadlessException {
+		final String pathToModel = args.get(args.size() - 1);
+
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+		final String argExperimentName = args.get(args.size() - 2);
+		final String argGamlFile = args.get(args.size() - 1);
+
+		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile);
+		ManualExperimentJob selectedJob = null;
+		for (final IExperimentJob j : jb) {
+			if (j.getExperimentName().equals(argExperimentName)) {
+				selectedJob = new ManualExperimentJob((ExperimentJob) j, server, socket);
+				break;
+			}
+		}
+		if (selectedJob == null) return;
+		Globals.OUTPUT_PATH = args.get(args.size() - 3);
+
+		try {
+			selectedJob.loadAndBuild();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
+				| GamaHeadlessException e) {
+			e.printStackTrace();
+		}
+		server.simulations.put(selectedJob.getExperimentID(), selectedJob);
+		socket.send("exp@" + selectedJob.getExperimentID());
+
+		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
+	}
+
 	@Override
 	public void onMessage(final GamaWebSocketServer server, final WebSocket socket, final String message) {
-//		server.broadcast(message);
+		// server.broadcast(message);
 		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
-		if ("run".equals(args[0])) {
+		if ("launch".equals(args[0])) {
 			try {
 				Globals.IMAGES_PATH = "C:\\GAMA\\headless\\samples\\toto\\snapshot";
-				runGamlSimulation(server,socket, Arrays.asList("-gaml", ".", args[2], args[1]));
+				launchGamlSimulation(server, socket, Arrays.asList("-gaml", ".", args[2], args[1]));
 			} catch (IOException | GamaHeadlessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		if ("play".equals(args[0])) {
+			String id_exp = args[1];
+			System.out.println("play " + id_exp);
+			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.simulations.get(id_exp)).paused = false;
+				// DEBUG.TIMER("Simulation duration", () -> {
+				if (((ManualExperimentJob) server.simulations.get(id_exp)).internalThread == null) {
+					((ManualExperimentJob) server.simulations.get(id_exp)).internalThread = new Thread() {
+						@Override
+						public void run() {
+
+							while (!server.simulations.get(id_exp).getSimulation().isInterrupted()) {
+								if (!((ManualExperimentJob) server.simulations.get(id_exp)).paused)
+									server.simulations.get(id_exp).doStep();
+							}
+						}
+					};
+					((ManualExperimentJob) server.simulations.get(id_exp)).internalThread.start();
+				}
+			}
+		}
+
+		if ("pause".equals(args[0])) {
+			String id_exp = args[1];
+			System.out.println("pause " + id_exp);
+			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
+			}
+		}
+		if ("stop".equals(args[0])) {
+			String id_exp = args[1];
+			System.out.println("stop " + id_exp);
+			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
+				((ManualExperimentJob) server.simulations.get(id_exp)).dispose();
 			}
 		}
 		if ("compile".equals(args[0])) {
@@ -173,11 +209,11 @@ public class LaunchEndPoint implements Endpoint {
 	public void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer compiledModel) {
 
 		try {
-			runGamlSimulation(server, compiledModel);
+			runModelSimulation(server, compiledModel);
 		} catch (IOException | GamaHeadlessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
 
 }

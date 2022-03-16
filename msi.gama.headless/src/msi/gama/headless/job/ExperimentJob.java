@@ -77,7 +77,7 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Variable listeners
 	 */
-	private ListenedVariable[] listenedVariables;
+	protected ListenedVariable[] listenedVariables;
 	
 	/** The parameters. */
 	private List<Parameter> parameters;
@@ -86,7 +86,7 @@ public class ExperimentJob implements IExperimentJob {
 	private List<Output> outputs;
 	
 	/** The output file. */
-	private Writer outputFile;
+	protected Writer outputFile;
 	
 	/** The source path. */
 	private String sourcePath;
@@ -102,7 +102,7 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * current step
 	 */
-	private long step;
+	protected long step;
 
 	/**
 	 * id of current experiment
@@ -366,7 +366,7 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Export variables.
 	 */
-	private void exportVariables() {
+	protected void exportVariables() {
 		final int size = this.listenedVariables.length;
 		if (size == 0) return;
 		for (int i = 0; i < size; i++) {
@@ -413,7 +413,7 @@ public class ExperimentJob implements IExperimentJob {
 	 * @param outputPath the output path
 	 * @return the display 2 D
 	 */
-	private Display2D writeImageInFile(final BufferedImage img, final String name, final String outputPath) {
+	protected Display2D writeImageInFile(final BufferedImage img, final String name, final String outputPath) {
 		final String fileName = name + this.getExperimentID() + "-" + step + ".png";
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
 		if (outputPath != "" && outputPath != null) {

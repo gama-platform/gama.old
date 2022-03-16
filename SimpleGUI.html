@@ -98,7 +98,6 @@
 			</tr>
 		</table>
 	</div>
-
 	<button id="create_button">Create a new Widget</button>
 	<script>
 
@@ -199,7 +198,7 @@
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch" onclick="launch()"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="play()">  <input type="button" value="Pause" onclick="pause()">  <input type="button" value="Stop" onclick="stop()"></td></tr>  </table><div id="errors"></div>');
+			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="run()">  <input type="button" value="Pause">  <input type="button" value="Stop"></td></tr>  </table><div id="errors"></div>');
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
 
@@ -265,13 +264,13 @@
 		};
 		var interval_id;
 		// send message from the form
-		function launch() {
+		function run() {
 			//setInterval(function(){ 
 			//  socket.send(""); }, 100);  
 			if (socket && socket.readyState === 1) {
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
-				socket.send("launch@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
+				socket.send("run@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
 				// var sk = new WebSocket("ws://localhost:6868/output");
 				// sk.binaryType = "arraybuffer";
 				// sk.addEventListener('open', (event) => {
@@ -309,7 +308,7 @@
 							data += String.fromCharCode(bytes[i]);
 						}
 						// console.log(bytes[len - 1]);
-						var img = document.getElementById("image_out" + bytes[len - 1]);
+						var img = document.getElementById("image_out"+bytes[len - 1]);
 						img.src = "data:image/png;base64," + window.btoa(data);
 
 
@@ -326,68 +325,6 @@
 			return false;
 		};
 
-		function play() {
-			//setInterval(function(){ 
-			//  socket.send(""); }, 100);  
-			if (socket && socket.readyState === 1) {
-				socket.binaryType = "arraybuffer";
-				// socket.send(exp_compiled);
-				socket.send("play@" + exp_id);
-				socket.onmessage = function (event) {
-					let message = event.data;
-					// console.log(message);
-					// $('#console').append(message+"\n");//.scrollBottom();
-
-					if (typeof event.data == "object") {
-
-						var bytes = new Uint8Array(event.data);
-						var data = "";
-						var len = bytes.byteLength;
-						for (var i = 0; i < len - 1; ++i) {
-							data += String.fromCharCode(bytes[i]);
-						}
-						// console.log(bytes[len - 1]);
-						var img = document.getElementById("image_out" + bytes[len - 1]);
-						img.src = "data:image/png;base64," + window.btoa(data);
-
-
-					} else {
-						if (message.startsWith("exp@")) {
-							exp_id = message.substring(4);
-						}
-						$('#console').append(message + "\n");
-					}
-				}
-			} else { $('#errors').text("Socket is not ready!"); }
-
-			// message received - show the message in div#messages
-			return false;
-		};
-		function pause() {
-			//setInterval(function(){ 
-			//  socket.send(""); }, 100);  
-			if (socket && socket.readyState === 1) {
-				socket.binaryType = "arraybuffer";
-				// socket.send(exp_compiled);
-				socket.send("pause@" + exp_id);
-			} else { $('#errors').text("Socket is not ready!"); }
-
-			// message received - show the message in div#messages
-			return false;
-		};
-
-		function stop() {
-			//setInterval(function(){ 
-			//  socket.send(""); }, 100);  
-			if (socket && socket.readyState === 1) {
-				socket.binaryType = "arraybuffer";
-				// socket.send(exp_compiled);
-				socket.send("stop@" + exp_id);
-			} else { $('#errors').text("Socket is not ready!"); }
-
-			// message received - show the message in div#messages
-			return false;
-		};
 
 
 

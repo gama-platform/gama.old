@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.IExperimentJob;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -39,7 +39,7 @@ public interface SimulationRuntime {
 		 * @throws FileNotFoundException
 		 *             the file not found exception
 		 */
-		DebugStream(final ExperimentJob si) throws FileNotFoundException {
+		DebugStream(final IExperimentJob si) throws FileNotFoundException {
 			super(OUTPUT_PATH + "/" + CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt");
 			DEBUG.REGISTER_LOG_WRITER(this);
 		}
@@ -58,7 +58,7 @@ public interface SimulationRuntime {
 	 * @param s
 	 *            the s
 	 */
-	void pushSimulation(ExperimentJob s);
+	void pushSimulation(IExperimentJob s);
 
 	/**
 	 * Checks if is performing simulation.
