@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
+import static msi.gama.common.interfaces.IKeyword.DEFAULT;
+import static msi.gama.outputs.layers.properties.ILightDefinition.ambient;
+
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1149,8 +1152,10 @@ public class LayeredDisplayData {
 	/** The lights. */
 	private final Map<String, ILightDefinition> lights = new LinkedHashMap<>() {
 		{
-			put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1, 127));
-			put(IKeyword.DEFAULT, new GenericLightDefinition(IKeyword.DEFAULT, 0, 127));
+			put(ambient, new GenericLightDefinition(ambient, -1,
+					GamaPreferences.Displays.OPENGL_DEFAULT_LIGHT_INTENSITY.getValue()));
+			put(DEFAULT, new GenericLightDefinition(DEFAULT, 0,
+					GamaPreferences.Displays.OPENGL_DEFAULT_LIGHT_INTENSITY.getValue()));
 		}
 	};
 

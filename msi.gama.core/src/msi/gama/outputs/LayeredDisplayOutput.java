@@ -425,9 +425,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 			// Are we in OpenGL world ?
 			final IExpressionDescription type = d.getFacet(TYPE);
-			final Boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
-			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
-					: LayeredDisplayData.OPENGL.equals(type.getExpression().literalValue());
+			final boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 			if (type != null) {
 				// Addresses and fixes Issue 833.
 				final String s = type.getExpression().literalValue();
@@ -437,8 +435,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 							IGamlIssue.UNKNOWN_KEYWORD, TYPE);
 					return;
 				}
-			} else if (isOpenGLDefault) {
-				d.setFacet(TYPE, LabelExpressionDescription.create(LayeredDisplayData.OPENGL));
+			} else {
+				d.setFacet(TYPE, LabelExpressionDescription
+						.create(isOpenGLDefault ? LayeredDisplayData.OPENGL : LayeredDisplayData.JAVA2D));
 			}
 
 			// final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,

@@ -11,6 +11,7 @@
 package msi.gama.outputs.layers.properties;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -75,13 +76,14 @@ public class LightDefinition extends AbstractDefinition implements ILightDefinit
 		angleAttribute = create("angle", Types.FLOAT, DEFAULT_ANGLE);
 		drawAttribute = create("show", Types.BOOL, false);
 		activeAttribute = create("active", Types.BOOL, true);
+		Integer i = GamaPreferences.Displays.OPENGL_DEFAULT_LIGHT_INTENSITY.getValue();
 		intensityAttribute = create("intensity", (scope, exp) -> {
 			if (exp.getGamlType() == Types.INT) {
 				int v = Cast.asInt(scope, exp.value(scope));
 				return new GamaColor(v, v, v, 255);
 			}
 			return Cast.asColor(scope, exp.value(scope));
-		}, Types.COLOR, DEFAULT_INTENSITY, exp -> {
+		}, Types.COLOR, new GamaColor(i, i, i, 255), exp -> {
 			if (exp.getGamlType() == Types.INT) {
 				int v = Cast.asInt(null, exp.getConstValue());
 				return new GamaColor(v, v, v, 255);

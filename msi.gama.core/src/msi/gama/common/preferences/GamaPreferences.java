@@ -607,8 +607,8 @@ public class GamaPreferences {
 
 		/** The Constant OPENGL_DEFAULT_CAM. */
 		public static final Pref<String> OPENGL_DEFAULT_CAM =
-				create("pref_display_camera", "Default camera to use when none is specified", "From above", IType.STRING,
-						true).among(ICameraDefinition.PRESETS).in(NAME, RENDERING);
+				create("pref_display_camera", "Default camera to use when none is specified", "From above",
+						IType.STRING, true).among(ICameraDefinition.PRESETS).in(NAME, RENDERING);
 
 		/** The Constant OPENGL_CLIPBOARD_CAM. */
 		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
@@ -620,6 +620,10 @@ public class GamaPreferences {
 				"Use GAMA image cache when building textures in OpenGL (potentially faster when running several simulations, but uses more memory)",
 				true, IType.BOOL, true).in(NAME, RENDERING);
 
+		/** The Constant OPENGL_DEFAULT_LIGHT_INTENSITY. */
+		public static final Pref<Integer> OPENGL_DEFAULT_LIGHT_INTENSITY = create("pref_display_light_intensity",
+				"Set the default intensity of the ambient and default lights (from 0, completely dark, to 255, completely light)",
+				160, IType.INT, true).in(NAME, RENDERING).between(0, 255);
 	}
 
 	/**

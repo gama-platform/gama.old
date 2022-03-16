@@ -59,7 +59,7 @@ public interface ILightDefinition extends INamed {
 	Double DEFAULT_ANGLE = 45d;
 
 	/** The default intensity. */
-	GamaColor DEFAULT_INTENSITY = new GamaColor(127, 127, 127, 255);
+	// GamaColor DEFAULT_INTENSITY = new GamaColor(160, 160, 160, 255);
 
 	/**
 	 * Checks if is dynamic.
@@ -94,7 +94,7 @@ public interface ILightDefinition extends INamed {
 	 *
 	 * @return the intensity
 	 */
-	default GamaColor getIntensity() { return DEFAULT_INTENSITY; }
+	GamaColor getIntensity();
 
 	/**
 	 * Gets the type.
