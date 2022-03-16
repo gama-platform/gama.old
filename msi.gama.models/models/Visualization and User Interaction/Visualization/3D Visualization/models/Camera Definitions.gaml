@@ -27,7 +27,7 @@ species object skills: [moving] {
 }
 
 experiment Display type: gui autorun: true {
-	float w -> simulation.shape.width;
+	float w -> simulation.shape.width; 
 	float h -> simulation.shape.height;
 	point p -> first(object).location;
 	float factor <- 1.0;

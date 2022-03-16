@@ -113,7 +113,7 @@ experiment "3D view" type: gui {
 				}
 			}
 			//The terrain is represented as a field (but could be equally represented as a grid		
-			mesh patches  texture: image_file("../images/DEM/Volcano Texture.jpg") triangulation: true ;
+			mesh patches  texture: image_file("../images/DEM/Volcano Texture.jpg") triangulation: true smooth: true;
 			//We add to the representation the individual 'aabb's (axis-aligned bounding boxes) of the patches if 'draw_inside' is true
 		 	species patches;
 		 	//Finally, each lava agent is represented (with its velocity if 'draw_inside' is true)

@@ -213,12 +213,12 @@ experiment "Classic" type: gui {
 	
 	
 	output {
-		display Ants type: opengl synchronized: true antialias: false  {
+		display Ants synchronized: false antialias: false type: opengl {
 			light #ambient intensity: 127;
 			light #default intensity: 127;
-			image terrain refresh: false;
+			image terrain refresh: true rotate: cycle;
 			agents "Grid" transparency: 0.4 value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
-			species ant aspect: info;
+			species ant aspect: info rotate:-cycle;
 		}
 
 	}
@@ -231,6 +231,8 @@ experiment "3D View" type: gui {
 	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 	output {
+		
+
 		display Ants3D type: opengl show_fps: true antialias: false{
 			grid ant_grid elevation: grid_values triangulation: true texture: terrain refresh: false;
 			agents "Trail" transparency: 0.7 position: {0.05, 0.05, 0.02} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
