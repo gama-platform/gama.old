@@ -13,6 +13,7 @@ package msi.gama.outputs.layers.properties;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayerStatement;
+import msi.gama.outputs.layers.AbstractLayerStatement.OpenGLSpecificLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -22,6 +23,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -70,6 +72,7 @@ import msi.gaml.types.IType;
 				+ "camera 'my_camera' locked: true location: #from_up_front target: people(0); will continuously follow the first agent of the people species from the up-front position. ",
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 				IKeyword.IMAGE, IKeyword.POPULATION, })
+@validator (OpenGLSpecificLayerValidator.class)
 public class RotationStatement extends AbstractLayerStatement {
 
 	/** The definition. */

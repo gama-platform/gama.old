@@ -1,16 +1,18 @@
 /*******************************************************************************************************
  *
- * IDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -71,12 +73,12 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	/**
 	 * The Constant TO_NAME.
 	 */
-	Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
+	Function<? super IDescription, ? extends String> TO_NAME = @Nullable IDescription::getName;
 
 	/**
 	 * The Constant TO_CLASS.
 	 */
-	Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
+	Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = @Nullable TypeDescription::getJavaBase;
 
 	/**
 	 * The Interface DescriptionVisitor.
@@ -96,10 +98,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	/**
 	 * The Constant VALIDATING_VISITOR.
 	 */
-	DescriptionVisitor<IDescription> VALIDATING_VISITOR = desc -> {
-		return desc.validate() != null;
-
-	};
+	DescriptionVisitor<IDescription> VALIDATING_VISITOR = desc -> (desc.validate() != null);
 
 	/**
 	 * The Constant DISPOSING_VISITOR.
@@ -237,9 +236,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 *
 	 * @return the underlying element
 	 */
-	default EObject getUnderlyingElement() {
-		return getUnderlyingElement(null, false);
-	}
+	default EObject getUnderlyingElement() { return getUnderlyingElement(null, false); }
 
 	/**
 	 * Gets the meta.
@@ -447,7 +444,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	boolean manipulatesVar(final String name);
 
 	/**
-	 * Gets the litteral.
+	 * Gets the litteral value of the facet or null if not defined
 	 *
 	 * @param name
 	 *            the name
@@ -566,13 +563,11 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	@Override
 	default void collectUsedVarsOf(final SpeciesDescription species,
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
-		if (alreadyProcessed.contains(this)) { return; }
+		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
 		this.visitFacets((name, exp) -> {
 			final IExpression expression = exp.getExpression();
-			if (expression != null) {
-				expression.collectUsedVarsOf(species, alreadyProcessed, result);
-			}
+			if (expression != null) { expression.collectUsedVarsOf(species, alreadyProcessed, result); }
 			return true;
 		});
 		this.visitOwnChildren(desc -> {

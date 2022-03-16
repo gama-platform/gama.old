@@ -25,10 +25,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
@@ -127,7 +127,7 @@ import msi.gaml.types.IType;
 						name = "intensity",
 						type = { IType.INT, IType.COLOR },
 						optional = true,
-						doc = @doc ("an int / rgb / rgba value to specify either the color+intensity of the light or simply its intensity. (default value if not specified : (127,127,127,255) ).")),
+						doc = @doc ("an int / rgb / rgba value to specify either the color+intensity of the light or simply its intensity. (default value if not specified can be set in the Preferences. If not, it is equal to: (160,160,160,255) ).")),
 				@facet (
 						name = "show",
 						type = { IType.BOOL },
@@ -140,14 +140,14 @@ import msi.gaml.types.IType;
 						doc = @doc ("specify if the parameters of the light need to be updated every cycle or treated as constants. (default value : true).")) })
 @doc (
 		value = "`light` allows to define diffusion lights in your 3D display. They must be given a name, which will help track them in the UI. Two names have however special meanings: #ambient, "
-				+ "which designates the ambient luminosity and color of the scene (with a default intensity of (127,127,127,255)) and #default, "
-				+ "which designates the default directional light applied to a scene (with a default medium intensity of (127,127,127,255) in the direction given by (0.5,0.5,1)). Redefining a light named #ambient or #regular "
+				+ "which designates the ambient luminosity and color of the scene (with a default intensity of (160,160,160,255) or the value set in the Preferences) and #default, "
+				+ "which designates the default directional light applied to a scene (with a default medium intensity of (160,160,160,255) or the value set in the Preferences in the direction given by (0.5,0.5,1)). Redefining a light named #ambient or #regular "
 				+ "will then modify these default lights (for example changing their color or deactivating them). To be more precise, and given all the default values of the facets, the existence of these two lights is effectively equivalent to redefining:"
-				+ "light #ambient intensity: 127; light #default type: #direction intensity: 127 direction: {0.5,0.5,-1};",
+				+ "light #ambient intensity: gama.pref_display_light_intensity; light #default type: #direction intensity: gama.pref_display_light_intensity direction: {0.5,0.5,-1};",
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (
-						value = "light 1 type:point position:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false",
+						value = "light 1 type:point location:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false",
 						isExecutable = false),
 						@example (
 								value = "light 'spot1' type: #spot location:{20,20,20} direction:{0,0,-1} color:255 angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw:true dynamic: false",
@@ -156,12 +156,13 @@ import msi.gaml.types.IType;
 								value = "light 'point2' type: #point direction:{1,1,-1} color:255 draw:true dynamic: false",
 								isExecutable = false) }) },
 		see = { IKeyword.DISPLAY })
+
 public class LightStatement extends AbstractLayerStatement {
 
 	/**
 	 * The Class LightStatementValidator.
 	 */
-	public static class LightStatementValidator implements IDescriptionValidator<IDescription> {
+	public static class LightStatementValidator extends OpenGLSpecificLayerValidator {
 
 		/**
 		 * Method validate()
@@ -169,8 +170,8 @@ public class LightStatement extends AbstractLayerStatement {
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription desc) {
-
+		public void validate(final StatementDescription desc) {
+			super.validate(desc);
 			// Taking care of deprecations
 			swap(desc, IKeyword.POSITION, IKeyword.LOCATION);
 			swap(desc, IKeyword.COLOR, "intensity");
