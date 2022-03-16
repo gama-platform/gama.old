@@ -137,7 +137,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		var minMax = object.getObject().getMinMax(null);
 		max = minMax[1];
 		min = minMax[0];
-		data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
+
 		this.cols = (int) attributes.getXYDimension().x;
 		this.rows = (int) attributes.getXYDimension().y;
 		boolean grayscale = attributes.isGrayscaled();
@@ -157,7 +157,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 		this.withText = attributes.isWithText();
 		this.triangles = attributes.isTriangulated();
-
+		data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
 		initializeBuffers();
 		fillBuffers();
 		finalizeBuffers();

@@ -47,7 +47,7 @@ experiment "Show" {
 	list<rgb> palette <- brewer_colors(any(brewer_palettes(0)));
 	output {
 		display Field type: opengl {
-			mesh terrain color: palette triangulation: true smooth: true;
+			mesh terrain color: palette triangulation: true smooth: 4;
 		}
 
 	}
