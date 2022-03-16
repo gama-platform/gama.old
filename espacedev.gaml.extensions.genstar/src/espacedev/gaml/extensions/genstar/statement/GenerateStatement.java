@@ -184,7 +184,6 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IList<? extends IAgent> privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
 		if (from == null && max != null && max <= 0) return GamaListFactory.EMPTY_LIST;
@@ -301,7 +300,6 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 
 			final SpeciesDescription sd = species.getGamlType().getDenotedSpecies();
 			if (sd == null) {
-				System.out.println(species.getGamlType()+" "+species.getName());
 				description.error("The species to instantiate cannot be determined", UNKNOWN_SPECIES, SPECIES, species.getName());
 				return;
 			}

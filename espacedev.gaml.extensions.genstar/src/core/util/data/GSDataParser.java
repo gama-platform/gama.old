@@ -118,19 +118,24 @@ public class GSDataParser {
 			}
 		}
 		if (lowerBound.isEmpty()) {
+			int lb = Integer.MAX_VALUE;
 			for(String range : ranges){
 				List<Integer> ints = this.getRangedIntegerData(range, numMatcher);
-				if (ints.get(0).equals(rangeInt.get(0)) && ints.size()==2) {
-					lowerBound = range.replaceAll(ints.get(1).toString(), match);
+				if (ints.size()==2 && (Math.min(ints.get(0),ints.get(1)) <lb)) {
+					lb = Math.min(ints.get(0),ints.get(1));
+					lowerBound = range;//.replaceAll(ints.get(1).toString(), match);
 				}
 			}
-		}
+		} 
 		if (upperBound.isEmpty()) {
+			int ub = -1 * Integer.MAX_VALUE;
 			for(String range : ranges){
 				List<Integer> ints = this.getRangedIntegerData(range, numMatcher);
-				if (ints.size()==2 && ints.get(1).equals(rangeInt.get(rangeInt.size()-1))) {
-					lowerBound = range.replaceAll(ints.get(0).toString(), match);
+				if (ints.size()==2 && (Math.max(ints.get(0),ints.get(1)) > ub)) {
+					ub = Math.max(ints.get(0),ints.get(1));
+					upperBound = range;//.replaceAll(ints.get(1).toString(), match);
 				}
+				
 			}
 		}
 		return new GSRangeTemplate(lowerBound, middle, upperBound, match, numMatcher);

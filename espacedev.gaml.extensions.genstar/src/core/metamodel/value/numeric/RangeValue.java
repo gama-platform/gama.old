@@ -54,6 +54,8 @@ public class RangeValue implements IValue {
 		}
 	}
 	
+	
+	
 	protected RangeValue(RangeSpace rs, Number lowerBound, Number upperbound){
 		this.bottomBound = lowerBound;
 		this.topBound = upperbound;
@@ -134,6 +136,18 @@ public class RangeValue implements IValue {
 	@Override
 	public <T> void setActualValue(T v) throws UnsupportedOperationException {
 		this.actualValue = v;
+	}
+
+
+
+	public void setBottomBound(Number bottomBound) {
+		this.bottomBound = bottomBound;
+	}
+
+
+
+	public void setTopBound(Number topBound) {
+		this.topBound = topBound;
 	}
 	
 }

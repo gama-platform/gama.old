@@ -286,7 +286,6 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 				.filter(num -> the_count.get(num) > 1)
 				.collect(Collectors.toList())) {
 			RangeValue conflictingRange;
-			RangeValue newRange = null;
 			List<RangeValue> conflictingRanges = values.stream()
 					.filter(v -> v.getBottomBound().doubleValue() == conflictingNumber.doubleValue() ||
 						v.getTopBound().doubleValue() == conflictingNumber.doubleValue())
@@ -301,14 +300,10 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 			} else {
 				conflictingRange = GenstarRandomUtils.oneOf(conflictingRanges);
 			}
-			newRange = conflictingRange.getBottomBound().doubleValue() == conflictingNumber.doubleValue() ?
-					new RangeValue(this, conflictingRange.getBottomBound().doubleValue() + modifier, conflictingRange.getTopBound()) :
-					new RangeValue(this, conflictingRange.getBottomBound(), conflictingRange.getTopBound().doubleValue() - modifier);
-			newRange.stringValueCached = conflictingRange.getStringValue();
-			values.remove(conflictingRange);
-			textual2valueCached.remove(conflictingRange.getStringValue());
-			values.add(newRange);
-			textual2valueCached.put(newRange.getStringValue(), newRange);
+			if (conflictingRange.getBottomBound().doubleValue() == conflictingNumber.doubleValue())
+				conflictingRange.setBottomBound(conflictingRange.getBottomBound().doubleValue() + modifier);
+			else
+				conflictingRange.setTopBound(conflictingRange.getTopBound().doubleValue() - modifier);
 		}
 			
 

@@ -28,6 +28,7 @@ import core.metamodel.attribute.AttributeFactory;
 import core.metamodel.entity.ADemoEntity;
 import core.metamodel.io.GSSurveyWrapper;
 import core.metamodel.value.IValue;
+import core.metamodel.value.numeric.RangeSpace;
 import core.util.data.GSEnumDataType;
 import core.util.excpetion.GSIllegalRangedData;
 import core.util.random.GenstarRandom;
@@ -160,7 +161,9 @@ public class FileBasedGenerator implements IGenstarGenerator {
 		// Gospl generation
 		////////////////////////////////////////////////////////////////////////
 		
+		
 		GosplInputDataManager gdb = new GosplInputDataManager(confFile);
+		
 		
         final EGosplAlgorithm gsAlgo = algo==null ? EGosplAlgorithm.DS : GenStarGamaUtils.toGosplAlgorithm(algo.toString());
         
@@ -176,6 +179,11 @@ public class FileBasedGenerator implements IGenstarGenerator {
 				// Build the n-dimensional matrix from raw data
 				INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution = manageRawData(scope, gdb);
 				ISampler<ACoordinate<Attribute<? extends IValue>, IValue>> sampler = null;
+				for (final Attribute<? extends IValue> attribute : gsAttributes) {  
+		        	if (attribute.getValueSpace() instanceof RangeSpace) {
+		        		((RangeSpace)attribute.getValueSpace()).consolidateRanges();   
+		        	}
+		        }
 				switch (gsAlgo) {
 					case HS: 
 						break;
@@ -206,6 +214,7 @@ public class FileBasedGenerator implements IGenstarGenerator {
         		IVariable var = gamaPop.getVar(attribute.getAttributeName());
         		map.put(attribute.getAttributeName(), 
         				GenStarGamaUtils.toGAMAValue(scope, e.getValueForAttribute(attribute), true, var.getType()));
+        		
         	}
         	generateStatement.fillWithUserInit(scope, map);
     		inits.add(map);
