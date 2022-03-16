@@ -128,7 +128,7 @@ public class GosplInputDataManager {
 		GosplSurveyFactory sf = new GosplSurveyFactory();
 		this.inputData = new HashSet<>();
 		for (final GSSurveyWrapper wrapper : this.configuration.getSurveyWrappers())
-			if (!wrapper.getSurveyType().equals(GSSurveyType.Sample))
+			if (!wrapper.getSurveyType().equals(GSSurveyType.Sample)) {
 				this.inputData.addAll(
 						getDataTables(
 								sf.getSurvey(
@@ -137,6 +137,7 @@ public class GosplInputDataManager {
 										), 
 						this.configuration.getDictionary()
 						));
+			}
 	}
 
 	/**

@@ -215,7 +215,7 @@ public class GenStarGamaSurveyUtils {
 				}
 			}
 
-			System.out.println("Total value is " + total);
+			//System.out.println("Total value is " + total);
 
 		} catch (final IOException e) {}
 		reader.close();

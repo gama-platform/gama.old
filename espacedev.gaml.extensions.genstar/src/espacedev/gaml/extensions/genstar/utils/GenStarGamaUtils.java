@@ -122,6 +122,7 @@ public class GenStarGamaUtils {
 		GenStarGamaSurveyUtils gsg = null;
 		try {
 			gsg = new GenStarGamaSurveyUtils(scope,survey,atts);
+			
 		} catch (FileNotFoundException e) {
 			GamaRuntimeException.create(e, scope);
 		}

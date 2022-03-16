@@ -156,6 +156,14 @@ public class CsvInputHandler extends AbstractInputHandler {
 		}
 		reader.close();
 		
+		if (dataTable != null) {
+			for (String[] str : dataTable) {
+				for (int i = 0; i < str.length; i++) {
+					if (str[i].isBlank())
+						str[i] = "";
+				}
+			}
+		}
 		this.firstRowDataIndex = firstRowDataIndex;
 		this.firstColumnDataIndex = firstColumnDataIndex;
 		

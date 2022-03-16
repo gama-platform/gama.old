@@ -139,6 +139,7 @@ public class FileBasedGenerator implements IGenstarGenerator {
 				.map(s -> GenStarGamaUtils.toSurveyWrapper(scope, s, gsAttributes))
 				.collect(Collectors.toList());
 		
+		
 		// Set Genstar random engine to be the one of Gama for seed purpose consistancy !
 		GenstarRandom.setInstance(scope.getRandom().getGenerator());
 		
