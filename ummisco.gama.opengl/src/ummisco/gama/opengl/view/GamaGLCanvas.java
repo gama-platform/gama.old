@@ -114,7 +114,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @return the GL animator control
 	 */
 	private GLAnimatorControl defineAnimator() {
-		GLAnimatorControl animator = new MultithreadGLAnimator(drawable);
+		GLAnimatorControl animator = new BareBonesGLAnimator(drawable);
 		// FLAGS.USE_OLD_ANIMATOR ? new SingleThreadGLAnimator(drawable) : new MultithreadGLAnimator(drawable);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		return animator;
