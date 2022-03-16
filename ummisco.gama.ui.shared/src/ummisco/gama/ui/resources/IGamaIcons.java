@@ -170,10 +170,10 @@ public interface IGamaIcons {
 	String SMALL_MINUS = "small.minus";
 
 	/** The small expand. */
-	String SMALL_EXPAND = "small.expand";
+	String SMALL_EXPAND = "small.expand2";
 
 	/** The small collapse. */
-	String SMALL_COLLAPSE = "small.collapse";
+	String SMALL_COLLAPSE = "small.collapse2";
 
 	/** The small pause. */
 	String SMALL_PAUSE = "small.pause";

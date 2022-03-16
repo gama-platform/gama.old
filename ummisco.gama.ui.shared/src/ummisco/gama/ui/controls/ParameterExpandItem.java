@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ParameterExpandItem.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ParameterExpandItem.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -149,10 +149,6 @@ public class ParameterExpandItem extends Item {
 	void drawItem(final GC gc, final boolean drawHover) {
 		if (parent == null) return;
 		final var headerHeight = parent.bandHeight;
-		// gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		// gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
-		// gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6,
-		// 6);
 		control.setBackground(this.parent.getBackground());
 		gc.setBackground(headerColor);
 		gc.fillRoundRectangle(x + 1, y, width - 2, headerHeight, 6, 6);
@@ -163,7 +159,7 @@ public class ParameterExpandItem extends Item {
 
 		var drawX = x;
 		final var imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
-		if (getImage() != null && drawHover) {
+		if (getImage() != null/* && drawHover */) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
 			drawX += imageWidth;
@@ -205,7 +201,6 @@ public class ParameterExpandItem extends Item {
 			} else {
 				title = getText();
 			}
-			// gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			var size = gc.stringExtent(title);
 			gc.setForeground(GamaColors.getTextColorForBackground(headerColor).color());
