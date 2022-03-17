@@ -31,9 +31,7 @@
         <setEntry value="com.google.inject@default:default"/>
         <setEntry value="com.ibm.icu@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>
-        <setEntry value="com.sun.jna*4.5.1.v20190425-1842@default:default"/>
         <setEntry value="com.sun.jna*5.8.0.v20210503-0343@default:default"/>
-        <setEntry value="com.sun.jna.platform*4.5.1.v20190425-1842@default:default"/>
         <setEntry value="com.sun.jna.platform*5.8.0.v20210406-1004@default:default"/>
         <setEntry value="jakarta.servlet-api@default:default"/>
         <setEntry value="javax.activation*1.2.2.v20201119-1642@default:default"/>
@@ -41,6 +39,7 @@
         <setEntry value="javax.inject@default:default"/>
         <setEntry value="javax.xml@default:default"/>
         <setEntry value="org.antlr.runtime@default:default"/>
+        <setEntry value="org.aopalliance@default:default"/>
         <setEntry value="org.apache.ant@default:default"/>
         <setEntry value="org.apache.batik.constants@default:default"/>
         <setEntry value="org.apache.batik.css@default:default"/>
@@ -190,8 +189,7 @@
         <setEntry value="org.junit.platform.engine@default:default"/>
         <setEntry value="org.junit.platform.launcher@default:default"/>
         <setEntry value="org.junit@default:default"/>
-        <setEntry value="org.objectweb.asm*9.1.0.v20210209-1849@default:default"/>
-        <setEntry value="org.objectweb.asm*9.2.0.v20210813-1119@default:default"/>
+        <setEntry value="org.objectweb.asm@default:default"/>
         <setEntry value="org.opentest4j@default:default"/>
         <setEntry value="org.sat4j.core@default:default"/>
         <setEntry value="org.sat4j.pb@default:default"/>
@@ -227,7 +225,7 @@
         <setEntry value="ummisco.gaml.extensions.maths@default:default"/>
         <setEntry value="ummisco.gaml.extensions.stats@default:default"/>
     </setAttribute>
-    <booleanAttribute key="show_selected_only" value="true"/>
+    <booleanAttribute key="show_selected_only" value="false"/>
     <booleanAttribute key="tracing" value="false"/>
     <booleanAttribute key="useCustomFeatures" value="false"/>
     <booleanAttribute key="useDefaultConfig" value="true"/>

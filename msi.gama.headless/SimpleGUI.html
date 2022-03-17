@@ -199,7 +199,7 @@
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch" onclick="launch()"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="play()">  <input type="button" value="Pause" onclick="pause()">  <input type="button" value="Stop" onclick="stop()"></td></tr>  </table><div id="errors"></div>');
+			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()">  <input type="button" value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch" onclick="launch()"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="play()">  <input type="button" value="Pause" onclick="pause()">  <input type="button" value="Stop" onclick="stop()"></td></tr>  </table><div id="errors"></div>');
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
 
@@ -383,6 +383,19 @@
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
 				socket.send("stop@" + exp_id);
+			} else { $('#errors').text("Socket is not ready!"); }
+
+			// message received - show the message in div#messages
+			return false;
+		};
+
+		function exit() {
+			//setInterval(function(){ 
+			//  socket.send(""); }, 100);  
+			if (socket && socket.readyState === 1) {
+				socket.binaryType = "arraybuffer";
+				// socket.send(exp_compiled);
+				socket.send("exit");
 			} else { $('#errors').text("Socket is not ready!"); }
 
 			// message received - show the message in div#messages

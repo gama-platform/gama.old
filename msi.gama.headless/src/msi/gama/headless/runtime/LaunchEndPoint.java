@@ -194,6 +194,9 @@ public class LaunchEndPoint implements Endpoint {
 				((ManualExperimentJob) server.simulations.get(id_exp)).dispose();
 			}
 		}
+		if ("exit".equals(args[0])) {
+			System.exit(0);
+		}
 		if ("compile".equals(args[0])) {
 			try {
 				Globals.IMAGES_PATH = "C:\\GAMA\\headless\\samples\\toto\\snapshot";
