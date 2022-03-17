@@ -32,6 +32,7 @@ public class ManualExperimentJob extends ExperimentJob {
 	protected GamaWebSocketServer server;
 	protected WebSocket socket;
 	public boolean paused = false;
+	public boolean stepping = false;
 	public Thread internalThread;
 
 	public ManualExperimentJob(ExperimentJob clone, GamaWebSocketServer s, WebSocket sk) {
@@ -48,7 +49,7 @@ public class ManualExperimentJob extends ExperimentJob {
 	}
 
 	@Override
-	protected void exportVariables() {
+	public void exportVariables() {
 		final int size = this.listenedVariables.length;
 		if (size == 0)
 			return;

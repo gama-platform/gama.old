@@ -152,7 +152,7 @@ public class LaunchEndPoint implements Endpoint {
 //			}
 //		}
 		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size);
-
+		((ManualExperimentJob)selectedJob).exportVariables();
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}
 
@@ -175,6 +175,7 @@ public class LaunchEndPoint implements Endpoint {
 			System.out.println("play " + id_exp);
 			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
 				((ManualExperimentJob) server.simulations.get(id_exp)).paused = false;
+				((ManualExperimentJob) server.simulations.get(id_exp)).stepping = false;
 				// DEBUG.TIMER("Simulation duration", () -> {
 				if (((ManualExperimentJob) server.simulations.get(id_exp)).internalThread == null) {
 					((ManualExperimentJob) server.simulations.get(id_exp)).internalThread = new Thread() {
@@ -182,6 +183,11 @@ public class LaunchEndPoint implements Endpoint {
 						public void run() {
 
 							while (!server.simulations.get(id_exp).getSimulation().isInterrupted()) {
+								if (((ManualExperimentJob) server.simulations.get(id_exp)).stepping) {
+									((ManualExperimentJob) server.simulations.get(id_exp)).stepping = false;
+									((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
+									server.simulations.get(id_exp).doStep();
+								}
 								if (!((ManualExperimentJob) server.simulations.get(id_exp)).paused)
 									server.simulations.get(id_exp).doStep();
 							}
@@ -192,6 +198,13 @@ public class LaunchEndPoint implements Endpoint {
 			}
 		}
 
+		if ("step".equals(args[0])) {
+			String id_exp = args[1];
+			System.out.println("step " + id_exp);
+			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.simulations.get(id_exp)).stepping = true;
+			}
+		}
 		if ("pause".equals(args[0])) {
 			String id_exp = args[1];
 			System.out.println("pause " + id_exp);
