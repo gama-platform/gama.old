@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
+import java.io.PrintStream;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -49,13 +50,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * The Class GamaGLCanvas.
  */
-public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent {
+public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent, FPSCounter {
 
 	/** The canvas. */
 	final Control canvas;
 
 	/** The drawable. */
 	final GLAutoDrawable drawable;
+
+	final FPSCounter fpsDelegate;
 
 	/** The detached. */
 	protected boolean detached = false;
@@ -100,12 +103,21 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		} else {
 			canvas = new GLCanvas(this, SWT.NONE, cap, null);
 			drawable = (GLAutoDrawable) canvas;
+
 		}
 		drawable.setAutoSwapBufferMode(true);
+
 		drawable.addGLEventListener(renderer);
 		GLAnimatorControl animator = defineAnimator();
+		if (drawable instanceof GLWindow w) {
+			fpsDelegate = w;
+		} else
+			fpsDelegate = animator;
+		drawable.setExclusiveContextThread(animator.getThread());
 		renderer.setCanvas(this);
-		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
+		addDisposeListener(e -> new Thread(() -> {
+			animator.stop();
+		}).start());
 	}
 
 	/**
@@ -114,7 +126,13 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @return the GL animator control
 	 */
 	private GLAnimatorControl defineAnimator() {
-		GLAnimatorControl animator = new BareBonesGLAnimator(drawable);
+		GLAnimatorControl animator ;
+		if (PlatformHelper.isARM())
+			animator = new BareBonesGLAnimator(drawable);
+		else if (PlatformHelper.isLinux())
+			animator = new SingleThreadGLAnimator(drawable);
+		else
+			animator = new MultithreadGLAnimator(drawable);
 		// FLAGS.USE_OLD_ANIMATOR ? new SingleThreadGLAnimator(drawable) : new MultithreadGLAnimator(drawable);
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		return animator;
@@ -145,16 +163,24 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public boolean isRealized() { return drawable.isRealized(); }
+	public boolean isRealized() {
+		return drawable.isRealized();
+	}
 
 	@Override
-	public int getSurfaceWidth() { return drawable.getSurfaceWidth(); }
+	public int getSurfaceWidth() {
+		return drawable.getSurfaceWidth();
+	}
 
 	@Override
-	public int getSurfaceHeight() { return drawable.getSurfaceHeight(); }
+	public int getSurfaceHeight() {
+		return drawable.getSurfaceHeight();
+	}
 
 	@Override
-	public boolean isGLOriented() { return drawable.isGLOriented(); }
+	public boolean isGLOriented() {
+		return drawable.isGLOriented();
+	}
 
 	@Override
 	public void swapBuffers() throws GLException {
@@ -162,28 +188,44 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public GLCapabilitiesImmutable getChosenGLCapabilities() { return drawable.getChosenGLCapabilities(); }
+	public GLCapabilitiesImmutable getChosenGLCapabilities() {
+		return drawable.getChosenGLCapabilities();
+	}
 
 	@Override
-	public GLCapabilitiesImmutable getRequestedGLCapabilities() { return drawable.getRequestedGLCapabilities(); }
+	public GLCapabilitiesImmutable getRequestedGLCapabilities() {
+		return drawable.getRequestedGLCapabilities();
+	}
 
 	@Override
-	public GLProfile getGLProfile() { return drawable.getGLProfile(); }
+	public GLProfile getGLProfile() {
+		return drawable.getGLProfile();
+	}
 
 	@Override
-	public NativeSurface getNativeSurface() { return drawable.getNativeSurface(); }
+	public NativeSurface getNativeSurface() {
+		return drawable.getNativeSurface();
+	}
 
 	@Override
-	public long getHandle() { return drawable.getHandle(); }
+	public long getHandle() {
+		return drawable.getHandle();
+	}
 
 	@Override
-	public GLDrawableFactory getFactory() { return drawable.getFactory(); }
+	public GLDrawableFactory getFactory() {
+		return drawable.getFactory();
+	}
 
 	@Override
-	public GLDrawable getDelegatedDrawable() { return drawable.getDelegatedDrawable(); }
+	public GLDrawable getDelegatedDrawable() {
+		return drawable.getDelegatedDrawable();
+	}
 
 	@Override
-	public GLContext getContext() { return drawable.getContext(); }
+	public GLContext getContext() {
+		return drawable.getContext();
+	}
 
 	@Override
 	public GLContext setContext(final GLContext newCtx, final boolean destroyPrevCtx) {
@@ -201,7 +243,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public int getGLEventListenerCount() { return drawable.getGLEventListenerCount(); }
+	public int getGLEventListenerCount() {
+		return drawable.getGLEventListenerCount();
+	}
 
 	@Override
 	public boolean areAllGLEventListenerInitialized() {
@@ -239,7 +283,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public GLAnimatorControl getAnimator() { return drawable.getAnimator(); }
+	public GLAnimatorControl getAnimator() {
+		return drawable.getAnimator();
+	}
 
 	@Override
 	public Thread setExclusiveContextThread(final Thread t) throws GLException {
@@ -247,7 +293,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public Thread getExclusiveContextThread() { return drawable.getExclusiveContextThread(); }
+	public Thread getExclusiveContextThread() {
+		return drawable.getExclusiveContextThread();
+	}
 
 	@Override
 	public boolean invoke(final boolean wait, final GLRunnable glRunnable) throws IllegalStateException {
@@ -280,7 +328,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public boolean getAutoSwapBufferMode() { return drawable.getAutoSwapBufferMode(); }
+	public boolean getAutoSwapBufferMode() {
+		return drawable.getAutoSwapBufferMode();
+	}
 
 	@Override
 	public void setContextCreationFlags(final int flags) {
@@ -288,7 +338,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public int getContextCreationFlags() { return drawable.getContextCreationFlags(); }
+	public int getContextCreationFlags() {
+		return drawable.getContextCreationFlags();
+	}
 
 	@Override
 	public GLContext createContext(final GLContext shareWith) {
@@ -296,7 +348,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public GL getGL() { return drawable.getGL(); }
+	public GL getGL() {
+		return drawable.getGL();
+	}
 
 	@Override
 	public GL setGL(final GL gl) {
@@ -304,13 +358,19 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	}
 
 	@Override
-	public Object getUpstreamWidget() { return drawable.getUpstreamWidget(); }
+	public Object getUpstreamWidget() {
+		return drawable.getUpstreamWidget();
+	}
 
 	@Override
-	public RecursiveLock getUpstreamLock() { return drawable.getUpstreamLock(); }
+	public RecursiveLock getUpstreamLock() {
+		return drawable.getUpstreamLock();
+	}
 
 	@Override
-	public boolean isThreadGLCapable() { return drawable.isThreadGLCapable(); }
+	public boolean isThreadGLCapable() {
+		return drawable.isThreadGLCapable();
+	}
 
 	/**
 	 * Gets the NEWT window.
@@ -402,6 +462,58 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 				w.removeMouseListener(camera);
 			}
 		});
+	}
+
+	@Override
+	public void setUpdateFPSFrames(int frames, PrintStream out) {
+		fpsDelegate.setUpdateFPSFrames(frames, out);
+	}
+
+	@Override
+	public void resetFPSCounter() {
+		fpsDelegate.resetFPSCounter();
+	}
+
+	@Override
+	public int getUpdateFPSFrames() {
+		return fpsDelegate.getUpdateFPSFrames();
+
+	}
+
+	@Override
+	public long getFPSStartTime() {
+		return fpsDelegate.getFPSStartTime();
+	}
+
+	@Override
+	public long getLastFPSUpdateTime() {
+		return fpsDelegate.getLastFPSUpdateTime();
+
+	}
+
+	@Override
+	public long getLastFPSPeriod() {
+		return fpsDelegate.getLastFPSPeriod();
+	}
+
+	@Override
+	public float getLastFPS() {
+		return fpsDelegate.getLastFPS();
+	}
+
+	@Override
+	public int getTotalFPSFrames() {
+		return fpsDelegate.getTotalFPSFrames();
+	}
+
+	@Override
+	public long getTotalFPSDuration() {
+		return fpsDelegate.getTotalFPSDuration();
+	}
+
+	@Override
+	public float getTotalFPS() {
+		return fpsDelegate.getTotalFPS();
 	}
 
 }

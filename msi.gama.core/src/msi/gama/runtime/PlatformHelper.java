@@ -128,4 +128,8 @@ public class PlatformHelper {
 		return (major << 16) + (minor << 8) + micro;
 	}
 
+	public static boolean isARM() {
+		return Platform.ARCH_AARCH64.equals(Platform.getOSArch());
+	}
+
 }

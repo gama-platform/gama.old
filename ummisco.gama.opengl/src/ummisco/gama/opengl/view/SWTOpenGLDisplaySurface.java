@@ -247,25 +247,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void updateDisplay(final boolean force) {
-
 		if (alreadyUpdating) return;
 		try {
 			alreadyUpdating = true;
-
-			final boolean oldState = animator.isPaused();
-			if (force) { animator.resume(); }
 			layerManager.drawLayersOn(renderer);
-
-			// EXPERIMENTAL
-
-			// if (temp_focus != null) {
-			// final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()));
-			// if (geometry != null) {
-			// temp_focus = null;
-			// focusOn(geometry);
-			// }
-			// }
-			if (force && oldState) { animator.pause(); }
 		} finally {
 			alreadyUpdating = false;
 		}
@@ -741,7 +726,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getFPS()
 	 */
 	@Override
-	public int getFPS() { return Math.round(this.animator.getLastFPS()); }
+	public int getFPS() { return Math.round(renderer.getCanvas().getLastFPS()); }
 
 	// @Override
 	// public boolean isRealized() {
