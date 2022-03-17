@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaExecutorService.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaExecutorService.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -37,24 +37,48 @@ import msi.gaml.types.IType;;
  */
 public abstract class GamaExecutorService {
 
-	/** The Constant EXCEPTION_HANDLER. */
-	public static final UncaughtExceptionHandler EXCEPTION_HANDLER = (t, e) -> {
+	/**
+	 * The Class GamaMemoryExceptionHandler.
+	 */
+	static class GamaMemoryExceptionHandler implements UncaughtExceptionHandler {
 
-		if (e instanceof OutOfMemoryError) {
-			if (GamaPreferences.Runtime.CORE_MEMORY_ACTION.getValue()) {
-				GAMA.getGui().tell(
-						"GAMA is out of memory. Experiment will be closed now. Increase the memory allocated to the platform in the preferences.");
-				GAMA.closeAllExperiments(true, true);
+		/** The last warning time stamp. */
+		long lastWarningTimeStamp = 0l;
+
+		@Override
+		public void uncaughtException(final Thread t, final Throwable e) {
+			if (e instanceof OutOfMemoryError) {
+				long currentTime = System.currentTimeMillis();
+				if (currentTime - lastWarningTimeStamp > 60000l) {
+					// 1 minute between warnings
+					lastWarningTimeStamp = currentTime;
+					String msg = e.getMessage();
+					msg = msg == null ? "" : msg.toLowerCase();
+					if (GamaPreferences.Runtime.CORE_MEMORY_ACTION.getValue() && GAMA.getExperiment() != null
+							&& msg.contains("heap")) {
+						GAMA.getGui().tell(
+								"GAMA is out of memory. Experiment will be closed now. Please consult: https://gama-platform.org/wiki/Troubleshooting#memory-problems");
+						GAMA.closeAllExperiments(true, true);
+					} else {
+						if (GAMA.getExperiment() != null && !msg.contains("heap")) {
+							GAMA.getGui().tell(
+									"GAMA cannot allocate more memory for displaying this experiment. The platform will exit now. Please try to quit other applications and relaunch it");
+						} else {
+							GAMA.getGui().tell(
+									"Your system is running out of memory. GAMA will exit now. Please try to quit other applications and relaunch it");
+						}
+						System.exit(0);
+					}
+				}
 			} else {
-				GAMA.getGui().tell(
-						"GAMA is out of memory. The platform will exit now. Relaunch it and increase the memory allocated in the preferences.");
-				System.exit(0);
+				e.printStackTrace();
 			}
-		} else {
-			e.printStackTrace();
 		}
 
-	};
+	}
+
+	/** The Constant EXCEPTION_HANDLER. */
+	public static final UncaughtExceptionHandler EXCEPTION_HANDLER = new GamaMemoryExceptionHandler();
 
 	/** The agent parallel executor. */
 	public static volatile ForkJoinPool AGENT_PARALLEL_EXECUTOR;
