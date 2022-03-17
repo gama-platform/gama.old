@@ -31,13 +31,20 @@ import msi.gama.headless.runtime.GamaWebSocketServer;
 public class ManualExperimentJob extends ExperimentJob {
 	protected GamaWebSocketServer server;
 	protected WebSocket socket;
-	public boolean paused=false;
+	public boolean paused = false;
 	public Thread internalThread;
-	public ManualExperimentJob(ExperimentJob clone,GamaWebSocketServer s, WebSocket sk) {
+
+	public ManualExperimentJob(ExperimentJob clone, GamaWebSocketServer s, WebSocket sk) {
 		super(clone);
-		server=s;
-		socket=sk;
+		server = s;
+		socket = sk;
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void doStep() {
+		this.step = simulator.step();
+		this.exportVariables();
 	}
 
 	@Override
@@ -56,13 +63,15 @@ public class ManualExperimentJob extends ExperimentJob {
 						BufferedImage bi = (BufferedImage) out.getValue();
 						ByteArrayOutputStream out1 = new ByteArrayOutputStream();
 						ImageIO.write(bi, "png", out1);
-						
+
 						byte[] array1 = out1.toByteArray();
-						byte[] array2 = { (byte) i };
-						byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length);
+						byte[] array2 = { (byte) 0 };
+						byte[] array3 = { (byte) i };
+						byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length + array3.length);
 						System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
-						
-						ByteBuffer byteBuffer = ByteBuffer.wrap(joinedArray); 
+						System.arraycopy(array3, 0, joinedArray, array1.length + array2.length, array3.length);
+
+						ByteBuffer byteBuffer = ByteBuffer.wrap(joinedArray);
 						socket.send(byteBuffer);
 //						server.broadcast(byteBuffer);
 						out1.close();
@@ -74,6 +83,15 @@ public class ManualExperimentJob extends ExperimentJob {
 //					v.setValue(writeImageInFile((BufferedImage) out.getValue(), v.getName(), v.getPath()), step,
 //							out.getType());
 				} else {
+					byte[] array1 = (out.getName()+": "+out.getValue().toString()).getBytes();
+					byte[] array2 = { (byte) 1 };
+					byte[] array3 = { (byte) i };
+					byte[] joinedArray = Arrays.copyOf(array1, array1.length + array2.length + array3.length);
+					System.arraycopy(array2, 0, joinedArray, array1.length, array2.length);
+					System.arraycopy(array3, 0, joinedArray, array1.length + array2.length, array3.length);
+
+					ByteBuffer byteBuffer = ByteBuffer.wrap(joinedArray);
+					socket.send(byteBuffer);
 					v.setValue(out.getValue(), out.getStep(), out.getType());
 				}
 			} else {

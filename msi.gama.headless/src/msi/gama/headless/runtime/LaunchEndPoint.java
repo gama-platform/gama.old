@@ -27,6 +27,7 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.job.ListenedVariable;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.job.Output;
 import msi.gama.headless.script.ExperimentationPlanFactory;
@@ -46,7 +47,9 @@ public class LaunchEndPoint implements Endpoint {
 			throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+		if (!GamlFileExtension.isGaml(pathToModel)) {
+			System.exit(-1);
+		}
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
@@ -58,7 +61,8 @@ public class LaunchEndPoint implements Endpoint {
 				break;
 			}
 		}
-		if (selectedJob == null) return;
+		if (selectedJob == null)
+			return;
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream out = null;
@@ -91,7 +95,9 @@ public class LaunchEndPoint implements Endpoint {
 			ex.printStackTrace();
 		} finally {
 			try {
-				if (in != null) { in.close(); }
+				if (in != null) {
+					in.close();
+				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -103,20 +109,18 @@ public class LaunchEndPoint implements Endpoint {
 	/**
 	 * Run gaml simulation.
 	 *
-	 * @param server
-	 *            the server
-	 * @param message
-	 *            the args
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException
-	 *             the gama headless exception
+	 * @param server  the server
+	 * @param message the args
+	 * @throws IOException           Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
 	 */
 	public void launchGamlSimulation(final GamaWebSocketServer server, WebSocket socket, final List<String> args)
 			throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+		if (!GamlFileExtension.isGaml(pathToModel)) {
+			System.exit(-1);
+		}
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
@@ -128,7 +132,8 @@ public class LaunchEndPoint implements Endpoint {
 				break;
 			}
 		}
-		if (selectedJob == null) return;
+		if (selectedJob == null)
+			return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		try {
@@ -138,7 +143,15 @@ public class LaunchEndPoint implements Endpoint {
 			e.printStackTrace();
 		}
 		server.simulations.put(selectedJob.getExperimentID(), selectedJob);
-		socket.send("exp@" + selectedJob.getExperimentID());
+		final int size = selectedJob.getListenedVariables().length;
+//		String lst_out = "";
+//		if (size != 0) {
+//			for (int i = 0; i < size; i++) {
+//				final ListenedVariable v = selectedJob.getListenedVariables()[i];
+//				lst_out += "@" + v.getName();
+//			}
+//		}
+		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size);
 
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}

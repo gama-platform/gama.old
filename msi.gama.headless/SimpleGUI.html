@@ -199,27 +199,28 @@
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()">  <input type="button" value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr>  <tr><td colspan=2> <input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">  <input type="button" value="Launch" onclick="launch()"></td></tr>  <tr><td colspan=2>  <input type="button" value="Play" onclick="play()">  <input type="button" value="Pause" onclick="pause()">  <input type="button" value="Stop" onclick="stop()"></td></tr>  </table><div id="errors"></div>');
+			$('#new_window_content').val('Socket <input type="button" value="Open" onclick="connect()"> <input type="button" value="Close" onclick="disconnect()">  <input type="button" value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr> <tr><td colspan=2>  <input type="button" value="Launch" onclick="launch()"> <input type="button" value="Play" onclick="play()">  <input type="button" value="Pause" onclick="pause()">  <input type="button" value="Stop" onclick="stop()"></td></tr>  </table><div id="errors"></div>');
+			//<input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
 
 
-			$('#new_window_title').val("Display2"); $('#new_window_content').val('<img id="image_out0"></img>');
-			create1();
-			$('#' + 'dialog_window_3').parent().css({ left: 400, top: 50 });
+			// $('#new_window_title').val("Display2"); $('#new_window_content').val('<img id="image_out0"></img>');
+			// create1();
+			// $('#' + 'dialog_window_3').parent().css({ left: 400, top: 50 });
 
 
 
 			$('#new_window_title').val("Console"); $('#new_window_content').val('<textarea  rows="24" cols="36" id="console"></textarea>');
 			create1();
-			$('#' + 'dialog_window_4').parent().css({ left: 8, top: 280 });
+			$('#' + 'dialog_window_3').parent().css({ left: 8, top: 280 });
 
 
 
 
-			$('#new_window_title').val("Display3"); $('#new_window_content').val('<img id="image_out1"></img>');
-			create1();
-			$('#' + 'dialog_window_5').parent().css({ left: 400, top: 280 });
+			// $('#new_window_title').val("Display3"); $('#new_window_content').val('<img id="image_out1"></img>');
+			// create1();
+			// $('#' + 'dialog_window_5').parent().css({ left: 400, top: 280 });
 
 
 			$('#new_window_title').val('');
@@ -248,6 +249,7 @@
 		// send message from the form
 		var exp_compiled;
 		var exp_id = 0;
+		var exp_out = 0;
 		function compile() {
 			//setInterval(function(){ 
 			//  socket.send(""); }, 100);  
@@ -302,20 +304,16 @@
 
 					if (typeof event.data == "object") {
 
-						var bytes = new Uint8Array(event.data);
-						var data = "";
-						var len = bytes.byteLength;
-						for (var i = 0; i < len - 1; ++i) {
-							data += String.fromCharCode(bytes[i]);
-						}
-						// console.log(bytes[len - 1]);
-						var img = document.getElementById("image_out" + bytes[len - 1]);
-						img.src = "data:image/png;base64," + window.btoa(data);
-
-
 					} else {
 						if (message.startsWith("exp@")) {
-							exp_id = message.substring(4);
+							const myArray = message.split("@");
+							exp_id = myArray[1];
+							exp_out = myArray[2];
+							for (let i = 0; i < exp_out; i++) {
+								$('#new_window_title').val("Out" + i); $('#new_window_content').val('<div id="out' + i + '"><img width="500"></div>');
+								create1();
+								$('#' + 'dialog_window_' + (4 + i)).parent().css({left: 400, top: 10 + (150 * i) });
+							}
 						}
 						$('#console').append(message + "\n");
 					}
@@ -343,18 +341,26 @@
 						var bytes = new Uint8Array(event.data);
 						var data = "";
 						var len = bytes.byteLength;
-						for (var i = 0; i < len - 1; ++i) {
+						for (var i = 0; i < len - 2; ++i) {
 							data += String.fromCharCode(bytes[i]);
 						}
-						// console.log(bytes[len - 1]);
-						var img = document.getElementById("image_out" + bytes[len - 1]);
-						img.src = "data:image/png;base64," + window.btoa(data);
+						if (bytes[len - 2] == 0) {
+
+							// console.log(bytes[len - 1]);
+							// <img id="image_out0"></img>
+							var img = document.createElement("IMG");
+							// img.src = "/images/abc.jpg";
+							// var img = document.getElementById("image_out" + bytes[len - 1]);
+							img.src = "data:image/png;base64," + window.btoa(data);
+							$("#out" + bytes[len - 1]).html(img);
+						}
+
+						if (bytes[len - 2] == 1) { 
+							$("#out" + bytes[len - 1]).html(data);
+						}
 
 
 					} else {
-						if (message.startsWith("exp@")) {
-							exp_id = message.substring(4);
-						}
 						$('#console').append(message + "\n");
 					}
 				}
@@ -383,6 +389,12 @@
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
 				socket.send("stop@" + exp_id);
+				// 'dialog_window_'
+				// $('#' + div_id).dialog('close');
+
+				for (let i = 0; i < exp_out; i++) {
+					$('#' + 'dialog_window_' + (4 + i)).remove();
+				}
 			} else { $('#errors').text("Socket is not ready!"); }
 
 			// message received - show the message in div#messages
