@@ -60,6 +60,8 @@
 	</style>
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.1/jszip.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.0.2/jszip-utils.js"></script>
 
 </head>
 
@@ -132,7 +134,7 @@
 				dialog_element.open();
 			});
 		};
-
+		
 		$(document).ready(function () {
 			$('#create_button').button().click(function () {
 				var create_dialog = $('#dialog_window_1');
@@ -199,7 +201,7 @@
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('Socket <input type="button" id="sk_open" value="Open" onclick="connect()"> <input type="button" id="sk_close" disabled value="Close" onclick="disconnect()">  <input type="button" id="sk_exit" disabled value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\GAMA\\headless\\samples\\predatorPrey\\predatorPrey.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="prey_predatorExp"></td></tr> <tr><td colspan=2>  <input type="button" id="exp_launch" value="Launch" onclick="launch()" disabled> <input type="button"  id="exp_play"value="Play" onclick="play()" disabled>  <input type="button" id="exp_step" value="Step" onclick="dostep()" disabled>  <input type="button"  id="exp_pause" value="Pause" onclick="pause()" disabled>  <input type="button"  id="exp_stop" value="Stop" onclick="stop()" disabled></td></tr>  </table><div id="errors"></div>');
+			$('#new_window_content').val('Socket <input type="button" id="sk_open" value="Open" onclick="connect()"> <input type="button" id="sk_close" disabled value="Close" onclick="disconnect()">  <input type="button" id="sk_exit" disabled value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\git\\gama\\msi.gama.models\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="traffic"></td></tr> <tr><td colspan=2>  <input type="button" id="exp_launch" value="Launch" onclick="launch()" disabled> <input type="button"  id="exp_play"value="Play" onclick="play()" disabled>  <input type="button" id="exp_step" value="Step" onclick="dostep()" disabled>  <input type="button"  id="exp_pause" value="Pause" onclick="pause()" disabled>  <input type="button"  id="exp_stop" value="Stop" onclick="stop()" disabled></td></tr>  </table><div id="errors"></div>');
 			//<input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
@@ -291,6 +293,7 @@
 			if (socket && socket.readyState === 1) {
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
+				console.log("launch@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
 				socket.send("launch@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
 				$("#exp_launch").prop("disabled", true);
 				$("#exp_play").prop("disabled", false);

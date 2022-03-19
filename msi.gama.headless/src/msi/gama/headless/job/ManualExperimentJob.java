@@ -14,16 +14,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.geotools.feature.SchemaException;
 import org.java_websocket.WebSocket;
 
+import msi.gama.headless.common.SaveHelper;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.runtime.GamaWebSocketServer;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 
 /**
  * The Class ExperimentJob.
@@ -59,7 +62,24 @@ public class ManualExperimentJob extends ExperimentJob {
 				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {
 				} else if (out.getValue() instanceof BufferedImage) {
-//					System.out.println(v.getName());
+//					IAgent agt=simulator.getSimulation().getMicroPopulation("people").get(0);
+//					IShape geom=Spatial.Projections.transform_CRS(agt.getScope(),agt.getGeometry(),"EPSG:4326");
+//					socket.send(""+geom.getLocation().x+","+geom.getLocation().y);
+
+//					IList<? extends IShape> agents=simulator.getSimulation().getMicroPopulation("Individual");
+////					IList<? extends IShape> agents=GamaListFactory.create();
+////					for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
+////						if(!(pop instanceof GridPopulation)) {
+////							agents.addAll(pop);
+////						}
+////					}
+//					try {
+//						socket.send(SaveHelper.buildGeoJSon(simulator.getSimulation().getScope(), agents));
+//					} catch (GamaRuntimeException | IOException | SchemaException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+					
 					try {
 						BufferedImage bi = (BufferedImage) out.getValue();
 						ByteArrayOutputStream out1 = new ByteArrayOutputStream();

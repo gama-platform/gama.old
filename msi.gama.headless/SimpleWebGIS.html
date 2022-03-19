@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Demo: Route avoidance with the Directions API and Turf.js</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+		crossorigin="" /> 
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin=""></script> -->
+	<style>
+		#map {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		body {
+			color: #404040;
+			font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+
+
+	<!-- Mapbox GL JS -->
+	<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+	<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
+
+	<!-- Mapbox GL Directions -->
+	<!-- <script
+		src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.js"></script>
+	<link rel="stylesheet"
+		href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.0.2/mapbox-gl-directions.css"
+		type="text/css" /> -->
+
+	<!-- Turf & Polyline -->
+	<script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-polyline/1.1.1/polyline.js"></script>
+
+</head>
+
+<body>
+	<div id="map"></div>
+
+	<script>
+		// var map = L.map('map').setView([51.505, -0.09], 13);
+
+		// var circle = L.circle([51.508, -0.11], {
+		// 		color: 'red',
+		// 		fillColor: '#f03',
+		// 		fillOpacity: 0.5,
+		// 		radius: 500
+		// 	}).addTo(map); 
+
+		// var polygon = L.polygon([
+		// 	[51.509, -0.08],
+		// 	[51.503, -0.06],
+		// 	[51.51, -0.047]
+		// ]).addTo(map);
+		// var map = L.map('map', {
+		//       center: {lat:1241.595510187326,lon:1157.999897506088},
+		//       zoom: 1,
+		//       maxZoom: 21,
+		//       crs: L.CRS.EPSG4326,
+		//       zoomControl: true
+		//     });
+
+		// var circle = L.circle([1241.595510187326, 1157.999897506088], {
+		// 				color: 'red',
+		// 				fillColor: '#f03',
+		// 				fillOpacity: 0.9,
+		// 				radius: 500
+		// 			}).addTo(map); 
+
+		// var polygon = L.polygon ([[991.595510187326,1407.999897506088],[1491.595510187326,1407.999897506088],[1491.595510187326,907.9998975060882],[991.595510187326,907.9998975060882],[991.595510187326,1407.999897506088]]).addTo(map);
+		// var map = L.map('map', {
+		//       center: {lat:3.8816019487308298,lon:43.60945558063863},
+		//       zoom: 13,
+		//       maxZoom: 21,
+		//       crs: L.CRS.EPSG3857,
+		//       zoomControl: true
+		//     });
+
+		// var circle = L.circle([3.8816019487308298,43.60945558063863], {
+		// 				color: 'red',
+		// 				fillColor: '#f03',
+		// 				fillOpacity: 0.9,
+		// 				radius: 500
+		// 			}).addTo(map); 
+
+		// var polygon = L.polygon ([[991.595510187326,1407.999897506088],[1491.595510187326,1407.999897506088],[1491.595510187326,907.9998975060882],[991.595510187326,907.9998975060882],[991.595510187326,1407.999897506088]]).addTo(map);
+
+		// var polygon1 = L.polygon ([[0.0,2315.999795012176],[2483.191020374652,2315.999795012176],[2483.191020374652,0.0],[0.0,0.0],[0.0,2315.999795012176]]).addTo(map);
+		//launch@C:\GAMA\configuration\org.eclipse.osgi\400\0\.cp\models\Toy Models\Traffic\models\traffic.gaml@traffic
+
+		mapboxgl.accessToken = 'pk.eyJ1IjoiaHFuZ2hpODgiLCJhIjoiY2t0N2w0cGZ6MHRjNTJ2bnJtYm5vcDB0YyJ9.oTjisOggN28UFY8q1hiAug';
+
+		const map = new mapboxgl.Map({
+			container: 'map', // container id
+			style: 'mapbox://styles/mapbox/satellite-streets-v11',
+			pitch: 45,
+			bearing: -17.6,
+			antialias: true,
+			// style: { version: 8, sources: {}, layers: [] },
+			// center: [3.8816019487308298, 43.60945558063863], //  -84.5, 38.05starting position 
+			center: [0,0], //  -84.5, 38.05starting position 
+			zoom: 13 // starting zoom
+		});
+
+		var socket = new WebSocket("ws://localhost:6868/launch");
+		// socket.binaryType = "arraybuffer";
+		socket.addEventListener('open', (event) => {
+
+			// socket.send("launch@C:\\GAMA\\configuration\\org.eclipse.osgi\\400\\0\\.cp\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml@traffic");
+			socket.send("launch@C:\\git\\COMOKIT-Model\\COMOKIT\\Experiments\\Lockdown\\LockDown.gaml@Lockdown");
+			socket.onmessage = function (event) {
+				exp_compiled = event.data;
+				if (exp_compiled.startsWith("exp@")) {
+					const myArray = exp_compiled.split("@");
+					// console.log(myArray[3], myArray[4]);
+					exp_id = myArray[1];
+					map.flyTo({
+						center: [myArray[3], myArray[4]], 
+						essential: true,
+						zoom: 15
+					});
+					socket.send("play@" + exp_id);
+					socket.onmessage = function (event) {
+						let message = event.data;
+						if (typeof event.data == "object") {
+
+						} else {
+							// var tmp = message.split(",");
+							// geojson = {
+							// 	'type': 'FeatureCollection',
+							// 	'features': [
+							// 		{
+							// 			'type': 'Feature',
+							// 			'geometry': {
+							// 				'type': 'Point',
+							// 				'coordinates': [tmp[0], tmp[1]]
+							// 			}
+							// 		}
+							// 	]
+							// };
+							// geojson = { "type": "FeatureCollection", "features": [{ "type": "Feature", "geometry": { "type": "Polygon", "coordinates": [[[3.878413870603185, 43.60724945488746, 0.0], [3.8784827490068476, 43.611748024959404, 0.0], [3.884674112463863, 43.61169779842066, 0.0], [3.8846047487005113, 43.607199232441594, 0.0], [3.878413870603185, 43.60724945488746, 0.0]]] }, "properties": {}, "id": "0" }] };
+							geojson = JSON.parse(message);
+							// console.log(geojson);
+							map.getSource('iss').setData(geojson);
+							// console.log(tmp[0], tmp[1]);
+						}
+					}
+				}
+			}
+		});
+		var geojson = {
+			'type': 'FeatureCollection',
+			'features': [
+				{
+					'type': 'Feature',
+					'geometry': {
+						'type': 'Point',
+						'coordinates': [21.276612216569756, 105.6788139592465]
+					}
+				}
+			]
+		};
+		map.on('load', async () => {
+			// Get the initial location of the International Space Station (ISS).
+			// var geojson = await getLocation();
+
+			// Add the ISS location as a source.
+			map.addSource('iss', {
+				type: 'geojson',
+				data: geojson
+			});
+			// Add the rocket symbol layer to the map.
+			map.addLayer({
+				'id': 'iss',
+				'type': 'fill',
+				'source': 'iss',
+				'layout': {},
+				'paint': {
+					'fill-color': 'red', // blue color fill
+					'fill-opacity': 0.5
+				}
+
+			});
+			const layers = map.getStyle().layers;
+			const labelLayerId = layers.find(
+				(layer) => layer.type === 'symbol' && layer.layout['text-field']
+			).id;
+			map.addLayer(
+				{
+					'id': 'add-3d-buildings',
+					'source': 'composite',
+					'source-layer': 'building',
+					'filter': ['==', 'extrude', 'true'],
+					'type': 'fill-extrusion',
+					'minzoom': 15,
+					'paint': {
+						'fill-extrusion-color': '#aaa',
+
+						// Use an 'interpolate' expression to
+						// add a smooth transition effect to
+						// the buildings as the user zooms in.
+						'fill-extrusion-height': [
+							'interpolate',
+							['linear'],
+							['zoom'],
+							15,
+							0,
+							15.05,
+							['get', 'height']
+						],
+						'fill-extrusion-base': [
+							'interpolate',
+							['linear'],
+							['zoom'],
+							15,
+							0,
+							15.05,
+							['get', 'min_height']
+						],
+						'fill-extrusion-opacity': 0.6
+					}
+				},
+				labelLayerId
+			);
+			// Add some fog in the background
+			map.setFog({
+				'range': [-0.5, 2],
+				'color': 'white',
+				'horizon-blend': 0.2
+			});
+
+			// Add a sky layer over the horizon
+			map.addLayer({
+				'id': 'sky',
+				'type': 'sky',
+				'paint': {
+					'sky-type': 'atmosphere',
+					'sky-atmosphere-color': 'rgba(85, 151, 210, 0.5)'
+				}
+			});
+
+			// Add terrain source, with slight exaggeration
+			map.addSource('mapbox-dem', {
+				'type': 'raster-dem',
+				'url': 'mapbox://mapbox.terrain-rgb',
+				'tileSize': 512,
+				'maxzoom': 14
+			});
+			map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+			// Update the source from the API every 2 seconds.
+			// const updateSource = setInterval(async () => {
+			// 	// const geojson = await getLocation(updateSource);
+			// 	map.getSource('iss').setData(geojson);
+			// }, 100);
+
+			// async function getLocation(updateSource) {
+			// 	// Make a GET request to the API and return the location of the ISS.
+			// 	try {
+			// 		const response = await fetch(
+			// 			'https://api.wheretheiss.at/v1/satellites/25544',
+			// 			{ method: 'GET' }
+			// 		);
+			// 		const { latitude, longitude } = await response.json();
+			// 		// Fly the map to the location.
+			// 		map.flyTo({
+			// 			center: [longitude, latitude],
+			// 			speed: 0.5
+			// 		});
+			// 		// Return the location of the ISS as GeoJSON.
+			// 		return {
+			// 			'type': 'FeatureCollection',
+			// 			'features': [
+			// 				{
+			// 					'type': 'Feature',
+			// 					'geometry': {
+			// 						'type': 'Point',
+			// 						'coordinates': [longitude, latitude]
+			// 					}
+			// 				}
+			// 			]
+			// 		};
+			// 	} catch (err) {
+			// 		// If the updateSource interval is defined, clear the interval to stop updating the source.
+			// 		if (updateSource) clearInterval(updateSource);
+			// 		throw new Error(err);
+			// 	}
+			// }
+		});
+		// map.on('load', () => {
+		// 	// Add a data source containing GeoJSON data.
+		// 	map.addSource('maine', {
+		// 		'type': 'geojson',
+		// 		'data': {
+		// 			'type': 'Feature',
+		// 			'geometry': {
+		// 				'type': 'Polygon',
+		// 				// These coordinates outline Maine.
+		// 				'coordinates': [
+		// 					[
+		// 						[3.878471947875774, 43.6072313671899], [3.8785408308115015, 43.6117299371692], [3.88473219226557, 43.611679707322175], [3.884662823970474, 43.60718114143601], [3.878471947875774, 43.6072313671899]
+		// 					]
+		// 				]
+		// 			}
+		// 		}
+		// 	});
+		// 	// Add a new layer to visualize the polygon.
+		// 	map.addLayer({
+		// 		'id': 'maine',
+		// 		'type': 'fill',
+		// 		'source': 'maine', // reference the data source
+		// 		'layout': {},
+		// 		'paint': {
+		// 			'fill-color': '#0080ff', // blue color fill
+		// 			'fill-opacity': 0.5
+		// 		}
+		// 	});
+		// 	// Add a black outline around the polygon.
+		// 	map.addLayer({
+		// 		'id': 'outline',
+		// 		'type': 'line',
+		// 		'source': 'maine',
+		// 		'layout': {},
+		// 		'paint': {
+		// 			'line-color': '#000',
+		// 			'line-width': 3
+		// 		}
+		// 	});
+		// });
+	</script>
+</body>
+
+</html>

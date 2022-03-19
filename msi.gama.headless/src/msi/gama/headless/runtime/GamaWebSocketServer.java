@@ -128,6 +128,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+		simulations.clear();
 		broadcast(conn + " has left the room!");
 		System.out.println(conn + " has left the room!");
 	}

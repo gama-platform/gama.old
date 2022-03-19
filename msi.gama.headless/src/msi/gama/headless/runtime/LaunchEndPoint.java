@@ -31,6 +31,9 @@ import msi.gama.headless.job.ListenedVariable;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.job.Output;
 import msi.gama.headless.script.ExperimentationPlanFactory;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
+import msi.gaml.operators.Spatial;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -151,7 +154,11 @@ public class LaunchEndPoint implements Endpoint {
 //				lst_out += "@" + v.getName();
 //			}
 //		}
-		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size);
+		IAgent agt=selectedJob.getSimulation().getSimulation();
+
+		IShape geom=Spatial.Projections.transform_CRS(agt.getScope(),agt.getGeometry(),"EPSG:4326");
+
+		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size+"@"+geom.getLocation().x+"@"+geom.getLocation().y);
 		((ManualExperimentJob)selectedJob).exportVariables();
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}
