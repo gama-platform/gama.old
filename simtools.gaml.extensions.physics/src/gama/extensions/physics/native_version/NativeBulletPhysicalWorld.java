@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * NativeBulletPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * NativeBulletPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -32,7 +32,8 @@ public class NativeBulletPhysicalWorld extends AbstractPhysicalWorld<PhysicsSpac
 	/**
 	 * Instantiates a new native bullet physical world.
 	 *
-	 * @param physicalSimulationAgent the physical simulation agent
+	 * @param physicalSimulationAgent
+	 *            the physical simulation agent
 	 */
 	public NativeBulletPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		super(physicalSimulationAgent);
@@ -52,6 +53,7 @@ public class NativeBulletPhysicalWorld extends AbstractPhysicalWorld<PhysicsSpac
 	@Override
 	public PhysicsSpace createWorld() {
 		world = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
+		// TODO Adopt the new API
 		world.addCollisionListener(contactListener);
 		setGravity(simulation.getGravity(simulation.getScope()));
 		setCCD(simulation.getCCD(simulation.getScope()));
@@ -91,6 +93,7 @@ public class NativeBulletPhysicalWorld extends AbstractPhysicalWorld<PhysicsSpac
 	public void dispose() {
 		if (world == null) return;
 		world.getRigidBodyList().forEach(world::removeCollisionObject);
+		world.freeUnusedObjects();
 		world = null;
 	}
 

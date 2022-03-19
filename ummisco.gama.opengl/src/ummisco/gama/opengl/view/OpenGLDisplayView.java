@@ -84,9 +84,9 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	// */
 	@Override
 	public IDisposable getMultiListener() {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW)
+//		if (FLAGS.USE_NATIVE_OPENGL_WINDOW)
 			return new NEWTLayeredDisplayMultiListener(decorator, getDisplaySurface(), getGLCanvas().getNEWTWindow());
-		return super.getMultiListener();
+//		return super.getMultiListener();
 	}
 
 	@Override

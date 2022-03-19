@@ -38,13 +38,15 @@ public class NativeLoader {
 	public static final String NATIVE_LIBRARY_LOCATION = "/lib/native/";
 
 	/** The Constant MAC_NATIVE_LIBRARY_NAME. */
-	public static final String MAC_NATIVE_LIBRARY_NAME = "libbulletjme.dylib";
+	public static final String MAC_NATIVE_LIBRARY_NAME = "MacOSX64ReleaseDp_libbulletjme.dylib";
+	
+	public static final String MAC_ARM_NATIVE_LIBRARY_NAME = "MacOSX_ARM64ReleaseDp_libbulletjme.dylib";
 
 	/** The Constant WIN_NATIVE_LIBRARY_NAME. */
-	public static final String WIN_NATIVE_LIBRARY_NAME = "bulletjme.dll";
+	public static final String WIN_NATIVE_LIBRARY_NAME = "Windows64ReleaseDp_bulletjme.dll";
 
 	/** The Constant LIN_NATIVE_LIBRARY_NAME. */
-	public static final String LIN_NATIVE_LIBRARY_NAME = "libbulletjme.so";
+	public static final String LIN_NATIVE_LIBRARY_NAME = "Linux64ReleaseDp_libbulletjme.so";
 
 	/** The Load native library. */
 	public static boolean LoadNativeLibrary() {
@@ -65,6 +67,9 @@ public class NativeLoader {
 										break;
 									case MacOSX64:
 										name = MAC_NATIVE_LIBRARY_NAME;
+										break;
+									case MacOSX_ARM64:
+										name = MAC_ARM_NATIVE_LIBRARY_NAME;
 										break;
 									default:
 										throw new RuntimeException("Platform " + platform + " is not supported");

@@ -439,8 +439,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * @return the int
 	 */
 	private int autoScaleUp(final int nb) {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) return nb;
-		return DPIHelper.autoScaleUp(nb);
+		return nb;
+//		return DPIHelper.autoScaleUp(nb);
 	}
 
 	@Override

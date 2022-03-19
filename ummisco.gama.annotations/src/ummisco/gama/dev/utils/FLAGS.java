@@ -115,6 +115,6 @@ public class FLAGS {
 	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.), and only a
 	 * few glitches remain (esp. on macOS). True by defautl
 	 */
-	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
+//	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
 
 }

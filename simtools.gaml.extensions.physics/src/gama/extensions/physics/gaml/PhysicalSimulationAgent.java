@@ -164,7 +164,9 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	public Object primRegister(final IScope scope) {
 		IList<IAgent> agents = scope.getListArg(BODIES);
 		if (agents == null) return null;
-		for (IAgent agent : agents) { registerAgent(scope, agent); }
+		for (IAgent agent : agents) {
+			registerAgent(scope, agent);
+		}
 		return agents;
 	}
 
@@ -208,7 +210,9 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	 * @return the terrain
 	 */
 	@getter (IPhysicalConstants.TERRAIN)
-	public IField getTerrain() { return terrain; }
+	public IField getTerrain() {
+		return terrain;
+	}
 
 	/**
 	 * Sets the terrain.
@@ -217,7 +221,9 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	 *            the new terrain
 	 */
 	@setter (IPhysicalConstants.TERRAIN)
-	public void setTerrain(final IField t) { terrain = t; }
+	public void setTerrain(final IField t) {
+		terrain = t;
+	}
 
 	/**
 	 * Gets the ccd.
@@ -406,10 +412,12 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 
 	@Override
 	public boolean doStep(final IScope scope) {
-		super.doStep(scope);
-		final Double timeStep = getTimeStep(scope);
-		getGateway().doStep(timeStep, maxSubSteps);
-		return true;
+		if (super.doStep(scope)) {
+			final Double timeStep = getTimeStep(scope);
+			getGateway().doStep(timeStep, maxSubSteps);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -457,18 +465,31 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 		@Override
 		public void notifyAgentsAdded(final IScope scope, final IPopulation<? extends IAgent> pop,
 				final Collection<? extends IAgent> agents) {
-			if (automatedRegistration) { for (IAgent a : agents) { registerAgent(scope, a); } }
+			if (scope.interrupted()) return;
+
+			if (automatedRegistration) {
+				for (IAgent a : agents) {
+					registerAgent(scope, a);
+				}
+			}
 		}
 
 		@Override
 		public void notifyAgentsRemoved(final IScope scope, final IPopulation<? extends IAgent> pop,
 				final Collection<? extends IAgent> agents) {
-			for (IAgent a : agents) { unregisterAgent(scope, a); }
+			if (scope.interrupted()) return;
+
+			for (IAgent a : agents) {
+				unregisterAgent(scope, a);
+			}
 		}
 
 		@Override
 		public void notifyPopulationCleared(final IScope scope, final IPopulation<? extends IAgent> pop) {
-			for (IAgent a : pop) { unregisterAgent(scope, a); }
+			if (scope.interrupted()) return;
+			for (IAgent a : pop) {
+				unregisterAgent(scope, a);
+			}
 
 		}
 

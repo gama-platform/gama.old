@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PlatformHelper.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PlatformHelper.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 /*******************************************************************************
  * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A. All rights reserved. This program and the accompanying
@@ -29,13 +29,15 @@ public class PlatformHelper {
 	private static String platformString = Platform.getOS();
 
 	/** The is windows. */
-	private static boolean isWindows = "win32".equals(platformString);
+	private static boolean isWindows = "win32".equals(PlatformHelper.platformString);
 
 	/** The is mac. */
-	private static boolean isMac = "macosx".equals(platformString);
+	private static boolean isMac = "macosx".equals(PlatformHelper.platformString);
 
 	/** The is linux. */
-	private static boolean isLinux = "linux".equals(platformString);
+	private static boolean isLinux = "linux".equals(PlatformHelper.platformString);
+
+	private static boolean isARM = Platform.ARCH_AARCH64.equals(Platform.getOSArch());
 
 	/** The is developer. */
 	private static volatile Boolean isDeveloper;
@@ -50,21 +52,27 @@ public class PlatformHelper {
 	 *
 	 * @return true, if is windows
 	 */
-	public static boolean isWindows() { return isWindows; }
+	public static boolean isWindows() {
+		return PlatformHelper.isWindows;
+	}
 
 	/**
 	 * Checks if is linux.
 	 *
 	 * @return true, if is linux
 	 */
-	public static boolean isLinux() { return isLinux; }
+	public static boolean isLinux() {
+		return PlatformHelper.isLinux;
+	}
 
 	/**
 	 * Checks if is mac.
 	 *
 	 * @return true, if is mac
 	 */
-	public static boolean isMac() { return isMac; }
+	public static boolean isMac() {
+		return PlatformHelper.isMac;
+	}
 
 	/**
 	 * Checks if is developer.
@@ -72,11 +80,11 @@ public class PlatformHelper {
 	 * @return true, if is developer
 	 */
 	public static boolean isDeveloper() { // NO_UCD (unused code)
-		if (isDeveloper == null) {
-			isDeveloper = Platform.getInstallLocation() == null
+		if (PlatformHelper.isDeveloper == null) {
+			PlatformHelper.isDeveloper = Platform.getInstallLocation() == null
 					|| Platform.getInstallLocation().getURL().getPath().contains("org.eclipse.pde.core");
 		}
-		return isDeveloper;
+		return PlatformHelper.isDeveloper;
 	}
 
 	/**
@@ -95,21 +103,27 @@ public class PlatformHelper {
 	 * @return the int
 	 */
 	static int parseVersion(final String version) {
-		if (version == null) return 0;
+		if (version == null) { return 0; }
 		int major = 0, minor = 0, micro = 0;
-		final int length = version.length();
+		final var length = version.length();
 		int index = 0, start = 0;
-		while (index < length && Character.isDigit(version.charAt(index))) { index++; }
+		while (index < length && Character.isDigit(version.charAt(index))) {
+			index++;
+		}
 		try {
 			if (start < length) { major = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
 		start = ++index;
-		while (index < length && Character.isDigit(version.charAt(index))) { index++; }
+		while (index < length && Character.isDigit(version.charAt(index))) {
+			index++;
+		}
 		try {
 			if (start < length) { minor = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
 		start = ++index;
-		while (index < length && Character.isDigit(version.charAt(index))) { index++; }
+		while (index < length && Character.isDigit(version.charAt(index))) {
+			index++;
+		}
 		try {
 			if (start < length) { micro = Integer.parseInt(version.substring(start, index)); }
 		} catch (final NumberFormatException e) {}
@@ -129,7 +143,7 @@ public class PlatformHelper {
 	}
 
 	public static boolean isARM() {
-		return Platform.ARCH_AARCH64.equals(Platform.getOSArch());
+		return PlatformHelper.isARM;
 	}
 
 }

@@ -38,10 +38,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLRunnable;
-import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.runtime.PlatformHelper;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.IDelegateEventsToParent;
@@ -55,10 +53,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	/** The canvas. */
 	final Control canvas;
 
-	/** The drawable. */
-	final GLAutoDrawable drawable;
-
-	final FPSCounter fpsDelegate;
+	/** The window. */
+	final GLWindow window;
 
 	/** The detached. */
 	protected boolean detached = false;
@@ -75,68 +71,39 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		super(parent, SWT.NONE);
 		parent.setLayout(new FillLayout());
 		this.setLayout(new FillLayout());
-		final GLCapabilities cap = defineCapabilities();
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) {
-			drawable = GLWindow.create(cap);
-			canvas = new NewtCanvasSWT(this, SWT.NONE, (Window) drawable);
-			addControlListener(new ControlAdapter() {
-				@Override
-				public void controlResized(final ControlEvent e) {
-					/* Detached views have not title! */
-					if (PlatformHelper.isMac()) {
-						boolean isDetached = parent.getShell().getText().length() == 0;
-						if (isDetached) {
-							if (!detached) {
-								// DEBUG.OUT("detach");
-								reparentWindow();
-								detached = true;
-							}
+		final var cap = defineCapabilities();
 
-						} else if (detached) {
-							// DEBUG.OUT("attach");
+		window = GLWindow.create(cap);
+		canvas = new NewtCanvasSWT(this, SWT.NONE, window);
+		addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(final ControlEvent e) {
+				/* Detached views have not title! */
+				if (PlatformHelper.isMac()) {
+					final var isDetached = parent.getShell().getText().length() == 0;
+					if (isDetached) {
+						if (!detached) {
 							reparentWindow();
-							detached = false;
+							detached = true;
 						}
+
+					} else if (detached) {
+						reparentWindow();
+						detached = false;
 					}
 				}
-			});
-		} else {
-			canvas = new GLCanvas(this, SWT.NONE, cap, null);
-			drawable = (GLAutoDrawable) canvas;
+			}
+		});
+		window.setAutoSwapBufferMode(true);
 
-		}
-		drawable.setAutoSwapBufferMode(true);
-
-		drawable.addGLEventListener(renderer);
-		GLAnimatorControl animator = defineAnimator();
-		if (drawable instanceof GLWindow w) {
-			fpsDelegate = w;
-		} else
-			fpsDelegate = animator;
-		drawable.setExclusiveContextThread(animator.getThread());
+		window.addGLEventListener(renderer);
+		final var animator = new GamaGLAnimator(window);
 		renderer.setCanvas(this);
 		addDisposeListener(e -> new Thread(() -> {
 			animator.stop();
 		}).start());
 	}
 
-	/**
-	 * Define animator.
-	 *
-	 * @return the GL animator control
-	 */
-	private GLAnimatorControl defineAnimator() {
-		GLAnimatorControl animator ;
-		if (PlatformHelper.isARM())
-			animator = new BareBonesGLAnimator(drawable);
-		else if (PlatformHelper.isLinux())
-			animator = new SingleThreadGLAnimator(drawable);
-		else
-			animator = new MultithreadGLAnimator(drawable);
-		// FLAGS.USE_OLD_ANIMATOR ? new SingleThreadGLAnimator(drawable) : new MultithreadGLAnimator(drawable);
-		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
-		return animator;
-	}
 
 	/**
 	 * Define capabilities.
@@ -146,8 +113,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *             the GL exception
 	 */
 	private GLCapabilities defineCapabilities() throws GLException {
-		final GLProfile profile = GLProfile.getDefault();
-		final GLCapabilities cap = new GLCapabilities(profile);
+		final var profile = GLProfile.getDefault();
+		final var cap = new GLCapabilities(profile);
 		cap.setDepthBits(24);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);
@@ -159,217 +126,217 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 
 	@Override
 	public void setRealized(final boolean realized) {
-		drawable.setRealized(realized);
+		window.setRealized(realized);
 	}
 
 	@Override
 	public boolean isRealized() {
-		return drawable.isRealized();
+		return window.isRealized();
 	}
 
 	@Override
 	public int getSurfaceWidth() {
-		return drawable.getSurfaceWidth();
+		return window.getSurfaceWidth();
 	}
 
 	@Override
 	public int getSurfaceHeight() {
-		return drawable.getSurfaceHeight();
+		return window.getSurfaceHeight();
 	}
 
 	@Override
 	public boolean isGLOriented() {
-		return drawable.isGLOriented();
+		return window.isGLOriented();
 	}
 
 	@Override
 	public void swapBuffers() throws GLException {
-		drawable.swapBuffers();
+		window.swapBuffers();
 	}
 
 	@Override
 	public GLCapabilitiesImmutable getChosenGLCapabilities() {
-		return drawable.getChosenGLCapabilities();
+		return window.getChosenGLCapabilities();
 	}
 
 	@Override
 	public GLCapabilitiesImmutable getRequestedGLCapabilities() {
-		return drawable.getRequestedGLCapabilities();
+		return window.getRequestedGLCapabilities();
 	}
 
 	@Override
 	public GLProfile getGLProfile() {
-		return drawable.getGLProfile();
+		return window.getGLProfile();
 	}
 
 	@Override
 	public NativeSurface getNativeSurface() {
-		return drawable.getNativeSurface();
+		return window.getNativeSurface();
 	}
 
 	@Override
 	public long getHandle() {
-		return drawable.getHandle();
+		return window.getHandle();
 	}
 
 	@Override
 	public GLDrawableFactory getFactory() {
-		return drawable.getFactory();
+		return window.getFactory();
 	}
 
 	@Override
 	public GLDrawable getDelegatedDrawable() {
-		return drawable.getDelegatedDrawable();
+		return window.getDelegatedDrawable();
 	}
 
 	@Override
 	public GLContext getContext() {
-		return drawable.getContext();
+		return window.getContext();
 	}
 
 	@Override
 	public GLContext setContext(final GLContext newCtx, final boolean destroyPrevCtx) {
-		return drawable.setContext(newCtx, destroyPrevCtx);
+		return window.setContext(newCtx, destroyPrevCtx);
 	}
 
 	@Override
 	public void addGLEventListener(final GLEventListener listener) {
-		drawable.addGLEventListener(listener);
+		window.addGLEventListener(listener);
 	}
 
 	@Override
 	public void addGLEventListener(final int index, final GLEventListener listener) throws IndexOutOfBoundsException {
-		drawable.addGLEventListener(index, listener);
+		window.addGLEventListener(index, listener);
 	}
 
 	@Override
 	public int getGLEventListenerCount() {
-		return drawable.getGLEventListenerCount();
+		return window.getGLEventListenerCount();
 	}
 
 	@Override
 	public boolean areAllGLEventListenerInitialized() {
-		return drawable.areAllGLEventListenerInitialized();
+		return window.areAllGLEventListenerInitialized();
 	}
 
 	@Override
 	public GLEventListener getGLEventListener(final int index) throws IndexOutOfBoundsException {
-		return drawable.getGLEventListener(index);
+		return window.getGLEventListener(index);
 	}
 
 	@Override
 	public boolean getGLEventListenerInitState(final GLEventListener listener) {
-		return drawable.getGLEventListenerInitState(listener);
+		return window.getGLEventListenerInitState(listener);
 	}
 
 	@Override
 	public void setGLEventListenerInitState(final GLEventListener listener, final boolean initialized) {
-		drawable.setGLEventListenerInitState(listener, initialized);
+		window.setGLEventListenerInitState(listener, initialized);
 	}
 
 	@Override
 	public GLEventListener disposeGLEventListener(final GLEventListener listener, final boolean remove) {
-		return drawable.disposeGLEventListener(listener, remove);
+		return window.disposeGLEventListener(listener, remove);
 	}
 
 	@Override
 	public GLEventListener removeGLEventListener(final GLEventListener listener) {
-		return drawable.removeGLEventListener(listener);
+		return window.removeGLEventListener(listener);
 	}
 
 	@Override
 	public void setAnimator(final GLAnimatorControl animatorControl) throws GLException {
-		drawable.setAnimator(animatorControl);
+		window.setAnimator(animatorControl);
 	}
 
 	@Override
 	public GLAnimatorControl getAnimator() {
-		return drawable.getAnimator();
+		return window.getAnimator();
 	}
 
 	@Override
 	public Thread setExclusiveContextThread(final Thread t) throws GLException {
-		return drawable.setExclusiveContextThread(t);
+		return window.setExclusiveContextThread(t);
 	}
 
 	@Override
 	public Thread getExclusiveContextThread() {
-		return drawable.getExclusiveContextThread();
+		return window.getExclusiveContextThread();
 	}
 
 	@Override
 	public boolean invoke(final boolean wait, final GLRunnable glRunnable) throws IllegalStateException {
-		return drawable.invoke(wait, glRunnable);
+		return window.invoke(wait, glRunnable);
 	}
 
 	@Override
 	public boolean invoke(final boolean wait, final List<GLRunnable> glRunnables) throws IllegalStateException {
-		return drawable.invoke(wait, glRunnables);
+		return window.invoke(wait, glRunnables);
 	}
 
 	@Override
 	public void flushGLRunnables() {
-		drawable.flushGLRunnables();
+		window.flushGLRunnables();
 	}
 
 	@Override
 	public void destroy() {
-		drawable.destroy();
+		window.destroy();
 	}
 
 	@Override
 	public void display() {
-		drawable.display();
+		window.display();
 	}
 
 	@Override
 	public void setAutoSwapBufferMode(final boolean enable) {
-		drawable.setAutoSwapBufferMode(enable);
+		window.setAutoSwapBufferMode(enable);
 	}
 
 	@Override
 	public boolean getAutoSwapBufferMode() {
-		return drawable.getAutoSwapBufferMode();
+		return window.getAutoSwapBufferMode();
 	}
 
 	@Override
 	public void setContextCreationFlags(final int flags) {
-		drawable.setContextCreationFlags(flags);
+		window.setContextCreationFlags(flags);
 	}
 
 	@Override
 	public int getContextCreationFlags() {
-		return drawable.getContextCreationFlags();
+		return window.getContextCreationFlags();
 	}
 
 	@Override
 	public GLContext createContext(final GLContext shareWith) {
-		return drawable.createContext(shareWith);
+		return window.createContext(shareWith);
 	}
 
 	@Override
 	public GL getGL() {
-		return drawable.getGL();
+		return window.getGL();
 	}
 
 	@Override
 	public GL setGL(final GL gl) {
-		return drawable.setGL(gl);
+		return window.setGL(gl);
 	}
 
 	@Override
 	public Object getUpstreamWidget() {
-		return drawable.getUpstreamWidget();
+		return window.getUpstreamWidget();
 	}
 
 	@Override
 	public RecursiveLock getUpstreamLock() {
-		return drawable.getUpstreamLock();
+		return window.getUpstreamLock();
 	}
 
 	@Override
 	public boolean isThreadGLCapable() {
-		return drawable.isThreadGLCapable();
+		return window.isThreadGLCapable();
 	}
 
 	/**
@@ -378,16 +345,17 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @return the NEWT window
 	 */
 	public Window getNEWTWindow() {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) return (Window) drawable;
-		return null;
+		// if (FLAGS.USE_NATIVE_OPENGL_WINDOW)
+		return window;
+		// return null;
 	}
 
 	/**
 	 * Reparent window.
 	 */
 	public void reparentWindow() {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
-		Window w = (Window) drawable;
+		// if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
+		final Window w = window;
 		w.setVisible(false);
 		w.setFullscreen(true);
 		w.setFullscreen(false);
@@ -401,8 +369,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the new window visible
 	 */
 	public void setWindowVisible(final boolean b) {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
-		Window w = (Window) drawable;
+		// if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
+		final Window w = window;
 		w.setVisible(b);
 	}
 
@@ -420,7 +388,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	public void addCameraListeners(final IMultiListener camera) {
 
 		WorkbenchHelper.asyncRun(() -> {
-			if (isDisposed() || canvas.isDisposed()) return;
+			if (isDisposed() || canvas.isDisposed()) { return; }
 			canvas.addKeyListener(camera);
 			canvas.addMouseListener(camera);
 			canvas.addMouseMoveListener(camera);
@@ -431,10 +399,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			addMouseMoveListener(camera);
 			addMouseWheelListener(camera);
 			addMouseTrackListener(camera);
-			if (drawable instanceof Window w) {
-				w.addKeyListener(camera);
-				w.addMouseListener(camera);
-			}
+			window.addKeyListener(camera);
+			window.addMouseListener(camera);
 		});
 	}
 
@@ -446,7 +412,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 */
 	public void removeCameraListeners(final IMultiListener camera) {
 		WorkbenchHelper.asyncRun(() -> {
-			if (isDisposed() || canvas.isDisposed()) return;
+			if (isDisposed() || canvas.isDisposed()) { return; }
 			canvas.removeKeyListener(camera);
 			canvas.removeMouseListener(camera);
 			canvas.removeMouseMoveListener(camera);
@@ -457,63 +423,61 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			removeMouseMoveListener(camera);
 			removeMouseWheelListener(camera);
 			removeMouseTrackListener(camera);
-			if (drawable instanceof Window w) {
-				w.removeKeyListener(camera);
-				w.removeMouseListener(camera);
-			}
+			window.removeKeyListener(camera);
+			window.removeMouseListener(camera);
 		});
 	}
 
 	@Override
-	public void setUpdateFPSFrames(int frames, PrintStream out) {
-		fpsDelegate.setUpdateFPSFrames(frames, out);
+	public void setUpdateFPSFrames(final int frames, final PrintStream out) {
+		window.setUpdateFPSFrames(frames, out);
 	}
 
 	@Override
 	public void resetFPSCounter() {
-		fpsDelegate.resetFPSCounter();
+		window.resetFPSCounter();
 	}
 
 	@Override
 	public int getUpdateFPSFrames() {
-		return fpsDelegate.getUpdateFPSFrames();
+		return window.getUpdateFPSFrames();
 
 	}
 
 	@Override
 	public long getFPSStartTime() {
-		return fpsDelegate.getFPSStartTime();
+		return window.getFPSStartTime();
 	}
 
 	@Override
 	public long getLastFPSUpdateTime() {
-		return fpsDelegate.getLastFPSUpdateTime();
+		return window.getLastFPSUpdateTime();
 
 	}
 
 	@Override
 	public long getLastFPSPeriod() {
-		return fpsDelegate.getLastFPSPeriod();
+		return window.getLastFPSPeriod();
 	}
 
 	@Override
 	public float getLastFPS() {
-		return fpsDelegate.getLastFPS();
+		return window.getLastFPS();
 	}
 
 	@Override
 	public int getTotalFPSFrames() {
-		return fpsDelegate.getTotalFPSFrames();
+		return window.getTotalFPSFrames();
 	}
 
 	@Override
 	public long getTotalFPSDuration() {
-		return fpsDelegate.getTotalFPSDuration();
+		return window.getTotalFPSDuration();
 	}
 
 	@Override
 	public float getTotalFPS() {
-		return fpsDelegate.getTotalFPS();
+		return window.getTotalFPS();
 	}
 
 }
