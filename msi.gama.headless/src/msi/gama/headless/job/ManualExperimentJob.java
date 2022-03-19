@@ -61,25 +61,7 @@ public class ManualExperimentJob extends ExperimentJob {
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {
-				} else if (out.getValue() instanceof BufferedImage) {
-//					IAgent agt=simulator.getSimulation().getMicroPopulation("people").get(0);
-//					IShape geom=Spatial.Projections.transform_CRS(agt.getScope(),agt.getGeometry(),"EPSG:4326");
-//					socket.send(""+geom.getLocation().x+","+geom.getLocation().y);
-
-//					IList<? extends IShape> agents=simulator.getSimulation().getMicroPopulation("Individual");
-////					IList<? extends IShape> agents=GamaListFactory.create();
-////					for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
-////						if(!(pop instanceof GridPopulation)) {
-////							agents.addAll(pop);
-////						}
-////					}
-//					try {
-//						socket.send(SaveHelper.buildGeoJSon(simulator.getSimulation().getScope(), agents));
-//					} catch (GamaRuntimeException | IOException | SchemaException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-					
+				} else if (out.getValue() instanceof BufferedImage) {					
 					try {
 						BufferedImage bi = (BufferedImage) out.getValue();
 						ByteArrayOutputStream out1 = new ByteArrayOutputStream();

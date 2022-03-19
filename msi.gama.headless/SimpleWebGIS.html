@@ -110,11 +110,12 @@
 			antialias: true,
 			// style: { version: 8, sources: {}, layers: [] },
 			// center: [3.8816019487308298, 43.60945558063863], //  -84.5, 38.05starting position 
-			center: [0,0], //  -84.5, 38.05starting position 
+			center: [0, 0], //  -84.5, 38.05starting position 
 			zoom: 13 // starting zoom
 		});
 
 		var socket = new WebSocket("ws://localhost:6868/launch");
+		var sk = new WebSocket("ws://localhost:6868/output");
 		// socket.binaryType = "arraybuffer";
 		socket.addEventListener('open', (event) => {
 
@@ -127,35 +128,26 @@
 					// console.log(myArray[3], myArray[4]);
 					exp_id = myArray[1];
 					map.flyTo({
-						center: [myArray[3], myArray[4]], 
+						center: [myArray[3], myArray[4]],
 						essential: true,
 						zoom: 15
 					});
 					socket.send("play@" + exp_id);
-					socket.onmessage = function (event) {
-						let message = event.data;
-						if (typeof event.data == "object") {
+					const updateSource = setInterval(() => {
+						sk.send("output@" + exp_id+"@Individual");
+						sk.onmessage = function (event) {
 
-						} else {
-							// var tmp = message.split(",");
-							// geojson = {
-							// 	'type': 'FeatureCollection',
-							// 	'features': [
-							// 		{
-							// 			'type': 'Feature',
-							// 			'geometry': {
-							// 				'type': 'Point',
-							// 				'coordinates': [tmp[0], tmp[1]]
-							// 			}
-							// 		}
-							// 	]
-							// };
-							// geojson = { "type": "FeatureCollection", "features": [{ "type": "Feature", "geometry": { "type": "Polygon", "coordinates": [[[3.878413870603185, 43.60724945488746, 0.0], [3.8784827490068476, 43.611748024959404, 0.0], [3.884674112463863, 43.61169779842066, 0.0], [3.8846047487005113, 43.607199232441594, 0.0], [3.878413870603185, 43.60724945488746, 0.0]]] }, "properties": {}, "id": "0" }] };
-							geojson = JSON.parse(message);
-							// console.log(geojson);
-							map.getSource('iss').setData(geojson);
-							// console.log(tmp[0], tmp[1]);
+							let message = event.data;
+							if (typeof event.data == "object") {
+
+							} else {
+								geojson = JSON.parse(message);
+								map.getSource('iss').setData(geojson);
+							}
 						}
+					}, 1000);
+					socket.onmessage = function (event) {
+						// console.log(event.data);
 					}
 				}
 			}

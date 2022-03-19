@@ -8,10 +8,15 @@ import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
+import org.geotools.feature.SchemaException;
 import org.java_websocket.WebSocket;
 
+import msi.gama.headless.common.SaveHelper;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.job.ListenedVariable;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 
 public class OutputEndPoint implements Endpoint {
 
@@ -29,27 +34,22 @@ public class OutputEndPoint implements Endpoint {
 		if ("output".equals(args[0])) {
 			String id_exp = args[1];
 			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				for (ListenedVariable l : server.simulations.get(id_exp).getListenedVariables()) {
-					if (l.getName().equals(args[2])) {
-
-						final RichOutput out = (RichOutput) server.simulations.get(id_exp).getSimulation()
-								.getRichOutput(l);
-						if (out != null && out.getValue() instanceof BufferedImage) {
-							try {
-								BufferedImage bi = (BufferedImage) out.getValue();
-								ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-								ImageIO.write(bi, "png", out1);
-								ByteBuffer byteBuffer = ByteBuffer.wrap(out1.toByteArray());
-								socket.send(byteBuffer);
-								out1.close();
-								byteBuffer.clear();
-
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
+				IList<? extends IShape> agents = server.simulations.get(id_exp).getSimulation().getSimulation()
+						.getMicroPopulation(args[2]);
+//				IList<? extends IShape> agents=GamaListFactory.create();
+//				for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
+//					if(!(pop instanceof GridPopulation)) {
+//						agents.addAll(pop);
+//					}
+//				}
+				try {
+					socket.send(SaveHelper.buildGeoJSon(
+							server.simulations.get(id_exp).getSimulation().getSimulation().getScope(), agents));
+				} catch (GamaRuntimeException | IOException | SchemaException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
+ 
 			}
 
 		}
