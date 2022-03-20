@@ -126,7 +126,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final GamaTree<String> tree) {
 		listDisplayViews();
 		// final List<IGamaView.Display> displays = WorkbenchHelper.getDisplayViews();
-
 		if (tree != null) {
 			DEBUG.LOG("Tree root = " + tree.getRoot().getChildren().get(0).getData() + " weight "
 					+ tree.getRoot().getChildren().get(0).getWeight());
@@ -157,8 +156,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
 		holders.forEach(ph -> {
-			getPartService().bringToTop((MPart) ph.getRef());
+			//getPartService().bringToTop((MPart) ph.getRef());
 			getPartService().activate((MPart) ph.getRef(), focus);
+			//((MPart) ph.getRef()).setOnTop(true);
 		});
 	}
 
@@ -184,7 +184,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	private static void showDisplays(final MElementContainer<?> root, final List<MPlaceholder> holders) {
 		root.setVisible(true);
 		decorateDisplays();
-		DEBUG.OUT("Holders to show " + DEBUG.TO_STRING(StreamEx.of(holders).map(MPlaceholder::getElementId).toArray()));
+		//DEBUG.OUT("Holders to show " + DEBUG.TO_STRING(StreamEx.of(holders).map(MPlaceholder::getElementId).toArray()));
 		holders.forEach(ph -> {
 			ph.setVisible(true);
 			ph.setToBeRendered(true);
@@ -197,8 +197,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	public static void decorateDisplays() {
 		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
-		DEBUG.OUT("Displays to decorate "
-				+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+		//DEBUG.OUT("Displays to decorate "
+		//		+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
 		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }

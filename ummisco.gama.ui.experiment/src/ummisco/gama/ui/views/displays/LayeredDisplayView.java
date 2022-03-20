@@ -149,8 +149,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 */
 	public boolean isOpenGL() {
 		return false;
-		// if (outputs.isEmpty()) return false;
-		// return getOutput().getData().isOpenGL();
 	}
 
 	/**
@@ -251,14 +249,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	GridData fullData() {
 		return new GridData(SWT.FILL, SWT.FILL, true, true);
 	}
-	//
-	// @Override
-	// public void setFocus() {
-	// if (getParentComposite() != null && !getParentComposite().isDisposed()
-	// && !getParentComposite().isFocusControl()) {
-	// getParentComposite().forceFocus();
-	// }
-	// }
+	
+	 @Override
+	 public void setFocus() {
+		 // Uncommenting this method seems to fix #3325. Should be tested !
+		// DEBUG.OUT("Part " + getTitle() + " gaining focus");
+	 if (getParentComposite() != null && !getParentComposite().isDisposed()
+	 && !getParentComposite().isFocusControl()) {
+	 getParentComposite().forceFocus(); // Necessary ? 
+	 }
+	 }
 
 	/**
 	 * Creates the surface composite.
