@@ -102,6 +102,43 @@
 	</div>
 
 	<button id="create_button">Create a new Widget</button>
+	<div id="controller_html">
+		<table>
+			<tr>
+				<td colspan=2>
+					Socket <input type="button" id="sk_open" value="Open" onclick="connect()"> <input type="button"
+						id="sk_close" disabled value="Close" onclick="disconnect()"> <input type="button" id="sk_exit"
+						disabled value="Exit" onclick="exit()"></td>
+			</tr>
+			<tr>
+				<td colspan=2>
+					<input type="file" id="btn_file" name="zip" disabled> <input type="button" id="btn_upload"
+						onclick="uploadZip()" value="Upload" disabled>
+				</td>
+			</tr>
+			<tr>
+				<td> Model:</td>
+				<td> <input type="text" id="gaml_path" value="Traffic\models\Simple Traffic Model.gaml">
+					<!-- C:\\git\\gama\\msi.gama.models\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml -->
+
+				</td>
+			</tr>
+			<tr>
+				<td> Experiment:</td>
+				<td> <input type="text" id="exp_name" value="traffic"></td>
+			</tr>
+			<tr>
+				<td colspan=2>
+					<input type="button" id="exp_launch" value="Launch" onclick="launch()" disabled>
+					<input type="button" id="exp_play" value="Play" onclick="play()" disabled>
+					<input type="button" id="exp_step" value="Step" onclick="dostep()" disabled>
+					<input type="button" id="exp_pause" value="Pause" onclick="pause()" disabled>
+					<input type="button" id="exp_stop" value="Stop" onclick="stop()" disabled>
+				</td>
+			</tr>
+		</table>
+		<div id="errors"></div>
+	</div>
 	<script>
 
 		var _init = $.ui.dialog.prototype._init;
@@ -134,7 +171,7 @@
 				dialog_element.open();
 			});
 		};
-		
+
 		$(document).ready(function () {
 			$('#create_button').button().click(function () {
 				var create_dialog = $('#dialog_window_1');
@@ -198,10 +235,26 @@
 		$.fn.scrollBottom = function () {
 			return $(this).scrollTop($(this)[0].scrollHeight);
 		};
+		var sk = new WebSocket("ws://localhost:6868/compile");
+		function uploadZip() {
+			let photo = document.getElementById("btn_file").files[0];
+
+			sk.binaryType = "arraybuffer";
+			sk.send(photo);
+			sk.onmessage = function (event) {
+				model_path = event.data;
+				console.log(model_path);
+				$('#errors').text("File uploaded successful!");
+			}
+
+			// sk.addEventListener('open', (event) => {
+			// });
+		}
 		initDefaultWidget();
 		function initDefaultWidget() {
 			$('#new_window_title').val("Controller");
-			$('#new_window_content').val('Socket <input type="button" id="sk_open" value="Open" onclick="connect()"> <input type="button" id="sk_close" disabled value="Close" onclick="disconnect()">  <input type="button" id="sk_exit" disabled value="Exit" onclick="exit()"> <table><tr><td>  Model:</td><td>  <input type="text" id="gaml_path" value="C:\\git\\gama\\msi.gama.models\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml"></td></tr>  <tr><td>  Experiment:</td><td>  <input type="text" id="exp_name" value="traffic"></td></tr> <tr><td colspan=2>  <input type="button" id="exp_launch" value="Launch" onclick="launch()" disabled> <input type="button"  id="exp_play"value="Play" onclick="play()" disabled>  <input type="button" id="exp_step" value="Step" onclick="dostep()" disabled>  <input type="button"  id="exp_pause" value="Pause" onclick="pause()" disabled>  <input type="button"  id="exp_stop" value="Stop" onclick="stop()" disabled></td></tr>  </table><div id="errors"></div>');
+			$('#new_window_content').val($('#controller_html').html());
+			$('#controller_html').html('');
 			//<input type="button" value="Load">  <input type="button" value="Compile" onclick="compile()">
 			create1();
 			$('#' + 'dialog_window_2').parent().css({ left: 8, top: 50 });
@@ -233,8 +286,15 @@
 			if (!socket) {
 				socket = new WebSocket("ws://localhost:6868/launch");
 				socket.binaryType = "arraybuffer";
+				socket.onerror = function (err) {
+					socket.close();
+					socket = null;
+					$('#errors').text(err);
+				};
 				socket.addEventListener('open', (event) => {
 
+					$("#btn_file").prop("disabled", false);
+					$("#btn_upload").prop("disabled", false);
 					$("#sk_open").prop("disabled", true);
 					$("#sk_close").prop("disabled", false);
 					$("#sk_exit").prop("disabled", false);
@@ -247,6 +307,8 @@
 		function disconnect() {
 			$('#errors').text('Socket closed!');
 			$("#sk_open").prop("disabled", false);
+			$("#btn_file").prop("disabled", true);
+			$("#btn_upload").prop("disabled", true);
 			$("#sk_close").prop("disabled", true);
 			$("#sk_exit").prop("disabled", true);
 			$("#exp_launch").prop("disabled", true);
@@ -270,6 +332,7 @@
 		var exp_id = 0;
 		var exp_out = 0;
 		var exp_div_out = 0;
+		var model_path = "";
 		function compile() {
 			//setInterval(function(){ 
 			//  socket.send(""); }, 100);  
@@ -293,8 +356,8 @@
 			if (socket && socket.readyState === 1) {
 				socket.binaryType = "arraybuffer";
 				// socket.send(exp_compiled);
-				console.log("launch@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
-				socket.send("launch@" + $('#gaml_path').val() + "@" + $('#exp_name').val());
+				console.log("launch@" + model_path + "\\" + $('#gaml_path').val() + "@" + $('#exp_name').val());
+				socket.send("launch@" + model_path + "\\" + $('#gaml_path').val() + "@" + $('#exp_name').val());
 				$("#exp_launch").prop("disabled", true);
 				$("#exp_play").prop("disabled", false);
 				$("#exp_step").prop("disabled", false);

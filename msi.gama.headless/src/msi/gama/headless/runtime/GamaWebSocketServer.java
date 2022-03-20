@@ -16,7 +16,6 @@ package msi.gama.headless.runtime;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +27,9 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import msi.gama.headless.common.Globals;
 import msi.gama.headless.job.ExperimentJob;
 
 /**
@@ -63,6 +65,32 @@ public class GamaWebSocketServer extends WebSocketServer {
 	public GamaWebSocketServer(int port, Application a) {
 		super(new InetSocketAddress(port));
 		app = a;
+		File currentJavaJarFile = new File(
+				GamaWebSocketServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
+
+		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/temp";
+
+		File f = new File(Globals.TEMP_PATH);
+		deleteFolder(f);
+		// check if the directory can be created
+		// using the abstract path name
+		if (f.mkdir()) {
+			System.out.println("TEMP Directory is created");
+		} else {
+			System.out.println("TEMP Directory cannot be created");
+		}
+	}
+
+	void deleteFolder(File file) {
+		for (File subFile : file.listFiles()) {
+			if (subFile.isDirectory()) {
+				deleteFolder(subFile);
+			} else {
+				subFile.delete();
+			}
+		}
+		file.delete();
 	}
 
 	public Application getDefaultApp() {
@@ -75,15 +103,16 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @return single instance of GamaWebSocketServer
 	 */
 	public static GamaWebSocketServer newInstance(final int p, final Application a) {
-		if (instance == null) { createSocketServer(p, a); }
+		if (instance == null) {
+			createSocketServer(p, a);
+		}
 		return instance;
 	}
 
 	/**
 	 * Creates the socket server.
 	 *
-	 * @throws UnknownHostException
-	 *             the unknown host exception
+	 * @throws UnknownHostException the unknown host exception
 	 */
 	public static void createSocketServer(final int port, final Application a) {
 		instance = new GamaWebSocketServer(port, a);
@@ -128,7 +157,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		simulations.clear();
+//		simulations.clear();
 		broadcast(conn + " has left the room!");
 		System.out.println(conn + " has left the room!");
 	}

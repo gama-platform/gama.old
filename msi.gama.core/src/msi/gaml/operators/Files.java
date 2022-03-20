@@ -205,7 +205,7 @@ public class Files {
 	 * @param extractFolder
 	 *            the extract folder
 	 */
-	private static void extractFolder(final IScope scope, final String zipFile, final String extractFolder) {
+	public static void extractFolder(final IScope scope, final String zipFile, final String extractFolder) {
 		try {
 			int BUFFER = 2048;
 			File file = new File(zipFile);

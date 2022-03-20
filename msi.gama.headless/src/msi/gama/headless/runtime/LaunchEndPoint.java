@@ -12,6 +12,7 @@ package msi.gama.headless.runtime;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -27,14 +28,11 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.job.ListenedVariable;
 import msi.gama.headless.job.ManualExperimentJob;
-import msi.gama.headless.job.Output;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Spatial;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class LaunchEndPoint.
@@ -121,13 +119,16 @@ public class LaunchEndPoint implements Endpoint {
 			throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
-		if (!GamlFileExtension.isGaml(pathToModel)) {
+		File ff = new File(pathToModel);
+		System.out.println(ff.getAbsoluteFile().toString());
+		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			System.exit(-1);
 		}
 		final String argExperimentName = args.get(args.size() - 2);
-		final String argGamlFile = args.get(args.size() - 1);
-
-		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile);
+//		final String argGamlFile = args.get(args.size() - 1); 
+		if(!ff.exists()) 
+			return;
+		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(ff.getAbsoluteFile().toString());
 		ManualExperimentJob selectedJob = null;
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(argExperimentName)) {
@@ -154,12 +155,13 @@ public class LaunchEndPoint implements Endpoint {
 //				lst_out += "@" + v.getName();
 //			}
 //		}
-		IAgent agt=selectedJob.getSimulation().getSimulation();
+		IAgent agt = selectedJob.getSimulation().getSimulation();
 
-		IShape geom=Spatial.Projections.transform_CRS(agt.getScope(),agt.getGeometry(),"EPSG:4326");
+		IShape geom = Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
 
-		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size+"@"+geom.getLocation().x+"@"+geom.getLocation().y);
-		((ManualExperimentJob)selectedJob).exportVariables();
+		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size + "@" + geom.getLocation().x + "@"
+				+ geom.getLocation().y);
+		((ManualExperimentJob) selectedJob).exportVariables();
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}
 
@@ -170,7 +172,7 @@ public class LaunchEndPoint implements Endpoint {
 		String[] args = message.split("@");
 		if ("launch".equals(args[0])) {
 			try {
-				Globals.IMAGES_PATH = "C:\\GAMA\\headless\\samples\\toto\\snapshot";
+				Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
 				launchGamlSimulation(server, socket, Arrays.asList("-gaml", ".", args[2], args[1]));
 			} catch (IOException | GamaHeadlessException e) {
 				// TODO Auto-generated catch block

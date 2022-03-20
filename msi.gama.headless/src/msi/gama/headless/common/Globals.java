@@ -18,9 +18,12 @@ public abstract class Globals {
 	
 	/** The images path. */
 	public static String IMAGES_PATH;
-	
+
 	/** The output path. */
 	public static String OUTPUT_PATH;
+	
+	/** The output path. */
+	public static String TEMP_PATH;
 	
 	/** The Constant OUTPUT_FILENAME. */
 	public final static String OUTPUT_FILENAME = "simulation-outputs";

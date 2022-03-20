@@ -18,15 +18,10 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import org.geotools.feature.SchemaException;
 import org.java_websocket.WebSocket;
 
-import msi.gama.headless.common.SaveHelper;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.runtime.GamaWebSocketServer;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
 
 /**
  * The Class ExperimentJob.
