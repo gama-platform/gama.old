@@ -10,19 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.java2d;
 
-/*********************************************************************************************
- *
- *
- * 'AbstractAWTDisplaySurface.java', in plugin 'msi.gama.application', is part of the source code of the GAMA modeling
- * and simulation platform. (v. 1.8.1)
- *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -204,22 +191,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
-	/**
-	 * Auto scale up.
-	 *
-	 * @param c
-	 *            the c
-	 * @return the int
-	 */
-	int autoScaleUp(final int c) {
-		if (DPIHelper.getDeviceZoom() > 100) return c;
-		return DPIHelper.autoScaleUp(c);
-	}
-
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
-		final int x = autoScaleUp(xm);
-		final int y = autoScaleUp(ym);
+		final int x = xm;
+		final int y = ym;
 		if (mousePosition == null) {
 			mousePosition = new Point(x, y);
 		} else {
@@ -230,7 +205,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void draggedTo(final int x, final int y) {
 		final Point origin = getOrigin();
-		setOrigin(origin.x + autoScaleUp(x) - getMousePosition().x, origin.y + autoScaleUp(y) - getMousePosition().y);
+		setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
 		setMousePosition(x, y);
 		updateDisplay(true);
 	}
