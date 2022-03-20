@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbench;
@@ -53,9 +54,11 @@ import ummisco.gama.dev.utils.FLAGS;
 public class Application implements IApplication {
 
 	{
-		DEBUG.OFF();
-		if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
-	}
+		DEBUG.ON();
+	//	if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
+
+
+		}
 
 	/** The processor. */
 	public static OpenDocumentEventProcessor processor;
@@ -126,7 +129,15 @@ public class Application implements IApplication {
 	 * Creates the processor.
 	 */
 	public static void createProcessor() {
+		DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
+		System.setProperty("swt.autoScale","integer"); // cf DPIUtil
+		
 		final Display display = Display.getDefault();
+		
+		DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"), false);
+		System.setProperty("sun.java2d.uiScale.enabled",String.valueOf(DPIUtil.getDeviceZoom() > 100));
+		DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
+
 		if (display == null) return;
 		processor = new OpenDocumentEventProcessor(display);
 	}

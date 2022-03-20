@@ -84,7 +84,7 @@ public class FLAGS {
 	 * org.eclipse.swt.internal.DPIUtil.SWT_AUTOSCALE, enabling more precise scaling methods for HiDPI screens.
 	 * Otherwise the default is used by DPIUtil (see #3180). False by default.
 	 */
-	public static final boolean USE_PRECISE_AUTOSCALE = get("use_precise_autoscale", false);
+//	public static final boolean USE_PRECISE_AUTOSCALE = get("use_precise_autoscale", false);
 
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
