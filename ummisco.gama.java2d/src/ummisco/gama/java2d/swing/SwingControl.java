@@ -12,25 +12,14 @@ package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JApplet;
-import javax.swing.LayoutFocusTraversalPolicy;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -143,11 +132,12 @@ public abstract class SwingControl extends Composite {
 	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
-		//DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
+		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		super.setBounds(x, y, width, height);
+		// Assignment necessary for #3313 and #3239
 		WorkbenchHelper.asyncRun(() -> EventQueue.invokeLater(() -> {
-			//DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
+			// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
 			surface.setSize(width, height);
 		}));
 
