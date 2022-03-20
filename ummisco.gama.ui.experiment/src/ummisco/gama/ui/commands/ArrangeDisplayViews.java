@@ -34,6 +34,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.runtime.PlatformHelper;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
@@ -155,8 +156,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	private static void activateDisplays(final List<MPlaceholder> holders, final boolean focus) {
 		holders.forEach(ph -> {
-			// getPartService().bringToTop((MPart) ph.getRef());
+			//
 			try {
+				if (PlatformHelper.isMac()) { getPartService().bringToTop((MPart) ph.getRef()); }
 				getPartService().activate((MPart) ph.getRef(), focus);
 			} catch (IllegalStateException e) {}
 
