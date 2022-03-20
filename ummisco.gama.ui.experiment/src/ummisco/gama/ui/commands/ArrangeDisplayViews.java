@@ -158,7 +158,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		holders.forEach(ph -> {
 			//
 			try {
-				if (PlatformHelper.isMac()) { getPartService().bringToTop((MPart) ph.getRef()); }
+				 getPartService().bringToTop((MPart) ph.getRef()); 
 				getPartService().activate((MPart) ph.getRef(), focus);
 			} catch (IllegalStateException e) {}
 
