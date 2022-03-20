@@ -12,12 +12,21 @@ package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
+import java.awt.event.HierarchyBoundsListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JApplet;
 import javax.swing.LayoutFocusTraversalPolicy;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -46,6 +55,8 @@ public abstract class SwingControl extends Composite {
 	/** The frame. */
 	Frame frame;
 
+	Java2DDisplaySurface surface;
+
 	/** The populated. */
 	boolean populated = false;
 
@@ -60,12 +71,6 @@ public abstract class SwingControl extends Composite {
 	public SwingControl(final Composite parent, final int style) {
 		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
 		setLayout(new FillLayout());
-		addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
-			try {
-				frame.remove(applet);
-			} catch (final Exception e) {}
-
-		}));
 	}
 
 	@Override
@@ -89,19 +94,13 @@ public abstract class SwingControl extends Composite {
 		if (isDisposed()) return;
 		if (!populated) {
 			populated = true;
-			// WorkbenchHelper.runInUI("Opening Java2D display", 400, m -> {
+
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
-
 				frame.setAlwaysOnTop(false);
-				frame.setAutoRequestFocus(false);
-				// frame.setFocusable(false);
-				// frame.setFocusableWindowState(false);
 				applet = new JApplet();
-				// applet.setFocusable(false);
-				if (PlatformHelper.isWindows()) { applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy()); }
-				final Java2DDisplaySurface surface = createSwingComponent();
-				applet.getRootPane().getContentPane().add(surface);
+				surface = createSwingComponent();
+				applet.getContentPane().add(surface);
 				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
 				if (PlatformHelper.isMac()) {
@@ -120,13 +119,15 @@ public abstract class SwingControl extends Composite {
 					};
 					applet.addMouseListener(ml);
 					surface.addMouseListener(ml);
+
 				}
 			});
-			// SwingControl.this.getParent().layout(true, true);
+			addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
+				try {
+					frame.remove(applet);
+				} catch (final Exception e) {}
 
-			// EventQueue.invokeLater(() -> {
-			// WorkbenchHelper.asyncRun(() -> SwingControl.this.getParent().layout(true, true));
-			// });
+			}));
 		}
 	}
 
@@ -137,19 +138,19 @@ public abstract class SwingControl extends Composite {
 	 */
 	protected abstract Java2DDisplaySurface createSwingComponent();
 
-	@Override
-	public void setBounds(final Rectangle rect) {
-		setBounds(rect.x, rect.y, rect.width, rect.height);
-	}
-
 	/**
 	 * Overridden to propagate the size to the embedded Swing component.
 	 */
 	@Override
 	public void setBounds(final int x, final int y, final int width, final int height) {
-		// DEBUG.OUT("-- Surface bounds set to " + x + " " + y + " | " + width + " " + height);
+		//DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		super.setBounds(x, y, width, height);
+		WorkbenchHelper.asyncRun(() -> EventQueue.invokeLater(() -> {
+			//DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
+			surface.setSize(width, height);
+		}));
+
 	}
 
 }

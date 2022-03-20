@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * LayoutTreeConverter.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayoutTreeConverter.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -65,6 +65,7 @@ public class LayoutTreeConverter {
 		Arrays.sort(indices);
 		final GamaTree<String> result = newLayoutTree();
 		switch (layout) {
+			case none:
 			case stack:
 				return buildStackTree(result, indices);
 			case split:
@@ -72,8 +73,9 @@ public class LayoutTreeConverter {
 			case horizontal:
 			case vertical:
 				return buildHorizontalOrVerticalTree(result, indices, layout == horizontal);
-			case none:
-				return null;
+			// Issue #3313. Forcing a layout seems to be the solution to the sizing problem of Java2D displays
+			// case none:
+			// return null;
 		}
 		return null;
 	}
@@ -116,7 +118,9 @@ public class LayoutTreeConverter {
 		final List<GamaNode<String>> placeholders = new ArrayList<>();
 		buildPlaceholders(initialSash, placeholders, indices.length);
 		int i = 0;
-		for (final GamaNode<String> node : placeholders) { node.setData(valueOf(indices[i++])); }
+		for (final GamaNode<String> node : placeholders) {
+			node.setData(valueOf(indices[i++]));
+		}
 		return result;
 	}
 
@@ -185,7 +189,9 @@ public class LayoutTreeConverter {
 	String getWeight(final MUIElement element) {
 		String data = element.getContainerData();
 		final MUIElement parent = element.getParent();
-		while (data == null && parent != null) { data = parent.getContainerData(); }
+		while (data == null && parent != null) {
+			data = parent.getContainerData();
+		}
 		return data;
 	}
 
