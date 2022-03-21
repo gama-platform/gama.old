@@ -80,10 +80,22 @@ NEWFILES[$n]='GAMA_1.8.2_MacOS_with_JDK'$SUFFIX_MAC
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip"
 NEWFILES[$n]='GAMA_1.8.2_MacOS_with_JDK'$SUFFIX
+n=8
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64.dmg"
+NEWFILES[$n]='GAMA_1.8.2_MacOS_M1'$SUFFIX_MAC
+n=9
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64.zip"
+NEWFILES[$n]='GAMA_1.8.2_MacOS_M1'$SUFFIX
+n=10
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.dmg"
+NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX_MAC
+n=11
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.zip"
+NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX
  
 
 i=0
-for (( i=0; i<8; i++ ))
+for (( i=0; i<12; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
@@ -134,7 +146,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$COMMIT')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 15 . Please test and report issues","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.8.2 ('$COMMIT')","body":"Alpha release for GAMA 1.8.2, which adds compatibility with JDK 17 . Please test and report issues","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 
