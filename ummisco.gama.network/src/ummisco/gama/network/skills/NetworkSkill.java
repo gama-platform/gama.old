@@ -166,7 +166,7 @@ public class NetworkSkill extends MessagingSkill {
 							name = INetworkSkill.MAX_DATA_PACKET_SIZE,
 							type = IType.INT,
 							optional = true,
-							doc = @doc ("For UDP connection, it sets the maximum size of received packets (deafault = 1024bits).")) },
+							doc = @doc ("For UDP connection, it sets the maximum size of received packets (default = 1024bits).")) },
 			doc = @doc (
 					value = "Action used by a networking agent to connect to a server or as a server.",
 					examples = { @example (" do connect  with_name:\"any_name\";"),
