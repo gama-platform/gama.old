@@ -24,7 +24,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           java-package: jdk
-          cache: maven
 
       - name: Prepare build
         run: |
@@ -285,7 +284,7 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
 
-      - name: Sign Application w/ JDK
+      - name: Sign Application w/o JDK
         env: 
           working_directory: ${{ github.workspace }}/artifacts/work
           # Variables
@@ -300,7 +299,7 @@ jobs:
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
           codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
 
-      - name: Packaging signed Application w/ JDK
+      - name: Packaging signed Application w/o JDK
         env: 
           working_directory: ${{ github.workspace }}/artifacts/work
           # Variables
