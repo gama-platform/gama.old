@@ -103,7 +103,7 @@ jobs:
   apple-signing-wo-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-11.0
     steps:
       - name: Prepare vm
         run: |
@@ -179,7 +179,7 @@ jobs:
   apple-signing-w-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-11.0
     steps:
       - name: Prepare vm
         run: |
@@ -255,7 +255,7 @@ jobs:
   apple-signing-aarch64-wo-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-11.0
     steps:
       - name: Prepare vm
         run: |
@@ -331,7 +331,7 @@ jobs:
   apple-signing-aarch64-w-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: [self-hosted, macOS]
+    runs-on: macos-11.0
     steps:
       - name: Prepare vm
         run: |
