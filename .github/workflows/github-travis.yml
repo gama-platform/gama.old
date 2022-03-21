@@ -174,7 +174,6 @@ jobs:
           path: ./Gama1.7-macosx.cocoa.x86_64.dmg
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
-      
   apple-signing-w-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
@@ -327,7 +326,6 @@ jobs:
           path: ./Gama1.7-macosx.cocoa.aarch64.dmg
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
-
   apple-signing-aarch64-w-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
@@ -404,9 +402,8 @@ jobs:
           path: ./Gama1.7-macosx.cocoa.aarch64_withJDK.dmg
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
-
   publish-archives:
-    needs: [apple-signing-w-jdk, apple-signing-wo-jdk]
+    needs: [apple-signing-w-jdk, apple-signing-wo-jdk, apple-signing-aarch64-wo-JDK, apple-signing-aarch64-w-JDK]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
