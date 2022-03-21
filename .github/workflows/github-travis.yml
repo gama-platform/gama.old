@@ -23,8 +23,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          java-package: jdk  
-          cache: maven
+          java-package: jdk
 
       - name: Prepare build
         run: |
@@ -96,8 +95,7 @@ jobs:
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
-
-      
+     
   apple-signing-wo-JDK:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
