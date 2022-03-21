@@ -11,6 +11,7 @@ import java.net.Socket;
 
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -25,7 +26,9 @@ import ummisco.gama.dev.utils.DEBUG;
 @skill (
 		name = IRawNetworkSkill.TCP_SKILL_NAME,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL },
-		internal = true)
+		internal = true,
+		doc = @doc ("The " + IRawNetworkSkill.TCP_SKILL_NAME + " skill provides new features to let agents use raw tcp functions.")
+		)
 public class TcpSkill extends Skill{
 
 	
@@ -46,8 +49,12 @@ public class TcpSkill extends Skill{
 					@arg(
 							name	= IRawNetworkSkill.SERVER_NAME,
 							optional= false,
-							type 	= IType.STRING)
-				}
+							type 	= IType.STRING,
+							doc		= @doc("Identifier of the server that should be waiting for the connection"))
+				},
+			doc	= @doc(
+					value 	= "Function that blocks the execution until a client connects to the server",
+					returns	= "The identifier of the socket for communicating afterward")
 			)
 	public String waitForConnexion(final IScope scope) {
 		
@@ -75,8 +82,12 @@ public class TcpSkill extends Skill{
 				@arg(
 						name	= IRawNetworkSkill.PORT,
 						optional= true,
-						type	= IType.INT),
-				}
+						type	= IType.INT,
+						doc		= @doc("The server's port. Will be assigned automatically to the next available if nil")),
+				},
+			doc	= @doc(
+					value	= "Creates a tcp server on given port",
+					returns	= "The server's identifier")
 			)
 	public String createServer(final IScope scope) {
 		
@@ -105,12 +116,18 @@ public class TcpSkill extends Skill{
 					@arg(
 							name	= IRawNetworkSkill.SERVER_URL,
 							optional= false,
-							type	= IType.STRING),
+							type	= IType.STRING,
+							doc		= @doc("The url to connect to")),
 					@arg(
 							name	= IRawNetworkSkill.PORT,
 							optional= false,
-							type	= IType.INT)
-				}
+							type	= IType.INT,
+							doc		= @doc("The connection port"))
+				},
+			doc	= @doc(
+					value	= "Creates a connection to a given server",
+					returns = "The identifier of the connection's socket")
+			
 			)
 	public String connectToServer(final IScope scope) {
 		
@@ -138,11 +155,16 @@ public class TcpSkill extends Skill{
 				args	= {
 							@arg(	name	= IRawNetworkSkill.TO,
 									optional= false,
-									type	= IType.STRING),
+									type	= IType.STRING,
+									doc		= @doc("Identifier of the socket used to send the message")),
 							@arg(	name	= IRawNetworkSkill.CONTENT,
 									optional= false,
-									type	= IType.STRING)
-				})
+									type	= IType.STRING,
+									doc		= @doc("Message to send")),
+						},
+				doc		= @doc(
+							value 	= "Sends a message via tcp through the given socket",
+							returns	= "True if everything went well, false otherwise"))
 	public boolean send(IScope scope) {
 
 		final String to_desc = (String)	scope.getArg(IRawNetworkSkill.TO, 		IType.STRING);
@@ -178,8 +200,15 @@ public class TcpSkill extends Skill{
 						@arg(
 								name 	= IRawNetworkSkill.FROM,
 								optional= false,
-								type	= IType.STRING)
-				})
+								type	= IType.STRING,
+								doc		= @doc("Identifier of the socket used to read")
+								)
+						},
+				doc	= @doc(
+						value 	= "Reads a line from the given socket",
+						returns	= "The line read"
+						)
+			)
 	public String readLine(IScope scope) {
 
 		final String from_desc = (String)	scope.getArg(IRawNetworkSkill.FROM, 		IType.STRING);
@@ -202,8 +231,15 @@ public class TcpSkill extends Skill{
 					@arg(
 							name 	= IRawNetworkSkill.FROM,
 							optional= false,
-							type	= IType.STRING)
-			})
+							type	= IType.STRING,
+							doc		= @doc("Identifier of the socket used to read")
+							)
+					},
+			doc	= @doc(
+					value 	= "Reads all bytes from the given socket",
+					returns	= "The data read, converted into a string"
+					)
+			)
 	public String readAll(IScope scope) {
 
 		
@@ -239,12 +275,21 @@ public class TcpSkill extends Skill{
 					@arg(
 							name 	= IRawNetworkSkill.FROM,
 							optional= false,
-							type	= IType.STRING),
+							type	= IType.STRING,
+							doc		= @doc("Identifier of the socket used to read")
+							),
 					@arg(
 							name 	= IRawNetworkSkill.LENGTH,
 							optional= false,
-							type	= IType.INT),
-			})
+							type	= IType.INT,
+							doc		= @doc("How many bytes should be read")
+							),
+					},
+			doc	= @doc(
+					value 	= "Reads a given number of bytes from the given socket",
+					returns	= "The data read, converted into a string"
+					)
+			)
 	public String readBytes(IScope scope) {
 
 		
@@ -281,12 +326,21 @@ public class TcpSkill extends Skill{
 					@arg(
 							name 	= IRawNetworkSkill.FROM,
 							optional= false,
-							type	= IType.STRING),
+							type	= IType.STRING,
+							doc		= @doc("Identifier of the socket used to read")
+							),
 					@arg(
 							name 	= IRawNetworkSkill.END_STRING,
 							optional= false,
-							type	= IType.STRING),
-			})
+							type	= IType.STRING,
+							doc		= @doc("Characters used as a 'stop reading' command")
+							),
+				},
+			doc	= @doc(
+					value 	= "Reads from the given socket until the given string is met",
+					returns	= "The data read, converted into a string"
+					)
+			)
 	public String readUntil(IScope scope) {
 
 		
