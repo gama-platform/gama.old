@@ -126,7 +126,7 @@ public class TcpSkill extends Skill{
 				},
 			doc	= @doc(
 					value	= "Creates a connection to a given server",
-					returns = "The identifier of the connection's socket")
+					returns = "The identifier of the connection's socket, nil if there was an error")
 			
 			)
 	public String connectToServer(final IScope scope) {
