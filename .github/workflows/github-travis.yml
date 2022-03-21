@@ -24,6 +24,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           java-package: jdk
+          cache: maven
 
       - name: Prepare build
         run: |
@@ -85,6 +86,10 @@ jobs:
           path: |
             ./Gama1.7-macosx*zip
             ./mac-sign.sh
+
+      - name: Remove unsigned mac builds
+        if: env.CONTINUE == 'true'
+        run: rm Gama1.7-macosx*zip
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
