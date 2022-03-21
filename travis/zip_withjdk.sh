@@ -46,49 +46,8 @@ n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip"  
 n=5
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip" 
-
-
-#git clone --depth=50 --branch=master https://github.com/gama-platform/jdk.git  jdk	
-
-
-
-rem111(){
-sudo rm "${RELEASEFILES[0]}"
-sudo rm "${RELEASEFILES[1]}"
-sudo rm "${RELEASEFILES[2]}"
-
-
-	
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-sudo zip -9 -qyr "${RELEASEFILES[0]}" . && echo "compressed ${RELEASEFILES[0]}" || echo "compress fail ${RELEASEFILES[0]}"
-cd ../../../../../../../
-
-
-
-
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-sudo zip -9 -qr "${RELEASEFILES[2]}" . && echo "compressed ${RELEASEFILES[2]}" || echo "compress fail ${RELEASEFILES[2]}"
-cd ../../../../../../../
-
-
-
-
-
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
-sudo zip -9 -qyr "${RELEASEFILES[1]}" . && echo "compressed ${RELEASEFILES[1]}" || echo "compress fail ${RELEASEFILES[1]}"
-cd ../../../../../../../
-
-}
-
-
-
-
-
-
-
-
-
-
+n=7
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.zip" 
 
 
 
