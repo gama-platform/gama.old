@@ -23,7 +23,7 @@ species boat skills: [moving]{
 		}	
 	}
 	aspect obj {
-		//we draw an obj file in the aspect apply an initial rotation r0 to give the boat the right orientation and apply an composition of rotation (pitch,roll,yaw) and 
+		//we draw an obj file in the aspect apply an initial rotation r0 to give the boat the right orientation and apply a composition of rotation (pitch,roll,yaw) and 
 		//the location of a obj file is centroid of the bounding box, so we add with the "at" facet a translated along the z axis to place the boat on the water and not inside
 		//the size represents here the max size of the bounding box
 		//at last, we dynamically apply a rotation to the boat to make it head in direction of the heading of the agents. 
