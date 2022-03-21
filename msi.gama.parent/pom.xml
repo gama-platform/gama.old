@@ -30,7 +30,10 @@
 			<url>http://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
-
+		<pluginRepository>
+			<id>tycho-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
+		</pluginRepository>
 		<pluginRepository>
 			<id>jzy3d-releases</id>
 			<name>Jzy3d Releases</name>
@@ -77,13 +80,6 @@
 									<goal>upload</goal>
 								</goals>
 								<configuration>
-									<rules>
-										<requireFilesSize>
-											<maxsize>50000</maxsize>
-											<minsize>90</minsize>
-										</requireFilesSize>
-									</rules>
-									<removeAll>true</removeAll>
 									<fromDir>${repo.path}</fromDir>
 									<includes>**</includes>
 									<toDir>${ftp.toDir}</toDir>
@@ -124,7 +120,7 @@
 		</repository>
 		<repository>
 			<id>xtext</id>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.25.0/</url>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.26.0/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
@@ -256,7 +252,7 @@
 		<batik.version>1.7</batik.version>
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
-		<tycho.version>2.6.0</tycho.version>
+		<tycho.version>3.0.0-SNAPSHOT</tycho.version>
 		<jdk.version>17</jdk.version>
 		<project.version>1.8.2-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -371,18 +367,7 @@
 					<useProjectSettings>false</useProjectSettings>
 					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
 					<optimize>true</optimize>
-					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
-				<configuration>
-					<debug>false</debug>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+					<executionEnvironment>${jdk.version}</executionEnvironment>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -559,11 +544,6 @@
 							<arch>x86</arch>
 						</environment>
 						-->
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>
-						</environment>
 						<!--  obsolete on 1812 
 						<environment>
 							<os>win32</os>
@@ -572,14 +552,34 @@
 						</environment>
 						-->
 						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86_64</arch>
 						</environment>
 						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>ppc64le</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>aarch64</arch>
+						</environment>
+						<environment>
 							<os>macosx</os>
 							<ws>cocoa</ws>
-							<arch>x86_64</arch>
+							<arch>aarch64</arch>
 						</environment>
 					</environments>
 					<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>

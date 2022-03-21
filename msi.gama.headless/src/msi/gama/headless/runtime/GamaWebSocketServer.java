@@ -83,14 +83,16 @@ public class GamaWebSocketServer extends WebSocketServer {
 	}
 
 	void deleteFolder(File file) {
-		for (File subFile : file.listFiles()) {
-			if (subFile.isDirectory()) {
-				deleteFolder(subFile);
-			} else {
-				subFile.delete();
+		if(file.listFiles()!=null) {			
+			for (File subFile : file.listFiles()) {
+				if (subFile.isDirectory()) {
+					deleteFolder(subFile);
+				} else {
+					subFile.delete();
+				}
 			}
+			file.delete();
 		}
-		file.delete();
 	}
 
 	public Application getDefaultApp() {
@@ -129,7 +131,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 			while (true) {
 				String in = sysin.readLine();
-				instance.broadcast(in);
+//				instance.broadcast(in);
 				if ("exit".equals(in)) {
 					instance.stop(1000);
 					break;
