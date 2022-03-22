@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * TCPConnector.java, in ummisco.gama.network, is part of the source code of the
+ * TCPConnection.java, in ummisco.gama.network, is part of the source code of the
  * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -10,262 +10,147 @@
  ********************************************************************************************************/
 package ummisco.gama.network.tcp;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.BindException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
-import msi.gaml.operators.Cast;
+import ummisco.gama.network.common.CommandMessage;
+import ummisco.gama.network.common.CommandMessage.CommandType;
 import ummisco.gama.network.common.Connector;
-import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
+import ummisco.gama.network.common.MessageFactory;
+import ummisco.gama.network.common.MessageFactory.MessageType;
+import ummisco.gama.network.common.socket.SocketService;
 
 /**
- * The Class TCPConnector.
+ * The Class TCPConnection.
  */
-@SuppressWarnings ({ "unchecked" })
 public class TCPConnector extends Connector {
-	
-	/** The is server. */
-	private final boolean is_server = false;
-	
-	/** The  tcp server. */
-	public static String _TCP_SERVER = "__tcp_server";
-	
-	/** The  tcp socket. */
-	public static String _TCP_SOCKET = "__tcp_socket";
-	
-	/** The  tcp client. */
-	public static String _TCP_CLIENT = "__tcp_client";
-	
-	/** The  tcp so timeout. */
-	public static Integer _TCP_SO_TIMEOUT = 100;
 
-	/** The default host. */
-	public static String DEFAULT_HOST = "localhost";
-	
-	/** The default port. */
-	public static String DEFAULT_PORT = "1988";
+	/** The socket. */
+	private SocketService socket;
+
+	/** The is server. */
+	private final boolean isServer;
+
+	/** The remote box name. */
+	private final ArrayList<String> remoteBoxName;
 
 	/**
-	 * Open server socket.
+	 * Instantiates a new TCP connection.
 	 *
-	 * @param agent the agent
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope the scope
+	 * @param isServer the is server
 	 */
-	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
-		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
-		if (agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port) == null) {
-			try {
-				final ServerSocket sersock = new ServerSocket(port);
-				sersock.setSoTimeout(_TCP_SO_TIMEOUT);
-				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(agent, sersock);
-				ssThread.start();
-				agent.getScope().getSimulation().setAttribute(_TCP_SERVER + port, ssThread);
-
-			} catch (final BindException be) {
-				throw GamaRuntimeException.create(be, agent.getScope());
-			} catch (final Exception e) {
-				throw GamaRuntimeException.create(e, agent.getScope());
-			}
-		}
-
+	public TCPConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
+		this.isServer = isServer;
+		this.isRaw = isRaw;
+		this.remoteBoxName = new ArrayList<>();
 	}
 
 	/**
-	 * Connect to server socket.
+	 * Extract and apply command.
 	 *
-	 * @param agent the agent
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param sender the sender
+	 * @param message the message
 	 */
-	public void connectToServerSocket(final IAgent agent) throws GamaRuntimeException {
-		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_SOCKET);
-		Socket sock = null;
-		if (c != null) {
-			sock = c.getMyClientSocket();
+	protected void extractAndApplyCommand(final String sender, final String message) {
+		final CommandMessage mm = MessageFactory.unPackCommandMessage(sender, message);
+		final String sttr = mm.getPlainContents();
+		if (mm.getCommand().equals(CommandType.NEW_GROUP)) {
+			this.remoteBoxName.add(sttr);
 		}
-		if (sock == null) {
-			try {
-				String server = this.getConfigurationParameter(SERVER_URL);
-				String port = this.getConfigurationParameter(SERVER_PORT);
-				server = server == null ? DEFAULT_HOST : server;
-				port = port == null ? DEFAULT_PORT : port;
-				sock = new Socket(server, Cast.asInt(agent.getScope(), port));
-				sock.setSoTimeout(_TCP_SO_TIMEOUT);
 
-				final ClientServiceThread cSock = new ClientServiceThread(agent, sock);
-				cSock.start();
-				agent.setAttribute(_TCP_SOCKET, cSock);
-				// return sock.toString();
-			} catch (final Exception e) {
-				throw GamaRuntimeException.create(e, agent.getScope());
-			}
+		if (mm.getCommand().equals(CommandType.REMOVE_GROUP)) {
+			this.remoteBoxName.remove(sttr);
 		}
 	}
 
 	@Override
 	protected void connectToServer(final IAgent agent) throws GamaNetworkException {
-		if (is_server) {
-			openServerSocket(agent);
-		} else {
-			connectToServerSocket(agent);
-		}
-	}
+		if (isConnected) { return; }
 
-	/**
-	 * Send to client.
-	 *
-	 * @param agent the agent
-	 * @param cli the cli
-	 * @param data the data
-	 * @throws GamaRuntimeException the gama runtime exception
-	 */
-	public void sendToClient(final IAgent agent, final String cli, final String data) throws GamaRuntimeException {
-		try {
-			final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_CLIENT + cli);
-			Socket sock = null;
-			if (c != null) {
-				sock = c.getMyClientSocket();
-			}
-			if (sock == null) { return; }
-			final OutputStream ostream = sock.getOutputStream();
-			final PrintWriter pwrite = new PrintWriter(ostream, true);
-			pwrite.println(data);
-			pwrite.flush();
-		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e, agent.getScope());
-		}
-	}
-
-	/**
-	 * Send to server.
-	 *
-	 * @param agent the agent
-	 * @param data the data
-	 * @throws GamaRuntimeException the gama runtime exception
-	 */
-	public void sendToServer(final IAgent agent, final String data) throws GamaRuntimeException {
-		OutputStream ostream = null;
-		final ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_SOCKET);
-		Socket sock = null;
-		if (c != null) {
-			sock = c.getMyClientSocket();
-		}
-		if (sock == null || sock.isClosed() || sock.isInputShutdown()) { return; }
-		try {
-			ostream = sock.getOutputStream();
-			final PrintWriter pwrite = new PrintWriter(ostream, true);
-			pwrite.println(data);
-			pwrite.flush();
-		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e, agent.getScope());
-		}
-
-	}
-
-	// @Override
-	// public void send(final IAgent sender, final String receiver, final
-	// GamaMessage content) {
-	// if (is_server) {
-	// sendToClient(sender, receiver, content.getContents(myScope));
-	// } else {
-	// sendToServer(sender, content.getContents(myScope));
-	// }
-	// }
-
-	@Override
-	public List<ConnectorMessage> fetchMessageBox(final IAgent agent) {
-		// TODO Auto-generated method stub
-		return super.fetchMessageBox(agent);
-	}
-
-	@Override
-	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
-		for (final IAgent agt : this.receivedMessage.keySet()) {
-			// IScope scope = agt.getScope();
-			final IList<ConnectorMessage> m = (IList<ConnectorMessage>) agt.getAttribute("messages" + agt);
-			if (m != null) {
-				// receivedMessage.get(agt).addAll(m);
-				for (final ConnectorMessage cm : m) {
-					receivedMessage.get(agt).add(cm);
+		final String server = this.getConfigurationParameter(SERVER_URL);
+		final int port = Integer.valueOf(this.getConfigurationParameter(SERVER_PORT)).intValue();
+		if (this.isServer) {
+			socket = new ServerService(port) {
+				@Override
+				public void receivedMessage(final String sender, final String message) {
+					final MessageType mte = MessageFactory.identifyMessageType(message);
+					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+						extractAndApplyCommand(sender, message);
+					} else {
+						final String r = MessageFactory.unpackReceiverName(message);
+						storeMessage(r, message);
+					}
 				}
-				m.clear();
-				agt.setAttribute("message" + agt, m);
-			}
+			};
+		} else {
+			socket = new ClientService(server, port, this) {
+				@Override
+				public void receivedMessage(final String sender, final String message) {
+					final MessageType mte = MessageFactory.identifyMessageType(message);
+					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+						extractAndApplyCommand(sender, message);
+					} else {
+						final String rer = MessageFactory.unpackReceiverName(message);
+						storeMessage(rer, message);
+					}
+				}
+			};
 		}
-		return super.fetchAllMessages();
-	}
-
-	@Override
-	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
-
+		try {
+			socket.startService();
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		this.setConnected();
 	}
 
 	@Override
 	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {
-		final String sport = this.getConfigurationParameter(SERVER_PORT);
-		final Integer port = Cast.asInt(agent.getScope(), sport);
-		final Thread sersock = (Thread) agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port);
-		if (sersock != null && sersock.isAlive()) { return true; }
+		return socket.isOnline();
+	}
 
-		final Thread cSock = (Thread) agent.getScope().getAgent().getAttribute(_TCP_SOCKET);
-		if (sersock != null && cSock.isAlive()) { return true; }
+	@Override
+	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
+		if (!this.localMemberNames.containsKey(boxName)) {
+			this.remoteBoxName.add(boxName);
+		}
 
-		return false;
+		final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
+				socket.getRemoteAddress(), CommandType.NEW_GROUP, boxName);
+		this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
+	}
+
+	@Override
+	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
+		this.remoteBoxName.remove(boxName);
+		final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
+				socket.getRemoteAddress(), CommandType.REMOVE_GROUP, boxName);
+		this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
 	}
 
 	@Override
 	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
-		// final String server = this.getConfigurationParameter(SERVER_URL);
-		final String sport = this.getConfigurationParameter(SERVER_PORT);
-		final Integer port = Cast.asInt(scope, sport);
-		final Thread sersock = (Thread) scope.getSimulation().getAttribute(_TCP_SERVER + port);
-		final Thread cSock = (Thread) scope.getAgent().getAttribute(_TCP_SOCKET);
-
-		try {
-			if (sersock != null) {
-				sersock.interrupt();
-				scope.getSimulation().setAttribute(_TCP_SERVER + port, null);
-			}
-			if (cSock != null) {
-				cSock.interrupt();
-				scope.getAgent().setAttribute(_TCP_SOCKET, null);
-			}
-		} catch (final Exception e) {
-			throw GamaRuntimeException.create(e, scope);
-		}
+		socket.stopService();
+		socket = null;
+		this.isConnected = false;
 	}
-
+  
 	@Override
-	protected void sendMessage(final IAgent sender, final String receiver, final String cont)
+	protected void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException {
-
-		String content = cont.replaceAll("\b\r", "@b@@r@");
-		content = content.replaceAll("\n", "@n@");
-		if (is_server) {
-			sendToClient(sender, receiver, content);
-		} else {
-			sendToServer(sender, content);
+		try {
+			if (socket != null) {
+				socket.sendMessage(content);
+			}
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		// if(is_server){
-		// primSendToClient(sender, receiver, content);
-		// }else{
-		// primSendToServer(sender, content);
-		// }
 	}
+
 }

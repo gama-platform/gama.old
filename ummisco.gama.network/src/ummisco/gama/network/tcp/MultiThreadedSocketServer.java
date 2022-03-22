@@ -97,13 +97,13 @@ public class MultiThreadedSocketServer extends Thread {
 					if (list_net_agents != null && !list_net_agents.contains(clientSocket.toString())) {
 						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
-						clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
+						clientSocket.setSoTimeout(TCPConnectorOld._TCP_SO_TIMEOUT);
 						clientSocket.setKeepAlive(true);
 
 						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
 
-						myAgent.setAttribute(TCPConnector._TCP_CLIENT + clientSocket.toString(), cliThread);
+						myAgent.setAttribute(TCPConnectorOld._TCP_CLIENT + clientSocket.toString(), cliThread);
 					}
 				}
 
@@ -128,7 +128,7 @@ public class MultiThreadedSocketServer extends Thread {
 		}
 		// DEBUG.OUT("closed ");
 		try {
-			myAgent.setAttribute(TCPConnector._TCP_SERVER + myServerSocket.getLocalPort(), null);
+			myAgent.setAttribute(TCPConnectorOld._TCP_SERVER + myServerSocket.getLocalPort(), null);
 			myServerSocket.close();
 		} catch (final Exception e) {
 			// TODO Auto-generated catch block

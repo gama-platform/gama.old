@@ -43,7 +43,7 @@ import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqtt.MQTTConnector;
 import ummisco.gama.network.serial.ArduinoConnector;
-import ummisco.gama.network.tcp.TCPConnection;
+import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
 
 /**
@@ -138,6 +138,10 @@ public class NetworkSkill extends MessagingSkill {
 							type = IType.INT,
 							doc = @doc ("Port number")),
 					@arg (
+							name = "raw",
+							type = IType.BOOL,
+							doc = @doc ("message type raw or rich")),
+					@arg (
 							name = INetworkSkill.WITHNAME,
 							type = IType.STRING,
 							optional = true,
@@ -184,6 +188,7 @@ public class NetworkSkill extends MessagingSkill {
 		final String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		final String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		final Boolean force_local = (Boolean) scope.getArg(INetworkSkill.FORCE_NETWORK_USE, IType.BOOL);
+		final Boolean raw_package = (Boolean) scope.getArg("raw", IType.BOOL);
 		final Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 		final String packet_size = (String) scope.getArg(INetworkSkill.MAX_DATA_PACKET_SIZE, IType.STRING);
 
@@ -208,12 +213,12 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.PACKET_SIZE, "" + packet_size);
 			} else if (INetworkSkill.TCP_SERVER.equals(protocol)) {
 				DEBUG.OUT("create TCP serveur");
-				connector = new TCPConnection(scope, true);
+				connector = new TCPConnector(scope, true, raw_package);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (INetworkSkill.TCP_CLIENT.equals(protocol)) {
 				DEBUG.OUT("create TCP client");
-				connector = new TCPConnection(scope, false);
+				connector = new TCPConnector(scope, false, raw_package);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if ("arduino".equals(protocol)) {
