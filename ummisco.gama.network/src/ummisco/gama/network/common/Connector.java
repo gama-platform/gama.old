@@ -67,6 +67,10 @@ public abstract class Connector implements IConnector {
 	/** The force network use. */
 	boolean forceNetworkUse = false;
 
+
+	/** TCP message is raw or composite. */
+	protected boolean isRaw = false;
+	
 	/**
 	 * Instantiates a new connector.
 	 */
@@ -174,14 +178,18 @@ public abstract class Connector implements IConnector {
 		}
 
 		if (!this.localMemberNames.containsKey(receiver)) {
-			final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
-			if (cmsg.getSender() instanceof IAgent) {
-				cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
+			if(!isRaw) {				
+				final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
+				if (cmsg.getSender() instanceof IAgent) {
+					cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
+				}
+				final NetworkMessage msg =
+						MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
+								receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
+				this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
+			}else {
+				this.sendMessage(sender, receiver, content.getContents(sender.getScope()).toString());
 			}
-			final NetworkMessage msg =
-					MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
-							receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
-			this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
 		}
 	}
 
@@ -213,6 +221,7 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void joinAGroup(final IAgent agt, final String groupName) {
+		if(isRaw) return;
 		if (!this.receivedMessage.keySet().contains(agt)) {
 			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
 		}
@@ -240,7 +249,7 @@ public abstract class Connector implements IConnector {
 			connectToServer(agent);
 		}
 
-		if (this.receivedMessage.get(agent) == null) {
+		if (this.receivedMessage.get(agent) == null && !isRaw) {
 			joinAGroup(agent, netAgent);
 		}
 	}
