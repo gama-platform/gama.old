@@ -332,6 +332,7 @@
 		}
 		// send message from the form
 		var exp_compiled;
+		var socket_id = "";
 		var exp_id = 0;
 		var exp_out = 0;
 		var exp_div_out = 0;
@@ -398,8 +399,9 @@
 					} else {
 						if (message.startsWith("exp@")) {
 							const myArray = message.split("@");
-							exp_id = myArray[1];
-							exp_out = myArray[2];
+							socket_id = myArray[1];
+							exp_id = myArray[2];
+							exp_out = myArray[3];
 							exp_div_out = $('.dialog_window').length + 1;
 							for (let i = 0; i < exp_out; i++) {
 								$('#new_window_title').val("Out" + i); $('#new_window_content').val('<div id="out' + i + '"><img width="500"></div>');

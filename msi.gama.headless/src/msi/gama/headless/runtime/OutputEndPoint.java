@@ -29,13 +29,14 @@ public class OutputEndPoint implements Endpoint {
 	public void onMessage(GamaWebSocketServer server, WebSocket socket, String message) {
 //		socket.send(message);
 
-		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
 		if ("output".equals(args[0])) {
-			String id_exp = args[1];
-			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				IList<? extends IShape> agents = server.simulations.get(id_exp).getSimulation().getSimulation()
-						.getMicroPopulation(args[2]);
+			final String socket_id=args[1];
+			System.out.println(socket_id + ": " + message);
+			final String id_exp = args[2];
+			if (server.getExperiment(socket_id,id_exp) != null && server.getExperiment(socket_id,id_exp).getSimulation() != null) {
+				IList<? extends IShape> agents = server.getExperiment(socket_id,id_exp).getSimulation().getSimulation()
+						.getMicroPopulation(args[3]);
 //				IList<? extends IShape> agents=GamaListFactory.create();
 //				for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
 //					if(!(pop instanceof GridPopulation)) {
@@ -44,7 +45,7 @@ public class OutputEndPoint implements Endpoint {
 //				}
 				try {
 					socket.send(SaveHelper.buildGeoJSon(
-							server.simulations.get(id_exp).getSimulation().getSimulation().getScope(), agents));
+							server.getExperiment(socket_id,id_exp).getSimulation().getSimulation().getScope(), agents));
 				} catch (GamaRuntimeException | IOException | SchemaException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

@@ -18,20 +18,15 @@ package msi.gama.headless.runtime;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -39,6 +34,7 @@ import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.ManualExperimentJob;
 
 /**
  * A simple WebSocketServer implementation. Keeps track of a "chatroom".
@@ -59,7 +55,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	/** The instance. */
 	private static GamaWebSocketServer instance;
 	/** The simulations. */
-	final Map<String, ExperimentJob> simulations = new HashMap<>();
+	final private ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>> launched_experiments = new ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>>();
 	private static WebSocketPrintStream bufferStream;
 
 	public GamaWebSocketServer(int port, Application a) {
@@ -83,7 +79,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	}
 
 	void deleteFolder(File file) {
-		if(file.listFiles()!=null) {			
+		if (file.listFiles() != null) {
 			for (File subFile : file.listFiles()) {
 				if (subFile.isDirectory()) {
 					deleteFolder(subFile);
@@ -157,9 +153,28 @@ public class GamaWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	public ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>> getAllExperiments() {
+		return launched_experiments;
+	}
+
+	public ConcurrentHashMap<String, ExperimentJob> getExperimentsOf(final String socket) {
+		return launched_experiments.get(socket);
+	}
+
+	public ExperimentJob getExperiment(final String socket, final String expid) {
+		return launched_experiments.get(socket).get(expid);
+	}
+
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-//		simulations.clear();
+		if(launched_experiments.get(""+conn.hashCode())!=null) {			
+			for (ExperimentJob e : launched_experiments.get(""+conn.hashCode()).values()) {
+				((ManualExperimentJob) e).paused = true;
+
+				e.dispose();
+			}
+			launched_experiments.get(""+conn.hashCode()).clear();
+		}
 		broadcast(conn + " has left the room!");
 		System.out.println(conn + " has left the room!");
 	}

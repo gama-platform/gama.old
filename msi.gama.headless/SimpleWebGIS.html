@@ -114,8 +114,13 @@
 			zoom: 13 // starting zoom
 		});
 
+		var socket_id = "";
+		var exp_id = 0; var updateSource;
 		var socket = new WebSocket("ws://localhost:6868/launch");
 		var sk = new WebSocket("ws://localhost:6868/output");
+		sk.onclose = function (event) {
+			clearInterval(updateSource);
+		};
 		// socket.binaryType = "arraybuffer";
 		socket.addEventListener('open', (event) => {
 
@@ -124,17 +129,17 @@
 			socket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
-					const myArray = exp_compiled.split("@");
-					// console.log(myArray[3], myArray[4]);
-					exp_id = myArray[1];
+					const myArray = exp_compiled.split("@"); 
+					socket_id = myArray[1];
+					exp_id = myArray[2];
 					map.flyTo({
-						center: [myArray[3], myArray[4]],
+						center: [myArray[4], myArray[5]],
 						essential: true,
 						zoom: 15
 					});
 					socket.send("play@" + exp_id);
-					const updateSource = setInterval(() => {
-						sk.send("output@" + exp_id+"@Individual");
+					updateSource = setInterval(() => {
+						sk.send("output@" + socket_id + "@" + exp_id + "@Individual");
 						sk.onmessage = function (event) {
 
 							let message = event.data;

@@ -20,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.java_websocket.WebSocket;
 
@@ -126,7 +127,7 @@ public class LaunchEndPoint implements Endpoint {
 		}
 		final String argExperimentName = args.get(args.size() - 2);
 //		final String argGamlFile = args.get(args.size() - 1); 
-		if(!ff.exists()) 
+		if (!ff.exists())
 			return;
 		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(ff.getAbsoluteFile().toString());
 		ManualExperimentJob selectedJob = null;
@@ -146,7 +147,13 @@ public class LaunchEndPoint implements Endpoint {
 				| GamaHeadlessException e) {
 			e.printStackTrace();
 		}
-		server.simulations.put(selectedJob.getExperimentID(), selectedJob);
+		if (server.getExperimentsOf(""+socket.hashCode()) == null) {
+			final ConcurrentHashMap<String, ExperimentJob> exps = new ConcurrentHashMap<String, ExperimentJob>();
+			server.getAllExperiments().put(""+socket.hashCode(), exps);
+
+		}
+		server.getExperimentsOf(""+socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
+
 		final int size = selectedJob.getListenedVariables().length;
 //		String lst_out = "";
 //		if (size != 0) {
@@ -158,9 +165,10 @@ public class LaunchEndPoint implements Endpoint {
 		IAgent agt = selectedJob.getSimulation().getSimulation();
 
 		IShape geom = Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
-
-		socket.send("exp@" + selectedJob.getExperimentID() + "@" + size + "@" + geom.getLocation().x + "@"
-				+ geom.getLocation().y);
+		System.out.println("exp@" + ""+socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
+				+ geom.getLocation().x + "@" + geom.getLocation().y);
+		socket.send("exp@" + ""+socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
+				+ geom.getLocation().x + "@" + geom.getLocation().y);
 		((ManualExperimentJob) selectedJob).exportVariables();
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}
@@ -168,6 +176,7 @@ public class LaunchEndPoint implements Endpoint {
 	@Override
 	public void onMessage(final GamaWebSocketServer server, final WebSocket socket, final String message) {
 		// server.broadcast(message);
+		final String socket_id = ""+socket.hashCode();
 		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
 		if ("launch".equals(args[0])) {
@@ -182,27 +191,28 @@ public class LaunchEndPoint implements Endpoint {
 		if ("play".equals(args[0])) {
 			String id_exp = args[1];
 			System.out.println("play " + id_exp);
-			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.simulations.get(id_exp)).paused = false;
-				((ManualExperimentJob) server.simulations.get(id_exp)).stepping = false;
+			if (server.getExperiment(socket_id, id_exp) != null
+					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = false;
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = false;
 				// DEBUG.TIMER("Simulation duration", () -> {
-				if (((ManualExperimentJob) server.simulations.get(id_exp)).internalThread == null) {
-					((ManualExperimentJob) server.simulations.get(id_exp)).internalThread = new Thread() {
+				if (((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread == null) {
+					((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread = new Thread() {
 						@Override
 						public void run() {
 
-							while (!server.simulations.get(id_exp).getSimulation().isInterrupted()) {
-								if (((ManualExperimentJob) server.simulations.get(id_exp)).stepping) {
-									((ManualExperimentJob) server.simulations.get(id_exp)).stepping = false;
-									((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
-									server.simulations.get(id_exp).doStep();
+							while (!server.getExperiment(socket_id, id_exp).getSimulation().isInterrupted()) {
+								if (((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping) {
+									((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = false;
+									((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
+									server.getExperiment(socket_id, id_exp).doStep();
 								}
-								if (!((ManualExperimentJob) server.simulations.get(id_exp)).paused)
-									server.simulations.get(id_exp).doStep();
+								if (!((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused)
+									server.getExperiment(socket_id, id_exp).doStep();
 							}
 						}
 					};
-					((ManualExperimentJob) server.simulations.get(id_exp)).internalThread.start();
+					((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread.start();
 				}
 			}
 		}
@@ -210,23 +220,26 @@ public class LaunchEndPoint implements Endpoint {
 		if ("step".equals(args[0])) {
 			String id_exp = args[1];
 			System.out.println("step " + id_exp);
-			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.simulations.get(id_exp)).stepping = true;
+			if (server.getExperiment(socket_id, id_exp) != null
+					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = true;
 			}
 		}
 		if ("pause".equals(args[0])) {
 			String id_exp = args[1];
 			System.out.println("pause " + id_exp);
-			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
+			if (server.getExperiment(socket_id, id_exp) != null
+					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
 			}
 		}
 		if ("stop".equals(args[0])) {
 			String id_exp = args[1];
 			System.out.println("stop " + id_exp);
-			if (server.simulations.get(id_exp) != null && server.simulations.get(id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.simulations.get(id_exp)).paused = true;
-				((ManualExperimentJob) server.simulations.get(id_exp)).dispose();
+			if (server.getExperiment(socket_id, id_exp) != null
+					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
+				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).dispose();
 			}
 		}
 		if ("exit".equals(args[0])) {
