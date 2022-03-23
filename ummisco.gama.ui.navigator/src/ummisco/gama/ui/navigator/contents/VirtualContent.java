@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * VirtualContent.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * VirtualContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -28,7 +29,8 @@ import ummisco.gama.ui.resources.IGamaColors;
 /**
  * The Class VirtualContent.
  *
- * @param <P> the generic type
+ * @param <P>
+ *            the generic type
  */
 public abstract class VirtualContent<P extends VirtualContent<?>> {
 
@@ -36,23 +38,23 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 * The Enum VirtualContentType.
 	 */
 	public enum VirtualContentType {
-		
+
 		/** The root. */
-		ROOT, 
- /** The virtual folder. */
- VIRTUAL_FOLDER, 
- /** The project. */
- PROJECT, 
- /** The folder. */
- FOLDER, 
- /** The file. */
- FILE, 
- /** The file reference. */
- FILE_REFERENCE, 
- /** The category. */
- CATEGORY, 
- /** The gaml element. */
- GAML_ELEMENT
+		ROOT,
+		/** The virtual folder. */
+		VIRTUAL_FOLDER,
+		/** The project. */
+		PROJECT,
+		/** The folder. */
+		FOLDER,
+		/** The file. */
+		FILE,
+		/** The file reference. */
+		FILE_REFERENCE,
+		/** The category. */
+		CATEGORY,
+		/** The gaml element. */
+		GAML_ELEMENT
 	}
 
 	/** The default label provider. */
@@ -76,36 +78,38 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 
 	/** The Constant NO_PROBLEM. */
 	public static final int NO_PROBLEM = -1;
-	
+
 	/** The Constant CLOSED. */
 	public static final int CLOSED = -2;
-	
+
 	/** The Constant LINK_OK. */
 	public static final int LINK_OK = -3;
-	
+
 	/** The Constant LINK_BROKEN. */
 	public static final int LINK_BROKEN = -4;
-	
+
 	/** The Constant WEBLINK_OK. */
 	public static final int WEBLINK_OK = -5;
-	
+
 	/** The Constant WEBLINK_BROKEN. */
 	public static final int WEBLINK_BROKEN = -6;
-	
+
 	/** The empty. */
 	public static Object[] EMPTY = {};
 
 	/** The root. */
 	private final P root;
-	
+
 	/** The name. */
 	private final String name;
 
 	/**
 	 * Instantiates a new virtual content.
 	 *
-	 * @param root the root
-	 * @param name the name
+	 * @param root
+	 *            the root
+	 * @param name
+	 *            the name
 	 */
 	public VirtualContent(final P root, final String name) {
 		this.root = root;
@@ -180,12 +184,13 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 */
 	public abstract Image getImage();
 
-	// public abstract Color getColor();
+	public Color getColor() { return null; }
 
 	/**
 	 * Gets the suffix.
 	 *
-	 * @param sb the sb
+	 * @param sb
+	 *            the sb
 	 * @return the suffix
 	 */
 	public abstract void getSuffix(StringBuilder sb);
@@ -261,7 +266,8 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	/**
 	 * Checks if is contained in.
 	 *
-	 * @param current the current
+	 * @param current
+	 *            the current
 	 * @return true, if is contained in
 	 */
 	public boolean isContainedIn(final VirtualContent<?> current) {

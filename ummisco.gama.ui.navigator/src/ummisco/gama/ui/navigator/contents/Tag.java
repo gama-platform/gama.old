@@ -11,7 +11,11 @@
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * Class LinkedFile.
@@ -84,5 +88,11 @@ public class Tag extends VirtualContent<Tags> {
 
 	@Override
 	public VirtualContentType getType() { return VirtualContentType.CATEGORY; }
+
+	@Override
+	public Color getColor() {
+		if (suffix.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_RED);
+		return null;
+	}
 
 }

@@ -17,19 +17,25 @@ import static ummisco.gama.ui.metadata.FileMetaDataProvider.isSupport;
 import static ummisco.gama.ui.metadata.FileMetaDataProvider.shapeFileSupportedBy;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.types.Types;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
@@ -49,6 +55,8 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 
 	/** The image. */
 	Image image;
+
+	Color color;
 
 	/**
 	 * Instantiates a new wrapped file.
@@ -136,8 +144,16 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 				if (r instanceof IFile && isSupport(p, (IFile) r)) { sub.add(getManager().findWrappedInstanceOf(r)); }
 			}
 			final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
-			if (metaData instanceof ShapeInfo info && !info.getAttributes().isEmpty()) {
-				final Tags wf = new Tags(this, info.getAttributes(), "Attributes", false);
+			Map<String, String> attributes;
+			if (metaData instanceof ShapeInfo info && !(attributes = info.getAttributes()).isEmpty()) {
+				Map<String, String> tags = new LinkedHashMap<>(attributes);
+				attributes.forEach((k, v) -> {
+					if (Types.AGENT.getSpecies().hasAttribute(k)) {
+						tags.put(k, tags.get(k) + " <- built-in attribute of agents");
+						color = GamaColors.system(SWT.COLOR_RED);
+					}
+				});
+				final Tags wf = new Tags(this, tags, "Attributes", false);
 				if (wf.getNavigatorChildren().length > 0) { sub.add(wf); }
 			}
 			return sub.toArray();
@@ -158,10 +174,8 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		return image;
 	}
 
-	// @Override
-	// public Color getColor() {
-	// return null;
-	// }
+	@Override
+	public Color getColor() { return color; }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {

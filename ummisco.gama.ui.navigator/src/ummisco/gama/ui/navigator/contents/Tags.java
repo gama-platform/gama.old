@@ -13,9 +13,12 @@ package ummisco.gama.ui.navigator.contents;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import one.util.streamex.StreamEx;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -80,11 +83,13 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 *
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
 	 */
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-	//
-	// }
+	@Override
+	public Color getColor() {
+		for (String s : tags.values()) {
+			if (s.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_RED);
+		}
+		return null;
+	}
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {}
