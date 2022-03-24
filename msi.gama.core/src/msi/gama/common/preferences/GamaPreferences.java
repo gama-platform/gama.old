@@ -102,7 +102,7 @@ public class GamaPreferences {
 						.in(NAME, STARTUP).activates("pref_default_model", "pref_default_experiment");
 		/** The Constant CORE_DEFAULT_MODEL. */
 		public static final Pref<? extends IGamaFile> CORE_DEFAULT_MODEL =
-				create("pref_default_model", "Choose the model to open at startup", (IGamaFile) null, IType.FILE, false)
+				create("pref_default_model", "Choose the model to open at startup", () -> new GenericFile("Enter path", false), IType.FILE, false)
 						.in(NAME, STARTUP).restrictToWorkspace().withExtensions("gaml", "experiment")
 						.refreshes("pref_default_experiment").activates("pref_default_experiment");
 
@@ -112,7 +112,7 @@ public class GamaPreferences {
 						.in(NAME, STARTUP).among(() -> {
 							List result = new ArrayList();
 							IGamaFile file = CORE_DEFAULT_MODEL.getValue();
-							if (file == null) return result;
+							if (file == null || "".equals(file.getOriginalPath())) return result;
 							result.addAll(
 									GAML.getInfo(FileUtils.getURI(file.getOriginalPath(), null)).getExperiments());
 							return result;
