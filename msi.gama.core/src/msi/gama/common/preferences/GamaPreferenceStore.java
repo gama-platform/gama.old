@@ -42,6 +42,7 @@ import msi.gama.util.GamaDate;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GenericFile;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.FLAGS;
@@ -523,19 +524,19 @@ public abstract class GamaPreferenceStore<T> {
 				put(key, toJavaString((String) value));
 				break;
 			case IType.FILE:
-				put(key, ((GamaFile) value).getPath(null));
+				put(key, value == null ? "" : ((GamaFile) value).getPath(null));
 				break;
 			case IType.COLOR:
-				putInt(key, ((GamaColor) value).getRGB());
+				putInt(key, value == null ? 0 : ((GamaColor) value).getRGB());
 				break;
 			case IType.POINT:
-				put(key, ((GamaPoint) value).stringValue(null));
+				put(key, value==null ? "{0,0}" : ((GamaPoint) value).stringValue(null));
 				break;
 			case IType.FONT:
 				put(key, value == null ? DEFAULT_FONT : value.toString());
 				break;
 			case IType.DATE:
-				put(key, toJavaString(((GamaDate) value).toISOString()));
+				put(key, value== null ? toJavaString(GamaDateType.EPOCH.toISOString()): toJavaString(((GamaDate) value).toISOString()));
 				break;
 			default:
 				put(key, (String) value);
