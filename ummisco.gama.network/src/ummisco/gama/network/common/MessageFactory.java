@@ -107,10 +107,12 @@ public final class MessageFactory {
 	public static MessageType identifyMessageType(final String data)
 	{
 		final String key = new String(keyChain);
-		if (data.substring(0, keyChain.length*2).equals(key+key))
-			return MessageType.COMMAND_MESSAGE;
-		if (data.substring(0, keyChain.length).equals(key))
-			return MessageType.NETWORK_MESSAGE;
+		if (data != null) {
+ 			if(data.length() >= keyChain.length*2 && data.substring(0, keyChain.length*2).equals(key+key))
+				return MessageType.COMMAND_MESSAGE;
+			if (data.length() >= keyChain.length && data.substring(0, keyChain.length).equals(key))
+				return MessageType.NETWORK_MESSAGE;			
+		}
 		return MessageType.PLAIN_MESSAGE;
 	}
 	
