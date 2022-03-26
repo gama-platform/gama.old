@@ -150,7 +150,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 				attributes.forEach((k, v) -> {
 					if (Types.AGENT.getSpecies().hasAttribute(k)) {
 						tags.put(k, tags.get(k) + " <- built-in attribute of agents");
-						color = GamaColors.system(SWT.COLOR_RED);
+						color = GamaColors.system(SWT.COLOR_DARK_RED);
 					}
 				});
 				final Tags wf = new Tags(this, tags, "Attributes", false);

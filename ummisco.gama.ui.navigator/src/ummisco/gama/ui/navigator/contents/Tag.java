@@ -91,7 +91,7 @@ public class Tag extends VirtualContent<Tags> {
 
 	@Override
 	public Color getColor() {
-		if (suffix.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_RED);
+		if (suffix.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_DARK_RED);
 		return null;
 	}
 

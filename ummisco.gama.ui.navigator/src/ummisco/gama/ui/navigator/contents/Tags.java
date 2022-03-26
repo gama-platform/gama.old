@@ -86,7 +86,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	@Override
 	public Color getColor() {
 		for (String s : tags.values()) {
-			if (s.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_RED);
+			if (s.contains("built-in attribute")) return GamaColors.system(SWT.COLOR_DARK_RED);
 		}
 		return null;
 	}
