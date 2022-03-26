@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ServerService.java, in ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ServerService.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.network.tcp;
 
@@ -29,32 +29,33 @@ import ummisco.gama.network.common.socket.SocketService;
  * The Class ServerService.
  */
 public abstract class ServerService extends Thread implements SocketService {
-	
+
 	/** The server socket. */
 	private ServerSocket serverSocket;
-	
+
 	/** The port. */
 	private final int port;
-	
+
 	/** The is alive. */
 	private boolean isAlive;
-	
+
 	/** The is online. */
 	private boolean isOnline;
-	
+
 	/** The sender. */
 	private PrintWriter sender;
-	
+
 	/** The current socket. */
 	private Socket currentSocket;
-	
+
 	/** The receiver. */
 	BufferedReader receiver = null;
 
 	/**
 	 * Instantiates a new server service.
 	 *
-	 * @param port the port
+	 * @param port
+	 *            the port
 	 */
 	public ServerService(final int port) {
 		this.port = port;
@@ -64,13 +65,13 @@ public abstract class ServerService extends Thread implements SocketService {
 
 	@Override
 	public String getRemoteAddress() {
-		if (currentSocket == null) { return null; }
+		if (currentSocket == null) return null;
 		return this.currentSocket.getInetAddress() + ":" + this.port;
 	}
 
 	@Override
 	public String getLocalAddress() {
-		if (currentSocket == null) { return null; }
+		if (currentSocket == null) return null;
 		return this.currentSocket.getLocalAddress() + ":" + this.port;
 	}
 
@@ -94,9 +95,11 @@ public abstract class ServerService extends Thread implements SocketService {
 					DEBUG.OUT("wait message ...........");
 					receiver = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
 					msg = receiver.readLine();
-					msg = msg.replaceAll("@n@", "\n");
-					msg = msg.replaceAll("@b@@r@", "\b\r");
-					receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
+					if (msg != null) {
+						msg = msg.replace("@n@", "\n");
+						msg = msg.replace("@b@@r@", "\b\r");
+						receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
+					}
 					DEBUG.OUT("fin traitement message ..." + this.isOnline);
 				} while (isOnline);
 
@@ -107,33 +110,25 @@ public abstract class ServerService extends Thread implements SocketService {
 			} catch (final IOException e1) {
 				DEBUG.LOG("Socket error" + e1);
 				/// isOnline = false;
+			} catch (final Exception e) {
+				DEBUG.LOG("Exception occured in socket");
 			}
 		}
 	}
 
 	@Override
-	public boolean isOnline() {
-		return isAlive && isOnline;
-	}
+	public boolean isOnline() { return isAlive && isOnline; }
 
 	@Override
 	public void stopService() {
 		isOnline = false;
 		isAlive = false;
 
-		if (sender != null) {
-			sender.close();
-		}
+		if (sender != null) { sender.close(); }
 		try {
-			if (receiver != null) {
-				receiver.close();
-			}
-			if (currentSocket != null) {
-				currentSocket.close();
-			}
-			if (serverSocket != null) {
-				serverSocket.close();
-			}
+			if (receiver != null) { receiver.close(); }
+			if (currentSocket != null) { currentSocket.close(); }
+			if (serverSocket != null) { serverSocket.close(); }
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -143,10 +138,10 @@ public abstract class ServerService extends Thread implements SocketService {
 	@Override
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
-		if (currentSocket == null || !isOnline()) { return; }
+		if (currentSocket == null || !isOnline()) return;
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
-		message = message.replaceAll("\n", "@n@");
-		message = message.replaceAll("\b\r", "@b@@r@");
+		message = message.replace("\n", "@n@");
+		message = message.replace("\b\r", "@b@@r@");
 		sender.println(message + "\n");
 		sender.flush();
 

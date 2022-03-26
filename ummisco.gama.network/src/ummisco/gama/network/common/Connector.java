@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Connector.java, in ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Connector.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.network.common;
 
@@ -36,7 +36,7 @@ public abstract class Connector implements IConnector {
 
 	/** The Constant FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION. */
 	private final static int FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION = 5;
-	
+
 	/** The Constant PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION. */
 	private final static int PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION = 8;
 
@@ -57,7 +57,7 @@ public abstract class Connector implements IConnector {
 
 	/** The topic suscribing pending. */
 	protected List<String> topicSuscribingPending;
-	
+
 	/** The is connected. */
 	protected boolean isConnected = false;
 
@@ -67,15 +67,13 @@ public abstract class Connector implements IConnector {
 	/** The force network use. */
 	boolean forceNetworkUse = false;
 
-
 	/** TCP message is raw or composite. */
 	protected boolean isRaw = false;
-	
+
 	/**
 	 * Instantiates a new connector.
 	 */
 	protected Connector() {
-		super();
 		boxFollower = new HashMap<>();
 		topicSuscribingPending = Collections.synchronizedList(new ArrayList<String>());
 		connectionParameter = new HashMap<>();
@@ -97,7 +95,8 @@ public abstract class Connector implements IConnector {
 	/**
 	 * Gets the configuration parameter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the configuration parameter
 	 */
 	protected String getConfigurationParameter(final String name) {
@@ -121,9 +120,12 @@ public abstract class Connector implements IConnector {
 	/**
 	 * Store message.
 	 *
-	 * @param topic the topic
-	 * @param content the content
-	 * @throws GamaNetworkException the gama network exception
+	 * @param topic
+	 *            the topic
+	 * @param content
+	 *            the content
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	public void storeMessage(final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
@@ -136,9 +138,12 @@ public abstract class Connector implements IConnector {
 	/**
 	 * Push and fetchthread safe.
 	 *
-	 * @param action the action
-	 * @param groupName the group name
-	 * @param message the message
+	 * @param action
+	 *            the action
+	 * @param groupName
+	 *            the group name
+	 * @param message
+	 *            the message
 	 * @return the map
 	 */
 	private Map<IAgent, LinkedList<ConnectorMessage>> pushAndFetchthreadSafe(final int action, final String groupName,
@@ -158,9 +163,7 @@ public abstract class Connector implements IConnector {
 					final ArrayList<IAgent> bb = this.boxFollower.get(groupName);
 					for (final IAgent agt : bb) {
 						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
-						if (messages != null) {
-							messages.add(message);
-						}
+						if (messages != null) { messages.add(message); }
 					}
 					break;
 				}
@@ -175,10 +178,12 @@ public abstract class Connector implements IConnector {
 			final ConnectorMessage msg =
 					new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content);
 			this.pushAndFetchthreadSafe(PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
+			// Fix for #3335
+			return;
 		}
 
 		if (!this.localMemberNames.containsKey(receiver)) {
-			if(!isRaw) {				
+			if (!isRaw) {
 				final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
 				if (cmsg.getSender() instanceof IAgent) {
 					cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
@@ -187,7 +192,7 @@ public abstract class Connector implements IConnector {
 						MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
 								receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
 				this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
-			}else {
+			} else {
 				this.sendMessage(sender, receiver, content.getContents(sender.getScope()).toString());
 			}
 		}
@@ -213,16 +218,14 @@ public abstract class Connector implements IConnector {
 		final ArrayList<IAgent> members = this.boxFollower.get(groupName);
 		if (members != null) {
 			members.remove(agt);
-			if (members.size() == 0) {
-				this.boxFollower.remove(groupName);
-			}
+			if (members.size() == 0) { this.boxFollower.remove(groupName); }
 		}
 	}
 
 	@Override
 	public void joinAGroup(final IAgent agt, final String groupName) {
-		if(isRaw) return;
-		if (!this.receivedMessage.keySet().contains(agt)) {
+		if (isRaw) return;
+		if (!this.receivedMessage.containsKey(agt)) {
 			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
 		}
 
@@ -245,65 +248,77 @@ public abstract class Connector implements IConnector {
 		if (!this.forceNetworkUse && !this.localMemberNames.containsKey(netAgent)) {
 			this.localMemberNames.put(netAgent, agent);
 		}
-		if (!this.isConnected) {
-			connectToServer(agent);
-		}
+		if (!this.isConnected) { connectToServer(agent); }
 
-		if (this.receivedMessage.get(agent) == null && !isRaw) {
-			joinAGroup(agent, netAgent);
-		}
+		if (this.receivedMessage.get(agent) == null && !isRaw) { joinAGroup(agent, netAgent); }
 	}
 
 	/**
 	 * Connect to server.
 	 *
-	 * @param agent the agent
-	 * @throws GamaNetworkException the gama network exception
+	 * @param agent
+	 *            the agent
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract void connectToServer(IAgent agent) throws GamaNetworkException;
 
 	/**
 	 * Checks if is alive.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return true, if is alive
-	 * @throws GamaNetworkException the gama network exception
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract boolean isAlive(final IAgent agent) throws GamaNetworkException;
 
 	/**
 	 * Subscribe to group.
 	 *
-	 * @param agt the agt
-	 * @param boxName the box name
-	 * @throws GamaNetworkException the gama network exception
+	 * @param agt
+	 *            the agt
+	 * @param boxName
+	 *            the box name
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException;
 
 	/**
 	 * Unsubscribe group.
 	 *
-	 * @param agt the agt
-	 * @param boxName the box name
-	 * @throws GamaNetworkException the gama network exception
+	 * @param agt
+	 *            the agt
+	 * @param boxName
+	 *            the box name
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException;
 
 	/**
 	 * Release connection.
 	 *
-	 * @param scope the scope
-	 * @throws GamaNetworkException the gama network exception
+	 * @param scope
+	 *            the scope
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract void releaseConnection(final IScope scope) throws GamaNetworkException;
 
 	/**
 	 * Send message.
 	 *
-	 * @param sender the sender
-	 * @param receiver the receiver
-	 * @param content the content
-	 * @throws GamaNetworkException the gama network exception
+	 * @param sender
+	 *            the sender
+	 * @param receiver
+	 *            the receiver
+	 * @param content
+	 *            the content
+	 * @throws GamaNetworkException
+	 *             the gama network exception
 	 */
 	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException;

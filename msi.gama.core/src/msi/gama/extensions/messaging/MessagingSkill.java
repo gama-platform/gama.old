@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MessagingSkill.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MessagingSkill.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.extensions.messaging;
 
@@ -164,12 +164,12 @@ public class MessagingSkill extends Skill {
 	 * @param receiver
 	 *            the receiver
 	 */
-	@SuppressWarnings ("rawtypes")
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	protected void effectiveSend(final IScope scope, final GamaMessage message, final Object receiver) {
-		if (receiver instanceof IAgent) {
-			final IAgent agent = (IAgent) receiver;
+		if (receiver instanceof IAgent agent) {
 			if (agent.isInstanceOf(SKILL_NAME, false)) {
-				final GamaMailbox mailbox = (GamaMailbox) agent.getAttribute(MAILBOX_ATTRIBUTE);
+				final GamaMailbox<GamaMessage> mailbox =
+						(GamaMailbox<GamaMessage>) agent.getAttribute(MAILBOX_ATTRIBUTE);
 				mailbox.addMessage(scope, message);
 			}
 		} else if (receiver instanceof IList) {
