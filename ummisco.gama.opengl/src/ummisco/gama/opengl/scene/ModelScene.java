@@ -121,12 +121,16 @@ public class ModelScene {
 		gl.rotateModel();
 		for (LayerObject layer : layers.values()) {
 			if (layer != null && !layer.isInvalid()) {
+				// AD added to prevent overlays to rotate
+				if (layer.isOverlay()) { gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW); }
 				try {
 					layer.lock();
 					layer.draw(gl);
 				} catch (final RuntimeException r) {
 					DEBUG.ERR("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();
+				} finally {
+					if (layer.isOverlay()) { gl.pop(GLMatrixFunc.GL_MODELVIEW); }
 				}
 			}
 		}

@@ -109,11 +109,11 @@ import msi.gaml.types.IType;
 						type = IType.LABEL,
 						optional = true,
 						doc = @doc ("Human readable title of the layer")),
-				@facet (
-						name = IKeyword.FOCUS,
-						type = IType.AGENT,
-						optional = true,
-						doc = @doc ("the agent on which the camera will be focused (it is dynamically computed)")),
+				// @facet (
+				// name = IKeyword.FOCUS,
+				// type = IType.AGENT,
+				// optional = true,
+				// doc = @doc ("the agent on which the camera will be focused (it is dynamically computed)")),
 				@facet (
 						name = IKeyword.ASPECT,
 						type = IType.ID,
