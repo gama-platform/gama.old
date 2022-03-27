@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CreateFromGeometriesDelegate.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CreateFromGeometriesDelegate.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -16,6 +16,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
@@ -67,7 +68,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 				(IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
 		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
-			final GamaShape g = container.get(scope, i);
+			final IShape g = container.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);
