@@ -55,7 +55,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	/** The instance. */
 	private static GamaWebSocketServer instance;
 	/** The simulations. */
-	final private ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>> launched_experiments = new ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>>();
+	final private ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> launched_experiments = new ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>>();
 	private static WebSocketPrintStream bufferStream;
 
 	public GamaWebSocketServer(int port, Application a) {
@@ -153,24 +153,23 @@ public class GamaWebSocketServer extends WebSocketServer {
 		}
 	}
 
-	public ConcurrentHashMap<String, ConcurrentHashMap<String, ExperimentJob>> getAllExperiments() {
+	public ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> getAllExperiments() {
 		return launched_experiments;
 	}
 
-	public ConcurrentHashMap<String, ExperimentJob> getExperimentsOf(final String socket) {
+	public ConcurrentHashMap<String, ManualExperimentJob> getExperimentsOf(final String socket) {
 		return launched_experiments.get(socket);
 	}
 
-	public ExperimentJob getExperiment(final String socket, final String expid) {
+	public ManualExperimentJob getExperiment(final String socket, final String expid) {
 		return launched_experiments.get(socket).get(expid);
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		if(launched_experiments.get(""+conn.hashCode())!=null) {			
-			for (ExperimentJob e : launched_experiments.get(""+conn.hashCode()).values()) {
-				((ManualExperimentJob) e).paused = true;
-
+			for (ManualExperimentJob e : launched_experiments.get(""+conn.hashCode()).values()) { 
+				e.directPause();
 				e.dispose();
 			}
 			launched_experiments.get(""+conn.hashCode()).clear();

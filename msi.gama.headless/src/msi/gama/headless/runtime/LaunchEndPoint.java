@@ -84,7 +84,7 @@ public class LaunchEndPoint implements Endpoint {
 
 	}
 
-	public void runModelSimulation(final GamaWebSocketServer server, final ByteBuffer compiledModel)
+	public void runCompiledSimulation(final GamaWebSocketServer server, final ByteBuffer compiledModel)
 			throws IOException, GamaHeadlessException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
 		ObjectInput in = null;
@@ -141,18 +141,13 @@ public class LaunchEndPoint implements Endpoint {
 			return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
-		try {
-			selectedJob.loadAndBuild();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
-				| GamaHeadlessException e) {
-			e.printStackTrace();
-		}
-		if (server.getExperimentsOf(""+socket.hashCode()) == null) {
-			final ConcurrentHashMap<String, ExperimentJob> exps = new ConcurrentHashMap<String, ExperimentJob>();
-			server.getAllExperiments().put(""+socket.hashCode(), exps);
+		selectedJob.directOpenExperiment();
+		if (server.getExperimentsOf("" + socket.hashCode()) == null) {
+			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<String, ManualExperimentJob>();
+			server.getAllExperiments().put("" + socket.hashCode(), exps);
 
 		}
-		server.getExperimentsOf(""+socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
+		server.getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
 
 		final int size = selectedJob.getListenedVariables().length;
 //		String lst_out = "";
@@ -165,18 +160,18 @@ public class LaunchEndPoint implements Endpoint {
 		IAgent agt = selectedJob.getSimulation().getSimulation();
 
 		IShape geom = Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
-		System.out.println("exp@" + ""+socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
+		System.out.println("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		socket.send("exp@" + ""+socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
+		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		((ManualExperimentJob) selectedJob).exportVariables();
+		selectedJob.exportVariables();
 		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
 	}
 
 	@Override
 	public void onMessage(final GamaWebSocketServer server, final WebSocket socket, final String message) {
 		// server.broadcast(message);
-		final String socket_id = ""+socket.hashCode();
+		final String socket_id = "" + socket.hashCode();
 		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
 		if ("launch".equals(args[0])) {
@@ -193,27 +188,7 @@ public class LaunchEndPoint implements Endpoint {
 			System.out.println("play " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = false;
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = false;
-				// DEBUG.TIMER("Simulation duration", () -> {
-				if (((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread == null) {
-					((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread = new Thread() {
-						@Override
-						public void run() {
-
-							while (!server.getExperiment(socket_id, id_exp).getSimulation().isInterrupted()) {
-								if (((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping) {
-									((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = false;
-									((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
-									server.getExperiment(socket_id, id_exp).doStep();
-								}
-								if (!((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused)
-									server.getExperiment(socket_id, id_exp).doStep();
-							}
-						}
-					};
-					((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).internalThread.start();
-				}
+				server.getExperiment(socket_id, id_exp).userStart();
 			}
 		}
 
@@ -222,7 +197,7 @@ public class LaunchEndPoint implements Endpoint {
 			System.out.println("step " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).stepping = true;
+				server.getExperiment(socket_id, id_exp).userStep();
 			}
 		}
 		if ("pause".equals(args[0])) {
@@ -230,7 +205,7 @@ public class LaunchEndPoint implements Endpoint {
 			System.out.println("pause " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
+				server.getExperiment(socket_id, id_exp).directPause();
 			}
 		}
 		if ("stop".equals(args[0])) {
@@ -238,8 +213,8 @@ public class LaunchEndPoint implements Endpoint {
 			System.out.println("stop " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).paused = true;
-				((ManualExperimentJob) server.getExperiment(socket_id, id_exp)).dispose();
+				server.getExperiment(socket_id, id_exp).directPause();
+				server.getExperiment(socket_id, id_exp).dispose();
 			}
 		}
 		if ("exit".equals(args[0])) {
@@ -260,7 +235,7 @@ public class LaunchEndPoint implements Endpoint {
 	public void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer compiledModel) {
 
 		try {
-			runModelSimulation(server, compiledModel);
+			runCompiledSimulation(server, compiledModel);
 		} catch (IOException | GamaHeadlessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
