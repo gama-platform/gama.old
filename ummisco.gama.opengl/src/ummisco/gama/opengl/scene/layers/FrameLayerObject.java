@@ -47,7 +47,7 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		final double h = renderer.getData().getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
 		final DrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, (IAgent) null, null, FRAME);
-		drawingAttr.setLighting(false);
+		// drawingAttr.setLighting(false);
 		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		list.add(geomObj);
 	}

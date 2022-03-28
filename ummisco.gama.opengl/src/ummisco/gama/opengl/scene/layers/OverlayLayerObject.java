@@ -77,13 +77,17 @@ public class OverlayLayerObject extends LayerObject {
 			if (size.y <= 1) { size.y *= renderer.getEnvHeight(); }
 		}
 		gl.pushMatrix();
-		gl.setObjectWireframe(false);
-		gl.translateBy(0, -size.y, 0);
-		gl.scaleBy(size.x, size.y, 1);
-		gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope),
-				1 - layer.getData().getTransparency(scope));
-		gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
-		gl.popMatrix();
+		boolean previous = gl.setObjectWireframe(false);
+		try {
+			gl.translateBy(0, -size.y, 0);
+			gl.scaleBy(size.x, size.y, 1);
+			gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope),
+					1 - layer.getData().getTransparency(scope));
+			gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
+		} finally {
+			gl.setObjectWireframe(previous);
+			gl.popMatrix();
+		}
 	}
 
 	@Override

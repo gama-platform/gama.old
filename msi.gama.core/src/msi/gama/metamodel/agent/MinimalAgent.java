@@ -110,7 +110,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			// If the agent is different, we do not copy the attributes present in the shape passed as argument (see
 			// Issue #2053).
-			newLocalGeom = new GamaShape((Geometry) newGeometry.getInnerGeometry().clone());
+			newLocalGeom = new GamaShape(newGeometry.getInnerGeometry().copy());
 			newLocalGeom.copyShapeAttributesFrom(newGeometry);
 		}
 		topology.normalizeLocation(newGeomLocation, false);

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaShape.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaShape.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
@@ -58,27 +57,28 @@ public class GamaShape implements IShape {
 	 * The Class ShapeData.
 	 */
 	private static class ShapeData {
-		
+
 		/** The depth. */
 		private Double depth;
-		
+
 		/** The type. */
 		private Type type;
 	}
 
 	/** The geometry. */
 	protected Geometry geometry;
-	
+
 	/** The agent. */
 	private IAgent agent;
-	
+
 	/** The attributes. */
 	protected IMap<String, Object> attributes;
 
 	/**
 	 * Instantiates a new gama shape.
 	 *
-	 * @param geom the geom
+	 * @param geom
+	 *            the geom
 	 */
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -90,7 +90,8 @@ public class GamaShape implements IShape {
 	/**
 	 * Instantiates a new gama shape.
 	 *
-	 * @param env the env
+	 * @param env
+	 *            the env
 	 */
 	public GamaShape(final Envelope3D env) {
 		this(env == null ? null : env.toGeometry());
@@ -99,7 +100,8 @@ public class GamaShape implements IShape {
 	/**
 	 * Instantiates a new gama shape.
 	 *
-	 * @param geom the geom
+	 * @param geom
+	 *            the geom
 	 */
 	public GamaShape(final IShape geom) {
 		this(geom, null);
@@ -116,7 +118,7 @@ public class GamaShape implements IShape {
 	 */
 
 	public GamaShape(final IShape source, final Geometry geom) {
-		this((Geometry) (geom == null ? source.getInnerGeometry().clone() : geom));
+		this(geom == null ? source.getInnerGeometry().copy() : geom);
 		mixAttributes(source);
 	}
 
@@ -130,8 +132,7 @@ public class GamaShape implements IShape {
 		if (source == null) return;
 		// final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
 		copyShapeAttributesFrom(source);
-		if (source instanceof GamaShape) {
-			final GamaShape shape = (GamaShape) source;
+		if (source instanceof GamaShape shape) {
 			if (shape.attributes != null) {
 				getOrCreateAttributes();
 				shape.attributes.forEach((key, val) -> { if (val != source) { attributes.put(key, val); } });
@@ -152,8 +153,7 @@ public class GamaShape implements IShape {
 
 	@Override
 	public void copyAttributesOf(final IAttributed source) {
-		if (source instanceof GamaShape) {
-			final GamaShape shape = (GamaShape) source;
+		if (source instanceof GamaShape shape) {
 			if (shape.attributes != null) {
 				getOrCreateAttributes();
 				attributes.putAll(shape.attributes);
@@ -329,8 +329,10 @@ public class GamaShape implements IShape {
 	/**
 	 * Translated to.
 	 *
-	 * @param scope the scope
-	 * @param target the target
+	 * @param scope
+	 *            the scope
+	 * @param target
+	 *            the target
 	 * @return the gama shape
 	 */
 	public GamaShape translatedTo(final IScope scope, final GamaPoint target) {
@@ -417,8 +419,7 @@ public class GamaShape implements IShape {
 			result = ((Polygon) result).getExteriorRing();
 		} else
 
-		if (result instanceof MultiPolygon) {
-			final MultiPolygon mp = (MultiPolygon) result;
+		if (result instanceof MultiPolygon mp) {
 			final LineString lines[] = new LineString[mp.getNumGeometries()];
 			for (int i = 0; i < mp.getNumGeometries(); i++) {
 				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
@@ -432,7 +433,8 @@ public class GamaShape implements IShape {
 	/**
 	 * Gets the data.
 	 *
-	 * @param createIt the create it
+	 * @param createIt
+	 *            the create it
 	 * @return the data
 	 */
 	private ShapeData getData(final boolean createIt) {
@@ -556,8 +558,7 @@ public class GamaShape implements IShape {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		final Geometry gg = (Geometry) geometry.clone();
-		return new GamaShape(this, gg);
+		return new GamaShape(this, geometry.copy());
 	}
 
 	/**

@@ -320,14 +320,14 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			ogl.glVertex3d(vertexBuffer.get(one), vertexBuffer.get(two), vertexBuffer.get(three));
 		}
 		if (outputsLines) {
-			gl.setObjectWireframe(true);
+			boolean previous = gl.setObjectWireframe(true);
 			for (var index = 0; index < indexBuffer.limit(); index++) {
 				var i = indexBuffer.get(index);
 				gl.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
 						lineColorBuffer.get(i + 1), 1);
 				gl.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
 			}
-			gl.setObjectWireframe(false);
+			gl.setObjectWireframe(previous);
 		}
 		gl.endDrawing();
 		ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -371,9 +371,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			if (outputsLines) {
 				if (!outputsColors) { gl.enable(GLPointerFunc.GL_COLOR_ARRAY); }
 				ogl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
-				gl.setObjectWireframe(true);
+				boolean previous = gl.setObjectWireframe(true);
 				ogl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
-				gl.setObjectWireframe(false);
+				gl.setObjectWireframe(previous);
 			}
 
 		} finally {
@@ -413,12 +413,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			}
 		}
 		gl.beginRasterTextMode();
-		final var previous = gl.setLighting(false);
+		final var previous = gl.setObjectLighting(false);
 		for (var i = 0; i < strings.length; i++) {
 			gl.getGL().glRasterPos3d(coords[i * 3], coords[i * 3 + 1], coords[i * 3 + 2] + gl.getCurrentZTranslation());
 			gl.getGlut().glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, strings[i]);
 		}
-		gl.setLighting(previous);
+		gl.setObjectLighting(previous);
 		gl.exitRasterTextMode();
 
 	}

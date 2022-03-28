@@ -112,9 +112,9 @@ public class LightHelper extends AbstractRendererHelper {
 				}
 				if (light.isDrawing()) {
 					// disable the lighting during the time the light is drawn
-					final boolean previous = openGL.setLighting(false);
+					final boolean previous = openGL.setObjectLighting(false);
 					drawLight(openGL, size, worldWidth, worldHeight, light, lightPosition);
-					openGL.setLighting(previous);
+					openGL.setObjectLighting(previous);
 				}
 			} else {
 				gl.glDisable(id);

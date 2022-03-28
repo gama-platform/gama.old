@@ -102,6 +102,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	@Override
 	public void draw(final OpenGL gl) {
+		boolean previous = gl.setObjectWireframe(false);
 		if (renderer.getOpenGLHelper().isInRotationMode()) {
 			final GamaPoint pivotPoint = renderer.getCameraTarget();
 			setOffset(pivotPoint.yNegated());
@@ -113,6 +114,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			setScale(null);
 		}
 		super.draw(gl);
+		gl.setObjectWireframe(previous);
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 		for (int i = 0; i < 3; i++) {
 			final GamaPoint p = dirs[i];
 			// build axis
-			addSyntheticObject(list, axes[i], COLORS[i], IShape.Type.LINECYLINDER, false);
+			addSyntheticObject(list, axes[i], COLORS[i], IShape.Type.LINECYLINDER);
 			// build labels
 			final TextDrawingAttributes text =
 					new TextDrawingAttributes(of(1), null, p.times(1.3).yNegated(), COLORS[i]);
@@ -130,7 +132,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			list.add(new StringObject(LABELS[i], text));
 			// build arrows
 			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
-			addSyntheticObject(list, s, COLORS[i], IShape.Type.CONE, false);
+			addSyntheticObject(list, s, COLORS[i], IShape.Type.CONE);
 		}
 	}
 
@@ -149,10 +151,10 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	 *            the empty
 	 */
 	protected void addSyntheticObject(final List<AbstractObject<?, ?>> list, final IShape shape, final GamaColor color,
-			final IShape.Type type, final boolean empty) {
+			final IShape.Type type) {
 		final DrawingAttributes att = new ShapeDrawingAttributes(shape, (IAgent) null, color, color, type,
 				GamaPreferences.Displays.CORE_LINE_WIDTH.getValue(), null);
-		att.setEmpty(empty);
+		att.setEmpty(false);
 		att.setHeight(shape.getDepth());
 		att.setLighting(false);
 		list.add(new GeometryObject(shape.getInnerGeometry(), att));

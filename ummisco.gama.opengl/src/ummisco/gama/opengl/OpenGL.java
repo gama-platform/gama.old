@@ -168,7 +168,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	private double currentObjectAlpha = 1d;
 
 	/** The lighted. */
-	private boolean lighted;
+	private boolean objectIsLighted;
+
+	/** The display is lighted. */
+	private boolean displayIsLighted;
 
 	/** The in raster text mode. */
 	// Text
@@ -548,15 +551,40 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param lighted
 	 * @return
 	 */
-	public boolean setLighting(final boolean lighted) {
-		if (this.lighted == lighted) return lighted;
-		if (lighted) {
+	public boolean setObjectLighting(final boolean lighted) {
+		boolean previous = objectIsLighted;
+		if (lighted != previous) {
+			objectIsLighted = lighted;
+			updateLightMode();
+		}
+		return previous;
+	}
+
+	/**
+	 * Sets the display lighting.
+	 *
+	 * @param lighted
+	 *            the lighted
+	 * @return true, if successful
+	 */
+	public boolean setDisplayLighting(final boolean lighted) {
+		boolean previous = displayIsLighted;
+		if (lighted != previous) {
+			displayIsLighted = lighted;
+			updateLightMode();
+		}
+		return previous;
+	}
+
+	/**
+	 * Update light mode.
+	 */
+	private void updateLightMode() {
+		if (getLighting()) {
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 		} else {
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 		}
-		this.lighted = lighted;
-		return !lighted;
 	}
 
 	/**
@@ -564,7 +592,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 * @return the lighting
 	 */
-	public boolean getLighting() { return lighted; }
+	public boolean getLighting() { return objectIsLighted && displayIsLighted; }
 
 	/**
 	 * Matrix mode.
@@ -855,9 +883,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the number
 	 */
 	public void drawLine(final ICoordinates yNegatedVertices, final int number) {
-		final boolean previous = this.setLighting(false);
+		// final boolean previous = this.setLighting(false);
 		drawVertices(GL.GL_LINE_STRIP, yNegatedVertices, number, true);
-		this.setLighting(previous);
+		// this.setLighting(previous);
 	}
 
 	/**
@@ -1245,10 +1273,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public void rasterText(final String s, final int font, final double x, final double y, final double z) {
 		beginRasterTextMode();
-		final boolean previous = setLighting(false);
+		final boolean previous = setObjectLighting(false);
 		gl.glRasterPos3d(x, y, z);
 		glut.glutBitmapString(font, s);
-		setLighting(previous);
+		setObjectLighting(previous);
 		exitRasterTextMode();
 	}
 
@@ -1291,20 +1319,28 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param wireframe
 	 *            the new display wireframe
 	 */
-	public void setDisplayWireframe(final boolean wireframe) {
-		displayIsWireframe = wireframe;
-		updatePolygonMode();
+	public boolean setDisplayWireframe(final boolean wireframe) {
+		boolean old = displayIsWireframe;
+		if (old != wireframe) {
+			displayIsWireframe = wireframe;
+			updatePolygonMode();
+		}
+		return old;
 	}
 
 	/**
-	 * Sets the object wireframe.
+	 * Sets the object wireframe. Returns the previous value.
 	 *
 	 * @param wireframe
 	 *            the new object wireframe
 	 */
-	public void setObjectWireframe(final boolean wireframe) {
-		objectIsWireframe = wireframe;
-		updatePolygonMode();
+	public boolean setObjectWireframe(final boolean wireframe) {
+		boolean old = objectIsWireframe;
+		if (old != wireframe) {
+			objectIsWireframe = wireframe;
+			updatePolygonMode();
+		}
+		return old;
 	}
 
 	/**
@@ -1403,12 +1439,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			if (border != null || isWireframe()) {
 				final Color colorToUse = border != null ? border : getCurrentColor();
 				final Color old = swapCurrentColor(colorToUse);
-				setObjectWireframe(true);
+				boolean previous = setObjectWireframe(true);
 				try {
 					drawList(index);
 				} finally {
 					setCurrentColor(old);
-					setObjectWireframe(false);
+					setObjectWireframe(previous);
 				}
 			}
 		}
@@ -1430,12 +1466,12 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (border != null || isWireframe()) {
 			final Color colorToUse = border != null ? border : getCurrentColor();
 			final Color old = swapCurrentColor(colorToUse);
-			setObjectWireframe(true);
+			boolean previous = setObjectWireframe(true);
 			try {
 				object.draw(this);
 			} finally {
 				setCurrentColor(old);
-				setObjectWireframe(false);
+				setObjectWireframe(previous);
 			}
 		}
 	}
@@ -1456,7 +1492,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public boolean isTextured() { return textured && !isWireframe(); }
 
-	// COMPLEX SHAPES
+	/** The previous object lighting. */
+	boolean previousObjectWireframe, previousObjectLighting;
 
 	/**
 	 * Begin object.
@@ -1468,9 +1505,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// DEBUG.OUT("Object " + object + " begin and is " + (object.getAttributes().isEmpty() ? "empty" : "filled"));
 		DrawingAttributes att = object.getAttributes();
 		if (isPicking) { registerForSelection(att.getIndex()); }
-		setLighting(att.isLighting());
 		boolean empty = att.isEmpty();
-		setObjectWireframe(empty);
+		previousObjectWireframe = setObjectWireframe(empty);
+		previousObjectLighting = setObjectLighting(att.isLighting());
 		setLineWidth(att.getLineWidth());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		setCurrentColor(att.getColor());
@@ -1492,9 +1529,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (object.isFilled() && !object.getAttributes().isSynthetic()) {
 			gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		}
-		// setObjectWireframe(false);
+		setObjectLighting(previousObjectLighting);
+		setObjectWireframe(previousObjectWireframe);
 		if (isPicking) { renderer.getPickingHelper().tryPick(object.getAttributes()); }
 	}
+
+	/** The previous display lighting. */
+	boolean previousDisplayWireframe, previousDisplayLighting;
 
 	/**
 	 * Begin scene.
@@ -1502,20 +1543,36 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @return the pass
 	 */
 	public Pass beginScene() {
-		setDisplayWireframe(getData().isWireframe());
+		previousDisplayWireframe = setDisplayWireframe(getData().isWireframe());
+		previousDisplayLighting = setDisplayLighting(getData().isLightOn());
 		processUnloadedCacheObjects();
 		final Color backgroundColor = getData().getBackgroundColor();
 		gl.glClearColor(backgroundColor.getRed() / 255.0f, backgroundColor.getGreen() / 255.0f,
 				backgroundColor.getBlue() / 255.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		gl.glClearDepth(1.0f);
-		setLighting(getData().isLightOn());
 		resetMatrix(GLMatrixFunc.GL_PROJECTION);
 		updatePerspective(gl);
 		resetMatrix(GLMatrixFunc.GL_MODELVIEW);
 		// AD removed from here and put in ModelScene.draw() so that it is inside the keystone drawing. See #3285
 		// rotateModel();
 		return endScene;
+	}
+
+	/**
+	 * End scene.
+	 */
+	public void endScene() {
+		boolean drawFPS = getData().isShowfps();
+		boolean drawRotation = rotationMode && SHOULD_DRAW_ROTATION_SPHERE;
+		boolean drawROI = roiEnvelope != null;
+		if (drawFPS || drawRotation || drawROI) { disableTextures(); }
+		drawFPS(drawFPS);
+		drawROI(drawROI);
+		drawRotation(drawRotation);
+		setDisplayLighting(previousDisplayLighting);
+		setDisplayWireframe(previousDisplayWireframe);
+		gl.glFinish();
 	}
 
 	/**
@@ -1551,24 +1608,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			}
 			translateBy(-c.x, -c.y, -c.z);
 		}
-	}
-
-	/**
-	 * End scene.
-	 */
-	public void endScene() {
-		boolean drawFPS = getData().isShowfps();
-		boolean drawRotation = rotationMode && SHOULD_DRAW_ROTATION_SPHERE;
-		boolean drawROI = roiEnvelope != null;
-		if (drawFPS || drawRotation || drawROI) {
-			disableTextures();
-			setLighting(false);
-		}
-		drawFPS(drawFPS);
-		drawROI(drawROI);
-		drawRotation(drawRotation);
-		// gl.glFlush();
-		gl.glFinish();
 	}
 
 	/**

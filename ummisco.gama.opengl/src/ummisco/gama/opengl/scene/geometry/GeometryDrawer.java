@@ -436,15 +436,15 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final GamaPoint v2 = _vertices.at(i + 1);
 			// draw first sphere
 			_center.setLocation(v1);
-			_normal.setLocation(v2);
-			_normal.subtract(v1);
+			_normal.setLocation(v2).subtract(v1);
 			final double height = _normal.norm();
 			_tangent.setLocation(_normal.orthogonal());
 			_normal.normalize();
-			if (i > 0) {
-				_scale.setTo(radius);
-				drawCachedGeometry(Type.SPHERE, /* solid, */ border);
-			}
+			// if (i > 0) {
+			// _scale.setTo(radius);
+			// drawCachedGeometry(Type.SPHERE, /* solid, */ border);
+			// }
+			// _center.setLocation(v1);
 			// draw tube
 			_scale.setTo(radius, radius, height);
 			drawCachedGeometry(Type.CYLINDER, /* solid, */border);
@@ -469,7 +469,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getCenter(_center);
 		_vertices.getNormal(true, 1, _normal);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
-		_rot.rotateToHorizontal(_normal, _tangent, false).revertInPlace();
+		// _rot.rotateToHorizontal(_normal, _tangent, false).revertInPlace();
 		_scale.setTo(radius, radius, height);
 		drawCachedGeometry(Type.CONE, /* solid, */ border);
 	}
@@ -517,10 +517,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Polygon polygon = envelope.yNegated().toGeometry();
 		gl.setCurrentColor(0, 0.5, 0, 0.15);
 		gl.setZIncrement(0);
-		boolean old = gl.isWireframe();
-		gl.setObjectWireframe(false);
-		drawPolyhedron(polygon, /* true, */ envelope.getMaxZ(), DEFAULT_BORDER);
-		gl.setObjectWireframe(old);
+		boolean old = gl.setObjectWireframe(false);
+		boolean previous = gl.setObjectLighting(false);
+		try {
+			drawPolyhedron(polygon, /* true, */ envelope.getMaxZ(), DEFAULT_BORDER);
+		} finally {
+			gl.setObjectWireframe(old);
+			gl.setObjectLighting(previous);
+		}
 	}
 
 	/**
@@ -536,10 +540,14 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		gl.setCurrentColor(Color.gray, 0.3);
 		final GamaPoint position = target.yNegated().add(0, 0, -height);
 		final Geometry point = GamaGeometryType.buildCircle(height, position).getInnerGeometry();
-		boolean old = gl.isWireframe();
-		gl.setObjectWireframe(false);
-		drawSphere(point, /* true, */ height, DEFAULT_BORDER);
-		gl.setObjectWireframe(old);
+		boolean old = gl.setObjectWireframe(false);
+		boolean previous = gl.setObjectLighting(false);
+		try {
+			drawSphere(point, /* true, */ height, DEFAULT_BORDER);
+		} finally {
+			gl.setObjectWireframe(old);
+			gl.setObjectLighting(previous);
+		}
 	}
 
 	@Override
