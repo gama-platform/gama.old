@@ -70,36 +70,40 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	protected final Semaphore lock = new Semaphore(1);
 
 	/** The execution thread. */
-	private final Thread executionThread = new Thread(() -> {
-		while (experimentAlive) {
-			step();
-		}
-	}, "Front end scheduler");
+//	private final Thread executionThread = new Thread(() -> {
+//		while (experimentAlive) {
+//			step();
+//		}
+//	}, "Front end scheduler");
+	public MyRunnable executionThread;
+	/**
+	 * The Class OwnRunnable.
+	 */
+	static class MyRunnable implements Runnable {
 
-//	static class OwnRunnable implements Runnable {
-//
-//		/** The sim. */
-//		final ManualExperimentJob sim;
-//
-//		/**
-//		 * Instantiates a new own runnable.
-//		 *
-//		 * @param s the s
-//		 */
-//		OwnRunnable(final ManualExperimentJob s) {
-//			sim = s;
-//		}
-//
-//		/**
-//		 * Run.
-//		 */
-//		@Override
-//		public void run() {
-//			while (sim.experimentAlive) {
-//				sim.step();
-//			}
-//		}
-//	}
+		/** The sim. */
+		final ManualExperimentJob sim;
+
+		/**
+		 * Instantiates a new own runnable.
+		 *
+		 * @param s
+		 *            the s
+		 */
+		MyRunnable(final ManualExperimentJob s) {
+			sim = s;
+		}
+
+		/**
+		 * Run.
+		 */
+		@Override
+		public void run() { 
+				while (sim.experimentAlive) {
+					sim.step();
+				} 
+		}
+	}
 
 	/** The disposing. */
 	private boolean disposing;
@@ -123,14 +127,15 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		socket = sk;
 		commands = new ArrayBlockingQueue<>(10);
 //		this.experiment = experiment;
-		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+		executionThread=new MyRunnable(this);
+//		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
 			lock.acquire();
 		} catch (final InterruptedException e) {
 		}
 		commandThread.start();
-		executionThread.start();
+//		executionThread.start();
 	}
 
 	public boolean isDisposing() {

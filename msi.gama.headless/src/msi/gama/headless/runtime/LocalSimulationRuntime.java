@@ -165,4 +165,10 @@ public class LocalSimulationRuntime /* extends Observable */ implements Simulati
 
 	}
 
+	@Override
+	public void execute(Runnable r) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

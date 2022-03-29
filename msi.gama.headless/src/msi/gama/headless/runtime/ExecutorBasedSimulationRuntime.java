@@ -100,6 +100,12 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 			}
 		});
 	}
+	
+	@Override
+	public void execute(final Runnable r) {
+		executor.execute(r);
+	}
+
 
 	@Override
 	public void pushSimulation(final IExperimentJob s) {

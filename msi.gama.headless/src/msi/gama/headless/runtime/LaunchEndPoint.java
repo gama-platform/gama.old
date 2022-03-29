@@ -30,10 +30,12 @@ import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.ManualExperimentJob;
+import msi.gama.headless.runtime.SimulationRuntime.DebugStream;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Spatial;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class LaunchEndPoint.
@@ -165,7 +167,7 @@ public class LaunchEndPoint implements Endpoint {
 		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
 		selectedJob.exportVariables();
-		// server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
+		server.getDefaultApp().processorQueue.execute(selectedJob.executionThread);
 	}
 
 	@Override

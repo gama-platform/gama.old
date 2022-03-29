@@ -53,6 +53,14 @@ public interface SimulationRuntime {
 	}
 
 	/**
+	 * execute Runnable.
+	 *
+	 * @param s
+	 *            the s
+	 */
+	void execute(final Runnable r);
+	
+	/**
 	 * Push simulation.
 	 *
 	 * @param s
