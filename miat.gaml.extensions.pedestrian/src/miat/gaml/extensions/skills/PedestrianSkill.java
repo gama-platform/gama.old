@@ -1293,8 +1293,8 @@ public class PedestrianSkill extends MovingSkill {
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
-		double BWall = getObstacleConsiderationDistance(agent);
-		double Bpedestrian = getPedestrianConsiderationDistance(agent);
+		double BWall = getBObstSFM(agent);
+ 		double Bpedestrian = getB_SFM(agent);
 		Double distMin = getMinDist(agent);
 		double shoulderL = getShoulderLength(agent) / 2.0 + distMin;
 		IMap<IShape, GamaPoint> forcesMap = GamaMapFactory.create();
@@ -1342,6 +1342,7 @@ public class PedestrianSkill extends MovingSkill {
 				force = fsoc.copy(scope);
 
 				double omega = shoulderL + getShoulderLength(ag) / 2.0 - distance;
+
 				if (omega > 0) {
 					GamaPoint fphys = new GamaPoint();
 					fphys = fphys.add(nij.copy(scope).multiplyBy(omega * k));
@@ -1359,21 +1360,21 @@ public class PedestrianSkill extends MovingSkill {
 		for (IAgent ag : obstacles) {
 			double distance = agent.euclidianDistanceTo(ag);
 			GamaPoint closest_point = null;
+			GamaPoint fwall = new GamaPoint();
 
 			if (distance == 0) {
 				closest_point = Punctal._closest_point_to(agent.getLocation(), ag.getGeometry().getExteriorRing(scope));
 			} else {
 				closest_point = Punctal._closest_point_to(agent.getLocation(), ag);
 			}
-			GamaPoint force = new GamaPoint();
+
 			if (distance > 0) {
 				double fact = AWall * Math.exp((shoulderL - distance) / BWall);
 				double omega = shoulderL - distance;
 				if (omega > 0) { fact += k * omega; }
 				GamaPoint nij = Points.subtract(agent.getLocation(), closest_point.getLocation());
 				nij = nij.normalize();
-
-				GamaPoint fwall = nij.multiplyBy(fact);
+				fwall = nij.multiplyBy(fact);
 
 				if (omega > 0) {
 					GamaPoint tij = new GamaPoint(-1 * nij.y, nij.x);
@@ -1381,17 +1382,16 @@ public class PedestrianSkill extends MovingSkill {
 
 					fwall = fwall.minus(tij.multiplyBy(omega * kappa * product));
 				}
-				forcesWall.add(fwall);
-
 			}
-
-			forcesMap.put(ag, force);
+			
+			forcesWall.add(fwall);
+			forcesMap.put(ag, fwall);
 
 		}
 
 		forcesMap.put(agent, fdest);
 		agent.setAttribute(FORCES, forcesMap);
-		GamaPoint forces = fdest.add(forcesPedestrian);
+		GamaPoint forces = fdest.add(forcesPedestrian).add(forcesWall);
 		return current_velocity.add(forces).normalize();
 	}
 
