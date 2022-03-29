@@ -26,15 +26,13 @@ global {
 	float P_tolerance_waypoint <- 0.1 parameter: true;
 	bool P_use_geometry_waypoint <- true parameter: true;
 	
-	
-	
 	string P_model_type <- "advanced" among: ["simple", "advanced"] parameter: true ; 
 	
-	float P_A_pedestrian_SFM_advanced parameter: true <- 0.16 category: "SFM advanced" ;
-	float P_A_obstacles_SFM_advanced parameter: true <- 1.9 category: "SFM advanced" ;
-	float P_B_pedestrian_SFM_advanced parameter: true <- 0.1 category: "SFM advanced" ;
-	float P_B_obstacles_SFM_advanced parameter: true <- 1.0 category: "SFM advanced" ;
-	float P_relaxion_SFM_advanced  parameter: true <- 0.5 category: "SFM advanced" ;
+	float P_A_pedestrian_SFM_advanced parameter: true <- 25.0 category: "SFM advanced" ;
+	float P_A_obstacles_SFM_advanced parameter: true <- 25.0 category: "SFM advanced" ;
+	float P_B_pedestrian_SFM_advanced parameter: true <- 0.5 category: "SFM advanced" ;
+	float P_B_obstacles_SFM_advanced parameter: true <- 0.1 category: "SFM advanced" ;
+	float P_relaxion_SFM_advanced  parameter: true <- 0.1 category: "SFM advanced" ;
 	float P_gama_SFM_advanced parameter: true <- 0.35 category: "SFM advanced" ;
 	float P_lambda_SFM_advanced <- 0.1 parameter: true category: "SFM advanced" ;
 	float P_minimal_distance_advanced <- 0.5 parameter: true category: "SFM advanced" ;
@@ -45,7 +43,7 @@ global {
 	float P_lambda_SFM_simple <- 2.0 parameter: true category: "SFM simple" ;
 	float P_gama_SFM_simple parameter: true <- 0.35 category: "SFM simple" ;
 	float P_relaxion_SFM_simple parameter: true <- 0.54 category: "SFM simple" ;
-	float P_A_pedestrian_SFM_simple parameter: true <-4.5category: "SFM simple" ;
+	float P_A_pedestrian_SFM_simple parameter: true <- 4.5category: "SFM simple" ;
 	
 	geometry shape <- square(environment_size);
 	geometry free_space <- copy(shape);
@@ -61,16 +59,17 @@ global {
 		right_space <- polygon([{environment_size,0}, {environment_size, environment_size}, {9 * environment_size/10, environment_size}, {9 * environment_size/10,0}]);
 		bottom_space <- polygon([{0, environment_size}, {0, 9 * environment_size/10}, {environment_size,9*  environment_size/10}, {environment_size, environment_size}]);	
 		top_space <- polygon([{0, 0}, {0, environment_size/10}, {environment_size, environment_size/10}, {environment_size, 0.0}]);	
+		
 		create obstacle number:nb_obstacles {
+			location <- any_location_in(square(8*environment_size/10) at_location {environment_size/2, environment_size/2} scaled_by 0.8);
 			shape <- sphere(1+rnd(environment_size/50.0));
-			location <- any_location_in(myself.shape scaled_by 0.8);
 			free_space <- free_space - shape;
 		}
 		
 		create people number: nb_people {
-			obstacle_consideration_distance <-P_obstacle_consideration_distance;
-			obstacle_consideration_distance <-P_obstacle_consideration_distance;
-			pedestrian_consideration_distance <-P_pedestrian_consideration_distance;
+			obstacle_consideration_distance <- P_obstacle_consideration_distance;
+			obstacle_consideration_distance <- P_obstacle_consideration_distance;
+			pedestrian_consideration_distance <- P_pedestrian_consideration_distance;
 			shoulder_length <- P_shoulder_length;
 			avoid_other <- P_avoid_other;
 			proba_detour <- P_proba_detour;
