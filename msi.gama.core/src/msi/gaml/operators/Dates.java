@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Dates.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Dates.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -73,31 +72,31 @@ public class Dates {
 
 	/** The Constant ISO_LOCAL_KEY. */
 	public static final String ISO_LOCAL_KEY = "ISO_LOCAL_DATE_TIME";
-	
+
 	/** The Constant ISO_OFFSET_KEY. */
 	public static final String ISO_OFFSET_KEY = "ISO_OFFSET_DATE_TIME";
-	
+
 	/** The Constant ISO_ZONED_KEY. */
 	public static final String ISO_ZONED_KEY = "ISO_ZONED_DATE_TIME";
-	
+
 	/** The Constant ISO_SIMPLE_KEY. */
 	public static final String ISO_SIMPLE_KEY = "ISO_SIMPLE";
-	
+
 	/** The Constant CUSTOM_KEY. */
 	public static final String CUSTOM_KEY = "CUSTOM";
-	
+
 	/** The default value. */
 	public static String DEFAULT_VALUE = "CUSTOM";
-	
+
 	/** The Constant DEFAULT_KEY. */
 	public static final String DEFAULT_KEY = "DEFAULT";
-	
+
 	/** The Constant DEFAULT_FORMAT. */
 	public static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	
+
 	/** The Constant ISO_SIMPLE_FORMAT. */
 	public static final String ISO_SIMPLE_FORMAT = "yy-MM-dd HH:mm:ss";
-	
+
 	/** The Constant DURATION_FORMATTER. */
 	static final DurationFormatter DURATION_FORMATTER = new DurationFormatter();
 
@@ -168,9 +167,12 @@ public class Dates {
 	/**
 	 * Approximal query.
 	 *
-	 * @param scope the scope
-	 * @param left the left
-	 * @param right the right
+	 * @param scope
+	 *            the scope
+	 * @param left
+	 *            the left
+	 * @param right
+	 *            the right
 	 * @return the double
 	 */
 	@operator (
@@ -180,20 +182,26 @@ public class Dates {
 	@no_test
 	public static double approximalQuery(final IScope scope, final IExpression left, final IExpression right) {
 		final Double arg = Cast.asFloat(scope, left.value(scope));
-		if (right instanceof TimeUnitConstantExpression)
-			return scope.getClock().getCurrentDate().getDuration(scope, (TimeUnitConstantExpression) right, arg);
+		if (right instanceof TimeUnitConstantExpression timeUnit) {
+			GamaDate date = scope.getClock().getCurrentDate();
+			GamaDate next = date.plus(1l, timeUnit.getName().startsWith("m") ? ChronoUnit.MONTHS : ChronoUnit.YEARS);
+			return arg * date.until(next, ChronoUnit.MILLIS) / 1000d;
+		}
 		return 0d;
-
 	}
 
 	/**
 	 * Minus date.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.MINUS },
@@ -218,8 +226,10 @@ public class Dates {
 	/**
 	 * Every.
 	 *
-	 * @param scope the scope
-	 * @param period the period
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
 	 * @return the boolean
 	 */
 	@operator (
@@ -244,8 +254,10 @@ public class Dates {
 	/**
 	 * Every.
 	 *
-	 * @param scope the scope
-	 * @param period the period
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
 	 * @return the boolean
 	 */
 	@operator (
@@ -270,9 +282,12 @@ public class Dates {
 	/**
 	 * Every.
 	 *
-	 * @param scope the scope
-	 * @param interval the interval
-	 * @param period the period
+	 * @param scope
+	 *            the scope
+	 * @param interval
+	 *            the interval
+	 * @param period
+	 *            the period
 	 * @return the i list
 	 */
 	@operator (
@@ -294,9 +309,12 @@ public class Dates {
 	/**
 	 * To.
 	 *
-	 * @param scope the scope
-	 * @param start the start
-	 * @param end the end
+	 * @param scope
+	 *            the scope
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
 	 * @return the i list
 	 */
 	@operator (
@@ -322,8 +340,10 @@ public class Dates {
 	/**
 	 * Since.
 	 *
-	 * @param scope the scope
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -348,8 +368,10 @@ public class Dates {
 	/**
 	 * After.
 	 *
-	 * @param scope the scope
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -377,8 +399,10 @@ public class Dates {
 	/**
 	 * Before.
 	 *
-	 * @param scope the scope
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -400,8 +424,10 @@ public class Dates {
 	/**
 	 * Until.
 	 *
-	 * @param scope the scope
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -423,9 +449,12 @@ public class Dates {
 	/**
 	 * Since.
 	 *
-	 * @param scope the scope
-	 * @param expression the expression
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -441,9 +470,12 @@ public class Dates {
 	/**
 	 * After.
 	 *
-	 * @param scope the scope
-	 * @param expression the expression
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -459,9 +491,12 @@ public class Dates {
 	/**
 	 * Before.
 	 *
-	 * @param scope the scope
-	 * @param expression the expression
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -477,9 +512,12 @@ public class Dates {
 	/**
 	 * Until.
 	 *
-	 * @param scope the scope
-	 * @param expression the expression
-	 * @param date the date
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
 	 * @return true, if successful
 	 */
 	@operator (
@@ -495,10 +533,14 @@ public class Dates {
 	/**
 	 * Between.
 	 *
-	 * @param scope the scope
-	 * @param expression the expression
-	 * @param start the start
-	 * @param stop the stop
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param start
+	 *            the start
+	 * @param stop
+	 *            the stop
 	 * @return true, if successful
 	 */
 	@operator (
@@ -515,10 +557,14 @@ public class Dates {
 	/**
 	 * Between.
 	 *
-	 * @param scope the scope
-	 * @param date the date
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
 	 */
 	@operator (
@@ -545,9 +591,12 @@ public class Dates {
 	/**
 	 * Between.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
 	 */
 	@operator (
@@ -569,11 +618,15 @@ public class Dates {
 	/**
 	 * Plus duration.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param duration the duration
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.PLUS, "plus_seconds", "add_seconds" },
@@ -595,11 +648,15 @@ public class Dates {
 	/**
 	 * Plus duration.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param duration the duration
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.PLUS },
@@ -621,11 +678,15 @@ public class Dates {
 	/**
 	 * Minus duration.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param duration the duration
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.MINUS, "minus_seconds", "subtract_seconds" },
@@ -648,11 +709,15 @@ public class Dates {
 	/**
 	 * Minus duration.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param duration the duration
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.MINUS },
@@ -674,11 +739,15 @@ public class Dates {
 	/**
 	 * Concatain date.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param text the text
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param text
+	 *            the text
 	 * @return the string
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.PLUS },
@@ -699,11 +768,15 @@ public class Dates {
 	/**
 	 * Adds the years.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbYears the nb years
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbYears
+	 *            the nb years
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_years", "add_years" },
@@ -726,11 +799,15 @@ public class Dates {
 	/**
 	 * Adds the months.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMonths the nb months
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMonths
+	 *            the nb months
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_months", "add_months" },
@@ -753,11 +830,15 @@ public class Dates {
 	/**
 	 * Adds the weeks.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbWeeks the nb weeks
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbWeeks
+	 *            the nb weeks
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_weeks", "add_weeks" },
@@ -779,11 +860,15 @@ public class Dates {
 	/**
 	 * Adds the days.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbDays the nb days
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbDays
+	 *            the nb days
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_days", "add_days" },
@@ -805,11 +890,15 @@ public class Dates {
 	/**
 	 * Adds the hours.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbHours the nb hours
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbHours
+	 *            the nb hours
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_hours", "add_hours" },
@@ -834,11 +923,15 @@ public class Dates {
 	/**
 	 * Adds the minutes.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMinutes the nb minutes
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMinutes
+	 *            the nb minutes
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_minutes", "add_minutes" },
@@ -863,11 +956,15 @@ public class Dates {
 	/**
 	 * Subtract years.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbYears the nb years
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbYears
+	 *            the nb years
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_years", "subtract_years" },
@@ -889,11 +986,15 @@ public class Dates {
 	/**
 	 * Subtract months.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMonths the nb months
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMonths
+	 *            the nb months
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_months", "subtract_months" },
@@ -915,11 +1016,15 @@ public class Dates {
 	/**
 	 * Subtract weeks.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbWeeks the nb weeks
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbWeeks
+	 *            the nb weeks
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_weeks", "subtract_weeks" },
@@ -941,11 +1046,15 @@ public class Dates {
 	/**
 	 * Subtract days.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbDays the nb days
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbDays
+	 *            the nb days
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_days", "subtract_days" },
@@ -967,11 +1076,15 @@ public class Dates {
 	/**
 	 * Subtract hours.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbHours the nb hours
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbHours
+	 *            the nb hours
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_hours", "subtract_hours" },
@@ -996,11 +1109,15 @@ public class Dates {
 	/**
 	 * Subtract ms.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMs the nb ms
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMs
+	 *            the nb ms
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_ms", "subtract_ms" },
@@ -1024,11 +1141,15 @@ public class Dates {
 	/**
 	 * Adds the ms.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMs the nb ms
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMs
+	 *            the nb ms
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "plus_ms", "add_ms" },
@@ -1051,11 +1172,15 @@ public class Dates {
 	/**
 	 * Subtract minutes.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param nbMinutes the nb minutes
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMinutes
+	 *            the nb minutes
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "minus_minutes", "subtract_minutes" },
@@ -1080,11 +1205,15 @@ public class Dates {
 	/**
 	 * Years between.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return the int
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "years_between" },
@@ -1105,11 +1234,15 @@ public class Dates {
 	/**
 	 * Milliseconds between.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "milliseconds_between" },
@@ -1130,11 +1263,15 @@ public class Dates {
 	/**
 	 * Months between.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return the int
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "months_between" },
@@ -1155,11 +1292,15 @@ public class Dates {
 	/**
 	 * Greater than.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { ">" },
@@ -1180,11 +1321,15 @@ public class Dates {
 	/**
 	 * Greater than or equal.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { ">=" },
@@ -1205,11 +1350,15 @@ public class Dates {
 	/**
 	 * Smaller than.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "<" },
@@ -1230,11 +1379,15 @@ public class Dates {
 	/**
 	 * Smaller than or equal.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "<=" },
@@ -1255,11 +1408,15 @@ public class Dates {
 	/**
 	 * Equal.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "=" },
@@ -1280,11 +1437,15 @@ public class Dates {
 	/**
 	 * Different.
 	 *
-	 * @param scope the scope
-	 * @param date1 the date 1
-	 * @param date2 the date 2
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "!=" },
@@ -1305,7 +1466,8 @@ public class Dates {
 	/**
 	 * Gets the locale.
 	 *
-	 * @param l the l
+	 * @param l
+	 *            the l
 	 * @return the locale
 	 */
 	static Locale getLocale(final String l) {
@@ -1334,8 +1496,10 @@ public class Dates {
 	/**
 	 * Gets the formatter key.
 	 *
-	 * @param p the p
-	 * @param locale the locale
+	 * @param p
+	 *            the p
+	 * @param locale
+	 *            the locale
 	 * @return the formatter key
 	 */
 	static String getFormatterKey(final String p, final String locale) {
@@ -1346,8 +1510,10 @@ public class Dates {
 	/**
 	 * Gets the formatter.
 	 *
-	 * @param p the p
-	 * @param locale the locale
+	 * @param p
+	 *            the p
+	 * @param locale
+	 *            the locale
 	 * @return the formatter
 	 */
 	public static DateTimeFormatter getFormatter(final String p, final String locale) {
@@ -1430,8 +1596,10 @@ public class Dates {
 	/**
 	 * As duration.
 	 *
-	 * @param d1 the d 1
-	 * @param d2 the d 2
+	 * @param d1
+	 *            the d 1
+	 * @param d2
+	 *            the d 2
 	 * @return the string
 	 */
 	public static String asDuration(final Temporal d1, final Temporal d2) {
@@ -1442,9 +1610,12 @@ public class Dates {
 	/**
 	 * Date.
 	 *
-	 * @param scope the scope
-	 * @param value the value
-	 * @param pattern the pattern
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @param pattern
+	 *            the pattern
 	 * @return the gama date
 	 */
 	@operator (
@@ -1468,10 +1639,14 @@ public class Dates {
 	/**
 	 * Date.
 	 *
-	 * @param scope the scope
-	 * @param value the value
-	 * @param pattern the pattern
-	 * @param locale the locale
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @param pattern
+	 *            the pattern
+	 * @param locale
+	 *            the locale
 	 * @return the gama date
 	 */
 	@operator (
@@ -1495,8 +1670,10 @@ public class Dates {
 	/**
 	 * Format.
 	 *
-	 * @param time the time
-	 * @param pattern the pattern
+	 * @param time
+	 *            the time
+	 * @param pattern
+	 *            the pattern
 	 * @return the string
 	 */
 	@operator (
@@ -1522,9 +1699,12 @@ public class Dates {
 	/**
 	 * Format.
 	 *
-	 * @param time the time
-	 * @param pattern the pattern
-	 * @param locale the locale
+	 * @param time
+	 *            the time
+	 * @param pattern
+	 *            the pattern
+	 * @param locale
+	 *            the locale
 	 * @return the string
 	 */
 	@operator (
@@ -1550,32 +1730,33 @@ public class Dates {
 	 * The Class DurationFormatter.
 	 */
 	static class DurationFormatter implements TemporalAccessor {
-		
+
 		/** The Constant YMDHMS. */
 		private static final DateTimeFormatter YMDHMS = DateTimeFormatter.ofPattern("u'y' M'm' d'd' HH:mm:ss");
-		
+
 		/** The Constant MDHMS. */
 		private static final DateTimeFormatter MDHMS = DateTimeFormatter.ofPattern("M' months' d 'days' HH:mm:ss");
-		
+
 		/** The Constant M1DHMS. */
 		private static final DateTimeFormatter M1DHMS = DateTimeFormatter.ofPattern("M' month' d 'days' HH:mm:ss");
-		
+
 		/** The Constant M1D1HMS. */
 		private static final DateTimeFormatter M1D1HMS = DateTimeFormatter.ofPattern("M' month' d 'day' HH:mm:ss");
-		
+
 		/** The Constant DHMS. */
 		private static final DateTimeFormatter DHMS = DateTimeFormatter.ofPattern("d 'days' HH:mm:ss");
-		
+
 		/** The Constant D1HMS. */
 		private static final DateTimeFormatter D1HMS = DateTimeFormatter.ofPattern("d 'day' HH:mm:ss");
-		
+
 		/** The Constant HMS. */
 		private static final DateTimeFormatter HMS = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 		/**
 		 * Format.
 		 *
-		 * @param duration the duration
+		 * @param duration
+		 *            the duration
 		 * @return the string
 		 */
 		static String format(final Duration duration) {
@@ -1588,7 +1769,8 @@ public class Dates {
 		/**
 		 * To string.
 		 *
-		 * @param duration the duration
+		 * @param duration
+		 *            the duration
 		 * @return the string
 		 */
 		private String toString(final Duration duration) {
@@ -1610,10 +1792,8 @@ public class Dates {
 			final long day = getLong(DAY_OF_MONTH);
 			if (month > 0) {
 				if (month >= 2) return MDHMS;
-				if (day < 2)
-					return M1D1HMS;
-				else
-					return M1DHMS;
+				if (day < 2) return M1D1HMS;
+				return M1DHMS;
 			}
 			if (day > 0) {
 				if (day < 2) return D1HMS;
@@ -1630,15 +1810,11 @@ public class Dates {
 		@Override
 		public long getLong(final TemporalField field) {
 			if (field == SECOND_OF_MINUTE) return temporal.getLong(SECOND_OF_MINUTE);
-			if (field == MINUTE_OF_HOUR)
-				return temporal.getLong(MINUTE_OF_HOUR);
-			else if (field == HOUR_OF_DAY)
-				return temporal.getLong(HOUR_OF_DAY);
-			else if (field == DAY_OF_MONTH)
-				return temporal.getLong(DAY_OF_MONTH) - 1l;
-			else if (field == MONTH_OF_YEAR)
-				return temporal.getLong(MONTH_OF_YEAR) - 1;
-			else if (field == YEAR) return temporal.getLong(YEAR) - Dates.DATES_STARTING_DATE.getValue().getLong(YEAR);
+			if (field == MINUTE_OF_HOUR) return temporal.getLong(MINUTE_OF_HOUR);
+			if (field == HOUR_OF_DAY) return temporal.getLong(HOUR_OF_DAY);
+			if (field == DAY_OF_MONTH) return temporal.getLong(DAY_OF_MONTH) - 1l;
+			if (field == MONTH_OF_YEAR) return temporal.getLong(MONTH_OF_YEAR) - 1;
+			if (field == YEAR) return temporal.getLong(YEAR) - Dates.DATES_STARTING_DATE.getValue().getLong(YEAR);
 			return 0;
 		}
 

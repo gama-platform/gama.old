@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaDate.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaDate.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -49,7 +48,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Dates;
 import msi.gaml.types.GamaDateType;
@@ -130,7 +128,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Of.
 	 *
-	 * @param t the t
+	 * @param t
+	 *            the t
 	 * @return the gama date
 	 */
 	public static GamaDate of(final Temporal t) {
@@ -140,7 +139,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param t the t
+	 * @param t
+	 *            the t
 	 */
 	private GamaDate(final Temporal t) {
 		this(null, t);
@@ -149,8 +149,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param other the other
+	 * @param scope
+	 *            the scope
+	 * @param other
+	 *            the other
 	 */
 	public GamaDate(final IScope scope, final GamaDate other) {
 		this(scope, LocalDateTime.from(other));
@@ -159,8 +161,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param d the d
+	 * @param scope
+	 *            the scope
+	 * @param d
+	 *            the d
 	 */
 	public GamaDate(final IScope scope, final Temporal d) {
 		final ZoneId zone;
@@ -187,8 +191,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param dateStr the date str
+	 * @param scope
+	 *            the scope
+	 * @param dateStr
+	 *            the date str
 	 */
 	public GamaDate(final IScope scope, final String dateStr) {
 		this(scope, parse(scope, dateStr, null));
@@ -197,9 +203,12 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param dateStr the date str
-	 * @param pattern the pattern
+	 * @param scope
+	 *            the scope
+	 * @param dateStr
+	 *            the date str
+	 * @param pattern
+	 *            the pattern
 	 */
 	public GamaDate(final IScope scope, final String dateStr, final String pattern) {
 		this(scope, dateStr, pattern, null);
@@ -208,10 +217,14 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param dateStr the date str
-	 * @param pattern the pattern
-	 * @param locale the locale
+	 * @param scope
+	 *            the scope
+	 * @param dateStr
+	 *            the date str
+	 * @param pattern
+	 *            the pattern
+	 * @param locale
+	 *            the locale
 	 */
 	public GamaDate(final IScope scope, final String dateStr, final String pattern, final String locale) {
 		this(scope, parse(scope, dateStr, Dates.getFormatter(pattern, locale)));
@@ -220,8 +233,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param val the val
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
 	 */
 	public GamaDate(final IScope scope, final double val) {
 		this(scope, scope.getSimulation().getStartingDate().plus(val * 1000, ChronoUnit.MILLIS));
@@ -230,8 +245,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param vals the vals
+	 * @param scope
+	 *            the scope
+	 * @param vals
+	 *            the vals
 	 */
 	public GamaDate(final IScope scope, final IList<?> vals) {
 		this(scope, computeFromList(scope, vals));
@@ -241,9 +258,12 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Parses the.
 	 *
-	 * @param scope the scope
-	 * @param original the original
-	 * @param df the df
+	 * @param scope
+	 *            the scope
+	 * @param original
+	 *            the original
+	 * @param df
+	 *            the df
 	 * @return the temporal
 	 */
 	private static Temporal parse(final IScope scope, final String original, final DateTimeFormatter df) {
@@ -330,13 +350,20 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Instantiates a new gama date.
 	 *
-	 * @param scope the scope
-	 * @param second the second
-	 * @param minute the minute
-	 * @param hour the hour
-	 * @param day the day
-	 * @param month the month
-	 * @param year the year
+	 * @param scope
+	 *            the scope
+	 * @param second
+	 *            the second
+	 * @param minute
+	 *            the minute
+	 * @param hour
+	 *            the hour
+	 * @param day
+	 *            the day
+	 * @param month
+	 *            the month
+	 * @param year
+	 *            the year
 	 */
 	public GamaDate(final IScope scope, final int second, final int minute, final int hour, final int day,
 			final int month, final int year) {
@@ -359,7 +386,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Int value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the int
 	 */
 	public int intValue(final IScope scope) {
@@ -369,8 +397,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * List value.
 	 *
-	 * @param scope the scope
-	 * @param ct the ct
+	 * @param scope
+	 *            the scope
+	 * @param ct
+	 *            the ct
 	 * @return the i list
 	 */
 	public IList<?> listValue(final IScope scope, final IType<?> ct) {
@@ -382,8 +412,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Compute from list.
 	 *
-	 * @param scope the scope
-	 * @param vals the vals
+	 * @param scope
+	 *            the scope
+	 * @param vals
+	 *            the vals
 	 * @return the local date time
 	 */
 	private static LocalDateTime computeFromList(final IScope scope, final IList<?> vals) {
@@ -424,9 +456,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.DATE;
-	}
+	public IType<?> getGamlType() { return Types.DATE; }
 
 	@Override
 	public GamaDate copy(final IScope scope) throws GamaRuntimeException {
@@ -439,9 +469,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the year
 	 */
 	@getter ("year")
-	public int getYear() {
-		return internal.get(YEAR);
-	}
+	public int getYear() { return internal.get(YEAR); }
 
 	/**
 	 * Gets the date.
@@ -449,9 +477,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the date
 	 */
 	@getter ("date")
-	public GamaDate getDate() {
-		return GamaDate.of(LocalDate.of(getYear(), getMonth(), getDay()));
-	}
+	public GamaDate getDate() { return GamaDate.of(LocalDate.of(getYear(), getMonth(), getDay())); }
 
 	/**
 	 * Gets the day of year.
@@ -459,9 +485,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the day of year
 	 */
 	@getter ("day_of_year")
-	public int getDayOfYear() {
-		return internal.get(DAY_OF_YEAR);
-	}
+	public int getDayOfYear() { return internal.get(DAY_OF_YEAR); }
 
 	/**
 	 * Gets the second of day.
@@ -469,9 +493,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the second of day
 	 */
 	@getter ("second_of_day")
-	public int getSecondOfDay() {
-		return internal.get(ChronoField.SECOND_OF_DAY);
-	}
+	public int getSecondOfDay() { return internal.get(ChronoField.SECOND_OF_DAY); }
 
 	/**
 	 * Gets the month.
@@ -479,9 +501,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the month
 	 */
 	@getter ("month")
-	public int getMonth() {
-		return internal.get(MONTH_OF_YEAR);
-	}
+	public int getMonth() { return internal.get(MONTH_OF_YEAR); }
 
 	/**
 	 * Gets the day.
@@ -489,9 +509,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the day
 	 */
 	@getter ("day")
-	public int getDay() {
-		return internal.get(DAY_OF_MONTH);
-	}
+	public int getDay() { return internal.get(DAY_OF_MONTH); }
 
 	/**
 	 * Gets the hour.
@@ -499,9 +517,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the hour
 	 */
 	@getter ("hour")
-	public int getHour() {
-		return internal.get(ChronoField.HOUR_OF_DAY);
-	}
+	public int getHour() { return internal.get(ChronoField.HOUR_OF_DAY); }
 
 	/**
 	 * Gets the minute.
@@ -509,9 +525,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the minute
 	 */
 	@getter ("minute")
-	public int getMinute() {
-		return internal.get(MINUTE_OF_HOUR);
-	}
+	public int getMinute() { return internal.get(MINUTE_OF_HOUR); }
 
 	/**
 	 * Gets the minute of day.
@@ -519,9 +533,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the minute of day
 	 */
 	@getter ("minute_of_day")
-	public int getMinuteOfDay() {
-		return internal.get(ChronoField.MINUTE_OF_DAY);
-	}
+	public int getMinuteOfDay() { return internal.get(ChronoField.MINUTE_OF_DAY); }
 
 	/**
 	 * Gets the second.
@@ -529,9 +541,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the second
 	 */
 	@getter ("second")
-	public int getSecond() {
-		return internal.get(SECOND_OF_MINUTE);
-	}
+	public int getSecond() { return internal.get(SECOND_OF_MINUTE); }
 
 	/**
 	 * Gets the day week.
@@ -539,9 +549,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the day week
 	 */
 	@getter ("day_of_week")
-	public int getDayWeek() {
-		return internal.get(DAY_OF_WEEK);
-	}
+	public int getDayWeek() { return internal.get(DAY_OF_WEEK); }
 
 	/**
 	 * Gets the checks if is leap.
@@ -549,9 +557,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the checks if is leap
 	 */
 	@getter ("leap")
-	public boolean getIsLeap() {
-		return LocalDate.from(internal).isLeapYear();
-	}
+	public boolean getIsLeap() { return LocalDate.from(internal).isLeapYear(); }
 
 	/**
 	 * Gets the week year.
@@ -559,9 +565,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the week year
 	 */
 	@getter ("week_of_year")
-	public int getWeekYear() {
-		return internal.get(WeekFields.ISO.weekOfYear());
-	}
+	public int getWeekYear() { return internal.get(WeekFields.ISO.weekOfYear()); }
 
 	/**
 	 * Gets the days month.
@@ -569,9 +573,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the days month
 	 */
 	@getter ("days_in_month")
-	public int getDaysMonth() {
-		return LocalDate.from(internal).lengthOfMonth();
-	}
+	public int getDaysMonth() { return LocalDate.from(internal).lengthOfMonth(); }
 
 	/**
 	 * Gets the days in year.
@@ -579,45 +581,35 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the days in year
 	 */
 	@getter ("days_in_year")
-	public int getDaysInYear() {
-		return LocalDate.from(internal).lengthOfYear();
-	}
+	public int getDaysInYear() { return LocalDate.from(internal).lengthOfYear(); }
 
 	/**
 	 * Gets the temporal.
 	 *
 	 * @return the temporal
 	 */
-	public Temporal getTemporal() {
-		return internal;
-	}
+	public Temporal getTemporal() { return internal; }
 
 	/**
 	 * Gets the local date time.
 	 *
 	 * @return the local date time
 	 */
-	public LocalDateTime getLocalDateTime() {
-		return LocalDateTime.from(internal);
-	}
+	public LocalDateTime getLocalDateTime() { return LocalDateTime.from(internal); }
 
 	/**
 	 * Gets the zoned date time.
 	 *
 	 * @return the zoned date time
 	 */
-	public ZonedDateTime getZonedDateTime() {
-		return ZonedDateTime.from(internal);
-	}
+	public ZonedDateTime getZonedDateTime() { return ZonedDateTime.from(internal); }
 
 	/**
 	 * Gets the offset date time.
 	 *
 	 * @return the offset date time
 	 */
-	public OffsetDateTime getOffsetDateTime() {
-		return OffsetDateTime.from(internal);
-	}
+	public OffsetDateTime getOffsetDateTime() { return OffsetDateTime.from(internal); }
 
 	@Override
 	public boolean isSupported(final TemporalField field) {
@@ -664,8 +656,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * To string.
 	 *
-	 * @param string the string
-	 * @param locale the locale
+	 * @param string
+	 *            the string
+	 * @param locale
+	 *            the locale
 	 * @return the string
 	 */
 	public String toString(final String string, final String locale) {
@@ -675,8 +669,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Checks if is greater than.
 	 *
-	 * @param date2 the date 2
-	 * @param strict the strict
+	 * @param date2
+	 *            the date 2
+	 * @param strict
+	 *            the strict
 	 * @return true, if is greater than
 	 */
 	public boolean isGreaterThan(final GamaDate date2, final boolean strict) {
@@ -687,8 +683,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Checks if is smaller than.
 	 *
-	 * @param date2 the date 2
-	 * @param strict the strict
+	 * @param date2
+	 *            the date 2
+	 * @param strict
+	 *            the strict
 	 * @return true, if is smaller than
 	 */
 	public boolean isSmallerThan(final GamaDate date2, final boolean strict) {
@@ -717,8 +715,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Plus.
 	 *
-	 * @param duration the duration
-	 * @param unit the unit
+	 * @param duration
+	 *            the duration
+	 * @param unit
+	 *            the unit
 	 * @return the gama date
 	 */
 	public GamaDate plus(final double duration, final TemporalUnit unit) {
@@ -738,7 +738,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Plus millis.
 	 *
-	 * @param duration the duration
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
 	 */
 	public GamaDate plusMillis(final double duration) {
@@ -748,7 +749,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Minus millis.
 	 *
-	 * @param duration the duration
+	 * @param duration
+	 *            the duration
 	 * @return the gama date
 	 */
 	public GamaDate minusMillis(final double duration) {
@@ -758,8 +760,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Checks if is interval reached.
 	 *
-	 * @param scope the scope
-	 * @param period the period
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
 	 * @return true, if is interval reached
 	 */
 	public boolean isIntervalReached(final IScope scope, final IExpression period) {
@@ -774,9 +778,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		if (this.equals(nextByPeriod)) return false;
 		// Exactly reached ?
 		if (nextByPeriod.equals(current)) return true;
-		while (nextByPeriod.isSmallerThan(current, true)) {
-			nextByPeriod = nextByPeriod.plus(scope, period);
-		}
+		while (nextByPeriod.isSmallerThan(current, true)) { nextByPeriod = nextByPeriod.plus(scope, period); }
 
 		final long stepInMillis = scope.getClock().getStepInMillis();
 		final GamaDate nextByStep = current.plus(stepInMillis, ChronoUnit.MILLIS);
@@ -799,8 +801,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Plus.
 	 *
-	 * @param scope the scope
-	 * @param period the period
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
 	 * @return the gama date
 	 */
 	public GamaDate plus(final IScope scope, final IExpression period) {
@@ -818,9 +822,12 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Plus.
 	 *
-	 * @param period the period
-	 * @param repeat the repeat
-	 * @param unit the unit
+	 * @param period
+	 *            the period
+	 * @param repeat
+	 *            the repeat
+	 * @param unit
+	 *            the unit
 	 * @return the gama date
 	 */
 	public GamaDate plus(final double period, final int repeat, final ChronoUnit unit) {
@@ -831,9 +838,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		// period.evaluateAsTemporalExpression(scope, a);
 		// return this.plus(a.d).plus(a.p);
 		GamaDate result = this;
-		for (int i = 0; i < repeat; i++) {
-			result = result.plus(period, unit);
-		}
+		for (int i = 0; i < repeat; i++) { result = result.plus(period, unit); }
 		return result;
 	}
 
@@ -874,22 +879,6 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	// return result;
 	// }
 
-	/**
-	 * Gets the duration.
-	 *
-	 * @param scope the scope
-	 * @param exp the exp
-	 * @param number the number
-	 * @return the duration
-	 */
-	public double getDuration(final IScope scope, final TimeUnitConstantExpression exp, final Double number) {
-		final String name = exp.getName();
-		// final boolean isTimeDependent = !exp.isConst();
-		final boolean month = name.startsWith("m");
-		final GamaDate next = this.plus(number, month ? ChronoUnit.MONTHS : ChronoUnit.YEARS);
-		return this.until(next, ChronoUnit.MILLIS) / 1000d;
-	}
-
 	@Override
 	public int compareTo(final GamaDate o) {
 		return isSmallerThan(o, true) ? -1 : isGreaterThan(o, true) ? 1 : 0;
@@ -898,7 +887,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Checks if is before.
 	 *
-	 * @param startInclusive the start inclusive
+	 * @param startInclusive
+	 *            the start inclusive
 	 * @return true, if is before
 	 */
 	public boolean isBefore(final GamaDate startInclusive) {
@@ -908,7 +898,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * Checks if is after.
 	 *
-	 * @param startInclusive the start inclusive
+	 * @param startInclusive
+	 *            the start inclusive
 	 * @return true, if is after
 	 */
 	public boolean isAfter(final GamaDate startInclusive) {
@@ -927,7 +918,8 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	/**
 	 * From ISO string.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the gama date
 	 */
 	public static GamaDate fromISOString(final String s) {
