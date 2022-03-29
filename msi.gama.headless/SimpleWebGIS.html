@@ -118,6 +118,7 @@
 		var exp_id = 0; var updateSource;
 		var socket = new WebSocket("ws://localhost:6868/launch");
 		var sk = new WebSocket("ws://localhost:6868/output");
+		var sk1 = new WebSocket("ws://localhost:6868/output");
 		sk.onclose = function (event) {
 			clearInterval(updateSource);
 		};
@@ -150,7 +151,12 @@
 								map.getSource('iss').setData(geojson);
 							}
 						}
-					}, 1000);
+						sk1.send("expression@" + socket_id + "@" + exp_id + "@cycle");//length(all_individuals where (each.is_infectious))
+						sk1.onmessage = function (event) {
+							let message = event.data;
+							console.log(message);
+						}
+					}, 5000);
 					socket.onmessage = function (event) {
 						// console.log(event.data);
 					}

@@ -76,6 +76,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 //		}
 //	}, "Front end scheduler");
 	public MyRunnable executionThread;
+
 	/**
 	 * The Class OwnRunnable.
 	 */
@@ -87,8 +88,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		/**
 		 * Instantiates a new own runnable.
 		 *
-		 * @param s
-		 *            the s
+		 * @param s the s
 		 */
 		MyRunnable(final ManualExperimentJob s) {
 			sim = s;
@@ -98,10 +98,10 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		 * Run.
 		 */
 		@Override
-		public void run() { 
-				while (sim.experimentAlive) {
-					sim.step();
-				} 
+		public void run() {
+			while (sim.experimentAlive) {
+				sim.step();
+			}
 		}
 	}
 
@@ -121,13 +121,19 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		}
 	}, "Front end controller");
 
+	private boolean do_export = true;
+
+	public void setExport(final boolean b) {
+		do_export = b;
+	}
+
 	public ManualExperimentJob(ExperimentJob clone, GamaWebSocketServer s, WebSocket sk) {
 		super(clone);
 		server = s;
 		socket = sk;
 		commands = new ArrayBlockingQueue<>(10);
 //		this.experiment = experiment;
-		executionThread=new MyRunnable(this);
+		executionThread = new MyRunnable(this);
 //		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
@@ -150,7 +156,8 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	@Override
 	public void doStep() {
 		this.step = simulator.step();
-		this.exportVariables();
+		if (do_export)
+			this.exportVariables();
 	}
 
 	/**

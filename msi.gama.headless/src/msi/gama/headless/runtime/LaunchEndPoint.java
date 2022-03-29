@@ -118,8 +118,8 @@ public class LaunchEndPoint implements Endpoint {
 	 * @throws IOException           Signals that an I/O exception has occurred.
 	 * @throws GamaHeadlessException the gama headless exception
 	 */
-	public void launchGamlSimulation(final GamaWebSocketServer server, WebSocket socket, final List<String> args)
-			throws IOException, GamaHeadlessException {
+	public void launchGamlSimulation(final GamaWebSocketServer server, WebSocket socket, final List<String> args,
+			final boolean export) throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
 		File ff = new File(pathToModel);
@@ -136,6 +136,7 @@ public class LaunchEndPoint implements Endpoint {
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(argExperimentName)) {
 				selectedJob = new ManualExperimentJob((ExperimentJob) j, server, socket);
+				selectedJob.setExport(export);
 				break;
 			}
 		}
@@ -166,7 +167,8 @@ public class LaunchEndPoint implements Endpoint {
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
 		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		selectedJob.exportVariables();
+		if (export)
+			selectedJob.exportVariables();
 		server.getDefaultApp().processorQueue.execute(selectedJob.executionThread);
 	}
 
@@ -176,53 +178,50 @@ public class LaunchEndPoint implements Endpoint {
 		final String socket_id = "" + socket.hashCode();
 		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
-		if ("launch".equals(args[0])) {
+		String id_exp = args[1];
+		switch (args[0]) {
+		case "launch":
 			try {
-				Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
-				launchGamlSimulation(server, socket, Arrays.asList("-gaml", ".", args[2], args[1]));
+				launchGamlSimulation(server, socket, Arrays.asList("-gaml", ".", args[2], args[1]),
+						args.length > 3 ? false : true);
 			} catch (IOException | GamaHeadlessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		if ("play".equals(args[0])) {
-			String id_exp = args[1];
+			break;
+		case "play":
 			System.out.println("play " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
 				server.getExperiment(socket_id, id_exp).userStart();
 			}
-		}
-
-		if ("step".equals(args[0])) {
-			String id_exp = args[1];
+			break;
+		case "step":
 			System.out.println("step " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
 				server.getExperiment(socket_id, id_exp).userStep();
 			}
-		}
-		if ("pause".equals(args[0])) {
-			String id_exp = args[1];
+			break;
+		case "pause":
 			System.out.println("pause " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
 				server.getExperiment(socket_id, id_exp).directPause();
 			}
-		}
-		if ("stop".equals(args[0])) {
-			String id_exp = args[1];
+			break;
+		case "stop":
 			System.out.println("stop " + id_exp);
 			if (server.getExperiment(socket_id, id_exp) != null
 					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
 				server.getExperiment(socket_id, id_exp).directPause();
 				server.getExperiment(socket_id, id_exp).dispose();
 			}
-		}
-		if ("exit".equals(args[0])) {
+			break;
+		case "exit":
 			System.exit(0);
-		}
-		if ("compile".equals(args[0])) {
+			break;
+		case "compile":
 			try {
 				Globals.IMAGES_PATH = "C:\\GAMA\\headless\\samples\\toto\\snapshot";
 				compileGamlSimulation(socket, Arrays.asList("-gaml", ".", args[2], args[1]));
@@ -230,6 +229,7 @@ public class LaunchEndPoint implements Endpoint {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			break;
 		}
 	}
 

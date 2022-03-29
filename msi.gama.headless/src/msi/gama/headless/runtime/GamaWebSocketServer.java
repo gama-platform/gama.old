@@ -67,6 +67,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/temp";
 
+		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
 		File f = new File(Globals.TEMP_PATH);
 		deleteFolder(f);
 		// check if the directory can be created
@@ -162,6 +163,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	}
 
 	public ManualExperimentJob getExperiment(final String socket, final String expid) {
+		if(launched_experiments.get(socket)==null) return null;
 		return launched_experiments.get(socket).get(expid);
 	}
 
