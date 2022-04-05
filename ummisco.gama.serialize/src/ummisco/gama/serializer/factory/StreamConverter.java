@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.factory;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -25,24 +29,51 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 public abstract class StreamConverter {
 
 	/** The streamer. */
-	static XStream streamer;
+//	static XStream streamer;
+//
+//	static {
+//		streamer = new XStream(new DomDriver());
+//		streamer.addPermission(AnyTypePermission.ANY);
+//		streamer.setClassLoader(GamaClassLoader.getInstance());
+//	}
+	private static Map<Class<?>, XStream> xStreamMap = Collections.synchronizedMap(new HashMap<Class<?>, XStream>());
 
-	static {
-		streamer = new XStream(new DomDriver());
-		streamer.addPermission(AnyTypePermission.ANY);
-		streamer.setClassLoader(GamaClassLoader.getInstance());
+	private static XStream getXStreamInstance(Class<?> clazz) {
+		if (xStreamMap.containsKey(clazz)) {
+			return xStreamMap.get(clazz);
+		}
+		synchronized (clazz) {
+			if (xStreamMap.containsKey(clazz)) {
+				return xStreamMap.get(clazz);
+			}
+			XStream xStream = new XStream(new DomDriver());
+			xStream.ignoreUnknownElements();
+			xStream.processAnnotations(clazz);
+			xStream.addPermission(AnyTypePermission.ANY);
+			xStream.setClassLoader(GamaClassLoader.getInstance());
+			xStreamMap.put(clazz, xStream);
+			return xStream;
+		}
+	}
+
+	public static Object fromXML(String xml, final Class type) {
+		return getXStreamInstance(type).fromXML(xml);
+
+	}
+
+	public static String toXml(Object obj) {
+		return getXStreamInstance(obj.getClass()).toXML(obj);
+
 	}
 
 	/**
 	 * Register converter.
 	 *
-	 * @param dataStreamer
-	 *            the data streamer
-	 * @param c
-	 *            the c
+	 * @param dataStreamer the data streamer
+	 * @param c            the c
 	 */
-	public static void registerConverter(final Converter c) {
-		streamer.registerConverter(c);
+	public static void registerConverter(final XStream st,final Converter c) {
+		st.registerConverter(c);
 	}
 
 	/**
@@ -52,10 +83,11 @@ public abstract class StreamConverter {
 	 *            the cs
 	 * @return the x stream
 	 */
-	public static XStream loadAndBuild(final ConverterScope cs) {
+	public static XStream loadAndBuild(final ConverterScope cs, final Object o) {
 
 		final Converter[] cnv = Converters.converterFactory(cs);
-		for (final Converter c : cnv) { StreamConverter.registerConverter(c); }
+		XStream streamer=getXStreamInstance(o.getClass());
+		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer,c); }
 		// dataStreamer.setMode(XStream.ID_REFERENCES);
 		return streamer;
 	}
@@ -70,7 +102,7 @@ public abstract class StreamConverter {
 	 * @return the string
 	 */
 	public static synchronized String convertObjectToStream(final IScope scope, final Object o) {
-		return loadAndBuild(new ConverterScope(scope)).toXML(o);
+		return loadAndBuild(new ConverterScope(scope),o).toXML(o);
 	}
 
 	/**
@@ -83,7 +115,7 @@ public abstract class StreamConverter {
 	 * @return the string
 	 */
 	public static synchronized String convertObjectToStream(final ConverterScope scope, final Object o) {
-		return loadAndBuild(scope).toXML(o);
+		return loadAndBuild(scope,o).toXML(o);
 	}
 
 	/**
@@ -96,7 +128,7 @@ public abstract class StreamConverter {
 	 * @return the object
 	 */
 	public static Object convertStreamToObject(final IScope scope, final String data) {
-		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
+		return loadAndBuild(new ConverterScope(scope),String.class).fromXML(data);
 	}
 
 	/**
@@ -109,7 +141,7 @@ public abstract class StreamConverter {
 	 * @return the object
 	 */
 	public static Object convertStreamToObject(final ConverterScope scope, final String data) {
-		return loadAndBuild(scope).fromXML(data);
+		return loadAndBuild(scope,String.class).fromXML(data);
 	}
 
 	/**
@@ -120,10 +152,11 @@ public abstract class StreamConverter {
 	 * @return the x stream
 	 */
 	// TODO To remove when possible
-	public static XStream loadAndBuildNetwork(final ConverterScope cs) {
+	public static XStream loadAndBuildNetwork(final ConverterScope cs, final Object o) {
 
+		XStream streamer=getXStreamInstance(o.getClass());
 		final Converter[] cnv = Converters.converterNetworkFactory(cs);
-		for (final Converter c : cnv) { StreamConverter.registerConverter(c); }
+		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer,c); }
 		return streamer;
 	}
 
@@ -137,7 +170,7 @@ public abstract class StreamConverter {
 	 * @return the string
 	 */
 	public static synchronized String convertNetworkObjectToStream(final ConverterScope scope, final Object o) {
-		return loadAndBuildNetwork(scope).toXML(o);
+		return loadAndBuildNetwork(scope,o).toXML(o);
 	}
 
 	/**
@@ -150,7 +183,7 @@ public abstract class StreamConverter {
 	 * @return the string
 	 */
 	public static synchronized String convertNetworkObjectToStream(final IScope scope, final Object o) {
-		return loadAndBuildNetwork(new ConverterScope(scope)).toXML(o);
+		return loadAndBuildNetwork(new ConverterScope(scope),o).toXML(o);
 	}
 
 	/**
@@ -163,7 +196,7 @@ public abstract class StreamConverter {
 	 * @return the object
 	 */
 	public static Object convertNetworkStreamToObject(final ConverterScope scope, final String data) {
-		return loadAndBuildNetwork(scope).fromXML(data);
+		return loadAndBuildNetwork(scope,String.class).fromXML(data);
 	}
 
 	/**
@@ -176,7 +209,7 @@ public abstract class StreamConverter {
 	 * @return the object
 	 */
 	public static Object convertNetworkStreamToObject(final IScope scope, final String data) {
-		return loadAndBuildNetwork(new ConverterScope(scope)).fromXML(data);
+		return loadAndBuildNetwork(new ConverterScope(scope),String.class).fromXML(data);
 	}
 
 	// END TODO

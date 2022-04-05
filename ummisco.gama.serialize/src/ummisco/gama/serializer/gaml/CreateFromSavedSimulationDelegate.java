@@ -59,7 +59,7 @@ public class CreateFromSavedSimulationDelegate implements ICreateDelegate {
 		final GamaSavedSimulationFile file = (GamaSavedSimulationFile) source;
 
 		final ConverterScope cScope = new ConverterScope(scope);
-		final XStream xstream = StreamConverter.loadAndBuild(cScope);
+		final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
 
 		String stringFile = file.getBuffer().get(0);
 		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);

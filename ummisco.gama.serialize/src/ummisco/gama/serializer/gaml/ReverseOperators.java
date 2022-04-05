@@ -126,7 +126,7 @@ public class ReverseOperators {
 	@no_test
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
 		final ConverterScope cScope = new ConverterScope(scope);
-		final XStream xstream = StreamConverter.loadAndBuild(cScope);
+		final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
 
 		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(simul);
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();

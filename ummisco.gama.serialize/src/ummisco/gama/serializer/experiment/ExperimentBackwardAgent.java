@@ -99,7 +99,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 				if (previousState != null) {
 					final ConverterScope cScope = new ConverterScope(scope);
-					final XStream xstream = StreamConverter.loadAndBuild(cScope);
+					final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
 
 					// get the previous state
 					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
