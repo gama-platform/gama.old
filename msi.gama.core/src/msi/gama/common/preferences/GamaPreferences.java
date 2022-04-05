@@ -26,6 +26,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.common.util.URI;
 import org.geotools.referencing.CRS;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -111,10 +112,13 @@ public class GamaPreferences {
 				create("pref_default_experiment", "Choose the experiment to run at startup", "", IType.STRING, false)
 						.in(NAME, STARTUP).among(() -> {
 							List result = new ArrayList();
-							IGamaFile file = CORE_DEFAULT_MODEL.getValue();
-							if (file == null || "".equals(file.getOriginalPath())) return result;
-							result.addAll(
-									GAML.getInfo(FileUtils.getURI(file.getOriginalPath(), null)).getExperiments());
+							if (CORE_STARTUP_MODEL.getValue()) {
+								IGamaFile file = CORE_DEFAULT_MODEL.getValue();
+								final URI uriModel = FileUtils.getURI(file.getOriginalPath(), null);
+								if (uriModel == null)
+									return result;
+								result.addAll(GAML.getInfo(uriModel).getExperiments());
+							}
 							return result;
 						});
 		/**
