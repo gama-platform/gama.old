@@ -37,7 +37,7 @@ global
 	}
 }
 
-species manager schedules:shuffle(B+A)
+species manager schedules:manager+shuffle(B+A)
 {
 	reflex write_new_step
 	{
