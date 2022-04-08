@@ -118,7 +118,7 @@
 		var exp_id = 0; var updateSource;
 		var socket = new WebSocket("ws://localhost:6868/launch");
 		var sk = new WebSocket("ws://localhost:6868/output");
-		var sk1 = new WebSocket("ws://localhost:6868/output");
+		// var sk1 = new WebSocket("ws://localhost:6868/output");
 		sk.onclose = function (event) {
 			clearInterval(updateSource);
 		};
@@ -126,7 +126,7 @@
 		socket.addEventListener('open', (event) => {
 
 			// socket.send("launch@C:\\GAMA\\configuration\\org.eclipse.osgi\\400\\0\\.cp\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml@traffic");
-			socket.send("launch@C:\\git\\COMOKIT-Model\\COMOKIT\\Experiments\\Lockdown\\LockDown.gaml@Lockdown");
+			socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Experiments\\Lockdown\\LockDown.gaml@Lockdown");
 			socket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
@@ -148,14 +148,15 @@
 
 							} else {
 								geojson = JSON.parse(message);
+								// console.log(geojson);
 								map.getSource('iss').setData(geojson);
 							}
 						}
-						sk1.send("expression@" + socket_id + "@" + exp_id + "@cycle");//length(all_individuals where (each.is_infectious))
-						sk1.onmessage = function (event) {
-							let message = event.data;
-							console.log(message);
-						}
+						// sk1.send("expression@" + socket_id + "@" + exp_id + "@cycle");//length(all_individuals where (each.is_infectious))
+						// sk1.onmessage = function (event) {
+						// 	let message = event.data;
+						// 	console.log(message);
+						// }
 					}, 5000);
 					socket.onmessage = function (event) {
 						// console.log(event.data);
@@ -191,9 +192,26 @@
 				'source': 'iss',
 				'layout': {},
 				'paint': {
-					'fill-color': 'red', // blue color fill
-					'fill-opacity': 0.5
-				}
+					'fill-color': ['match', ['get', 'state'], // get the property
+									'susceptible', 'green',              // if 'GP' then yellow
+									'symptomatic', 'red',                // if 'GP' then yellow
+									'asymptomatic', 'pink',             // if 'GP' then yellow
+									'presymptomatic', 'pink',                // if 'GP' then yellow
+									'removed', 'blue',               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
+									'white'],                     // white otherwise
+									
+					'fill-opacity': ['match', ['get', 'state'], // get the property
+									'susceptible', 0.5,              // if 'GP' then yellow
+									'symptomatic', 1,                // if 'GP' then yellow
+									'asymptomatic', 1,             // if 'GP' then yellow
+									'presymptomatic', 1,                // if 'GP' then yellow
+									'removed', 1,               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
+									0.5]                     // white otherwise
+					},
+				// 'paint': {
+				// 	'fill-color': 'red', // blue color fill
+				// 	'fill-opacity': 0.5
+				// }
 
 			});
 			const layers = map.getStyle().layers;

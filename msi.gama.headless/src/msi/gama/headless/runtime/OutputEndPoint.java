@@ -40,7 +40,7 @@ public class OutputEndPoint implements Endpoint {
 				final boolean wasPaused = server.getExperiment(socket_id, id_exp).isPaused();
 				server.getExperiment(socket_id, id_exp).directPause();
 				IList<? extends IShape> agents = server.getExperiment(socket_id, id_exp).getSimulation().getSimulation()
-						.getMicroPopulation(args[3]);
+						.getPopulationFor(args[3]);
 //				IList<? extends IShape> agents=GamaListFactory.create();
 //				for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
 //					if(!(pop instanceof GridPopulation)) {
@@ -49,7 +49,7 @@ public class OutputEndPoint implements Endpoint {
 //				}
 				try {
 					socket.send(SaveHelper.buildGeoJSon(
-							server.getExperiment(socket_id, id_exp).getSimulation().getSimulation().getScope(),
+							server.getExperiment(socket_id, id_exp).getSimulation().getExperimentPlan().getAgent().getScope(),
 							agents));
 				} catch (GamaRuntimeException | IOException | SchemaException e1) {
 					// TODO Auto-generated catch block

@@ -328,6 +328,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 		return true;
 	}
 
+	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
+			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
 	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents)
 			throws IOException, SchemaException, GamaRuntimeException {
 
@@ -343,6 +345,12 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 //			if (withFacet != null) {
 //				computeInitsFromWithFacet(scope, withFacet, attributes, species);
 //			} else if (attributesFacet != null) { computeInitsFromAttributesFacet(scope, attributes, species); }
+
+			for (final String var : species.getAttributeNames()) {
+//				System.out.println(var);
+//				if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var)) { attributes.put(var, species.getVarExpr(var, false)); }
+			}
 			for (final String e : attributes.keySet()) {
 				if (e == null) {
 					continue;
