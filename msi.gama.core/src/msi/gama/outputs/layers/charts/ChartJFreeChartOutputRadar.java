@@ -102,7 +102,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
-
+		if (plot.getMaxValue() <= 0.0) plot.setMaxValue(1.0);
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 		if (!IdPosition.containsKey(serieid)) {
 			// DEBUG.LOG("pb!!!");
