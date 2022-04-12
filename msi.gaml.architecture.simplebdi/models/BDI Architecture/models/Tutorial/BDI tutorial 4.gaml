@@ -207,6 +207,10 @@ experiment GoldBdi type: gui {
 			species miner;
 		}
 		
+		display socialLinks type: opengl{
+        species socialLinkRepresentation aspect: base;
+    }
+
 		display chart {
 			chart "Money" type: series {
 				datalist legend: miner accumulate each.name value: miner accumulate each.gold_sold color: miner accumulate each.my_color;
