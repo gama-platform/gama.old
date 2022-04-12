@@ -99,10 +99,6 @@ species miner skills: [moving] control:simple_bdi {
 	
 	perceive target: miner in: view_dist {
 		socialize liking: 1 -  point(my_color.red, my_color.green, my_color.blue) distance_to point(myself.my_color.red, myself.my_color.green, myself.my_color.blue) / 255;
-		//créer un lien social "physique" que l'on affiche avec en couleur, vert pour liking positif et rouge pour liking négatif
-		//s'assurer qu'on a seulement 1 lien physique par lien social.
-		//l'aspect sera une ligne droite avec chaque bout placé à la location de chaque agent à ses bouts
-		//Faire cet affichage dans un réflexe global
 	}
 		
 	perceive target: gold_mine where (each.quantity > 0) in: view_dist {
