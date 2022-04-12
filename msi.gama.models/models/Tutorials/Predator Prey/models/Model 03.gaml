@@ -9,7 +9,7 @@ model prey_predator
 global {
 	int nb_preys_init <- 200;
 	float prey_max_energy <- 1.0;
-	float prey_max_transfert <- 0.1;
+	float prey_max_transfer <- 0.1;
 	float prey_energy_consum <- 0.05;
 	
 	init {
@@ -21,7 +21,7 @@ species prey {
 	float size <- 1.0;
 	rgb color <- #blue;
 	float max_energy <- prey_max_energy;
-	float max_transfert <- prey_max_transfert;
+	float max_transfer <- prey_max_transfer;
 	float energy_consum <- prey_energy_consum;
 		
 	vegetation_cell my_cell <- one_of (vegetation_cell); 
@@ -36,9 +36,9 @@ species prey {
 		location <- my_cell.location;
 	}
 	reflex eat when: my_cell.food > 0 { 
-		float energy_transfert <- min([max_transfert, my_cell.food]);
-		my_cell.food <- my_cell.food - energy_transfert;
-		energy <- energy + energy_transfert;
+		float energy_transfer <- min([max_transfer, my_cell.food]);
+		my_cell.food <- my_cell.food - energy_transfer;
+		energy <- energy + energy_transfer;
 	}
 	reflex die when: energy <= 0 {
 		do die;
@@ -60,7 +60,7 @@ grid vegetation_cell width: 50 height: 50 neighbors: 4 {
 experiment prey_predator type: gui {
 	parameter "Initial number of preys: " var: nb_preys_init min: 1 max: 1000 category: "Prey";
 	parameter "Prey max energy: " var: prey_max_energy category: "Prey";
-	parameter "Prey max transfert: " var: prey_max_transfert  category: "Prey";
+	parameter "Prey max transfer: " var: prey_max_transfer  category: "Prey";
 	parameter "Prey energy consumption: " var: prey_energy_consum  category: "Prey";
 	output {
 		display main_display {

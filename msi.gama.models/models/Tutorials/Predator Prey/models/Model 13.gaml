@@ -10,10 +10,10 @@ global {
 	int nb_preys_init <- 200;
 	int nb_predators_init <- 20;
 	float prey_max_energy <- 1.0;
-	float prey_max_transfert <- 0.1;
+	float prey_max_transfer <- 0.1;
 	float prey_energy_consum <- 0.05;
 	float predator_max_energy <- 1.0;
-	float predator_energy_transfert <- 0.5;
+	float predator_energy_transfer <- 0.5;
 	float predator_energy_consum <- 0.02;
 	float prey_proba_reproduce <- 0.01;
 	int prey_nb_max_offsprings <- 5;
@@ -55,7 +55,7 @@ species generic_species {
 	float size <- 1.0;
 	rgb color;
 	float max_energy;
-	float max_transfert;
+	float max_transfer;
 	float energy_consum;
 	float proba_reproduce;
 	int nb_max_offsprings;
@@ -117,7 +117,7 @@ species generic_species {
 species prey parent: generic_species {
 	rgb color <- #blue;
 	float max_energy <- prey_max_energy;
-	float max_transfert <- prey_max_transfert;
+	float max_transfer <- prey_max_transfer;
 	float energy_consum <- prey_energy_consum;
 	float proba_reproduce <- prey_proba_reproduce;
 	int nb_max_offsprings <- prey_nb_max_offsprings;
@@ -125,12 +125,12 @@ species prey parent: generic_species {
 	image_file my_icon <- image_file("../includes/data/sheep.png");
 
 	float energy_from_eat {
-		float energy_transfert <- 0.0;
+		float energy_transfer <- 0.0;
 		if(my_cell.food > 0) {
-			energy_transfert <- min([max_transfert, my_cell.food]);
-			my_cell.food <- my_cell.food - energy_transfert;
+			energy_transfer <- min([max_transfer, my_cell.food]);
+			my_cell.food <- my_cell.food - energy_transfer;
 		} 			
-		return energy_transfert;
+		return energy_transfer;
 	}
 
 	vegetation_cell choose_cell {
@@ -141,7 +141,7 @@ species prey parent: generic_species {
 species predator parent: generic_species {
 	rgb color <- #red;
 	float max_energy <- predator_max_energy;
-	float energy_transfert <- predator_energy_transfert;
+	float energy_transfer <- predator_energy_transfer;
 	float energy_consum <- predator_energy_consum;
 	float proba_reproduce <- predator_proba_reproduce;
 	int nb_max_offsprings <- predator_nb_max_offsprings;
@@ -154,7 +154,7 @@ species predator parent: generic_species {
 			ask one_of (reachable_preys) {
 				do die;
 			}
-			return energy_transfert;
+			return energy_transfer;
 		}
 		return 0.0;
 	}
@@ -180,11 +180,11 @@ grid vegetation_cell width: 50 height: 50 neighbors: 4 {
 experiment prey_predator type: gui {
 	parameter "Initial number of preys: " var: nb_preys_init min: 0 max: 1000 category: "Prey";
 	parameter "Prey max energy: " var: prey_max_energy category: "Prey";
-	parameter "Prey max transfert: " var: prey_max_transfert category: "Prey";
+	parameter "Prey max transfer: " var: prey_max_transfer category: "Prey";
 	parameter "Prey energy consumption: " var: prey_energy_consum category: "Prey";
 	parameter "Initial number of predators: " var: nb_predators_init min: 0 max: 200 category: "Predator";
 	parameter "Predator max energy: " var: predator_max_energy category: "Predator";
-	parameter "Predator energy transfert: " var: predator_energy_transfert category: "Predator";
+	parameter "Predator energy transfer: " var: predator_energy_transfer category: "Predator";
 	parameter "Predator energy consumption: " var: predator_energy_consum category: "Predator";
 	parameter 'Prey probability reproduce: ' var: prey_proba_reproduce category: 'Prey';
 	parameter 'Prey nb max offsprings: ' var: prey_nb_max_offsprings category: 'Prey';
@@ -231,9 +231,9 @@ experiment prey_predator type: gui {
 }
 
 experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 200 ) {
-	parameter "Prey max transfert:" var: prey_max_transfert min: 0.05 max: 0.5 step: 0.05;
+	parameter "Prey max transfer:" var: prey_max_transfer min: 0.05 max: 0.5 step: 0.05;
 	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
-	parameter "Predator energy transfert:" var: predator_energy_transfert min: 0.1 max: 1.0 step: 0.1;
+	parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
 	parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
 	parameter "Batch mode:" var: is_batch <- true;
 	
@@ -242,7 +242,7 @@ experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 20
 	
 	reflex save_results_explo {
 		ask simulations {
-			save [int(self),prey_max_transfert,prey_energy_reproduce,predator_energy_transfert,predator_energy_reproduce,self.nb_predators,self.nb_preys] 
+			save [int(self),prey_max_transfer,prey_energy_reproduce,predator_energy_transfer,predator_energy_reproduce,self.nb_predators,self.nb_preys] 
 		   		to: "results.csv" type: "csv" rewrite: (int(self) = 0) ? true : false header: true;
 		}		
 	}
