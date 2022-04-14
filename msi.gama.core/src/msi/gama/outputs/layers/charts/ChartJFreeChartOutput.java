@@ -145,9 +145,12 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 				newChart = new ChartJFreeChartOutputPie(scope, name, typeexp);
 				break;
 			}
-			case HISTOGRAM_CHART:
-			case BOX_WHISKER_CHART: {
+			case HISTOGRAM_CHART:{
 				newChart = new ChartJFreeChartOutputHistogram(scope, name, typeexp);
+				break;
+			}
+			case BOX_WHISKER_CHART: {
+				newChart = new ChartJFreeChartOutputBoxAndWhiskerCategory(scope, name, typeexp);
 				break;
 			}
 			case RADAR_CHART: {

@@ -394,6 +394,64 @@ public class ChartDataSeries {
 		return o;
 
 	}
+	
+	/**
+	 * Addxbwvalue.
+	 *
+	 * @param scope the scope
+	 * @param dx the dx
+	 * @param dmean the dmean
+	 * @param dmed the dmed
+	 * @param d25 the d25
+	 * @param d75 the d75
+	 * @param dmin the dmin
+	 * @param dmax the dmax
+	 * @param date the date
+	 * @param barvalues the barvalues
+	 * @param listvalue the listvalue
+	 */
+	public void addcbwvalue(final IScope scope, final String dx, final double dmean, final double dmed,final double d25, final double d75, final double dmin, final double dmax, final int date,
+			final HashMap barvalues, final int listvalue) {
+
+		cvalues.add(dx);
+		yvalues.add(dmean);
+		svalues.add(dmed);
+		xerrvaluesmin.add(d25);
+		xerrvaluesmax.add(d75);
+		yerrvaluesmin.add(dmin);
+		yerrvaluesmax.add(dmax);
+		if (barvalues.containsKey(IKeyword.COLOR)) {
+			final Object o = getlistvalue(scope, barvalues, IKeyword.COLOR, listvalue);
+			if (o != null) {
+				if (o instanceof IList) {
+					final IList ol = Cast.asList(scope, o);
+					if (ol.size() == 1) {
+						this.setMycolor(Cast.asColor(scope, ol.get(0)));
+					}
+					if (ol.size() == 2) {
+						this.setMycolor(Cast.asColor(scope, ol.get(1)));
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+					}
+					if (ol.size() > 2) {
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+						this.setMyMedcolor(Cast.asColor(scope, ol.get(1)));
+						this.setMycolor(Cast.asColor(scope, ol.get(2)));
+					}
+				} else {
+					final GamaColor col = Cast.asColor(scope, o);
+					this.setMycolor(col);
+
+				}
+			}
+
+		}
+		this.getDataset().serieToUpdateBefore.put(this.getName(), date);
+
+	}
+
+
+	
+
 
 	/**
 	 * Addxysvalue.

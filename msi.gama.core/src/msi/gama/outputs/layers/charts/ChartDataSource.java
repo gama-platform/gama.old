@@ -151,6 +151,9 @@ public class ChartDataSource {
 	/** The use marker shape exp. */
 	boolean useMarkerShapeExp = false;
 
+	/** Is Box and whisker. */
+	boolean isBoxAndWhiskerData = false;
+	
 	/** The line thickness. */
 	double lineThickness = 1.0;
 
@@ -193,6 +196,8 @@ public class ChartDataSource {
 		useColorExp = source.useColorExp;
 		useMarkerShapeExp = source.useMarkerShapeExp;
 		lineThickness = source.lineThickness;
+		isBoxAndWhiskerData = source.isBoxAndWhiskerData;
+
 
 		return true;
 	}
@@ -263,6 +268,15 @@ public class ChartDataSource {
 	public void setUseSize(final boolean useSize) {
 		this.useSize = useSize;
 	}
+
+	public boolean isBoxAndWhiskerData() {
+		return isBoxAndWhiskerData;
+	}
+
+	public void setisBoxAndWhiskerData(final boolean isBoxAndWhiskerData) {
+		this.isBoxAndWhiskerData = isBoxAndWhiskerData;
+	}
+
 
 	/**
 	 * Sets the line thickness.
@@ -831,9 +845,16 @@ public class ChartDataSource {
 								myserie.addcyvalue(scope, getDataset().getLastCategories(scope),
 										Cast.asFloat(scope, lvalue.get(0)), chartCycle, barvalues, listvalue);
 							}
-							if (lvalue.length(scope) > 1) {
+							if (lvalue.length(scope) > 1 && (lvalue.length(scope) < 6 || !this.isBoxAndWhiskerData())) {
 								myserie.addcysvalue(scope, getDataset().getLastCategories(scope),
 										Cast.asFloat(scope, lvalue.get(0)), Cast.asFloat(scope, lvalue.get(1)),
+										chartCycle, barvalues, listvalue);
+							}
+							if (lvalue.length(scope) > 5 && this.isBoxAndWhiskerData()) {
+								myserie.addcbwvalue(scope, getDataset().getLastCategories(scope),
+										Cast.asFloat(scope, lvalue.get(0)), Cast.asFloat(scope, lvalue.get(1)),
+										Cast.asFloat(scope, lvalue.get(2)), Cast.asFloat(scope, lvalue.get(3)),
+										Cast.asFloat(scope, lvalue.get(4)), Cast.asFloat(scope, lvalue.get(5)),
 										chartCycle, barvalues, listvalue);
 							}
 							break;
@@ -892,9 +913,16 @@ public class ChartDataSource {
 											Cast.asFloat(scope, lvalue.get(0)), chartCycle, barvalues, listvalue);
 
 								}
-								if (lvalue.length(scope) > 1) {
+								if (lvalue.length(scope) > 1 && (lvalue.length(scope) < 6 || !this.isBoxAndWhiskerData())) {
 									myserie.addcysvalue(scope, getDataset().getCategories(scope, n1),
 											Cast.asFloat(scope, lvalue.get(0)), Cast.asFloat(scope, lvalue.get(1)),
+											chartCycle, barvalues, listvalue);
+								}
+								if (lvalue.length(scope) > 5 && this.isBoxAndWhiskerData()) {
+									myserie.addcbwvalue(scope, getDataset().getCategories(scope, n1),
+											Cast.asFloat(scope, lvalue.get(0)), Cast.asFloat(scope, lvalue.get(1)),
+											Cast.asFloat(scope, lvalue.get(2)), Cast.asFloat(scope, lvalue.get(3)),
+											Cast.asFloat(scope, lvalue.get(4)), Cast.asFloat(scope, lvalue.get(5)),
 											chartCycle, barvalues, listvalue);
 								}
 
