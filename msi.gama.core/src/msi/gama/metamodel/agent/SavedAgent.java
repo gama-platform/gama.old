@@ -55,9 +55,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/**
 	 * Instantiates a new saved agent.
 	 */
-	private SavedAgent() {
+	protected SavedAgent() {
 		super(11, Types.STRING, Types.NO_TYPE);
 	}
+	
 
 	/**
 	 * Instantiates a new saved agent.
@@ -277,3 +278,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 		}
 	}
 }
+
+
+
+

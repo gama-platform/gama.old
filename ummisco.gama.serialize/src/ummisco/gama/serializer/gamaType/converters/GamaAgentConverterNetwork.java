@@ -19,6 +19,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
+import msi.gama.metamodel.agent.MutableSavedAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -59,16 +60,30 @@ public class GamaAgentConverterNetwork implements Converter {
 		DEBUG.OUT("===========END ConvertAnother : GamaAgent Network");
 	//	System.out.println("===========END ConvertAnother : GamaAgent Network");
 	//	writer.endNode();
+		
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		
-		final SavedAgent rmt = (SavedAgent) arg1.convertAnother(null, SavedAgent.class);
+		
+		MutableSavedAgent msa = new MutableSavedAgent();
+//		var converter = new SavedAgentConverter(convertScope);
+//		arg1.convertAnother(msa, getClass())
+//		return converter.unmarshal(reader, arg1, msa);
+//		
+		SavedAgentProvider.push(msa);
+		var tmp = arg1.convertAnother(msa, SavedAgent.class);
+		SavedAgentProvider.pop();
+		return (SavedAgent)msa;
+//		var context = new AgentUnmarshallingContext(arg1, msa);
+//		context.convertAnother(msa, SavedAgent.class, null);
+//		msa = (MutableSavedAgent) arg1.convertAnother(msa, SavedAgent.class);
 		//reader.moveUp();
 	//	System.out.println("lecture d'un save agent " + rmt.getName()+" " +rmt.values());
 		
-		return rmt;
+//		return msa;
+		
 	}
 
 }

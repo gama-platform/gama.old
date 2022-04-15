@@ -7,6 +7,8 @@
 
 model MQTT_HelloWorld_Receive
 
+
+
 global {	
 	init {
 		write "A MQTT server should run." color: #red;
@@ -15,7 +17,7 @@ global {
 		create NetworkingAgent number:1{
 			/**
 			 * Demo connection based on the demo gama server. 
-			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could be slow down the simulation. 
+			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could slow down the simulation. 
 			 * It is a free and unsecure server.
 			 * Using YOUR server is thus adviced. You can download free solution such as ActiveMQ (http://activemq.apache.org) 
 			 */
@@ -33,11 +35,19 @@ species NetworkingAgent skills:[network]{
 	reflex fetch when:has_more_message()
 	{	
 		message mess <- fetch_message();
-		write name + " fecth this message: " + mess.contents;	
+//		let contents <- NetworkingAgent(mess.contents);
+//		if contents != nil {
+//			write "agent received: " + contents.name;
+//		}
+//		else {
+//			write string(mess);		
+//		}
+		write "fetch this message: " + mess;		
+		
 	}
 }
 
-experiment Network_reciever type: gui {
+experiment Network_receiver type: gui {
 	output {
 	}
 }
