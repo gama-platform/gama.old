@@ -11,7 +11,6 @@
 package ummisco.gama.serializer.gamaType.converters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.MutableSavedAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.util.IMap;
 
@@ -41,7 +41,7 @@ public class SavedAgentConverter implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return arg0.equals(SavedAgent.class);
+		return SavedAgent.class.isAssignableFrom(arg0);
 	}
 
 	@Override
@@ -81,10 +81,19 @@ public class SavedAgentConverter implements Converter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+		return unmarshal(reader, arg1, SavedAgentProvider.getCurrent());
+	}
+	
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1, MutableSavedAgent base) {
 
 		reader.moveDown();
 		final String indexStr = reader.getValue();
+		
+		final MutableSavedAgent agtToReturn = base != null ? base : new MutableSavedAgent();
+		
 		final Integer index = Integer.parseInt(indexStr);
+		agtToReturn.setIndex(index);
+		
 		reader.moveUp();
 		reader.moveDown();
 		reader.moveDown();
@@ -94,21 +103,19 @@ public class SavedAgentConverter implements Converter {
 		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveUp();
-		final Map<String, Object> localData = new HashMap<>();
 		for (int ii = 0; ii < keys.size(); ii++) {
-			localData.put(keys.get(ii), datas.get(ii));
+			agtToReturn.put(keys.get(ii), datas.get(ii));
 		}
 		Map<String, List<SavedAgent>> inPop = null;
 
 		if (reader.hasMoreChildren()) {
 			reader.moveDown();
 			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, IMap.class);
+			agtToReturn.setInnerPop(inPop);
 			reader.moveUp();
 		}
-
-		final SavedAgent agtToReturn = new SavedAgent(index, localData, inPop);
-
-		return agtToReturn;
+		
+		return (SavedAgent)agtToReturn;
 	}
 
 }

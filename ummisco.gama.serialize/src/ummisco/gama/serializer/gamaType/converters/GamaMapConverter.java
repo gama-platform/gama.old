@@ -40,7 +40,7 @@ public class GamaMapConverter implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
-		if (IMap.class.isAssignableFrom(arg0) && !SavedAgent.class.equals(arg0)) { return true; }
+		if (IMap.class.isAssignableFrom(arg0) && !SavedAgent.class.isAssignableFrom(arg0) ) { return true; }
 		return false;
 	}
 
