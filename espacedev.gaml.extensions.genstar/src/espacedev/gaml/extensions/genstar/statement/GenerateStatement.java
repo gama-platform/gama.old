@@ -91,7 +91,7 @@ import one.util.streamex.StreamEx;
 						name = FROM,
 						type = IType.NONE,
 						optional = false,
-						doc = @doc ("To specify the input data used to inform the generation process. Various data input can be used: <\b> "
+						doc = @doc ("To specify the input data used to inform the generation process. Various data input can be used: \n"
 								+ "<ul>"
 								+ "  <li>list of csv_file: can be aggregated or micro data</li>\n"
 								+ "  <li>matrix: describe the joint distribution of two attributes</li>\n"
