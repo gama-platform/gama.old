@@ -4,9 +4,6 @@
 name: Documentation Auto Refresh
 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
-  push:
-    branches: [ GAMA_1.8.2 ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:  # For manual trigger
