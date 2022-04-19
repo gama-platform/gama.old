@@ -52,6 +52,7 @@ timestamp=$(date '+_%D')
 
 SUFFIX=$timestamp'_'$COMMIT'.zip'
 SUFFIX_MAC=$timestamp'_'$COMMIT'.dmg'
+SUFFIX_DEB=$timestamp'_'$COMMIT'.deb'
 echo $SUFFIX
 
 
@@ -80,6 +81,9 @@ NEWFILES[$n]='GAMA_1.8.2_MacOS_M1'$SUFFIX_MAC
 n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.dmg"
 NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX_MAC
+n=8
+RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2.deb"
+NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX_DEB
  
 
 i=0

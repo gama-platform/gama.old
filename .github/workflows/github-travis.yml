@@ -86,9 +86,18 @@ jobs:
             ./Gama1.7-macosx*zip
             ./mac-sign.sh
 
-      - name: Remove unsigned mac builds
+      - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
-        run: rm Gama1.7-macosx*zip
+        with:
+          name: gama-linux-zip
+          path: |
+            ./Gama1.7-linux*zip
+
+      - name: Remove already moved builds
+        if: env.CONTINUE == 'true'
+        run: |
+          rm Gama1.7-macosx*zip
+          rm Gama1.7-linux*zip
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -404,8 +413,40 @@ jobs:
           path: ./Gama1.7-macosx.cocoa.aarch64_withJDK.dmg
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
+  debian-archive-generate:
+    needs: build
+    if: needs.build.outputs.continue_pipeline == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare vm
+        run: |
+          sudo apt-get install -y gcc dpkg-dev gpg
+          mkdir -p ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-linux-zip
+          path: ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform
+
+      - name: Get extra files
+        run: |
+          wget https://raw.githubusercontent.com/gama-platform/gama/master/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN/control
+          wget https://raw.githubusercontent.com/gama-platform/gama/master/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
+          cd ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform && unzip Gama1.7-linux*.zip . && rm Gama1.7-linux*.zip
+
+      - name: Build DEB archive
+        run: |
+          dpkg --build ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
+          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2.deb
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gama-linux-deb
+          path: |
+            ${{ github.workspace }}/gama-platform_1.8.2.deb
+
   publish-archives:
-    needs: [apple-signing-w-jdk, apple-signing-wo-jdk, apple-signing-aarch64-wo-JDK, apple-signing-aarch64-w-JDK]
+    needs: [apple-signing-w-jdk, apple-signing-wo-jdk, apple-signing-aarch64-wo-JDK, apple-signing-aarch64-w-JDK, debian-archive-generate]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -416,7 +457,7 @@ jobs:
           name: gama-zip-builds
 
 
-      # Get 2 Mac dmg signed archives
+      # Get Mac dmg signed archives
       - uses: actions/download-artifact@v2
         with:
           name: gama-signed
@@ -432,6 +473,12 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: gama-signed-aarch64-jdk
+
+
+      # Get Linux deb archive
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-linux-deb
 
       - name: Set Travis env
         run: |
