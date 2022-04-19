@@ -438,13 +438,13 @@ jobs:
       - name: Build DEB archive
         run: |
           dpkg --build ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
-          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
+          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2-1_amd64.deb
 
       - uses: actions/upload-artifact@v2
         with:
           name: gama-linux-deb
           path: |
-            ${{ github.workspace }}/gama-platform_1.8.2.deb
+            ${{ github.workspace }}/gama-platform_1.8.2-1_amd64.deb
 
   debian-archive-jdk-generate:
     needs: build
@@ -477,7 +477,7 @@ jobs:
         with:
           name: gama-linux-jdk-deb
           path: |
-            ${{ github.workspace }}/gama-platform-jdk_1.8.2.deb
+            ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64.deb
 
   publish-archives:
     needs: [
