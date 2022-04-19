@@ -84,6 +84,9 @@ NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX_MAC
 n=8
 RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2.deb"
 NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX_DEB
+n=8
+RELEASEFILES[$n]="${{ github.workspace }}/gama-platform-zip_1.8.2.deb"
+NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$SUFFIX_DEB
  
 
 i=0
