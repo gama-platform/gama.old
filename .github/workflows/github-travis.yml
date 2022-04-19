@@ -421,7 +421,7 @@ jobs:
       - name: Prepare vm
         run: |
           sudo apt-get install -y gcc dpkg-dev gpg
-          mkdir -p ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform
+          mkdir -p ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications
 
       - uses: actions/download-artifact@v2
         with:
@@ -454,7 +454,7 @@ jobs:
       - name: Prepare vm
         run: |
           sudo apt-get install -y gcc dpkg-dev gpg
-          mkdir -p ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform
+          mkdir -p ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/usr/share/applications
 
       - uses: actions/download-artifact@v2
         with:
