@@ -50,10 +50,6 @@ public class CheckConcepts {
 	/** The path to documentation. */
 	public static String PATH_TO_DOCUMENTATION = Constants.WIKI_FOLDER + File.separator + "Tutorials";
 
-	/** The path to md report. */
-	public static String PATH_TO_MD_REPORT = Constants.WIKI_FOLDER + File.separator + "WikiOnly" + File.separator
-			+ "DevelopingExtensions" + File.separator + "WebsiteGeneration.md";
-
 	/**
 	 * Do check concepts.
 	 *
@@ -77,9 +73,6 @@ public class CheckConcepts {
 
 		// print statistics
 		ConceptManager.printStatistics();
-
-		// write report in websiteGeneration file
-		writeReport(PATH_TO_MD_REPORT);
 	}
 
 	/**
@@ -141,41 +134,6 @@ public class CheckConcepts {
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Write report.
-	 *
-	 * @param file the file
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 */
-	private static void writeReport(final String file) throws IOException {
-		String result = "";
-
-		// read the file
-		try (final FileInputStream fis = new FileInputStream(file);
-				final BufferedReader br = new BufferedReader(new InputStreamReader(fis));) {
-
-			String line = null;
-
-			while ((line = br.readLine()) != null) {
-				if (line.contains("__________________________________")) {
-					result += line + "\n";
-					break;
-				}
-				result += line + "\n";
-			}
-		}
-		result += "\n\n";
-
-		// add the statistics
-		result += ConceptManager.getExtendedStatistics();
-
-		// write the file
-		final File outputFile = new File(file);
-		try (final FileOutputStream fileOut = new FileOutputStream(outputFile);) {
-			fileOut.write(result.getBytes());
 		}
 	}
 }
