@@ -5,12 +5,10 @@ commit_wiki_files() {
 	git config --global user.name "GAMA Bot"
 	git config --global push.default simple			
 	cd $GITHUB_WORKSPACE
-	cd ..
-	git clone --depth=50 --branch=master https://github.com/gama-platform/gama.wiki.git  gama.wiki	
+	git clone https://github.com/gama-platform/gama.wiki.git  ../gama.wiki	
 	cd $GITHUB_WORKSPACE/msi.gama.documentation/
 	java -cp ".:libs/jdom-2.0.1.jar:target/classes:../ummisco.gama.annotations/target/classes"  msi.gama.doc.MainGenerateWiki -online	
-	
-	cd $GITHUB_WORKSPACE/gama.wiki
+	cd $GITHUB_WORKSPACE/../gama.wiki
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama.wiki.git
 	git status
@@ -26,8 +24,8 @@ commit_io_website_files() {
 	git config --global user.email "my.gama.bot@gmail.com"
 	git config --global user.name "GAMA Bot"
 	git config --global push.default simple		
-	git clone https://github.com/gama-platform/gama-platform.github.io.git ~/gama-platform.github.io
-	cd ~/gama-platform.github.io
+	git clone https://github.com/gama-platform/gama-platform.github.io.git $GITHUB_WORKSPACE/gama-platform.github.io
+	cd $GITHUB_WORKSPACE/gama-platform.github.io
 	git remote rm origin
 	git remote add origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
 	git fetch origin
