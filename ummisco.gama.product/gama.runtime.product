@@ -69,7 +69,7 @@
       startupMessageRect="230,490,500,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
-      <linux icon="launcher_icons/icon.xpm"/>
+      <linux icon="launcher_icons/icon.icns"/>
       <macosx icon="launcher_icons/icon.icns"/>
       <win useIco="true">
          <ico path="launcher_icons/icon.ico"/>
