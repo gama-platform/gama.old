@@ -82,10 +82,10 @@ n=7
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.dmg"
 NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX_MAC
 n=8
-RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2.deb"
+RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2-1_amd64"
 NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX_DEB
 n=8
-RELEASEFILES[$n]="${{ github.workspace }}/gama-platform-zip_1.8.2.deb"
+RELEASEFILES[$n]="${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64"
 NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$SUFFIX_DEB
  
 

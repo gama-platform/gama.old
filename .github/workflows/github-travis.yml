@@ -438,7 +438,7 @@ jobs:
       - name: Build DEB archive
         run: |
           dpkg --build ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
-          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2.deb
+          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
 
       - uses: actions/upload-artifact@v2
         with:
@@ -463,7 +463,7 @@ jobs:
 
       - name: Get extra files
         run: |
-          rm ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform/*x86_64.zip
+          rm ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform/*x86_64.zip
           wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/DEBIAN/control
           wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform && unzip Gama1.7-linux*.zip && rm Gama1.7-linux*.zip
@@ -471,7 +471,7 @@ jobs:
       - name: Build DEB archive
         run: |
           dpkg --build ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64
-          dpkg --info ${{ github.workspace }}/gama-platform-jdk_1.8.2.deb
+          dpkg --info ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64.deb
 
       - uses: actions/upload-artifact@v2
         with:
