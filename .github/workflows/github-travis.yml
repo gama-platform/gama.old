@@ -430,8 +430,8 @@ jobs:
 
       - name: Get extra files
         run: |
-          wget https://raw.githubusercontent.com/gama-platform/gama/master/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN/control
-          wget https://raw.githubusercontent.com/gama-platform/gama/master/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
+          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN/control
+          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform && unzip Gama1.7-linux*.zip . && rm Gama1.7-linux*.zip
 
       - name: Build DEB archive
