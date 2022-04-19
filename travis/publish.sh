@@ -20,14 +20,7 @@ commit_wiki_files() {
  
 commit_io_website_files() {
 	echo "Trigger to githubio"
-	git config --global user.email "my.gama.bot@gmail.com"
-	git config --global user.name "GAMA Bot"
-	git config --global push.default simple		
-	git clone https://github.com/gama-platform/gama-platform.github.io.git -b sources $GITHUB_WORKSPACE/gama-platform.github.io
-	cd $GITHUB_WORKSPACE/gama-platform.github.io
-	git remote set-url origin https://gama-bot:$BOT_TOKEN@github.com/gama-platform/gama-platform.github.io.git
-	git commit --allow-empty -m "Trigger to generate docs - $(date)"
-	git push
+	curl -H "Accept: application/vnd.github+json" -H "Authorization: token $BOT_TOKEN" --request POST --data '{"event_type": "automated-generation"}' https://api.github.com/repos/gama-platform/gama-platform.github.io/dispatches 
 }
 
 function update_tag() {
