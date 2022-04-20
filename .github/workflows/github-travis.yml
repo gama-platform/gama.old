@@ -75,8 +75,12 @@ jobs:
       - name: Move artefacts to root tree
         if: env.CONTINUE == 'true'
         run: |
+          # MacOS Family
           mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
           mv ${{ github.workspace }}/travis/mac-sign.sh ${{ github.workspace }}
+          # Debian Family
+          mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.8.2-1_amd64.zip
+          mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.8.2-1_amd64.zip
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -91,13 +95,12 @@ jobs:
         with:
           name: gama-linux-jdk
           path: |
-            ./Gama1.7-linux*zip
+            ./gama-platform*amd64.zip
 
       - name: Remove already moved builds
         if: env.CONTINUE == 'true'
         run: |
           rm Gama1.7-macosx*zip
-          rm Gama1.7-linux*zip
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -109,7 +112,7 @@ jobs:
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
      
-  apple-signing:
+  macOS-signing:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-11.0
@@ -188,74 +191,44 @@ jobs:
           path: ./${{ matrix.toSignedZipName }}.dmg
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
-  debian-archive-generate:
+  debian-archive:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        zipName: [gama-platform_1.8.2-1_amd64, gama-platform-jdk_1.8.2-1_amd64]
     steps:
       - name: Prepare vm
         run: |
           sudo apt-get install -y gcc dpkg-dev gpg
-          mkdir -p ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications
+          mkdir -p ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications
 
       - uses: actions/download-artifact@v2
         with:
           name: gama-linux-jdk
-          path: ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform
+          path: ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform
 
       - name: Get extra files
         run: |
-          rm ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform/*x86_64_withJDK.zip
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/DEBIAN/control
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
-          cd ${{ github.workspace }}/gama-platform_1.8.2-1_amd64/opt/gama-platform && unzip Gama1.7-linux*.zip && rm Gama1.7-linux*.zip
+          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
+          cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip Gama1.7-linux*.zip && cd -
+          rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
 
       - name: Build DEB archive
         run: |
-          dpkg --build ${{ github.workspace }}/gama-platform_1.8.2-1_amd64
-          dpkg --info ${{ github.workspace }}/gama-platform_1.8.2-1_amd64.deb
+          dpkg --build ${{ github.workspace }}/${{ matrix.zipName }}
+          dpkg --info ${{ github.workspace }}/${{ matrix.zipName }}.deb
 
       - uses: actions/upload-artifact@v3
         with:
           name: gama-linux-deb
           path: |
-            ${{ github.workspace }}/gama-platform_1.8.2-1_amd64.deb
-
-  debian-archive-jdk-generate:
-    needs: build
-    if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Prepare vm
-        run: |
-          sudo apt-get install -y gcc dpkg-dev gpg
-          mkdir -p ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/DEBIAN ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/usr/share/applications
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: gama-linux-jdk
-          path: ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform
-
-      - name: Get extra files
-        run: |
-          rm ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform/*x86_64.zip
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/DEBIAN/control
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/usr/share/applications/gama-platform.desktop
-          cd ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64/opt/gama-platform && unzip Gama1.7-linux*.zip && rm Gama1.7-linux*.zip
-
-      - name: Build DEB archive
-        run: |
-          dpkg --build ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64
-          dpkg --info ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64.deb
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: gama-linux-deb
-          path: |
-            ${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64.deb
+            ${{ github.workspace }}/${{ matrix.zipName }}.deb
 
   publish-archives:
-    needs: [apple-signing, debian-archive-generate, debian-archive-jdk-generate]
+    needs: [apple-signing, debian-archive]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
