@@ -115,7 +115,7 @@ jobs:
   macOS-signing:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: macos-11.0
+    runs-on: [self-hosted, macOS, X64]
     strategy:
       matrix:
         toSignedZipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK, Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
@@ -228,7 +228,7 @@ jobs:
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
 
   publish-archives:
-    needs: [apple-signing, debian-archive]
+    needs: [macOS-signing, debian-archive]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
