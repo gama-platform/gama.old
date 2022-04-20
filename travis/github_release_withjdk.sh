@@ -58,35 +58,42 @@ echo $SUFFIX
 
 
 n=0
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX 
-n=1
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.dmg"
-NEWFILES[$n]='GAMA_1.8.2_MacOS'$SUFFIX_MAC
-n=2
+# Linux .zip & .deb
+suff=($SUFFIX $SUFFIX_DEB) 
+for s in ${suff[@]}; 
+do
+    RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2-1_amd64."$($s | rev | cut -d "." -f 1 | rev)
+		NEWFILES[$n]='GAMA_1.8.2_Linux'$s 
+		n=$n+1
+		RELEASEFILES[$n]="${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64."$($s | rev | cut -d "." -f 1 | rev)
+		NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$s
+		n=$n+1
+done
+
+# macOS Intel & M1
+archi=("" "_M1") 
+for a in ${archi[@]}; 
+do
+		zipArchi = "x86_64"
+		if [ $a == $archi[2] ]
+		then
+		  zipArchi = "aarch64"
+		fi
+
+		RELEASEFILES[$n]="$thePATH-macosx.cocoa.'$zipArchi'.dmg"
+		NEWFILES[$n]='GAMA_1.8.2_MacOS'$a''$SUFFIX_MAC
+		n=$n+1
+		RELEASEFILES[$n]="$thePATH-macosx.cocoa.'$zipArchi'_withJDK.dmg"
+		NEWFILES[$n]='GAMA_1.8.2_MacOS'$a'_with_JDK'$SUFFIX_MAC
+		n=$n+1
+done
+
+# Windows
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
 NEWFILES[$n]='GAMA_1.8.2_Windows'$SUFFIX
-n=3
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip"
-NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$SUFFIX
-n=4
+n=$n+1
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA_1.8.2_Windows_with_JDK'$SUFFIX
-n=5
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.dmg"
-NEWFILES[$n]='GAMA_1.8.2_MacOS_with_JDK'$SUFFIX_MAC
-n=6
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64.dmg"
-NEWFILES[$n]='GAMA_1.8.2_MacOS_M1'$SUFFIX_MAC
-n=7
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.dmg"
-NEWFILES[$n]='GAMA_1.8.2_MacOS_M1_with_JDK'$SUFFIX_MAC
-n=8
-RELEASEFILES[$n]="${{ github.workspace }}/gama-platform_1.8.2-1_amd64"
-NEWFILES[$n]='GAMA_1.8.2_Linux'$SUFFIX_DEB
-n=8
-RELEASEFILES[$n]="${{ github.workspace }}/gama-platform-jdk_1.8.2-1_amd64"
-NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$SUFFIX_DEB
  
 
 i=0
