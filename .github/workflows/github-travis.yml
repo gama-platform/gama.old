@@ -115,7 +115,7 @@ jobs:
   macOS-signing:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: [self-hosted, macOS, X64]
+    runs-on: macos-latest
     strategy:
       matrix:
         toSignedZipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK, Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
