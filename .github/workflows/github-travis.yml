@@ -153,7 +153,7 @@ jobs:
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ${{ github.workspace }}/artifacts/${{ matrix.toSignedZipName }}.zip -d . && rm ${{ github.workspace }}/artifacts/*
+          unzip -q ${{ github.workspace }}/artifacts/${{ matrix.toSignedZipName }}.zip -d . && rm ${{ github.workspace }}/artifacts/*.zip
           # Sign everything inside app
           bash ${{ github.workspace }}/artifacts/mac-sign.sh
           wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
