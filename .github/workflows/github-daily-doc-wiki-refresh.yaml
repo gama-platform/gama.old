@@ -28,7 +28,8 @@ jobs:
         run: |
           echo "MAVEN_OPTS='-Dorg.slf4j.simpleLogger.defaultLogLevel=error -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xmx2048m'" >> ~/.mavenrc
           sudo chmod +x $GITHUB_WORKSPACE/travis/*.sh
-          sed -i 's/<module>..\/ummisco.gama.product<\/module>//g' msi.gama.parent/pom.xml
+          sed -i 's/<module>..\/ummisco.gama.product<\/module>//g' $GITHUB_WORKSPACE/msi.gama.parent/pom.xml
+          sed -i 's/^MESSAGE=.*$//g' $GITHUB_WORKSPACE/travis/publish.sh
       
       - name: Build with Maven
         shell: bash
