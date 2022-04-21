@@ -10,7 +10,12 @@ function signInJar(){
 
     sed -i -e '/META-INF/d' filelist.txt
 
-    tail -r filelist.txt > reverse-filelist.txt
+    # Reverse list to prevent concurrency signature submition per architecture
+    if [[ $isWithJDK ]]; then
+        tail -r filelist.txt > reverse-filelist.txt
+        rm filelist.txt
+        mv reverse-filelist.txt filelist.txt
+    fi
 
     while read f
     do
@@ -27,11 +32,17 @@ function signInJar(){
         fi
 
         jar uf "$1" "$f"
-    done < reverse-filelist.txt
+    done < filelist.txt
 }
 
 find ./ -name "*jar" > jarlist.txt
-tail -r jarlist.txt > reverse-jarlist.txt
+
+# Reverse list to prevent concurrency signature submition per architecture
+if [[ $isWithJDK ]]; then
+    tail -r filelist.txt > reverse-filelist.txt
+    rm filelist.txt
+    mv reverse-filelist.txt filelist.txt
+fi
 
 # Sign .jar files
 while read j
@@ -41,7 +52,7 @@ do
     find . -not -wholename "*Gama.app*" -delete
 
     echo "xxx"
-done < reverse-jarlist.txt
+done < jarlist.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;

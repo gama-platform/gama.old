@@ -120,9 +120,12 @@ jobs:
       matrix:
         toSignedZipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK, Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
     steps:
+      - name: Delay x86_64 jobs
+        if: contains(matrix.toSignedZipName, 'x86_64')
+        run: sleep 60
       - name: Delay JDK jobs
         if: contains(matrix.toSignedZipName, 'withJDK')
-        run: sleep 450
+        run: sleep 100
 
       - name: Prepare vm
         run: |
@@ -157,6 +160,7 @@ jobs:
           # Variables
           MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+          isWithJDK: contains(matrix.toSignedZipName, 'withJDK')
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
