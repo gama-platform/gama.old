@@ -192,6 +192,7 @@ jobs:
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
   debian-archive:
+    # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: ubuntu-latest
@@ -213,7 +214,7 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
           wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
-          cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip Gama1.7-linux*.zip && cd -
+          cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
 
       - name: Build DEB archive
