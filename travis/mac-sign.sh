@@ -10,29 +10,34 @@ function signInJar(){
 
     sed -i -e '/META-INF/d' filelist.txt
 
-    # Reverse list to prevent concurrency signature submition per architecture
-    if [[ $isWithJDK ]]; then
-        tail -r filelist.txt > reverse-filelist.txt
-        rm filelist.txt
-        mv reverse-filelist.txt filelist.txt
-    fi
+    if [[ -s "filelist.txt" ]]; then
+        echo "$1"
 
-    while read f
-    do
-        jar xf "$1" "$f"
-
-        if [[ "$f" =~ .*".jar" ]]; then
-            mkdir "_sub" && cd "_sub"
-
-            signInJar "../$f"
-            cd ".." && rm -fr "_sub"
-        else
-            codesign --timestamp --force -s "$MACOS_DEV_ID" -v "$f"
-            echo "---"
+        # Reverse list to prevent concurrency signature submition per architecture
+        if [[ $isWithJDK ]]; then
+            tail -r filelist.txt > reverse-filelist.txt
+            rm filelist.txt
+            mv reverse-filelist.txt filelist.txt
         fi
 
-        jar uf "$1" "$f"
-    done < filelist.txt
+        while read f
+        do
+            jar xf "$1" "$f"
+
+            if [[ "$f" =~ .*".jar" ]]; then
+                mkdir "_sub" && cd "_sub"
+
+                signInJar "../$f"
+                cd ".." && rm -fr "_sub"
+            else
+                codesign --timestamp --force -s "$MACOS_DEV_ID" -v "$f"
+                echo "---"
+            fi
+
+            jar uf "$1" "$f"
+        done < filelist.txt
+
+    fi
 }
 
 find ./ -name "*jar" > jarlist.txt
@@ -48,10 +53,7 @@ fi
 while read j
 do
     signInJar "$j"
-    
     find . -not -wholename "*Gama.app*" -delete
-
-    echo "xxx"
 done < jarlist.txt
 
 # Sign single lib files
