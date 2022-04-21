@@ -1,13 +1,5 @@
 #!/bin/bash
 
-function noTimeOut(){
-    while true
-    do
-        sleep 25
-        echo "No timeout please"
-    done
-}
-
 function signInJar(){
     local f
 
@@ -18,11 +10,7 @@ function signInJar(){
 
     sed -i -e '/META-INF/d' filelist.txt
 
-    # Debug check 
-    if [[ "$1" =~ "../geotools/".* ]]; then
-        df -h
-        top -l 1 -s 0 | grep PhysMem | sed 's/, /\n         /g'
-    fi
+    tac filelist.txt > reverse-filelist.txt
 
     while read f
     do
@@ -39,12 +27,13 @@ function signInJar(){
         fi
 
         jar uf "$1" "$f"
-    done < filelist.txt
+    done < reverse-filelist.txt
 }
 
 noTimeOut &
 
 find ./ -name "*jar" > jarlist.txt
+tac jarlist.txt > reverse-jarlist.txt
 
 # Sign .jar files
 while read j
@@ -54,10 +43,7 @@ do
     find . -not -wholename "*Gama.app*" -delete
 
     echo "xxx"
-done < jarlist.txt
+done < reverse-jarlist.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
-
-# Kill noTimeOut()
-kill $(ps -aux | grep mac-sign.sh | grep bash | cut -d " " -f 2)
