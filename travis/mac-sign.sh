@@ -3,8 +3,6 @@
 function signInJar(){
     local f
 
-    echo "$1"
-
     # TODO : Prevent gathering META-INF folder
     jar tf "$1" | grep '\.so\|\.dylib\|\.jnilib\|\.jar'  > filelist.txt
 
@@ -14,7 +12,7 @@ function signInJar(){
         echo "$1"
 
         # Reverse list to prevent concurrency signature submition per architecture
-        if [[ $isWithJDK ]]; then
+        if [[ $IS_WITH_JDK ]]; then
             tail -r filelist.txt > reverse-filelist.txt
             rm filelist.txt
             mv reverse-filelist.txt filelist.txt
@@ -43,7 +41,7 @@ function signInJar(){
 find ./ -name "*jar" > jarlist.txt
 
 # Reverse list to prevent concurrency signature submition per architecture
-if [[ $isWithJDK ]]; then
+if [[ $IS_WITH_JDK ]]; then
     tail -r filelist.txt > reverse-filelist.txt
     rm filelist.txt
     mv reverse-filelist.txt filelist.txt
