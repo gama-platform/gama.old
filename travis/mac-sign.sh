@@ -30,8 +30,6 @@ function signInJar(){
     done < reverse-filelist.txt
 }
 
-noTimeOut &
-
 find ./ -name "*jar" > jarlist.txt
 tac jarlist.txt > reverse-jarlist.txt
 
