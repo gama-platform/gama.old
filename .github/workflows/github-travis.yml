@@ -120,6 +120,10 @@ jobs:
       matrix:
         toSignedZipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK, Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
     steps:
+      - name: Delay JDK jobs
+        if: contains(matrix.toSignedZipName, 'withJDK')
+        run: sleep 450
+
       - name: Prepare vm
         run: |
           # Change XCode version 
@@ -147,7 +151,7 @@ jobs:
           security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
 
-      - name: Sign Application w/o JDK
+      - name: Sign Application
         env: 
           working_directory: ${{ github.workspace }}/artifacts/work
           # Variables
