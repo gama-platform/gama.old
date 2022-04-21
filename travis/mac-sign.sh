@@ -10,7 +10,7 @@ function signInJar(){
 
     sed -i -e '/META-INF/d' filelist.txt
 
-    tac filelist.txt > reverse-filelist.txt
+    tail -r filelist.txt > reverse-filelist.txt
 
     while read f
     do
@@ -31,7 +31,7 @@ function signInJar(){
 }
 
 find ./ -name "*jar" > jarlist.txt
-tac jarlist.txt > reverse-jarlist.txt
+tail -r jarlist.txt > reverse-jarlist.txt
 
 # Sign .jar files
 while read j
