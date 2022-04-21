@@ -18,6 +18,12 @@ function signInJar(){
 
     sed -i -e '/META-INF/d' filelist.txt
 
+    # Debug check 
+    if [[ "$1" =~ "../geotools/".* ]]; then
+        df -h
+        top -l 1 -s 0 | grep PhysMem | sed 's/, /\n         /g'
+    fi
+
     while read f
     do
         jar xf "$1" "$f"
