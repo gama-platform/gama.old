@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function noTimeOut(){
+    while true
+    do
+        sleep 25
+        echo "No timeout please"
+    done
+}
+
 function signInJar(){
     local f
 
@@ -28,6 +36,8 @@ function signInJar(){
     done < filelist.txt
 }
 
+noTimeOut &
+
 find ./ -name "*jar" > jarlist.txt
 
 # Sign .jar files
@@ -42,3 +52,6 @@ done < jarlist.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
+
+# Kill noTimeOut()
+kill $(ps -aux | grep mac-sign.sh | grep bash | cut -d " " -f 2)
