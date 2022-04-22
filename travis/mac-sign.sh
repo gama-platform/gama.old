@@ -38,6 +38,8 @@ function signInJar(){
     fi
 }
 
+echo $IS_WITH_JDK
+
 find ./ -name "*jar" > jarlist.txt
 
 # Reverse list to prevent concurrency signature submition per architecture
