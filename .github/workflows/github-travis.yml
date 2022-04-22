@@ -310,7 +310,7 @@ jobs:
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
 
   publish-archives:
-    needs: [macOS-signing-x84_64, macOS-signing-aarch64, debian-archive]
+    needs: [macOS-signing-x86_64, macOS-signing-aarch64, debian-archive]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
