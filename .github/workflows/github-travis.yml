@@ -153,7 +153,7 @@ jobs:
           # Variables
           MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          IS_WITH_JDK: contains(matrix.toSignedZipName, 'withJDK')
+          IS_WITH_JDK: ${{ matrix.toSignedZipName }} =~ .*'withJDK'
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
@@ -233,7 +233,7 @@ jobs:
           # Variables
           MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          IS_WITH_JDK: contains(matrix.toSignedZipName, 'withJDK')
+          IS_WITH_JDK: ${{ matrix.toSignedZipName }} =~ .*'withJDK'
         run: |
           # Unlock
           security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
