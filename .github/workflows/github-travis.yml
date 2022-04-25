@@ -12,6 +12,9 @@ on:
   workflow_dispatch:  # For manual trigger
 
 jobs:
+  # 
+  # GENERIC BUILD
+  # 
   build:
     runs-on: ubuntu-latest
 
@@ -111,13 +114,19 @@ jobs:
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
-     
+  
+  #
+  # MacOS signature Pipelines
+  #
   macOS-signing-x86_64:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - name: toto
+      - uses: makers99/checkout-files@v1.1.0
+        with:
+          files: .github
+      - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
           toSignedZipName: Gama1.7-macosx.cocoa.x86_64
@@ -135,7 +144,10 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - name: toto
+      - uses: makers99/checkout-files@v1.1.0
+        with:
+          files: .github
+      - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
           toSignedZipName: Gama1.7-macosx.cocoa.x86_64_withJDK
@@ -154,7 +166,10 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - name: toto
+      - uses: makers99/checkout-files@v1.1.0
+        with:
+          files: .github
+      - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
           toSignedZipName: Gama1.7-macosx.cocoa.aarch64
@@ -172,7 +187,10 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - name: toto
+      - uses: makers99/checkout-files@v1.1.0
+        with:
+          files: .github
+      - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
           toSignedZipName: Gama1.7-macosx.cocoa.aarch64_withJDK
@@ -186,6 +204,9 @@ jobs:
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
 
+  #
+  # Linux packaging Pipelines
+  #
   debian-archive:
     # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
     needs: build
@@ -222,7 +243,10 @@ jobs:
           name: gama-linux-deb
           path: |
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
-
+  
+  #
+  # Github releasing
+  #
   publish-archives:
     needs: [macOS-signing-aarch64, macOS-signing-aarch64_withJDK, debian-archive]
     runs-on: ubuntu-latest
