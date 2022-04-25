@@ -81,6 +81,7 @@ jobs:
           # MacOS Family
           mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
           mv ${{ github.workspace }}/travis/mac-sign.sh ${{ github.workspace }}
+          mv ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/windows/* ${{ github.workspace }}
           # Debian Family
           mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.8.2-1_amd64.zip
           mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.8.2-1_amd64.zip
@@ -108,7 +109,16 @@ jobs:
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
         with:
-          name: gama-jdk-builds
+          name: gama-windows
+          path: |
+            ./Gama1.7-win32*zip
+            ./icon256.ico
+            ./windows_installer_script.iss
+
+      - uses: actions/upload-artifact@v2
+        if: env.CONTINUE == 'true'
+        with:
+          name: gama-zip-builds
           path: |
             ./Gama*zip
           
@@ -241,10 +251,44 @@ jobs:
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
   
   #
+  # Windows packaging Pipelines
+  #
+  windows-msi:
+    needs: build
+    if: needs.build.outputs.continue_pipeline == 'true'
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        zipName: [Gama1.7-win32.win32.x86_64.zip, Gama1.7-win32.win32.x86_64_withJDK.zip]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-windows
+
+      - name: Change variables for JDK installer
+        if: contains( matrix.zipName, 'withJDK')
+        run: |
+          get-content windows_installer_script.iss | %{$_ -replace "x86_64","x86_64_withJDK"}
+
+      - name: Prepare vm
+        run: |
+          mkdir gama_output
+
+      - name: Create installer
+        run: iscc.exe windows_installer_script.iss
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gama-windows-exe
+          path: |
+            gama_output
+
+  
+  #
   # Github releasing
   #
   publish-archives:
-    needs: [macOS-signing-aarch64, macOS-signing-aarch64_withJDK, debian-archive]
+    needs: [macOS-signing-aarch64, macOS-signing-aarch64_withJDK, debian-archive, windows-msi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -263,6 +307,11 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: gama-linux-deb
+
+      # Get Linux deb archive
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-windows-exe
 
       - name: Set Travis env
         run: |

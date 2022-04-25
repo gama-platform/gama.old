@@ -4,10 +4,11 @@
 
 ; To replace at deployment time
 #define AppExeName "Gama.exe"
-#define AppDirPath "C:\GAMA_1.8.2_Windows_with_JDK_03.21.22_b6da0133"
+#define AppDirPath ".\Gama1.7-win32.win32.x86_64.zip"
+#define MsiOutputFilename "Gama_installer_x86_64"
 #define LicensePath ".\LICENSE"
-#define SetupIconPath "C:\Users\Baptiste\Downloads\icon256.ico"
-#define OutputDirPath ".\gama installer"
+#define SetupIconPath ".\icon256.ico"
+#define OutputDirPath ".\gama_output"
 
 #define MyAppName "Gama"
 #define MyAppVersion "1.8.2"
@@ -36,7 +37,7 @@ LicenseFile={#LicensePath}
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir={#OutputDirPath}
-OutputBaseFilename=Gama installer
+OutputBaseFilename={#MsiOutputFilename}
 SetupIconFile={#SetupIconPath}
 Compression=lzma
 SolidCompression=yes

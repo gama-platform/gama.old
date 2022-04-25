@@ -38,7 +38,6 @@ runs:
         mkdir -p ${{ github.workspace }}/artifacts/work
 
     - uses: actions/download-artifact@v2
-      shell: bash
       with:
         name: gama-mac-unsigned
         path: ./artifacts/
@@ -99,7 +98,6 @@ runs:
         xcrun -v stapler staple ./${{ inputs.toSignedZipName }}.dmg
 
     - uses: actions/upload-artifact@v3
-      shell: bash
       env: 
         working_directory: ${{ github.workspace }}/artifacts/work
       with:
