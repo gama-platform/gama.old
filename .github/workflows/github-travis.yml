@@ -116,161 +116,75 @@ jobs:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
-    strategy:
-      matrix:
-        toSignedZipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK]
     steps:
-      - name: Prepare vm
-        run: |
-          # Change XCode version 
-          sudo xcode-select -s "/Applications/Xcode_13.0.app"
-          export JAVA_HOME=$JAVA_HOME_11_X64
-          mkdir -p ${{ github.workspace }}/artifacts/work
-
-      - uses: actions/download-artifact@v2
+      - name: toto
+        uses: ./.github/actions/macOS-sign
         with:
-          name: gama-mac-unsigned
-          path: ./artifacts/
-
-      - name: Create Keychain
-        env: 
+          toSignedZipName: Gama1.7-macosx.cocoa.x86_64
+          IS_WITH_JDK: false
+          # Pass secrets
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
-          # Prepare the keychain - Based on https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
-          security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          # Prepare certificate
-          echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
-          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
-
-      - name: Sign Application
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
-          # Variables
           MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          IS_WITH_JDK: ${{ matrix.toSignedZipName }} =~ .*'withJDK'
-        run: |
-          # Unlock
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ${{ github.workspace }}/artifacts/${{ matrix.toSignedZipName }}.zip -d . && rm ${{ github.workspace }}/artifacts/*.zip
-          # Sign everything inside app
-          bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
-          codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
-
-      - name: Packaging signed Application w/o JDK
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
-          # Variables
-          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          # Notarization variables
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-        run: |
-          # Unlock
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
-          hdiutil create -verbose -srcFolder ./Gama.app -o ./${{ matrix.toSignedZipName }}.dmg
-          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ./${{ matrix.toSignedZipName }}.dmg
-          # Notarize dmg - Based on : https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
-          xcrun -v notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
-          xcrun -v notarytool submit ./${{ matrix.toSignedZipName }}.dmg --keychain-profile "AC_PASSWORD" --wait
-          xcrun -v stapler staple ./${{ matrix.toSignedZipName }}.dmg
-
-      - uses: actions/upload-artifact@v3
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
-        with:
-          name: gama-mac-signed
-          path: ./${{ matrix.toSignedZipName }}.dmg
-          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
-
-  macOS-signing-aarch64:
-    needs: macOS-signing-x86_64
+  macOS-signing-x86_64_withJDK:
+    needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
-    strategy:
-      matrix:
-        toSignedZipName: [Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
     steps:
-      - name: Prepare vm
-        run: |
-          # Change XCode version 
-          sudo xcode-select -s "/Applications/Xcode_13.0.app"
-          export JAVA_HOME=$JAVA_HOME_11_X64
-          mkdir -p ${{ github.workspace }}/artifacts/work
-
-      - uses: actions/download-artifact@v2
+      - name: toto
+        uses: ./.github/actions/macOS-sign
         with:
-          name: gama-mac-unsigned
-          path: ./artifacts/
-
-      - name: Create Keychain
-        env: 
+          toSignedZipName: Gama1.7-macosx.cocoa.x86_64_withJDK
+          IS_WITH_JDK: true
+          # Pass secrets
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
-          # Prepare the keychain - Based on https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
-          security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          # Prepare certificate
-          echo "$MACOS_CERTIFICATE" | base64 --decode > certificate.p12
-          security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
-
-      - name: Sign Application
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
-          # Variables
           MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          IS_WITH_JDK: ${{ matrix.toSignedZipName }} =~ .*'withJDK'
-        run: |
-          # Unlock
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          unzip -q ${{ github.workspace }}/artifacts/${{ matrix.toSignedZipName }}.zip -d . && rm ${{ github.workspace }}/artifacts/*.zip
-          # Sign everything inside app
-          bash ${{ github.workspace }}/artifacts/mac-sign.sh
-          wget https://raw.githubusercontent.com/gama-platform/gama/$( echo $GITHUB_SHA )/ummisco.gama.product/extraresources/entitlements.plist && plutil -convert xml1 ./entitlements.plist && plutil -lint ./entitlements.plist
-          codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
-
-      - name: Packaging signed Application w/o JDK
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
-          # Variables
-          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          # Notarization variables
           NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-        run: |
-          # Unlock
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
-          # Make DMG - Based on : https://developer.apple.com/forums/thread/128166
-          hdiutil create -verbose -srcFolder ./Gama.app -o ./${{ matrix.toSignedZipName }}.dmg
-          codesign -s "$MACOS_DEV_ID" --timestamp -f -v ./${{ matrix.toSignedZipName }}.dmg
-          # Notarize dmg - Based on : https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow#3087734
-          xcrun -v notarytool store-credentials "AC_PASSWORD" --apple-id "$NOTARY_APPLE_ID" --team-id "$NOTARY_TEAM_ID" --password "$NOTARY_PASSWORD"
-          xcrun -v notarytool submit ./${{ matrix.toSignedZipName }}.dmg --keychain-profile "AC_PASSWORD" --wait
-          xcrun -v stapler staple ./${{ matrix.toSignedZipName }}.dmg
 
-      - uses: actions/upload-artifact@v3
-        env: 
-          working_directory: ${{ github.workspace }}/artifacts/work
+  macOS-signing-aarch64:
+    needs: [macOS-signing-x86_64, macOS-signing-x86_64_withJDK]
+    if: needs.build.outputs.continue_pipeline == 'true'
+    runs-on: macos-latest
+    steps:
+      - name: toto
+        uses: ./.github/actions/macOS-sign
         with:
-          name: gama-mac-signed
-          path: ./${{ matrix.toSignedZipName }}.dmg
-          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
+          toSignedZipName: Gama1.7-macosx.cocoa.aarch64
+          IS_WITH_JDK: false
+          # Pass secrets
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
+          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+  macOS-signing-aarch64_withJDK:
+    needs: [macOS-signing-x86_64, macOS-signing-x86_64_withJDK]
+    if: needs.build.outputs.continue_pipeline == 'true'
+    runs-on: macos-latest
+    steps:
+      - name: toto
+        uses: ./.github/actions/macOS-sign
+        with:
+          toSignedZipName: Gama1.7-macosx.cocoa.aarch64_withJDK
+          IS_WITH_JDK: true
+          # Pass secrets
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
+          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
 
   debian-archive:
     # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
@@ -310,7 +224,7 @@ jobs:
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
 
   publish-archives:
-    needs: [macOS-signing-x86_64, macOS-signing-aarch64, debian-archive]
+    needs: [macOS-signing-aarch64, macOS-signing-aarch64_withJDK, debian-archive]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
