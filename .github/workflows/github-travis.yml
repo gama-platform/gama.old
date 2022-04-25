@@ -171,8 +171,7 @@ jobs:
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
 
   macOS-signing-aarch64:
-    needs: build
-    if: needs.build.outputs.continue_pipeline == 'true'
+    needs: [macOS-signing-x86_64, macOS-signing-x86_64_withJDK]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -191,8 +190,7 @@ jobs:
           NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
           NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
   macOS-signing-aarch64_withJDK:
-    needs: build
-    if: needs.build.outputs.continue_pipeline == 'true'
+    needs: [macOS-signing-x86_64, macOS-signing-x86_64_withJDK]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -296,8 +294,7 @@ jobs:
   # Github releasing
   #
   publish-archives:
-    needs: [macOS-signing-x86_64, macOS-signing-x86_64_withJDK, 
-    macOS-signing-aarch64, macOS-signing-aarch64_withJDK, 
+    needs: [macOS-signing-aarch64, macOS-signing-aarch64_withJDK, 
     debian-archive, windows-msi]
     runs-on: ubuntu-latest
     steps:
