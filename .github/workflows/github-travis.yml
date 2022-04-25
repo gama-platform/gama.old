@@ -123,9 +123,8 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - uses: makers99/checkout-files@v1.1.0
-        with:
-          files: .github
+      - uses: actions/checkout@v2
+      
       - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
@@ -144,9 +143,8 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - uses: makers99/checkout-files@v1.1.0
-        with:
-          files: .github
+      - uses: actions/checkout@v2
+      
       - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
@@ -166,9 +164,8 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - uses: makers99/checkout-files@v1.1.0
-        with:
-          files: .github
+      - uses: actions/checkout@v2
+      
       - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
@@ -187,9 +184,8 @@ jobs:
     if: needs.build.outputs.continue_pipeline == 'true'
     runs-on: macos-latest
     steps:
-      - uses: makers99/checkout-files@v1.1.0
-        with:
-          files: .github
+      - uses: actions/checkout@v2
+      
       - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
