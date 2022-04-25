@@ -85,7 +85,7 @@ jobs:
           # Debian Family
           mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.8.2-1_amd64.zip
           mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.8.2-1_amd64.zip
-          cd ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/unix && zip -R ${{ github.workspace }}/extraresources-unix.zip . && cd -
+          cd ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/unix && zip -r ${{ github.workspace }}/extraresources-unix.zip . && cd -
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
