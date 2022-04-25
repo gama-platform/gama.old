@@ -1,0 +1,4 @@
+#!/bin/bash
+
+chmod a+rw -R /opt/gama-platform
+chmod a+x -R /opt/gama-platform/Gama

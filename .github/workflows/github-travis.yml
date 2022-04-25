@@ -85,6 +85,7 @@ jobs:
           # Debian Family
           mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.8.2-1_amd64.zip
           mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.8.2-1_amd64.zip
+          cd ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/unix && zip -R ${{ github.workspace }}/extraresources-unix.zip . && cd -
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -100,6 +101,7 @@ jobs:
           name: gama-linux-jdk
           path: |
             ./gama-platform*amd64.zip
+            ./extraresources-unix.zip
 
       - name: Remove already moved builds
         if: env.CONTINUE == 'true'
@@ -233,8 +235,8 @@ jobs:
 
       - name: Get extra files
         run: |
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/DEBIAN/control -O ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
-          wget https://raw.githubusercontent.com/gama-platform/gama/${GITHUB_REF##*/}/ummisco.gama.product/extraresources/installer/unix/gama-platform.desktop -O ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
+          unzip extraresources-unix.zip -d ${{ github.workspace }}/${{ matrix.zipName }}
+          mv ${{ github.workspace }}/${{ matrix.zipName }}/gama-platform.desktop ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
 
