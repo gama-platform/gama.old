@@ -269,7 +269,8 @@ jobs:
       - name: Change variables for JDK installer
         if: contains( matrix.zipName, 'withJDK')
         run: |
-          get-content windows_installer_script.iss | %{$_ -replace "x86_64","x86_64_withJDK"}
+          ((Get-Content -path windows_installer_script.iss -Raw) -replace 'x86_64','x86_64_withJDK') | Set-Content -Path windows_installer_script.iss
+          Get-Content -path windows_installer_script.iss
 
       - name: Prepare vm
         run: |
