@@ -33,7 +33,6 @@ runs:
       shell: bash
       run: |
         # Change XCode version 
-        sudo xcode-select -s "/Applications/Xcode_13.0.app"
         export JAVA_HOME=$JAVA_HOME_11_X64
         mkdir -p ${{ github.workspace }}/artifacts/work
 

@@ -12,7 +12,7 @@ function signInJar(){
         echo "$1"
 
         # Reverse list to prevent concurrency signature submition per architecture
-        if [[ $IS_WITH_JDK ]]; then
+        if $IS_WITH_JDK; then
             tail -r filelist.txt > reverse-filelist.txt
             rm filelist.txt
             mv reverse-filelist.txt filelist.txt
@@ -43,7 +43,7 @@ echo $IS_WITH_JDK
 find ./ -name "*jar" > jarlist.txt
 
 # Reverse list to prevent concurrency signature submition per architecture
-if [[ $IS_WITH_JDK ]]; then
+if $IS_WITH_JDK; then
     tail -r filelist.txt > reverse-filelist.txt
     rm filelist.txt
     mv reverse-filelist.txt filelist.txt
