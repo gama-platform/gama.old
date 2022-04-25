@@ -30,6 +30,7 @@ runs:
   using: "composite"
   steps:
     - name: Prepare vm
+      shell: bash
       run: |
         # Change XCode version 
         sudo xcode-select -s "/Applications/Xcode_13.0.app"
@@ -37,15 +38,17 @@ runs:
         mkdir -p ${{ github.workspace }}/artifacts/work
 
     - uses: actions/download-artifact@v2
+      shell: bash
       with:
         name: gama-mac-unsigned
         path: ./artifacts/
 
     - name: Create Keychain
+      shell: bash
       env: 
-        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-        MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+        MACOS_CERTIFICATE: ${{ inputs.MACOS_CERTIFICATE }}
+        MACOS_CERTIFICATE_PWD: ${{ inputs.MACOS_CERTIFICATE_PWD }}
+        MACOS_KEYCHAIN_PWD: ${{ inputs.MACOS_KEYCHAIN_PWD }}
       run: |
         # Prepare the keychain - Based on https://localazy.com/blog/how-to-automatically-sign-macos-apps-using-github-actions
         security create-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
@@ -57,11 +60,12 @@ runs:
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_KEYCHAIN_PWD" build.keychain
 
     - name: Sign Application
+      shell: bash
       env: 
         working_directory: ${{ github.workspace }}/artifacts/work
         # Variables
-        MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-        MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+        MACOS_DEV_ID: ${{ inputs.MACOS_DEV_ID }}
+        MACOS_KEYCHAIN_PWD: ${{ inputs.MACOS_KEYCHAIN_PWD }}
         IS_WITH_JDK: ${{ inputs.IS_WITH_JDK }}
       run: |
         # Unlock
@@ -73,15 +77,16 @@ runs:
         codesign --entitlements "./entitlements.plist" --timestamp --options=runtime --force -s "$MACOS_DEV_ID" -v ./Gama.app/Contents/MacOS/Gama
 
     - name: Packaging signed Application w/o JDK
+      shell: bash
       env: 
         working_directory: ${{ github.workspace }}/artifacts/work
         # Variables
-        MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-        MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
+        MACOS_DEV_ID: ${{ inputs.MACOS_DEV_ID }}
+        MACOS_KEYCHAIN_PWD: ${{ inputs.MACOS_KEYCHAIN_PWD }}
         # Notarization variables
-        NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
-        NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
-        NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+        NOTARY_APPLE_ID: ${{ inputs.NOTARY_APPLE_ID }}
+        NOTARY_PASSWORD: ${{ inputs.NOTARY_PASSWORD }}
+        NOTARY_TEAM_ID: ${{ inputs.NOTARY_TEAM_ID }}
       run: |
         # Unlock
         security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" build.keychain
@@ -94,6 +99,7 @@ runs:
         xcrun -v stapler staple ./${{ inputs.toSignedZipName }}.dmg
 
     - uses: actions/upload-artifact@v3
+      shell: bash
       env: 
         working_directory: ${{ github.workspace }}/artifacts/work
       with:
