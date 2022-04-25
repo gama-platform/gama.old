@@ -4,7 +4,7 @@
 
 ; To replace at deployment time
 #define AppExeName "Gama.exe"
-#define AppDirPath ".\Gama1.7-win32.win32.x86_64.zip"
+#define AppDirPath ".\gama_input"
 #define MsiOutputFilename "Gama_installer_x86_64"
 #define LicensePath ".\LICENSE"
 #define SetupIconPath ".\icon256.ico"

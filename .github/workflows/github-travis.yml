@@ -114,6 +114,7 @@ jobs:
             ./Gama1.7-win32*zip
             ./icon256.ico
             ./windows_installer_script.iss
+            ./LICENSE
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -273,6 +274,8 @@ jobs:
       - name: Prepare vm
         run: |
           mkdir gama_output
+          mkdir gama_input
+          7z x ${{ matrix.zipName }} -ogama_input
 
       - name: Create installer
         run: iscc.exe windows_installer_script.iss
