@@ -235,7 +235,7 @@ jobs:
 
       - name: Get extra files
         run: |
-          unzip extraresources-unix.zip -d ${{ github.workspace }}/${{ matrix.zipName }}
+          unzip ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/extraresources-unix.zip -d ${{ github.workspace }}/${{ matrix.zipName }} && rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/extraresources-unix.zip
           mv ${{ github.workspace }}/${{ matrix.zipName }}/gama-platform.desktop ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
