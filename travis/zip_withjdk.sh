@@ -53,10 +53,12 @@ RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.zip"
 
 
 
-wget -q 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.3_7.tar.gz' -O "jdk_linux_17.tar.gz"
-wget -q 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_x64_windows_hotspot_17.0.2_8.zip' -O "jdk_win_17.zip"
-wget -q 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_x64_mac_hotspot_17.0.2_8.tar.gz' -O "jdk_osx_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_17.zip"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_17.tar.gz"
+#wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/latest | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_aarch_17.tar.gz"
 wget -q 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.2_8.tar.gz' -O "jdk_osx_aarch_17.tar.gz"
+
 mkdir  jdk_linux
 mkdir  jdk_win
 mkdir  jdk_osx
