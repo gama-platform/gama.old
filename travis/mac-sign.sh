@@ -22,7 +22,7 @@ function signInJar(){
 
     fi
 
-    grep "^\[$f" needToSign.txt | cut -d " " -f 2 > nestedJar.txt
+    grep "^\[$f" $needToSignPath | cut -d " " -f 2 > nestedJar.txt
     if [[ -s "nestedJar.txt" ]]; then
         while read nJ
         do
@@ -39,7 +39,9 @@ function signInJar(){
     fi
 }
 
-grep "^./" needToSign.txt > jar.txt
+needToSignPath=$(pwd)/needToSign.txt
+
+grep "^./" $needToSignPath > jar.txt
 
 # Sign .jar files
 while read j
