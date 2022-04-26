@@ -283,7 +283,11 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public void update(final IScope scope, final Envelope envelope, final boolean parallel) {
 		this.bounds = envelope;
 		this.parallel = parallel;
-		for (ISpecies species : spatialIndexes.keySet()) {
+		
+		final WeakHashMap<ISpecies, ISpatialIndex> spatialIndexesTmp = new WeakHashMap<>();
+		spatialIndexesTmp.putAll(spatialIndexes);
+		
+		for (ISpecies species : spatialIndexesTmp.keySet()) {
 			remove(species);
 			add(scope, species, true);
 		}

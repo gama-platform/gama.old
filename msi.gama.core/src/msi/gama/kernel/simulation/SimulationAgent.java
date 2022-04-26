@@ -972,6 +972,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 
+		Double seedValue = null;
+		String rngValue = null;
+		Integer usageValue = null;		
+		
 		// This list is updated during all the updateWith of the simulation.
 		// When all the agents will be created (end of this updateWith),
 		// all the references will be replaced by the corresponding agent.
@@ -989,9 +993,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				((IReference) attrValue).setAgentAndAttrName(this, varName);
 				if (!list_ref.contains(attrValue)) { list_ref.add((IReference) attrValue); }
 			}
+			
+			// If attributes are related to the RNG, we keep them to initialise the RNG later, in the proper order.
+			if(varName.equals(IKeyword.SEED)) {
+				seedValue = (Double) attrValue;
+			} else if(varName.equals(IKeyword.RNG)) {
+				rngValue = (String) attrValue;
+			} else if(varName.equals(SimulationAgent.USAGE)) {
+				usageValue = (Integer) attrValue;
+			} else {
+				this.setDirectVarValue(scope, varName, attrValue);				
+			}
 
-			this.setDirectVarValue(scope, varName, attrValue);
 		}
+		
+		// Update RNG
+		setRandomGenerator(new RandomUtils(seedValue, rngValue));
+		setUsage(usageValue);
 
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
@@ -1012,7 +1030,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (savedAgentInnerPop != null) {
 			for (final String savedAgentMicroPopName : savedAgentInnerPop.keySet()) {
 				final IPopulation<? extends IAgent> simuMicroPop = getPopulationFor(savedAgentMicroPopName);
-				// final IPopulation<? extends IAgent> simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
 
 				if (simuMicroPop != null) {
 					// Build a map name::innerPopAgentSavedAgt :
@@ -1061,9 +1078,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 					for (final IAgent remainingAgent : mapSimuAgtName.values()) {
 						// Kill them all
 						remainingAgent.dispose();
-						// simuMicroPop.killMembers();
-						// microPop.clear();
-						// microPop.firePopulationCleared();
 					}
 				}
 			}

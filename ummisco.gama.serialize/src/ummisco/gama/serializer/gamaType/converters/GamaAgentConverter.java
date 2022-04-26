@@ -33,12 +33,17 @@ import ummisco.gama.serializer.gamaType.reference.ReferenceAgent;
 @SuppressWarnings ({ "rawtypes" })
 public class GamaAgentConverter implements Converter {
 
+	/** The convert scope. */
+	ConverterScope convertScope;
+
 	/**
-	 * Instantiates a new gama agent converter.
+	 * Instantiates a new gama list converter.
 	 *
 	 * @param s the s
 	 */
-	public GamaAgentConverter(final ConverterScope s) {}
+	public GamaAgentConverter(final ConverterScope s) {
+		convertScope = s;
+	}
 
 	@Override
 	public boolean canConvert(final Class arg0) {
@@ -61,7 +66,6 @@ public class GamaAgentConverter implements Converter {
 		}
 
 		return false;
-		// return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
 	}
 
 	@Override
@@ -73,11 +77,9 @@ public class GamaAgentConverter implements Converter {
 		DEBUG.OUT("ConvertAnother : AgentConverter " + agt.getClass());
 		// System.out.println("ConvertAnother : AgentConverter " + agt.getClass());
 
-		// ReferenceSavedAgent refAft = new ReferenceSavedAgent(agt, null, (ReferenceToAgent) null);
 		final ReferenceAgent refAft = new ReferenceAgent(null, null, agt);
 		context.convertAnother(refAft);
 
-		// writer.setValue(agt.getName());
 		DEBUG.OUT("===========END ConvertAnother : GamaAgent");
 		// System.out.println("===========END ConvertAnother : GamaAgent");
 
@@ -88,27 +90,10 @@ public class GamaAgentConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		// TODO manage MinimalAgent and MinimalGridAgent
 		reader.moveDown();
-		// SimulationAgent simAgt = convertScope.getSimulationAgent();
-		// List<IAgent> lagt;
-		// if(simAgt == null) {
-		// lagt = (convertScope.getScope()).getSimulation().getAgents(convertScope.getScope());
-		// } else {
-		// lagt = simAgt.getAgents(convertScope.getScope());
-		// }
 		final ReferenceAgent agt = (ReferenceAgent) arg1.convertAnother(null, ReferenceAgent.class);
-
-		// boolean found = false;
-		// int i = 0;
-		// IAgent agt = null;
-		// while(!found && (i < lagt.size())) {
-		// if(lagt.get(i).getName().equals(reader.getValue())) {
-		// found = true;
-		// agt = lagt.get(i);
-		// }
-		// i++;
-		// }
 		reader.moveUp();
-		return agt;
+		
+		return agt.getReferencedAgent(convertScope.getScope().getSimulation());
 	}
 
 }

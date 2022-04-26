@@ -102,6 +102,10 @@ public class ReferenceAgent implements IReference, IAgent {
 		if (o == this) return true;
 		return false;
 	}
+	
+	public IAgent getReferencedAgent(final SimulationAgent sim) {
+		return attributeValue.getReferencedAgent(sim);
+	}
 
 	@Override
 	public int hashCode() {
