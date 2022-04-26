@@ -309,13 +309,15 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "rgb (" + red() + ", " + green() + ", " + blue() + "," + getAlpha() + ")";
+		return "rgb (" + red() + ", " + green() + ", " + blue() + ", " + getAlpha() + ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return String.valueOf(getRGB());
+		return toString();
 	}
+	
+	
 
 	/**
 	 * Red.
