@@ -11,13 +11,6 @@ function signInJar(){
     if [[ -s "filelist.txt" ]]; then
         echo "$1"
 
-        # Reverse list to prevent concurrency signature submition per architecture
-        if $IS_WITH_JDK; then
-            tail -r filelist.txt > reverse-filelist.txt
-            rm filelist.txt
-            mv reverse-filelist.txt filelist.txt
-        fi
-
         while read f
         do
             jar xf "$1" "$f"
@@ -39,13 +32,6 @@ function signInJar(){
 }
 
 find ./ -name "*jar" > jarlist.txt
-
-# Reverse list to prevent concurrency signature submition per architecture
-if $IS_WITH_JDK; then
-    tail -r jarlist.txt > reverse-filelist.txt
-    rm jarlist.txt
-    mv reverse-filelist.txt jarlist.txt
-fi
 
 # Sign .jar files
 while read j

@@ -6,10 +6,6 @@ inputs:
     description: '[string] Name of the generated zip archive to turn in file.dmg (should only be filename, w/o extension -ie `.zip` part)'
     required: true
     default: 'Gama1.7-macosx.cocoa.x86_64'
-  IS_WITH_JDK:
-    description: '[bool] Reverse list order to sign application'
-    required: false
-    default: false
   # Get secrets
   MACOS_CERTIFICATE: 
     required: true
