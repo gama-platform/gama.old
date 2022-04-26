@@ -104,12 +104,7 @@ jobs:
           path: |
             ./gama-platform*amd64.zip
             ./extraresources-unix.zip
-
-      - name: Remove already moved builds
-        if: env.CONTINUE == 'true'
-        run: |
-          rm Gama1.7-macosx*zip
-
+      
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
         with:
@@ -125,7 +120,8 @@ jobs:
         with:
           name: gama-zip-builds
           path: |
-            ./Gama*zip
+            ./Gama1.7-win32*zip
+            ./gama-platform*amd64.zip
           
     outputs:
       continue_pipeline: ${{ env.CONTINUE }}
