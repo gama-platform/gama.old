@@ -148,7 +148,6 @@ jobs:
           cat needToSign.txt
 
       - uses: actions/upload-artifact@v2
-        if: env.CONTINUE == 'true'
         with:
           name: gama-mac-what2sign
           path: |
@@ -265,7 +264,7 @@ jobs:
   # Github releasing
   #
   publish-archives:
-    needs: [macOS-signing-aarch64_withJDK, debian-archive, windows-msi]
+    needs: [macOS-signing, debian-archive, windows-msi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

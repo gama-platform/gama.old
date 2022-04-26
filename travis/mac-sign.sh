@@ -31,14 +31,14 @@ function signInJar(){
     fi
 }
 
-find ./ -name "*jar" > jarlist.txt
-
 # Sign .jar files
 while read j
 do
-    signInJar "$j"
-    find . -not -wholename "*Gama.app*" -delete
-done < jarlist.txt
+    if [  -f "$f" ]; then
+        signInJar "$j"
+        find . -not -wholename "*Gama.app*" -delete
+    fi
+done < needToSign.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
