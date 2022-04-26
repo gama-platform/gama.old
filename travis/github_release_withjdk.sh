@@ -76,15 +76,14 @@ archi=("" "_M1")
 for a in ${archi[@]}; 
 do
 		zipArchi="x86_64"
-		if [ $a == $archi[2] ]
-		then
+		if [ $a == $archi[2] ]; then
 		  zipArchi="aarch64"
 		fi
 
-		RELEASEFILES[$n]="$thePATH-macosx.cocoa.'$zipArchi'.dmg"
+		RELEASEFILES[$n]=$thePATH"-macosx.cocoa."$zipArchi".dmg"
 		NEWFILES[$n]='GAMA_1.8.2_MacOS'$a''$SUFFIX_MAC
 		n=$n+1
-		RELEASEFILES[$n]="$thePATH-macosx.cocoa.'$zipArchi'_withJDK.dmg"
+		RELEASEFILES[$n]=$thePATH"-macosx.cocoa."$zipArchi"_withJDK.dmg"
 		NEWFILES[$n]='GAMA_1.8.2_MacOS'$a'_with_JDK'$SUFFIX_MAC
 		n=$n+1
 done
