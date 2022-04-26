@@ -53,6 +53,7 @@ timestamp=$(date '+_%D')
 SUFFIX=$timestamp'_'$COMMIT'.zip'
 SUFFIX_MAC=$timestamp'_'$COMMIT'.dmg'
 SUFFIX_DEB=$timestamp'_'$COMMIT'.deb'
+SUFFIX_EXE=$timestamp'_'$COMMIT'.exe'
 echo $SUFFIX
 
 
@@ -94,10 +95,17 @@ NEWFILES[$n]='GAMA_1.8.2_Windows'$SUFFIX
 n=$n+1
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
 NEWFILES[$n]='GAMA_1.8.2_Windows_with_JDK'$SUFFIX
+n=$n+1
+RELEASEFILES[$n]="${{ github.workspace }}/Gama_installer_x86_64.exe" 
+NEWFILES[$n]='GAMA_1.8.2_Windows'$SUFFIX_EXE
+n=$n+1
+RELEASEFILES[$n]="${{ github.workspace }}/Gama_installer_x86_64_withJDK.exe" 
+NEWFILES[$n]='GAMA_1.8.2_Windows_with_JDK'$SUFFIX_EXE
+n=$n+1
  
 
 i=0
-for (( i=0; i<8; i++ ))
+for (( i=0; i<${#NEWFILES[@]} ; i++ ))
 do
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
