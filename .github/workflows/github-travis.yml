@@ -145,6 +145,7 @@ jobs:
       - name: Calculate what Jar to sign
         run: |
           bash what2sign.sh
+          echo "\nPrint `needToSign.txt` :"
           cat needToSign.txt
 
       - uses: actions/upload-artifact@v2

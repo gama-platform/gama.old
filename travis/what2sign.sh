@@ -39,10 +39,10 @@ function parseApp(){
 				jar tf "$f" | grep '\.jar' > nestedJar.txt
 				while read j
 				do
-					echo "Check in $j nested in $f"
+					echo "[$(echo $f | rev | cut -d "/" -f 1 | rev)]\tCheck in $j"
 					jar xf "$f" "$j"
 					if haveSomethingToSign "$j"; then
-						echo "Need to sign $j nested in $f"
+						echo "==> Need to sign $j <=="
 						echo $f >> needToSign.txt
 					fi
 				done < nestedJar.txt
@@ -56,7 +56,8 @@ function unzipAndParse(){
 	echo "Unzipping $1 ..."
 	unzip -q "$1"
 	parseApp "./Gama.app"
-	find . -maxdepth 1 -type d -exec rm -fr {} \;
+	find . -type d -delete
+	echo "\n"
 }
 
 
