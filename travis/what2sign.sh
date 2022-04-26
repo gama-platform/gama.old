@@ -7,6 +7,16 @@
 
 haveLib=false
 
+function addJarInFile(){
+	if [[ $(tail -n 1 needToSign.txt) != "$1" ]]; then
+		echo $1 >> needToSign.txt
+	fi
+
+	if (( $# != 1 )); then
+		echo "[$1] $2" >> needToSign.txt
+	fi
+}
+
 function getJarToCheck(){
 	find "$1" -name "*.jar" > currentAppJar.txt
 
@@ -33,17 +43,17 @@ function parseApp(){
     do
 		if haveSomethingToSign "$f"; then
 			echo "==> Need to sign $f <=="
-			echo $f >> needToSign.txt
+			addJarInFile $f
 		else
 			if [ $(jar tf "$f" | grep '\.jar' | wc -l) -gt 0 ]; then
 				jar tf "$f" | grep '\.jar' > nestedJar.txt
 				while read j
 				do
-					echo "[$(echo $f | rev | cut -d "/" -f 1 | rev)]\tCheck in $j"
+					echo "[$(echo $f | rev | cut -d "/" -f 1 | rev)] Check in $j"
 					jar xf "$f" "$j"
 					if haveSomethingToSign "$j"; then
 						echo "==> Need to sign $j <=="
-						echo $f >> needToSign.txt
+						addJarInFile $f $j
 					fi
 				done < nestedJar.txt
 			fi
@@ -56,8 +66,8 @@ function unzipAndParse(){
 	echo "Unzipping $1 ..."
 	unzip -q "$1"
 	parseApp "./Gama.app"
-	find . -type d -delete
-	echo "\n"
+	find . -maxdepth 1 -type d -exec rm -fr {} \;
+	echo "xxx"
 }
 
 
