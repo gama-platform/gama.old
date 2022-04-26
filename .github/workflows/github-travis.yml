@@ -382,3 +382,4 @@ jobs:
           TRAVIS_COMMIT: ${ GITHUB_SHA }
           TRAVIS_EVENT_TYPE: ${{ github.event_name }}
           thePATH: "${{ github.workspace }}/Gama1.7"
+          GITHUB_WORKSPACE: ${{ github.workspace }}
