@@ -26,6 +26,7 @@ import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
+import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class MQTTConnector.
@@ -172,5 +173,11 @@ public final class MQTTConnector extends Connector {
 
 		}
 
+	}
+
+	@Override
+	public SocketService getSocketService() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

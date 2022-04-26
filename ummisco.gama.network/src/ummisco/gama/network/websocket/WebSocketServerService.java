@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.network.tcp;
+package ummisco.gama.network.websocket;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,16 +23,15 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.network.common.socket.IListener;
 import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class ServerService.
  */
-public abstract class ServerService extends Thread implements SocketService, IListener {
+public abstract class WebSocketServerService extends Thread implements SocketService {
 
 	/** The server socket. */
-	private ServerSocket serverSocket;
+	private GamaServer serverSocket;
 
 	/** The port. */
 	private final int port;
@@ -55,10 +54,9 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 	/**
 	 * Instantiates a new server service.
 	 *
-	 * @param port
-	 *            the port
+	 * @param port the port
 	 */
-	public ServerService(final int port) {
+	public WebSocketServerService(final int port) {
 		this.port = port;
 		this.isAlive = false;
 		this.isOnline = false;
@@ -66,19 +64,22 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 
 	@Override
 	public String getRemoteAddress() {
-		if (currentSocket == null) return null;
+		if (currentSocket == null)
+			return null;
 		return this.currentSocket.getInetAddress() + ":" + this.port;
 	}
 
 	@Override
 	public String getLocalAddress() {
-		if (currentSocket == null) return null;
+		if (currentSocket == null)
+			return null;
 		return this.currentSocket.getLocalAddress() + ":" + this.port;
 	}
 
 	@Override
 	public void startService() throws UnknownHostException, IOException {
-		this.serverSocket = new ServerSocket(port);
+		this.serverSocket = new GamaServer(port);
+		serverSocket.start();
 		this.isAlive = true;
 		this.isOnline = true;
 		this.start();
@@ -88,48 +89,63 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 	public void run() {
 		while (this.isAlive) {
 			isOnline = true;
-			try {
-				DEBUG.OUT("before accept wait...");
-				currentSocket = this.serverSocket.accept();
-				String msg = "";
-				do {
-					DEBUG.OUT("wait message ...........");
-					receiver = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
-					msg = receiver.readLine();
-					if (msg != null) {
-						msg = msg.replace("@n@", "\n");
-						msg = msg.replace("@b@@r@", "\b\r");
-						receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
-					}
-					DEBUG.OUT("fin traitement message ..." + this.isOnline);
-				} while (isOnline);
-
-			} catch (final SocketTimeoutException e) {
-				DEBUG.LOG("Socket timeout");
-			} catch (final SocketException e) {
-				DEBUG.LOG("Socket closed");
-			} catch (final IOException e1) {
-				DEBUG.LOG("Socket error" + e1);
-				/// isOnline = false;
-			} catch (final Exception e) {
-				DEBUG.LOG("Exception occured in socket");
-			}
+//			try {
+//				DEBUG.OUT("before accept wait...");
+//				currentSocket = this.serverSocket.accept();
+//				String msg = "";
+//				do {
+//					DEBUG.OUT("wait message ...........");
+//					receiver = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
+//					msg = receiver.readLine();
+//					if (msg != null) {
+//						msg = msg.replace("@n@", "\n");
+//						msg = msg.replace("@b@@r@", "\b\r");
+//						receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
+//					}
+//					DEBUG.OUT("fin traitement message ..." + this.isOnline);
+//				} while (isOnline);
+//
+//			} catch (final SocketTimeoutException e) {
+//				DEBUG.LOG("Socket timeout");
+//			} catch (final SocketException e) {
+//				DEBUG.LOG("Socket closed");
+//			} catch (final IOException e1) {
+//				DEBUG.LOG("Socket error" + e1);
+//				/// isOnline = false;
+//			} catch (final Exception e) {
+//				DEBUG.LOG("Exception occured in socket");
+//			}
 		}
 	}
 
 	@Override
-	public boolean isOnline() { return isAlive && isOnline; }
+	public boolean isOnline() {
+		return isAlive && isOnline;
+	}
 
 	@Override
 	public void stopService() {
 		isOnline = false;
 		isAlive = false;
 
-		if (sender != null) { sender.close(); }
+		if (sender != null) {
+			sender.close();
+		}
 		try {
-			if (receiver != null) { receiver.close(); }
-			if (currentSocket != null) { currentSocket.close(); }
-			if (serverSocket != null) { serverSocket.close(); }
+			if (receiver != null) {
+				receiver.close();
+			}
+			if (currentSocket != null) {
+				currentSocket.close();
+			}
+			if (serverSocket != null) {
+				try {
+					serverSocket.stop();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -139,7 +155,8 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 	@Override
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
-		if (currentSocket == null || !isOnline()) return;
+		if (currentSocket == null || !isOnline())
+			return;
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
 		message = message.replace("\n", "@n@");
 		message = message.replace("\b\r", "@b@@r@");

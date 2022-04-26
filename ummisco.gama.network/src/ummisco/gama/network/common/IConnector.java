@@ -17,12 +17,14 @@ import java.util.Map;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Interface IConnector.
  */
 public interface IConnector {
 	
+	SocketService getSocketService();
 	/**
 	 * Connect.
 	 *

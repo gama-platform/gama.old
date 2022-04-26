@@ -1,4 +1,4 @@
-package msi.gama.headless.runtime;
+package msi.gama.headless.listener;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -13,6 +13,8 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gaml.operators.Files;
+import ummisco.gama.network.websocket.Endpoint;
+import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 public class CompileEndPoint implements Endpoint {
 
@@ -22,7 +24,7 @@ public class CompileEndPoint implements Endpoint {
 	}
 
 	@Override
-	public void onMessage(GamaWebSocketServer server, WebSocket socket, String message) {
+	public void onMessage(IGamaWebSocketServer server, WebSocket socket, String message) {
 		System.out.println(socket + ": String " + message);
 //		socket.send(message);
 
@@ -58,7 +60,7 @@ public class CompileEndPoint implements Endpoint {
 	}
 
 	@Override
-	public void onMessage(GamaWebSocketServer server, WebSocket socket, ByteBuffer message) {
+	public void onMessage(IGamaWebSocketServer server, WebSocket socket, ByteBuffer message) {
 
 		System.out.println(socket + ": " + message);
 		try {

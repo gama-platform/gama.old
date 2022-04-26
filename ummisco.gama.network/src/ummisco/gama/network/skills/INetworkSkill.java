@@ -46,6 +46,13 @@ public interface INetworkSkill {
 	/** The net agent server. */
 	String NET_AGENT_SERVER = "network_server";
 
+	/** The websocket server. */
+	// CONNECTION PROTOCOL
+	String WEBSOCKET_SERVER = "websocket_server";
+	
+	/** The websocket client. */
+	String WEBSOCKET_CLIENT = "websocket_client";
+
 	/** The udp server. */
 	// CONNECTION PROTOCOL
 	String UDP_SERVER = "udp_server";

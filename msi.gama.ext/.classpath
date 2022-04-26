@@ -147,7 +147,5 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="Java-WebSocket-1.5.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="slf4j-api-2.0.0-alpha1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

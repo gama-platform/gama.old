@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.headless.runtime;
+package msi.gama.headless.listener;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,6 +36,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Spatial;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.network.websocket.Endpoint;
+import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 /**
  * The Class LaunchEndPoint.
@@ -86,7 +88,7 @@ public class LaunchEndPoint implements Endpoint {
 
 	}
 
-	public void runCompiledSimulation(final GamaWebSocketServer server, final ByteBuffer compiledModel)
+	public void runCompiledSimulation(final IGamaWebSocketServer server, final ByteBuffer compiledModel)
 			throws IOException, GamaHeadlessException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
 		ObjectInput in = null;
@@ -106,7 +108,7 @@ public class LaunchEndPoint implements Endpoint {
 				ex.printStackTrace();
 			}
 		}
-		server.getDefaultApp().processorQueue.pushSimulation(selectedJob);
+		((GamaWebSocketServer) server).getDefaultApp().processorQueue.pushSimulation(selectedJob);
 
 	}
 
@@ -118,7 +120,7 @@ public class LaunchEndPoint implements Endpoint {
 	 * @throws IOException           Signals that an I/O exception has occurred.
 	 * @throws GamaHeadlessException the gama headless exception
 	 */
-	public void launchGamlSimulation(final GamaWebSocketServer server, WebSocket socket, final List<String> args,
+	public void launchGamlSimulation(final IGamaWebSocketServer server, WebSocket socket, final List<String> args,
 			final boolean export) throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
@@ -145,12 +147,12 @@ public class LaunchEndPoint implements Endpoint {
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.directOpenExperiment();
-		if (server.getExperimentsOf("" + socket.hashCode()) == null) {
+		if (((GamaWebSocketServer) server).get_listener().getExperimentsOf("" + socket.hashCode()) == null) {
 			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<String, ManualExperimentJob>();
-			server.getAllExperiments().put("" + socket.hashCode(), exps);
+			((GamaWebSocketServer) server).get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
 
 		}
-		server.getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
+		((GamaWebSocketServer) server).get_listener().getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
 
 		final int size = selectedJob.getListenedVariables().length;
 //		String lst_out = "";
@@ -169,12 +171,12 @@ public class LaunchEndPoint implements Endpoint {
 				+ geom.getLocation().x + "@" + geom.getLocation().y);
 		if (export)
 			selectedJob.exportVariables();
-		server.getDefaultApp().processorQueue.execute(selectedJob.executionThread);
+		((GamaWebSocketServer) server).getDefaultApp().processorQueue.execute(selectedJob.executionThread);
 	}
 
 	@Override
-	public void onMessage(final GamaWebSocketServer server, final WebSocket socket, final String message) {
-		// server.broadcast(message);
+	public void onMessage(final IGamaWebSocketServer server, final WebSocket socket, final String message) {
+		// server.get_listener().broadcast(message);
 		final String socket_id = "" + socket.hashCode();
 		System.out.println(socket + ": " + message);
 		String[] args = message.split("@");
@@ -191,31 +193,31 @@ public class LaunchEndPoint implements Endpoint {
 			break;
 		case "play":
 			System.out.println("play " + id_exp);
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				server.getExperiment(socket_id, id_exp).userStart();
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStart();
 			}
 			break;
 		case "step":
 			System.out.println("step " + id_exp);
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				server.getExperiment(socket_id, id_exp).userStep();
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStep();
 			}
 			break;
 		case "pause":
 			System.out.println("pause " + id_exp);
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				server.getExperiment(socket_id, id_exp).directPause();
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).directPause();
 			}
 			break;
 		case "stop":
 			System.out.println("stop " + id_exp);
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				server.getExperiment(socket_id, id_exp).directPause();
-				server.getExperiment(socket_id, id_exp).dispose();
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).directPause();
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).dispose();
 			}
 			break;
 		case "exit":
@@ -234,7 +236,7 @@ public class LaunchEndPoint implements Endpoint {
 	}
 
 	@Override
-	public void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer compiledModel) {
+	public void onMessage(IGamaWebSocketServer server, WebSocket conn, ByteBuffer compiledModel) {
 
 		try {
 			runCompiledSimulation(server, compiledModel);

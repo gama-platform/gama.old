@@ -1,4 +1,4 @@
-package msi.gama.headless.runtime;
+package ummisco.gama.network.websocket;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,8 +50,8 @@ public class WebSocketPrintStream extends PrintStream{
 		// TODO Auto-generated constructor stub
 	}
 	
-	GamaWebSocketServer mm;
-	public WebSocketPrintStream(OutputStream out, GamaWebSocketServer myChatServer) {
+	IGamaWebSocketServer mm;
+	public WebSocketPrintStream(OutputStream out, IGamaWebSocketServer myChatServer) {
 		super(out);
 		mm=myChatServer;
 	}

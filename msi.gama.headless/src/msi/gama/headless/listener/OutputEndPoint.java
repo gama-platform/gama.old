@@ -1,4 +1,4 @@
-package msi.gama.headless.runtime;
+package msi.gama.headless.listener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +18,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import ummisco.gama.network.websocket.Endpoint;
+import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 public class OutputEndPoint implements Endpoint {
 
@@ -27,7 +29,7 @@ public class OutputEndPoint implements Endpoint {
 	}
 
 	@Override
-	public void onMessage(GamaWebSocketServer server, WebSocket socket, String message) {
+	public void onMessage(IGamaWebSocketServer server, WebSocket socket, String message) {
 //		socket.send(message);
 
 		String[] args = message.split("@");
@@ -35,11 +37,11 @@ public class OutputEndPoint implements Endpoint {
 			final String socket_id = args[1];
 //			System.out.println(socket_id + ": " + message);
 			final String id_exp = args[2];
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				final boolean wasPaused = server.getExperiment(socket_id, id_exp).isPaused();
-				server.getExperiment(socket_id, id_exp).directPause();
-				IList<? extends IShape> agents = server.getExperiment(socket_id, id_exp).getSimulation().getSimulation()
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				final boolean wasPaused = ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).isPaused();
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).directPause();
+				IList<? extends IShape> agents = ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation().getSimulation()
 						.getPopulationFor(args[3]);
 //				IList<? extends IShape> agents=GamaListFactory.create();
 //				for(IPopulation pop:simulator.getSimulation().getMicroPopulations()) {
@@ -49,14 +51,14 @@ public class OutputEndPoint implements Endpoint {
 //				}
 				try {
 					socket.send(SaveHelper.buildGeoJSon(
-							server.getExperiment(socket_id, id_exp).getSimulation().getExperimentPlan().getAgent().getScope(),
+							((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation().getExperimentPlan().getAgent().getScope(),
 							agents));
 				} catch (GamaRuntimeException | IOException | SchemaException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} finally {
 					if (!wasPaused)
-						server.getExperiment(socket_id, id_exp).userStart();
+						((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStart();
 				}
 			}
 
@@ -64,19 +66,19 @@ public class OutputEndPoint implements Endpoint {
 			final String socket_id = args[1];
 //			System.out.println(socket_id + ": " + message);
 			final String id_exp = args[2];
-			if (server.getExperiment(socket_id, id_exp) != null
-					&& server.getExperiment(socket_id, id_exp).getSimulation() != null) {
-				final boolean wasPaused = server.getExperiment(socket_id, id_exp).isPaused();
-				server.getExperiment(socket_id, id_exp).directPause();
+			if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+					&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getSimulation() != null) {
+				final boolean wasPaused = ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).isPaused();
+				((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).directPause();
 				try {
 					socket.send(processInput(
-							server.getExperiment(socket_id, id_exp).getExperiment().getCurrentSimulation(), args[3]));
+							((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).getExperiment().getCurrentSimulation(), args[3]));
 				} catch (GamaRuntimeException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} finally {
 					if (!wasPaused)
-						server.getExperiment(socket_id, id_exp).userStart();
+						((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStart();
 				}
 			}
 
@@ -84,7 +86,7 @@ public class OutputEndPoint implements Endpoint {
 	}
 
 	@Override
-	public void onMessage(GamaWebSocketServer server, WebSocket conn, ByteBuffer message) {
+	public void onMessage(IGamaWebSocketServer server, WebSocket conn, ByteBuffer message) {
 		// TODO Auto-generated method stub
 
 	}
