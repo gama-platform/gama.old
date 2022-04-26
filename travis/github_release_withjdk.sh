@@ -63,10 +63,10 @@ n=0
 suff=($SUFFIX $SUFFIX_DEB) 
 for s in ${suff[@]}; 
 do
-    RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform_1.8.2-1_amd64."$($s | rev | cut -d "." -f 1 | rev)
+    RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform_1.8.2-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
 		NEWFILES[$n]='GAMA_1.8.2_Linux'$s 
 		n=$n+1
-		RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-jdk_1.8.2-1_amd64."$($s | rev | cut -d "." -f 1 | rev)
+		RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-jdk_1.8.2-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
 		NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$s
 		n=$n+1
 done
