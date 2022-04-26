@@ -81,6 +81,7 @@ jobs:
           # MacOS Family
           mv ${{ github.workspace }}/ummisco.gama.product/target/products/Gama*zip ${{ github.workspace }}
           mv ${{ github.workspace }}/travis/mac-sign.sh ${{ github.workspace }}
+          mv ${{ github.workspace }}/travis/what2sign.sh ${{ github.workspace }}
           mv ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/windows/* ${{ github.workspace }}
           # Debian Family
           mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.8.2-1_amd64.zip
@@ -94,6 +95,7 @@ jobs:
           path: |
             ./Gama1.7-macosx*zip
             ./mac-sign.sh
+            ./what2sign.sh
 
       - uses: actions/upload-artifact@v2
         if: env.CONTINUE == 'true'
@@ -131,77 +133,44 @@ jobs:
   #
   # MacOS signature Pipelines
   #
-  macOS-signing-x86_64:
+  macOS-pre-signing:
     needs: build
     if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: Signing zip
-        uses: ./.github/actions/macOS-sign
+      - uses: actions/download-artifact@v2
         with:
-          toSignedZipName: Gama1.7-macosx.cocoa.x86_64
-          IS_WITH_JDK: false
-          # Pass secrets
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
-          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
-          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-  macOS-signing-x86_64_withJDK:
-    needs: macOS-signing-x86_64
-    if: needs.build.outputs.continue_pipeline == 'true'
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Signing zip
-        uses: ./.github/actions/macOS-sign
-        with:
-          toSignedZipName: Gama1.7-macosx.cocoa.x86_64_withJDK
-          IS_WITH_JDK: true
-          # Pass secrets
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
-          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
-          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          name: gama-mac-unsigned
 
-  macOS-signing-aarch64:
-    needs: macOS-signing-x86_64_withJDK
-    runs-on: macos-latest
+      - name: Calculate what Jar to sign
+        run: |
+          bash what2sign.sh
+          cat needToSign.txt
+
+      - uses: actions/upload-artifact@v2
+        if: env.CONTINUE == 'true'
+        with:
+          name: gama-mac-what2sign
+          path: |
+            ./needToSign.txt
+
+  macOS-signing:
+    needs: macOS-pre-signing
+    runs-on: macos-latest    
+    strategy:
+      matrix:
+        zipName: [Gama1.7-macosx.cocoa.x86_64, Gama1.7-macosx.cocoa.x86_64_withJDK, Gama1.7-macosx.cocoa.aarch64, Gama1.7-macosx.cocoa.aarch64_withJDK]
     steps:
       - uses: actions/checkout@v2
+      
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-mac-what2sign
       
       - name: Signing zip
         uses: ./.github/actions/macOS-sign
         with:
-          toSignedZipName: Gama1.7-macosx.cocoa.aarch64
-          IS_WITH_JDK: false
-          # Pass secrets
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-          MACOS_DEV_ID: ${{ secrets.MACOS_DEV_ID }}
-          NOTARY_APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
-          NOTARY_PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
-          NOTARY_TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
-  macOS-signing-aarch64_withJDK:
-    needs: macOS-signing-aarch64
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Signing zip
-        uses: ./.github/actions/macOS-sign
-        with:
-          toSignedZipName: Gama1.7-macosx.cocoa.aarch64_withJDK
-          IS_WITH_JDK: true
+          toSignedZipName: ${{ matrix.zipName }}
           # Pass secrets
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
