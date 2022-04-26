@@ -196,7 +196,7 @@ echo
 echo "Upload new files..."
 echo
 
-for (( i=0; i<8; i++ ))
+for (( i=0; i<${#NEWFILES[@]}; i++ ))
 do     
 	FILE="${RELEASEFILES[$i]}"
 	NFILE="${NEWFILES[$i]}"
