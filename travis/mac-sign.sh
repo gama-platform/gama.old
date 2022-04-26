@@ -34,9 +34,9 @@ function signInJar(){
 # Sign .jar files
 while read j
 do
-    if [  -f "$f" ]; then
+    if [  -f "$j" ]; then
         signInJar "$j"
-        find . -not -wholename "*Gama.app*" -delete
+        find . -not -wholename "*Gama.app*" -not -name "needToSign.txt" -delete
     fi
 done < needToSign.txt
 
