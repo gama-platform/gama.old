@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -fr /opt/gama-platform
+rm /opt/gama-platform/headless/gama-headless

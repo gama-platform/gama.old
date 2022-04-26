@@ -1,4 +1,7 @@
 #!/bin/bash
 
 chmod a+rw -R /opt/gama-platform
-chmod a+x -R /opt/gama-platform/Gama
+chmod a+x -R /opt/gama-platform/Gama /opt/gama-platform/headless/gama-headless.sh
+
+# Add gama-headless.sh shortcut in PATH
+cd /usr/sbin && ln -s /opt/gama-platform/headless/gama-headless.sh gama-headless
