@@ -6,11 +6,29 @@ Bundle-Version: 1.8.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,
+ org.java_websocket,
+ org.java_websocket.client,
+ org.java_websocket.drafts,
+ org.java_websocket.enums,
+ org.java_websocket.exceptions,
+ org.java_websocket.extensions,
+ org.java_websocket.extensions.permessage_deflate,
+ org.java_websocket.framing,
+ org.java_websocket.handshake,
+ org.java_websocket.interfaces,
+ org.java_websocket.protocols,
+ org.java_websocket.server,
+ org.java_websocket.util,
+ org.slf4j,
+ org.slf4j.event,
+ org.slf4j.helpers,
+ org.slf4j.spi,
  ummisco.gama.network.common;
   uses:="msi.gama.extensions.messaging,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions,
    msi.gama.runtime",
+ ummisco.gama.network.common.socket,
  ummisco.gama.network.mqtt;
   uses:="msi.gama.metamodel.agent,
    org.eclipse.paho.client.mqttv3,
@@ -28,13 +46,16 @@ Export-Package: org.eclipse.paho.client.mqttv3,
    msi.gama.metamodel.agent,
    msi.gama.runtime,
    msi.gama.util,
-   ummisco.gama.network.common"
+   ummisco.gama.network.common",
+ ummisco.gama.network.websocket
 Require-Bundle: msi.gama.core,
  ummisco.gama.serialize
 Bundle-ClassPath: .,
  ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar,
  ext/arduino.jar,
- ext/jSerialComm-1.3.11.jar
+ ext/jSerialComm-1.3.11.jar,
+ ext/Java-WebSocket-1.5.3.jar,
+ ext/slf4j-api-2.0.0-alpha1.jar
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: ummisco.gama.network
  

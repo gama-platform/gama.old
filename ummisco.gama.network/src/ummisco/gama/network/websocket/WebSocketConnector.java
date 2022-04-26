@@ -8,10 +8,9 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package ummisco.gama.network.tcp;
+package ummisco.gama.network.websocket;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import msi.gama.extensions.messaging.GamaMessage;
@@ -23,25 +22,24 @@ import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
-import ummisco.gama.network.common.socket.AbstractProtocol;
 import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class TCPConnection.
  */
-public class TCPConnector extends Connector {
-
+public class WebSocketConnector extends Connector {
+	
 	/** The  tcp server. */
-	public static String _TCP_SERVER = "__tcp_server";
+	public static String _WEBSOCKET_SERVER = "__websocket_server";
 	
 	/** The  tcp socket. */
-	public static String _TCP_SOCKET = "__tcp_socket";
+	public static String _WEBSOCKET_SOCKET = "__websocket_socket";
 	
 	/** The  tcp client. */
-	public static String _TCP_CLIENT = "__tcp_client";
+	public static String _WEBSOCKET_CLIENT = "__websocket_client";
 	
 	/** The  tcp so timeout. */
-	public static Integer _TCP_SO_TIMEOUT = 100;
+	public static Integer _WEBSOCKET_SO_TIMEOUT = 100;
 
 	/** The default host. */
 	public static String DEFAULT_HOST = "localhost";
@@ -64,7 +62,7 @@ public class TCPConnector extends Connector {
 	 * @param scope the scope
 	 * @param isServer the is server
 	 */
-	public TCPConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
+	public WebSocketConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
 		this.isServer = isServer;
 		this.isRaw = isRaw;
 		this.remoteBoxName = new ArrayList<>();
@@ -95,7 +93,7 @@ public class TCPConnector extends Connector {
 		final String server = this.getConfigurationParameter(SERVER_URL);
 		final int port = Integer.valueOf(this.getConfigurationParameter(SERVER_PORT)).intValue();
 		if (this.isServer) {
-			socket = new ServerService(port) {
+			socket = new WebSocketServerService(port) {
 				@Override
 				public void receivedMessage(final String sender, final String message) {
 					final MessageType mte = MessageFactory.identifyMessageType(message);
@@ -106,45 +104,9 @@ public class TCPConnector extends Connector {
 						storeMessage(r, message);
 					}
 				}
-
-				@Override
-				public void onOpen(AbstractProtocol conn) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onClose(AbstractProtocol conn, int code, String reason, boolean remote) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onMessage(AbstractProtocol conn, String message) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onMessage(AbstractProtocol conn, ByteBuffer message) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onError(AbstractProtocol conn, Exception ex) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void onStart() {
-					// TODO Auto-generated method stub
-					
-				}
 			};
 		} else {
-			socket = new ClientService(server, port, this) {
+			socket = new WebSocketClientService(server, port, this) {
 				@Override
 				public void receivedMessage(final String sender, final String message) {
 					final MessageType mte = MessageFactory.identifyMessageType(message);

@@ -50,6 +50,8 @@ import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.listener.GamaListener;
+import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
@@ -366,7 +368,8 @@ public class Application implements IApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			GamaWebSocketServer.newInstance(this.socket, this);
+//			GamaListener.newInstance(this.socket, this);
+			GamaListener gl=new GamaListener(this.socket,this);
 		} else {
 			runSimulation(args);
 		}

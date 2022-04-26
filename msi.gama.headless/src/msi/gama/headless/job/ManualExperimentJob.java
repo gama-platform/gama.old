@@ -25,8 +25,7 @@ import org.java_websocket.WebSocket;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.RichOutput;
-import msi.gama.headless.runtime.GamaWebSocketServer;
-import msi.gama.headless.runtime.SimulationRuntime.DebugStream;
+import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -34,7 +33,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 /**
  * The Class ExperimentJob.
@@ -127,9 +126,9 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		do_export = b;
 	}
 
-	public ManualExperimentJob(ExperimentJob clone, GamaWebSocketServer s, WebSocket sk) {
+	public ManualExperimentJob(ExperimentJob clone, IGamaWebSocketServer s, WebSocket sk) {
 		super(clone);
-		server = s;
+		server = (GamaWebSocketServer) s;
 		socket = sk;
 		commands = new ArrayBlockingQueue<>(10);
 //		this.experiment = experiment;

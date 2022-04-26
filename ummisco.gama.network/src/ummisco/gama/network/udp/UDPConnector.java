@@ -27,6 +27,7 @@ import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
+import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class UDPConnector.
@@ -158,5 +159,10 @@ public class UDPConnector extends Connector {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
+	}
+
+	@Override
+	public SocketService getSocketService() { 
+		return null;
 	}
 }

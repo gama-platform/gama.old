@@ -45,6 +45,7 @@ import ummisco.gama.network.mqtt.MQTTConnector;
 import ummisco.gama.network.serial.ArduinoConnector;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
+import ummisco.gama.network.websocket.WebSocketConnector;
 
 /**
  * The Class NetworkSkill.
@@ -211,6 +212,16 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 				connector.configure(IConnector.PACKET_SIZE, "" + packet_size);
+			} else if (INetworkSkill.WEBSOCKET_SERVER.equals(protocol)) {
+				DEBUG.OUT("create WebSocket server");
+				connector = new WebSocketConnector(scope, true, raw_package);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port); 
+			} else if (INetworkSkill.WEBSOCKET_CLIENT.equals(protocol)) {
+				DEBUG.OUT("create WebSocket client");
+				connector = new WebSocketConnector(scope, false, raw_package);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port); 
 			} else if (INetworkSkill.TCP_SERVER.equals(protocol)) {
 				DEBUG.OUT("create TCP serveur");
 				connector = new TCPConnector(scope, true, raw_package);

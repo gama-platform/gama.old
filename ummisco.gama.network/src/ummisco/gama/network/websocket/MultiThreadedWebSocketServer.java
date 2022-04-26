@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package ummisco.gama.network.tcp;
+package ummisco.gama.network.websocket;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,7 +23,7 @@ import ummisco.gama.network.skills.INetworkSkill;
 /**
  * The Class MultiThreadedSocketServer.
  */
-public class MultiThreadedSocketServer extends Thread {
+public class MultiThreadedWebSocketServer extends Thread {
 
 	static {
 		DEBUG.ON();
@@ -70,7 +70,7 @@ public class MultiThreadedSocketServer extends Thread {
 	 * @param a the a
 	 * @param ss the ss
 	 */
-	public MultiThreadedSocketServer(final IAgent a, final ServerSocket ss) {
+	public MultiThreadedWebSocketServer(final IAgent a, final ServerSocket ss) {
 		myAgent = a;
 		myServerSocket = ss;
 	}
@@ -97,13 +97,13 @@ public class MultiThreadedSocketServer extends Thread {
 					if (list_net_agents != null && !list_net_agents.contains(clientSocket.toString())) {
 						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
-						clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
+//						clientSocket.setSoTimeout(TCPConnectorOld._TCP_SO_TIMEOUT);
 						clientSocket.setKeepAlive(true);
 
-						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
+						final WebSocketClientServiceThread cliThread = new WebSocketClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
 
-						myAgent.setAttribute(TCPConnector._TCP_CLIENT + clientSocket.toString(), cliThread);
+						myAgent.setAttribute(WebSocketConnector._WEBSOCKET_CLIENT + clientSocket.toString(), cliThread);
 					}
 				}
 
@@ -128,7 +128,7 @@ public class MultiThreadedSocketServer extends Thread {
 		}
 		// DEBUG.OUT("closed ");
 		try {
-			myAgent.setAttribute(TCPConnector._TCP_SERVER + myServerSocket.getLocalPort(), null);
+			myAgent.setAttribute(WebSocketConnector._WEBSOCKET_SERVER + myServerSocket.getLocalPort(), null);
 			myServerSocket.close();
 		} catch (final Exception e) {
 			// TODO Auto-generated catch block
