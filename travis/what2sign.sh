@@ -32,7 +32,7 @@ function parseApp(){
     while read f
     do
 		if haveSomethingToSign "$f"; then
-			echo "Need to sign $f"
+			echo "==> Need to sign $f <=="
 			echo $f >> needToSign.txt
 		else
 			if [ $(jar tf "$f" | grep '\.jar' | wc -l) -gt 0 ]; then
