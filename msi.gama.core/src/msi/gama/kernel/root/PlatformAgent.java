@@ -332,10 +332,10 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@getter (
 			value = "free_memory",
 			initializer = true)
-	public int getAvailableMemory() {
+	public long getAvailableMemory() {
 		final long allocatedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		final long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-		return (int) presumableFreeMemory;
+		return presumableFreeMemory;
 	}
 
 	/**
@@ -346,8 +346,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@getter (
 			value = "max_memory",
 			initializer = true)
-	public int getMaxMemory() {
-		return (int) Runtime.getRuntime().maxMemory();
+	public long getMaxMemory() {
+		return Runtime.getRuntime().maxMemory();
 	}
 
 	/**
