@@ -267,6 +267,13 @@ jobs:
           cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
 
+      - name: Tweaks for package w/ JDK
+        if: contains(matrix.zipName, 'jdk')
+        run: |
+          sed -i "s/gama-platform-jdk$/gama-platform/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+          sed -i "s/Package: gama-platform$/Package: gama-platform-jdk/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+          sed -i "/^Depends:.*$/d" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+
       - name: Build DEB archive
         run: |
           dpkg --build ${{ github.workspace }}/${{ matrix.zipName }}
