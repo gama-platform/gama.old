@@ -294,6 +294,10 @@ jobs:
         with:
           name: gama-linux-deb
 
+      - name: Update apt databse
+        run: |
+          sudo apt update
+
       - name: Install, Run & Remove (w JDK)
         shell: bash
         run: |
