@@ -307,13 +307,14 @@ jobs:
         shell: bash
         run: |
           sudo apt install ./gama-platform-jdk_1.8.2-1_amd64.deb
-          /opt/gama-platform/headless/gama-headless.sh -help
+          gama-headless -help
 
       - name: Install, Run & Remove (w/o JDK)
         shell: bash
         run: |
           sudo apt install -y ./gama-platform_1.8.2-1_amd64.deb
-          /opt/gama-platform/headless/gama-headless.sh -help
+          export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+          gama-headless -help
           sudo apt remove -y gama-platform
   
   #
