@@ -266,6 +266,8 @@ jobs:
           mv ${{ github.workspace }}/${{ matrix.zipName }}/gama-platform.desktop ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
+          # Fix relative path as we know where its installed 
+          sed -i "s/\".*\.\/p/\/opt\/gama-platform\/p/g" ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/headless/gama-headless.sh
 
       - name: Tweaks for package w/ JDK
         if: contains(matrix.zipName, 'jdk')
