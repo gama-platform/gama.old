@@ -9,7 +9,7 @@ public interface IRawNetworkSkill {
 	
 	public static final String TCP_SKILL_NAME 		= "tcp";
 	
-	public static final String WAIT_FOR_CONNEXION	= "wait_for_connexion";
+	public static final String WAIT_FOR_CONNECTION	= "wait_for_connection";
 	public static final String CREATE_SERVER 		= "create_server";
 	public static final String CONNECT_TO_SERVER 	= "connect_to_server";
 	public static final String SEND 				= "send";

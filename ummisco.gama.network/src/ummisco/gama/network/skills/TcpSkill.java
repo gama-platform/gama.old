@@ -1,11 +1,8 @@
 package ummisco.gama.network.skills;
 
 
-import java.io.BufferedReader;
+import java.awt.Color;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -15,6 +12,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.skills.Skill;
@@ -44,7 +42,7 @@ public class TcpSkill extends Skill{
 	
 	
 	@action(
-			name = IRawNetworkSkill.WAIT_FOR_CONNEXION,
+			name = IRawNetworkSkill.WAIT_FOR_CONNECTION,
 			args = {
 					@arg(
 							name	= IRawNetworkSkill.SERVER_NAME,
@@ -56,7 +54,7 @@ public class TcpSkill extends Skill{
 					value 	= "Function that blocks the execution until a client connects to the server",
 					returns	= "The identifier of the socket for communicating afterward")
 			)
-	public String waitForConnexion(final IScope scope) {
+	public String waitForconnection(final IScope scope) {
 		
 		String ret 		= null;
 		String server 	= (String) scope.getArg(IRawNetworkSkill.SERVER_NAME, IType.STRING);
@@ -70,6 +68,8 @@ public class TcpSkill extends Skill{
 				ret = sock_desc;
 				
 			} catch (IOException e) {
+				var error_mess = e.getMessage();
+				scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
 				e.printStackTrace();
 			}
 		}
@@ -99,6 +99,9 @@ public class TcpSkill extends Skill{
 		try {
 			sock = new ServerSocket(port);
 		} catch (IOException e) {
+
+			var error_mess = e.getMessage();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
 			e.printStackTrace();
 		}
 		
@@ -142,7 +145,9 @@ public class TcpSkill extends Skill{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			DEBUG.OUT("Unable to connect to server with url '" + server_url +"' and port '" + port + "' : " + e.toString());
+			var error_mess = "Unable to connect to server with url '" + server_url +"' and port '" + port + "' : " + e.toString();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.OUT(error_mess);
 			return null;
 		}  
 
@@ -171,11 +176,15 @@ public class TcpSkill extends Skill{
 		final String content = (String)	scope.getArg(IRawNetworkSkill.CONTENT, 	IType.STRING);
 		
 		if (to_desc == null || ! sockets.containsKey(scope, to_desc)) {
-			DEBUG.OUT("unknown client value for the 'to' facet : '" + to_desc + "'");			
+			var error_mess = "unknown client value for the 'to' facet : '" + to_desc + "'";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.OUT(error_mess);			
 			return false;
 		}
 		if (content == null) {
-			DEBUG.OUT("content cannot be nil");			
+			var error_mess = "content cannot be nil";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.OUT(error_mess);			
 			return false;
 		}
 		
@@ -187,7 +196,8 @@ public class TcpSkill extends Skill{
 			sock_to.getOutputStream().write(content_bytes);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			var error_mess = e.getMessage();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(),(GamaColor) Color.red);
 			return false;
 		}
 		
@@ -214,7 +224,9 @@ public class TcpSkill extends Skill{
 		final String from_desc = (String)	scope.getArg(IRawNetworkSkill.FROM, 		IType.STRING);
 
 		if (from_desc == null || ! sockets.containsKey(scope, from_desc)) {
-			DEBUG.ERR("unknown connexion value for the 'from' facet : '" + from_desc + "'");			
+			var error_mess = "unknown connection value for the 'from' facet : '" + from_desc + "'";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);			
 			return null;
 		}
 		
@@ -246,7 +258,9 @@ public class TcpSkill extends Skill{
 		final String from_desc = (String)	scope.getArg(IRawNetworkSkill.FROM, 		IType.STRING);
 
 		if (from_desc == null || ! sockets.containsKey(scope, from_desc)) {
-			DEBUG.ERR("unknown connexion value for the 'from' facet : '" + from_desc + "'");			
+			var error_mess = "unknown connection value for the 'from' facet : '" + from_desc + "'";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);			
 			return null;
 		}
 		
@@ -262,7 +276,9 @@ public class TcpSkill extends Skill{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			DEBUG.ERR("impossible to read line from '" + from_desc + "' : " + e.toString());
+			var error_mess = "impossible to read line from '" + from_desc + "' : " + e.toString();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);
 			return null;
 		}
 
@@ -299,7 +315,9 @@ public class TcpSkill extends Skill{
 		DEBUG.OUT("reading " + length + " bytes from " + from_desc);
 		
 		if (from_desc == null || ! sockets.containsKey(scope, from_desc)) {
-			DEBUG.ERR("unknown connexion value for the 'from' facet : '" + from_desc + "'");			
+			var error_mess = "unknown connection value for the 'from' facet : '" + from_desc + "'";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);			
 			return null;
 		}
 		
@@ -313,7 +331,9 @@ public class TcpSkill extends Skill{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			DEBUG.ERR("impossible to read line from '" + from_desc + "' : " + e.toString());
+			var error_mess = "impossible to read line from '" + from_desc + "' : " + e.toString();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);
 			return null;
 		}
 
@@ -350,12 +370,16 @@ public class TcpSkill extends Skill{
 		DEBUG.OUT("reading bytes from " + from_desc + " until the string '" + end_string + "' is met");
 		
 		if (from_desc == null || ! sockets.containsKey(scope, from_desc)) {
-			DEBUG.ERR("unknown connexion value for the 'from' facet : '" + from_desc + "'");			
+			var error_mess = "unknown connection value for the 'from' facet : '" + from_desc + "'";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);			
 			return null;
 		}
 		
 		if (end_string == null || end_string.length() == 0) {
-			DEBUG.ERR(IRawNetworkSkill.END_STRING + " must be at least one caracter long");
+			var error_mess = IRawNetworkSkill.END_STRING + " must be at least one caracter long";
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);
 			return null;
 		}
 		
@@ -390,7 +414,9 @@ public class TcpSkill extends Skill{
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			DEBUG.ERR("impossible to read line from '" + from.toString() + "' : " + e.toString());
+			var error_mess = "impossible to read line from '" + from.toString() + "' : " + e.toString();
+			scope.getGui().getConsole().informConsole(error_mess, scope.getRoot(), (GamaColor) Color.red);
+			DEBUG.ERR(error_mess);
 			return null;
 		}
 		
