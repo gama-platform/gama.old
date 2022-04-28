@@ -266,6 +266,15 @@ jobs:
           mv ${{ github.workspace }}/${{ matrix.zipName }}/gama-platform.desktop ${{ github.workspace }}/${{ matrix.zipName }}/usr/share/applications/gama-platform.desktop
           cd ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform && unzip ${{ matrix.zipName }}.zip && cd -
           rm ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/*.zip
+          # Fix relative path as we know where its installed 
+          sed -i "s/\".*\.\/p/\/opt\/gama-platform\/p/g" ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/headless/gama-headless.sh
+
+      - name: Tweaks for package w/ JDK
+        if: contains(matrix.zipName, 'jdk')
+        run: |
+          sed -i "s/gama-platform-jdk$/gama-platform/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+          sed -i "s/Package: gama-platform$/Package: gama-platform-jdk/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+          sed -i "/^Depends:.*$/d" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
 
       - name: Build DEB archive
         run: |
@@ -287,17 +296,20 @@ jobs:
         with:
           name: gama-linux-deb
 
+      - name: Update apt databse
+        run: |
+          sudo apt update
+
       - name: Install, Run & Remove (w JDK)
         shell: bash
         run: |
           sudo apt install ./gama-platform-jdk_1.8.2-1_amd64.deb
           /opt/gama-platform/headless/gama-headless.sh -help
-          sudo apt remove -y gama-platform
 
       - name: Install, Run & Remove (w/o JDK)
         shell: bash
         run: |
-          sudo apt install -y ./gama-platform_1.8.2-1_amd64.deb openjdk-17-jdk
+          sudo apt install -y ./gama-platform_1.8.2-1_amd64.deb
           /opt/gama-platform/headless/gama-headless.sh -help
           sudo apt remove -y gama-platform
   
