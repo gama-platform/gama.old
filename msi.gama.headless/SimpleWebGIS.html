@@ -127,7 +127,17 @@
 
 			// socket.send("launch@C:\\GAMA\\configuration\\org.eclipse.osgi\\400\\0\\.cp\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml@traffic");
 			// socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Macro\\Models\\Experiments\\LockDown.gaml@lockdown");
-			socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Meso\\Models\\Experiments\\Lockdown\\LockDown.gaml@Lockdown"); 
+			// socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Meso\\Models\\Experiments\\Lockdown\\LockDown.gaml@Lockdown"); 
+			
+			// socket.send("launch@/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml@Lockdown"); 
+			var cmd = {
+			'type': 'launch',
+			'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
+			'experiment':'Lockdown',
+			'auto-export':'true'
+		};
+ 
+			socket.send(JSON.stringify(cmd)); 
 			socket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
@@ -139,7 +149,16 @@
 						essential: true,
 						zoom: 15
 					});
-					socket.send("play@" + exp_id);
+					cmd = {
+						'type': 'play',
+						'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
+						'experiment':'Lockdown',
+						
+						'id_exp': exp_id, 
+					};
+								//socket.send("play@" + exp_id);
+								
+					socket.send(JSON.stringify(cmd)); 
 					updateSource = setInterval(() => {
 						sk.send("output@" + socket_id + "@" + exp_id + "@Individual");
 						sk.onmessage = function (event) {
