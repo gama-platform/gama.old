@@ -32,7 +32,7 @@ esac
 echo "******************************************************************"
 echo "* GAMA version 1.8.2                                             *"
 echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "* (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.workspace
 # w/ output folder

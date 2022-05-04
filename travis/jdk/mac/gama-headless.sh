@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# Check if good Java version before everything
+if [[ "$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2 | cut -d "." -f 1)" != "17" ]]; then
+  echo "You should use Java 17 to run GAMA"
+  exit 1
+fi
+
 memory=4096m
 
 for arg do
@@ -16,7 +23,7 @@ done
 
 workspaceCreate=0
 case "$@" in 
-  *-help*|*-version*|*-validate*|*-test*|*-xml*|*-batch*)
+  *-help*|*-version*|*-validate*|*-test*|*-xml*|*-batch*|*-write-xmi*)
     workspaceCreate=1
     ;;
 esac
@@ -25,7 +32,7 @@ esac
 echo "******************************************************************"
 echo "* GAMA version 1.8.2                                             *"
 echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2021 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "* (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.workspace
 # w/ output folder
