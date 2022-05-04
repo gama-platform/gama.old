@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -318,6 +320,87 @@ public class Files {
 		if (!file.isDirectory()) return file.delete();
 		deleteDir(file);
 		return !exist_folder(scope, source);
+	}
+	
+	
+	/**
+	 * Delete.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @return true, if successful
+	 */
+	@operator (
+			value = "rename_file",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "rename/move a file or a folder",
+			examples = { @example (
+					value = "bool rename_file_ok <- copy_file([\"../includes/my_folder\",\"../includes/my_new_folder\"];",
+					isExecutable = false) })
+	@no_test
+	public static boolean rename(final IScope scope, final String source, final String destination) {
+		if (source == null || scope == null || destination == null) return false;
+		final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+		final String pathDest = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+		File sourceFile = new File(pathSource);
+		File destFile = new File(pathDest);
+		return sourceFile.renameTo(destFile) ;
+	}
+
+	/**
+	 * Delete.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @return true, if successful
+	 */
+	@operator (
+			value = "copy_file",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "copy a file or a folder",
+			examples = { @example (
+					value = "bool copy_file_ok <- copy_file([\"../includes/my_folder\",\"../includes/my_new_folder\"];",
+					isExecutable = false) })
+	@no_test
+	public static boolean copy(final IScope scope, final String source, final String destination) {
+		if (source == null || scope == null || destination == null) return false;
+		final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
+		final String pathDest = FileUtils.constructAbsoluteFilePath(scope, destination, false);
+		File file = new File(pathSource);
+		if (!file.isDirectory()) {
+			Path dest = null;
+			try {
+				dest = java.nio.file.Files.copy(Paths.get(pathSource), Paths.get(pathDest));
+			} catch (IOException e) {
+				GamaRuntimeException.error("Error when copying the file " + e.getMessage(), scope);
+			}
+			return (dest != null) && (dest.toFile().exists());
+		}
+		 try {
+			java.nio.file.Files.walk(Paths.get(pathSource))
+			  .forEach(s -> {
+			      Path dest = Paths.get(pathDest, s.toString()
+			        .substring(pathSource.length()));
+			      try {
+			    	  java.nio.file.Files.copy(s, dest);
+			      } catch (IOException e) {
+			          e.printStackTrace();
+			      }
+			  });
+		} catch (IOException e) {
+			GamaRuntimeException.error("Error when copying the folder " + e.getMessage(), scope);
+		}
+		return !exist_folder(scope, destination);
 	}
 
 	/**
