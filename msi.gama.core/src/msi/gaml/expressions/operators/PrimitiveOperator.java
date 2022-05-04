@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PrimitiveOperator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PrimitiveOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -22,7 +22,6 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.AbstractExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.operators.IOperator.IOperatorVisitor;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
@@ -40,24 +39,29 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	/** The parameters. */
 	final Arguments parameters;
-	
+
 	/** The target. */
 	final IExpression target;
-	
+
 	/** The action. */
 	final StatementDescription action;
-	
+
 	/** The target species. */
 	final String targetSpecies;
 
 	/**
 	 * Instantiates a new primitive operator.
 	 *
-	 * @param callerContext the caller context
-	 * @param action the action
-	 * @param target the target
-	 * @param args the args
-	 * @param superInvocation the super invocation
+	 * @param callerContext
+	 *            the caller context
+	 * @param action
+	 *            the action
+	 * @param target
+	 *            the target
+	 * @param args
+	 *            the args
+	 * @param superInvocation
+	 *            the super invocation
 	 */
 	public PrimitiveOperator(final IDescription callerContext, final StatementDescription action,
 			final IExpression target, final Arguments args, final boolean superInvocation) {
@@ -65,28 +69,31 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		if (superInvocation) {
 			// target is not null
 			this.targetSpecies = target.getGamlType().getSpecies().getName();
+		} else if (target == null) {
+			targetSpecies = callerContext.getSpeciesContext().getName();
 		} else {
-			if (target == null) {
-				targetSpecies = callerContext.getSpeciesContext().getName();
-			} else {
-				targetSpecies = null;
-			}
+			targetSpecies = null;
 		}
 		this.action = action;
 		parameters = args;
+	}
 
+	public PrimitiveOperator(final StatementDescription action, final IExpression target, final Arguments args,
+			final String targetSpecies) {
+		this.target = target;
+		this.targetSpecies = targetSpecies;
+		this.action = action;
+		parameters = args;
 	}
 
 	@Override
-	public String getName() {
-		return action.getName();
-	}
+	public String getName() { return action.getName(); }
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		if (scope == null) { return null; }
+		if (scope == null) return null;
 		final IAgent target = this.target == null ? scope.getAgent() : Cast.asAgent(scope, this.target.value(scope));
-		if (target == null) { return null; }
+		if (target == null) return null;
 		// AD 13/05/13 The target should not be pushed so early to the scope, as
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
@@ -97,31 +104,28 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		// Then, (2) to set the caller to the actual agent on the scope (in the
 		// context of which the arguments need to
 		// be evaluated
-		if (executer != null) {
-			// And finally, (3) to execute the executer on the target (it will
+		if (executer != null) // And finally, (3) to execute the executer on the target (it will
 			// be pushed in the scope)
 			return scope.execute(executer, target, getRuntimeArgs(scope)).getValue();
-		}
 		return null;
 	}
 
 	/**
 	 * Gets the runtime args.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the runtime args
 	 */
 	public Arguments getRuntimeArgs(final IScope scope) {
-		if (parameters == null) { return null; }
+		if (parameters == null) return null;
 		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
 		// Copy-paste of DoStatement. Verify that this copy is necessary here.
 		return parameters.resolveAgainst(scope);
 	}
 
 	@Override
-	public boolean isConst() {
-		return false;
-	}
+	public boolean isConst() { return false; }
 
 	@Override
 	public String getTitle() {
@@ -133,14 +137,10 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	}
 
 	@Override
-	public String getDocumentation() {
-		return action.getDocumentation();
-	}
+	public String getDocumentation() { return action.getDocumentation(); }
 
 	@Override
-	public String getDefiningPlugin() {
-		return action.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return action.getDefiningPlugin(); }
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -158,12 +158,14 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	/**
 	 * Args to gaml.
 	 *
-	 * @param sb the sb
-	 * @param includingBuiltIn the including built in
+	 * @param sb
+	 *            the sb
+	 * @param includingBuiltIn
+	 *            the including built in
 	 * @return the string
 	 */
 	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
-		if (parameters == null || parameters.isEmpty()) { return ""; }
+		if (parameters == null || parameters.isEmpty()) return "";
 		parameters.forEachFacet((name, expr) -> {
 			if (Strings.isGamaNumber(name)) {
 				sb.append(expr.serialize(false));
@@ -173,23 +175,19 @@ public class PrimitiveOperator implements IExpression, IOperator {
 			sb.append(", ");
 			return true;
 		});
-		if (sb.length() > 0) {
-			sb.setLength(sb.length() - 2);
-		}
+		if (sb.length() > 0) { sb.setLength(sb.length() - 2); }
 		return sb.toString();
 	}
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
-		if (alreadyProcessed.contains(this)) { return; }
+		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
 		if (parameters != null) {
 			parameters.forEachFacet((name, exp) -> {
 				final IExpression expression = exp.getExpression();
-				if (expression != null) {
-					expression.collectUsedVarsOf(species, alreadyProcessed, result);
-				}
+				if (expression != null) { expression.collectUsedVarsOf(species, alreadyProcessed, result); }
 				return true;
 
 			});
@@ -203,15 +201,11 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public void setName(final String newName) {}
 
 	@Override
-	public IType<?> getGamlType() {
-		return action.getGamlType();
-	}
+	public IType<?> getGamlType() { return action.getGamlType(); }
 
 	@Override
 	public void dispose() {
-		if (parameters != null) {
-			parameters.dispose();
-		}
+		if (parameters != null) { parameters.dispose(); }
 	}
 
 	@Override
@@ -221,7 +215,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return this;
+		return new PrimitiveOperator(action, target.resolveAgainst(scope), parameters.resolveAgainst(scope),
+				targetSpecies);
 	}
 
 	@Override
@@ -234,9 +229,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		if (parameters != null) {
 			parameters.forEachFacet((name, exp) -> {
 				final IExpression expr = exp.getExpression();
-				if (expr instanceof IOperator) {
-					visitor.visit((IOperator) expr);
-				}
+				if (expr instanceof IOperator) { visitor.visit((IOperator) expr); }
 				return true;
 			});
 		}
@@ -246,14 +239,12 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	// TODO The arguments are not ordered...
 	@Override
 	public IExpression arg(final int i) {
-		if (i < 0 || i > parameters.size()) { return null; }
+		if (i < 0 || i > parameters.size()) return null;
 		return parameters.getExpr(i);
 		// return Iterables.get(parameters.values(), i).getExpression();
 	}
 
 	@Override
-	public OperatorProto getPrototype() {
-		return null;
-	}
+	public OperatorProto getPrototype() { return null; }
 
 }
