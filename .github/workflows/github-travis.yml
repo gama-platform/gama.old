@@ -320,7 +320,7 @@ jobs:
           sudo apt remove -y gama-platform
   aur-archive:
     # https://ostechnix.com/convert-deb-packages-arch-linux-packages/
-    needs: debian-test-installer
+    needs: debian-archive
     runs-on: m0rf30/arch-yay
     strategy:
       matrix:
