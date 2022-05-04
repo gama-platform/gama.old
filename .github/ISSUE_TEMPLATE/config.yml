@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a problem regarding GAMA's website and documentation
+    url:  https://github.com/gama-platform/gama-platform.github.io/issues/new/choose
+    about: Please open issues relating to http://gama-platform.org and the online documentation in their own repository
+  - name: Ask for support regarding your model (best practices, problem of data, ...) or how to use GAMA
+    url:  https://groups.google.com/forum/#!forum/gama-platform
+    about: Please use the community mailing-list for support and questions related to the use of GAMA, advices and problems in your models
+  - name: Discuss possible enhancements, shortcomings or ideas about GAMA  
+    url:  https://github.com/gama-platform/gama/discussions
+    about: Please use discussions for questions related to enhancements to GAMA, use and future of the platform before turning them into issues !
+  - name: Thank you for your contributions ! 
+    url:  
+    about: Your contributions to open source projects, large or small, make great projects like GAMA possible. Thank you for taking the time to contribute.
