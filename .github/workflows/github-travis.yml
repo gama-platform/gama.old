@@ -318,42 +318,6 @@ jobs:
           java -version
           gama-headless -help
           sudo apt remove -y gama-platform
-  aur-archive:
-    # https://ostechnix.com/convert-deb-packages-arch-linux-packages/
-    needs: debian-archive
-    runs-on: m0rf30/arch-yay
-    strategy:
-      matrix:
-        zipName: [gama-platform, gama-platform-jdk]
-    env:
-      working-directory: /home/user
-    steps:
-      # Get Linux deb archive
-      - uses: actions/download-artifact@v2
-        with:
-          name: gama-linux-deb
-
-      - name: Prepare VM
-        run: |
-          yay -Syy
-          yay -S bash binutils fakeroot pkgfile debtap
-          sudo debtap -u
-
-      - name: Make AUR file
-        run: debtap -Q ${{ matrix.zipName }}_1.8.2-1_amd64.deb
-
-      - name: Test AUR file
-        run: |
-          sudo pacman -U ${{ matrix.zipName }}-1.8.2-1-x86_64.pkg.tar.zst
-          gama-headless -help
-
-      #- name: Upload AUR file
-      #  run: 
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: gama-linux-aur
-          path: ${{ matrix.zipName }}.pkg.tar.zst
   
   #
   # Windows packaging Pipelines
@@ -400,7 +364,7 @@ jobs:
   # Github releasing
   #
   publish-archives:
-    needs: [macOS-signing, debian-test-installer, aur-archive, windows-msi]
+    needs: [macOS-signing, debian-test-installer, windows-msi]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
