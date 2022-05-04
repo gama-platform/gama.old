@@ -71,13 +71,6 @@ do
 		NEWFILES[$n]='GAMA_1.8.2_Linux_with_JDK'$s
 		n=$n+1
 done
-# Linux for ArchLinux
-RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-1.8.2-1-x86_64.pkg.tar.zst" 
-NEWFILES[$n]='GAMA_1.8.2_ArchLinux'$SUFFIX_AUR
-n=$n+1
-RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-jdk-1.8.2-1-x86_64.pkg.tar.zst" 
-NEWFILES[$n]='GAMA_1.8.2_ArchLinux_with_JDK'$SUFFIX_AUR
-n=$n+1
 
 
 # macOS Intel & M1
