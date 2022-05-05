@@ -344,13 +344,13 @@ public class ModelDescription extends SpeciesDescription {
 
 		if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
-			if (experiments == null) { experiments = GamaMapFactory.createUnordered(); }
+			if (experiments == null) { experiments = GamaMapFactory.createOrdered(); }
 			experiments.put(s, (ExperimentDescription) child);
 		} else {
 			super.addChild(child);
 		}
 
-		return child;
+		return child; 
 	}
 
 	@Override
