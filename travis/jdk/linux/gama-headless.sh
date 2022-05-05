@@ -1,11 +1,4 @@
 #!/bin/bash
-
-# Check if good Java version before everything
-if [[ "$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2 | cut -d "." -f 1)" != "17" ]]; then
-  echo "You should use Java 17 to run GAMA"
-  exit 1
-fi
-
 memory=4096m
 
 for arg do
