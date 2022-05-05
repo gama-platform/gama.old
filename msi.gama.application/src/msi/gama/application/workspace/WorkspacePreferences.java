@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WorkspacePreferences.java, in msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WorkspacePreferences.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.application.workspace;
 
@@ -34,22 +34,22 @@ public class WorkspacePreferences {
 
 	/** The Constant KEY_WORSPACE_PATH. */
 	private static final String KEY_WORSPACE_PATH = "pref_workspace_path";
-	
+
 	/** The Constant KEY_WORKSPACE_REMEMBER. */
 	private static final String KEY_WORKSPACE_REMEMBER = "pref_workspace_remember";
-	
+
 	/** The Constant KEY_WORKSPACE_LIST. */
 	private static final String KEY_WORKSPACE_LIST = "pref_workspace_list";
-	
+
 	/** The Constant KEY_ASK_REBUILD. */
 	private static final String KEY_ASK_REBUILD = "pref_ask_rebuild";
-	
+
 	/** The Constant KEY_ASK_OUTDATED. */
 	private static final String KEY_ASK_OUTDATED = "pref_ask_outdated";
-	
+
 	/** The Constant WORKSPACE_IDENTIFIER. */
 	public static final String WORKSPACE_IDENTIFIER = ".gama_application_workspace";
-	
+
 	/** The model identifier. */
 	private static String MODEL_IDENTIFIER = null;
 
@@ -59,14 +59,13 @@ public class WorkspacePreferences {
 	/**
 	 * Returns whether the user selected "remember workspace" in the preferences
 	 */
-	public static boolean isRememberWorkspace() {
-		return getStore().getBoolean(KEY_WORKSPACE_REMEMBER, false);
-	}
+	public static boolean isRememberWorkspace() { return getStore().getBoolean(KEY_WORKSPACE_REMEMBER, false); }
 
 	/**
 	 * Checks if is remember workspace.
 	 *
-	 * @param remember the remember
+	 * @param remember
+	 *            the remember
 	 */
 	public static void isRememberWorkspace(final boolean remember) {
 		getStore().putBoolean(KEY_WORKSPACE_REMEMBER, remember);
@@ -77,14 +76,13 @@ public class WorkspacePreferences {
 	 *
 	 * @return the last used workspaces
 	 */
-	public static String getLastUsedWorkspaces() {
-		return getStore().get(KEY_WORKSPACE_LIST, "");
-	}
+	public static String getLastUsedWorkspaces() { return getStore().get(KEY_WORKSPACE_LIST, ""); }
 
 	/**
 	 * Sets the last used workspaces.
 	 *
-	 * @param used the new last used workspaces
+	 * @param used
+	 *            the new last used workspaces
 	 */
 	public static void setLastUsedWorkspaces(final String used) {
 		getStore().put(KEY_WORKSPACE_LIST, used);
@@ -96,13 +94,14 @@ public class WorkspacePreferences {
 	 * @return null if none
 	 */
 	public static String getLastSetWorkspaceDirectory() {
-		return getStore().get(KEY_WORSPACE_PATH, "");
+		return getStore().get(KEY_WORSPACE_PATH, System.getProperty("user.home") + File.separator + "Gama_Workspace");
 	}
 
 	/**
 	 * Sets the last set workspace directory.
 	 *
-	 * @param last the new last set workspace directory
+	 * @param last
+	 *            the new last set workspace directory
 	 */
 	public static void setLastSetWorkspaceDirectory(final String last) {
 		getStore().put(KEY_WORSPACE_PATH, last);
@@ -121,7 +120,8 @@ public class WorkspacePreferences {
 	/**
 	 * Ask before rebuilding workspace.
 	 *
-	 * @param ask the ask
+	 * @param ask
+	 *            the ask
 	 */
 	public static void askBeforeRebuildingWorkspace(final boolean ask) {
 		// true by default
@@ -141,7 +141,8 @@ public class WorkspacePreferences {
 	/**
 	 * Ask before using outdated workspace.
 	 *
-	 * @param ask the ask
+	 * @param ask
+	 *            the ask
 	 */
 	public static void askBeforeUsingOutdatedWorkspace(final boolean ask) {
 		// true by default
@@ -153,18 +154,15 @@ public class WorkspacePreferences {
 	 *
 	 * @return the selected workspace root location
 	 */
-	public static String getSelectedWorkspaceRootLocation() {
-		return selectedWorkspaceRootLocation;
-	}
+	public static String getSelectedWorkspaceRootLocation() { return selectedWorkspaceRootLocation; }
 
 	/**
 	 * Sets the selected workspace root location.
 	 *
-	 * @param s the new selected workspace root location
+	 * @param s
+	 *            the new selected workspace root location
 	 */
-	public static void setSelectedWorkspaceRootLocation(final String s) {
-		selectedWorkspaceRootLocation = s;
-	}
+	public static void setSelectedWorkspaceRootLocation(final String s) { selectedWorkspaceRootLocation = s; }
 
 	/**
 	 * Gets the current gama stamp string.
@@ -290,7 +288,8 @@ public class WorkspacePreferences {
 	/**
 	 * Test workspace sanity.
 	 *
-	 * @param workspace the workspace
+	 * @param workspace
+	 *            the workspace
 	 * @return true, if successful
 	 */
 	public static boolean testWorkspaceSanity(final File workspace) {
@@ -298,11 +297,7 @@ public class WorkspacePreferences {
 		File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
 		if (files == null || files.length == 0) return true;
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
-		if (logs != null) {
-			for (final File log : logs) {
-				log.delete();
-			}
-		}
+		if (logs != null) { for (final File log : logs) { log.delete(); } }
 		files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
 		if (files == null) return false;
 		if (files.length == 0) return true;
@@ -319,9 +314,7 @@ public class WorkspacePreferences {
 					"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
 		}
 		if (rebuild) {
-			for (final File file : files) {
-				if (file.exists()) { file.delete(); }
-			}
+			for (final File file : files) { if (file.exists()) { file.delete(); } }
 			Application.ClearWorkspace(true);
 			return false;
 		}
