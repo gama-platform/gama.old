@@ -128,6 +128,9 @@ public interface XMLElements {
 	
 	/** The Constant RESULT. */
 	public static final String RESULT = "result";
+
+	/** The Constant RETURNS. */
+	public static final String RETURNS = "returns";	
 	
 	/** The Constant SEEALSO. */
 	public static final String SEEALSO = "seeAlso";
@@ -327,6 +330,11 @@ public interface XMLElements {
 	// Attributes of RESULT element
 	public static final String ATT_RES_MASTER = "masterDoc";
 
+	/** The Constant ATT_RET_MASTER. */
+	// Attributes of RETURNS element
+	public static final String ATT_RET_MASTER = "masterDoc";
+	
+	
 	/** The Constant ATT_SEE_ID. */
 	// Attributes of SEE element
 	public static final String ATT_SEE_ID = "id";

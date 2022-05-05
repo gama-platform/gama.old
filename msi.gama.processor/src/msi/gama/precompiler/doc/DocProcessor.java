@@ -1305,6 +1305,30 @@ public class DocProcessor extends ElementProcessor<doc> {
 					docElt.appendChild(resultElt);
 				}
 			}
+			
+			// Parse returns
+			final String returns = docAnnot.returns();
+			if (returns != "") {
+				if (docElt.getElementsByTagName(XMLElements.RETURNS).getLength() != 0) {
+					final org.w3c.dom.Element returnstElt =
+							(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.RETURNS).item(0);
+					if ("true".equals(returnstElt.getAttribute(XMLElements.ATT_RET_MASTER)) && masterDoc
+							|| !"true".equals(returnstElt.getAttribute(XMLElements.ATT_RET_MASTER)) && !masterDoc) {
+						returnstElt.setTextContent(returnstElt.getTextContent() + "\n" + returns);
+					} else if (!returnstElt.hasAttribute(XMLElements.ATT_RET_MASTER) && masterDoc) {
+						returnstElt.setTextContent(returns);
+						returnstElt.setAttribute(XMLElements.ATT_RET_MASTER, "true");
+					}
+				} else {
+					final org.w3c.dom.Element returnstElt = doc.createElement(XMLElements.RETURNS);
+					returnstElt.setTextContent(returns);
+					if (masterDoc) {
+						returnstElt.setAttribute(XMLElements.ATT_RET_MASTER, "true");
+					}
+					docElt.appendChild(returnstElt);
+				}
+			}
+			
 	
 			// Parse comment
 			final String comment = docAnnot.comment();

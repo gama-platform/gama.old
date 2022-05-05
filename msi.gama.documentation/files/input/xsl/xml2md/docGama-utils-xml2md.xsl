@@ -98,23 +98,27 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 	<xsl:sort select="@name" />  
 	 
 #### **`<xsl:value-of select="@name"/>`**
-	<xsl:value-of select="documentation/result"/><xsl:text>
-	</xsl:text>
-	
-* returns: <xsl:value-of select="@returnType"/>
-  	<xsl:for-each select="args/arg"> 			
-* **`<xsl:value-of select="@name"/>`** (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
-  	</xsl:for-each>
-		
-	<xsl:if test="documentation/examples[node()]">
 
-```
-<xsl:for-each select="documentation/examples/example" >
-<xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
+**<xsl:value-of select="documentation/result"/>**<xsl:text>
 </xsl:text>
+
+**Returned type:** `<xsl:value-of select="@returnType"/>`<xsl:if test="documentation/returns[text()]">  : <xsl:value-of select="documentation/returns"/></xsl:if><xsl:text>
+</xsl:text>
+
+ <xsl:if test="args/arg[node()]">
+##### Additional facets: 
+  	<xsl:for-each select="args/arg"> 			
+* **`<xsl:value-of select="@name"/>`** (<xsl:value-of select="@type"/>)<xsl:if test="documentation/result != ''">: <xsl:value-of select="documentation/result"/></xsl:if>
+  	</xsl:for-each>
 </xsl:if>
-</xsl:for-each>```
-</xsl:if>	
+		
+<xsl:if test="documentation/usagesExamples[node()]">
+
+##### Examples: 
+```<xsl:for-each select="documentation/usagesExamples/usage"><xsl:call-template name="generateExamples"/> </xsl:for-each>
+```
+</xsl:if>
+
 		
 		</xsl:for-each>	
 </xsl:template>
