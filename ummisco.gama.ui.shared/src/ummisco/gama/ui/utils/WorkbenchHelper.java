@@ -22,16 +22,18 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -48,8 +50,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGamaView.Display.InnerComponent;
 import msi.gama.common.interfaces.IGui;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.views.IGamlEditor;
@@ -58,6 +58,10 @@ import ummisco.gama.ui.views.IGamlEditor;
  * The Class WorkbenchHelper.
  */
 public class WorkbenchHelper {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant NULL. */
 	static final Object NULL = new Object();
@@ -294,28 +298,6 @@ public class WorkbenchHelper {
 	}
 
 	/**
-	 * Toggle full screen mode. Tries to put the frontmost display in full screen mode or in normal view mode if it is
-	 * already in full screen
-	 *
-	 * @return true, if successful
-	 */
-	public static boolean toggleFullScreenMode() {
-		Control c = run(() -> getDisplay().getCursorControl());
-		if (c instanceof InnerComponent) {
-			// DEBUG.OUT("Toggling from inner component ");
-			asyncRun(() -> ((InnerComponent) c).getView().toggleFullScreen());
-			return true;
-		}
-		final IViewPart part = run(ViewsHelper::findFrontmostGamaViewUnderMouse);
-		if (part instanceof IGamaView.Display) {
-			// DEBUG.OUT("Toggling from view ");
-			asyncRun(() -> ((IGamaView.Display) part).toggleFullScreen());
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Display size of.
 	 *
 	 * @param composite
@@ -449,6 +431,24 @@ public class WorkbenchHelper {
 		if (navigator != null) {
 			WorkbenchHelper.runInUI("Refreshing navigator", 0, m -> navigator.getCommonViewer().refresh(true));
 		}
+	}
+
+	public static int getMonitorUnderCursor() {
+		int closest = Integer.MAX_VALUE;
+		Monitor[] monitors = getDisplay().getMonitors();
+		int result = 0;
+		Point toFind = getDisplay().getCursorLocation();
+		for (int i = 0; i < monitors.length; i++) {
+			Monitor current = monitors[i];
+			Rectangle clientArea = current.getClientArea();
+			if (clientArea.contains(toFind)) return i;
+			int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+			if (distance < closest) {
+				closest = distance;
+				result = i;
+			}
+		}
+		return result;
 	}
 
 }

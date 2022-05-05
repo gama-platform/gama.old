@@ -10,22 +10,30 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
+import static ummisco.gama.ui.utils.WorkbenchHelper.getMonitorUnderCursor;
 import static ummisco.gama.ui.utils.WorkbenchHelper.getPage;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
+import com.google.common.base.Objects;
+
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamaView.Display.InnerComponent;
 import msi.gama.common.interfaces.IGui;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ViewsHelper.
@@ -34,6 +42,10 @@ public class ViewsHelper {
 
 	/** The is requesting. */
 	static volatile boolean isRequesting;
+
+	static {
+		DEBUG.ON();
+	}
 
 	/**
 	 * Request user attention.
@@ -167,8 +179,8 @@ public class ViewsHelper {
 	 */
 	public static IDisplaySurface frontmostDisplaySurface() {
 		return WorkbenchHelper.run(() -> {
-			IViewPart view = findFrontmostGamaViewUnderMouse();
-			if (view instanceof IGamaView.Display) return ((IGamaView.Display) view).getDisplaySurface();
+			IGamaView.Display view = findFrontmostGamaViewUnderMouse();
+			if (view != null) return view.getDisplaySurface();
 			List<IDisplaySurface> surfaces = allDisplaySurfaces();
 			if (surfaces.size() == 0) return null;
 			return surfaces.get(0);
@@ -192,15 +204,69 @@ public class ViewsHelper {
 	 * @todo find a more robust way to find the view (maybe with the control ?)
 	 * @return
 	 */
-	public static IViewPart findFrontmostGamaViewUnderMouse() {
+	public static IGamaView.Display findFrontmostGamaViewUnderMouse() {
+		// First the full screen view
+		IGamaView.Display view = WorkbenchHelper.run(() -> FULLSCREEN_VIEWS.get(getMonitorUnderCursor()));
+		if (view != null) return view;
+		Control c = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getCursorControl());
+		if (c instanceof InnerComponent) return ((InnerComponent) c).getView();
 		final IWorkbenchPage page = getPage();
 		if (page == null) return null;
 		final Point p = WorkbenchHelper.getDisplay().getCursorLocation();
 		final List<IGamaView.Display> displays = getDisplayViews(part -> page.isPartVisible(part));
-		for (IGamaView.Display v : displays) {
-			if (v.isFullScreen() || v.containsPoint(p.x, p.y)) return (IViewPart) v;
-		}
+		for (IGamaView.Display v : displays) { if (v.containsPoint(p.x, p.y)) return v; }
 		return null;
+	}
+
+	/**
+	 * Toggle full screen mode. Tries to put the frontmost display in full screen mode or in normal view mode if it is
+	 * already in full screen
+	 *
+	 * @return true, if successful
+	 */
+	public static boolean toggleFullScreenMode() {
+		// DEBUG.OUT("Trying to toggle full screen mode");
+		final IGamaView.Display part = WorkbenchHelper.run(ViewsHelper::findFrontmostGamaViewUnderMouse);
+		if (part != null) return toggleFullScreenMode(part);
+		return false;
+	}
+
+	/**
+	 * Toggle full screen mode. Tries to put the frontmost display in full screen mode or in normal view mode if it is
+	 * already in full screen
+	 *
+	 * @return true, if successful
+	 */
+	public static boolean toggleFullScreenMode(final IGamaView.Display part) {
+		WorkbenchHelper.run(() -> part.toggleFullScreen());
+		return true;
+	}
+
+	static Map<Integer, IGamaView.Display> FULLSCREEN_VIEWS = new HashMap<>();
+
+	/**
+	 * Returns false if the screen is already covered by a view
+	 *
+	 * @param screen
+	 * @param view
+	 * @return
+	 */
+	public static boolean registerFullScreenView(final Integer screen, final IGamaView.Display view) {
+		boolean result = FULLSCREEN_VIEWS.putIfAbsent(screen, view) == null;
+		if (result) {
+			DEBUG.OUT("Registered " + view + " as fullscreen on Monitor " + screen);
+		} else {
+			DEBUG.OUT("Impossible to register " + view + " as fullscreen on Monitor " + screen);
+		}
+		return result;
+	}
+
+	public static void unregisterFullScreenView(final IGamaView.Display view) {
+		FULLSCREEN_VIEWS.entrySet().removeIf(e -> {
+			boolean result = Objects.equal(e.getValue(), view);
+			if (result) { DEBUG.OUT("Unregistered " + view + " as fullscreen on Monitor " + e.getKey()); }
+			return result;
+		});
 	}
 
 }

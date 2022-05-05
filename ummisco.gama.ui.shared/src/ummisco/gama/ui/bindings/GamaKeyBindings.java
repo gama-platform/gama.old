@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaKeyBindings.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaKeyBindings.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.bindings;
 
@@ -25,6 +25,7 @@ import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.access.GamlSearchField;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -91,7 +92,7 @@ public class GamaKeyBindings implements Listener {
 	@Override
 	public void handleEvent(final Event event) {
 		if (event.keyCode == SWT.ESC) {
-			if (WorkbenchHelper.toggleFullScreenMode()) {
+			if (ViewsHelper.toggleFullScreenMode()) {
 				// DEBUG.OUT("Toogle full screen");
 				consume(event);
 			}

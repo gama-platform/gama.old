@@ -909,7 +909,7 @@ public class LayeredDisplayData {
 	 *
 	 * @return the distance coefficient
 	 */
-	public double getCameraDistanceCoefficient() { return isDrawEnv() ? 1.46 : 1.2; }
+	public double getCameraDistanceCoefficient() { return isDrawEnv() ? 1.60 : 1.46; }
 
 	/**
 	 * Reset camera.

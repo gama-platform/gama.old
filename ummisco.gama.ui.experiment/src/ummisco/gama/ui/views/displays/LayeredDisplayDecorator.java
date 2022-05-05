@@ -239,8 +239,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			normalParentOfFullScreenControl.layout(true, true);
 			destroyFullScreenShell();
 		} else {
-			fs.setImage(GamaIcons.create("display.fullscreen3").image());
 			fullScreenShell = createFullScreenShell();
+			if (fullScreenShell == null) return;
+			fs.setImage(GamaIcons.create("display.fullscreen3").image());
 			normalParentOfFullScreenControl = view.getSash().getParent();
 			view.getSash().setParent(fullScreenShell);
 			fullScreenShell.layout(true, true);
@@ -433,12 +434,26 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
 		int monitorId1 = Math.min(monitors.length - 1, Math.max(0, monitorId));
 		final Rectangle bounds = monitors[monitorId1].getBounds();
-		final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
-		fullScreenShell.setBounds(bounds);
-		// For DEBUG purposes:
-		// fullScreenShell.setBounds(new Rectangle(0, 0, bounds.width / 2, bounds.height / 2));
-		fullScreenShell.setLayout(shellLayout());
-		return fullScreenShell;
+		if (ViewsHelper.registerFullScreenView(monitorId1, view)) {
+			final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
+			fullScreenShell.setBounds(bounds);
+			// For DEBUG purposes:
+			// fullScreenShell.setBounds(new Rectangle(0, 0, bounds.width / 2, bounds.height / 2));
+			fullScreenShell.setLayout(shellLayout());
+			return fullScreenShell;
+		}
+		return null;
+	}
+
+	/**
+	 * Destroy full screen shell.
+	 */
+	private void destroyFullScreenShell() {
+		if (fullScreenShell == null) return;
+		fullScreenShell.close();
+		fullScreenShell.dispose();
+		fullScreenShell = null;
+		ViewsHelper.unregisterFullScreenView(view);
 	}
 
 	/**
@@ -456,16 +471,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		layout.marginBottom = margin;
 		layout.marginHeight = margin;
 		return layout;
-	}
-
-	/**
-	 * Destroy full screen shell.
-	 */
-	private void destroyFullScreenShell() {
-		if (fullScreenShell == null) return;
-		fullScreenShell.close();
-		fullScreenShell.dispose();
-		fullScreenShell = null;
 	}
 
 	/** The display overlay. */

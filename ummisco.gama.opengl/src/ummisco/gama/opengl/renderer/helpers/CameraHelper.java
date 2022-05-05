@@ -23,12 +23,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.utils.DPIHelper;
-import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.utils.ViewsHelper;
 
 /**
  * The Class CameraHelper.
@@ -440,7 +438,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	private int autoScaleUp(final int nb) {
 		return nb;
-//		return DPIHelper.autoScaleUp(nb);
+		// return DPIHelper.autoScaleUp(nb);
 	}
 
 	@Override
@@ -975,7 +973,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					// (like CTRL+SHIFT+H)
 					// First the global keystrokes
 					case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
-						WorkbenchHelper.toggleFullScreenMode();
+						ViewsHelper.toggleFullScreenMode();
 						break;
 					case 'p':
 					case 'P':
