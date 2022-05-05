@@ -108,18 +108,17 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
 			if (axesColor != null) { pp.setLabelLinkPaint(axesColor); }
 			pp.setLabelFont(getTickFont());
+			if (labelTextColor != null) 
+				 pp.setLabelPaint(labelTextColor);
+			if (labelBackgroundColor != null)
+				pp.setLabelBackgroundPaint(this.labelBackgroundColor);
+			
 		}
 		if ("none".equals(this.series_label_position)) {
 			pp.setLabelLinksVisible(false);
 			pp.setLabelGenerator(null);
 
 		}
-		if (textColor != null) {
-			// pp.setLabelPaint(textColor);
-			// not for Pie since the label background is always yellow for
-			// now...
-		}
-
 	}
 
 	@Override

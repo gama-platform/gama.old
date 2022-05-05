@@ -227,6 +227,16 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("Position of the Series names: default (best guess), none, legend, onchart, xaxis (for category plots) or yaxis (uses the first serie name).")),
 				@facet (
+						name = ChartLayerStatement.LABELBACKGROUNDCOLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Color of the label background (for Pie chart)")),
+				@facet (
+						name = ChartLayerStatement.LABELTEXTCOLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Color of the label text (for Pie chart)")),
+				@facet (
 						name = ChartLayerStatement.MEMORIZE,
 						type = IType.BOOL,
 						optional = true,
@@ -406,6 +416,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	/** The Constant TICKFONTSTYLE. */
 	public static final String TICKFONTSTYLE = "tick_font_style";
 
+	/** The Constant LABELTEXTCOLOR. */
+	public static final String LABELTEXTCOLOR = "label_text_color";
+	
+	/** The Constant LABELBACKGROUNDCOLOR. */
+	public static final String LABELBACKGROUNDCOLOR = "label_background_color";
+	
 	/** The Constant LABELFONTFACE. */
 	public static final String LABELFONTFACE = "label_font";
 	
@@ -722,6 +738,22 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setColorValue(scope, colorvalue);
 		colorvalue = new GamaColor(Color.white);
+		color = getFacet(IKeyword.BACKGROUND);
+		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
+		chartoutput.setBackgroundColorValue(scope, colorvalue);
+
+		color = getFacet(LABELTEXTCOLOR);
+		if (color != null) { 
+			colorvalue = Cast.asColor(scope, color.value(scope));
+			chartoutput.setLabelTextColorValue(scope, colorvalue);
+		}
+		
+		color = getFacet(LABELBACKGROUNDCOLOR);
+		if (color != null) { 
+			colorvalue = Cast.asColor(scope, color.value(scope));
+			chartoutput.setLabelBackgroundColorValue(scope, colorvalue);
+		}
+		
 		color = getFacet(IKeyword.BACKGROUND);
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartoutput.setBackgroundColorValue(scope, colorvalue);
