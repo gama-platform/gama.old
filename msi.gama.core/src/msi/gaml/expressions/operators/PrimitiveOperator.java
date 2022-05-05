@@ -215,7 +215,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return new PrimitiveOperator(action, target.resolveAgainst(scope), parameters.resolveAgainst(scope),
+		return new PrimitiveOperator(action, target==null?null:target.resolveAgainst(scope), parameters==null?null:parameters.resolveAgainst(scope),
 				targetSpecies);
 	}
 
