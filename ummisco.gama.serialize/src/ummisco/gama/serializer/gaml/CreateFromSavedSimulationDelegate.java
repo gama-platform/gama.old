@@ -11,6 +11,7 @@
 
 package ummisco.gama.serializer.gaml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +19,13 @@ import java.util.Map;
 import com.thoughtworks.xstream.XStream;
 
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.IType;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -58,6 +61,18 @@ public class CreateFromSavedSimulationDelegate implements ICreateDelegate {
 			final Object source, final Arguments init, final CreateStatement statement) {
 		final GamaSavedSimulationFile file = (GamaSavedSimulationFile) source;
 
+		SimulationPopulation pop = scope.getExperiment().getSimulationPopulation();
+		
+		if (pop == null) pop = (SimulationPopulation) GamaListFactory.EMPTY_LIST;
+		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
+		boolean shouldBeScheduled = false;
+
+		// Create an empty new simulation, that is necesssary to load the SavedAgents.
+		List<Map<String, Object>> mock_inits = GamaListFactory.create(Types.MAP, 1);
+		mock_inits.add(Collections.EMPTY_MAP);
+		pop.createAgents(scope, 1, mock_inits, false, shouldBeScheduled, null);
+		
+		
 		final ConverterScope cScope = new ConverterScope(scope);
 		final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
 
@@ -66,8 +81,13 @@ public class CreateFromSavedSimulationDelegate implements ICreateDelegate {
 		
 		HashMap mapSavedAgt = new HashMap<String, Object>();
 		mapSavedAgt.put("SavedAgent", saveAgt);
+
+		// Dispose the empty simulation, created only to read/load the saved agent
+		scope.getSimulation().dispose();
 		
 		inits.add(mapSavedAgt);
+		
+//		scope.getSimulation().dispose();
 		
 		return true;
 	}

@@ -60,12 +60,15 @@ public class GamaListReducer {
 			i++;
 		}
 
-		if(isReference) {
-			unreferenceReducer(scope.getSimulation());
-			return new ReferenceList(this);
-		} else {
-			return GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
-		}
+		return isReference ? new ReferenceList(this)
+				: GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+		
+//		if(isReference) {
+//			unreferenceReducer(scope.getSimulation());
+//			return new ReferenceList(this);
+//		} else {
+//			return GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+//		}
 	}
 
 	/**

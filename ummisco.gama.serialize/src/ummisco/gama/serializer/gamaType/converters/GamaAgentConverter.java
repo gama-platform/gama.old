@@ -93,7 +93,8 @@ public class GamaAgentConverter implements Converter {
 		final ReferenceAgent agt = (ReferenceAgent) arg1.convertAnother(null, ReferenceAgent.class);
 		reader.moveUp();
 		
-		return agt.getReferencedAgent(convertScope.getScope().getSimulation());
+//		return agt.getReferencedAgent(convertScope.getScope().getSimulation());
+		return  agt;
 	}
 
 }

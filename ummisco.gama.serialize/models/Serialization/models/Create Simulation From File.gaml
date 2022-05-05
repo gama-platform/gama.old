@@ -31,7 +31,7 @@ experiment saveSimu type: gui {
 
 experiment reloadSimu type: gui {
 	
-	init {
+	action _init_ {
 		create simulation from: saved_simulation_file("saveSimu.gsim");	
 		write "init simulation at step " + simulation.cycle;
 	}
