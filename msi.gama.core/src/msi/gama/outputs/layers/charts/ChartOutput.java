@@ -112,9 +112,16 @@ public abstract class ChartOutput {
 
 	/** The background color. */
 	Color backgroundColor = GamaColor.WHITE;
-	
+
 	/** The axes color. */
 	Color axesColor = null;
+	
+	/** The background color. */
+	Color labelBackgroundColor = null;
+	
+	/** The background color. */
+	Color labelTextColor = null;
+	
 	
 	/** The text color. */
 	Color textColor = null;
@@ -519,6 +526,26 @@ public abstract class ChartOutput {
 
 	}
 
+	/**
+	 * Sets the label text color value.
+	 *
+	 * @param scope the scope
+	 * @param color the color
+	 */
+	public void setLabelTextColorValue(final IScope scope, final GamaColor color) {
+		labelTextColor = color;
+	}
+	
+	/**
+	 * Sets the label background color value.
+	 *
+	 * @param scope the scope
+	 * @param color the color
+	 */
+	public void setLabelBackgroundColorValue(final IScope scope, final GamaColor color) {
+		labelBackgroundColor = color;
+	}
+	
 	/**
 	 * Sets the color value.
 	 *

@@ -19,7 +19,7 @@ experiment "Different Pies" type: gui
 		
 		display "data_pie_chart" type: java2D synchronized: true
 		{
-			chart "Nice Ring Pie Chart" type: pie style: ring background: # darkblue color: # lightgreen axes: # yellow title_font: font( 'Serif', 32.0, #italic)
+			chart "Nice Ring Pie Chart" type: pie style: ring background: # darkblue color: # lightgreen label_text_color: #red label_background_color: #lightgray axes: #red  title_font: font( 'Serif', 32.0, #italic)
 			tick_font: font('Monospaced' , 14, #bold) label_font: font('Arial', 32 #bold) x_label: 'Nice Xlabel' y_label:
 			'Nice Ylabel'
 			{
@@ -43,7 +43,7 @@ experiment "Different Pies" type: gui
 
 		display "datalist_pie_chart" type: java2D
 		{
-			chart "datalist_pie_chart" type: pie style: exploded
+			chart "datalist_pie_chart" type: pie style: exploded  series_label_position: "none" 
 			{
 				datalist legend: ["A", "B", "C"] value: [[cycle, cycle + 1, 2], [cycle / 2, cycle * 2, 1], [cycle + 2, cycle - 2, cycle]] x_err_values: [3, 2, 10] y_err_values:
 				[3, cycle, 2 * cycle]

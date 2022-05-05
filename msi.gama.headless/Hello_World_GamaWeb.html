@@ -57,13 +57,13 @@
 		};
 		socket.addEventListener('open', (event) => {
 			var cmd = {
-			'type': 'launch',
-			'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
-			'experiment':'traffic',
-			'auto-export':'true'
-		};
- 
-			socket.send(JSON.stringify(cmd)); 
+				'type': 'launch',
+				'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
+				'experiment': 'traffic',
+				'auto-export': 'true'
+			};
+
+			socket.send(JSON.stringify(cmd));
 			socket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
@@ -78,12 +78,23 @@
 					cmd = {
 						'type': 'play',
 						'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
-			            'experiment':'traffic',	
-						'id_exp': exp_id, 
-					};						
-					socket.send(JSON.stringify(cmd)); 
+						'experiment': 'traffic',
+						'id_exp': exp_id,
+					};
+					socket.send(JSON.stringify(cmd));
 					updateSource = setInterval(() => {
-						sk.send("output@" + socket_id + "@" + exp_id + "@building");
+						// sk.send("output@" + socket_id + "@" + exp_id + "@building");
+
+						cmd = {
+							'type': 'output',
+							'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
+							'experiment': 'traffic',
+							'species': 'people',
+							'attributes': ['state'],
+							'socket_id': socket_id,
+							'id_exp': exp_id,
+						};
+						sk.send(JSON.stringify(cmd));
 						sk.onmessage = function (event) {
 							let message = event.data;
 							if (typeof event.data == "object") {
@@ -97,7 +108,7 @@
 						}
 					}, 5000);
 					socket.onmessage = function (event) {
-				    // console.log(event.data);
+						// console.log(event.data);
 					}
 				}
 			}
@@ -217,4 +228,5 @@
 		});
 	</script>
 </body>
+
 </html>
