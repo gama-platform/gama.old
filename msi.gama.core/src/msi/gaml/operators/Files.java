@@ -340,7 +340,7 @@ public class Files {
 	@doc (
 			value = "rename/move a file or a folder",
 			examples = { @example (
-					value = "bool rename_file_ok <- copy_file([\"../includes/my_folder\",\"../includes/my_new_folder\"];",
+					value = "bool rename_file_ok <- rename_file(\"../includes/my_folder\",\"../includes/my_new_folder\");",
 					isExecutable = false) })
 	@no_test
 	public static boolean rename(final IScope scope, final String source, final String destination) {
@@ -369,7 +369,7 @@ public class Files {
 	@doc (
 			value = "copy a file or a folder",
 			examples = { @example (
-					value = "bool copy_file_ok <- copy_file([\"../includes/my_folder\",\"../includes/my_new_folder\"];",
+					value = "bool copy_file_ok <- copy_file(\"../includes/my_folder\",\"../includes/my_new_folder\");",
 					isExecutable = false) })
 	@no_test
 	public static boolean copy(final IScope scope, final String source, final String destination) {

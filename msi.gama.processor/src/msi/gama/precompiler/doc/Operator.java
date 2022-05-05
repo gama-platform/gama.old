@@ -127,7 +127,7 @@ public class Operator implements IElement {
 	 * @param exElt the ex elt
 	 */
 	public void addUsage(String descUsage, org.w3c.dom.Element exElt) {
-		if(exElt != null) {
+		if((exElt != null) && (exElt.hasChildNodes()) ) {
 			has_example = true;
 		}
 		documentation.addUsage(descUsage, exElt);

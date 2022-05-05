@@ -99,12 +99,32 @@ public class Documentation  implements IElement {
 		
 		// Usages 
 		if(usages.size() != 0) {
-			final org.w3c.dom.Element usagesElt = doc.createElement(XMLElements.USAGES);
+			org.w3c.dom.Element usagesElt;
+			org.w3c.dom.Element usagesNoExampleElt;
+			
+			if (docElt.getElementsByTagName(XMLElements.USAGES).getLength() != 0) {
+				usagesElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES).item(0);
+			} else {
+				usagesElt = doc.createElement(XMLElements.USAGES);
+			}
+			if (docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).getLength() != 0) {
+				usagesNoExampleElt =
+						(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).item(0);
+			} else {
+				usagesNoExampleElt = doc.createElement(XMLElements.USAGES_NO_EXAMPLE);
+			}
+					
+//			final org.w3c.dom.Element usagesElt = doc.createElement(XMLElements.USAGES);
 			for(DocUsage use : usages) {
-				usagesElt.appendChild(use.getElementDOM());
+				if(use.hasExample()) {
+					usagesElt.appendChild(use.getElementDOM());					
+				} else {
+					usagesNoExampleElt.appendChild(use.getElementDOM());
+				}
 			}	
 			
-			docElt.appendChild(usagesElt);			
+			if(usagesElt.hasChildNodes()) { docElt.appendChild(usagesElt); }
+			if(usagesNoExampleElt.hasChildNodes()) { docElt.appendChild(usagesNoExampleElt); }			
 		}
 
 		

@@ -57,10 +57,14 @@ public class DocUsage implements IElement {
 		
 		final org.w3c.dom.Element usageElt = doc.createElement(XMLElements.USAGE);
 		usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, descriptionUsage);
-		if(exElt != null) {
+		if((exElt != null) && (exElt.hasChildNodes()) ) {
 			usageElt.appendChild(exElt);			
 		}
 
 		return usageElt;
 	}	
+	
+	public boolean hasExample() {
+		return ((exElt != null) && (exElt.hasChildNodes()) ) ;
+	}
 }

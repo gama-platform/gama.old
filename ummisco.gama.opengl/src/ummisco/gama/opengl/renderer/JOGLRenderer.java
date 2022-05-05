@@ -143,7 +143,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-//		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) { WorkbenchHelper.asyncRun(() -> canvas.setVisible(visible)); }
+		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) { WorkbenchHelper.asyncRun(() -> canvas.setVisible(visible)); }
 		openGL.setGL2(drawable.getGL().getGL2());
 		cameraHelper.initialize();
 		openGL.initializeGLStates(data.getBackgroundColor());
