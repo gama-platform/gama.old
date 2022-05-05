@@ -1,8 +1,10 @@
 #!/bin/bash
 
+javaVersion=$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2)
 # Check if good Java version before everything
-if [[ "$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2 | cut -d "." -f 1)" != "17" ]]; then
+if [[ ${javaVersion:2} == 17 ]]; then
   echo "You should use Java 17 to run GAMA"
+  echo "Found you using version : $javaVersion"
   exit 1
 fi
 
