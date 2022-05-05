@@ -250,7 +250,7 @@ public class Application implements IApplication {
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if (pick == 1 /* Window.CANCEL */ && getSelectedWorkspaceRootLocation() == null) {
 				openError(null, "Error", "The application can not start without a workspace and will now exit.");
-				System.exit(0);
+				//System.exit(0);
 				return IApplication.EXIT_OK;
 			}
 			/* Tell Eclipse what the selected location was and continue */
