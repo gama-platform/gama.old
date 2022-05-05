@@ -27,16 +27,25 @@ GOTO TOP
 
 :NEXT_CODE
 echo ******************************************************************
-echo * GAMA version 1.8.1                                             *
-echo * http://gama-platform.googlecode.com                            *
-echo * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC and Partners            *
+echo * GAMA version 1.8.2                                             *
+echo * http://gama-platform.org                                       *
+echo * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners                *
 echo ******************************************************************
-rem @echo off
-set FILENAME=..\plugins\org.eclipse.equinox.launcher_*.jar
 
-set FILEPATH=
+set FILENAME="..\plugins\"
+FOR /F %%e in ('dir /b %FILENAME%') do ( 
+ 	SET result=%%e
+	if "!result:~0,29!" == "org.eclipse.equinox.launcher_" (  
+		goto END
+	)
+)
+:END
+@echo !result!
+@echo workDir = %workDir% 
+@echo memory = %memory% 
 
-FOR /F %%f in ('dir /S /B %FILENAME%') do set FILEPATH=%%f
+set "result=..\plugins\%result%"
 
-rem @echo off
-call ..\jdk\bin\java  -cp %FILEPATH% -Xms512m -Xmx%memory%  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+echo %result%
+::rem @echo off
+call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
