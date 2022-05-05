@@ -10,55 +10,87 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import static msi.gama.runtime.PlatformHelper.isARM;
-
 import java.io.PrintStream;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * Single Thread Animator (with target FPS)
+ * Simple Animator (with target FPS)
  *
- * @author Alexis Drogoul, loosely adapted from (aqd@5star.com.tw)
+ * @author AqD (aqd@5star.com.tw)
  */
-public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The cap FPS. */
-	protected volatile boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue();
+	protected boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue();
 
 	/** The target FPS. */
-	protected volatile int targetFPS = GamaPreferences.Displays.OPENGL_FPS.getValue();
+	protected int targetFPS = GamaPreferences.Displays.OPENGL_FPS.getValue();
 
 	/** The animator thread. */
 	protected final Thread animatorThread;
 
 	/** The drawable. */
-	private final GLAutoDrawable drawable;
+	protected final GLAutoDrawable drawable;
 
 	/** The stop requested. */
 	protected volatile boolean stopRequested = false;
 
+	/** The pause requested. */
+	protected volatile boolean pauseRequested = false;
+
+	/** The animating. */
+	protected volatile boolean animating = false;
+
+	/** The pause. */
+	Semaphore pause = new Semaphore(0);
+
 	/** The fps update frames interval. */
 	private int fpsUpdateFramesInterval = 50;
+
 	/** The fps total duration. */
 	private long fpsStartTime, fpsLastUpdateTime, fpsLastPeriod, fpsTotalDuration;
 
 	/** The fps total frames. */
 	private int fpsTotalFrames;
+
 	/** The fps total. */
 	private float fpsLast, fpsTotal;
 
+	/**
+	 * Instantiates a new single thread GL animator.
+	 *
+	 * @param drawable
+	 *            the drawable
+	 */
+	public SingleThreadGLAnimator(final GLAutoDrawable drawable) {
+		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
+		this.drawable = drawable;
+		drawable.setAnimator(this);
+		this.animatorThread = new Thread(this, "Animator thread");
+	}
+
+	@Override
+	public void setUpdateFPSFrames(final int frames, final PrintStream out) {
+		fpsUpdateFramesInterval = frames;
+	}
+
 	@Override
 	public void resetFPSCounter() {
-		long fpsStartTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()); // overwrite startTime to real init one
+		fpsStartTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()); // overwrite startTime to real init one
 		fpsLastUpdateTime = fpsStartTime;
 		fpsLastPeriod = 0;
 		fpsTotalFrames = 0;
@@ -93,33 +125,21 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 	public float getTotalFPS() { return fpsTotal; }
 
 	@Override
-	public void setUpdateFPSFrames(final int frames, final PrintStream out) {
-		fpsUpdateFramesInterval = frames;
-	}
-
-	/**
-	 * Instantiates a new single thread GL animator.
-	 *
-	 * @param window
-	 *            the drawable
-	 */
-	public GamaGLAnimator(final GLAutoDrawable window) {
-		this.drawable = window;
-		window.setAnimator(this);
-		this.animatorThread = new Thread(this, "Animator thread");
-		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
-		setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
-	}
+	public boolean isStarted() { return this.animatorThread.isAlive(); }
 
 	@Override
-	public boolean isStarted() { return animatorThread.isAlive(); }
+	public boolean isAnimating() { return this.animating && !pauseRequested; }
 
 	@Override
-	public Thread getThread() { return animatorThread; }
+	public boolean isPaused() { return isStarted() && pauseRequested; }
+
+	@Override
+	public Thread getThread() { return this.animatorThread; }
 
 	@Override
 	public boolean start() {
 		this.stopRequested = false;
+		this.pauseRequested = false;
 		this.animatorThread.start();
 		fpsStartTime = System.currentTimeMillis();
 		return true;
@@ -128,28 +148,27 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 	@Override
 	public boolean stop() {
 		this.stopRequested = true;
-		if (PlatformHelper.isARM() && WorkbenchHelper.isDisplayThread()) return true;
+		if (PlatformHelper.isARM() && FLAGS.USE_NATIVE_OPENGL_WINDOW && WorkbenchHelper.isDisplayThread()) return true;
 		try {
+			pause.release();
 			this.animatorThread.join();
-		} catch (final InterruptedException e) {} finally {
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		} finally {
 			this.stopRequested = false;
 		}
 		return true;
 	}
 
 	@Override
-	public boolean isAnimating() { return true; }
-
-	@Override
-	public boolean isPaused() { return false; }
-
-	@Override
 	public boolean pause() {
-		return false;
+		pauseRequested = true;
+		return true;
 	}
 
 	@Override
 	public boolean resume() {
+		pause.release();
 		return true;
 	}
 
@@ -158,40 +177,6 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 
 	@Override
 	public void remove(final GLAutoDrawable drawable) {}
-
-	@Override
-	public void run() {
-		// while (!window.isRealized()) {}
-		while (!stopRequested) {
-			try {
-				if (isARM()) {
-					WorkbenchHelper.run(() -> { if (drawable.isRealized()) { drawable.display(); } });
-				} else if (drawable.isRealized()) { drawable.display(); }
-				if (capFPS) {
-					final long frameDuration = 1000 / targetFPS;
-					final long timeSleep = frameDuration - fpsLastPeriod;
-					if (timeSleep >= 0) { Thread.sleep(timeSleep); }
-				}
-			} catch (final InterruptedException | RuntimeException ex) {
-				uncaughtException(this, drawable, ex);
-			}
-			tickFPS();
-		}
-	}
-
-	@Override
-	public UncaughtExceptionHandler getUncaughtExceptionHandler() { return this; }
-
-	@Override
-	public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {}
-
-	@Override
-	public void uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable,
-			final Throwable cause) {
-		DEBUG.ERR("Uncaught exception in animator & drawable:" + cause.getMessage());
-		cause.printStackTrace();
-
-	}
 
 	/**
 	 * Increases total frame count and updates values if feature is enabled and update interval is reached.<br>
@@ -214,8 +199,69 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 				StringBuilder sb = new StringBuilder();
 				String fpsLastS = String.valueOf(fpsLast);
 				fpsLastS = fpsLastS.substring(0, fpsLastS.indexOf('.') + 2);
+				String fpsTotalS = String.valueOf(fpsTotal);
+				fpsTotalS = fpsTotalS.substring(0, fpsTotalS.indexOf('.') + 2);
+				sb.append(fpsTotalDuration / 1000 + " s: " + fpsUpdateFramesInterval + " f / "
+						+ fpsLastPeriod / fpsUpdateFramesInterval + " ms, " + fpsLastS + " fps, " + fpsLastPeriod
+						+ " ms/f; " + "total: " + fpsTotalFrames + " f, " + fpsTotalS + " fps, "
+						+ fpsTotalDuration / fpsTotalFrames + " ms/f");
+				DEBUG.OUT(sb.toString());
 			}
 		}
 	}
 
+	@Override
+	public void run() {
+		while (!this.stopRequested) {
+			if (pauseRequested) {
+				try {
+					pause.drainPermits();
+					pause.acquire();
+					pauseRequested = false;
+				} catch (InterruptedException e1) {}
+			}
+			this.displayGL();
+
+			if (capFPS) {
+				final long frameDuration = 1000 / targetFPS;
+				final long timeSleep = frameDuration - fpsLastPeriod;
+				try {
+					if (timeSleep >= 0) { Thread.sleep(timeSleep); }
+				} catch (final InterruptedException e) {}
+			}
+			tickFPS();
+		}
+
+	}
+
+	/**
+	 * Display GL.
+	 */
+	protected void displayGL() {
+		this.animating = true;
+		try {
+			if (PlatformHelper.isARM() && FLAGS.USE_NATIVE_OPENGL_WINDOW) {
+				if (drawable.isRealized()) { drawable.display(); }
+			} else if (drawable.isRealized()) { drawable.display(); }
+		} catch (final RuntimeException ex) {
+			DEBUG.ERR("Exception in OpenGL:" + ex.getMessage());
+			ex.printStackTrace();
+		} finally {
+			this.animating = false;
+		}
+	}
+
+	@Override
+	public UncaughtExceptionHandler getUncaughtExceptionHandler() { return this; }
+
+	@Override
+	public void setUncaughtExceptionHandler(final UncaughtExceptionHandler handler) {}
+
+	@Override
+	public void uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable,
+			final Throwable cause) {
+		DEBUG.ERR("Uncaught exception in animator & drawable:");
+		cause.printStackTrace();
+
+	}
 }

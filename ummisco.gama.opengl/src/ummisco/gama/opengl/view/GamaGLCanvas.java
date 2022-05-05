@@ -105,8 +105,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		drawable.setAutoSwapBufferMode(true);
 
 		drawable.addGLEventListener(renderer);
-		final var animator = new GamaGLAnimator(drawable);
+		final var animator =
+				FLAGS.USE_NATIVE_OPENGL_WINDOW ? new GamaGLAnimator(drawable) : new SingleThreadGLAnimator(drawable);
 		fpsDelegate = animator;
+		// drawable.setExclusiveContextThread(animator.getThread());
 		renderer.setCanvas(this);
 		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
 	}
