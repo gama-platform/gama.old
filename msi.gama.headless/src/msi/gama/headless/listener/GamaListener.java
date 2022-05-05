@@ -3,18 +3,8 @@ package msi.gama.headless.listener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.java_websocket.WebSocket;
-import org.java_websocket.handshake.ClientHandshake;
-import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.job.ManualExperimentJob;
@@ -37,7 +27,7 @@ public class GamaListener {
 				GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
 
-		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../temp";
+		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "../temp";
 
 		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
 		File f = new File(Globals.TEMP_PATH);

@@ -128,16 +128,16 @@
 			// socket.send("launch@C:\\GAMA\\configuration\\org.eclipse.osgi\\400\\0\\.cp\\models\\Toy Models\\Traffic\\models\\Simple Traffic Model.gaml@traffic");
 			// socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Macro\\Models\\Experiments\\LockDown.gaml@lockdown");
 			// socket.send("launch@C:\\git\\PROJECT\\COMOKIT-Model\\COMOKIT\\Meso\\Models\\Experiments\\Lockdown\\LockDown.gaml@Lockdown"); 
-			
+
 			// socket.send("launch@/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml@Lockdown"); 
 			var cmd = {
-			'type': 'launch',
-			'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
-			'experiment':'Lockdown',
-			'auto-export':'true'
-		};
- 
-			socket.send(JSON.stringify(cmd)); 
+				'type': 'launch',
+				'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
+				'experiment': 'Lockdown',
+				'auto-export': 'true'
+			};
+
+			socket.send(JSON.stringify(cmd));
 			socket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
@@ -152,15 +152,26 @@
 					cmd = {
 						'type': 'play',
 						'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
-						'experiment':'Lockdown',
-						
-						'id_exp': exp_id, 
+						'experiment': 'Lockdown',
+
+						'id_exp': exp_id,
 					};
-								//socket.send("play@" + exp_id);
-								
-					socket.send(JSON.stringify(cmd)); 
+					//socket.send("play@" + exp_id);
+
+					socket.send(JSON.stringify(cmd));
 					updateSource = setInterval(() => {
-						sk.send("output@" + socket_id + "@" + exp_id + "@Individual");
+
+						cmd = {
+							'type': 'output',
+							'model': '/Users/hqn88/git/COMOKIT-Model/COMOKIT/Meso/Models/Experiments/Lockdown/LockDown.gaml',
+							'experiment': 'Lockdown',
+							'species': 'Individual',
+							'attributes': ['state'],
+							'socket_id':socket_id,
+							'id_exp': exp_id,
+						};
+						sk.send(JSON.stringify(cmd));
+						// sk.send("output@" + socket_id + "@" + exp_id + "@Individual");
 						sk.onmessage = function (event) {
 
 							let message = event.data;
@@ -169,7 +180,7 @@
 							} else {
 								geojson = null;
 								geojson = JSON.parse(message);
-								// console.log(geojson);
+								console.log(geojson);
 								map.getSource('iss').setData(geojson);
 								/*map.removeLayer('iss');
 								map.removeSource('iss');

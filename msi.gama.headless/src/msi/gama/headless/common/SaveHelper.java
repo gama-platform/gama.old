@@ -10,16 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.headless.common;
 
-import static msi.gama.common.util.FileUtils.constructAbsoluteFilePath;
-import static msi.gama.util.graph.writer.GraphExporters.getAvailableWriters;
-
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,25 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-import javax.media.jai.RasterFactory;
-
 import org.apache.commons.lang3.ArrayUtils;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.DataUtilities;
-import org.geotools.data.FeatureWriter;
-import org.geotools.data.Transaction;
-import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
-import org.geotools.geometry.Envelope2D;
-import org.geotools.referencing.CRS;
-import org.jgrapht.nio.GraphExporter;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -56,70 +35,26 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
-import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.geometry.Envelope;
-import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
-import msi.gama.metamodel.topology.projection.SimpleScalingProjection;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.facet;
-import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gama.util.IModifiableContainer;
-import msi.gama.util.file.IGamaFile;
-import msi.gama.util.graph.IGraph;
-import msi.gama.util.graph.writer.GraphExporters;
-import msi.gama.util.matrix.GamaField;
-import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.compilation.annotations.validator;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.Comparison;
-import msi.gaml.operators.Maths;
-import msi.gaml.operators.Strings;
-import msi.gaml.skills.GridSkill.IGridAgent;
-import msi.gaml.species.ISpecies;
-import msi.gaml.statements.SaveStatement.SaveValidator;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaKmlExport;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -330,7 +265,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 
 	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
 			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
-	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents)
+	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents, final IList<String> filterAttr)
 			throws IOException, SchemaException, GamaRuntimeException {
 
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
@@ -349,7 +284,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 			for (final String var : species.getAttributeNames()) {
 //				System.out.println(var);
 //				if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
-				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var)) { attributes.put(var, species.getVarExpr(var, false)); }
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) { attributes.put(var, species.getVarExpr(var, false)); }
 			}
 			for (final String e : attributes.keySet()) {
 				if (e == null) {
