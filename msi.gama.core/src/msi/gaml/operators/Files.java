@@ -369,10 +369,11 @@ public class Files {
 	@doc (
 			value = "copy a file or a folder",
 			examples = { @example (
-					value = "bool copy_file_ok <- copy_file(\"../includes/my_folder\",\"../includes/my_new_folder\");",
-					isExecutable = false) })
+					value = "bool copy_file_ok <- copy_file(\"../includes/my_folder\",\"../includes/my_new_folder\",true);",
+					isExecutable = false),
+			})
 	@no_test
-	public static boolean copy(final IScope scope, final String source, final String destination) {
+	public static boolean copy(final IScope scope, final String source, final String destination, final boolean replace) {
 		if (source == null || scope == null || destination == null) return false;
 		final String pathSource = FileUtils.constructAbsoluteFilePath(scope, source, false);
 		final String pathDest = FileUtils.constructAbsoluteFilePath(scope, destination, false);
@@ -380,7 +381,11 @@ public class Files {
 		if (!file.isDirectory()) {
 			Path dest = null;
 			try {
-				dest = java.nio.file.Files.copy(Paths.get(pathSource), Paths.get(pathDest));
+				if (replace){
+					dest = java.nio.file.Files.copy(Paths.get(pathSource), Paths.get(pathDest),java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+				}else {
+					dest = java.nio.file.Files.copy(Paths.get(pathSource), Paths.get(pathDest));					
+				}
 			} catch (IOException e) {
 				GamaRuntimeException.error("Error when copying the file " + e.getMessage(), scope);
 			}
@@ -392,7 +397,11 @@ public class Files {
 			      Path dest = Paths.get(pathDest, s.toString()
 			        .substring(pathSource.length()));
 			      try {
-			    	  java.nio.file.Files.copy(s, dest);
+			    	  if (replace) {
+			    		  java.nio.file.Files.copy(s, dest, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			    	  } else {
+			    		  java.nio.file.Files.copy(s, dest);			    		  
+			    	  }
 			      } catch (IOException e) {
 			          e.printStackTrace();
 			      }
@@ -402,6 +411,24 @@ public class Files {
 		}
 		return !exist_folder(scope, destination);
 	}
+	
+	@operator (
+			value = "copy_file",
+			can_be_const = false,
+			category = IOperatorCategory.FILE,
+			concept = { IConcept.FILE })
+	@doc (
+			value = "copy a file or a folder",
+			examples = { 
+						@example (
+						value = "bool copy_file_ok <- copy_file(\"../includes/my_folder\",\"../includes/my_new_folder\");",
+						isExecutable = false) 
+			})
+	
+	public static boolean copy(final IScope scope, final String source, final String destination) {
+		return copy(scope, source, destination, false);
+	}
+
 
 	/**
 	 * Delete dir.
