@@ -48,6 +48,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -440,6 +441,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope));
 
 			final Envelope envP = gis.getProjectedEnvelope();
+			if (gis != null) {
+				if(!(gis.getInitialCRS(scope) instanceof ProjectedCRS)) {
+						GAMA.reportError(scope, GamaRuntimeException.warning("Try to project a grid -" + this.originalPath+ "-  that is not projected. Projection of grids can lead to errors in the cell coordinates. ", scope), false);
+				}
+			}
 			final double cellHeight = envP.getHeight() / numRows;
 			final double cellWidth = envP.getWidth() / numCols;
 			final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
