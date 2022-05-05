@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Gama Web Hello World</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<style>
+		#map {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		body {
+			color: #404040;
+			font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+
+	<!-- Mapbox GL JS -->
+	<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+	<link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet" />
+
+	<!-- Turf & Polyline -->
+	<script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-polyline/1.1.1/polyline.js"></script>
+
+</head>
+
+<body>
+	<div id="map"></div>
+
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoiaHFuZ2hpODgiLCJhIjoiY2t0N2w0cGZ6MHRjNTJ2bnJtYm5vcDB0YyJ9.oTjisOggN28UFY8q1hiAug';
+
+		const map = new mapboxgl.Map({
+			container: 'map', // container id
+			style: 'mapbox://styles/mapbox/satellite-streets-v11',
+			pitch: 45,
+			bearing: -17.6,
+			antialias: true,
+			center: [0, 0], //  -84.5, 38.05starting position 
+			zoom: 13 // starting zoom
+		});
+
+		var socket_id = "";
+		var exp_id = 0; var updateSource;
+		var socket = new WebSocket("ws://localhost:6868/launch");
+		var sk = new WebSocket("ws://localhost:6868/output");
+		sk.onclose = function (event) {
+			clearInterval(updateSource);
+		};
+		socket.addEventListener('open', (event) => {
+			var cmd = {
+			'type': 'launch',
+			'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
+			'experiment':'traffic',
+			'auto-export':'true'
+		};
+ 
+			socket.send(JSON.stringify(cmd)); 
+			socket.onmessage = function (event) {
+				exp_compiled = event.data;
+				if (exp_compiled.startsWith("exp@")) {
+					const myArray = exp_compiled.split("@");
+					socket_id = myArray[1];
+					exp_id = myArray[2];
+					map.flyTo({
+						center: [myArray[4], myArray[5]],
+						essential: true,
+						zoom: 15
+					});
+					cmd = {
+						'type': 'play',
+						'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
+			            'experiment':'traffic',	
+						'id_exp': exp_id, 
+					};						
+					socket.send(JSON.stringify(cmd)); 
+					updateSource = setInterval(() => {
+						sk.send("output@" + socket_id + "@" + exp_id + "@building");
+						sk.onmessage = function (event) {
+							let message = event.data;
+							if (typeof event.data == "object") {
+
+							} else {
+								geojson = null;
+								geojson = JSON.parse(message);
+								// console.log(geojson);
+								map.getSource('iss').setData(geojson);
+							}
+						}
+					}, 5000);
+					socket.onmessage = function (event) {
+				    // console.log(event.data);
+					}
+				}
+			}
+		});
+		var geojson = {
+			'type': 'FeatureCollection',
+			'features': [
+				{
+					'type': 'Feature',
+					'geometry': {
+						'type': 'Point',
+						'coordinates': [21.276612216569756, 105.6788139592465]
+					}
+				}
+			]
+		};
+		map.on('load', async () => {
+			// Add the ISS location as a source.
+			map.addSource('iss', {
+				type: 'geojson',
+				data: geojson
+			});
+			// Add the rocket symbol layer to the map.
+			map.addLayer({
+				'id': 'iss',
+				type: 'circle',
+				'source': 'iss',
+				'layout': {},
+				'paint': {
+					'circle-radius': {
+						'base': 1.75,
+						'stops': [
+							[12, 2],
+							[22, 180]
+						]
+					},
+					'circle-color': ['match', ['get', 'state'], // get the property
+						'susceptible', 'green',              // if 'GP' then yellow
+						'symptomatic', 'red',                // if 'GP' then yellow
+						'asymptomatic', 'pink',             // if 'GP' then yellow
+						'presymptomatic', 'pink',                // if 'GP' then yellow
+						'removed', 'blue',               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
+						'white'],                     // white otherwise
+
+					'circle-opacity': ['match', ['get', 'state'], // get the property
+						'susceptible', 0.5,              // if 'GP' then yellow
+						'symptomatic', 1,                // if 'GP' then yellow
+						'asymptomatic', 1,             // if 'GP' then yellow
+						'presymptomatic', 1,                // if 'GP' then yellow
+						'removed', 1,               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
+						0.5]                     // white otherwise
+
+				},
+			});
+			const layers = map.getStyle().layers;
+			const labelLayerId = layers.find(
+				(layer) => layer.type === 'symbol' && layer.layout['text-field']
+			).id;
+			map.addLayer(
+				{
+					'id': 'add-3d-buildings',
+					'source': 'composite',
+					'source-layer': 'building',
+					'filter': ['==', 'extrude', 'true'],
+					'type': 'fill-extrusion',
+					'minzoom': 15,
+					'paint': {
+						'fill-extrusion-color': '#aaa',
+						'fill-extrusion-height': [
+							'interpolate',
+							['linear'],
+							['zoom'],
+							15,
+							0,
+							15.05,
+							['get', 'height']
+						],
+						'fill-extrusion-base': [
+							'interpolate',
+							['linear'],
+							['zoom'],
+							15,
+							0,
+							15.05,
+							['get', 'min_height']
+						],
+						'fill-extrusion-opacity': 0.6
+					}
+				},
+				labelLayerId
+			);
+			// Add some fog in the background
+			map.setFog({
+				'range': [-0.5, 2],
+				'color': 'white',
+				'horizon-blend': 0.2
+			});
+
+			// Add a sky layer over the horizon
+			map.addLayer({
+				'id': 'sky',
+				'type': 'sky',
+				'paint': {
+					'sky-type': 'atmosphere',
+					'sky-atmosphere-color': 'rgba(85, 151, 210, 0.5)'
+				}
+			});
+
+			// Add terrain source, with slight exaggeration
+			map.addSource('mapbox-dem', {
+				'type': 'raster-dem',
+				'url': 'mapbox://mapbox.terrain-rgb',
+				'tileSize': 512,
+				'maxzoom': 14
+			});
+			map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+		});
+	</script>
+</body>
+</html>
