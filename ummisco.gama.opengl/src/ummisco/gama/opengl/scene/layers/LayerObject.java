@@ -231,9 +231,11 @@ public class LayerObject {
 			GamaPoint offset = list.offset;
 			offset.setLocation(Cast.asPoint(scope, expr.value(scope)));
 			if (Math.abs(offset.x) <= 1 && !containsPixels) { offset.x *= renderer.getEnvWidth(); }
-			if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
 			if (Math.abs(offset.y) <= 1 && !containsPixels) { offset.y *= renderer.getEnvHeight(); }
-			if (offset.y < 0) { offset.y = renderer.getEnvHeight() - offset.y; }
+			
+			//REMOVE TO FIX #3342
+			//if (offset.x < 0) { offset.x = renderer.getEnvWidth() - offset.x; }
+			//if (offset.y < 0) { offset.y = renderer.getEnvHeight() - offset.y; }
 
 		}
 		increaseZ(list);
