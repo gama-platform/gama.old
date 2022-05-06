@@ -66,6 +66,9 @@ public interface INetworkSkill {
 	/** The tcp client. */
 	String TCP_CLIENT = "tcp_client";
 
+	/** For HTTP requests. */
+	String HTTP_REQUEST = "http";
+
 	/** The network skill. */
 	///// SKILL NETWORK
 	String NETWORK_SKILL = "network";

@@ -41,6 +41,7 @@ import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
+import ummisco.gama.network.httprequest.HTTPRequestConnector;
 import ummisco.gama.network.mqtt.MQTTConnector;
 import ummisco.gama.network.serial.ArduinoConnector;
 import ummisco.gama.network.tcp.TCPConnector;
@@ -234,6 +235,10 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if ("arduino".equals(protocol)) {
 				connector = new ArduinoConnector(scope);
+			} else if (INetworkSkill.HTTP_REQUEST.equals(protocol)) {
+				connector = new HTTPRequestConnector(scope);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);				
 			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
 				DEBUG.OUT("create MQTT serveur " + login + " " + password);
