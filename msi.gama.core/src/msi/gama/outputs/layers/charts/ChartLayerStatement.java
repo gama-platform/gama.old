@@ -755,9 +755,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		
 		color = getFacet(IKeyword.BACKGROUND);
-		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
-		chartoutput.setBackgroundColorValue(scope, colorvalue);
-
+		if (color != null) { 
+			colorvalue = Cast.asColor(scope, color.value(scope)); 
+			chartoutput.setBackgroundColorValue(scope, colorvalue);
+		}
 		GamaFont font = null;
 		IExpression face = getFacet(TICKFONTFACE);
 		if (face != null) {
