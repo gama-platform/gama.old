@@ -59,14 +59,8 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	}
 
 	/** The executor. */
-	final ThreadPoolExecutor executor;
-
-	/**
-	 * Instantiates a new local simulation runtime.
-	 */
-	public ExecutorBasedSimulationRuntime() {
-		this(UNDEFINED_QUEUE_SIZE);
-	}
+	ThreadPoolExecutor executor;
+	int numberOfThreads = UNDEFINED_QUEUE_SIZE;
 
 	/**
 	 * Sets the number of threads.
@@ -76,7 +70,11 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	 */
 	@Override
 	public void setNumberOfThreads(final int n) {
-		executor.setMaximumPoolSize(n);
+		numberOfThreads = n;
+		if (executor != null && n != executor.getMaximumPoolSize()) {
+			executor.shutdown();
+			executor = null;
+		}
 	}
 
 	/**
@@ -84,7 +82,7 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	 *
 	 * @return the number of threads
 	 */
-	public int getNumberOfThreads() { return executor.getMaximumPoolSize(); }
+	public int getNumberOfThreads() { return numberOfThreads; }
 
 	/**
 	 * Instantiates a new local simulation runtime.
@@ -92,27 +90,33 @@ public class ExecutorBasedSimulationRuntime implements SimulationRuntime {
 	 * @param n
 	 *            the number of cores asked
 	 */
-	public ExecutorBasedSimulationRuntime(final int n) {
-		executor = new ThreadPoolExecutor(n, n, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+
+	private void createNewExecutor() {
+		executor = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L, TimeUnit.MILLISECONDS,
+				new LinkedBlockingQueue<Runnable>());
 		executor.setRejectedExecutionHandler((r, executor) -> {
 			if (r instanceof OwnRunnable or) {
 				DEBUG.ERR("The execution of " + or.sim.getExperimentID() + " has been rejected");
 			}
 		});
 	}
-	
+
 	@Override
 	public void execute(final Runnable r) {
-		executor.execute(r);
+		getExecutor().execute(r);
 	}
-
 
 	@Override
 	public void pushSimulation(final IExperimentJob s) {
-		executor.execute(new OwnRunnable(s));
+		getExecutor().execute(new OwnRunnable(s));
 	}
 
 	@Override
-	public boolean isPerformingSimulation() { return executor.getActiveCount() > 0; }
+	public boolean isPerformingSimulation() { return getExecutor().getActiveCount() > 0; }
+
+	ThreadPoolExecutor getExecutor() {
+		if (executor == null) { createNewExecutor(); }
+		return executor;
+	}
 
 }
