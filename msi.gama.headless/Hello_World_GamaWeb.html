@@ -52,14 +52,27 @@
 		var exp_id = 0; var updateSource;
 		var socket = new WebSocket("ws://localhost:6868/launch");
 		var sk = new WebSocket("ws://localhost:6868/output");
+
+		/*var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Tutorials/Road Traffic/models/Model 05.gaml'; 
+		var experimentName='road_traffic';
+		var speciesName='people';
+		var attributeName='objective';*/
+        
+
+		var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml'; 
+		var experimentName='traffic';
+		var speciesName='people';
+		var attributeName='state';
+		
+		
 		sk.onclose = function (event) {
 			clearInterval(updateSource);
 		};
 		socket.addEventListener('open', (event) => {
 			var cmd = {
 				'type': 'launch',
-				'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
-				'experiment': 'traffic',
+				'model': modelPath,
+				'experiment': experimentName,
 				'auto-export': 'true'
 			};
 
@@ -77,8 +90,8 @@
 					});
 					cmd = {
 						'type': 'play',
-						'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
-						'experiment': 'traffic',
+						'model': modelPath,	
+						'experiment': experimentName,
 						'id_exp': exp_id,
 					};
 					socket.send(JSON.stringify(cmd));
@@ -87,10 +100,10 @@
 
 						cmd = {
 							'type': 'output',
-							'model': '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml',
-							'experiment': 'traffic',
-							'species': 'people',
-							'attributes': ['state'],
+							'model': modelPath,
+							'experiment': experimentName,
+							'species': speciesName,
+							'attributes': [attributeName],
 							'socket_id': socket_id,
 							'id_exp': exp_id,
 						};
@@ -102,11 +115,11 @@
 							} else {
 								geojson = null;
 								geojson = JSON.parse(message);
-								// console.log(geojson);
+								console.log(geojson);
 								map.getSource('iss').setData(geojson);
 							}
 						}
-					}, 5000);
+					}, 100);
 					socket.onmessage = function (event) {
 						// console.log(event.data);
 					}
@@ -141,25 +154,19 @@
 					'circle-radius': {
 						'base': 1.75,
 						'stops': [
-							[12, 2],
-							[22, 180]
+							[12, 1],
+							[22, 50]
 						]
 					},
-					'circle-color': ['match', ['get', 'state'], // get the property
-						'susceptible', 'green',              // if 'GP' then yellow
-						'symptomatic', 'red',                // if 'GP' then yellow
-						'asymptomatic', 'pink',             // if 'GP' then yellow
-						'presymptomatic', 'pink',                // if 'GP' then yellow
-						'removed', 'blue',               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
-						'white'],                     // white otherwise
-
-					'circle-opacity': ['match', ['get', 'state'], // get the property
-						'susceptible', 0.5,              // if 'GP' then yellow
-						'symptomatic', 1,                // if 'GP' then yellow
-						'asymptomatic', 1,             // if 'GP' then yellow
-						'presymptomatic', 1,                // if 'GP' then yellow
-						'removed', 1,               // if 'XX' then black "[symptomatic, latent, removed, asymptomatic, presymptomatic, susceptible]"
-						0.5]                     // white otherwise
+					'circle-color': ['match', ['get', attributeName], // get the property
+					    "ok", 'green',
+						"notok", 'red',
+					    "resting", 'green',
+						"working", 'red',
+						"car", 'red',
+						"bike", 'green', 
+						"pedestrian", 'blue',             
+						'white'], 
 
 				},
 			});
@@ -202,7 +209,7 @@
 			);
 			// Add some fog in the background
 			map.setFog({
-				'range': [-0.5, 2],
+				'range': [-0.5, 5],
 				'color': 'white',
 				'horizon-blend': 0.2
 			});
