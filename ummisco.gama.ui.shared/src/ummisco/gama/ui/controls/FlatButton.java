@@ -165,9 +165,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	/** The Constant innerMarginWidth. */
 	private static final int innerMarginWidth = 5;
-	// private static int DEFAULT_HEIGHT =
 	/** The preferred height. */
-	// WorkbenchHelper.getDisplay().getSystemFont().getFontData()[0].getHeight() + innerMarginWidth;
 	private int preferredHeight = -1; // DEFAULT_HEIGHT;
 
 	/** The preferred width. */
