@@ -525,7 +525,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		t.setWidth(t.getWidth() + buttonPadding);
 		final FlatButton b = (FlatButton) t.getControl();
 		b.setRightPadding(buttonPadding);
-		b.setImageHeight(maxImageHeight);
+		//b.setImageHeight(maxImageHeight);
 		b.setToolTipText("Executes the " + type + " experiment " + text);
 		b.addSelectionListener(listener);
 		t.setData("index", index);
@@ -546,10 +546,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) return;
 				toolbar.wipe(SWT.LEFT, true);
-				// without the following line, the display of the
-				// text "msg" is not updated
-				// correctly (at least for Windows OS)
-				if (PlatformHelper.isWindows()) { toolbar.sep(2, maxImageHeight, SWT.LEFT); }
+				toolbar.setDefaultHeight(maxImageHeight );
 
 				final var c = state.getColor();
 				var msg = state.getStatus();
