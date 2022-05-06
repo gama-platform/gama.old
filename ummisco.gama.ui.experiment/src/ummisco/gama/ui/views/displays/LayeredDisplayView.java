@@ -225,7 +225,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 					toggle[0] = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
 				}
 				DEBUG.OUT("Going full screen");
-				WorkbenchHelper.runInUI("FS", 500, m -> decorator.toggleFullScreen());
+				WorkbenchHelper.runInUI("FS", 500, m -> toggleFullScreen());
 			}).start();
 		}
 	}
