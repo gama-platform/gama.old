@@ -101,7 +101,7 @@ public class HeadlessStatement extends AbstractStatement {
 	 */
 	public HeadlessStatement(final IDescription desc) {
 		super(desc);
-		processorQueue = new ExecutorBasedSimulationRuntime(this.numberOfThread);
+		processorQueue = new ExecutorBasedSimulationRuntime();
 	}
 
 	/**
