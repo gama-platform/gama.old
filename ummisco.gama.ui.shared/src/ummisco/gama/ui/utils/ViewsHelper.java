@@ -10,11 +10,11 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
-import static ummisco.gama.ui.utils.WorkbenchHelper.getMonitorUnderCursor;
 import static ummisco.gama.ui.utils.WorkbenchHelper.getPage;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -206,15 +206,21 @@ public class ViewsHelper {
 	 */
 	public static IGamaView.Display findFrontmostGamaViewUnderMouse() {
 		// First the full screen view
-		IGamaView.Display view = WorkbenchHelper.run(() -> FULLSCREEN_VIEWS.get(getMonitorUnderCursor()));
+		int m = WorkbenchHelper.run(WorkbenchHelper::getMonitorUnderCursor);
+		DEBUG.OUT("First try with fullscreen on monitor " + m + " -- " + FULLSCREEN_VIEWS);
+		IGamaView.Display view = WorkbenchHelper.run(() -> FULLSCREEN_VIEWS.get(m));
 		if (view != null) return view;
 		Control c = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getCursorControl());
+		DEBUG.OUT("Second try with control under mouse -- " + c);
 		if (c instanceof InnerComponent) return ((InnerComponent) c).getView();
 		final IWorkbenchPage page = getPage();
 		if (page == null) return null;
 		final Point p = WorkbenchHelper.getDisplay().getCursorLocation();
-		final List<IGamaView.Display> displays = getDisplayViews(part -> page.isPartVisible(part));
+		final List<IGamaView.Display> displays =
+				WorkbenchHelper.run(() -> getDisplayViews(part -> page.isPartVisible(part)));
+		DEBUG.OUT("Third try with view -- at coordinates " + p + " -- in " + new HashSet<>(displays));
 		for (IGamaView.Display v : displays) { if (v.containsPoint(p.x, p.y)) return v; }
+		DEBUG.OUT("No view under mouse");
 		return null;
 	}
 
@@ -242,6 +248,7 @@ public class ViewsHelper {
 		return true;
 	}
 
+	/** The fullscreen views. */
 	static Map<Integer, IGamaView.Display> FULLSCREEN_VIEWS = new HashMap<>();
 
 	/**
@@ -261,6 +268,12 @@ public class ViewsHelper {
 		return result;
 	}
 
+	/**
+	 * Unregister full screen view.
+	 *
+	 * @param view
+	 *            the view
+	 */
 	public static void unregisterFullScreenView(final IGamaView.Display view) {
 		FULLSCREEN_VIEWS.entrySet().removeIf(e -> {
 			boolean result = Objects.equal(e.getValue(), view);

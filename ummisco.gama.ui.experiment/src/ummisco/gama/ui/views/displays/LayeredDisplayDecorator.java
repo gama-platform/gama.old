@@ -47,7 +47,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -64,7 +63,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The key and mouse listener. */
@@ -226,17 +225,18 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
+			DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
 			fs.setImage(GamaIcons.create("display.fullscreen2").image());
 			if (interactiveConsoleVisible) { toggleInteractiveConsole(); }
 			// Toolbar
 			if (!toolbar.isDisposed()) {
 				toolbar.wipe(SWT.LEFT, true);
 				toolbar.setParent(normalParentOfToolbar);
-				normalParentOfToolbar.layout(true, true);
+				normalParentOfToolbar.requestLayout();
 			}
 			view.getSash().setParent(normalParentOfFullScreenControl);
 			createOverlay();
-			normalParentOfFullScreenControl.layout(true, true);
+			normalParentOfFullScreenControl.requestLayout();
 			destroyFullScreenShell();
 		} else {
 			fullScreenShell = createFullScreenShell();
@@ -256,7 +256,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			}
 		}
 		toolbar.refresh(true);
-		toolbar.getParent().layout(true, true);
 		if (overlay.isVisible()) {
 			WorkbenchHelper.runInUI("Overlay", 50, m -> {
 				toggleOverlay();
@@ -358,13 +357,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				toolbar.hide();
 			}
 		});
-		if (view.getOutput().getData().fullScreen() > -1) {
-			boolean toggle = true;
-			if (GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue()) {
-				toggle = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
-			}
-			if (toggle) { WorkbenchHelper.runInUI("Fullscreen", 100, m -> toggleFullScreen()); }
-		}
+
 	}
 
 	/**

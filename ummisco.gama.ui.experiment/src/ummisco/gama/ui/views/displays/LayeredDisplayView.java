@@ -36,6 +36,7 @@ import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -43,6 +44,7 @@ import msi.gama.outputs.SnapshotMaker;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -76,7 +78,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	/** The synchronizer. */
 	public final IDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
-	// FLAGS.USE_OLD_SYNC_STRATEGY?new LayeredDisplayLegacySynchronizer():new LayeredDisplayNewSynchronizer();
 
 	/** The disposed. */
 	public volatile boolean disposed = false;
@@ -115,7 +116,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		if (super.containsPoint(x, y)) return true;
 		final Point o = getSurfaceComposite().toDisplay(0, 0);
 		final Point s = getSurfaceComposite().getSize();
-		return new Rectangle(o.x, o.y, s.x, s.y).contains(x, y);
+		Rectangle r = new Rectangle(o.x, o.y, s.x, s.y);
+		DEBUG.OUT("Looking in surfaceComposite rectangle " + r);
+
+		return r.contains(x, y);
 	}
 
 	@Override
@@ -147,9 +151,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 *
 	 * @return true, if is open GL
 	 */
-	public boolean isOpenGL() {
-		return false;
-	}
+	public boolean isOpenGL() { return false; }
 
 	/**
 	 * Gets the display manager.
@@ -215,6 +217,17 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
 		decorator.createDecorations(form);
 		c.requestLayout();
+		boolean[] toggle = { true };
+		if (getOutput().getData().fullScreen() > -1) {
+			new Thread(() -> {
+				DEBUG.OUT("Fullscreen thread started");
+				if (GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue()) {
+					toggle[0] = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
+				}
+				DEBUG.OUT("Going full screen");
+				WorkbenchHelper.runInUI("FS", 500, m -> decorator.toggleFullScreen());
+			}).start();
+		}
 	}
 
 	/**
@@ -249,16 +262,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	GridData fullData() {
 		return new GridData(SWT.FILL, SWT.FILL, true, true);
 	}
-	
-	 @Override
-	 public void setFocus() {
-		 // Uncommenting this method seems to fix #3325. Should be tested !
+
+	@Override
+	public void setFocus() {
+		// Uncommenting this method seems to fix #3325. Should be tested !
 		// DEBUG.OUT("Part " + getTitle() + " gaining focus");
-	 if (getParentComposite() != null && !getParentComposite().isDisposed()
-	 && !getParentComposite().isFocusControl()) {
-	 getParentComposite().forceFocus(); // Necessary ? 
-	 }
-	 }
+		if (getParentComposite() != null && !getParentComposite().isDisposed()
+				&& !getParentComposite().isFocusControl()) {
+			getParentComposite().forceFocus(); // Necessary ?
+		}
+	}
 
 	/**
 	 * Creates the surface composite.
@@ -376,12 +389,15 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		updateThread = new Thread(() -> {
 			final IDisplaySurface surface = getDisplaySurface();
 			synchronizer.waitForSurfaceToBeRealized();
+			DEBUG.OUT("Surface has been realized");
+
 			while (!disposed && !surface.isDisposed()) {
 				try {
 					synchronizer.waitForViewUpdateAuthorisation();
 					surface.updateDisplay(false);
 					if (surface.getData().isAutosave()) { takeSnapshot(); }
 					inInitPhase = false;
+
 				} catch (Exception e) {
 					DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
 				}
@@ -418,7 +434,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	@Override
 	public void removeOutput(final IDisplayOutput output) {
 		if (output == null) return;
-		if (output == getOutput() && isFullScreen()) { WorkbenchHelper.run(this::toggleFullScreen); }
+		if (output == getOutput() && isFullScreen()) { WorkbenchHelper.run(decorator::toggleFullScreen); }
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {

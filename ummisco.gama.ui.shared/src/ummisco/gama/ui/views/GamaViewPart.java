@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -233,7 +233,9 @@ public abstract class GamaViewPart extends ViewPart
 	public boolean containsPoint(final int x, final int y) {
 		final Point o = rootComposite.toDisplay(0, 0);
 		final Point s = rootComposite.getSize();
-		return new Rectangle(o.x, o.y, s.x, s.y).contains(x, y);
+		Rectangle r = new Rectangle(o.x, o.y, s.x, s.y);
+		DEBUG.OUT("Looking in rootComposite rectangle " + r);
+		return r.contains(x, y);
 	}
 
 	@Override

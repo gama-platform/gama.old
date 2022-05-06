@@ -964,42 +964,45 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public final void keyPressed(final com.jogamp.newt.event.KeyEvent e) {
 
+		// MOVED OUTSIDE OF THE GL THREAD (needs to be run in the SWT thread)
+		switch (e.getKeySymbol()) {
+			// We need to register here all the keystrokes used in the Workbench and on the view, as they might
+			// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
+			// (like CTRL+SHIFT+H)
+			// First the global keystrokes
+			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
+				ViewsHelper.toggleFullScreenMode();
+				return;
+			case 'p':
+			case 'P':
+				if (isControlDown(e)) {
+					if (e.isShiftDown()) {
+						GAMA.stepFrontmostExperiment();
+					} else {
+						GAMA.startPauseFrontmostExperiment();
+					}
+				}
+				return;
+			case 'R':
+			case 'r':
+				if (isControlDown(e)) {
+					if (e.isShiftDown()) {
+						GAMA.relaunchFrontmostExperiment();
+					} else {
+						GAMA.reloadFrontmostExperiment();
+					}
+				}
+				return;
+			case 'X':
+			case 'x':
+				if (isControlDown(e) && e.isShiftDown()) { GAMA.closeAllExperiments(true, false); }
+				return;
+		}
+
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
 				boolean cameraInteraction = !data.isCameraLocked();
 				switch (e.getKeySymbol()) {
-					// We need to register here all the keystrokes used in the Workbench and on the view, as they might
-					// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
-					// (like CTRL+SHIFT+H)
-					// First the global keystrokes
-					case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
-						ViewsHelper.toggleFullScreenMode();
-						break;
-					case 'p':
-					case 'P':
-						if (isControlDown(e)) {
-							if (e.isShiftDown()) {
-								GAMA.stepFrontmostExperiment();
-							} else {
-								GAMA.startPauseFrontmostExperiment();
-							}
-						}
-						break;
-					case 'R':
-					case 'r':
-						if (isControlDown(e)) {
-							if (e.isShiftDown()) {
-								GAMA.relaunchFrontmostExperiment();
-							} else {
-								GAMA.reloadFrontmostExperiment();
-							}
-						}
-						break;
-					case 'X':
-					case 'x':
-						if (isControlDown(e) && e.isShiftDown()) { GAMA.closeAllExperiments(true, false); }
-						break;
-
 					case com.jogamp.newt.event.KeyEvent.VK_SPACE:
 						if (cameraInteraction) { resetPivot(); }
 						break;
