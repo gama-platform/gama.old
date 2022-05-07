@@ -26,7 +26,7 @@ species people {
 	string Sexe;
 
 	aspect default { 
-		draw circle(2) color: #red border: #black;
+		draw circle(0.5) color: #red border: #black;
 	}
 }
 
