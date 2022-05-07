@@ -201,14 +201,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void ownCreatePartControl(final Composite c) {
 		if (getOutput() == null) return;
 		c.setLayout(emptyLayout());
-
-		// First create the sashform
-
-		// form = new Composite(c, SWT.HORIZONTAL);
-		// form.setLayoutData(fullData());
-		// form.setBackground(IGamaColors.WHITE.color());
-		// form.setSashWidth(8);
-		// decorator.createSidePanel(form);
 		centralPanel = new CentralPanel(c);
 		createSurfaceComposite(centralPanel);
 		surfaceComposite.setLayoutData(fullData());
@@ -443,11 +435,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public boolean isFullScreen() { return decorator.isFullScreen(); }
-	//
-	// @Override
-	// public void toggleSideControls() {
-	// decorator.toggleSideControls();
-	// }
 
 	@Override
 	public void toggleOverlay() {

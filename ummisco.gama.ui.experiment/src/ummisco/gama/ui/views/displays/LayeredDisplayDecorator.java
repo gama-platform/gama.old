@@ -222,7 +222,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (isFullScreen()) {
 			DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
 			fs.setImage(GamaIcons.create("display.fullscreen2").image());
-			// if (interactiveConsoleVisible) { toggleInteractiveConsole(); }
 			// Toolbar
 			if (!toolbar.isDisposed()) {
 				toolbar.wipe(SWT.LEFT, true);
