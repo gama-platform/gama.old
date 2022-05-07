@@ -273,10 +273,7 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The name of the rule")) },
 		omissible = IKeyword.NAME)
-@doc (
-		value = "enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.",
-		examples = {
-				@example ("rule belief: new_predicate(\"test\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
+@doc ("enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.")
 public class RuleStatement extends AbstractStatement {
 
 	/** The Constant RULE. */
