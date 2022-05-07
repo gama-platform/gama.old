@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="utf-8" />
 	<title>Gama Web Hello World</title>
@@ -34,7 +33,6 @@
 
 <body>
 	<div id="map"></div>
-
 	<script>
 		mapboxgl.accessToken = 'pk.eyJ1IjoiaHFuZ2hpODgiLCJhIjoiY2t0N2w0cGZ6MHRjNTJ2bnJtYm5vcDB0YyJ9.oTjisOggN28UFY8q1hiAug';
 
@@ -49,28 +47,49 @@
 		});
 
 		var socket_id = "";
-		var exp_id = 0; var updateSource;
+		var exp_id = 0; 
+		var updateSource; 
+		var updateSource2;
+		var updateSource3;
+		var canCallStaticLayer = Boolean(false);
+		var staticLayerCalled = Boolean(false);
+
+		//VISUALIZATION
+		var show3DBuilding = Boolean(true);
+
+		//SOCKET
 		var launchSocket = new WebSocket("ws://localhost:6868/launch");
 		var outputSocket = new WebSocket("ws://localhost:6868/output");
+		var outputSocket2 = new WebSocket("ws://localhost:6868/output");
 
+		//GAMA PATH
 		var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Tutorials/Road Traffic/models/Model 05.gaml'; 
 		var experimentName='road_traffic';
-		var speciesName='people';
-		var attributeName='objective';
-        
+		var species1Name='people';
+		var attribute1Name='objective';
+		var species2Name='building';
+		var attribute2Name='type';
+
 		/*var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml'; 
 		var experimentName='traffic';
-		var speciesName='people';
-		var attributeName='state';*/
+		var species1Name='people';
+		var attribute1Name='state';
+		var species2Name='building';
+		var attribute2Name='type';*/
 
 		/*var modelPath = '/Users/arno/Projects/GitHub/CSL_Lyon/CSL_GAMA_Lyon/models/confluence.gaml'; 
 		var experimentName='dev';
-		var speciesName='people';
-		var attributeName='objective';*/
+		var species1Name='people';
+		var attribute1Name='objective';
+		var species2Name='building';
+		var attribute2Name='type';*/
 		
 		
 		outputSocket.onclose = function (event) {
 			clearInterval(updateSource);
+		};
+		outputSocket2.onclose = function (event) {
+			clearInterval(updateSource2);
 		};
 		launchSocket.addEventListener('open', (event) => {
 			var cmd = {
@@ -103,8 +122,8 @@
 							'type': 'output',
 							'model': modelPath,
 							'experiment': experimentName,
-							'species': speciesName,
-							'attributes': [attributeName],
+							'species': species1Name,
+							'attributes': [attribute1Name],
 							'socket_id': socket_id,
 							'id_exp': exp_id,
 						};
@@ -118,11 +137,37 @@
 								geojson = JSON.parse(message);
 								console.log(geojson);
 								map.getSource('source1').setData(geojson);
+								canCallStaticLayer=true;
+
 							}
 						}
+						if(canCallStaticLayer && !staticLayerCalled){
+							cmd = {
+							'type': 'output',
+							'model': modelPath,
+							'experiment': experimentName,
+							'species': species2Name,
+							'attributes': [attribute2Name],
+							'socket_id': socket_id,
+							'id_exp': exp_id,
+						 	};
+							outputSocket2.send(JSON.stringify(cmd));
+							outputSocket2.onmessage = function (event) {
+								let message = event.data;
+								if (typeof event.data == "object") {
+
+								} else {
+									geojson = null;
+									geojson = JSON.parse(message);
+									console.log(geojson);
+									map.getSource('source2').setData(geojson);
+								}
+							}
+							canCallStaticLayer=false;
+							staticLayerCalled=true;
+						}
+						
 					}, 100);
-					launchSocket.onmessage = function (event) {
-					}
 				}
 			}
 		});
@@ -144,6 +189,10 @@
 				type: 'geojson',
 				data: geojson
 			});
+			map.addSource('source2', {
+				type: 'geojson',
+				data: geojson
+			});
 			map.addLayer({
 				'id': 'source1',
 				type: 'circle',
@@ -157,7 +206,7 @@
 							[22, 50]
 						]
 					},
-					'circle-color': ['match', ['get', attributeName], // get the property
+					'circle-color': ['match', ['get', attribute1Name], // get the property
 					    "ok", 'green',
 						"notok", 'red',
 					    "resting", 'green',
@@ -169,11 +218,26 @@
 
 				},
 			});
+			map.addLayer({
+				'id': 'source2',
+				type: 'fill',
+				'source': 'source2',
+				'layout': {},
+				'paint': {
+					'fill-color': ['match', ['get', attribute2Name], // get the property
+					    "commerce", 'green',
+						"gare", 'red',"Musee", 'red',
+					    "habitat", 'blue',"culte", 'blue',   "Industrial", 'blue',          
+						'gray'], 
+
+				},
+			});
 			const layers = map.getStyle().layers;
 			const labelLayerId = layers.find(
 				(layer) => layer.type === 'symbol' && layer.layout['text-field']
 			).id;
-			map.addLayer(
+			if(show3DBuilding){	
+				map.addLayer(
 				{
 					'id': 'add-3d-buildings',
 					'source': 'composite',
@@ -206,6 +270,7 @@
 				},
 				labelLayerId
 			);
+			}
 			// Add some fog in the background
 			map.setFog({
 				'range': [-0.5, 5],
@@ -232,5 +297,4 @@
 		});
 	</script>
 </body>
-
 </html>
