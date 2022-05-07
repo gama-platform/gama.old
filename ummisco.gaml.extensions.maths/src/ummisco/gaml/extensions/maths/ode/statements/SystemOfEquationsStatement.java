@@ -81,6 +81,7 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 		name = IKeyword.EQUATION,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		unique_name = true,
 		concept = { IConcept.EQUATION })
 @facets (
 		value = { @facet (
