@@ -14,7 +14,7 @@ global{
 	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"]]);
 	
 	//OSM file to load
-	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/rouen.gz", filtering))  ;
+	file<geometry> osmfile <-  file<geometry>(osm_file("../../includes/rouen.gz", filtering))  ;
 	
 	geometry shape <- envelope(osmfile);
 	graph the_graph; 

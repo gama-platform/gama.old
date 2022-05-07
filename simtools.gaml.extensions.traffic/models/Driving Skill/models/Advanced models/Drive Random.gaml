@@ -15,8 +15,8 @@ global {
 	float step <- 0.2#s;
 
 	string map_name;
-	file shp_roads <- file("../includes/" + map_name + "/roads.shp");
-	file shp_nodes <- file("../includes/" + map_name + "/nodes.shp");
+	file shp_roads <- file("../../includes/" + map_name + "/roads.shp");
+	file shp_nodes <- file("../../includes/" + map_name + "/nodes.shp");
 
 	geometry shape <- envelope(shp_roads) + 50;
 	
