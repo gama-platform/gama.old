@@ -589,6 +589,14 @@ public class GamaPreferences {
 				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0, 1);
 
+		public static final Pref<Double> OPENGL_KEYBOARD = create("pref_display_keyboard_factor",
+				"Set the sensitivity of the keyboard movements  (0 for slow, 1 for fast)", 0.5, IType.FLOAT, true)
+						.in(NAME, RENDERING).between(0.01, 1);
+
+		public static final Pref<Double> OPENGL_MOUSE = create("pref_display_mouse_factor",
+				"set the sensitivity of the mouse/trackpad movements  (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
+						.in(NAME, RENDERING).between(0.01, 1);
+
 		/** The Constant OPENGL_CAP_FPS. */
 		public static final Pref<Boolean> OPENGL_CAP_FPS =
 				create("pref_display_cap_fps", "Limit the number of frames per second", false, IType.BOOL, true)

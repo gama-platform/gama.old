@@ -76,12 +76,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	/** The up. */
 	protected final GamaPoint up = new GamaPoint();
 
-	/** The keyboard sensivity. */
-	private final double _keyboardSensivity = 1d;
-
-	/** The sensivity. */
-	private final double _sensivity = 1;
-
 	/** The goes forward. */
 	// Mouse and keyboard state
 	private boolean goesForward;
@@ -263,77 +257,77 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			if (isForward()) {
 				if (ctrlPressed) {
 					if (flipped) {
-						if (phi - getKeyboardSensivity() * getSensivity() > 0) {
-							phi -= getKeyboardSensivity() * getSensivity();
+						if (phi - getKeyboardSensivity() > 0) {
+							phi -= getKeyboardSensivity();
 						} else {
-							phi = -phi + getKeyboardSensivity() * getSensivity();
+							phi = -phi + getKeyboardSensivity();
 							flipped = false;
 							theta += 180;
 						}
-					} else if (phi + getKeyboardSensivity() * getSensivity() < 180) {
-						phi += getKeyboardSensivity() * getSensivity();
+					} else if (phi + getKeyboardSensivity() < 180) {
+						phi += getKeyboardSensivity();
 					} else {
-						phi = 360 - phi - getKeyboardSensivity() * getSensivity();
+						phi = 360 - phi - getKeyboardSensivity();
 						flipped = true;
 						theta += 180;
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
-					translateCameraFromScreenPlan(0.0, getKeyboardSensivity() * getSensivity());
+					translateCameraFromScreenPlan(0.0, getKeyboardSensivity());
 				} else {
-					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity() * getSensivity());
+					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity());
 				}
 			}
 			if (isBackward()) {
 				if (ctrlPressed) {
 					if (flipped) {
-						if (phi + getKeyboardSensivity() * getSensivity() < 180) {
-							phi += getKeyboardSensivity() * getSensivity();
+						if (phi + getKeyboardSensivity() < 180) {
+							phi += getKeyboardSensivity();
 						} else {
-							phi = 360 - phi - getKeyboardSensivity() * getSensivity();
+							phi = 360 - phi - getKeyboardSensivity();
 							flipped = false;
 							theta += 180;
 						}
-					} else if (phi - getKeyboardSensivity() * getSensivity() > 0) {
-						phi -= getKeyboardSensivity() * getSensivity();
+					} else if (phi - getKeyboardSensivity() > 0) {
+						phi -= getKeyboardSensivity();
 					} else {
-						phi = -phi + getKeyboardSensivity() * getSensivity();
+						phi = -phi + getKeyboardSensivity();
 						flipped = true;
 						theta += 180;
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
-					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity() * getSensivity());
+					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity());
 				} else {
-					translateCameraFromScreenPlan(0.0, getKeyboardSensivity() * getSensivity());
+					translateCameraFromScreenPlan(0.0, getKeyboardSensivity());
 				}
 			}
 			if (isStrafeLeft()) {
 				if (ctrlPressed) {
 					if (flipped) {
-						theta = theta + -getKeyboardSensivity() * getSensivity();
+						theta = theta + -getKeyboardSensivity();
 					} else {
-						theta = theta - -getKeyboardSensivity() * getSensivity();
+						theta = theta - -getKeyboardSensivity();
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
-					translateCameraFromScreenPlan(getKeyboardSensivity() * getSensivity(), 0.0);
+					translateCameraFromScreenPlan(getKeyboardSensivity(), 0.0);
 				} else {
-					translateCameraFromScreenPlan(-getKeyboardSensivity() * getSensivity(), 0.0);
+					translateCameraFromScreenPlan(-getKeyboardSensivity(), 0.0);
 				}
 			}
 			if (isStrafeRight()) {
 				if (ctrlPressed) {
 					if (flipped) {
-						theta = theta + getKeyboardSensivity() * getSensivity();
+						theta = theta + getKeyboardSensivity();
 					} else {
-						theta = theta - getKeyboardSensivity() * getSensivity();
+						theta = theta - getKeyboardSensivity();
 					}
 					updateCartesianCoordinatesFromAngles();
 				} else if (flipped) {
-					translateCameraFromScreenPlan(-getKeyboardSensivity() * getSensivity(), 0.0);
+					translateCameraFromScreenPlan(-getKeyboardSensivity(), 0.0);
 				} else {
-					translateCameraFromScreenPlan(getKeyboardSensivity() * getSensivity(), 0.0);
+					translateCameraFromScreenPlan(getKeyboardSensivity(), 0.0);
 				}
 			}
 		}
@@ -856,14 +850,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *
 	 * @return the keyboard sensivity
 	 */
-	protected double getKeyboardSensivity() { return _keyboardSensivity; }
+	protected double getKeyboardSensivity() { return GamaPreferences.Displays.OPENGL_KEYBOARD.getValue(); }
 
 	/**
 	 * Gets the sensivity.
 	 *
 	 * @return the sensivity
 	 */
-	protected double getSensivity() { return _sensivity; }
+	protected double getSensivity() { return GamaPreferences.Displays.OPENGL_MOUSE.getValue(); }
 
 	/**
 	 * Checks if is forward.
