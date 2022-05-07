@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IScope.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -593,7 +592,9 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the execution result
 	 */
 
-	ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args);
+	default ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args) {
+		return execute(executable, agent, false, args);
+	}
 
 	/**
 	 * Evaluate.
@@ -936,5 +937,13 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return true, if is graphics
 	 */
 	default boolean isGraphics() { return false; }
+
+	/**
+	 * Method execute(). Asks the scope to manage the execution of a statement on an agent, taking care of pushing the
+	 * agent on the stack, verifying the runtime state, etc. This method accepts optional arguments (which can be null)
+	 *
+	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
+	 */
+	ExecutionResult execute(IExecutable statement, IAgent target, boolean useTargetScopeForExecution, Arguments args);
 
 }

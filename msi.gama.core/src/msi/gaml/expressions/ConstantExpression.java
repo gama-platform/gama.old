@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ConstantExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ConstantExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -29,9 +29,12 @@ public class ConstantExpression extends AbstractExpression {
 	/**
 	 * Instantiates a new constant expression.
 	 *
-	 * @param val the val
-	 * @param t the t
-	 * @param name the name
+	 * @param val
+	 *            the val
+	 * @param t
+	 *            the t
+	 * @param name
+	 *            the name
 	 */
 	public ConstantExpression(final Object val, final IType<?> t, final String name) {
 		value = val;
@@ -42,8 +45,10 @@ public class ConstantExpression extends AbstractExpression {
 	/**
 	 * Instantiates a new constant expression.
 	 *
-	 * @param val the val
-	 * @param t the t
+	 * @param val
+	 *            the val
+	 * @param t
+	 *            the t
 	 */
 	public ConstantExpression(final Object val, final IType<?> t) {
 		this(val, t, val == null ? "nil" : val.toString());
@@ -52,7 +57,8 @@ public class ConstantExpression extends AbstractExpression {
 	/**
 	 * Instantiates a new constant expression.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 */
 	public ConstantExpression(final Object val) {
 		this(val, GamaType.of(val));
@@ -64,9 +70,7 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	@Override
-	public boolean isConst() {
-		return true;
-	}
+	public boolean isConst() { return true; }
 
 	@Override
 	public String toString() {
@@ -82,18 +86,19 @@ public class ConstantExpression extends AbstractExpression {
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() {
-		return "Literal expression of type " + getGamlType().getTitle();
-	}
+	public String getDocumentation() { return "Literal expression of type " + getGamlType().getTitle(); }
 
 	@Override
-	public String getTitle() {
-		return literalValue();
-	}
+	public String getTitle() { return literalValue(); }
 
 	@Override
 	public boolean shouldBeParenthesized() {
 		return false;
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
 	}
 
 }

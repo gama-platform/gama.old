@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -104,9 +104,7 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable, IVar
 	 *
 	 * @return true if this expression does not use any attribute, variable or species
 	 */
-	default boolean isContextIndependant() {
-		return true;
-	}
+	default boolean isContextIndependant() { return true; }
 
 	/**
 	 * Returns, by default, the type of the expression (see {@link ITyped#getGamlType()}. Specialized in some cases (ie.
@@ -114,9 +112,7 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable, IVar
 	 *
 	 * @return the type denoted by this expression
 	 */
-	default IType<?> getDenotedType() {
-		return getGamlType();
-	}
+	default IType<?> getDenotedType() { return getGamlType(); }
 
 	/**
 	 * Whether this expression or one of its sub-expressions match the predicate passed in parameter

@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -104,9 +106,13 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		// Then, (2) to set the caller to the actual agent on the scope (in the
 		// context of which the arguments need to
 		// be evaluated
-		if (executer != null) // And finally, (3) to execute the executer on the target (it will
+		if (executer != null) { // And finally, (3) to execute the executer on the target (it will
 			// be pushed in the scope)
-			return scope.execute(executer, target, getRuntimeArgs(scope)).getValue();
+			boolean useTargetScopeForExecution =
+					scope.getRoot() instanceof IExperimentAgent && target instanceof SimulationAgent;
+			//
+			return scope.execute(executer, target, useTargetScopeForExecution, getRuntimeArgs(scope)).getValue();
+		}
 		return null;
 	}
 
@@ -215,8 +221,8 @@ public class PrimitiveOperator implements IExpression, IOperator {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return new PrimitiveOperator(action, target==null?null:target.resolveAgainst(scope), parameters==null?null:parameters.resolveAgainst(scope),
-				targetSpecies);
+		return new PrimitiveOperator(action, target == null ? null : target.resolveAgainst(scope),
+				parameters == null ? null : parameters.resolveAgainst(scope), targetSpecies);
 	}
 
 	@Override

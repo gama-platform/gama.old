@@ -1,18 +1,19 @@
 /*******************************************************************************************************
  *
- * TypeExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * TypeExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.types;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.AbstractExpression;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -82,5 +83,10 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public boolean isContextIndependant() { return isConst(); }
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EachExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EachExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
@@ -22,8 +22,10 @@ public class EachExpression extends VariableExpression {
 	/**
 	 * Instantiates a new each expression.
 	 *
-	 * @param argName the arg name
-	 * @param type the type
+	 * @param argName
+	 *            the arg name
+	 * @param type
+	 *            the type
 	 */
 	public EachExpression(final String argName, final IType<?> type) {
 		super(argName, type, true, null);
@@ -38,9 +40,7 @@ public class EachExpression extends VariableExpression {
 	}
 
 	@Override
-	public String getTitle() {
-		return "pseudo-variable " + getName() + " of type " + getGamlType().getTitle();
-	}
+	public String getTitle() { return "pseudo-variable " + getName() + " of type " + getGamlType().getTitle(); }
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
@@ -54,8 +54,11 @@ public class EachExpression extends VariableExpression {
 	public void setVal(final IScope scope, final Object v, final boolean create) {}
 
 	@Override
-	public boolean isConst() {
-		return false;
+	public boolean isConst() { return false; }
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
 	}
 
 }

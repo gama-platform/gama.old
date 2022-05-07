@@ -423,12 +423,13 @@ public class ExecutionScope implements IScope {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public ExecutionResult execute(final IExecutable statement, final IAgent agent, final Arguments args) {
-		if (statement == null || agent == null || interrupted() || agent.dead()) return FAILED;
+	public ExecutionResult execute(final IExecutable statement, final IAgent target,
+			final boolean useTargetScopeForExecution, final Arguments args) {
+		if (statement == null || target == null || interrupted() || target.dead()) return FAILED;
 		// We keep the current pushed agent (context of this execution)
 		final IAgent caller = this.getAgent();
 		// We then try to push the agent on the stack
-		final boolean pushed = push(agent);
+		final boolean pushed = push(target);
 		try (StopWatch w = GAMA.benchmark(this, statement)) {
 			// Otherwise we compute the result of the statement, pushing the
 			// arguments if the statement expects them
@@ -437,7 +438,7 @@ public class ExecutionScope implements IScope {
 			statement.setRuntimeArgs(this, args);
 			// We push the caller to the remote sequence (will be cleaned when the remote sequence leaves its scope)
 			statement.setMyself(caller);
-			return withValue(statement.executeOn(ExecutionScope.this));
+			return withValue(statement.executeOn(useTargetScopeForExecution ? target.getScope() : ExecutionScope.this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 			return ExecutionResult.FAILED;
@@ -446,7 +447,7 @@ public class ExecutionScope implements IScope {
 			if (args != null) { args.setCaller(null); }
 			// Whatever the outcome, we pop the agent from the stack if it has
 			// been previously pushed
-			if (pushed) { pop(agent); }
+			if (pushed) { pop(target); }
 		}
 
 	}

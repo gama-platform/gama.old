@@ -159,4 +159,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		if (species.equals(sd)) { result.add(sd.getAttribute(getName())); }
 	}
 
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
+
 }

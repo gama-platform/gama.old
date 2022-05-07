@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * SuperExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SuperExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
@@ -22,7 +23,8 @@ public class SuperExpression extends VariableExpression {
 	/**
 	 * Instantiates a new super expression.
 	 *
-	 * @param type the type
+	 * @param type
+	 *            the type
 	 */
 	public SuperExpression(final IType<?> type) {
 		super(IKeyword.SUPER, type, true, null);
@@ -34,9 +36,7 @@ public class SuperExpression extends VariableExpression {
 	}
 
 	@Override
-	public String getTitle() {
-		return "pseudo-variable super of type " + getGamlType().getTitle();
-	}
+	public String getTitle() { return "pseudo-variable super of type " + getGamlType().getTitle(); }
 
 	@Override
 	public String getDocumentation() {
@@ -48,8 +48,11 @@ public class SuperExpression extends VariableExpression {
 	public void setVal(final IScope scope, final Object v, final boolean create) {}
 
 	@Override
-	public boolean isConst() {
-		return false;
+	public boolean isConst() { return false; }
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
 	}
 
 }

@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * DenotedActionExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DenotedActionExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.types;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.types.Types;
 
@@ -46,5 +47,10 @@ public class DenotedActionExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) {}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
 
 }
