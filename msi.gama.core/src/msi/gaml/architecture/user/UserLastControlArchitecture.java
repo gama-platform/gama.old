@@ -22,8 +22,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 @skill (
 		name = IKeyword.USER_LAST,
-		concept = { IConcept.GUI, IConcept.ARCHITECTURE },
-		doc = @doc ("A control architecture, based on FSM, where the user is being given control after states / reflexes of the agent are executed"))
+		concept = { IConcept.GUI, IConcept.ARCHITECTURE })
+@doc("A control architecture, based on FSM, where the user is being given control after states / reflexes of the agent are executed. This skill extends the UserControlArchitecture skill and take all his actions and variables ")
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 public class UserLastControlArchitecture extends UserControlArchitecture {

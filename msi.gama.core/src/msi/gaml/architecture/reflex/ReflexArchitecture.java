@@ -35,8 +35,8 @@ import msi.gaml.statements.IStatement;
  */
 @skill (
 		name = IKeyword.REFLEX,
-		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE },
-		doc = @doc ("Represents the default behavioral architecture attached to species of agents if none is specified"))
+		concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
+@doc ("Represents the default behavioral architecture attached to species of agents if none is specified. This skills extends AbstractArchitecture and have all his actions and variables")
 public class ReflexArchitecture extends AbstractArchitecture {
 
 	/** The inits. */

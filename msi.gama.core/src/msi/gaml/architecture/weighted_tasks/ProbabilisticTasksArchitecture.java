@@ -30,8 +30,8 @@ import msi.gaml.compilation.ISymbol;
  */
 @skill (
 		name = ProbabilisticTasksArchitecture.PT,
-		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED },
-		doc = @doc ("A control architecture, based on the concept of tasks, which are executed with a probability depending on their weight"))
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
+@doc ("A control architecture, based on the concept of tasks, which are executed with a probability depending on their weight. This skill extends WeightedTasksArchitecture skills and have all his actions and variables")
 public class ProbabilisticTasksArchitecture extends WeightedTasksArchitecture {
 
 	/** The Constant PT. */

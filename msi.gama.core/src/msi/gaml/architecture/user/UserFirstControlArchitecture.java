@@ -24,8 +24,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 @skill (
 		name = IKeyword.USER_FIRST,
-		concept = { IConcept.GUI, IConcept.ARCHITECTURE },
-		doc = @doc ("A control architecture, based on FSM, where the user is being given control before states / reflexes of the agent are executed"))
+		concept = { IConcept.GUI, IConcept.ARCHITECTURE })
+@doc("A control architecture, based on FSM, where the user is being given control before states / reflexes of the agent are executed. This skill extends the UserControlArchitecture skill and take all his actions and variables ")
 public class UserFirstControlArchitecture extends UserControlArchitecture {
 
 	@Override

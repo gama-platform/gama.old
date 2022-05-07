@@ -34,7 +34,7 @@ import msi.gaml.statements.IStatement;
 @skill (
 		name = SimpleBdiArchitectureParallel.PARALLEL_BDI,
 		concept = { IConcept.BDI, IConcept.ARCHITECTURE })
-@doc ("compute the bdi architecture in parallel")
+@doc ("compute the bdi architecture in parallel. This skill inherit all actions and variables from SimpleBdiArchitecture")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SimpleBdiArchitectureParallel extends SimpleBdiArchitecture {
 

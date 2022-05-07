@@ -33,8 +33,8 @@ import msi.gaml.statements.IStatement;
  */
 @skill (
 		name = WeightedTasksArchitecture.WT,
-		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED },
-		doc = @doc ("A control architecture, based on the concept of tasks, where the most 'heavy' one is executed"))
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
+@doc ("The class WeightedTasksArchitecture. A simple architecture of competing tasks, where one can be active at a time. Weights of the tasks are computed every step and the chosen task is simply the one with the maximal weight")
 public class WeightedTasksArchitecture extends ReflexArchitecture {
 
 	/** The Constant WT. */

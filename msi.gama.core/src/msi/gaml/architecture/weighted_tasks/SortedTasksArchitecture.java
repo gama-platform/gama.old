@@ -33,8 +33,8 @@ import msi.gaml.compilation.ISymbol;
  */
 @skill (
 		name = SortedTasksArchitecture.ST,
-		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED },
-		doc = @doc ("A control architecture, based on the concept of tasks, which are executed in an order defined by their weight"))
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR, IConcept.TASK_BASED })
+@doc ("A control architecture, based on the concept of tasks, which are executed in an order defined by their weight. This skill extends the WeightedTasksArchitecture skill and take all his actions and variables")
 public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 
 	/** The Constant ST. */

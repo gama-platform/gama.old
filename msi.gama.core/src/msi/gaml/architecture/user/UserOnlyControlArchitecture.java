@@ -22,8 +22,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 @skill (
 		name = IKeyword.USER_ONLY,
-		concept = { IConcept.GUI, IConcept.ARCHITECTURE },
-		doc = @doc ("A control architecture, based on FSM, where the user is being given complete control of the agents"))
+		concept = { IConcept.GUI, IConcept.ARCHITECTURE })
+@doc ("A control architecture, based on FSM, where the user is being given complete control of the agents. This skill extends the UserControlArchitecture skill and take all his actions and variables")
 // @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
 // @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 public class UserOnlyControlArchitecture extends UserControlArchitecture {
