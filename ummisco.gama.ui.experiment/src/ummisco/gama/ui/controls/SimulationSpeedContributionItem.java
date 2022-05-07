@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationSpeedContributionItem.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SimulationSpeedContributionItem.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -25,6 +25,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -45,25 +46,25 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	/** The instance. */
 	private static SimulationSpeedContributionItem instance;
-	
+
 	/** The max. */
 	static double max = 1000;
-	
+
 	/** The Constant popupColor. */
 	protected final static GamaUIColor popupColor = IGamaColors.BLUE;
-	
+
 	/** The Constant sliderColor. */
 	protected final static GamaUIColor sliderColor = IGamaColors.GRAY_LABEL;
-	
+
 	/** The Constant widthSize. */
 	public final static int widthSize = 100;
-	
+
 	/** The Constant marginWidth. */
 	public final static int marginWidth = 16;
-	
+
 	/** The Constant heightSize. */
 	public final static int heightSize = 16;
-	
+
 	/** The sliders. */
 	protected static List<SimpleSlider> sliders = new ArrayList<>();
 
@@ -118,18 +119,20 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	/**
 	 * Creates the.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the control
 	 */
 	public static Control create(final Composite parent) {
-		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED);
+		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED | SWT.INHERIT_DEFAULT);
+		GamaColors.setBackground(composite, parent.getBackground());
 		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = marginWidth;
 		composite.setLayout(layout);
-		composite.setBackground(parent.getBackground());
+		// composite.setBackground(parent.getBackground());
 		// final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.widthHint = widthSize;
@@ -204,8 +207,6 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 *
 	 * @return single instance of SimulationSpeedContributionItem
 	 */
-	public static SimulationSpeedContributionItem getInstance() {
-		return instance;
-	}
+	public static SimulationSpeedContributionItem getInstance() { return instance; }
 
 }

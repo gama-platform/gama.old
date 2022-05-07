@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimpleSlider.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SimpleSlider.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -51,37 +52,37 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	static {
 		DEBUG.OFF();
 	}
-	
+
 	/** The Constant THUMB_WIDTH. */
 	final static public int THUMB_WIDTH = 6;
-	
+
 	/** The Constant THUMB_HEIGHT. */
 	final static public int THUMB_HEIGHT = 13;
-	
+
 	/** The Constant PANEL_HEIGHT. */
 	final static public int PANEL_HEIGHT = 3;
-	
+
 	/** The parent. */
 	final Composite parent;
-	
+
 	/** The thumb. */
 	final Thumb thumb;
 
 	/** The right region. */
 	final Panel leftRegion, rightRegion;
-	
+
 	/** The mouse down. */
 	boolean mouseDown = false;
-	
+
 	/** The slider height. */
 	private int sliderHeight;
-	
+
 	/** The step. */
 	private Double step = null;
 
 	/** The tool tip interperter. */
 	private IToolTipProvider toolTipInterperter;
-	
+
 	/** The position changed listeners. */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
 	/**
@@ -91,28 +92,33 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	/** The popup color. */
 	GamaUIColor popupColor = IGamaColors.GRAY_LABEL;
-	
+
 	/** The popup. */
 	Popup2 popup = null;
-	
+
 	/** The notify. */
 	private boolean notify = true;
-	
+
 	/** The popup listener. */
 	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
 	/**
 	 * Instantiates a new simple slider.
 	 *
-	 * @param parent the parent
-	 * @param leftColor the left color
-	 * @param rightColor the right color
-	 * @param thumbColor the thumb color
-	 * @param withPopup the with popup
+	 * @param parent
+	 *            the parent
+	 * @param leftColor
+	 *            the left color
+	 * @param rightColor
+	 *            the right color
+	 * @param thumbColor
+	 *            the thumb color
+	 * @param withPopup
+	 *            the with popup
 	 */
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor, final Color thumbColor,
 			final boolean withPopup) {
-		super(parent, SWT.DOUBLE_BUFFERED);
+		super(parent, SWT.DOUBLE_BUFFERED | SWT.INHERIT_DEFAULT);
 		this.parent = parent;
 		fillDefaults().numColumns(3).spacing(0, 0).applyTo(this);
 		leftRegion = new Panel(this, leftColor);
@@ -129,9 +135,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				mouseDown = false;
 			}
 		});
-		leftRegion.addMouseMoveListener(e -> {
-			if (mouseDown) { moveThumbHorizontally(e.x - THUMB_WIDTH / 2); }
-		});
+		leftRegion.addMouseMoveListener(e -> { if (mouseDown) { moveThumbHorizontally(e.x - THUMB_WIDTH / 2); } });
 		thumb = new Thumb(this, thumbColor);
 		thumb.addMouseListener(new MouseAdapter() {
 
@@ -202,7 +206,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/**
 	 * Adds the position change listener.
 	 *
-	 * @param listener the listener
+	 * @param listener
+	 *            the listener
 	 */
 	public void addPositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
@@ -214,29 +219,27 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 *
 	 * @return the position of the slider in the form of a percentage. Note the range is from 0 to 1
 	 */
-	public double getCurrentPosition() {
-		return previousPosition;
-	}
+	public double getCurrentPosition() { return previousPosition; }
 
 	/**
 	 * Update position listeners.
 	 *
-	 * @param perc the perc
+	 * @param perc
+	 *            the perc
 	 */
 	private void updatePositionListeners(final double perc) {
 		if (!notify) return;
 		if (Math.abs(perc - previousPosition) > 0.000001) {
 			final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
-			while (iter.hasNext()) {
-				iter.next().positionChanged(SimpleSlider.this, perc);
-			}
+			while (iter.hasNext()) { iter.next().positionChanged(SimpleSlider.this, perc); }
 		}
 	}
 
 	/**
 	 * Move thumb horizontally.
 	 *
-	 * @param x the x
+	 * @param x
+	 *            the x
 	 */
 	void moveThumbHorizontally(final int x) {
 		final int width = getClientArea().width - THUMB_WIDTH;
@@ -281,16 +284,17 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	@Override
 	public void setBackground(final Color color) {
-		thumb.setBackground(color);
-		rightRegion.setBackground(color);
-		leftRegion.setBackground(color);
+		GamaColors.setBackground(thumb, color);
+		GamaColors.setBackground(rightRegion, color);
+		GamaColors.setBackground(leftRegion, color);
 		super.setBackground(color);
 	}
 
 	/**
 	 * Sets the left background.
 	 *
-	 * @param color the new left background
+	 * @param color
+	 *            the new left background
 	 */
 	public void setLeftBackground(final Color color) {
 		leftRegion.setBackground(color);
@@ -299,7 +303,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/**
 	 * Sets the right background.
 	 *
-	 * @param color the new right background
+	 * @param color
+	 *            the new right background
 	 */
 	public void setRightBackground(final Color color) {
 		rightRegion.setBackground(color);
@@ -308,11 +313,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/**
 	 * Sets the popup background.
 	 *
-	 * @param color the new popup background
+	 * @param color
+	 *            the new popup background
 	 */
-	public void setPopupBackground(final GamaUIColor color) {
-		popupColor = color;
-	}
+	public void setPopupBackground(final GamaUIColor color) { popupColor = color; }
 
 	@Override
 	public void setToolTipText(final String string) {
@@ -339,14 +343,13 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	@Override
-	public Shell getControllingShell() {
-		return leftRegion.getShell();
-	}
+	public Shell getControllingShell() { return leftRegion.getShell(); }
 
 	/**
 	 * Specify height.
 	 *
-	 * @param heightsize the heightsize
+	 * @param heightsize
+	 *            the heightsize
 	 */
 	public void specifyHeight(final int heightsize) {
 		sliderHeight = heightsize;
@@ -355,7 +358,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/**
 	 * Sets the step.
 	 *
-	 * @param realStep the new step
+	 * @param realStep
+	 *            the new step
 	 */
 	public void setStep(final Double realStep) {
 		if (realStep != null && realStep > 0d) { step = realStep; }
@@ -372,8 +376,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		/**
 		 * Instantiates a new thumb.
 		 *
-		 * @param parent the parent
-		 * @param thumbColor the thumb color
+		 * @param parent
+		 *            the parent
+		 * @param thumbColor
+		 *            the thumb color
 		 */
 		public Thumb(final Composite parent, final Color thumbColor) {
 			super(parent, NO_BACKGROUND);
@@ -399,7 +405,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			// DEBUG.OUT("Thumb bounds " + getBounds() + " client area: " + getClientArea() + " gc clipping: "
 			// + gc.getClipping());
 			final Rectangle r = gc.getClipping();
-			gc.setBackground(getParent().getBackground());
+			gc.setBackground(parent.getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
 			gc.fillRoundRectangle(0, (r.height - THUMB_HEIGHT) / 2 + 1, THUMB_WIDTH, THUMB_HEIGHT, 3, 3);
@@ -413,15 +419,17 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		/** The gd. */
 		private final GridData gd;
-		
+
 		/** The color. */
 		private final Color color;
 
 		/**
 		 * Instantiates a new panel.
 		 *
-		 * @param parent the parent
-		 * @param color the color
+		 * @param parent
+		 *            the parent
+		 * @param color
+		 *            the color
 		 */
 		public Panel(final Composite parent, final Color color) {
 			this(parent, color, false);
@@ -430,9 +438,12 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		/**
 		 * Instantiates a new panel.
 		 *
-		 * @param parent the parent
-		 * @param color the color
-		 * @param last the last
+		 * @param parent
+		 *            the parent
+		 * @param color
+		 *            the color
+		 * @param last
+		 *            the last
 		 */
 		public Panel(final Composite parent, final Color color, final boolean last) {
 			super(parent, DOUBLE_BUFFERED | NO_BACKGROUND);
@@ -446,7 +457,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		/**
 		 * Update position.
 		 *
-		 * @param value the value
+		 * @param value
+		 *            the value
 		 */
 		void updatePosition(final int value) {
 			gd.minimumWidth = value;
@@ -464,7 +476,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			// DEBUG.OUT("Panel bounds " + getBounds() + " client area: " + getClientArea() + " gc clipping: "
 			// + gc.getClipping() + " parent bounds " + parent.getBounds() + " parent size " + parent.getSize());
 			final Rectangle r = gc.getClipping();
-			gc.setBackground(getParent().getBackground());
+			gc.setBackground(parent.getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
 			gc.fillRoundRectangle(r.x, (int) ((double) r.height / 2 - 1d), r.width, PANEL_HEIGHT, 3, 3);
