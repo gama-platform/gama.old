@@ -10,7 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
+import java.util.Map;
+
+import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -105,7 +109,28 @@ public class Experiment implements IExperiment {
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
+		
+		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
+
+//		if (currentExperiment == null) throw GamaRuntimeException
+//				.error("Experiment " + expName + " does not exist. Please check its name.", getRuntimeScope());
+		curExperiment.setHeadless(true);
+//		for (final Map.Entry<String, Object> entry : params.entrySet()) {
+//
+//			final IParameter.Batch v = currentExperiment.getParameterByTitle(entry.getKey());
+//			if (v != null) {
+//				currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
+//						entry.getValue());
+//			} else {
+//				currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
+//						entry.getValue());
+//			}
+//
+//		}
+		curExperiment.open(seed);
+		GAMA.getControllers().add(curExperiment.getController());
+		this.currentExperiment = curExperiment;
+//		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		this.currentExperiment.setHeadless(true);
 	}
