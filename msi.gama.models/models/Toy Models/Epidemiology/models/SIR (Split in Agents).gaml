@@ -123,18 +123,18 @@ experiment Simulation type: gui {
 	
 	output {
 		layout #split;
-		display "split system" {
-			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
-				data 'susceptible' value: first ( S_agt ) . Ssize color: rgb ( 'green' ) ;
-				data 'infected' value: first ( I_agt ) . Isize color: rgb ( 'red' ) ;
-				data 'removed' value: first ( R_agt ) . Rsize color: rgb ( 'blue' ) ;
+		display "split system" axes: false{
+			chart 'Susceptible' type: series background: #white {
+				data 'susceptible' value: first ( S_agt ) . Ssize color: rgb(46,204,113) ;
+				data 'infected' value: first ( I_agt ) . Isize color: rgb(231,76,60) ;
+				data 'removed' value: first ( R_agt ) . Rsize color: rgb(52,152,219) ;
 			}
 		}
-		display "unified system"{
-			chart 'Susceptible' type: series background: rgb ( 'lightGray' ) {
-				data 'susceptible_maths' value: first( SIR_agt ).Sm color: rgb ( 'green' ) ;
-				data 'infected_maths' value: first( SIR_agt ).Im color: rgb ( 'red' ) ;
-				data 'removed_maths' value: first( SIR_agt ).Rm color: rgb ( 'blue' ) ;
+		display "unified system" axes: false{
+			chart 'Susceptible' type: series background: #white {
+				data 'susceptible_maths' value: first( SIR_agt ).Sm color: rgb(46,204,113) ;
+				data 'infected_maths' value: first( SIR_agt ).Im color: rgb(231,76,60) ;
+				data 'removed_maths' value: first( SIR_agt ).Rm color: rgb(52,152,219) ;
 			}
 		}
 	}

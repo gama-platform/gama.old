@@ -25,14 +25,14 @@ global {
         	is_susceptible <- true;
         	is_infected <-  false;
             is_immune <-  false; 
-            color <-  #green;
+            color <-  rgb(46,204,113);
         }
         //Creation of all the infected hosts
         create Host number: number_I {
             is_susceptible <-  false; 
             is_infected <-  true;
             is_immune <-  false; 
-            color <-  #red;  
+            color <-  rgb(231,76,60);  
        }
    }
    //Reflex to update the number of infected hosts
@@ -43,7 +43,7 @@ global {
 
 //Grid to discretize space
 grid si_grid width: 50 height: 50 use_individual_shapes: false use_regular_agents: false frequency: 0{
-	rgb color <- #black;
+	rgb color <- #white;
 	list<si_grid> neighbours <- (self neighbors_at neighbours_size) ;       
 }
 //Species host which represent the possible hosts of a disease
@@ -52,7 +52,7 @@ species Host  {
 	bool is_susceptible <- true;
 	bool is_infected <- false;
     bool is_immune <- false;
-    rgb color <- #green;
+    rgb color <- rgb(46,204,113);
     int sic_count <- 0;
     si_grid myPlace;
     
@@ -86,7 +86,7 @@ species Host  {
         	is_susceptible <-  false;
             is_infected <-  true;
             is_immune <-  false;
-            color <-  #red;    
+            color <-  rgb(231,76,60);    
         }
     }
     //Reflex to kill the agent according to the death rate
@@ -115,15 +115,15 @@ experiment Simulation type: gui {
 	
  	output {
  		layout #split; 
-	    display si_display {
-	        grid si_grid border: #black;
+	    display si_display axes: false {
+	        grid si_grid border: #lightgray;
 	        species Host aspect: basic;
 	    }
 	        
-	    display chart refresh: every(10#cycles) {
-			chart "Susceptible" type: series background: #lightgray style: exploded {
-				data "susceptible" value: Host count (each.is_susceptible) color: #green;
-				data "infected" value: Host count (each.is_infected) color: #red;
+	    display chart refresh: every(10#cycles) axes: false {
+			chart "Susceptible" type: series background: #white style: exploded {
+				data "susceptible" value: Host count (each.is_susceptible) color: rgb(46,204,113);
+				data "infected" value: Host count (each.is_infected) color: rgb(231,76,60);
 			}
 		}
 			
