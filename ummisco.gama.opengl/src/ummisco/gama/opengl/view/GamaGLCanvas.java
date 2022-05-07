@@ -88,16 +88,18 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			addControlListener(new ControlAdapter() {
 				@Override
 				public void controlResized(final ControlEvent e) {
-					/* Detached views have not title! */
+					/* Detached views have no title! */
 					if (PlatformHelper.isMac()) {
 						final var isDetached = parent.getShell().getText().length() == 0;
 						if (isDetached) {
 							if (!detached) {
+								// DEBUG.OUT("Reparenting because of detached");
 								reparentWindow();
 								detached = true;
 							}
 
 						} else if (detached) {
+							// DEBUG.OUT("Reparenting because of attached");
 							reparentWindow();
 							detached = false;
 						}
@@ -109,12 +111,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 			drawable = (GLAutoDrawable) canvas;
 		}
 		drawable.setAutoSwapBufferMode(true);
-
 		drawable.addGLEventListener(renderer);
 		final var animator =
 				FLAGS.USE_NATIVE_OPENGL_WINDOW ? new GamaGLAnimator(drawable) : new SingleThreadGLAnimator(drawable);
 		fpsDelegate = animator;
-		// drawable.setExclusiveContextThread(animator.getThread());
 		renderer.setCanvas(this);
 		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
 	}
@@ -327,10 +327,11 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	public void reparentWindow() {
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
 		final Window w = (Window) drawable;
-		setWindowVisible(false);
-		w.setFullscreen(true);
-		w.setFullscreen(false);
-		setWindowVisible(true);
+		if (setWindowVisible(false)) {
+			w.setFullscreen(true);
+			w.setFullscreen(false);
+			setWindowVisible(true);
+		}
 	}
 
 	/**
@@ -339,12 +340,13 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @param b
 	 *            the new window visible
 	 */
-	public void setWindowVisible(final boolean b) {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
+	public boolean setWindowVisible(final boolean b) {
+		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return false;
 		final Window w = (Window) drawable;
-		// if (!w.isNativeValid()) return;
-		DEBUG.OUT("Make GLWindow visible");
+		if (!w.isNativeValid()) return false;
+		DEBUG.OUT("Make GLWindow visible: " + b);
 		w.setVisible(b);
+		return true;
 	}
 
 	@Override

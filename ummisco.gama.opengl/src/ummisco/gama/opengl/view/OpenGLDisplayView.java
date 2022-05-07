@@ -89,14 +89,6 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 		return super.getMultiListener();
 	}
 
-	@Override
-	public void toggleFullScreen() {
-		hideCanvas();
-		super.toggleFullScreen();
-		getGLCanvas().reparentWindow();
-		showCanvas();
-	}
-
 	/**
 	 * Hide canvas.
 	 */
