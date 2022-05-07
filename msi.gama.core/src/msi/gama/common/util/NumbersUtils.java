@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NumbersUtils.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * NumbersUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -41,7 +41,7 @@ public final class NumbersUtils {
 
 	/** The Constant MIN_DOUBLE_EXPONENT. */
 	private static final int MIN_DOUBLE_EXPONENT = -1074;
-	
+
 	/** The Constant MAX_DOUBLE_EXPONENT. */
 	private static final int MAX_DOUBLE_EXPONENT = 1023;
 
@@ -58,12 +58,8 @@ public final class NumbersUtils {
 		final int n2 = maxLetter - minLetter + 1;
 		CHAR_BY_DIGIT = new char[n1 + n2];
 		int i = 0;
-		for (char c = minDecimal; c <= maxDecimal; c++) {
-			CHAR_BY_DIGIT[i++] = c;
-		}
-		for (char c = minLetter; c <= maxLetter; c++) {
-			CHAR_BY_DIGIT[i++] = c;
-		}
+		for (char c = minDecimal; c <= maxDecimal; c++) { CHAR_BY_DIGIT[i++] = c; }
+		for (char c = minLetter; c <= maxLetter; c++) { CHAR_BY_DIGIT[i++] = c; }
 	}
 
 	/**
@@ -73,14 +69,12 @@ public final class NumbersUtils {
 	static {
 		DIV_SHIFT_BY_RADIX = new int[32 + 1];
 		int shift = 1;
-		for (int radix = 2; radix <= 32; radix *= 2) {
-			DIV_SHIFT_BY_RADIX[radix] = shift++;
-		}
+		for (int radix = 2; radix <= 32; radix *= 2) { DIV_SHIFT_BY_RADIX[radix] = shift++; }
 	}
 
 	/** The Constant MAX_NBR_OF_NEG_INT_DIGITS_BY_RADIX. */
 	private final static int[] MAX_NBR_OF_NEG_INT_DIGITS_BY_RADIX = new int[Character.MAX_RADIX + 1];
-	
+
 	/** The Constant MAX_NBR_OF_NEG_LONG_DIGITS_BY_RADIX. */
 	private final static int[] MAX_NBR_OF_NEG_LONG_DIGITS_BY_RADIX = new int[Character.MAX_RADIX + 1];
 	static {
@@ -95,27 +89,27 @@ public final class NumbersUtils {
 
 	/** The Constant NO_CSN_MIN_BOUND_INCL. */
 	static final double NO_CSN_MIN_BOUND_INCL = 1e-3;
-	
+
 	/** The Constant NO_CSN_MAX_BOUND_EXCL. */
 	static final double NO_CSN_MAX_BOUND_EXCL = 1e7;
 
 	/** The Constant PIO2_HI. */
 	private static final double PIO2_HI = Double.longBitsToDouble(0x3FF921FB54400000L); // 1.57079632673412561417e+00
-																						
-																						/** The Constant PIO2_LO. */
-																						// first 33 bits of pi/2
+
+	/** The Constant PIO2_LO. */
+	// first 33 bits of pi/2
 	private static final double PIO2_LO = Double.longBitsToDouble(0x3DD0B4611A626331L); // 6.07710050650619224932e-11
-																						
-																						/** The Constant PI_HI. */
-																						// pi/2 - PIO2_HI
+
+	/** The Constant PI_HI. */
+	// pi/2 - PIO2_HI
 	private static final double PI_HI = 2 * PIO2_HI;
-	
+
 	/** The Constant PI_LO. */
 	private static final double PI_LO = 2 * PIO2_LO;
-	
+
 	/** The Constant TWOPI_HI. */
 	private static final double TWOPI_HI = 4 * PIO2_HI;
-	
+
 	/** The Constant TWOPI_LO. */
 	private static final double TWOPI_LO = 4 * PIO2_LO;
 
@@ -175,10 +169,8 @@ public final class NumbersUtils {
 	 */
 	public static boolean isEquidistant(final float value) {
 		final float valueAbs = Math.abs(value);
-		if (!(valueAbs < 1 << 23)) {
-			// NaN or too large to have a chance
+		if ((valueAbs >= 1 << 23)) // NaN or too large to have a chance
 			return false;
-		}
 		final float twice = valueAbs + valueAbs;
 		// Test on twice first, for it's the most likely to fail.
 		return twice == (int) twice && value != (int) value;
@@ -192,7 +184,7 @@ public final class NumbersUtils {
 	 */
 	public static boolean isEquidistant(final double value) {
 		final double valueAbs = Math.abs(value);
-		if (!(valueAbs < 1L << 52)) { return false; }
+		if ((valueAbs >= 1L << 52)) return false;
 		final double twice = valueAbs + valueAbs;
 		// Test on twice first, for it's the most likely to fail.
 		return twice == (long) twice && value != (long) value;
@@ -205,7 +197,7 @@ public final class NumbersUtils {
 	 */
 	public static boolean isNaNOrInfinite(final float a) {
 		// a-a is not equal to 0.0f (and is NaN) <-> a is NaN or +-Infinity
-		return !(a - a == 0.0f);
+		return (a - a != 0.0f);
 	}
 
 	/**
@@ -215,7 +207,7 @@ public final class NumbersUtils {
 	 */
 	public static boolean isNaNOrInfinite(final double a) {
 		// a-a is not equal to 0.0 (and is NaN) <-> a is NaN or +-Infinity
-		return !(a - a == 0.0);
+		return (a - a != 0.0);
 	}
 
 	/**
@@ -283,7 +275,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in the specified range (inclusive).
 	 */
 	public static boolean checkIsInRange(final int min, final int max, final int a) {
-		if (!isInRange(min, max, a)) { throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]"); }
+		if (!isInRange(min, max, a)) throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]");
 		return true;
 	}
 
@@ -293,7 +285,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in the specified range (inclusive).
 	 */
 	public static boolean checkIsInRange(final long min, final long max, final long a) {
-		if (!isInRange(min, max, a)) { throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]"); }
+		if (!isInRange(min, max, a)) throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]");
 		return true;
 	}
 
@@ -303,7 +295,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in the specified range (inclusive) or any parameter is NaN.
 	 */
 	public static boolean checkIsInRange(final float min, final float max, final float a) {
-		if (!isInRange(min, max, a)) { throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]"); }
+		if (!isInRange(min, max, a)) throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]");
 		return true;
 	}
 
@@ -313,7 +305,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in the specified range (inclusive) or any parameter is NaN.
 	 */
 	public static boolean checkIsInRange(final double min, final double max, final double a) {
-		if (!isInRange(min, max, a)) { throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]"); }
+		if (!isInRange(min, max, a)) throw new IllegalArgumentException(a + " not in [" + min + "," + max + "]");
 		return true;
 	}
 
@@ -331,13 +323,11 @@ public final class NumbersUtils {
 	 * @return min if a <= min, else max if a >= max, else a.
 	 */
 	public static int toRange(final int min, final int max, final int a) {
-		if (a <= min) {
-			return min;
-		} else if (a >= max) {
+		if (a <= min) return min;
+		if (a >= max)
 			return max;
-		} else {
+		else
 			return a;
-		}
 	}
 
 	/**
@@ -350,13 +340,11 @@ public final class NumbersUtils {
 	 * @return min if a <= min, else max if a >= max, else a.
 	 */
 	public static long toRange(final long min, final long max, final long a) {
-		if (a <= min) {
-			return min;
-		} else if (a >= max) {
+		if (a <= min) return min;
+		if (a >= max)
 			return max;
-		} else {
+		else
 			return a;
-		}
 	}
 
 	/**
@@ -369,13 +357,11 @@ public final class NumbersUtils {
 	 * @return min if a <= min, else max if a >= max, else a.
 	 */
 	public static float toRange(final float min, final float max, final float a) {
-		if (a <= min) {
-			return min;
-		} else if (a >= max) {
+		if (a <= min) return min;
+		if (a >= max)
 			return max;
-		} else {
+		else
 			return a;
-		}
 	}
 
 	/**
@@ -388,13 +374,11 @@ public final class NumbersUtils {
 	 * @return min if a <= min, else max if a >= max, else a.
 	 */
 	public static double toRange(final double min, final double max, final double a) {
-		if (a <= min) {
-			return min;
-		} else if (a >= max) {
+		if (a <= min) return min;
+		if (a >= max)
 			return max;
-		} else {
+		else
 			return a;
-		}
 	}
 
 	/*
@@ -461,9 +445,8 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as a signed integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeSigned(final int a, final int bitSize) {
-		if (!isInRangeSigned(a, bitSize)) {
+		if (!isInRangeSigned(a, bitSize))
 			throw new IllegalArgumentException(a + " does not fit as a signed value over " + bitSize + " bits");
-		}
 		return true;
 	}
 
@@ -475,9 +458,8 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as a signed integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeSigned(final long a, final int bitSize) {
-		if (!isInRangeSigned(a, bitSize)) {
+		if (!isInRangeSigned(a, bitSize))
 			throw new IllegalArgumentException(a + " does not fit as a signed value over " + bitSize + " bits");
-		}
 		return true;
 	}
 
@@ -489,9 +471,8 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as an unsigned integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeUnsigned(final int a, final int bitSize) {
-		if (!isInRangeUnsigned(a, bitSize)) {
+		if (!isInRangeUnsigned(a, bitSize))
 			throw new IllegalArgumentException(a + " does not fit as an unsigned value over " + bitSize + " bits");
-		}
 		return true;
 	}
 
@@ -503,9 +484,8 @@ public final class NumbersUtils {
 	 *             if the specified value does not fit as an unsigned integer over the specified number of bits.
 	 */
 	public static boolean checkIsInRangeUnsigned(final long a, final int bitSize) {
-		if (!isInRangeUnsigned(a, bitSize)) {
+		if (!isInRangeUnsigned(a, bitSize))
 			throw new IllegalArgumentException(a + " does not fit as an unsigned value over " + bitSize + " bits");
-		}
 		return true;
 	}
 
@@ -666,9 +646,8 @@ public final class NumbersUtils {
 	 *             if a signed int value can't be read over the specified number of bits, i.e. if it is not in [1,32].
 	 */
 	public static boolean checkBitSizeForSignedInt(final int bitSize) {
-		if (!isValidBitSizeForSignedInt(bitSize)) {
+		if (!isValidBitSizeForSignedInt(bitSize))
 			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,32] for signed int values");
-		}
 		return true;
 	}
 
@@ -678,9 +657,8 @@ public final class NumbersUtils {
 	 *             if a signed long value can't be read over the specified number of bits, i.e. if it is not in [1,64].
 	 */
 	public static boolean checkBitSizeForSignedLong(final int bitSize) {
-		if (!isValidBitSizeForSignedLong(bitSize)) {
+		if (!isValidBitSizeForSignedLong(bitSize))
 			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,64] for signed long values");
-		}
 		return true;
 	}
 
@@ -691,9 +669,8 @@ public final class NumbersUtils {
 	 *             [1,31].
 	 */
 	public static boolean checkBitSizeForUnsignedInt(final int bitSize) {
-		if (!isValidBitSizeForUnsignedInt(bitSize)) {
+		if (!isValidBitSizeForUnsignedInt(bitSize))
 			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,31] for unsigned int values");
-		}
 		return true;
 	}
 
@@ -704,9 +681,8 @@ public final class NumbersUtils {
 	 *             [1,63].
 	 */
 	public static boolean checkBitSizeForUnsignedLong(final int bitSize) {
-		if (!isValidBitSizeForUnsignedLong(bitSize)) {
+		if (!isValidBitSizeForUnsignedLong(bitSize))
 			throw new IllegalArgumentException("bit size [" + bitSize + "] must be in [1,63] for unsigned long values");
-		}
 		return true;
 	}
 
@@ -796,28 +772,24 @@ public final class NumbersUtils {
 	 * @return The number of bits required to store the specified value as a signed integer, i.e. a result in [1,32].
 	 */
 	public static int bitSizeForSignedValue(final int value) {
-		if (value > 0) {
-			return 33 - Integer.numberOfLeadingZeros(value);
-		} else if (value == 0) {
+		if (value > 0) return 33 - Integer.numberOfLeadingZeros(value);
+		if (value == 0)
 			return 1;
-		} else {
+		else
 			// Works for Integer.MIN_VALUE as well.
 			return 33 - Integer.numberOfLeadingZeros(-value - 1);
-		}
 	}
 
 	/**
 	 * @return The number of bits required to store the specified value as a signed integer, i.e. a result in [1,64].
 	 */
 	public static int bitSizeForSignedValue(final long value) {
-		if (value > 0) {
-			return 65 - Long.numberOfLeadingZeros(value);
-		} else if (value == 0) {
+		if (value > 0) return 65 - Long.numberOfLeadingZeros(value);
+		if (value == 0)
 			return 1;
-		} else {
+		else
 			// Works for Long.MIN_VALUE as well.
 			return 65 - Long.numberOfLeadingZeros(-value - 1);
-		}
 	}
 
 	/**
@@ -828,15 +800,11 @@ public final class NumbersUtils {
 	 *             if the specified value is < 0.
 	 */
 	public static int bitSizeForUnsignedValue(final int value) {
-		if (value > 0) {
-			return 32 - Integer.numberOfLeadingZeros(value);
-		} else {
-			if (value == 0) {
-				return 1;
-			} else {
-				throw new IllegalArgumentException("unsigned value [" + value + "] must be >= 0");
-			}
-		}
+		if (value > 0) return 32 - Integer.numberOfLeadingZeros(value);
+		if (value == 0)
+			return 1;
+		else
+			throw new IllegalArgumentException("unsigned value [" + value + "] must be >= 0");
 	}
 
 	/**
@@ -847,15 +815,11 @@ public final class NumbersUtils {
 	 *             if the specified value is < 0.
 	 */
 	public static int bitSizeForUnsignedValue(final long value) {
-		if (value > 0) {
-			return 64 - Long.numberOfLeadingZeros(value);
-		} else {
-			if (value == 0) {
-				return 1;
-			} else {
-				throw new IllegalArgumentException("unsigned value [" + value + "] must be >= 0");
-			}
-		}
+		if (value > 0) return 64 - Long.numberOfLeadingZeros(value);
+		if (value == 0)
+			return 1;
+		else
+			throw new IllegalArgumentException("unsigned value [" + value + "] must be >= 0");
 	}
 
 	/*
@@ -939,7 +903,7 @@ public final class NumbersUtils {
 	 * @return True if the specified value is a power of two, i.e. a value of the form 2^k, with k >= 0.
 	 */
 	public static boolean isPowerOfTwo(final int a) {
-		if (a <= 0) { return false; }
+		if (a <= 0) return false;
 		return (a & a - 1) == 0;
 	}
 
@@ -947,7 +911,7 @@ public final class NumbersUtils {
 	 * @return True if the specified value is a power of two, i.e. a value of the form 2^k, with k >= 0.
 	 */
 	public static boolean isPowerOfTwo(final long a) {
-		if (a <= 0) { return false; }
+		if (a <= 0) return false;
 		return (a & a - 1) == 0;
 	}
 
@@ -955,30 +919,20 @@ public final class NumbersUtils {
 	 * @return True if the specified value is a signed power of two, i.e. a value of the form +-2^k, with k >= 0.
 	 */
 	public static boolean isSignedPowerOfTwo(final int a) {
-		if (a > 0) {
-			return (a & a - 1) == 0;
-		} else {
-			if (a == -a) {
-				// a is 0 or Integer.MIN_VALUE
-				return a != 0;
-			}
-			return (-a & -a - 1) == 0;
-		}
+		if (a > 0) return (a & a - 1) == 0;
+		if (a == -a) // a is 0 or Integer.MIN_VALUE
+			return a != 0;
+		return (-a & -a - 1) == 0;
 	}
 
 	/**
 	 * @return True if the specified value is a signed power of two, i.e. a value of the form +-2^k, with k >= 0.
 	 */
 	public static boolean isSignedPowerOfTwo(final long a) {
-		if (a > 0) {
-			return (a & a - 1) == 0;
-		} else {
-			if (a == -a) {
-				// a is 0 or Long.MIN_VALUE
-				return a != 0;
-			}
-			return (-a & -a - 1) == 0;
-		}
+		if (a > 0) return (a & a - 1) == 0;
+		if (a == -a) // a is 0 or Long.MIN_VALUE
+			return a != 0;
+		return (-a & -a - 1) == 0;
 	}
 
 	/**
@@ -987,7 +941,7 @@ public final class NumbersUtils {
 	 * @return The highest power of two <= a.
 	 */
 	public static int floorPowerOfTwo(final int a) {
-		if (a <= 0) { throw new IllegalArgumentException("a [" + a + "] must be > 0"); }
+		if (a <= 0) throw new IllegalArgumentException("a [" + a + "] must be > 0");
 		return Integer.highestOneBit(a);
 	}
 
@@ -997,7 +951,7 @@ public final class NumbersUtils {
 	 * @return The highest power of two <= a.
 	 */
 	public static long floorPowerOfTwo(final long a) {
-		if (a <= 0) { throw new IllegalArgumentException("a [" + a + "] must be > 0"); }
+		if (a <= 0) throw new IllegalArgumentException("a [" + a + "] must be > 0");
 		// Faster than copying int method
 		// (less computations on long).
 		return 1L << 63 - Long.numberOfLeadingZeros(a);
@@ -1047,12 +1001,10 @@ public final class NumbersUtils {
 	 */
 	public static int meanSml(final int a, final int b) {
 		int result = meanLow(a, b);
-		if (!haveSameEvenness(a, b)) {
-			// inexact
-			if ((a & b) < 0 || (a | b) < 0 && a + b < 0) {
-				// both < 0, or only one is < 0 and it has the largest magnitude
-				result++;
-			}
+		// inexact
+		if (!haveSameEvenness(a, b) && ((a & b) < 0 || (a | b) < 0 && a + b < 0)) {
+			// both < 0, or only one is < 0 and it has the largest magnitude
+			result++;
 		}
 		return result;
 	}
@@ -1063,12 +1015,10 @@ public final class NumbersUtils {
 	 */
 	public static long meanSml(final long a, final long b) {
 		long result = meanLow(a, b);
-		if (!haveSameEvenness(a, b)) {
-			// inexact
-			if ((a & b) < 0 || (a | b) < 0 && a + b < 0) {
-				// both < 0, or only one is < 0 and it has the largest magnitude
-				result++;
-			}
+		// inexact
+		if (!haveSameEvenness(a, b) && ((a & b) < 0 || (a | b) < 0 && a + b < 0)) {
+			// both < 0, or only one is < 0 and it has the largest magnitude
+			result++;
 		}
 		return result;
 	}
@@ -1083,7 +1033,7 @@ public final class NumbersUtils {
 	 *             if min > max.
 	 */
 	public static int negHalfWidth(final int min, final int max) {
-		if (min > max) { throw new IllegalArgumentException("min [" + min + "] must be <= max [" + max + "]"); }
+		if (min > max) throw new IllegalArgumentException("min [" + min + "] must be <= max [" + max + "]");
 		final int mean = meanLow(min, max);
 		return min - mean - ((min ^ max) & 1);
 	}
@@ -1098,7 +1048,7 @@ public final class NumbersUtils {
 	 *             if min > max.
 	 */
 	public static long negHalfWidth(final long min, final long max) {
-		if (min > max) { throw new IllegalArgumentException("min [" + min + "] must be <= max [" + max + "]"); }
+		if (min > max) throw new IllegalArgumentException("min [" + min + "] must be <= max [" + max + "]");
 		final long mean = meanLow(min, max);
 		return min - mean - ((min ^ max) & 1);
 	}
@@ -1113,12 +1063,9 @@ public final class NumbersUtils {
 	 * @return value % spot, i.e. a value in ]-|spot|,|spot|[.
 	 */
 	public static int moduloSignedPowerOfTwo(final int value, final int spot) {
-		if (spot == Integer.MIN_VALUE) {
-			return value != Integer.MIN_VALUE ? value : 0;
-		} else {
-			final int s = value >> 31;
-			return ((value + s ^ s) & abs(spot) - 1) + s ^ s;
-		}
+		if (spot == Integer.MIN_VALUE) return value != Integer.MIN_VALUE ? value : 0;
+		final int s = value >> 31;
+		return ((value + s ^ s) & abs(spot) - 1) + s ^ s;
 	}
 
 	/**
@@ -1131,12 +1078,9 @@ public final class NumbersUtils {
 	 * @return value % spot, i.e. a value in ]-|spot|,|spot|[.
 	 */
 	public static long moduloSignedPowerOfTwo(final long value, final long spot) {
-		if (spot == Long.MIN_VALUE) {
-			return value != Long.MIN_VALUE ? value : 0;
-		} else {
-			final long s = value >> 63;
-			return ((value + s ^ s) & abs(spot) - 1) + s ^ s;
-		}
+		if (spot == Long.MIN_VALUE) return value != Long.MIN_VALUE ? value : 0;
+		final long s = value >> 63;
+		return ((value + s ^ s) & abs(spot) - 1) + s ^ s;
 	}
 
 	/**
@@ -1147,7 +1091,7 @@ public final class NumbersUtils {
 	 *             if the specified value is <= 0.
 	 */
 	public static int log2(final int value) {
-		if (value <= 0) { throw new IllegalArgumentException("value [" + value + "] must be > 0"); }
+		if (value <= 0) throw new IllegalArgumentException("value [" + value + "] must be > 0");
 		return 31 - Integer.numberOfLeadingZeros(value);
 	}
 
@@ -1159,7 +1103,7 @@ public final class NumbersUtils {
 	 *             if the specified value is <= 0.
 	 */
 	public static int log2(final long value) {
-		if (value <= 0) { throw new IllegalArgumentException("value [" + value + "] must be > 0"); }
+		if (value <= 0) throw new IllegalArgumentException("value [" + value + "] must be > 0");
 		return 63 - Long.numberOfLeadingZeros(value);
 	}
 
@@ -1202,9 +1146,7 @@ public final class NumbersUtils {
 	 */
 	public static int intHash(final long a) {
 		int hash = (int) (a >> 32) + (int) a;
-		if (a < 0) {
-			hash++;
-		}
+		if (a < 0) { hash++; }
 		return hash;
 	}
 
@@ -1218,7 +1160,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in [Byte.MIN_VALUE,Byte.MAX_VALUE] range.
 	 */
 	public static byte asByte(final int a) {
-		if (a != (byte) a) { throw new ArithmeticException("overflow: " + a); }
+		if (a != (byte) a) throw new ArithmeticException("overflow: " + a);
 		return (byte) a;
 	}
 
@@ -1230,7 +1172,7 @@ public final class NumbersUtils {
 	 *             if the specified value is not in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int asInt(final long a) {
-		if (a != (int) a) { throw new ArithmeticException("overflow: " + a); }
+		if (a != (int) a) throw new ArithmeticException("overflow: " + a);
 		return (int) a;
 	}
 
@@ -1240,7 +1182,7 @@ public final class NumbersUtils {
 	 * @return The closest int value in [Integer.MIN_VALUE,Integer.MAX_VALUE] range.
 	 */
 	public static int toInt(final long a) {
-		if (a != (int) a) { return a < 0 ? Integer.MIN_VALUE : Integer.MAX_VALUE; }
+		if (a != (int) a) return a < 0 ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 		return (int) a;
 	}
 
@@ -1257,7 +1199,7 @@ public final class NumbersUtils {
 		final int sum = a + b;
 		// HD 2-12 Overflow iff both arguments
 		// have the opposite sign of the result.
-		if (((a ^ sum) & (b ^ sum)) < 0) { throw new ArithmeticException("overflow: " + a + "+" + b); }
+		if (((a ^ sum) & (b ^ sum)) < 0) throw new ArithmeticException("overflow: " + a + "+" + b);
 		return sum;
 	}
 
@@ -1274,7 +1216,7 @@ public final class NumbersUtils {
 		final long sum = a + b;
 		// HD 2-12 Overflow iff both arguments
 		// have the opposite sign of the result.
-		if (((a ^ sum) & (b ^ sum)) < 0) { throw new ArithmeticException("overflow: " + a + "+" + b); }
+		if (((a ^ sum) & (b ^ sum)) < 0) throw new ArithmeticException("overflow: " + a + "+" + b);
 		return sum;
 	}
 
@@ -1300,7 +1242,7 @@ public final class NumbersUtils {
 	 */
 	public static long plusBounded(final long a, final long b) {
 		final long sum = a + b;
-		if (((a ^ sum) & (b ^ sum)) < 0) { return sum >= 0 ? Long.MIN_VALUE : Long.MAX_VALUE; }
+		if (((a ^ sum) & (b ^ sum)) < 0) return sum >= 0 ? Long.MIN_VALUE : Long.MAX_VALUE;
 		return sum;
 	}
 
@@ -1317,7 +1259,7 @@ public final class NumbersUtils {
 		final int diff = a - b;
 		// HD 2-12 Overflow iff the arguments have different signs and
 		// the sign of the result is different than the sign of "a".
-		if (((a ^ b) & (a ^ diff)) < 0) { throw new ArithmeticException("integer overflow"); }
+		if (((a ^ b) & (a ^ diff)) < 0) throw new ArithmeticException("integer overflow");
 		return diff;
 	}
 
@@ -1334,7 +1276,7 @@ public final class NumbersUtils {
 		final long diff = a - b;
 		// HD 2-12 Overflow iff the arguments have different signs and
 		// the sign of the result is different than the sign of "a".
-		if (((a ^ b) & (a ^ diff)) < 0) { throw new ArithmeticException("integer overflow"); }
+		if (((a ^ b) & (a ^ diff)) < 0) throw new ArithmeticException("integer overflow");
 		return diff;
 	}
 
@@ -1360,7 +1302,7 @@ public final class NumbersUtils {
 	 */
 	public static long minusBounded(final long a, final long b) {
 		final long diff = a - b;
-		if (((a ^ b) & (a ^ diff)) < 0) { return diff >= 0 ? Long.MIN_VALUE : Long.MAX_VALUE; }
+		if (((a ^ b) & (a ^ diff)) < 0) return diff >= 0 ? Long.MIN_VALUE : Long.MAX_VALUE;
 		return diff;
 	}
 
@@ -1375,7 +1317,7 @@ public final class NumbersUtils {
 	 */
 	public static int timesExact(final int a, final int b) {
 		final long prod = a * (long) b;
-		if (prod != (int) prod) { throw new ArithmeticException("overflow: " + a + "*" + b); }
+		if (prod != (int) prod) throw new ArithmeticException("overflow: " + a + "*" + b);
 		return (int) prod;
 	}
 
@@ -1396,9 +1338,8 @@ public final class NumbersUtils {
 			// Some bits greater than 2^31 that might cause overflow
 			// Check the result using the divide operator
 			// and check for the special case of Long.MIN_VALUE * -1
-			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1) {
+			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1)
 				throw new ArithmeticException("overflow: " + a + "*" + b);
-			}
 		}
 		return prod;
 	}
@@ -1431,9 +1372,8 @@ public final class NumbersUtils {
 			// Some bits greater than 2^31 that might cause overflow
 			// Check the result using the divide operator
 			// and check for the special case of Long.MIN_VALUE * -1
-			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1) {
+			if (b != 0 && prod / b != a || a == Long.MIN_VALUE && b == -1)
 				return (a ^ b) >= 0 ? Long.MAX_VALUE : Long.MIN_VALUE;
-			}
 		}
 		return prod;
 	}
@@ -1451,16 +1391,15 @@ public final class NumbersUtils {
 	 */
 	public static double twoPow(final int power) {
 		if (power <= -MAX_DOUBLE_EXPONENT) { // Not normal.
-			if (power >= MIN_DOUBLE_EXPONENT) { // Subnormal.
+			if (power >= MIN_DOUBLE_EXPONENT)
 				return Double.longBitsToDouble(0x0008000000000000L >> -(power + MAX_DOUBLE_EXPONENT));
-			} else { // Underflow.
+			else
 				return 0.0;
-			}
-		} else if (power > MAX_DOUBLE_EXPONENT) { // Overflow.
-			return Double.POSITIVE_INFINITY;
-		} else { // Normal.
-			return Double.longBitsToDouble((long) (power + MAX_DOUBLE_EXPONENT) << 52);
 		}
+		if (power > MAX_DOUBLE_EXPONENT)
+			return Double.POSITIVE_INFINITY;
+		else
+			return Double.longBitsToDouble((long) (power + MAX_DOUBLE_EXPONENT) << 52);
 	}
 
 	/**
@@ -1471,7 +1410,7 @@ public final class NumbersUtils {
 	 *             if the mathematical result is not in int range, i.e. if power is not in [0,30].
 	 */
 	public static int twoPowAsIntExact(final int power) {
-		if (power < 0 || power > 30) { throw new ArithmeticException("integer overflow"); }
+		if (power < 0 || power > 30) throw new ArithmeticException("integer overflow");
 		return 1 << power;
 	}
 
@@ -1494,7 +1433,7 @@ public final class NumbersUtils {
 	 *             if the mathematical result is not in long range, i.e. if power is not in [0,62].
 	 */
 	public static long twoPowAsLongExact(final int power) {
-		if (power < 0 || power > 62) { throw new ArithmeticException("long overflow"); }
+		if (power < 0 || power > 62) throw new ArithmeticException("long overflow");
 		return 1L << power;
 	}
 
@@ -1543,7 +1482,7 @@ public final class NumbersUtils {
 	 *            A value.
 	 * @return a*a.
 	 */
-	public static strictfp float pow2_strict(final float a) {
+	public static float pow2_strict(final float a) {
 		return a * a;
 	}
 
@@ -1563,7 +1502,7 @@ public final class NumbersUtils {
 	 *            A value.
 	 * @return a*a.
 	 */
-	public static strictfp double pow2_strict(final double a) {
+	public static double pow2_strict(final double a) {
 		return a * a;
 	}
 
@@ -1601,7 +1540,7 @@ public final class NumbersUtils {
 	 *            A value.
 	 * @return a*a*a.
 	 */
-	public static strictfp float pow3_strict(final float a) {
+	public static float pow3_strict(final float a) {
 		return a * a * a;
 	}
 
@@ -1621,7 +1560,7 @@ public final class NumbersUtils {
 	 *            A value.
 	 * @return a*a*a.
 	 */
-	public static strictfp double pow3_strict(final double a) {
+	public static double pow3_strict(final double a) {
 		return a * a * a;
 	}
 
@@ -1635,13 +1574,9 @@ public final class NumbersUtils {
 	 * @return angRad + 2*PI, accurately computed.
 	 */
 	public static double plus2PI(final double angRad) {
-		if (angRad > -Math.PI) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + TWOPI_LO + TWOPI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + TWOPI_HI + TWOPI_LO;
-		}
+		if (angRad > -Math.PI) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + TWOPI_HI + TWOPI_LO;
 	}
 
 	/**
@@ -1651,14 +1586,10 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad + 2*PI, accurately computed.
 	 */
-	public static strictfp double plus2PI_strict(final double angRad) {
-		if (angRad > -Math.PI) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + TWOPI_LO + TWOPI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + TWOPI_HI + TWOPI_LO;
-		}
+	public static double plus2PI_strict(final double angRad) {
+		if (angRad > -Math.PI) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + TWOPI_HI + TWOPI_LO;
 	}
 
 	/**
@@ -1667,13 +1598,10 @@ public final class NumbersUtils {
 	 * @return angRad - 2*PI, accurately computed.
 	 */
 	public static double minus2PI(final double angRad) {
-		if (angRad < Math.PI) {
-			// LO then HI, for better accuracy (if starting near 0).
+		if (angRad < Math.PI) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - TWOPI_LO - TWOPI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - TWOPI_HI - TWOPI_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - TWOPI_HI - TWOPI_LO;
 	}
 
 	/**
@@ -1683,14 +1611,11 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad - 2*PI, accurately computed.
 	 */
-	public static strictfp double minus2PI_strict(final double angRad) {
-		if (angRad < Math.PI) {
-			// LO then HI, for better accuracy (if starting near 0).
+	public static double minus2PI_strict(final double angRad) {
+		if (angRad < Math.PI) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - TWOPI_LO - TWOPI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - TWOPI_HI - TWOPI_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - TWOPI_HI - TWOPI_LO;
 	}
 
 	/**
@@ -1699,13 +1624,9 @@ public final class NumbersUtils {
 	 * @return angRad + PI, accurately computed.
 	 */
 	public static double plusPI(final double angRad) {
-		if (angRad > -Math.PI / 2) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + PI_LO + PI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + PI_HI + PI_LO;
-		}
+		if (angRad > -Math.PI / 2) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + PI_HI + PI_LO;
 	}
 
 	/**
@@ -1715,14 +1636,10 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad + PI, accurately computed.
 	 */
-	public static strictfp double plusPI_strict(final double angRad) {
-		if (angRad > -Math.PI / 2) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + PI_LO + PI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + PI_HI + PI_LO;
-		}
+	public static double plusPI_strict(final double angRad) {
+		if (angRad > -Math.PI / 2) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + PI_HI + PI_LO;
 	}
 
 	/**
@@ -1731,13 +1648,10 @@ public final class NumbersUtils {
 	 * @return angRad - PI, accurately computed.
 	 */
 	public static double minusPI(final double angRad) {
-		if (angRad < Math.PI / 2) {
-			// LO then HI, for better accuracy (if starting near 0).
+		if (angRad < Math.PI / 2) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - PI_LO - PI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - PI_HI - PI_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - PI_HI - PI_LO;
 	}
 
 	/**
@@ -1747,14 +1661,11 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad - PI, accurately computed.
 	 */
-	public static strictfp double minusPI_strict(final double angRad) {
-		if (angRad < Math.PI / 2) {
-			// LO then HI, for better accuracy (if starting near 0).
+	public static double minusPI_strict(final double angRad) {
+		if (angRad < Math.PI / 2) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - PI_LO - PI_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - PI_HI - PI_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - PI_HI - PI_LO;
 	}
 
 	/**
@@ -1763,13 +1674,9 @@ public final class NumbersUtils {
 	 * @return angRad + PI/2, accurately computed.
 	 */
 	public static double plusPIO2(final double angRad) {
-		if (angRad > -Math.PI / 4) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + PIO2_LO + PIO2_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + PIO2_HI + PIO2_LO;
-		}
+		if (angRad > -Math.PI / 4) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + PIO2_HI + PIO2_LO;
 	}
 
 	/**
@@ -1779,14 +1686,10 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad + PI/2, accurately computed.
 	 */
-	public static strictfp double plusPIO2_strict(final double angRad) {
-		if (angRad > -Math.PI / 4) {
-			// LO then HI, for better accuracy (if starting near 0).
-			return angRad + PIO2_LO + PIO2_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad + PIO2_HI + PIO2_LO;
-		}
+	public static double plusPIO2_strict(final double angRad) {
+		if (angRad > -Math.PI / 4) {}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad + PIO2_HI + PIO2_LO;
 	}
 
 	/**
@@ -1795,13 +1698,10 @@ public final class NumbersUtils {
 	 * @return angRad - PI/2, accurately computed.
 	 */
 	public static double minusPIO2(final double angRad) {
-		if (angRad < Math.PI / 4) {
-			// LO then HI, for better accuracy (if starting near 0).
+		if (angRad < Math.PI / 4) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - PIO2_LO - PIO2_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - PIO2_HI - PIO2_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - PIO2_HI - PIO2_LO;
 	}
 
 	/**
@@ -1811,14 +1711,11 @@ public final class NumbersUtils {
 	 *            An angle, in radians.
 	 * @return angRad - PI/2, accurately computed.
 	 */
-	public static strictfp double minusPIO2_strict(final double angRad) {
-		if (angRad < Math.PI / 4) {
-			// LO then HI, for better accuracy (if starting near 0).
+	public static double minusPIO2_strict(final double angRad) {
+		if (angRad < Math.PI / 4) // LO then HI, for better accuracy (if starting near 0).
 			return angRad - PIO2_LO - PIO2_HI;
-		} else {
-			// HI then LO, for better accuracy (if ending near 0).
-			return angRad - PIO2_HI - PIO2_LO;
-		}
+		// HI then LO, for better accuracy (if ending near 0).
+		return angRad - PIO2_HI - PIO2_LO;
 	}
 
 	/*
@@ -1833,10 +1730,8 @@ public final class NumbersUtils {
 	 *             if the specified radix is not in [2,36].
 	 */
 	public static boolean checkRadix(final int radix) {
-		if (!isInRange(Character.MIN_RADIX, Character.MAX_RADIX, radix)) {
-			throw new IllegalArgumentException(
-					"radix [" + radix + "] must be in [" + Character.MIN_RADIX + "," + Character.MAX_RADIX + "]");
-		}
+		if (!isInRange(Character.MIN_RADIX, Character.MAX_RADIX, radix)) throw new IllegalArgumentException(
+				"radix [" + radix + "] must be in [" + Character.MIN_RADIX + "," + Character.MAX_RADIX + "]");
 		return true;
 	}
 
@@ -1846,12 +1741,9 @@ public final class NumbersUtils {
 	 * @return Number of characters (minus sign included) to represent the specified value in the specified radix.
 	 */
 	public static int computeNbrOfChars(final int value, final int radix) {
-		if (value < 0) {
-			// 1 for sign
+		if (value < 0) // 1 for sign
 			return 1 + computeNbrOfDigits_negValue(value, radix);
-		} else {
-			return computeNbrOfDigits_negValue(-value, radix);
-		}
+		return computeNbrOfDigits_negValue(-value, radix);
 	}
 
 	/**
@@ -1860,12 +1752,9 @@ public final class NumbersUtils {
 	 * @return Number of characters (minus sign included) to represent the specified value in the specified radix.
 	 */
 	public static int computeNbrOfChars(final long value, final int radix) {
-		if (value < 0) {
-			// 1 for sign
+		if (value < 0) // 1 for sign
 			return 1 + computeNbrOfDigits_negValue(value, radix);
-		} else {
-			return computeNbrOfDigits_negValue(-value, radix);
-		}
+		return computeNbrOfDigits_negValue(-value, radix);
 	}
 
 	/**
@@ -1876,12 +1765,9 @@ public final class NumbersUtils {
 	 * @return Number of characters (minus sign included) to represent the specified value in the specified radix.
 	 */
 	public static int computeNbrOfChars(final int value, final int radix, final int paddingUpTo) {
-		if (value < 0) {
-			// 1 for sign
+		if (value < 0) // 1 for sign
 			return 1 + Math.max(paddingUpTo, computeNbrOfDigits_negValue(value, radix));
-		} else {
-			return Math.max(paddingUpTo, computeNbrOfDigits_negValue(-value, radix));
-		}
+		return Math.max(paddingUpTo, computeNbrOfDigits_negValue(-value, radix));
 	}
 
 	/**
@@ -1892,12 +1778,9 @@ public final class NumbersUtils {
 	 * @return Number of characters (minus sign included) to represent the specified value in the specified radix.
 	 */
 	public static int computeNbrOfChars(final long value, final int radix, final int paddingUpTo) {
-		if (value < 0) {
-			// 1 for sign
+		if (value < 0) // 1 for sign
 			return 1 + Math.max(paddingUpTo, computeNbrOfDigits_negValue(value, radix));
-		} else {
-			return Math.max(paddingUpTo, computeNbrOfDigits_negValue(-value, radix));
-		}
+		return Math.max(paddingUpTo, computeNbrOfDigits_negValue(-value, radix));
 	}
 
 	/**
@@ -1991,10 +1874,8 @@ public final class NumbersUtils {
 	 */
 	public static String toString(final int value, final int radix, final int paddingUpTo) {
 		// Only one test if radix+paddingUpTo != 10.
-		if (radix + paddingUpTo == 10 && paddingUpTo == 0) {
-			// Using JDK's optimized algorithm.
+		if (radix + paddingUpTo == 10 && paddingUpTo == 0) // Using JDK's optimized algorithm.
 			return Integer.toString(value);
-		}
 
 		int negValue;
 		final int signSize;
@@ -2032,13 +1913,9 @@ public final class NumbersUtils {
 		}
 		chars[--charPos] = CHAR_BY_DIGIT[-negValue];
 
-		while (charPos > signSize) {
-			chars[--charPos] = '0';
-		}
+		while (charPos > signSize) { chars[--charPos] = '0'; }
 
-		if (negative) {
-			chars[0] = '-';
-		}
+		if (negative) { chars[0] = '-'; }
 
 		return new String(chars);
 	}
@@ -2054,10 +1931,8 @@ public final class NumbersUtils {
 	 */
 	public static String toString(final long value, final int radix, final int paddingUpTo) {
 		// Only one test if radix+paddingUpTo != 10.
-		if (radix + paddingUpTo == 10 && paddingUpTo == 0) {
-			// Using JDK's optimized algorithm.
+		if (radix + paddingUpTo == 10 && paddingUpTo == 0) // Using JDK's optimized algorithm.
 			return Long.toString(value);
-		}
 
 		long negValue;
 		final int signSize;
@@ -2093,13 +1968,9 @@ public final class NumbersUtils {
 		}
 		chars[--charPos] = CHAR_BY_DIGIT[(int) -negValue];
 
-		while (charPos > signSize) {
-			chars[--charPos] = '0';
-		}
+		while (charPos > signSize) { chars[--charPos] = '0'; }
 
-		if (negative) {
-			chars[0] = '-';
-		}
+		if (negative) { chars[0] = '-'; }
 
 		return new String(chars);
 	}
@@ -2168,7 +2039,8 @@ public final class NumbersUtils {
 	/**
 	 * Min signed int for bit size no check.
 	 *
-	 * @param bitSize the bit size
+	 * @param bitSize
+	 *            the bit size
 	 * @return the int
 	 */
 	private static int minSignedIntForBitSize_noCheck(final int bitSize) {
@@ -2179,7 +2051,8 @@ public final class NumbersUtils {
 	/**
 	 * Min signed long for bit size no check.
 	 *
-	 * @param bitSize the bit size
+	 * @param bitSize
+	 *            the bit size
 	 * @return the long
 	 */
 	private static long minSignedLongForBitSize_noCheck(final int bitSize) {
@@ -2190,7 +2063,8 @@ public final class NumbersUtils {
 	/**
 	 * Max signed int for bit size no check.
 	 *
-	 * @param bitSize the bit size
+	 * @param bitSize
+	 *            the bit size
 	 * @return the int
 	 */
 	private static int maxSignedIntForBitSize_noCheck(final int bitSize) {
@@ -2201,7 +2075,8 @@ public final class NumbersUtils {
 	/**
 	 * Max signed long for bit size no check.
 	 *
-	 * @param bitSize the bit size
+	 * @param bitSize
+	 *            the bit size
 	 * @return the long
 	 */
 	private static long maxSignedLongForBitSize_noCheck(final int bitSize) {
@@ -2222,7 +2097,7 @@ public final class NumbersUtils {
 		final int maxNbrOfDigits = MAX_NBR_OF_NEG_INT_DIGITS_BY_RADIX[radix];
 		int p = radix;
 		for (int i = 1; i < maxNbrOfDigits; i++) {
-			if (negValue > -p) { return i; }
+			if (negValue > -p) return i;
 			p *= radix;
 		}
 		return maxNbrOfDigits;
@@ -2237,7 +2112,7 @@ public final class NumbersUtils {
 		final int maxNbrOfDigits = MAX_NBR_OF_NEG_LONG_DIGITS_BY_RADIX[radix];
 		long p = radix;
 		for (int i = 1; i < maxNbrOfDigits; i++) {
-			if (negValue > -p) { return i; }
+			if (negValue > -p) return i;
 			p *= radix;
 		}
 		return maxNbrOfDigits;
@@ -2250,16 +2125,18 @@ public final class NumbersUtils {
 	/**
 	 * Check bit positions.
 	 *
-	 * @param firstBitPos the first bit pos
-	 * @param lastBitPosExcl the last bit pos excl
-	 * @param bitSize the bit size
+	 * @param firstBitPos
+	 *            the first bit pos
+	 * @param lastBitPosExcl
+	 *            the last bit pos excl
+	 * @param bitSize
+	 *            the bit size
 	 * @return true, if successful
 	 */
 	private static boolean checkBitPositions(final int firstBitPos, final int lastBitPosExcl, final int bitSize) {
-		if (firstBitPos < 0 || firstBitPos > lastBitPosExcl || lastBitPosExcl > bitSize) {
+		if (firstBitPos < 0 || firstBitPos > lastBitPosExcl || lastBitPosExcl > bitSize)
 			throw new IllegalArgumentException("bit positions (first=" + firstBitPos + ",lastExcl=" + lastBitPosExcl
 					+ ") must verify 0 <= first <= lastExcl <= " + bitSize);
-		}
 		return true;
 	}
 
@@ -2308,25 +2185,24 @@ public final class NumbersUtils {
 				}
 			}
 			return new String(chars);
-		} else {
-			final int nbrOfChars = lastBitPosExcl - firstBitPos;
-			final char[] chars = new char[nbrOfChars];
-			if (bigEndian) {
-				final int firstBitIndex = bitSizeM1 - lastBitPos;
-				final int lastBitIndex = bitSizeM1 - firstBitPos;
-				int bitIndex = lastBitIndex;
-				while (bitIndex >= firstBitIndex) {
-					chars[lastBitIndex - bitIndex] = (char) ('0' + (bits >> bitIndex & 1));
-					--bitIndex;
-				}
-			} else {
-				int bitIndex = lastBitPos;
-				while (bitIndex >= firstBitPos) {
-					chars[bitIndex - firstBitPos] = (char) ('0' + (bits >> bitIndex & 1));
-					--bitIndex;
-				}
-			}
-			return new String(chars);
 		}
+		final int nbrOfChars = lastBitPosExcl - firstBitPos;
+		final char[] chars = new char[nbrOfChars];
+		if (bigEndian) {
+			final int firstBitIndex = bitSizeM1 - lastBitPos;
+			final int lastBitIndex = bitSizeM1 - firstBitPos;
+			int bitIndex = lastBitIndex;
+			while (bitIndex >= firstBitIndex) {
+				chars[lastBitIndex - bitIndex] = (char) ('0' + (bits >> bitIndex & 1));
+				--bitIndex;
+			}
+		} else {
+			int bitIndex = lastBitPos;
+			while (bitIndex >= firstBitPos) {
+				chars[bitIndex - firstBitPos] = (char) ('0' + (bits >> bitIndex & 1));
+				--bitIndex;
+			}
+		}
+		return new String(chars);
 	}
 }
