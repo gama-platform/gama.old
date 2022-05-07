@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * VariableDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * VariableDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -47,35 +47,37 @@ public class VariableDescription extends SymbolDescription {
 
 	/** The dependencies. */
 	private static Map<String, Collection<String>> dependencies = GamaMapFactory.createUnordered();
-	
+
 	/** The Constant INIT_DEPENDENCIES_FACETS. */
 	public final static Set<String> INIT_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(INIT, MIN, MAX, STEP, SIZE, AMONG).build();
-	
+
 	/** The Constant UPDATE_DEPENDENCIES_FACETS. */
 	public final static Set<String> UPDATE_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX).build();
-	
+
 	/** The Constant FUNCTION_DEPENDENCIES_FACETS. */
 	public final static Set<String> FUNCTION_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(FUNCTION).build();
-	
+
 	/** The Constant CLASS_DEFINITIONS. */
 	public static final Map<VariableDescription, Class<?>> CLASS_DEFINITIONS = new HashMap<>();
-	
+
 	/** The Constant PREF_DEFINITIONS. */
 	public static final Map<String, String> PREF_DEFINITIONS = new HashMap<>();
-	
+
 	/** The plugin. */
 	private String plugin;
 
+	String builtInDoc;
+
 	/** The is not modifiable. */
 	private final boolean _isGlobal, _isNotModifiable;
-	
+
 	/** The is synthetic species container. */
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
-	
+
 	/** The set. */
 	private IGamaHelper<?> get, init, set;
 	// private GamaHelper<?>[] listeners;
@@ -83,10 +85,14 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Instantiates a new variable description.
 	 *
-	 * @param keyword the keyword
-	 * @param superDesc the super desc
-	 * @param source the source
-	 * @param facets the facets
+	 * @param keyword
+	 *            the keyword
+	 * @param superDesc
+	 *            the super desc
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
 	 */
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
@@ -150,7 +156,8 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Copy from.
 	 *
-	 * @param v2 the v 2
+	 * @param v2
+	 *            the v 2
 	 */
 	public void copyFrom(final VariableDescription v2) {
 		// Special cases for functions
@@ -253,9 +260,12 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Gets the dependencies.
 	 *
-	 * @param facetsToVisit the facets to visit
-	 * @param includingThis the including this
-	 * @param includingSpecies the including species
+	 * @param facetsToVisit
+	 *            the facets to visit
+	 * @param includingThis
+	 *            the including this
+	 * @param includingSpecies
+	 *            the including species
 	 * @return the dependencies
 	 */
 	public Collection<VariableDescription> getDependencies(final Set<String> facetsToVisit, final boolean includingThis,
@@ -312,7 +322,8 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Gets the var expr.
 	 *
-	 * @param asField the as field
+	 * @param asField
+	 *            the as field
 	 * @return the var expr
 	 */
 	// If asField is true, should not try to build a GlobalVarExpr
@@ -374,19 +385,23 @@ public class VariableDescription extends SymbolDescription {
 	 * @return the built in doc
 	 */
 	public String getBuiltInDoc() {
+		if (builtInDoc != null) return builtInDoc;
+		builtInDoc = "";
 		final VariableDescription builtIn = getBuiltInAncestor();
-		if (builtIn == null) return null;
+		if (builtIn == null) { builtInDoc = null; }
 		Class<?> clazz = CLASS_DEFINITIONS.get(builtIn);
 		if (clazz == null) return PREF_DEFINITIONS.get(getName());
 		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
 		for (final msi.gama.precompiler.GamlAnnotations.variable v : vars.value()) {
 			if (v.name().equals(name)) {
 				final doc[] docs = v.doc();
-				if (docs.length > 0) // documentation of fields is not used
-					return docs[0].value();
+				if (docs.length > 0) { // documentation of fields is not used
+					builtInDoc = docs[0].value();
+				}
+				break;
 			}
 		}
-		return "";
+		return builtInDoc;
 
 	}
 
@@ -408,9 +423,12 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Adds the helpers.
 	 *
-	 * @param get the get
-	 * @param init the init
-	 * @param set the set
+	 * @param get
+	 *            the get
+	 * @param init
+	 *            the init
+	 * @param set
+	 *            the set
 	 */
 	public void addHelpers(final IGamaHelper<?> get, final IGamaHelper<?> init, final IGamaHelper<?> set) {
 		this.get = get;
@@ -421,10 +439,14 @@ public class VariableDescription extends SymbolDescription {
 	/**
 	 * Adds the helpers.
 	 *
-	 * @param skill the skill
-	 * @param get the get
-	 * @param init the init
-	 * @param set the set
+	 * @param skill
+	 *            the skill
+	 * @param get
+	 *            the get
+	 * @param init
+	 *            the init
+	 * @param set
+	 *            the set
 	 */
 	public void addHelpers(final Class<?> skill, final IGamaHelper<?> get, final IGamaHelper<?> init,
 			final IGamaHelper<?> set) {

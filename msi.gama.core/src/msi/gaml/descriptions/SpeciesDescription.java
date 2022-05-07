@@ -321,10 +321,11 @@ public class SpeciesDescription extends TypeDescription {
 				}
 				if (toAdd) {
 					// Fixes a problem where built-in attributes were not linked with their declaring class
-					Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
+					// Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
 					final VariableDescription var = (VariableDescription) v.copy(this);
 					addOwnAttribute(var);
-					VariableDescription.CLASS_DEFINITIONS.put(var, c);
+					var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
+					// VariableDescription.CLASS_DEFINITIONS.put(var, c);
 				}
 
 			} else {
