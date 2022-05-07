@@ -290,7 +290,6 @@ public class HomeToTOC {
 	 *            the wiki folder
 	 * @return the line file path
 	 */
-	// References/PlatformDocumentation/RunningExperiments/InspectorsAndMonitors
 	private static String getLineFilePath(final String line, final String wikiFolder) {
 		String lineFile = getLineFile(line);
 		return getRelativePathToWiki(lineFile, wikiFolder);

@@ -18,7 +18,7 @@ import java.io.File;
 public class Constants {
 	
 	/** The Constant GAMA_VERSION. */
-	public final static String GAMA_VERSION  = "1.8.1";
+	public final static String GAMA_VERSION  = "1.8.2";
 
 	/** The Constant CMD_PANDOC. */
 	// Commandes
@@ -27,7 +27,7 @@ public class Constants {
 	
 	/** The Constant CMD_PDFLATEX. */
 	public final static String CMD_PDFLATEX = OSUtils.isWindows() ? "\"C:/MiKTeX 2.9/miktex/bin/x64/pdflatex.exe\""
-			: "/Users/benoit/bin/pdflatex";
+			: "/Library/TeX/texbin/pdflatex";
 	// "/Library/TeX/Root/bin/universal-darwin/pdflatex";
 	
 	// Note : need to make change in mytemplate.tex to access the write style file ..... 

@@ -31,9 +31,9 @@ public class MainGeneratePDF {
 		try {
 			System.out.println("GENERATION OF THE PDF DOCUMENTATION");
 		
-		if (generateGamaStyle) {
-			GamaStyleGeneration.generateGamaStyle();
-		}
+			if (generateGamaStyle) {
+				GamaStyleGeneration.generateGamaStyle();
+			}
 
 			System.out.print("Preparation of the folders.......................");
 			PrepareEnv.prepareDocumentation();
@@ -43,7 +43,6 @@ public class MainGeneratePDF {
 			ConvertToPDF.convert();
 			System.out.println("DONE");			
 		} catch(Exception e){
-			System.out.println("ERROR: Impossible connection to the SVN repository.");
 			System.out.println(e);
 		}
 	}
