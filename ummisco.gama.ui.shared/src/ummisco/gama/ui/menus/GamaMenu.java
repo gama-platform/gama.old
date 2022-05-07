@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ummisco.gama.ui.views.toolbar.Selector;
+
 /**
  * The class GamaMenu.
  *
@@ -159,6 +161,10 @@ public abstract class GamaMenu {
 		return action(m, s, listener, null);
 	}
 
+	public static final MenuItem action(final Menu m, final String s, final Selector listener) {
+		return action(m, s, listener, null);
+	}
+
 	/**
 	 * Action.
 	 *
@@ -173,6 +179,14 @@ public abstract class GamaMenu {
 	 * @return the menu item
 	 */
 	public static MenuItem action(final Menu m, final String s, final SelectionListener listener, final Image image) {
+		final MenuItem action = createItem(m, SWT.PUSH);
+		action.setText(s);
+		action.addSelectionListener(listener);
+		if (image != null) { action.setImage(image); }
+		return action;
+	}
+
+	public static MenuItem action(final Menu m, final String s, final Selector listener, final Image image) {
 		final MenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
 		action.addSelectionListener(listener);
@@ -223,6 +237,16 @@ public abstract class GamaMenu {
 		return action;
 	}
 
+	public static final MenuItem check(final Menu m, final String s, final boolean select, final Selector listener,
+			final Image image) {
+		final MenuItem action = createItem(m, SWT.CHECK);
+		action.setText(s);
+		action.setSelection(select);
+		action.addSelectionListener(listener);
+		if (image != null) { action.setImage(image); }
+		return action;
+	}
+
 	/**
 	 * Sub.
 	 *
@@ -261,6 +285,16 @@ public abstract class GamaMenu {
 	public static Menu sub(final Menu parent, final String s, final String t) {
 		final MenuItem item = createItem(parent, SWT.CASCADE);
 		item.setText(s);
+		if (t != null) { item.setToolTipText(t); }
+		final Menu m = new Menu(item);
+		item.setMenu(m);
+		return m;
+	}
+
+	public static Menu sub(final Menu parent, final String s, final String t, final Image image) {
+		final MenuItem item = createItem(parent, SWT.CASCADE);
+		item.setText(s);
+		item.setImage(image);
 		if (t != null) { item.setToolTipText(t); }
 		final Menu m = new Menu(item);
 		item.setMenu(m);

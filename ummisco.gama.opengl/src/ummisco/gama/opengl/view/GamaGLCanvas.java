@@ -41,6 +41,7 @@ import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.runtime.PlatformHelper;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -51,6 +52,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The Class GamaGLCanvas.
  */
 public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent, FPSCounter {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The canvas. */
 	final Control canvas;
@@ -77,8 +82,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		this.setLayout(new FillLayout());
 		final var cap = defineCapabilities();
 		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) {
-			drawable = GLWindow.create(cap);
-			canvas = new NewtCanvasSWT(this, SWT.NONE, (Window) drawable);
+			GLWindow window = GLWindow.create(cap);
+			drawable = window;
+			canvas = new NewtCanvasSWT(this, SWT.NONE, window);
 			addControlListener(new ControlAdapter() {
 				@Override
 				public void controlResized(final ControlEvent e) {
@@ -321,10 +327,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	public void reparentWindow() {
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
 		final Window w = (Window) drawable;
-		w.setVisible(false);
+		setWindowVisible(false);
 		w.setFullscreen(true);
 		w.setFullscreen(false);
-		w.setVisible(true);
+		setWindowVisible(true);
 	}
 
 	/**
@@ -336,6 +342,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	public void setWindowVisible(final boolean b) {
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
 		final Window w = (Window) drawable;
+		// if (!w.isNativeValid()) return;
+		DEBUG.OUT("Make GLWindow visible");
 		w.setVisible(b);
 	}
 

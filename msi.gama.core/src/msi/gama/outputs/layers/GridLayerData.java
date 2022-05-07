@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GridLayerData.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GridLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -205,7 +205,12 @@ public class GridLayerData extends LayerData {
 	 * @param newValue
 	 *            the new draw lines
 	 */
-	public void setDrawLines(final Boolean newValue) { turnGridOn = newValue; }
+	public void setDrawLines(final Boolean newValue) {
+
+		turnGridOn = newValue;
+		if (newValue && line.get() == null) { line = create(IKeyword.BORDER, Types.COLOR, defaultLineColor); }
+
+	}
 
 	/**
 	 * Gets the grid.

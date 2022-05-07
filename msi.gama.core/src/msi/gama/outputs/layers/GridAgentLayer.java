@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GridAgentLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GridAgentLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ILayer.IGridLayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.ExecutionResult;
@@ -28,7 +29,7 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 /**
  * The Class GridAgentLayer.
  */
-public class GridAgentLayer extends AgentLayer {
+public class GridAgentLayer extends AgentLayer implements IGridLayer {
 
 	/**
 	 * Instantiates a new grid agent layer.
@@ -41,7 +42,7 @@ public class GridAgentLayer extends AgentLayer {
 	}
 
 	@Override
-	protected ILayerData createData() {
+	public GridLayerData createData() {
 		return new GridLayerData(definition);
 	}
 
@@ -81,4 +82,6 @@ public class GridAgentLayer extends AgentLayer {
 
 	}
 
+	@Override
+	public String getType() { return "Grid layer"; }
 }

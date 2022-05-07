@@ -366,15 +366,13 @@ public class AgentsMenu extends ContributionItem {
 			GamaMenu.separate(menu);
 			actionAgentMenuItem(menu, agent, killer, GamaIcons.create(IGamaIcons.MENU_KILL).image(), "Kill");
 		}
-		if (agent instanceof IMacroAgent macro) {
-			if (macro.hasMembers()) {
-				GamaMenu.separate(menu);
-				if (!topLevel) { GamaMenu.separate(menu, "Micro-populations"); }
-				for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
-					if (!pop.isEmpty()) {
-						cascadingPopulationMenuItem(menu, agent, pop,
-								GamaIcons.create(IGamaIcons.MENU_POPULATION).image(), actions);
-					}
+		if ((agent instanceof IMacroAgent macro) && macro.hasMembers()) {
+			GamaMenu.separate(menu);
+			if (!topLevel) { GamaMenu.separate(menu, "Micro-populations"); }
+			for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
+				if (!pop.isEmpty()) {
+					cascadingPopulationMenuItem(menu, agent, pop, GamaIcons.create(IGamaIcons.MENU_POPULATION).image(),
+							actions);
 				}
 			}
 		}
@@ -397,7 +395,7 @@ public class AgentsMenu extends ContributionItem {
 		int subMenuSize = Math.max(2, GamaPreferences.Interface.CORE_MENU_SIZE.getValue());
 		final List<IAgent> agents = new ArrayList<>(species);
 		final int size = agents.size();
-		if (size > 1 && !isSimulations) { GamaMenu.separate(menu, "Actions"); }
+		// if (size > 1 && !isSimulations) { GamaMenu.separate(menu, "Actions"); }
 		if (size > 1) { browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image()); }
 		if (size > 1 && !isSimulations) {
 			GamaMenu.separate(menu);

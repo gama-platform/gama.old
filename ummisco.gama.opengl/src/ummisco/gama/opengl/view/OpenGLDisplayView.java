@@ -10,10 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import java.util.Collection;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import com.jogamp.newt.Window;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.GAMA;
@@ -94,6 +94,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 		hideCanvas();
 		super.toggleFullScreen();
 		getGLCanvas().reparentWindow();
+		showCanvas();
 	}
 
 	/**
@@ -121,33 +122,17 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
-	public Collection<String> getCameraNames() { return getOutput().getData().getCameraNames(); }
+	protected boolean canBeSynchronized() {
+		Window w = getGLCanvas().getNEWTWindow();
+		return w == null || w.isVisible();
+	}
 
 	@Override
-	public void setCameraName(final String p) {
-		getOutput().getData().setCameraNameFromUser(p);
-		this.getDisplaySurface().renderer.getCameraHelper().applyPreset(p);
-	}
+	public ICameraHelper getCameraHelper() { return getDisplaySurface().renderer.getCameraHelper(); }
 
 	@Override
 	public boolean hasCameras() {
 		return true;
-	}
-
-	@Override
-	public String getCameraName() { return getOutput().getData().getCameraName(); }
-
-	@Override
-	public boolean isCameraLocked() { return getOutput().getData().isCameraLocked(); }
-
-	@Override
-	public void toggleCamera() {
-		getOutput().getData().setCameraLocked(!getOutput().getData().isCameraLocked());
-	}
-
-	@Override
-	protected boolean canBeSynchronized() {
-		return getGLCanvas().getNEWTWindow().isVisible();
 	}
 
 }

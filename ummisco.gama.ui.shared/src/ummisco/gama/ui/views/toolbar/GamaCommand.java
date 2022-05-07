@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaCommand.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaCommand.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -34,10 +36,14 @@ public class GamaCommand {
 	/**
 	 * Builds the.
 	 *
-	 * @param image the image
-	 * @param text the text
-	 * @param tooltip the tooltip
-	 * @param runner the runner
+	 * @param image
+	 *            the image
+	 * @param text
+	 *            the text
+	 * @param tooltip
+	 *            the tooltip
+	 * @param runner
+	 *            the runner
 	 * @return the gama command
 	 */
 	public static GamaCommand build(final String image, final String text, final String tooltip,
@@ -48,9 +54,12 @@ public class GamaCommand {
 	/**
 	 * Builds the.
 	 *
-	 * @param image the image
-	 * @param text the text
-	 * @param runner the runner
+	 * @param image
+	 *            the image
+	 * @param text
+	 *            the text
+	 * @param runner
+	 *            the runner
 	 * @return the gama command
 	 */
 	public static GamaCommand build(final String image, final String text, final Selector runner) {
@@ -59,17 +68,21 @@ public class GamaCommand {
 
 	/** The image. */
 	String text, tooltip, image;
-	
+
 	/** The selector. */
 	Selector selector;
 
 	/**
 	 * Instantiates a new gama command.
 	 *
-	 * @param image the image
-	 * @param text the text
-	 * @param tooltip the tooltip
-	 * @param runner the runner
+	 * @param image
+	 *            the image
+	 * @param text
+	 *            the text
+	 * @param tooltip
+	 *            the tooltip
+	 * @param runner
+	 *            the runner
 	 */
 	public GamaCommand(final String image, final String text, final String tooltip, final Selector runner) {
 		this.text = text;
@@ -81,9 +94,12 @@ public class GamaCommand {
 	/**
 	 * Instantiates a new gama command.
 	 *
-	 * @param image the image
-	 * @param text the text
-	 * @param runner the runner
+	 * @param image
+	 *            the image
+	 * @param text
+	 *            the text
+	 * @param runner
+	 *            the runner
 	 */
 	public GamaCommand(final String image, final String text, final Selector runner) {
 		this(image, text, text, runner);
@@ -94,81 +110,67 @@ public class GamaCommand {
 	 *
 	 * @return the text
 	 */
-	public String getText() {
-		return text;
-	}
+	public String getText() { return text; }
 
 	/**
 	 * Sets the text.
 	 *
-	 * @param text the new text
+	 * @param text
+	 *            the new text
 	 */
-	public void setText(final String text) {
-		this.text = text;
-	}
+	public void setText(final String text) { this.text = text; }
 
 	/**
 	 * Gets the tooltip.
 	 *
 	 * @return the tooltip
 	 */
-	public String getTooltip() {
-		return tooltip;
-	}
+	public String getTooltip() { return tooltip; }
 
 	/**
 	 * Sets the tooltip.
 	 *
-	 * @param tooltip the new tooltip
+	 * @param tooltip
+	 *            the new tooltip
 	 */
-	public void setTooltip(final String tooltip) {
-		this.tooltip = tooltip;
-	}
+	public void setTooltip(final String tooltip) { this.tooltip = tooltip; }
 
 	/**
 	 * Gets the image.
 	 *
 	 * @return the image
 	 */
-	public String getImage() {
-		return image;
-	}
+	public String getImage() { return image; }
 
 	/**
 	 * Sets the image.
 	 *
-	 * @param image the new image
+	 * @param image
+	 *            the new image
 	 */
-	public void setImage(final String image) {
-		this.image = image;
-	}
+	public void setImage(final String image) { this.image = image; }
 
 	/**
 	 * Gets the listener.
 	 *
 	 * @return the listener
 	 */
-	public Selector getListener() {
-		return selector;
-	}
+	public Selector getListener() { return selector; }
 
 	/**
 	 * Sets the selector.
 	 *
-	 * @param event the new selector
+	 * @param event
+	 *            the new selector
 	 */
-	public void setSelector(final Selector event) {
-		this.selector = event;
-	}
+	public void setSelector(final Selector event) { this.selector = event; }
 
 	/**
 	 * Gets the id.
 	 *
 	 * @return the id
 	 */
-	public String getId() {
-		return image;
-	}
+	public String getId() { return image; }
 
 	/**
 	 * To action.
@@ -215,7 +217,8 @@ public class GamaCommand {
 	/**
 	 * To item.
 	 *
-	 * @param t the t
+	 * @param t
+	 *            the t
 	 * @return the tool item
 	 */
 	public ToolItem toItem(final ToolBar t) {
@@ -225,8 +228,10 @@ public class GamaCommand {
 	/**
 	 * To item.
 	 *
-	 * @param t the t
-	 * @param sel the sel
+	 * @param t
+	 *            the t
+	 * @param sel
+	 *            the sel
 	 * @return the tool item
 	 */
 	public ToolItem toItem(final ToolBar t, final Selector sel) {
@@ -238,11 +243,22 @@ public class GamaCommand {
 		return i;
 	}
 
+	public MenuItem toItem(final Menu m) {
+		final var i = new MenuItem(m, SWT.PUSH);
+		if (text != null) { i.setText(text); }
+		i.setToolTipText(tooltip);
+		if (image != null) { i.setImage(create(image).image()); }
+		i.addSelectionListener(selector);
+		return i;
+	}
+
 	/**
 	 * To button.
 	 *
-	 * @param t the t
-	 * @param selector2 the selector 2
+	 * @param t
+	 *            the t
+	 * @param selector2
+	 *            the selector 2
 	 * @return the button
 	 */
 	public Button toButton(final Composite t, final Selector selector2) {
@@ -258,8 +274,10 @@ public class GamaCommand {
 	/**
 	 * To label.
 	 *
-	 * @param t the t
-	 * @param selector2 the selector 2
+	 * @param t
+	 *            the t
+	 * @param selector2
+	 *            the selector 2
 	 * @return the label
 	 */
 	public Label toLabel(final Composite t, final MouseListener selector2) {
@@ -274,8 +292,10 @@ public class GamaCommand {
 	/**
 	 * To link.
 	 *
-	 * @param t the t
-	 * @param selector2 the selector 2
+	 * @param t
+	 *            the t
+	 * @param selector2
+	 *            the selector 2
 	 * @return the hyperlink
 	 */
 	public Hyperlink toLink(final Composite t, final Selector selector2) {

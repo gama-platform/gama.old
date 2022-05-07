@@ -192,7 +192,7 @@ public interface IGamaView {
 		/**
 		 * Toggle side controls.
 		 */
-		void toggleSideControls();
+		// void toggleSideControls();
 
 		/**
 		 * Toggle overlay.

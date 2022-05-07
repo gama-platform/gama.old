@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GridLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GridLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -19,6 +18,7 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.ILayer.IGridLayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -33,19 +33,20 @@ import msi.gaml.statements.draw.MeshDrawingAttributes;
 /**
  * The Class GridLayer.
  */
-public class GridLayer extends AbstractLayer {
+public class GridLayer extends AbstractLayer implements IGridLayer {
 
 	/**
 	 * Instantiates a new grid layer.
 	 *
-	 * @param layer the layer
+	 * @param layer
+	 *            the layer
 	 */
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
 	}
 
 	@Override
-	protected ILayerData createData() {
+	public GridLayerData createData() {
 		return new GridLayerData(definition);
 	}
 

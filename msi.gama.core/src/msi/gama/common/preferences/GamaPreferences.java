@@ -102,8 +102,8 @@ public class GamaPreferences {
 				create("pref_startup_model", "Open a model or an experiment at startup", false, IType.BOOL, false)
 						.in(NAME, STARTUP).activates("pref_default_model", "pref_default_experiment");
 		/** The Constant CORE_DEFAULT_MODEL. */
-		public static final Pref<? extends IGamaFile> CORE_DEFAULT_MODEL =
-				create("pref_default_model", "Choose the model to open at startup", () -> new GenericFile("Enter path", false), IType.FILE, false)
+		public static final Pref<? extends IGamaFile> CORE_DEFAULT_MODEL = create("pref_default_model",
+				"Choose the model to open at startup", () -> new GenericFile("Enter path", false), IType.FILE, false)
 						.in(NAME, STARTUP).restrictToWorkspace().withExtensions("gaml", "experiment")
 						.refreshes("pref_default_experiment").activates("pref_default_experiment");
 
@@ -115,8 +115,7 @@ public class GamaPreferences {
 							if (CORE_STARTUP_MODEL.getValue()) {
 								IGamaFile file = CORE_DEFAULT_MODEL.getValue();
 								final URI uriModel = FileUtils.getURI(file.getOriginalPath(), null);
-								if (uriModel == null)
-									return result;
+								if (uriModel == null) return result;
 								result.addAll(GAML.getInfo(uriModel).getExperiments());
 							}
 							return result;
@@ -341,7 +340,7 @@ public class GamaPreferences {
 		/** The Constant CORE_ASK_FULLSCREEN. */
 		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
 				create("pref_experiment_ask_fullscreen", "Ask before entering fullscreen mode", false, IType.BOOL, true)
-						.in(NAME, EXECUTION);
+						.in(NAME, EXECUTION).hidden();
 		// public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
 		/** The Constant CORE_SYNC. */
 		// "Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
@@ -462,7 +461,7 @@ public class GamaPreferences {
 
 		/** The Constant CORE_DISPLAY_LAYOUT. */
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
-				create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING, true)
+				create("pref_display_view_layout", "Default layout of display views", "Split", IType.STRING, true)
 						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
 		// public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
 		/** The Constant CORE_DISPLAY_BORDER. */

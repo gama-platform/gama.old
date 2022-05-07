@@ -32,6 +32,7 @@ import ummisco.gama.opengl.renderer.shaders.AbstractPostprocessingShader;
 import ummisco.gama.opengl.renderer.shaders.AbstractShader;
 import ummisco.gama.opengl.renderer.shaders.FrameBufferObject;
 import ummisco.gama.opengl.renderer.shaders.KeystoneShaderProgram;
+import ummisco.gama.ui.utils.DPIHelper;
 
 /**
  * The Class KeystoneHelper.
@@ -450,15 +451,11 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	 */
 	public int cornerSelected(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
-			if (mouse.y < getViewHeight() / 2)
-				return 1;
-			else
-				return 0;
+			if (mouse.y < getViewHeight() / 2) return 1;
+			return 0;
 		}
-		if (mouse.y < getViewHeight() / 2)
-			return 2;
-		else
-			return 3;
+		if (mouse.y < getViewHeight() / 2) return 2;
+		return 3;
 	}
 
 	/**
@@ -470,15 +467,11 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	 */
 	public int cornerHovered(final GamaPoint mouse) {
 		if (mouse.x < getViewWidth() / 2) {
-			if (mouse.y < getViewHeight() / 2)
-				return 1;
-			else
-				return 0;
+			if (mouse.y < getViewHeight() / 2) return 1;
+			return 0;
 		}
-		if (mouse.y < getViewHeight() / 2)
-			return 2;
-		else
-			return 3;
+		if (mouse.y < getViewHeight() / 2) return 2;
+		return 3;
 	}
 
 	/**
@@ -532,7 +525,9 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	 *            the height
 	 */
 	public void reshape(final int width, final int height) {
-		if (fboScene != null) { fboScene.setDisplayDimensions(width, height); }
+		if (fboScene != null) {
+			fboScene.setDisplayDimensions(DPIHelper.autoScaleUp(width), DPIHelper.autoScaleUp(height));
+		}
 
 	}
 

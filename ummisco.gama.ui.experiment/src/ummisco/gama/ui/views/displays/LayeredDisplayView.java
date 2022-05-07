@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -47,7 +46,6 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
@@ -67,8 +65,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	/** The real index. */
 	protected int realIndex = -1;
 
-	/** The form. */
-	private SashForm form;
+	// /** The form. */
+	// private Composite form;
 
 	/** The surface composite. */
 	public Composite surfaceComposite;
@@ -109,7 +107,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	 *
 	 * @return the sash
 	 */
-	public SashForm getSash() { return form; }
+	public Composite getCentralPanel() { return centralPanel; }
 
 	@Override
 	public boolean containsPoint(final int x, final int y) {
@@ -181,12 +179,12 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		 * @param style
 		 *            the style
 		 */
-		public CentralPanel() {
-			super(form, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+		public CentralPanel(final Composite c) {
+			super(c, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 			setLayout(emptyLayout());
 			setLayoutData(fullData());
 			setParentComposite(this);
-			form.setMaximizedControl(this);
+			// form.setMaximizedControl(this);
 		}
 
 		/**
@@ -206,16 +204,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 		// First create the sashform
 
-		form = new SashForm(c, SWT.HORIZONTAL);
-		form.setLayoutData(fullData());
-		form.setBackground(IGamaColors.WHITE.color());
-		form.setSashWidth(8);
-		decorator.createSidePanel(form);
-		centralPanel = new CentralPanel();
+		// form = new Composite(c, SWT.HORIZONTAL);
+		// form.setLayoutData(fullData());
+		// form.setBackground(IGamaColors.WHITE.color());
+		// form.setSashWidth(8);
+		// decorator.createSidePanel(form);
+		centralPanel = new CentralPanel(c);
 		createSurfaceComposite(centralPanel);
 		surfaceComposite.setLayoutData(fullData());
 		getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
-		decorator.createDecorations(form);
+		decorator.createDecorations();
 		c.requestLayout();
 		boolean[] toggle = { true };
 		if (getOutput().getData().fullScreen() > -1) {
@@ -445,11 +443,11 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public boolean isFullScreen() { return decorator.isFullScreen(); }
-
-	@Override
-	public void toggleSideControls() {
-		decorator.toggleSideControls();
-	}
+	//
+	// @Override
+	// public void toggleSideControls() {
+	// decorator.toggleSideControls();
+	// }
 
 	@Override
 	public void toggleOverlay() {

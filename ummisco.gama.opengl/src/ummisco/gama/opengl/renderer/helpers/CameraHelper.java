@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
+import static msi.gama.util.GamaListFactory.createWithoutCasting;
+
+import java.util.Collection;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
@@ -17,21 +21,25 @@ import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.glu.GLU;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import msi.gaml.operators.Maths;
+import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.ViewsHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.ICameraHelper;
 
 /**
  * The Class CameraHelper.
  */
-public class CameraHelper extends AbstractRendererHelper implements IMultiListener {
+public class CameraHelper extends AbstractRendererHelper implements IMultiListener, ICameraHelper {
 
 	static {
 		DEBUG.ON();
@@ -1154,7 +1162,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			getRenderer().getSurface().zoomFit();
 			getRenderer().getKeystoneHelper().startDrawHelper();
 		} else {
+			String def = IKeyword.KEYSTONE + ": "
+					+ createWithoutCasting(Types.POINT, data.getKeystone().toCoordinateArray()).serialize(false);
 			getRenderer().getKeystoneHelper().stopDrawHelper();
+			WorkbenchHelper.copy(def);
 		}
 		keystoneMode = !keystoneMode;
 	}
@@ -1335,6 +1346,35 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	public void dispose() {
 		getCanvas().removeCameraListeners(this);
+	}
+
+	@Override
+	public Collection<String> getCameraNames() { return getData().getCameraNames(); }
+
+	@Override
+	public void setCameraName(final String p) {
+		getData().setCameraNameFromUser(p);
+		applyPreset(p);
+	}
+
+	@Override
+	public String getCameraName() { return getData().getCameraName(); }
+
+	@Override
+	public boolean isCameraLocked() { return getData().isCameraLocked(); }
+
+	@Override
+	public void toggleCamera() {
+		getData().setCameraLocked(!getData().isCameraLocked());
+	}
+
+	@Override
+	public String getCameraDefinition() {
+		StringBuilder text = new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION)
+				.append(": ").append(new GamaPoint(data.getCameraPos()).withPrecision(4).serialize(false));
+		text.append(" ").append(IKeyword.TARGET).append(": ")
+				.append(new GamaPoint(data.getCameraTarget()).withPrecision(4).serialize(false)).append(";");
+		return text.toString();
 	}
 
 }

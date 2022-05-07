@@ -38,6 +38,46 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public interface IToolbarDecoratedView {
 
+	ICameraHelper NULL_CAMERA = new ICameraHelper() {};
+
+	public interface ICameraHelper {
+		/**
+		 * Gets the camera names.
+		 *
+		 * @return the camera names
+		 */
+		default Collection<String> getCameraNames() { return Collections.EMPTY_LIST; }
+
+		/**
+		 * Sets the camera name.
+		 *
+		 * @param p
+		 *            the new camera name
+		 */
+		default void setCameraName(final String p) {}
+
+		/**
+		 * Gets the camera name.
+		 *
+		 * @return the camera name
+		 */
+		default String getCameraName() { return GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue(); }
+
+		/**
+		 * Checks if is camera locked.
+		 *
+		 * @return true, if is camera locked
+		 */
+		default boolean isCameraLocked() { return false; }
+
+		/**
+		 * Toggle camera.
+		 */
+		default void toggleCamera() {}
+
+		default String getCameraDefinition() { return ""; }
+	}
+
 	/**
 	 * Gets the site.
 	 *
@@ -236,20 +276,7 @@ public interface IToolbarDecoratedView {
 		 */
 		boolean zoomWhenScrolling();
 
-		/**
-		 * Gets the camera names.
-		 *
-		 * @return the camera names
-		 */
-		default Collection<String> getCameraNames() { return Collections.EMPTY_LIST; }
-
-		/**
-		 * Sets the camera name.
-		 *
-		 * @param p
-		 *            the new camera name
-		 */
-		default void setCameraName(final String p) {}
+		default ICameraHelper getCameraHelper() { return NULL_CAMERA; }
 
 		/**
 		 * Checks for cameras.
@@ -259,25 +286,6 @@ public interface IToolbarDecoratedView {
 		default boolean hasCameras() {
 			return false;
 		}
-
-		/**
-		 * Gets the camera name.
-		 *
-		 * @return the camera name
-		 */
-		default String getCameraName() { return GamaPreferences.Displays.OPENGL_DEFAULT_CAM.getValue(); }
-
-		/**
-		 * Checks if is camera locked.
-		 *
-		 * @return true, if is camera locked
-		 */
-		default boolean isCameraLocked() { return false; }
-
-		/**
-		 * Toggle camera.
-		 */
-		default void toggleCamera() {}
 
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DisplaySurfaceMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DisplaySurfaceMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -18,8 +18,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -27,6 +27,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -35,13 +36,21 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayer.IGridLayer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.AgentLayer;
 import msi.gama.outputs.layers.GraphicLayer;
+import msi.gama.outputs.layers.GridAgentLayer;
 import msi.gama.outputs.layers.GridLayer;
+import msi.gama.outputs.layers.GridLayerStatement;
+import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.ImageLayer;
+import msi.gama.outputs.layers.MeshLayer;
+import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
+import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.outputs.layers.charts.ChartLayer;
+import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
@@ -60,8 +69,11 @@ public class DisplaySurfaceMenu {
 
 	static {
 		layer_images.put(GridLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(GridAgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(MeshLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
 		layer_images.put(AgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_AGENTS).image());
 		layer_images.put(ImageLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
+		layer_images.put(OverlayLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
 		layer_images.put(SpeciesLayer.class, GamaIcons.create(IGamaIcons.LAYER_SPECIES).image());
 		layer_images.put(ChartLayer.class, GamaIcons.create(IGamaIcons.LAYER_CHART).image());
 		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
@@ -77,7 +89,7 @@ public class DisplaySurfaceMenu {
 	private final Control swtControl;
 
 	/** The presentation menu. */
-	private final MenuManager presentationMenu;
+	private final Function<Menu, Menu> presentationMenu;
 
 	/**
 	 * The Class FocusOnSelection.
@@ -115,7 +127,7 @@ public class DisplaySurfaceMenu {
 	 * @param viewMenu
 	 *            the view menu
 	 */
-	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final MenuManager viewMenu) {
+	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final Function<Menu, Menu> viewMenu) {
 		surface = s;
 		swtControl = c;
 		if (s != null) { s.setMenuManager(this); }
@@ -139,7 +151,7 @@ public class DisplaySurfaceMenu {
 		menu = new Menu(c);
 		// menu.setLocation(scaleDownIfWin(c.toDisplay(x, y)));
 		if (withPresentation) {
-			presentationMenu.fill(menu, -1);
+			presentationMenu.apply(menu);
 			GamaMenu.separate(menu);
 		}
 	}
@@ -318,31 +330,79 @@ public class DisplaySurfaceMenu {
 			actions2[0] = focus;
 			AgentsMenu.fillPopulationSubMenu(menu, filteredList, actions2);
 		} else {
-
 			for (final ILayer layer : surface.getManager().getItems()) {
-				if (layer.getData().isSelectable()) {
-					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
-					pop = new ArrayList<>(pop);
-					if (pop.isEmpty()) { continue; }
-					final String layerName = layer.getType() + ": " + layer.getName();
+				boolean select = layer.getData().isSelectable();
+				boolean visible = layer.getData().isVisible();
+				final ILayerStatement definition = layer.getDefinition();
+
+				Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
+				pop = new ArrayList<>(pop);
+				// if (pop.isEmpty()) { continue; }
+
+				if (filteredList != null) { pop.retainAll(filteredList); }
+				// if (pop.isEmpty()) { continue; }
+				final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
+				layerMenu.setText(layer.getType() + ": " + layer.getName());
+				layerMenu.setImage(layer_images.get(layer.getClass()));
+				if (!layer.isControllable()) { continue; }
+				final Menu submenu = new Menu(layerMenu);
+				layerMenu.setMenu(submenu);
+				GamaMenu.separate(submenu, "Actions");
+				GamaMenu.action(submenu, visible ? "Hide" : "Show", t -> {
+					layer.getData().setVisible(!visible);
+					surface.updateDisplay(true);
+				}, GamaIcons.create("menu.inspect2").image());
+				if (!pop.isEmpty()) {
+					GamaMenu.action(submenu, select ? "Forbid selection" : "Allow selection",
+							t -> layer.getData().setSelectable(!select), GamaIcons.create("menu.follow2").image());
+				}
+				Menu transparency =
+						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer.transparency").image());
+				for (int i = 0; i <= 100; i += 10) {
+					double value = i;
+					GamaMenu.action(transparency, "" + i + "%", t -> {
+						layer.getData().setTransparency(value / 100d);
+						surface.updateDisplay(true);
+					}, null);
+				}
+				if (definition instanceof SpeciesLayerStatement spec) {
+					Menu aspectMenu = GamaMenu.sub(submenu, "Aspect", "", GamaIcons.create("menu.agent2").image());
+					String current = spec.getAspectName();
+					for (String aspect : spec.getAspects()) {
+						GamaMenu.check(aspectMenu, aspect, aspect.equals(current), t -> {
+							spec.setAspect(aspect);
+							surface.updateDisplay(true);
+						}, null);
+					}
+				} else if (definition instanceof ChartLayerStatement chart) {
+					GamaMenu.action(submenu, "Properties", t -> {
+						// FIXME Editor not working for the moment
+						Point p = WorkbenchHelper.getDisplay().getCursorLocation();
+						p.x -= 100;
+						p.y += 100;
+						final SWTChartEditor editor = new SWTChartEditor(WorkbenchHelper.getDisplay(),
+								((ChartLayerStatement) definition).getChart(), p);
+						editor.open();
+						surface.updateDisplay(true);
+					}, GamaIcons.create("chart.parameters").image());
+					if (chart.getDataSet().keepsHistory()) {
+						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
+								GamaIcons.create("menu.browse2").image());
+					}
+				} else if (definition instanceof GridLayerStatement grid) {
+					boolean lines = ((IGridLayer) layer).getData().drawLines();
+					GamaMenu.action(submenu, lines ? "Hide lines" : "Draw lines", t -> {
+						((IGridLayer) layer).getData().setDrawLines(!lines);
+						surface.updateDisplay(true);
+					}, GamaIcons.create("menu.browse2").image());
+				}
+				if (select) {
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
 					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
 					final MenuAction[] actions2 = { focus };
-					// if (layer instanceof GridLayer) {
-					// actions2 = new MenuAction[] { focus };
-					// } else {
-					// actions2 = new MenuAction[] { focus };
-					// }
-
-					if (filteredList != null) { pop.retainAll(filteredList); }
-					if (pop.isEmpty()) { continue; }
-					final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
-					layerMenu.setText(layerName);
-					layerMenu.setImage(layer_images.get(layer.getClass()));
-					final Menu submenu = new Menu(layerMenu);
-					layerMenu.setMenu(submenu);
-					AgentsMenu.fillPopulationSubMenu(submenu, pop, actions2);
+					Menu agentsMenu = GamaMenu.sub(submenu, "Agents", "", GamaIcons.create("display.agents2").image());
+					AgentsMenu.fillPopulationSubMenu(agentsMenu, pop, actions2);
 				}
 			}
 		}

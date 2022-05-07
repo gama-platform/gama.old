@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -72,14 +72,6 @@ public class LayeredDisplayMultiListener {
 				case 'o':
 				case 'O':
 					deco.toggleOverlay();
-					break;
-				case 'l':
-				case 'L':
-					deco.toggleSideControls();
-					break;
-				case 'k':
-				case 'K':
-					if (deco.isFullScreen()) { deco.toggleInteractiveConsole(); }
 					break;
 				case 't':
 				case 'T':

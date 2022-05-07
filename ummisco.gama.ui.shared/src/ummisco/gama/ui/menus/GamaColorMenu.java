@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaColorMenu.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaColorMenu.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.menus;
 
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -47,19 +48,22 @@ import ummisco.gama.ui.views.toolbar.Selector;
 public class GamaColorMenu extends GamaMenu {
 
 	/** The Constant SORT_NAMES. */
-	public static final String[] SORT_NAMES = new String[] { "RGB value", "Name", "Brightness", "Luminescence" };
+	public static final String[] SORT_NAMES = { "RGB value", "Name", "Brightness", "Luminescence" };
 
 	/**
 	 * The Interface IColorRunnable.
 	 */
-	public static interface IColorRunnable {
+	public interface IColorRunnable {
 
 		/**
 		 * Run.
 		 *
-		 * @param r the r
-		 * @param g the g
-		 * @param b the b
+		 * @param r
+		 *            the r
+		 * @param g
+		 *            the g
+		 * @param b
+		 *            the b
 		 */
 		void run(int r, int g, int b);
 	}
@@ -87,7 +91,8 @@ public class GamaColorMenu extends GamaMenu {
 	/**
 	 * Instantiates a new gama color menu.
 	 *
-	 * @param main the main
+	 * @param main
+	 *            the main
 	 */
 	public GamaColorMenu(final Menu main) {
 		mainMenu = main;
@@ -112,10 +117,10 @@ public class GamaColorMenu extends GamaMenu {
 	/** The by luminescence. */
 	public static Comparator<String> byLuminescence =
 			(a, b) -> getReverse() * GamaColor.colors.get(a).compareTo(GamaColor.colors.get(b));
-	
+
 	/** The color comp. */
 	public static Comparator colorComp = null;
-	
+
 	/** The choose sort. */
 	public SelectionListener chooseSort = new SelectionAdapter() {
 
@@ -130,7 +135,7 @@ public class GamaColorMenu extends GamaMenu {
 
 	/** The breakdown. */
 	public static Boolean breakdown = null;
-	
+
 	/** The choose break. */
 	Selector chooseBreak = e -> {
 		breakdown = !breakdown;
@@ -146,8 +151,10 @@ public class GamaColorMenu extends GamaMenu {
 	/**
 	 * Open view.
 	 *
-	 * @param runnable the runnable
-	 * @param initial the initial
+	 * @param runnable
+	 *            the runnable
+	 * @param initial
+	 *            the initial
 	 */
 	public static void openView(final IColorRunnable runnable, final RGB initial) {
 		final Shell shell = new Shell(WorkbenchHelper.getDisplay(), SWT.MODELESS);
@@ -156,11 +163,7 @@ public class GamaColorMenu extends GamaMenu {
 		dlg.setRGB(initial);
 		final RGB rgb = dlg.open();
 		// final int a = StringUtils.INDEX_NOT_FOUND;
-		if (rgb != null) {
-			if (runnable != null) {
-				runnable.run(rgb.red, rgb.green, rgb.blue);
-			}
-		}
+		if (rgb != null && runnable != null) { runnable.run(rgb.red, rgb.green, rgb.blue); }
 	}
 
 	@Override
@@ -177,12 +180,8 @@ public class GamaColorMenu extends GamaMenu {
 				colorComp = byLuminescence;
 			}
 		}
-		if (getReverse() == null) {
-			setReverse(PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1);
-		}
-		if (breakdown == null) {
-			breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue();
-		}
+		if (getReverse() == null) { setReverse(PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1); }
+		if (breakdown == null) { breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue(); }
 		action("Custom...", new SelectionAdapter() {
 
 			@Override
@@ -218,13 +217,30 @@ public class GamaColorMenu extends GamaMenu {
 
 	}
 
+	public static void addColorSubmenuTo(final Menu menu, final String text, final Consumer<GamaColor> selector) {
+		Menu subMenu = sub(menu, text, text, GamaIcons.create("reference.colors").image());
+		final List<String> names = new ArrayList(GamaColor.colors.keySet());
+		Collections.sort(names, colorComp);
+		for (final String current : names) {
+			final GamaColor color = GamaColor.colors.get(current);
+			final MenuItem item = action(subMenu, "#" + current, t -> selector.accept(GamaColor.colors.get(current)));
+			item.setImage(
+					GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16)
+							.image());
+		}
+	}
+
 	/**
 	 * Open.
 	 *
-	 * @param c the c
-	 * @param trigger the trigger
-	 * @param colorInserter the color inserter
-	 * @param custom the custom
+	 * @param c
+	 *            the c
+	 * @param trigger
+	 *            the trigger
+	 * @param colorInserter
+	 *            the color inserter
+	 * @param custom
+	 *            the custom
 	 */
 	public void open(final Control c, final SelectionEvent trigger, final SelectionListener colorInserter,
 			final IColorRunnable custom) {
@@ -252,23 +268,21 @@ public class GamaColorMenu extends GamaMenu {
 	 *
 	 * @return the reverse
 	 */
-	public static Integer getReverse() {
-		return reverse;
-	}
+	public static Integer getReverse() { return reverse; }
 
 	/**
 	 * Sets the reverse.
 	 *
-	 * @param r the new reverse
+	 * @param r
+	 *            the new reverse
 	 */
-	public static void setReverse(final Integer r) {
-		reverse = r;
-	}
+	public static void setReverse(final Integer r) { reverse = r; }
 
 	/**
 	 * Sets the selection listener.
 	 *
-	 * @param colorInserter the new selection listener
+	 * @param colorInserter
+	 *            the new selection listener
 	 */
 	public void setSelectionListener(final SelectionListener colorInserter) {
 		this.currentListener = colorInserter;
@@ -278,7 +292,8 @@ public class GamaColorMenu extends GamaMenu {
 	/**
 	 * Sets the current runnable.
 	 *
-	 * @param runnable the new current runnable
+	 * @param runnable
+	 *            the new current runnable
 	 */
 	public void setCurrentRunnable(final IColorRunnable runnable) {
 		this.currentRunnable = runnable;

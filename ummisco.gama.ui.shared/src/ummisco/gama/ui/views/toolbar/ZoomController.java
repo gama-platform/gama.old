@@ -26,7 +26,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class ZoomController.
@@ -114,27 +116,39 @@ public class ZoomController {
 
 					@Override
 					protected void fillMenu() {
-						final Collection<String> cameras = view.getCameraNames();
+						final Collection<String> cameras = view.getCameraHelper().getCameraNames();
 
 						for (final String p : cameras) {
-							action((p.equals(view.getCameraName()) ? "\u2713 " : " \u00A0 ") + p,
-									new SelectionAdapter() {
+							action(p, new SelectionAdapter() {
 
-										@Override
-										public void widgetSelected(final SelectionEvent e) {
-											view.setCameraName(p);
-											cameraLocked.setSelection(view.isCameraLocked());
-										}
+								@Override
+								public void widgetSelected(final SelectionEvent e) {
+									view.getCameraHelper().setCameraName(p);
+									cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
+								}
 
-									}, null);
+							}, p.equals(view.getCameraHelper().getCameraName())
+									? GamaIcons.create("display.camera2").image()
+									: GamaIcons.create("display.color3").image());
 						}
+						sep();
+						action("Copy current camera", new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e) {
+								final String text = view.getCameraHelper().getCameraDefinition();
+								WorkbenchHelper.copy(text);
+							}
+
+						}, GamaIcons.create("menu.paste2").image());
 					}
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
-			cameraLocked = tb.check("population.lock2", "Lock/unlock", "Lock/unlock camera",
-					e -> { view.toggleCamera(); }, SWT.RIGHT);
-			cameraLocked.setSelection(view.isCameraLocked());
+			cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
+				view.getCameraHelper().toggleCamera();
+			}, SWT.RIGHT);
+			// cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
 		}
 
 	}

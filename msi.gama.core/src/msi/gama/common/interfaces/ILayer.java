@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * ILayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ILayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -22,6 +21,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.GridLayerData;
 import msi.gama.outputs.layers.ILayerData;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
@@ -37,6 +37,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  *
  */
 public interface ILayer extends INamed, Comparable<ILayer> {
+
+	interface IGridLayer extends ILayer {
+
+		@Override
+		GridLayerData getData();
+	}
 
 	/**
 	 * Returns the statement (ILayerStatement) that constitutes the definition of this layer, or null if it has none

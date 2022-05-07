@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaToolbarFactory.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaToolbarFactory.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -368,12 +368,12 @@ public class GamaToolbarFactory {
 			}
 
 			if (view instanceof IGamaView.Display) {
-				final Action toggleSideControls = new ToggleSideControls() {
-					@Override
-					public void run() {
-						((IGamaView.Display) view).toggleSideControls();
-					}
-				};
+				// final Action toggleSideControls = new ToggleSideControls() {
+				// @Override
+				// public void run() {
+				// ((IGamaView.Display) view).toggleSideControls();
+				// }
+				// };
 
 				final Action toggleOverlay = new ToggleOverlay() {
 					@Override
@@ -382,7 +382,7 @@ public class GamaToolbarFactory {
 					}
 				};
 				tm.add(toggleOverlay);
-				tm.add(toggleSideControls);
+				// tm.add(toggleSideControls);
 			}
 			tm.update(true);
 		}
