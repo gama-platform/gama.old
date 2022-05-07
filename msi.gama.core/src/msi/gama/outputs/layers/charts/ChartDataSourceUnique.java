@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ChartDataSourceUnique.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartDataSourceUnique.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -63,27 +63,22 @@ public class ChartDataSourceUnique extends ChartDataSource {
 	 *
 	 * @return the myserie
 	 */
-	public ChartDataSeries getMyserie() {
-		return mySeries.get(getName());
-	}
+	public ChartDataSeries getMyserie() { return mySeries.get(getName()); }
 
 	/**
 	 * Gets the name.
 	 *
 	 * @return the name
 	 */
-	public String getName() {
-		return myname;
-	}
+	public String getName() { return myname; }
 
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
-	public void setName(final String name) {
-		this.myname = name;
-	}
+	public void setName(final String name) { this.myname = name; }
 
 	/**
 	 * Instantiates a new chart data source unique.
@@ -95,8 +90,10 @@ public class ChartDataSourceUnique extends ChartDataSource {
 	/**
 	 * Sets the legend.
 	 *
-	 * @param scope the scope
-	 * @param stval the stval
+	 * @param scope
+	 *            the scope
+	 * @param stval
+	 *            the stval
 	 */
 	public void setLegend(final IScope scope, final String stval) {
 		myname = stval;
@@ -139,25 +136,15 @@ public class ChartDataSourceUnique extends ChartDataSource {
 
 		Object o = null;
 		final HashMap<String, Object> barvalues = new HashMap<>();
-		if (this.isUseYErrValues()) {
-			barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope));
-		}
-		if (this.isUseXErrValues()) {
-			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValueyerr().value(scope));
-		}
+		if (this.isUseYErrValues()) { barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope)); }
+		if (this.isUseXErrValues()) { barvalues.put(ChartDataStatement.XERR_VALUES, this.getValueyerr().value(scope)); }
 		if (this.isUseYMinMaxValues()) {
 			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
 		}
-		if (this.isUseSizeExp()) {
-			barvalues.put(ChartDataStatement.MARKERSIZE, this.getSizeexp().value(scope));
-		}
-		if (this.isUseColorExp()) {
-			barvalues.put(IKeyword.COLOR, this.getColorexp().value(scope));
-		}
+		if (this.isUseSizeExp()) { barvalues.put(ChartDataStatement.MARKERSIZE, this.getSizeexp().value(scope)); }
+		if (this.isUseColorExp()) { barvalues.put(IKeyword.COLOR, this.getColorexp().value(scope)); }
 
-		if (getValue() != null) {
-			o = getValue().value(scope);
-		}
+		if (getValue() != null) { o = getValue().value(scope); }
 
 		if (o == null) {
 			// lastvalue??
@@ -172,14 +159,14 @@ public class ChartDataSourceUnique extends ChartDataSource {
 	/**
 	 * Infer dataset properties.
 	 *
-	 * @param scope the scope
-	 * @param myserie the myserie
+	 * @param scope
+	 *            the scope
+	 * @param myserie
+	 *            the myserie
 	 */
 	public void inferDatasetProperties(final IScope scope, final ChartDataSeries myserie) {
 		Object o = null;
-		if (this.getValue() != null) {
-			o = this.getValue().value(scope);
-		}
+		if (this.getValue() != null) { o = this.getValue().value(scope); }
 
 		final int type_val = get_data_type(scope, o);
 		// by default
