@@ -548,19 +548,19 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIONS = "Advanced ";
 
-		/** The Constant DISPLAY_ONLY_VISIBLE. */
-		public static final Pref<Boolean> DISPLAY_ONLY_VISIBLE = create("pref_display_visible_agents",
-				"Only display visible agents (faster, may create visual oddities)", false, IType.BOOL, true).in(NAME,
-						OPTIONS);
-
 		/** The Constant DISPLAY_NO_ACCELERATION. */
 		public static final Pref<Boolean> DISPLAY_NO_ACCELERATION = create("pref_display_no_java2d_acceleration",
-				"Disable acceleration for Java2D (necessary on some configurations)", false, IType.BOOL, true).in(NAME,
-						OPTIONS);
+				"Disable acceleration for Java2D (necessary on some configurations)", false, IType.BOOL, true)
+						.in(NAME, OPTIONS).hidden();
 		/**
 		 * OPENGL
 		 */
 		public static final String RENDERING = "OpenGL Rendering Properties";
+
+		/** The Constant DISPLAY_ONLY_VISIBLE. */
+		public static final Pref<Boolean> DISPLAY_ONLY_VISIBLE = create("pref_display_visible_agents",
+				"Only display visible agents (faster, may create visual oddities)", false, IType.BOOL, true).in(NAME,
+						RENDERING);
 
 		/** The Constant CORE_DRAW_ENV. */
 		public static final Pref<Boolean> CORE_DRAW_ENV =
@@ -610,7 +610,7 @@ public class GamaPreferences {
 		/** The Constant DISPLAY_POWER_OF_TWO. */
 		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
 				"Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
-				IType.BOOL, true).in(NAME, RENDERING);
+				IType.BOOL, true).in(NAME, RENDERING).hidden();
 
 		/** The Constant OPENGL_NUM_KEYS_CAM. */
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
@@ -705,7 +705,7 @@ public class GamaPreferences {
 							try {
 								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 							} catch (CoreException e) {}
-						});
+						}).hidden();
 
 		/** The Constant AGENT_OPTIMIZATION. */
 		public static final Pref<Boolean> AGENT_OPTIMIZATION =
@@ -735,7 +735,7 @@ public class GamaPreferences {
 		/** The Constant USE_POOLING. */
 		public static final Pref<Boolean> USE_POOLING =
 				create("pref_use_pooling", "Use object pooling to reduce memory usage (still experimental)", false,
-						IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+						IType.BOOL, true).in(NAME, OPTIMIZATIONS).hidden();
 
 		/** The Constant TOLERANCE_POINTS. */
 		public static final Pref<Double> TOLERANCE_POINTS =
