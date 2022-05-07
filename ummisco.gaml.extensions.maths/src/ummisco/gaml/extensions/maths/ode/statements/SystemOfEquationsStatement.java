@@ -1,19 +1,17 @@
 /*******************************************************************************************************
  *
- * SystemOfEquationsStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SystemOfEquationsStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +23,6 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 import com.google.common.collect.Lists;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -46,13 +43,10 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.operators.UnaryOperator;
 import msi.gaml.expressions.variables.AgentVariableExpression;
 import msi.gaml.operators.Cast;
@@ -60,13 +54,6 @@ import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement.SystemOfEquationsValidator;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIEquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIREquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIRSEquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSISEquations;
-import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics.ClassicalLVEquations;
 
 /**
  * The class SystemOfEquationsStatement. This class represents a system of equations (SingleEquationStatement) that
@@ -89,13 +76,13 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 				type = IType.ID /* CHANGE */,
 				optional = false,
 				doc = @doc ("the equation identifier")),
-				@facet (
-						name = IKeyword.TYPE,
-						type = IType.ID /* CHANGE */,
-						optional = true,
-						values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" },
-						doc = @doc (
-								value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
+				// @facet (
+				// name = IKeyword.TYPE,
+				// type = IType.ID /* CHANGE */,
+				// optional = true,
+				// values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" },
+				// doc = @doc (
+				// value = "the choice of one among classical models (SI, SIS, SIR, SIRS, SEIR, LV)")),
 				@facet (
 						name = IKeyword.VARS,
 						type = IType.LIST,
@@ -163,7 +150,7 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 				@usage (
 						value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },
 		see = { "=", IKeyword.SOLVE })
-@validator (SystemOfEquationsValidator.class)
+// @validator (SystemOfEquationsValidator.class)
 
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
@@ -171,47 +158,48 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * The Class SystemOfEquationsValidator.
 	 */
-	public static class SystemOfEquationsValidator implements IDescriptionValidator<IDescription> {
-		
-		/** The Constant CLASSICAL_NAMES. */
-		final static Set<String> CLASSICAL_NAMES =
-				new HashSet<>(Arrays.asList("SIR", "SI", "SIS", "SIRS", "SEIR", "LV"));
-
-		@Override
-		public void validate(final IDescription description) {
-			final String type = description.getLitteral(TYPE);
-			if (type == null) return;
-			if (!CLASSICAL_NAMES.contains(type)) {
-				description.error(type + " is not a recognized classical equation name", IGamlIssue.WRONG_TYPE, TYPE);
-			}
-		}
-	}
+	// public static class SystemOfEquationsValidator implements IDescriptionValidator<IDescription> {
+	//
+	// // /** The Constant CLASSICAL_NAMES. */
+	// // final static Set<String> CLASSICAL_NAMES =
+	// // new HashSet<>(Arrays.asList("SIR", "SI", "SIS", "SIRS", "SEIR", "LV"));
+	//
+	// @Override
+	// public void validate(final IDescription description) {
+	// // final String type = description.getLitteral(TYPE);
+	// // if (type == null) return;
+	// // if (!CLASSICAL_NAMES.contains(type)) {
+	// // description.error(type + " is not a recognized classical equation name", IGamlIssue.WRONG_TYPE, TYPE);
+	// // }
+	// }
+	// }
 
 	/** The Constant ___equations. */
 	public static final String ___equations = "___equations";
-	
+
 	/** The Constant ___variables_diff. */
 	public static final String ___variables_diff = "___variables_diff";
-	
+
 	/** The equations. */
 	private final IMap<Integer, GamaPair<IAgent, SingleEquationStatement>> equations = GamaMapFactory.create();
-	
+
 	/** The variables diff. */
 	private final IMap<Integer, GamaPair<IAgent, IExpression>> variables_diff = GamaMapFactory.create();
-	
+
 	/** The variable time. */
 	public IExpression variable_time = null;
-	
+
 	/** The current scope. */
 	private IScope currentScope;
-	
+
 	/** The simultan. */
 	IExpression simultan = null;
 
 	/**
 	 * Instantiates a new system of equations statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
@@ -228,40 +216,39 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		List<? extends ISymbol> cmd = Lists.newArrayList(commands);
-		if (getFacet(IKeyword.TYPE) != null) {
-			final String type = getFacet(IKeyword.TYPE).literalValue();
-			final ListExpression vars = (ListExpression) getFacet(IKeyword.VARS);
-			final ListExpression params = (ListExpression) getFacet(IKeyword.PARAMS);
-			switch (type) {
-				case "SIR":
-					cmd.clear();
-					cmd = new ClassicalSIREquations(getDescription()).SIR(vars, params);
-					break;
-				case "SI":
-					cmd.clear();
-					cmd = new ClassicalSIEquations(getDescription()).SI(vars, params);
-					break;
-				case "SIS":
-					cmd.clear();
-					cmd = new ClassicalSISEquations(getDescription()).SIS(vars, params);
-					break;
-				case "SIRS":
-					cmd.clear();
-					cmd = new ClassicalSIRSEquations(getDescription()).SIRS(vars, params);
-					break;
-				case "SEIR":
-					cmd.clear();
-					cmd = new ClassicalSEIREquations(getDescription()).SEIR(vars, params);
-					break;
-				case "LV":
-					cmd.clear();
-					cmd = new ClassicalLVEquations(getDescription()).LV(vars, params);
-			}
-		}
+		// if (getFacet(IKeyword.TYPE) != null) {
+		// final String type = getFacet(IKeyword.TYPE).literalValue();
+		// final ListExpression vars = (ListExpression) getFacet(IKeyword.VARS);
+		// final ListExpression params = (ListExpression) getFacet(IKeyword.PARAMS);
+		// switch (type) {
+		// case "SIR":
+		// cmd.clear();
+		// cmd = new ClassicalSIREquations(getDescription()).SIR(vars, params);
+		// break;
+		// case "SI":
+		// cmd.clear();
+		// cmd = new ClassicalSIEquations(getDescription()).SI(vars, params);
+		// break;
+		// case "SIS":
+		// cmd.clear();
+		// cmd = new ClassicalSISEquations(getDescription()).SIS(vars, params);
+		// break;
+		// case "SIRS":
+		// cmd.clear();
+		// cmd = new ClassicalSIRSEquations(getDescription()).SIRS(vars, params);
+		// break;
+		// case "SEIR":
+		// cmd.clear();
+		// cmd = new ClassicalSEIREquations(getDescription()).SEIR(vars, params);
+		// break;
+		// case "LV":
+		// cmd.clear();
+		// cmd = new ClassicalLVEquations(getDescription()).LV(vars, params);
+		// }
+		// }
 		try (final Collector.AsList<ISymbol> others = Collector.getList()) {
 			for (final ISymbol s : cmd) {
-				if (s instanceof SingleEquationStatement) {
-					SingleEquationStatement s2 = (SingleEquationStatement) s;
+				if (s instanceof SingleEquationStatement s2) {
 					s2.establishVar();
 					for (int i = 0; i < s2.getVars().size(); i++) {
 						final IExpression v = s2.getVar(i);
@@ -289,9 +276,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Assign value.
 	 *
-	 * @param scope the scope
-	 * @param time the time
-	 * @param y the y
+	 * @param scope
+	 *            the scope
+	 * @param time
+	 *            the time
+	 * @param y
+	 *            the y
 	 */
 	public void assignValue(final IScope scope, final double time, final double[] y) {
 		// final List<SingleEquationStatement> equationValues = new
@@ -399,23 +389,23 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Sets the current scope.
 	 *
-	 * @param currentScope the new current scope
+	 * @param currentScope
+	 *            the new current scope
 	 */
-	private void setCurrentScope(final IScope currentScope) {
-		this.currentScope = currentScope;
-	}
+	private void setCurrentScope(final IScope currentScope) { this.currentScope = currentScope; }
 
 	/**
 	 * Gets the external agents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the external agents
 	 */
 	private Set<IAgent> getExternalAgents(final IScope scope) {
 		if (scope.getAgent() == null) return Collections.EMPTY_SET;
 		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
-			result = new LinkedHashSet<IAgent>();
+			result = new LinkedHashSet<>();
 			scope.getAgent().setAttribute("__externalAgents", result);
 		}
 		return result;
@@ -424,7 +414,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Gets the equations.
 	 *
-	 * @param agt the agt
+	 * @param agt
+	 *            the agt
 	 * @return the equations
 	 */
 	public IMap<Integer, GamaPair<IAgent, SingleEquationStatement>> getEquations(final IAgent agt) {
@@ -441,8 +432,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Sets the equations.
 	 *
-	 * @param agt the agt
-	 * @param eqs the eqs
+	 * @param agt
+	 *            the agt
+	 * @param eqs
+	 *            the eqs
 	 */
 	public void setEquations(final IAgent agt, final IMap<Integer, GamaPair<IAgent, SingleEquationStatement>> eqs) {
 		if (agt == null) return;
@@ -452,7 +445,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Gets the variable diff.
 	 *
-	 * @param agt the agt
+	 * @param agt
+	 *            the agt
 	 * @return the variable diff
 	 */
 	public IMap<Integer, GamaPair<IAgent, IExpression>> getVariableDiff(final IAgent agt) {
@@ -469,8 +463,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Sets the variable diff.
 	 *
-	 * @param agt the agt
-	 * @param var the var
+	 * @param agt
+	 *            the agt
+	 * @param var
+	 *            the var
 	 */
 	public void setVariableDiff(final IAgent agt, final IMap<Integer, GamaPair<IAgent, IExpression>> var) {
 		if (agt == null) return;
@@ -480,7 +476,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Gets the equation agents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the equation agents
 	 */
 	public Map<Integer, IAgent> getEquationAgents(final IScope scope) {
@@ -497,7 +494,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Begin with scope.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void beginWithScope(final IScope scope) {
 		setCurrentScope(scope);
@@ -510,7 +508,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Finish with scope.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void finishWithScope(final IScope scope) {
 		removeExternalEquations(scope);
@@ -526,8 +525,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Execute in scope.
 	 *
-	 * @param scope the scope
-	 * @param criticalSection the critical section
+	 * @param scope
+	 *            the scope
+	 * @param criticalSection
+	 *            the critical section
 	 */
 	public synchronized void executeInScope(final IScope scope, final Runnable criticalSection) {
 		beginWithScope(scope);
@@ -538,29 +539,28 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Adds the internal agents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void addInternalAgents(final IScope scope) {
-		for (int i = 0; i < equations.size(); i++) {
-			getEquationAgents(scope).put(i, scope.getAgent());
-		}
+		for (int i = 0; i < equations.size(); i++) { getEquationAgents(scope).put(i, scope.getAgent()); }
 	}
 
 	/**
 	 * Adds the internal equations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void addInternalEquations(final IScope scope) {
-		for (int i = 0; i < equations.size(); i++) {
-			addEquationsOf(scope.getAgent());
-		}
+		for (int i = 0; i < equations.size(); i++) { addEquationsOf(scope.getAgent()); }
 	}
 
 	/**
 	 * Adds the external agents.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void addExternalAgents(final IScope scope) {
 		addExternalAgents(scope, simultan, getExternalAgents(scope));
@@ -569,7 +569,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Adds the external equations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void addExternalEquations(final IScope scope) {
 		for (final IAgent remoteAgent : getExternalAgents(scope)) {
@@ -580,7 +581,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Removes the external equations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	private void removeExternalEquations(final IScope scope) {
 		if (scope.getAgent() == null) return;
@@ -597,7 +599,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Adds the equations of.
 	 *
-	 * @param remoteAgent the remote agent
+	 * @param remoteAgent
+	 *            the remote agent
 	 */
 	private void addEquationsOf(final IAgent remoteAgent) {
 		final IMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
@@ -670,7 +673,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Removes the equations of.
 	 *
-	 * @param remoteAgent the remote agent
+	 * @param remoteAgent
+	 *            the remote agent
 	 */
 	private void removeEquationsOf(final IAgent remoteAgent) {
 		final IMap<Integer, GamaPair<IAgent, SingleEquationStatement>> myEQ = getEquations(currentScope.getAgent());
@@ -708,9 +712,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	/**
 	 * Adds the external agents.
 	 *
-	 * @param scope the scope
-	 * @param toAdd the to add
-	 * @param externalAgents the external agents
+	 * @param scope
+	 *            the scope
+	 * @param toAdd
+	 *            the to add
+	 * @param externalAgents
+	 *            the external agents
 	 */
 	private void addExternalAgents(final IScope scope, final Object toAdd, final Set<IAgent> externalAgents) {
 		if (toAdd instanceof IExpression) {
@@ -720,9 +727,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		} else if (toAdd instanceof GamlSpecies) {
 			addExternalAgents(scope, ((GamlSpecies) toAdd).getPopulation(scope), externalAgents);
 		} else if (toAdd instanceof IList) {
-			for (final Object o : ((IList) toAdd).iterable(scope)) {
-				addExternalAgents(scope, o, externalAgents);
-			}
+			for (final Object o : ((IList) toAdd).iterable(scope)) { addExternalAgents(scope, o, externalAgents); }
 		}
 	}
 
