@@ -225,6 +225,14 @@ public class LaunchEndPoint implements Endpoint {
 					((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStep();
 				}
 				break;
+			case "stepBack":
+				System.out.println("stepBack " + id_exp);
+				if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
+						&& ((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp)
+								.getSimulation() != null) {
+					((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp).userStepBack();
+				}
+				break;
 			case "pause":
 				System.out.println("pause " + id_exp);
 				if (((GamaWebSocketServer) server).get_listener().getExperiment(socket_id, id_exp) != null
