@@ -17,7 +17,7 @@
 ----
 
 ## Table of Contents
-	</xsl:text>
+</xsl:text>
 	
 <xsl:call-template name="buildSkillsByName"/>
 
