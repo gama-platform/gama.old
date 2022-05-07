@@ -26,7 +26,7 @@ global {
 	float P_tolerance_waypoint <- 0.1 parameter: true;
 	bool P_use_geometry_waypoint <- true parameter: true;
 	
-	string P_model_type <- "advanced" among: ["simple", "advanced"] parameter: true ; 
+	string P_model_type <- "simple" among: ["simple", "advanced"] parameter: true ; 
 	
 	float P_A_pedestrian_SFM_advanced parameter: true <- 25.0 category: "SFM advanced" ;
 	float P_A_obstacles_SFM_advanced parameter: true <- 25.0 category: "SFM advanced" ;

@@ -34,7 +34,7 @@ global {
 	bool P_use_geometry_target <- true parameter: true;
 	
 	
-	string P_model_type <- "advanced" among: ["simple", "advanced"] parameter: true ; 
+	string P_model_type <- "simple" among: ["simple", "advanced"] parameter: true ; 
 	
 	float P_A_pedestrian_SFM_advanced parameter: true <- 0.16 category: "SFM advanced" ;
 	float P_A_obstacles_SFM_advanced parameter: true <- 1.9 category: "SFM advanced" ;
@@ -53,7 +53,7 @@ global {
 	float P_A_pedestrian_SFM_simple parameter: true <-4.5category: "SFM simple" ;
 	
 	float step <- 0.1;
-	int nb_people <- 100;
+	int nb_people <- 250;
 
 	geometry open_area ;
 	
