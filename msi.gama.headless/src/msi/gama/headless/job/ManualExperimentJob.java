@@ -212,10 +212,12 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 //			scope.getGui().updateExperimentState(scope, IGui.PAUSED);
 			stepByStep();
 			break;
-//		case _BACK:
+		case _BACK:
 //			scope.getGui().updateExperimentState(scope, IGui.PAUSED);
 //			stepBack();
-//			break;
+			pause();
+			getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
+			break;
 		case _RELOAD:
 //			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
 			try {
