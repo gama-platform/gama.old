@@ -50,34 +50,37 @@
 
 		var socket_id = "";
 		var exp_id = 0; var updateSource;
-		var socket = new WebSocket("ws://localhost:6868/launch");
-		var sk = new WebSocket("ws://localhost:6868/output");
+		var launchSocket = new WebSocket("ws://localhost:6868/launch");
+		var outputSocket = new WebSocket("ws://localhost:6868/output");
 
-		/*var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Tutorials/Road Traffic/models/Model 05.gaml'; 
+		var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Tutorials/Road Traffic/models/Model 05.gaml'; 
 		var experimentName='road_traffic';
 		var speciesName='people';
-		var attributeName='objective';*/
+		var attributeName='objective';
         
-
-		var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml'; 
+		/*var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Toy Models/Traffic/models/Simple Traffic Model.gaml'; 
 		var experimentName='traffic';
 		var speciesName='people';
-		var attributeName='state';
+		var attributeName='state';*/
+
+		/*var modelPath = '/Users/arno/Projects/GitHub/CSL_Lyon/CSL_GAMA_Lyon/models/confluence.gaml'; 
+		var experimentName='dev';
+		var speciesName='people';
+		var attributeName='objective';*/
 		
 		
-		sk.onclose = function (event) {
+		outputSocket.onclose = function (event) {
 			clearInterval(updateSource);
 		};
-		socket.addEventListener('open', (event) => {
+		launchSocket.addEventListener('open', (event) => {
 			var cmd = {
 				'type': 'launch',
 				'model': modelPath,
 				'experiment': experimentName,
 				'auto-export': 'true'
 			};
-
-			socket.send(JSON.stringify(cmd));
-			socket.onmessage = function (event) {
+			launchSocket.send(JSON.stringify(cmd));
+			launchSocket.onmessage = function (event) {
 				exp_compiled = event.data;
 				if (exp_compiled.startsWith("exp@")) {
 					const myArray = exp_compiled.split("@");
@@ -94,10 +97,8 @@
 						'experiment': experimentName,
 						'id_exp': exp_id,
 					};
-					socket.send(JSON.stringify(cmd));
+					launchSocket.send(JSON.stringify(cmd));
 					updateSource = setInterval(() => {
-						// sk.send("output@" + socket_id + "@" + exp_id + "@building");
-
 						cmd = {
 							'type': 'output',
 							'model': modelPath,
@@ -107,8 +108,8 @@
 							'socket_id': socket_id,
 							'id_exp': exp_id,
 						};
-						sk.send(JSON.stringify(cmd));
-						sk.onmessage = function (event) {
+						outputSocket.send(JSON.stringify(cmd));
+						outputSocket.onmessage = function (event) {
 							let message = event.data;
 							if (typeof event.data == "object") {
 
@@ -116,12 +117,11 @@
 								geojson = null;
 								geojson = JSON.parse(message);
 								console.log(geojson);
-								map.getSource('iss').setData(geojson);
+								map.getSource('source1').setData(geojson);
 							}
 						}
 					}, 100);
-					socket.onmessage = function (event) {
-						// console.log(event.data);
+					launchSocket.onmessage = function (event) {
 					}
 				}
 			}
@@ -139,16 +139,15 @@
 			]
 		};
 		map.on('load', async () => {
-			// Add the ISS location as a source.
-			map.addSource('iss', {
+			// Add the source1 location as a source.
+			map.addSource('source1', {
 				type: 'geojson',
 				data: geojson
 			});
-			// Add the rocket symbol layer to the map.
 			map.addLayer({
-				'id': 'iss',
+				'id': 'source1',
 				type: 'circle',
-				'source': 'iss',
+				'source': 'source1',
 				'layout': {},
 				'paint': {
 					'circle-radius': {
@@ -213,7 +212,6 @@
 				'color': 'white',
 				'horizon-blend': 0.2
 			});
-
 			// Add a sky layer over the horizon
 			map.addLayer({
 				'id': 'sky',
@@ -223,7 +221,6 @@
 					'sky-atmosphere-color': 'rgba(85, 151, 210, 0.5)'
 				}
 			});
-
 			// Add terrain source, with slight exaggeration
 			map.addSource('mapbox-dem', {
 				'type': 'raster-dem',
