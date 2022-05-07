@@ -46,6 +46,7 @@ import jogamp.nativewindow.x11.X11Lib;
 /**
  * The Class SWTAccessor.
  */
+@SuppressWarnings ("restriction")
 public class SWTAccessor {
 
 	static {
@@ -800,6 +801,7 @@ public class SWTAccessor {
 	 * @throws NativeWindowException
 	 *             the native window exception
 	 */
+
 	public static Point getLocationInPixels(final Control c) throws NativeWindowException {
 		if (null == swt_control_locationInPixels) return DPIUtil.autoScaleUp(c.getLocation());
 		try {
