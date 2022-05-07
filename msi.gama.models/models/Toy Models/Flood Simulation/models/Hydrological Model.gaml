@@ -11,7 +11,7 @@
 model hydro
 
 global {
-	bool parallel <- true;
+	
    //Shapefile for the river
    file river_shapefile <- file("../includes/RedRiver.shp");
    //Shapefile for the dykes
@@ -51,14 +51,14 @@ global {
      //Initialization of the obstacles (buildings and dykes)
       do init_obstacles;
       //Set the height of each cell
-      ask cell parallel: parallel{
+      ask cell {
          obstacle_height <- compute_highest_obstacle();
          do update_color;
       }
    }
    //Action to initialize the altitude value of the cell according to the dem file
    action init_cells {
-      ask cell parallel: parallel {
+      ask cell  {
          altitude <- grid_value;
          neighbour_cells <- (self neighbors_at 1) ;
       }
@@ -66,7 +66,7 @@ global {
    //action to initialize the water cells according to the river shape file and the drain
    action init_water {
       geometry river <- geometry(river_shapefile);
-      ask cell overlapping river parallel: parallel {
+      ask cell overlapping river  {
          water_height <- 10.0;
          is_river <- true;
          is_drain <- grid_y = matrix(cell).rows - 1;
@@ -78,7 +78,7 @@ global {
          do update_cells;
       }
       create dyke from: dykes_shapefile;
-      ask dyke parallel: parallel {
+      ask dyke  {
           shape <-  shape + dyke_width;
             do update_cells;
       }
@@ -86,33 +86,33 @@ global {
    //Reflex to add water among the water cells
    reflex adding_input_water {
    	  float water_input <- rnd(100)/100;
-      ask river_cells parallel: parallel{
+      ask river_cells {
          water_height <- water_height + water_input;
       }
    }
    //Reflex to flow the water according to the altitute and the obstacle
    reflex flowing {
-      ask (cell sort_by ((each.altitude + each.water_height + each.obstacle_height))) parallel: parallel {
+      ask (cell sort_by ((each.altitude + each.water_height + each.obstacle_height))) {
       	already <- false;
          do flow;
       }
    }
    //Reflex to update the color of the cell
    reflex update_cell_color {
-      ask cell parallel: parallel {
+      ask cell  {
          do update_color;
       }
    }
    //Reflex for the drain cells to drain water
    reflex draining {
-      ask drain_cells parallel: parallel{
+      ask drain_cells {
          water_height <- 0.0;
       }
    }
    
 }
 //Species which represent the obstacle
-   species obstacle parallel: parallel {
+   species obstacle  {
    	  //height of the obstacle
       float height min: 0.0;
       //Color of the obstacle
@@ -169,7 +169,7 @@ global {
       float height <- 2.0 + rnd(8);
    }
    //Species dyke which is derivated from obstacle
-   species dyke parent: obstacle parallel: parallel {
+   species dyke parent: obstacle {
    	
        int counter_wp <- 0;
        int breaking_threshold <- 24;
@@ -203,7 +203,7 @@ global {
       user_command "Destroy dyke" action: break; 
    }
    //Grid cell to discretize space, initialized using the dem file
-   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false schedules: [] parallel: parallel {
+   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false schedules: []  {
       //Altitude of the cell
       float altitude;
       //Height of the water in the cell
@@ -275,7 +275,6 @@ global {
 
 
 experiment Run type: gui {
-	parameter "Run agents in parallel" var: parallel <- true category: "Model";
    parameter "Shapefile for the river" var:river_shapefile category:"Water data";
    parameter "Shapefile for the dykes" var:dykes_shapefile category:"Obstacles";
    parameter "Shapefile for the buildings" var:buildings_shapefile category:"Obstacles";
