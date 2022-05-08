@@ -11,6 +11,7 @@ model FallingHelloWorld
 
 
 global parent: physical_world {
+	bool use_native <- true;
 	float restitution <- 0.8; // the "bounciness" of the world
 	float friction <- 0.2; // the deceleration it imposes on other objects
 	int environment_size <- 500; 

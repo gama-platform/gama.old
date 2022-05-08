@@ -8,7 +8,7 @@
 model Terrain
 
 global parent: physical_world {
-
+	bool use_native <- true;
 	// We scale the DEM up a little
 	float z_scale <- 0.5;
 	float step <-  1.0/30;	
@@ -59,7 +59,7 @@ species water skills: [dynamic_body] {
 
 experiment "3D view" type: gui {
 	
-	string camera_loc <- #from_above;
+	string camera_loc <- #from_up_front;
 	int distance <- 200;
 	
 	action _init_ {
@@ -68,7 +68,7 @@ experiment "3D view" type: gui {
 		create simulation with: [z_scale::2.0];
 		create simulation with: [z_scale::3.0];
 	} 
-	parameter "Location of the camera" var: camera_loc among: [#from_above, #from_up_left, #from_up_right, #from_up_front];
+	parameter "Location of the camera" var: camera_loc among: [#from_up_front, #from_above, #from_up_left, #from_up_right];
 	parameter "Distance of the camera" var: distance min: 1 max: 1000 slider: true;
  	parameter "Number of water agents per cycle" var: number_of_water_units;
 	

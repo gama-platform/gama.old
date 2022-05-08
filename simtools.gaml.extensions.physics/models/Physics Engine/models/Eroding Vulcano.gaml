@@ -15,7 +15,7 @@ model Vulcano
  * to manage physical agents. In this model, the world itself is not a physical agent
  */
 global parent: physical_world {
-	bool use_native_library <- true;
+	bool use_native <- true;
 	//Step (in #sec) passed to the physics engine. The same step is used for the simulation and the physics engine. The accuracy and synchronization
 	//between the two can be controlled by max_substeps. A too large step (e.g. 1#sec) would make the lava 'pass through' the ground (tunnel effect).
 	//A too small (e.g. 0.01), while more accurate, would, given the velocity of the lava, slow everything down on useless computations.
@@ -51,10 +51,6 @@ grid patches file: grid_file("../images/DEM/Volcano DEM.asc") skills: [static_bo
 	// When redefined, it allows agents to react to contacts. Here, every new contact with a lava agent makes a patch decrease its height (grid_value) 
 	// and that of its neigbors by a small amount, as well as stop the lava agent quite brutally (clearing all the forces applied to it) to imitate "stickiness"
 	action contact_added_with (agent other) {
-		ask lava(other) {
-			// write "Collision of " + myself + " with " + self;
-		//	do apply clearance: true;
-		}
 		if (erosion) {
 			grid_value <- grid_value - 0.01;
 			ask neighbors {

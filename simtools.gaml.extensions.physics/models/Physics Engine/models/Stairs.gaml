@@ -7,6 +7,7 @@
 model Stairs
 
 global parent: physical_world {
+	bool use_native <- true;
 	list<string> textures <- ["tennis", "foot", "basket", "ball"];
 	list<float> sizes <- [0.07, 0.22, 0.25, 0.5];
 	list<float> masses <- [0.1, 0.45, 0.62, 0.01];
@@ -15,7 +16,7 @@ global parent: physical_world {
 	int tennis <- 0;
 	int basket <- 1;
 	int foot <- 2;
-	float step <- 0.003;
+	float step <- 0.001;
 	int max_substeps <- 0;
 	int number_of_steps <- 8;
 	float max_height <- 20.0;
@@ -40,7 +41,7 @@ global parent: physical_world {
 
 	reflex when: every(500 #cycle) {
 		create ball with: [type::one_of(0, 1, 2, 3)] {
-			location <- {dimension * 3 / 2 + rnd(2) - 1, dimension + rnd(2) - 1, max_height + dimension};
+			location <- {dimension * 3 / 2 + rnd(4) - 2, dimension + rnd(4) - 2, max_height + dimension + rnd(4) - 2};
 		}
 
 	}
@@ -85,8 +86,9 @@ species ball skills: [dynamic_body] {
 experiment Stairs type: gui {
 	output {
 		display "Climb" type: opengl axes: false {
+			camera 'default' location: {-47.816,165.8396,88.7059} target: {60.0,60.0,0.0};
 			graphics ground {
-				draw shape color: rgb(122, 140, 70, 255);
+				draw shape color: #blue;
 				//draw aabb wireframe: true color: #blue;
 			}
 

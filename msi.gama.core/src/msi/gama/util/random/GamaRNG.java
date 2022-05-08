@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaRNG.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaRNG.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.random;
 
@@ -46,7 +45,6 @@ public abstract class GamaRNG extends Random {
 	 * Instantiates a new gama RNG.
 	 */
 	public GamaRNG() {
-		super();
 	}
 
 	/**
@@ -54,19 +52,16 @@ public abstract class GamaRNG extends Random {
 	 *
 	 * @return the number of times the generator has been asked to draw a random number
 	 */
-	public int getUsage() {
-		return usage;
-	}
+	public int getUsage() { return usage; }
 
 	/**
 	 * Sets the number of times the generator has been asked to draw a random number.
 	 *
-	 * @param usage the new number of times the generator has been asked to draw a random number
+	 * @param usage
+	 *            the new number of times the generator has been asked to draw a random number
 	 */
 	public void setUsage(final int usage) {
-		for (long i = 0; i < usage; i++) {
-			next(32);
-		}
+		for (long i = 0; i < usage; i++) { next(32); }
 	}
 
 	/**
@@ -96,9 +91,7 @@ public abstract class GamaRNG extends Random {
 	public static int[] convertBytesToInts(final byte[] bytes) {
 		if (bytes.length % 4 != 0) throw new IllegalArgumentException("Number of input bytes must be a multiple of 4.");
 		final int[] ints = new int[bytes.length / 4];
-		for (int i = 0; i < ints.length; i++) {
-			ints[i] = convertBytesToInt(bytes, i * 4);
-		}
+		for (int i = 0; i < ints.length; i++) { ints[i] = convertBytesToInt(bytes, i * 4); }
 		return ints;
 	}
 

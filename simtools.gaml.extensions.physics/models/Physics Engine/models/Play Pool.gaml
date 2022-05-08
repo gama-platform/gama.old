@@ -15,7 +15,7 @@ model pool3D
  */
 global parent: physical_world {
 	// The dynamics of the agents is a bit different if we use the native (3.0.x) or Java version (2.8.x) of Bullet
-	bool use_native_library <- false;
+	bool use_native <- false;
 	string library <- "bullet";
 	//All the physical characteristics of the balls can be accessed here and modified at will by the user
 	float ball_damping <- 0.05 min: 0.0 max: 1.0 on_change: {ask ball {damping<-ball_damping;}};

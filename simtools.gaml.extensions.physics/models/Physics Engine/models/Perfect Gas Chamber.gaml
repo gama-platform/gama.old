@@ -13,6 +13,7 @@ model Gas
  * to manage physical agents. In this model, the world itself is not a physical agent
  */
 global parent: physical_world {
+	bool use_native <- true;
 	int width parameter: 'Dimensions' init:500 ; 
 	point gravity <- {0.0, 0.0, 0.0};
 	bool withGravity <- false parameter: "Enable gravity" on_change: {gravity <- withGravity ? {0.0, 0.0, -9.81} : {0.0, 0.0, 0.0};};

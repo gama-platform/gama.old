@@ -164,9 +164,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	public Object primRegister(final IScope scope) {
 		IList<IAgent> agents = scope.getListArg(BODIES);
 		if (agents == null) return null;
-		for (IAgent agent : agents) {
-			registerAgent(scope, agent);
-		}
+		for (IAgent agent : agents) { registerAgent(scope, agent); }
 		return agents;
 	}
 
@@ -210,9 +208,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	 * @return the terrain
 	 */
 	@getter (IPhysicalConstants.TERRAIN)
-	public IField getTerrain() {
-		return terrain;
-	}
+	public IField getTerrain() { return terrain; }
 
 	/**
 	 * Sets the terrain.
@@ -221,9 +217,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	 *            the new terrain
 	 */
 	@setter (IPhysicalConstants.TERRAIN)
-	public void setTerrain(final IField t) {
-		terrain = t;
-	}
+	public void setTerrain(final IField t) { terrain = t; }
 
 	/**
 	 * Gets the ccd.
@@ -289,8 +283,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	 * @return the boolean
 	 */
 	@getter (
-			value = USE_NATIVE,
-			initializer = true)
+			value = USE_NATIVE)
 	public Boolean usesNativeLibrary(final IScope scope) {
 		if (useNativeLibrary == null) { useNativeLibrary = NativeLoader.LoadNativeLibrary(); }
 		return useNativeLibrary;
@@ -307,7 +300,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 	@setter (USE_NATIVE)
 	public void useNativeLibrary(final IScope scope, final Boolean v) {
 		// If we have not successfully loaded the library, then the setting should remain false.
-		useNativeLibrary = NativeLoader.LoadNativeLibrary() && v;
+		useNativeLibrary = v && NativeLoader.LoadNativeLibrary();
 	}
 
 	/**
@@ -467,11 +460,7 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 				final Collection<? extends IAgent> agents) {
 			if (scope.interrupted()) return;
 
-			if (automatedRegistration) {
-				for (IAgent a : agents) {
-					registerAgent(scope, a);
-				}
-			}
+			if (automatedRegistration) { for (IAgent a : agents) { registerAgent(scope, a); } }
 		}
 
 		@Override
@@ -479,17 +468,13 @@ public class PhysicalSimulationAgent extends SimulationAgent implements IPhysica
 				final Collection<? extends IAgent> agents) {
 			if (scope.interrupted()) return;
 
-			for (IAgent a : agents) {
-				unregisterAgent(scope, a);
-			}
+			for (IAgent a : agents) { unregisterAgent(scope, a); }
 		}
 
 		@Override
 		public void notifyPopulationCleared(final IScope scope, final IPopulation<? extends IAgent> pop) {
 			if (scope.interrupted()) return;
-			for (IAgent a : pop) {
-				unregisterAgent(scope, a);
-			}
+			for (IAgent a : pop) { unregisterAgent(scope, a); }
 
 		}
 

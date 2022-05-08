@@ -68,6 +68,8 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	/** The detached. */
 	protected boolean detached = false;
 
+	final String name;
+
 	/**
 	 * Instantiates a new gama GL canvas.
 	 *
@@ -75,9 +77,12 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the parent
 	 * @param renderer
 	 *            the renderer
+	 * @param name
+	 *            for debug purposes
 	 */
-	public GamaGLCanvas(final Composite parent, final IOpenGLRenderer renderer) {
+	public GamaGLCanvas(final Composite parent, final IOpenGLRenderer renderer, final String name) {
 		super(parent, SWT.NONE);
+		this.name = name;
 		parent.setLayout(new FillLayout());
 		this.setLayout(new FillLayout());
 		final var cap = defineCapabilities();
@@ -325,6 +330,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * Reparent window.
 	 */
 	public void reparentWindow() {
+		DEBUG.OUT("Entering making GLWindow " + name + " reparent ");
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
 		final Window w = (Window) drawable;
 		if (setWindowVisible(false)) {
@@ -341,11 +347,13 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the new window visible
 	 */
 	public boolean setWindowVisible(final boolean b) {
+		DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return false;
 		final Window w = (Window) drawable;
 		if (!w.isNativeValid()) return false;
-		DEBUG.OUT("Make GLWindow visible: " + b);
+		DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
 		w.setVisible(b);
+		DEBUG.OUT("Make GLWindow " + name + " visible " + b + " succeeded");
 		return true;
 	}
 
