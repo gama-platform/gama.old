@@ -10,7 +10,7 @@ model traffic
 
 global {
 	//Shapefile of the buildings
-	file building_shapefile <- file("../includes/buildings2.shp");
+	file building_shapefile <- file("../includes/buildings.shp");
 	//Shapefile of the roads
 	file road_shapefile <- file("../includes/roads.shp");
 	//Shape of the environment
@@ -24,7 +24,8 @@ global {
 	
 	init {
 		//Initialization of the building using the shapefile of buildings
-		create building from: building_shapefile;
+		create building from: building_shapefile ;
+		
 		//Initialization of the road using the shapefile of roads
 		create road from: road_shapefile;
 		
