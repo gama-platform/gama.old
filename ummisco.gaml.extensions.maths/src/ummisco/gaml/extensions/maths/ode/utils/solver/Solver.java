@@ -137,7 +137,7 @@ public abstract class Solver {
 			}
 
 			seq.assignValue(scope, finalTime, y);
-			storeValues(finalTime, y, integrationValues);
+//			storeValues(finalTime, y, integrationValues);
 		});
 
 	}
