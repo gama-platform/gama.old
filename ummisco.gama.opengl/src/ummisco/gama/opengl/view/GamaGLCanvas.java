@@ -455,18 +455,18 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	@Override
 	public float getTotalFPS() { return fpsDelegate.getTotalFPS(); }
 
-	@Override
-	public boolean isVisible() {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return canvas.isVisible();
-		final Window w = (Window) drawable;
-		return super.isVisible() && w.isNativeValid() && w.isVisible();
-	}
-
-	@Override
-	// public void setVisible(final boolean v) {}
-
-	public void setVisible(final boolean v) {
-		super.setVisible(v);
-	}
+	// @Override
+	// public boolean isVisible() {
+	// if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return canvas.isVisible();
+	// final Window w = (Window) drawable;
+	// return super.isVisible() && w.isNativeValid() && w.isVisible();
+	// }
+	//
+	// @Override
+	// // public void setVisible(final boolean v) {}
+	//
+	// public void setVisible(final boolean v) {
+	// super.setVisible(v);
+	// }
 
 }
