@@ -253,7 +253,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 		super.initChart_post_data_init(scope);
 		final SpiderWebPlot pp = (SpiderWebPlot) chart.getPlot();
-
+		
 		// final String sty = getStyle();
 		// this.useSubAxis=false;
 		// switch (sty) {
@@ -295,7 +295,10 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		if (this.series_label_position.equals("none")) {
 			pp.setLabelPaint(this.backgroundColor);
 		}
-
+		if (this.useyrangeinterval) 
+			((SpiderWebPlot) chart.getPlot()).setMaxValue(this.yrangeinterval);
+		else if (this.useyrangeminmax)
+			((SpiderWebPlot) chart.getPlot()).setMaxValue(this.yrangemax);
 	}
 
 	@Override
