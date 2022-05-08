@@ -577,7 +577,7 @@ public class Application implements IApplication {
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
 
 		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
-		GamaExecutorService.CONCURRENCY_THRESHOLD.set(processorQueue.getNumberOfThreads());
+		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getNumberOfThreads());
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
 
