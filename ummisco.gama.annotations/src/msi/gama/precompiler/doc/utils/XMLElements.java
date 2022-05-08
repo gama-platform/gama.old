@@ -408,6 +408,9 @@ public interface XMLElements {
 	
 	/** The Constant ATT_STAT_KIND. */
 	public static final String ATT_STAT_KIND = "kind";
+	
+	/** The Constant ATT_STAT_ALT_NAME_OF. */
+	public static final String ATT_STAT_ALT_NAME_OF = "alt_name_of";	
 
 	/** The Constant ATT_TYPE_NAME. */
 	// Attributes of TYPE element

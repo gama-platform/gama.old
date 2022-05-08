@@ -1187,6 +1187,7 @@ public class DocProcessor extends ElementProcessor<doc> {
 				// We just omit it
 			} else {
 				nbrSymbols++;
+				
 				final org.w3c.dom.Element statElt = document.createElement(XMLElements.STATEMENT);
 				if (e.getAnnotation(symbol.class).name().length != 0) {
 					statElt.setAttribute(XMLElements.ATT_STAT_ID, e.getAnnotation(symbol.class).name()[0]);
@@ -1231,6 +1232,26 @@ public class DocProcessor extends ElementProcessor<doc> {
 				statElt.appendChild(conceptsElt);
 
 				statementsElt.appendChild(statElt);
+				
+				
+				// Alternative names of the statement
+				if (e.getAnnotation(symbol.class).name().length > 1) {
+
+					for(int  i = 1; i < e.getAnnotation(symbol.class).name().length ; i++) {
+						final org.w3c.dom.Element alternateElt = document.createElement(XMLElements.STATEMENT);
+
+						alternateElt.setAttribute(XMLElements.ATT_STAT_ID, e.getAnnotation(symbol.class).name()[i]);
+						alternateElt.setAttribute(XMLElements.ATT_STAT_NAME, e.getAnnotation(symbol.class).name()[i]);		
+						alternateElt.setAttribute(XMLElements.ATT_STAT_ALT_NAME_OF, e.getAnnotation(symbol.class).name()[0]);
+						alternateElt.setAttribute(XMLElements.ATT_STAT_KIND, 
+								tc.getSymbolKindStringFromISymbolKind(e.getAnnotation(symbol.class).kind()));
+						
+						statementsElt.appendChild(alternateElt);
+					}
+				} 
+				
+				
+				
 			}
 		}
 		return statementsElt;

@@ -82,7 +82,7 @@ public class XmlToWiki {
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsSZ-xml2md.xsl",
 				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsSZ" + suffix + ".md");
-		System.out.println("Done");
+		System.out.println("Done"); 
 		//
 		System.out.print("Creation of the wiki page for Statements.....");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
