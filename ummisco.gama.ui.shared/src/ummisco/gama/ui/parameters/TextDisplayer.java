@@ -25,11 +25,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * The Class CommandEditor.
+ * The Class TextDisplayer.
  */
 public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 
@@ -83,16 +82,19 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 
 		java.awt.Color c = getStatement().getColor(getScope());
-		Color color;
-		if (c == null) {
-			color = IGamaColors.NEUTRAL.color();
-		} else {
-			color = GamaColors.toSwtColor(getStatement().getColor(getScope()));
-		}
-		text = new StyledText(composite, SWT.BORDER | SWT.WRAP);
+		java.awt.Color b = getStatement().getBackground(getScope());
+		Color color = c == null ? null : GamaColors.toSwtColor(c);
+		Color back = b == null ? null : GamaColors.toSwtColor(b);
+		text = new StyledText(composite, SWT.BORDER | SWT.WRAP | SWT.READ_ONLY);
 		text.setJustify(true);
 		text.setMargins(4, 4, 4, 4);
-		GamaColors.setBackAndForeground(text, IGamaColors.WHITE.color(), color);
+		if (back != null) {
+			if (color != null) {
+				GamaColors.setBackAndForeground(text, back, color);
+			} else {
+				GamaColors.setBackground(text, back);
+			}
+		} else if (color != null) { GamaColors.setForeground(text, color); }
 		text.setText(getStatement().getText(getScope()));
 		GamaFont font = getStatement().getFont(getScope());
 		if (font != null) {
