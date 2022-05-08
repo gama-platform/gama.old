@@ -6,7 +6,7 @@
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.native_version;
 
@@ -93,7 +93,7 @@ public class NativeBulletPhysicalWorld extends AbstractPhysicalWorld<PhysicsSpac
 	public void dispose() {
 		if (world == null) return;
 		world.getRigidBodyList().forEach(world::removeCollisionObject);
-		world.freeUnusedObjects();
+		// world.freeUnusedObjects();
 		world = null;
 	}
 
