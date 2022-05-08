@@ -236,8 +236,11 @@ grid button width:max_species+1 height:max_species+1
 experiment simulation type: gui autorun: true  {
 	float minimum_cycle_duration <- 0.1;
 	parameter "Language for animal names" var: language category: "language";
- 	parameter "Click on '?'s to add animal species, then click on grey squares to change types of interactions.\n'+' means that the upper species has a positive impact on the left species (e.g. the left one eats the top one). '-' is for negative impact and grey for neutral. The interaction graph is shown in the lower-right corner."
- 		var: dummy category: "Help";
+ 	text "Click on '?'s to add animal species, then click on grey squares to change among 3 types of interactions:
+'+' means that the upper species has a positive impact on the left species (e.g. the left one eats the top one). 
+'-' is for negative impact.
+grey is neutral."
+ 		category: "Help";
  			
 	output { 
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
