@@ -54,8 +54,8 @@ experiment "Show Parameters" type: gui {
 	// Texts can be inserted in the parameters pane to explain, for instance, how the model works
 	// Category: Explanation	
 	//////////////////////////////////////////////
-	text "This is a simple text using default values" category: "Explanation";
-	text "This is a more elaborate text in a different color" color: #darkgreen category: "Explanation";
+	text "This is a simple text using default values. It adapts automatically to the light/dark themes" category: "Explanation";
+	text "This is a more elaborate text in a different color and a background" color: #white background: #violet category: "Explanation";
 	text "This is a text in a different font, in italic and a size of 12" category: "Explanation" color: #orange font: font("Helvetica",12,#italic); 
 	text "This bold red text \rspans over \r3 lines." category: "Explanation" color: #red font: font("Helvetica",12,#bold); 
 	

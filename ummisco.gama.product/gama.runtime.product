@@ -65,9 +65,7 @@
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="71,515,500,12"
-      startupMessageRect="230,490,500,16"
-      startupForegroundColor="165E93" />
+      startupProgressRect="71,515,500,12" />
    <launcher name="Gama">
       <linux icon="launcher_icons/icon.icns"/>
       <macosx icon="launcher_icons/icon.icns"/>
@@ -290,8 +288,8 @@
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="version" value="1.8.2" />
-      <property name="org.eclipse.update.reconcile" value="false" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 
    <repositories>

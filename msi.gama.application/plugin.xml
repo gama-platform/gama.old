@@ -22,16 +22,8 @@
                value="branding_icons/icon128.png">
          </property>
          <property
-               name="startupForegroundColor"
-               value="165E93">
-         </property>
-         <property
                name="startupProgressRect"
                value="71,515,500,12">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="230,490,500,16">
          </property>
          <property
                name="appName"
@@ -118,20 +110,12 @@
                      value="branding_icons/icon128.png">
                </property>
                <property
-                     name="startupForegroundColor"
-                     value="165E93">
+                     name="appName"
+                     value="Gama (runtime)">
                </property>
                <property
                      name="startupProgressRect"
                      value="71,515,500,12">
-               </property>
-               <property
-                     name="startupMessageRect"
-                     value="230,490,500,16">
-               </property>
-               <property
-                     name="appName"
-                     value="Gama (runtime)">
                </property>
                <property
                      name="preferenceCustomization"
