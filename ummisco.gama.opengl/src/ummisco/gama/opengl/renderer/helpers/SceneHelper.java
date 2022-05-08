@@ -14,6 +14,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import msi.gama.common.interfaces.ILayer;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.ModelScene;
@@ -30,6 +31,10 @@ import ummisco.gama.opengl.scene.ModelScene;
  */
 public class SceneHelper extends AbstractRendererHelper {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The back scene. */
 	volatile ModelScene backScene;
 
@@ -38,6 +43,8 @@ public class SceneHelper extends AbstractRendererHelper {
 
 	/** The front scene. */
 	volatile ModelScene frontScene;
+
+	int index;
 
 	/** The garbage. */
 	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<>();
@@ -50,6 +57,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 */
 	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
+		DEBUG.OUT("Creating the SceneHelper");
 	}
 
 	@Override
@@ -231,6 +239,11 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * Draw.
 	 */
 	public void draw() {
+		// if (index++ == 0) {
+		// DEBUG.OUT("First SceneHelper draw");
+		// } else {
+		// DEBUG.OUT("SceneHelper draw " + index);
+		// }
 		final OpenGL gl = getOpenGL();
 		// Do some garbage collecting in model scenes
 		garbageCollect(gl);

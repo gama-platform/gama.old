@@ -14,6 +14,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -23,6 +24,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public abstract class AbstractLayer implements ILayer {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The definition. */
 	protected ILayerStatement definition;
 
@@ -31,6 +36,8 @@ public abstract class AbstractLayer implements ILayer {
 
 	/** The has been drawn once. */
 	volatile boolean hasBeenDrawnOnce;
+
+	volatile int counter;
 
 	/** The data. */
 	private final ILayerData data;
@@ -86,12 +93,16 @@ public abstract class AbstractLayer implements ILayer {
 	 */
 	@Override
 	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
-		if (shouldNotDraw(g)) return;
+		// Necessary to handle Issue #3392
+		if (!hasBeenDrawnOnce) { counter++; }
+		hasBeenDrawnOnce = counter > 10;
+		if (!shouldDraw(g)) // DEBUG.OUT("Refuses to draw " + this.getName() + " with counter " + counter);
+			return;
 		g.setAlpha(1 - getData().getTransparency(scope));
 		g.beginDrawingLayer(this);
 		privateDraw(scope, g);
 		g.endDrawingLayer(this);
-		hasBeenDrawnOnce = true;
+
 	}
 
 	/**
@@ -102,12 +113,9 @@ public abstract class AbstractLayer implements ILayer {
 	 *            the IGraphics instance on which we draw
 	 * @return false if ok to draw, true otherwise
 	 */
-	protected boolean shouldNotDraw(final IGraphics g) {
-		if (!getData().isVisible() || g.isNotReadyToUpdate()) return true;
-		if (hasBeenDrawnOnce) {
-			if (g.is2D()) return false;
-			if (!getData().isDynamic()) return true;
-		}
+	protected boolean shouldDraw(final IGraphics g) {
+		if (!getData().isVisible() || g.isNotReadyToUpdate()) return false;
+		if (getData().isDynamic() || hasBeenDrawnOnce) return true;
 		return false;
 	}
 
