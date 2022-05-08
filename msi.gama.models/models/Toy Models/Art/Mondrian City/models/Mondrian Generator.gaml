@@ -105,6 +105,7 @@ species squares {
 }
 
 experiment MondrianGenerator type: gui {
+	float minimum_cycle_duration<-0.1;
 	parameter "Nb max of squares: " var: nb_max_squares;
 	parameter "Nb max of border: " var: nb_max_lines;
 	parameter "Nb max of columns: " var: nb_max_columns;
