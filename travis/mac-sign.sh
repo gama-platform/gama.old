@@ -56,4 +56,4 @@ done < jar.txt
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
 
 # Clean-up apple mess
-find ./Gama.ap -name "jar*.tmp" -exec rm -fr {} \;
+find ./Gama.app -name "jar*.tmp" -exec rm -fr {} \;
