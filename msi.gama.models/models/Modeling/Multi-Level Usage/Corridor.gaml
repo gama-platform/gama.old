@@ -125,7 +125,7 @@ experiment "Corridor" type: gui autorun: true {
 		button_location <- {simulation.corridor_left_bounds + 100, 100};  
 	}
 	output {
-		display defaut_display background: #black fullscreen: true toolbar: false {
+		display defaut_display type: java2D background: #black fullscreen: true toolbar: false {
 			graphics back {
 				draw shape color: #black wireframe: false;
 				draw corridor_wall_0_display color: #gray wireframe: true;
@@ -153,16 +153,16 @@ experiment "Corridor" type: gui autorun: true {
 
 			graphics button {
 				draw circle(50) color: #darkgray at: button_location;
-				draw circle(40) color: !capture_pedestrians ? (button_hover ? #red : #darkred) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
+				draw circle(40) color: !capture_pedestrians ? (button_hover ? #yellow : #red) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
 			}
 
 			event mouse_down {
-				if (button_location distance_to #user_location <= 40) {
+				if (button_location distance_to #user_location <= 50) {
 					capture_pedestrians <- !capture_pedestrians;
 				}
 			}
 			event mouse_move {
-				button_hover <- (button_location distance_to #user_location <= 40);
+				button_hover <- (button_location distance_to #user_location <= 50);
 			}
 		}
 	}

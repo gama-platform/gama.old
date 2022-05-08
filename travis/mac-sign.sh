@@ -54,3 +54,6 @@ done < jar.txt
 
 # Sign single lib files
 find ./ \( -name "*dylib" -o -name "*.so" -o -name "*.jnilib" \) -exec codesign --timestamp --force -s "$MACOS_DEV_ID" -v {} \;
+
+# Clean-up apple mess
+find ./Gama.app -name "jar*.tmp" -exec rm -fr {} \;

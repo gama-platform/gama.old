@@ -1365,9 +1365,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public String getCameraDefinition() {
 		StringBuilder text = new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION)
-				.append(": ").append(new GamaPoint(data.getCameraPos()).withPrecision(4).serialize(false));
+				.append(": ").append(new GamaPoint(data.getCameraPos()).yNegated().withPrecision(4).serialize(false));
 		text.append(" ").append(IKeyword.TARGET).append(": ")
-				.append(new GamaPoint(data.getCameraTarget()).withPrecision(4).serialize(false)).append(";");
+				.append(new GamaPoint(data.getCameraTarget()).yNegated().withPrecision(4).serialize(false)).append(";");
 		return text.toString();
 	}
 

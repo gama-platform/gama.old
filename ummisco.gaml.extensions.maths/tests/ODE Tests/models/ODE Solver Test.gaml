@@ -232,7 +232,7 @@ experiment simulation type: gui {
 	
 	output {
 		display "Equation Tests" refresh: every(1 #cycle) {
-			chart 'Comparision rk4 from Gama (lines) with rk4 from Maple (markers)' type: series background: rgb ( 'lightGray' ) size:{0.5,0.5} position:{0.0,0.0} {
+			chart 'Comparision rk4 from Gama (lines) with rk4 from Maple (markers)' type: series background: #white size:{0.5,0.5} position:{0.0,0.0} {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: false;
 				data "R" value: (first(SIR_model).Rm) color: #blue marker: false;
@@ -240,7 +240,7 @@ experiment simulation type: gui {
 				data "I (data)" value: world.return_value("rk4",time+step,1) color: rgb('red') marker_shape: marker_diamond line_visible: false;			
 				data "R (data)" value: world.return_value("rk4",time+step,2) color: rgb('blue') marker_shape: marker_diamond line_visible: false;			
 			}
-			chart 'Continuous graph test' type: series background: rgb ( 'lightGray' ) size:{0.5,0.5} position:{0.0,0.5} x_serie: first(SIR_model).t[]  {
+			chart 'Continuous graph test' type: series background: #white size:{0.5,0.5} position:{0.0,0.5} x_serie: first(SIR_model).t[]  {
 				data "S" value: (first(SIR_model).Sm[]) color: #green marker: false; 
 				data "I" value: (first(SIR_model).Im[]) color: #red marker: false;
 				data "R" value: (first(SIR_model).Rm[]) color: #blue marker: false;
@@ -248,7 +248,7 @@ experiment simulation type: gui {
 				data "I (data)" value: (first(SIR_model).data_cont[1]) color: rgb(255,150,150); 	
 				data "R (data)" value: (first(SIR_model).data_cont[2]) color: rgb(150,150,255);	
 			}
-			chart 'Split system test' type: series background: rgb ( 'lightGray' ) size:{0.5,0.5} position:{0.5,0.0}  {
+			chart 'Split system test' type: series background: #white size:{0.5,0.5} position:{0.5,0.0}  {
 				data "S" value: (first(S).Ssize) color: #green marker: false; 
 				data "I" value: (first(I).Isize) color: #red marker: false;
 				data "R" value: (first(R).Rsize) color: #blue marker: false;
@@ -256,7 +256,7 @@ experiment simulation type: gui {
 				data "I (data)" value: world.return_value("rk4",time+step,1) color: rgb('red') marker_shape: marker_diamond line_visible: false;			
 				data "R (data)" value: world.return_value("rk4",time+step,2) color: rgb('blue') marker_shape: marker_diamond line_visible: false;
 			}
-			chart 'Integration step test' type: series background: rgb ( 'lightGray' ) size:{0.5,0.5} position:{0.5,0.5}  {
+			chart 'Integration step test' type: series background: #white size:{0.5,0.5} position:{0.5,0.5}  {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: false;
 				data "R" value: (first(SIR_model).Rm) color: #blue marker: false;

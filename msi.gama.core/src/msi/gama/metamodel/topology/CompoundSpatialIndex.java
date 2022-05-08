@@ -1,13 +1,13 @@
 
 /*******************************************************************************************************
  *
- * CompoundSpatialIndex.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * CompoundSpatialIndex.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
@@ -106,6 +106,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		try (final Collector.AsList<IAgent> shapes = Collector.getList()) {
 			for (final double step : steps) {
 				for (final ISpatialIndex si : indices) {
+					if (si == null) { continue; }
 					final IAgent first = si.firstAtDistance(scope, source, step, f);
 					if (first != null) { shapes.add(first); }
 				}
@@ -193,7 +194,9 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) return Collections.EMPTY_LIST;
 		Iterable<ISpatialIndex> indices = add(scope, f);
 		try (final ICollector<IAgent> agents = Collector.getOrderedSet()) {
-			for (final ISpatialIndex si : indices) { agents.addAll(si.allAtDistance(scope, source, dist, f)); }
+			for (final ISpatialIndex si : indices) {
+				if (si != null) { agents.addAll(si.allAtDistance(scope, source, dist, f)); }
+			}
 			agents.shuffleInPlaceWith(scope.getRandom());
 			return agents.items();
 		}
@@ -230,7 +233,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	 * @return the i spatial index
 	 */
 	private ISpatialIndex add(final IPopulation<? extends IAgent> pop, final boolean insertAgents) {
-		if (disposed) return null;
+		if (disposed || pop == null) return null;
 		ISpecies spec = pop.getSpecies();
 		ISpatialIndex index = spatialIndexes.getOrDefault(spec, null);
 		if (index == null) {
@@ -283,10 +286,10 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public void update(final IScope scope, final Envelope envelope, final boolean parallel) {
 		this.bounds = envelope;
 		this.parallel = parallel;
-		
+
 		final WeakHashMap<ISpecies, ISpatialIndex> spatialIndexesTmp = new WeakHashMap<>();
 		spatialIndexesTmp.putAll(spatialIndexes);
-		
+
 		for (ISpecies species : spatialIndexesTmp.keySet()) {
 			remove(species);
 			add(scope, species, true);
