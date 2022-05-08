@@ -100,7 +100,9 @@ public class ZoomController {
 						// toolbar
 					}
 				}
-				cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
+				if (view.getCameraHelper() != null) {
+					cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
+				}
 				tb.removeControlListener(this);
 			}
 
