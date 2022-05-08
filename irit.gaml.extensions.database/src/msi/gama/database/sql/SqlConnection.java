@@ -98,7 +98,7 @@ public abstract class SqlConnection {
 	static final String NULLVALUE = "NULL";
 
 	/** The Constant MYSQLDriver. */
-	static final String MYSQLDriver = "com.mysql.jdbc.Driver";
+	static final String MYSQLDriver = "com.mysql.cj.jdbc.Driver";
 	
 	/** The Constant MSSQLDriver. */
 	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
