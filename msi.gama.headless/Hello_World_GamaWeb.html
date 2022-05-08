@@ -38,7 +38,7 @@
 
 		const map = new mapboxgl.Map({
 			container: 'map', // container id
-			style: 'mapbox://styles/mapbox/satellite-streets-v11',
+			style: 'mapbox://styles/mapbox/dark-v10',
 			pitch: 45,
 			bearing: -17.6,
 			antialias: true,
@@ -55,12 +55,11 @@
 		var staticLayerCalled = Boolean(false);
 
 		//VISUALIZATION
-		var show3DBuilding = Boolean(true);
+		var show3DBuilding = Boolean(false);
 
 		//SOCKET
 		var launchSocket = new WebSocket("ws://localhost:6868/launch");
 		var outputSocket = new WebSocket("ws://localhost:6868/output");
-		var outputSocket2 = new WebSocket("ws://localhost:6868/output");
 
 		//GAMA PATH
 		var modelPath = '/Users/arno/git/gama/msi.gama.models/models/Tutorials/Road Traffic/models/Model 05.gaml'; 
@@ -87,9 +86,6 @@
 		
 		outputSocket.onclose = function (event) {
 			clearInterval(updateSource);
-		};
-		outputSocket2.onclose = function (event) {
-			clearInterval(updateSource2);
 		};
 		launchSocket.addEventListener('open', (event) => {
 			var cmd = {
@@ -151,8 +147,8 @@
 							'socket_id': socket_id,
 							'id_exp': exp_id,
 						 	};
-							outputSocket2.send(JSON.stringify(cmd));
-							outputSocket2.onmessage = function (event) {
+							outputSocket.send(JSON.stringify(cmd));
+							outputSocket.onmessage = function (event) {
 								let message = event.data;
 								if (typeof event.data == "object") {
 
