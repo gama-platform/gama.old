@@ -583,6 +583,7 @@ public class Application implements IApplication {
 
 		expPlan.setHeadless(true);
 		expPlan.open();
+		expPlan.getController().userStart();
 
 		System.exit(0);
 	}
