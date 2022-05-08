@@ -1,7 +1,7 @@
 /**
 * Name: FIPA Query (2)
 * Author:
-* Description: This model demontrates a usecase of the FIPA Query interaction protocol. 
+* Description: This model demonstrates a usecase of the FIPA Query interaction protocol. 
 * (Please see http://www.fipa.org/specs/fipa00027/SC00027H.html for the detail description of this protocol).
 * 
 * 

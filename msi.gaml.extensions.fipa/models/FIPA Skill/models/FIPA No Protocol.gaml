@@ -3,7 +3,7 @@
 * Author:
 * Description: This model demonstrates a usecase of 'no-protocol' interaction protocol.
 * 
-* 'no-protocol' is a freestyle intecraction protocol in which the modeller
+* 'no-protocol' is a freestyle interaction protocol in which the modeler
 * 
 * 		(1) can send whatever type of message (i.e., message performative) in the corresponding conversation
 * 

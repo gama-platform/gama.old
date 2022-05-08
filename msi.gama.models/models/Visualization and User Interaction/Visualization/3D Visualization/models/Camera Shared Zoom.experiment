@@ -11,7 +11,7 @@ experiment "Shared Zoom Example" model: 'Building Elevation.gaml' type: gui {
 	int target4 <- 75;
 	int target3 <- 5;
 	float distance -> 500 / factor;
-	parameter "Shared zoom" var: factor min: 0.01 max: 10.0;
+	parameter "Shared zoom" var: factor min: 0.1 max: 2.0;
 	parameter "Display 1 focuses on building " var: target1;
 	parameter "Display 2 focuses on building " var: target2;
 	parameter "Display 3 focuses on building " var: target3;

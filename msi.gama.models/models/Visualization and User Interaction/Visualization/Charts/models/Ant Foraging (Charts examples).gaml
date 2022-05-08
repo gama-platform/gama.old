@@ -1,8 +1,7 @@
 /**
 * Name: Ant Foraging (Charts examples)
 * Author: Philippe Caillou
-* Description: How ants search food and use pheromons to return to their 
-* nest once they find it. I
+* Description: How ants search food and use pheromons to return to their nest once they find it.
 * Tags: gui, skill, chart, grid, diffusion
 */
 model ants

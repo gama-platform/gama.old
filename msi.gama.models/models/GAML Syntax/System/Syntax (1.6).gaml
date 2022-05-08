@@ -12,7 +12,7 @@ model syntax
  * The global section can now sport skills and control, just like other agents. 
  * The example below shows a potentially moving world that can be controlled by a finite state machine.
  */
-// TODO ToDo comments can know be added; they appear in the Validation view.
+// TODO ToDo comments can now be added; they appear in the Validation view.
 global skills: [moving] control: fsm {
 
 /**

@@ -1,7 +1,7 @@
 /**
  * Name: FIPA Request (4)
  * Author:
- * Description: This model demontrates a usecase of the FIPA Request interaction protocol. 
+ * Description: This model demonstrates a usecase of the FIPA Request interaction protocol. 
  * (Please see http://www.fipa.org/specs/fipa00026/index.html for the detail description of this protocol).
  * 
  * 
