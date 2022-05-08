@@ -8,6 +8,8 @@
 model obj_loading   
 
 global {
+	
+	geometry shape <- square(10000);
 
 	init { 
 		create object;
