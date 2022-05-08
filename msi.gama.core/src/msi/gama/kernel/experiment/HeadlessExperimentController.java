@@ -21,6 +21,7 @@ public class HeadlessExperimentController implements IExperimentController {
 
 	/** The experiment. */
 	private final IExperimentPlan experiment;
+	private ExperimentAgent agent;
 
 	/**
 	 * Instantiates a new headless experiment controller.
@@ -42,6 +43,7 @@ public class HeadlessExperimentController implements IExperimentController {
 
 	@Override
 	public void schedule(final ExperimentAgent agent) {
+		this.agent = agent;
 		IScope scope = agent.getScope();
 		try {
 			if (!scope.init(agent).passed()) { scope.setInterrupted(); }
@@ -51,6 +53,24 @@ public class HeadlessExperimentController implements IExperimentController {
 			}
 		}
 
+	}
+
+	@Override
+	public void userStart() {
+		if (agent == null) return;
+		IScope scope = agent.getScope();
+		try {
+			while (scope.step(agent).passed()) {}
+		} catch (final Throwable e) {
+			if (!(e instanceof GamaRuntimeException)) {
+				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+			}
+		}
+	}
+
+	@Override
+	public void dispose() {
+		agent = null;
 	}
 
 }
