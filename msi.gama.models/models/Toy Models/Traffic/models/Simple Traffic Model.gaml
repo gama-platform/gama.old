@@ -29,9 +29,10 @@ global {
 		create road from: road_shapefile;
 		
 		//Creation of the people agents
-		create people number: 1000{
+		create people number: 500{
 			//People agents are located anywhere in one of the building
 			location <- any_location_in(one_of(building));
+			state<-flip(0.75) ? "ok" : "notok";
       	}
       	//Weights of the road
       	road_weights <- road as_map (each::each.shape.perimeter);
@@ -62,6 +63,8 @@ species people skills: [moving]{
 	//Speed of the agent
 	float speed <- 5 #km/#h;
 	rgb color <- rnd_color(255);
+	// Random state
+	string state;
 	//Reflex to leave the building to another building
 	reflex leave when: (target = nil) and (flip(leaving_proba)) {
 		target <- any_location_in(one_of(building));
@@ -121,7 +124,7 @@ experiment traffic type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
 		display carte type: opengl{
-			species building refresh: false;
+			species building;
 			species road ;
 			species people ;
 			

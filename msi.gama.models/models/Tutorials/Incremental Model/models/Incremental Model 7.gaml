@@ -148,7 +148,7 @@ experiment main_experiment type: gui {
 		monitor "Infected people rate" value: infected_rate;
 		display map_3D type: opengl {
 			light #ambient intensity: 20;
-			light #default intensity:(is_night ? 0 : 127);
+			light #default intensity:(is_night ? 127 : 255);
 			image "../includes/soil.jpg";
 			species road;
 			species people aspect: sphere3D;

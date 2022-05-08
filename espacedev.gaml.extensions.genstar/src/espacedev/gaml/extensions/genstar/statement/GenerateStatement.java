@@ -92,12 +92,10 @@ import one.util.streamex.StreamEx;
 						type = IType.NONE,
 						optional = false,
 						doc = @doc ("To specify the input data used to inform the generation process. Various data input can be used: \n"
-								+ "<ul>"
-								+ "  <li>list of csv_file: can be aggregated or micro data</li>\n"
-								+ "  <li>matrix: describe the joint distribution of two attributes</li>\n"
-								//+ "  <li>bayesian network (not yet implem): describe a conditional distribution of three or more attributes</li>"
-								+ "  <li>genstar generator: a dedicated gaml type to enclose various genstar options all in one"
-								+ "</ul>")
+								+ "* list of csv_file: can be aggregated or micro data\n"
+								+ "* matrix: describe the joint distribution of two attributes\n"
+								//+ "* bayesian network (not yet implem): describe a conditional distribution of three or more attributes"
+								+ "* genstar generator: a dedicated gaml type to enclose various genstar options all in one")
 						),
 				@facet (
 						/*
