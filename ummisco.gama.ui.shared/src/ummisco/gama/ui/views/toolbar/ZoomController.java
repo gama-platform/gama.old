@@ -100,12 +100,11 @@ public class ZoomController {
 						// toolbar
 					}
 				}
+				cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
 				tb.removeControlListener(this);
 			}
 
 		});
-		// ⊘ CIRCLED DIVISION SLASH Unicode: U+2298, UTF-8: E2 8A 98
-		//   NO-BREAK SPACE Unicode: U+00A0, UTF-8: C2 A0
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN, "Zoom in", "Zoom in", e -> view.zoomIn(), SWT.RIGHT);
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT, "Zoom fit", "Zoom to fit view", e -> view.zoomFit(), SWT.RIGHT);
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT, "Zoom out", "Zoom out", e -> view.zoomOut(), SWT.RIGHT);
@@ -148,7 +147,6 @@ public class ZoomController {
 			cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
 				view.getCameraHelper().toggleCamera();
 			}, SWT.RIGHT);
-			// cameraLocked.setSelection(view.getCameraHelper().isCameraLocked());
 		}
 
 	}
