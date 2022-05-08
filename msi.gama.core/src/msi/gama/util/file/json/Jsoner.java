@@ -744,8 +744,16 @@ public class Jsoner {
 			writableDestination.write(jsonSerializable.toString());
 		} else if (jsonSerializable instanceof Boolean) {
 			writableDestination.write(jsonSerializable.toString());
-//		} else if (jsonSerializable instanceof GamaColor) {
-//			
+		} else if (jsonSerializable instanceof GamaColor) {
+			GamaColor col = (GamaColor) jsonSerializable;
+			writableDestination.write('{');
+			writableDestination.write('"'+"r"+'"'+":");
+			Jsoner.serialize(col.red(), writableDestination, flags);
+			writableDestination.write("," + '"'+"g"+'"'+":");
+			Jsoner.serialize(col.blue(), writableDestination, flags);			
+			writableDestination.write("," + '"'+"b"+'"'+":");
+			Jsoner.serialize(col.green(), writableDestination, flags);			
+			writableDestination.write('}');
 	 	} else if (jsonSerializable instanceof Map) {
 			/* Writes the map in JSON object format. */
 			boolean isFirstEntry = true;
@@ -975,7 +983,7 @@ public class Jsoner {
 //						+ "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
 //			}
 //		}
-	//	System.out.println(writableDestination.toString());
+//		System.out.println(writableDestination.toString());
 	}
 
 	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
