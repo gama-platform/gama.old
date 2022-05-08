@@ -119,6 +119,7 @@ species animal {
 }
 
 experiment sugarscape type: gui{
+	float minimum_cycle_duration<-0.1;
 	parameter 'Growth rate of sugar:' var: sugarGrowthRate category: 'Environment';
 	parameter 'Minimum age of death:' var: minDeathAge <- 60 category: 'Agents';
 	parameter 'Maximum age of death:' var: maxDeathAge <- 100 category: 'Agents';
@@ -135,13 +136,13 @@ experiment sugarscape type: gui{
 			species animal;
 		}
 		display chart refresh: every(5#cycles) {
-			chart 'Energy' type: pie background: #lightgray style: exploded {
+			chart 'Energy' type: pie background: #white style: exploded label_background_color:#white{
 				data "strong" value: (animal as list) count (each.sugar > 8) color: #green;
 				data "weak" value: (animal as list) count (each.sugar < 9) color: #red;
 			}
 		}
 		display chart2 refresh: every(5#cycles) {
-			chart 'Energy' type: histogram background: #lightgray {
+			chart 'Energy' type: histogram background: #white label_background_color:#white{
 				data "strong" value: (animal as list) count (each.sugar > 8)  color: #green;
 				data "weak" value: (animal as list) count (each.sugar < 9)  color: #red;
 			}

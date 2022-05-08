@@ -99,7 +99,7 @@ experiment hydro type: gui {
 	parameter "Input water at source" var: input_water <- 1.0;
 	parameter "Fill the river" var: fill <- true;
 	output {
-		display d type: opengl {
+		display d type: opengl camera:#isometric{
 			mesh terrain scale: 3 triangulation: true  color: palette([#burlywood, #saddlebrown, #darkgreen, #green]) refresh: false smooth: true;
 			mesh flow scale: 3 triangulation: true color: palette(reverse(brewer_colors("Blues"))) transparency: 0.5 no_data:0.0 ;
 		}
