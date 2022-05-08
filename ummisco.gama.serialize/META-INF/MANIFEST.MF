@@ -35,7 +35,9 @@ Export-Package: com.thoughtworks.xstream,
  ummisco.gama.serializer.gamaType.converters,
  ummisco.gama.serializer.gamaType.reduced,
  ummisco.gama.serializer.gaml
-Import-Package: org.apache.commons.lang
+Import-Package: org.apache.commons.lang,
+ org.osgi.framework;version="1.10.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.serialize
+Bundle-Activator: ummisco.gama.serializer.Activator
