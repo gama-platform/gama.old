@@ -1113,7 +1113,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 *            the var
 	 * @return the string
 	 */
-	public String type(final ITyped var) {
+	public static String type(final ITyped var) {
 		switch (var.getGamlType().id()) {
 			case IType.BOOL:
 				return "Boolean";
