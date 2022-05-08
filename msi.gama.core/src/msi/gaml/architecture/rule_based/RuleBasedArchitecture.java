@@ -38,8 +38,8 @@ import msi.gaml.statements.IStatement;
  */
 @skill (
 		name = RuleBasedArchitecture.RULES,
-		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR },
-		doc = @doc ("A control architecture based on the concept of rules"))
+		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR })
+@doc ("A control architecture based on the concept of rules")
 public class RuleBasedArchitecture extends ReflexArchitecture {
 
 	/** The Constant RULES. */
