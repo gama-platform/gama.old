@@ -241,11 +241,11 @@ experiment simulation type: gui autorun: true  {
  			
 	output { 
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
-		display action_button name:"Interaction matrix" {
+		display action_button name:"Interaction matrix" toolbar: false{
 			species button aspect:modern ;
 			event mouse_down action:activate_act;    
 		}
-		display LV name: "Time series" refresh: every(1#cycle) type: java2D {
+		display LV name: "Time series" refresh: every(1#cycle) type: java2D toolbar: false{
 			chart "Population size" type: series background: rgb('white') x_range: 200 x_tick_line_visible: false{
 				loop i from: 0 to: max_species-1{
 					data "Species "+i value: first(solver_and_scheduler).pop[i] color: (species_list[i] != nil)?color_list[i]:rgb(0,0,0,0) marker: false;

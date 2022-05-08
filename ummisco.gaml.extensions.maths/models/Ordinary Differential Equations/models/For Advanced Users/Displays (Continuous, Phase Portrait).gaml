@@ -43,28 +43,28 @@ species LV_model {
 experiment Displays type: gui {
 	float minimum_cycle_duration <- 0.1#s;
 	output {
-		layout #split;
-		display D1 synchronized:false {
-			chart 'Time series' type: series background: #white y_label:"pop" x_tick_line_visible: false{
+		layout #split tabs: false;
+		display D1 synchronized:false toolbar: false{
+			chart 'Time series' type: series background: rgb(47,47,47) color: #white y_label:"pop" x_tick_line_visible: false{
 				data "x" value: first(LV_model).x color: rgb(52,152,219);
 				data "y" value: first(LV_model).y color: rgb(41,128,185);
 			}
 		}
-		display D2 synchronized:false {
-			chart 'Time series - continuous display' type: series background: #white y_label:"pop" x_tick_line_visible: false{
+		display D2 synchronized:false toolbar: false{
+			chart 'Time series - continuous display' type: series background:  rgb(47,47,47) color: #white y_label:"pop" x_tick_line_visible: false{
 		//	chart 'Time series - continuous display' type: series x_serie: first(LV_model).t[] background: #white y_label:"pop"{
 				data "x" value: first(LV_model).x[] color: rgb(52,152,219) marker: false;
 				data "y" value: first(LV_model).y[] color: rgb(41,128,185) marker: false;
 			}
 		}
-		display D3 name: "Phase Portrait " synchronized:false {
-			chart 'Phase Portrait' type: xy background: #white x_label: "x" y_label:"y"{
+		display D3 name: "Phase Portrait " synchronized:false toolbar: false{
+			chart 'Phase Portrait' type: xy background:  rgb(47,47,47) color: #white x_label: "x" y_label:"y"{
 				// Continuous display requires to pass a list of two values x and y
 				data "y(x(t))" value: [first(LV_model).x,first(LV_model).y] color: rgb(243,156,18);
 			}
 		}
-		display D4 name: "Phase Portrait - continuous display" synchronized:false {
-			chart 'Phase Portrait - continuous display' type: xy background: #white x_label: "x" y_label:"y"{
+		display D4 name: "Phase Portrait - continuous display" synchronized:false toolbar: false{
+			chart 'Phase Portrait - continuous display' type: xy background:  rgb(47,47,47) color: #white x_label: "x" y_label:"y"{
 				// Continuous display requires to pass a list of two values x and y
 				data "y(x(t))" value: rows_list(matrix(first(LV_model).x[],first(LV_model).y[])) color: rgb(243,156,18) marker: false;
 			}

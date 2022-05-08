@@ -112,9 +112,9 @@ experiment Simulation type: gui {
 	parameter 'Delta (I->R)' type: float var: _delta <- 0.2 category: "Parameters";	
 	
 	output {
-		layout #split;
-		display chart_3system_eq {
-			chart 'Split system' type: series background: #white x_tick_line_visible: false{
+		layout #split tabs: false;
+		display chart_3system_eq name: "Split system" toolbar: false{
+			chart 'Split system' type: series background: rgb(47,47,47) color: #white x_tick_line_visible: false{
 				data 'susceptible' value: first(S_agt).Ssize color: rgb(46,204,113) marker_shape: marker_circle;
 				data 'infected 1' value: first(I_agt).beta * first(I_agt).Isize color: rgb(231,76,60)+120 marker_shape: marker_diamond;
 				data 'infected 2' value: last(I_agt).beta * last(I_agt).Isize color: rgb(231,76,60)+100 marker_shape: marker_diamond;
@@ -124,8 +124,8 @@ experiment Simulation type: gui {
 
 		}
 
-		display chart_1system_eq  {
-			chart 'unified system' type: series background: #white x_tick_line_visible: false{
+		display chart_1system_eq name: "Unified system" toolbar: false  {
+			chart 'Unified system' type: series background: rgb(47,47,47) color: #white x_tick_line_visible: false{
 				data 'susceptible (maths)' value: first(my_SIR_maths).Sm color: rgb(46,204,113) marker_shape: marker_circle;
 				data 'infected (maths)' value: first(my_SIR_maths).Im color: rgb(231,76,60) marker_shape: marker_circle;
 				data 'recovered (maths)' value: first(my_SIR_maths).Rm color: rgb(52,152,219) marker_shape: marker_circle;
