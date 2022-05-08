@@ -40,13 +40,20 @@ species agent_with_SIR_dynamic {
 }
 
 
-experiment maths type: gui {
+experiment Simulation type: gui {
+	float minimum_cycle_duration <- 0.1#s;
 	output { 
+		layout #vertical;
 		display display_charts {
-			chart "SIR_agent" type: series background: #white {
-				data 'S' value: first(agent_with_SIR_dynamic).S color: #green ;				
-				data 'I' value: first(agent_with_SIR_dynamic).I color: #red ;
-				data 'R' value: first(agent_with_SIR_dynamic).R color: #blue ;
+			chart "Time series" type: series background: #white {
+				data 'S' value: first(agent_with_SIR_dynamic).S color: rgb(46,204,113) ;				
+				data 'I' value: first(agent_with_SIR_dynamic).I color: rgb(231,76,60) ;
+				data 'R' value: first(agent_with_SIR_dynamic).R color: rgb(52,152,219) ;
+			}
+		}
+		display display_phase_portrait {
+			chart "Phase portrait" type: xy background: #white x_label:"S" y_label:"Y" x_range: {0,1600} y_range: {0,700}{
+				data 'I vs S' value: [first(agent_with_SIR_dynamic).S,first(agent_with_SIR_dynamic).I] color: rgb(243,156,18)  ;				
 			}
 		}
 	}

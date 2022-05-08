@@ -13,8 +13,8 @@ global {
 	int number_I <- 5 ; // The number of infected
 	int number_R <- 0 ; // The number of removed 
 
-	float _beta <- 1.0 ; // The parameter Beta
-	float _delta <- 0.01 ; // The parameter Delta
+	float _beta <- 0.8 ; // The parameter Beta
+	float _delta <- 0.2 ; // The parameter Delta
 	
 	// Global variables
 	int strain_number <- 2;
@@ -28,7 +28,8 @@ global {
 
 		create I_agt number: strain_number {
 			Isize <- float(number_I);
-			self.beta <- _beta; 
+			self.beta <- _beta*(0.8+rnd(0.4)); 
+			write self.beta;
 			self.delta <- _delta; 
 		}
 
@@ -102,30 +103,32 @@ species my_SIR_maths {
 
 
 experiment Simulation type: gui {
+	float minimum_cycle_duration <- 0.1#s;
 	parameter 'Number of Susceptible' type: int var: number_S <- 495 category: "Initial population"; 
 	parameter 'Number of Infected'    type: int var: number_I <- 5   category: "Initial population";
 	parameter 'Number of Removed'     type: int var: number_R <- 0   category: "Initial population";
 
-	parameter 'Beta (S->I)'  type: float var: _beta <- 1.0   category: "Parameters";
-	parameter 'Delta (I->R)' type: float var: _delta <- 0.01 category: "Parameters";	
+	parameter 'Beta (S->I)'  type: float var: _beta <- 0.8   category: "Parameters";
+	parameter 'Delta (I->R)' type: float var: _delta <- 0.2 category: "Parameters";	
 	
 	output {
+		layout #split;
 		display chart_3system_eq {
-			chart 'Split system' type: series background: #lightgray {
-				data 'susceptible' value: first(S_agt).Ssize color: #green;
-				data 'infected0' value: first(I_agt).beta * first(I_agt).Isize color: #white;
-				data 'infected1' value: last(I_agt).beta * last(I_agt).Isize color: #yellow;
-				data 'i1+i2' value: sum(I_agt accumulate (each.beta * each. Isize)) color: rgb ( 'red' ) ;				
-				data 'recovered' value: first(R_agt).Rsize color: #blue;
+			chart 'Split system' type: series background: #white x_tick_line_visible: false{
+				data 'susceptible' value: first(S_agt).Ssize color: rgb(46,204,113) marker_shape: marker_circle;
+				data 'infected 1' value: first(I_agt).beta * first(I_agt).Isize color: rgb(231,76,60)+120 marker_shape: marker_diamond;
+				data 'infected 2' value: last(I_agt).beta * last(I_agt).Isize color: rgb(231,76,60)+100 marker_shape: marker_diamond;
+				data 'infected 1+2' value: sum(I_agt accumulate (each.beta * each. Isize)) color: rgb(231,76,60) marker_shape: marker_circle;				
+				data 'recovered' value: first(R_agt).Rsize color: rgb(52,152,219) marker_shape: marker_circle;
 			}
 
 		}
 
 		display chart_1system_eq  {
-			chart 'unified system' type: series background: #lightgray {
-				data 'susceptible_maths' value: first(my_SIR_maths).Sm color: #green;
-				data 'infected_maths' value: first(my_SIR_maths).Im color: #red;
-				data 'recovered_maths' value: first(my_SIR_maths).Rm color: #blue;
+			chart 'unified system' type: series background: #white x_tick_line_visible: false{
+				data 'susceptible (maths)' value: first(my_SIR_maths).Sm color: rgb(46,204,113) marker_shape: marker_circle;
+				data 'infected (maths)' value: first(my_SIR_maths).Im color: rgb(231,76,60) marker_shape: marker_circle;
+				data 'recovered (maths)' value: first(my_SIR_maths).Rm color: rgb(52,152,219) marker_shape: marker_circle;
 			}
 		}
 	}

@@ -2,13 +2,12 @@
 * Name: Influence of the integration step
 * Author: Tri, Nghi, Benoit
 * Description: The aim is to show the influence of the integration method on the result precision.
-* 				Note: an integration step of 0.1 is considered as not precise enough. It is used here to highlight clearly the impact of the integration method.
+* 				Note: an integration step of 0.1 is considered as not accurate enough. It is used here to highlight clearly the impact of the integration method.
 * Tags: equation, math
 ***/
-model LVInfluenceoftheIntegrationstep
+model LVInfluenceoftheIntegrationMethod
 
 global {
-
 	init {
 		create LVRK4 with: [x::2.0, y::2.0];
 		create LVEuler with: [x::2.0, y::2.0];
@@ -37,6 +36,7 @@ species LVRK4 {
 
 }
 
+
 species LVEuler {
 	float t;
 	float x;
@@ -52,26 +52,23 @@ species LVEuler {
 		diff(y, t) = -y * (delta - gamma * x);
 	}
 
-	reflex solving {
-		try{		
-			solve eqLV method: #Euler step_size: h;    
-			if(!is_finite(x)){ 
-				ask world{do pause;}
-			}
-		} 
-
+	reflex solving {	
+		solve eqLV method: #Euler step_size: h;    
+	}
+	
+	reflex end_simulation when: cycle > 126{
+		ask world{do pause;}
 	}
 
 }
 
 experiment examples type: gui {
+	float minimum_cycle_duration <- 0.1#s;
 	output {
 		display LV synchronized:false {
-			chart 'Comparison Euler - RK4 (RK4 is more precise)' type: series background: #lightgray {
-				data "xRK4" value: first(LVRK4).x color: #yellow;
-				data "yRK4" value: first(LVRK4).y color: #blue;
-				data "xEuler" value: last(LVEuler).x color: #red;
-				data "yEuler" value: last(LVEuler).y color: #green;
+			chart 'Comparison Euler - RK4 (RK4 is more accurate)' type: xy x_serie:first(LVRK4).t[] background: #white {
+				data "RK4" value: [first(LVRK4).x,first(LVRK4).y] color: #blue marker: false;
+				data "Euler" value: [first(LVEuler).x,first(LVEuler).y] color: #red marker: false;
 			}
 
 		}

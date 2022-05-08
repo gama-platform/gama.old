@@ -67,7 +67,7 @@ public abstract class Solver {
 					if (lastT < 0) {
 						storeIntegratedValues(time, y, integrated_val);
 					} else {
-						if (Maths.abs(lastT - time) > 0.01) {
+						if (Maths.abs(lastT - time) > 10E-12) {
 							storeIntegratedValues(time, y, integrated_val);
 						}
 					}
