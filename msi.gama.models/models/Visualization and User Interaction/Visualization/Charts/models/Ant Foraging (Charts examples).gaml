@@ -217,8 +217,6 @@ experiment "Experiment" type: gui {
 			}
 
 			chart "Distribution2d of the XvsY positions- heatmap"   size: {0.7,0.7} position: {0, 0.3} type:heatmap
-			x_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendx")
-			y_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendy")
 			series_label_position:none
 			{
 				data  "XYdistrib"

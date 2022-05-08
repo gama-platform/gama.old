@@ -107,9 +107,10 @@ species cells{
 }
 
 
-experiment Display type: gui {
+experiment Display type: gui autorun:true{
 	output {
-		display View1 type:opengl axes:false{
+		display View1 type:opengl axes:false background:#black {
+			camera 'default' location: {26.889,23.7693,37.0687} target: {2.2036,3.0558,0.0};
 			species cells transparency:0.1;
 			graphics "di"{
 			 draw "black(0,0,0)" at:{0,0,0} color:°black perspective:false;

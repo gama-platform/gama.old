@@ -47,5 +47,12 @@ FOR /F %%e in ('dir /b %FILENAME%') do (
 set "result=..\plugins\%result%"
 
 echo %result%
-::rem @echo off
-call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+echo %JAVA_HOME%
+
+if exist ..\jdk\ (
+	echo "JDK"
+	call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+) else (
+	echo "JAVA_HOME"
+  	call "%JAVA_HOME%\java.exe" -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+)

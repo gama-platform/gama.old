@@ -128,7 +128,7 @@ public class FieldDiffuser {
 			varName = var_name;
 			nbRows = pop.getRows(scope);
 			nbCols = pop.getCols(scope);
-			isTorus = false;
+			isTorus = scope.getSimulation().getTopology().isTorus();
 			target = pop;
 		}
 

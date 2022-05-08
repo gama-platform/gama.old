@@ -60,7 +60,7 @@ public interface IGui {
 	int USER = 4;
 
 	/** The displays. */
-	Map<String, DisplayDescription> DISPLAYS = GamaMapFactory.createUnordered();
+	Map<String, DisplayDescription> DISPLAYS = GamaMapFactory.createOrdered();
 
 	/** The monitor view id. */
 	String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
