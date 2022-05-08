@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +128,35 @@ public class System {
 		} catch (final GamaRuntimeException e) {
 			return e.isWarning();
 		} catch (final Exception e1) {}
+		return false;
+	}
+	
+	/**
+	 * Checks if is warning.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expr
+	 *            the expr
+	 * @return the boolean
+	 */
+	@operator (
+			value = "is_reachable",
+			can_be_const = true,
+			concept = IConcept.TEST)
+	@doc (value = "Returns whether or not the given web address is reachable or not before a time_out time in milliseconds",
+		examples = {
+					@example (value="write sample(is_reachable(\"www.google.com\", 200));",isExecutable = false)})
+	@no_test 
+	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
+		try {
+			InetAddress ad = InetAddress.getByName(address);
+			if (ad != null) return ad.isReachable(timeout);
+		} catch (UnknownHostException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
 		return false;
 	}
 
