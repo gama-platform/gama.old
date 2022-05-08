@@ -576,6 +576,7 @@ public class Application implements IApplication {
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
 
+		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
 		GamaExecutorService.CONCURRENCY_THRESHOLD.set(processorQueue.getNumberOfThreads());
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
