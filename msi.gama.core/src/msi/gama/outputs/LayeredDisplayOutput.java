@@ -424,20 +424,25 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 						IGamlIssue.GENERAL, auto.getTarget(), AUTOSAVE);
 			}
 			// Are we in OpenGL world ?
-			final IExpressionDescription type = d.getFacet(TYPE);
+			IExpressionDescription type = d.getFacet(TYPE);
 			final boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
-			if (type != null) {
-				// Addresses and fixes Issue 833.
-				final String s = type.getExpression().literalValue();
-				if (!IGui.DISPLAYS.containsKey(s) && !msi.gama.runtime.GAMA.isInHeadLessMode()) {
-					// In headless mode, all displays should be accepted
-					d.error(s + " is not a valid display type. Valid types are:" + IGui.DISPLAYS.keySet(),
-							IGamlIssue.UNKNOWN_KEYWORD, TYPE);
-					return;
-				}
-			} else {
+			if(type==null) {
+				type=LabelExpressionDescription
+						.create(isOpenGLDefault ? LayeredDisplayData.OPENGL : LayeredDisplayData.JAVA2D);
+				d.setFacet(TYPE, type);
+			}
+			String cand="";
+			// Addresses and fixes Issue 833.
+			final String s = type.getExpression().literalValue();
+			if (!IGui.DISPLAYS.containsKey(s) && !msi.gama.runtime.GAMA.isInHeadLessMode()) {
+				// In headless mode, all displays should be accepted
+				cand=IGui.DISPLAYS.keySet().stream().findFirst().get();
+
+				d.warning(s + " is not a valid display type. Valid types are:" + IGui.DISPLAYS.keySet()+". Gama will fallback to first valid type ("+cand+")",
+						IGamlIssue.UNKNOWN_KEYWORD, TYPE);
+				
 				d.setFacet(TYPE, LabelExpressionDescription
-						.create(isOpenGLDefault ? LayeredDisplayData.OPENGL : LayeredDisplayData.JAVA2D));
+						.create(cand));
 			}
 
 			// final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
