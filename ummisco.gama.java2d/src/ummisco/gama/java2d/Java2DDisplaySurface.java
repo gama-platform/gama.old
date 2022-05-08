@@ -761,11 +761,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int yc = mousey - origin.y;
 		final List<ILayer> layers = layerManager.getLayersIntersecting(xc, yc);
 		if (layers.isEmpty()) return;
-		try {
-			EventQueue.invokeAndWait(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
-		} catch (InvocationTargetException | InterruptedException e) {
-			e.printStackTrace();
-		}
+		EventQueue.invokeLater(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
+		// Modified for Issue #3404 -- now calls the menu asynchronously
+		// try {
+		// EventQueue.invokeAndWait(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
+		// } catch (InvocationTargetException | InterruptedException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 	@Override

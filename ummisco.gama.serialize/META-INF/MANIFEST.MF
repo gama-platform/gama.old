@@ -8,7 +8,8 @@ Require-Bundle: msi.gama.core,
  msi.gaml.architecture.simplebdi;bundle-version="1.8.2"
 Bundle-ClassPath: .,
  ext/mxparser-1.2.2.jar,
- ext/xstream-1.4.18.jar
+ ext/xstream-1.4.18.jar,
+ ext/jettison-1.4.1.jar
 Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.annotations,
  com.thoughtworks.xstream.converters,
@@ -34,7 +35,9 @@ Export-Package: com.thoughtworks.xstream,
  ummisco.gama.serializer.gamaType.converters,
  ummisco.gama.serializer.gamaType.reduced,
  ummisco.gama.serializer.gaml
-Import-Package: org.apache.commons.lang
+Import-Package: org.apache.commons.lang,
+ org.osgi.framework;version="1.10.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.serialize
+Bundle-Activator: ummisco.gama.serializer.Activator

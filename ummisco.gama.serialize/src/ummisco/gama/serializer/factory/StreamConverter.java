@@ -16,6 +16,7 @@ import java.util.Map;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 
@@ -39,6 +40,10 @@ public abstract class StreamConverter {
 	private static Map<Class<?>, XStream> xStreamMap = Collections.synchronizedMap(new HashMap<Class<?>, XStream>());
 
 	private static XStream getXStreamInstance(Class<?> clazz) {
+		return getXStreamInstance(clazz, false);
+	}	
+	
+	private static XStream getXStreamInstance(Class<?> clazz, boolean toJSON) {
 		if (xStreamMap.containsKey(clazz)) {
 			return xStreamMap.get(clazz);
 		}
@@ -46,7 +51,12 @@ public abstract class StreamConverter {
 			if (xStreamMap.containsKey(clazz)) {
 				return xStreamMap.get(clazz);
 			}
-			XStream xStream = new XStream(new DomDriver());
+			XStream xStream;
+			if(toJSON) {
+				xStream = new XStream(new JettisonMappedXmlDriver());								
+			} else {
+				xStream = new XStream(new DomDriver());				
+			}
 			xStream.ignoreUnknownElements();
 			xStream.processAnnotations(clazz);
 			xStream.addPermission(AnyTypePermission.ANY);
@@ -77,6 +87,19 @@ public abstract class StreamConverter {
 	}
 
 	/**
+	 * Convert object to stream in JSON.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 * @return the string
+	 */
+	public static synchronized String convertObjectToJSONStream(final IScope scope, final Object o) {
+		return loadAndBuild(new ConverterScope(scope),o, true).toXML(o);
+	}	
+	
+	/**
 	 * Load and build.
 	 *
 	 * @param cs
@@ -84,9 +107,13 @@ public abstract class StreamConverter {
 	 * @return the x stream
 	 */
 	public static XStream loadAndBuild(final ConverterScope cs, final Object o) {
+		return loadAndBuild(cs, o, false);
+	}	
+	
+	public static XStream loadAndBuild(final ConverterScope cs, final Object o, final boolean toJSON) {
 
 		final Converter[] cnv = Converters.converterFactory(cs);
-		XStream streamer=getXStreamInstance(o.getClass());
+		XStream streamer = getXStreamInstance(o.getClass(),toJSON);		
 		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer,c); }
 		// dataStreamer.setMode(XStream.ID_REFERENCES);
 		return streamer;

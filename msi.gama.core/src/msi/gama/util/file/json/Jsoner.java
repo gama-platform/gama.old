@@ -15,12 +15,37 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+
+import org.geotools.data.DataUtilities;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.serialize.IStreamConverter;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.SaveStatement;
 
 /**
  * Jsoner provides JSON utilities for escaping strings to be JSON compatible, thread safe parsing (RFC 4627) JSON
@@ -41,6 +66,8 @@ public class Jsoner {
 		/** Whether a JsonObject can be deserialized as a root element. */
 		ALLOW_JSON_OBJECTS;
 	}
+	
+	public static IStreamConverter streamConverter;
 
 	/** Flags to tweak the behavior of the primary serialization method. */
 	private enum SerializationOptions {
@@ -717,7 +744,17 @@ public class Jsoner {
 			writableDestination.write(jsonSerializable.toString());
 		} else if (jsonSerializable instanceof Boolean) {
 			writableDestination.write(jsonSerializable.toString());
-		} else if (jsonSerializable instanceof Map) {
+		} else if (jsonSerializable instanceof GamaColor) {
+			GamaColor col = (GamaColor) jsonSerializable;
+			writableDestination.write('{');
+			writableDestination.write('"'+"r"+'"'+":");
+			Jsoner.serialize(col.red(), writableDestination, flags);
+			writableDestination.write("," + '"'+"g"+'"'+":");
+			Jsoner.serialize(col.blue(), writableDestination, flags);			
+			writableDestination.write("," + '"'+"b"+'"'+":");
+			Jsoner.serialize(col.green(), writableDestination, flags);			
+			writableDestination.write('}');
+	 	} else if (jsonSerializable instanceof Map) {
 			/* Writes the map in JSON object format. */
 			boolean isFirstEntry = true;
 			@SuppressWarnings ("rawtypes") final Iterator entries = ((Map) jsonSerializable).entrySet().iterator();
@@ -874,21 +911,86 @@ public class Jsoner {
 				}
 			}
 			writableDestination.write(']');
+		} else if (jsonSerializable instanceof IAgent) {
+			IAgent agent = (IAgent) jsonSerializable;
+			final SpeciesDescription species = agent.getSpecies().getDescription();
+			
+			writableDestination.write('{');
+			writableDestination.write('"'+"species"+'"'+":");
+			Jsoner.serialize(species.getSpeciesExpr().getName(), writableDestination, flags);						
+			
+			for (final String var : species.getAttributeNames()) {
+				if (!NON_JSONABLE_ATTRIBUTE_NAMES.contains(var)) { 
+					writableDestination.write(',');
+					writableDestination.write('"'+var+'"');
+					writableDestination.write(":");
+					
+					Object attrValue = species.getVarExpr(var, false).value(agent.getScope()) ;
+					if(attrValue instanceof IAgent) {
+						Jsoner.serialize(((IAgent) attrValue).getName(), writableDestination, flags);												
+					} else {
+						Jsoner.serialize(attrValue, writableDestination, flags);						
+					}
+				}
+			}
+			writableDestination.write('}');
+			
+		} else if (jsonSerializable instanceof IShape) {
+			IShape agentOrIShape = (IShape) jsonSerializable;
+			final StringBuilder specs = new StringBuilder(1 * 20);
+			final String geomType = SaveStatement.getGeometryType(Arrays.asList( agentOrIShape ));
+			specs.append("geometry:" + geomType);
+			try {
+				final SimpleFeatureType type = DataUtilities.createType("geojson", specs.toString());
+				final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
+				final SimpleFeature ff = builder.buildFeature("");
+
+				SaveStatement.buildFeature(null, ff, agentOrIShape, null, Collections.EMPTY_LIST);
+				
+				final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
+				writableDestination.write(io.toString(ff));
+			} catch (final ClassCastException e) {
+				e.printStackTrace();				
+			}  catch (SchemaException e) {
+				e.printStackTrace();
+			}			
 		} else {
-			/* It cannot by any measure be safely serialized according to specification. */
-			if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
-				/* Can be helpful for debugging how it isn't valid. */
-				writableDestination.write(jsonSerializable.toString());
-			} else {
-				/* Notify the caller the cause of failure for the serialization. */
-				throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: "
-						+ jsonSerializable.toString()
-						+ "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+			try {
+				writableDestination.write(streamConverter.convertObjectToJSONStream(null,jsonSerializable));
+			} catch(Exception e) {
+				/* It cannot by any measure be safely serialized according to specification. */
+				if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
+					/* Can be helpful for debugging how it isn't valid. */
+					writableDestination.write(jsonSerializable.toString());
+				} else {
+					/* Notify the caller the cause of failure for the serialization. */
+					throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: "
+							+ jsonSerializable.toString()
+							+ "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+				}				
 			}
 		}
-		// System.out.println(writableDestination.toString());
+		
+//		else {
+//			/* It cannot by any measure be safely serialized according to specification. */
+//			if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
+//				/* Can be helpful for debugging how it isn't valid. */
+//				writableDestination.write(jsonSerializable.toString());
+//			} else {
+//				/* Notify the caller the cause of failure for the serialization. */
+//				throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: "
+//						+ jsonSerializable.toString()
+//						+ "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+//			}
+//		}
+//		System.out.println(writableDestination.toString());
 	}
 
+	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
+	private static final Set<String> NON_JSONABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
+			IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS));
+		
+		
 	/**
 	 * Serializes like the first version of this library. It has been adapted to use Jsonable for serializing custom
 	 * objects, but otherwise works like the old JSON string serializer. It will allow non-JSON values in its output
