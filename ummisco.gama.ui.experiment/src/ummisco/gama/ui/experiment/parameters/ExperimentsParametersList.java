@@ -17,6 +17,7 @@ import java.util.Map;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -126,6 +127,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						}
 					});
 				}
+			} else if (var instanceof TextStatement) {
+				gp = EditorFactory.getInstance().create(scope, (TextStatement) var);
 			} else {
 				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
 						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {

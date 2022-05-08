@@ -1,6 +1,6 @@
 /***
 * Name: GUI Interactive Elements
-* Author: Benoit Gaudou
+* Author: Benoit Gaudou/Alexis Drogoul
 * Description: This model illustrates the various possible interactive elements that can be used in the parameters pane.
 * Tags: experiment, GUI, parameter
 ***/
@@ -13,7 +13,7 @@ global {
 	// In the simulation parameter view, their display can depend on their type or on other facets (e.g. min and max).
 
 	// Definition of a set of global parameters of several types.
-	int an_integer_with_limits <- 0;
+	int an_integer_without_limits <- 0;
 	int an_integer <-0;
 	float a_float_variable <- 0.0;
 	float another <- 10.0;
@@ -50,10 +50,19 @@ experiment "Show Parameters" type: gui {
 	string a_string_among_others <- "10";
 	int an_int_with_an_updated_slider <- 2;
 	
+	
+	// Texts can be inserted in the parameters pane to explain, for instance, how the model works
+	// Category: Explanation	
+	//////////////////////////////////////////////
+	text "This is a simple text using default values" category: "Explanation";
+	text "This is a more elaborate text in a different color" color: #darkgreen category: "Explanation";
+	text "This is a text in a different font, in italic and a size of 12" category: "Explanation" color: #orange font: font("Helvetica",12,#italic); 
+	text "This bold red text \rspans over \r3 lines." category: "Explanation" color: #red font: font("Helvetica",12,#bold); 
+	
 	// Category: Various types	
 	//////////////////////////////////////////////
 	// When min: and max: facets are used, the input chooser for a numerical value appears as a slider. 
-	parameter "An integer with limits" category:"Various types" var: an_integer_with_limits min: 0 max: 100 step: 1;
+	parameter "An integer with limits" category:"Various types" var: an_integer_without_limits min: 0 max: 100 step: 1;
 	// Without these facets, the parameter value chooser appears only as a textfield. 	
 	parameter "An integer without limit" category:"Various types" var: an_integer ;
 	parameter "Slider of a float" category:"Various types" var: a_float_variable min: 0.0 max: 100.0 step: 0.5;
@@ -61,7 +70,7 @@ experiment "Show Parameters" type: gui {
 	// When a variable of type boolean is a parameter, its input chooser appears as a check box.
 	parameter "Boolean variable" category:"Various types" var: a_boolean_variable;
 	parameter "Boolean variable with different colors" category:"Various types" var: a_boolean_variable2 colors: [#blue, #lightskyblue];
-	parameter "Boolean variable with the same colors" category:"Various types" var: a_boolean_variable3 colors: [#orange];
+		parameter "Boolean variable with the same colors" category:"Various types" var: a_boolean_variable3 colors: [#orange];
 	// A color parameter can be modified using a color chooser.
 	parameter "A color" category:"Various types" var: a_color;
 	// For any parameter, if the possible values are described using the among: facet, a ComboBox is used to choose the parameter value.

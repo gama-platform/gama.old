@@ -15,6 +15,7 @@ import java.util.Collection;
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
+import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
@@ -363,5 +364,9 @@ public class EditorFactory {
 	public IParameterEditor create(final IScope scope, final UserCommandStatement command,
 			final EditorListener.Command selectionAdapter) {
 		return new CommandEditor(scope, command, selectionAdapter);
+	}
+
+	public IParameterEditor create(final IScope scope, final TextStatement var) {
+		return new TextDisplayer(scope, var);
 	}
 }

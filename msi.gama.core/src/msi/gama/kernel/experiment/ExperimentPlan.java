@@ -51,6 +51,7 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -228,6 +229,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	/** The parameters. */
 	// private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = GamaMapFactory.create();
+
+	protected final List<TextStatement> texts = GamaListFactory.create();
 
 	/** The explorable parameters. */
 	protected final Map<String, IParameter.Batch> explorableParameters = GamaMapFactory.create();
@@ -408,6 +411,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			experimentOutputs = null;
 		}
 		parameters.clear();
+		texts.clear();
 		GAMA.releaseScope(myScope);
 		// FIXME Should be put somewhere around here, but probably not here
 		// exactly.
@@ -490,7 +494,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		BatchOutput fileOutputDescription = null;
 		LayoutStatement layout = null;
 		for (final ISymbol s : children) {
-			if (s instanceof LayoutStatement) {
+			if (s instanceof TextStatement) {
+				texts.add((TextStatement) s);
+			} else if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
 			} else if (s instanceof IExploration) {
 				exploration = (IExploration) s;
@@ -567,6 +573,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 			getGui().updateExperimentState(scope);
 		}
+
 	}
 
 	@Override
@@ -734,6 +741,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public Map<String, IParameter> getParameters() { return parameters; }
+
+	public List<TextStatement> getTexts() { return texts; }
 
 	@Override
 	public SimulationAgent getCurrentSimulation() {

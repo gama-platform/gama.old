@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaColors.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaColors.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
@@ -370,6 +370,7 @@ public class GamaColors {
 	 * @return the color
 	 */
 	public static Color toSwtColor(final java.awt.Color color) {
+		if (color == null) return toSwtColor(java.awt.Color.BLACK);
 		return new Color(color.getRed(), color.getGreen(), color.getBlue());
 	}
 

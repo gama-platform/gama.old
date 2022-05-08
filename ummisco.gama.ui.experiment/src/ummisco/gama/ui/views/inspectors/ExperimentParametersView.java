@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
@@ -47,10 +47,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/** The Constant ID. */
 	public static final String ID = IGui.PARAMETER_VIEW_ID;
-	
+
 	/** The Constant REVERT. */
 	public final static int REVERT = 0;
-	
+
 	/** The experiment. */
 	private IExperimentPlan experiment;
 
@@ -77,6 +77,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getParameters().values());
 			params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
+			params.addAll(exp.getTexts());
 			Collections.sort(params);
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
 			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
@@ -123,9 +124,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	 *
 	 * @return the experiment
 	 */
-	public IExperimentPlan getExperiment() {
-		return experiment;
-	}
+	public IExperimentPlan getExperiment() { return experiment; }
 
 	@Override
 	public void stopDisplayingTooltips() {

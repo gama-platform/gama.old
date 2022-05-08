@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.kernel.batch.IExploration;
@@ -271,5 +272,7 @@ public interface IExperimentPlan extends ISpecies {
 	 * @return true, if successful
 	 */
 	boolean shouldBeBenchmarked();
+
+	List<TextStatement> getTexts();
 
 }
