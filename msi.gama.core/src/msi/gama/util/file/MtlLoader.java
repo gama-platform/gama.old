@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package ummisco.gama.opengl.files;
+package msi.gama.util.file;
 
 import java.io.BufferedReader;
 import java.io.IOException;
