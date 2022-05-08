@@ -1,8 +1,14 @@
 /**
 * Name: ODE Solver Test
-* Author: Tri Nguyen-Huu, Huynh Nghi
+* Author: Tri Nguyen-Huu,Huynh Quang Nghi
 * 
-* 
+* This model tests if ODE solvers react as expected to events. 
+* The 'normal' experiment tests the reaction to the modification of a variable governed by an equation 
+* (here the number of infected')
+* The 'dynamical_creation' tests if the ODE system adapts to the creation/destruction of agents, adding and 
+* removing equations dynamically.
+* The 'test' experiment do both and quantify the error. An error of 0 is expected, otherwise the model does not
+* behave as expected.
 * 
 * Tags: math, equation
 */
@@ -163,7 +169,7 @@ global{
 experiment normal type: gui {
 	output {
 		display "Equation Tests" refresh: every(1 #cycle) {
-			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: rgb( 'lightGray' ) y_range: {0,500} {
+			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: #white y_range: {0,500} {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: true line_visible: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: true line_visible: false;
 				data "R" value: (first(SIR_model).Rm) color: #blue marker: true line_visible: false;	
@@ -177,14 +183,14 @@ experiment normal type: gui {
 }
 
 
-experiment dynamics_creation type: gui {
+experiment dynamical_creation type: gui {
 	action _init_ {
 		create SplitTest_model with: [dynamics_creation::true];
 	}
 	
 	output {
 		display "Equation Tests" refresh: every(1 #cycle) {
-			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: rgb( 'lightGray' ) y_range: {0,500} {
+			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: #white y_range: {0,500} {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: true line_visible: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: true line_visible: false;
 				data "R" value: (first(SIR_model).Rm) color: #blue marker: true line_visible: false;	
