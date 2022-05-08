@@ -384,14 +384,14 @@ experiment "Trajectory Analysis" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
-		display RealBoids type: opengl {
+		display RealBoids type: opengl{
 			image 'background' file: file_path_to_ocean;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.1};
 			species obstacle position: {0, 0, 0.1};
 		}
 
-		display AggregatedBoidsTrajectory type: opengl {
+		display AggregatedBoidsTrajectory type: opengl{
 			image 'background' file: file_path_to_ocean;
 			species aggregatedboids aspect: base trace: 100 fading: true;
 			species boids_goal aspect: default;
@@ -405,33 +405,33 @@ experiment "Space & Time Cube" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
-		display RealBoids type: opengl {
+		display RealBoids type: opengl{
 			image 'background' file: file_path_to_ocean;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.1};
 			species obstacle position: {0, 0, 0.1};
 		}
 
-		display SpaceTimeCubeAll type: opengl {
+		display SpaceTimeCubeAll type: opengl camera:#from_up_front{
 			image 'background' file: file_path_to_ocean refresh: false;
-			species boids trace: true {
+			species boids trace: 100 {
 				draw triangle(20) size: 15 rotate: heading color: hsb(float(heading) / 360.0, 1.0, 1.0) border: hsb(float(heading) / 360.0, 1.0, 1.0) depth: 5 at:
 				{location.x, location.y, location.z + time};
 			}
 
-			species boids_goal trace: true {
+			species boids_goal trace: 100 {
 				draw sphere(10) color: rgb('yellow') at: {location.x, location.y, location.z + time};
 			}
 
 		}
 
-		display SpaceTimeCubeAggregated type: opengl {
+		display SpaceTimeCubeAggregated type: opengl camera:#from_up_front{
 			image 'background' file: file_path_to_ocean refresh: false;
-			species aggregatedboids trace: true {
+			species aggregatedboids trace: 500 {
 				draw sphere(10) color: rgb('red') at: {location.x, location.y, location.z + time};
 			}
 
-			species boids_goal trace: true {
+			species boids_goal trace: 500 {
 				draw sphere(10) color: rgb('yellow') at: {location.x, location.y, location.z + time};
 			}
 
@@ -454,8 +454,8 @@ experiment "Multiple views" type: gui {
 		}
 
 		display ThirdPerson type: opengl antialias: false {
-			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 2500} target:
-		{int(first(boids).location.x), int(first(boids).location.y), 0};
+			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 500} target:
+		    {int(first(boids).location.x), int(first(boids).location.y), 0};
 			image 'background' file: file_path_to_ocean;
 			species obstacle;
 			species boids aspect: dynamicColor transparency: 0.2;
