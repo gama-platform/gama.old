@@ -11,15 +11,16 @@ global
 {
 	image_file static_map_request;
 	map
-	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","")]);
+	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","48.8566140,2.3522219")]);
 	string center_text <- answers["Address"]; 
 	int zoom_text <- 10;
 	action load_map
 	{ 
+		string appkey<-"G1VfvZoE8T4g0U24bm7UbuozvS9YIGXt";
 		string zoom <- "zoom=" + zoom_text;
 		string center <- "center=" + center_text;
 		static_map_request <-
-		image_file("https://www.mapquestapi.com/staticmap/v4/getmap?key=lYrP4vF3Uk5zgTiGGuEzQGwGIVDGuy24&size=600,600&type=map&imagetype=jpg&"+zoom+"&scalebar=false&traffic=false&"+center+"");
+		image_file("https://www.mapquestapi.com/staticmap/v4/getmap?key="+appkey+"&size=600,600&type=map&imagetype=jpg&"+zoom+"&scalebar=false&traffic=false&"+center+"");
 	}
  
 	init

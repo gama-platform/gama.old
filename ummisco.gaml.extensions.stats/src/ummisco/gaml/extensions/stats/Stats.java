@@ -1158,7 +1158,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "the geometric mean of the elements of the operand. "
-					+ "See <A href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</A> for more details.",
+					+ "See <a href=\"http://en.wikipedia.org/wiki/Geometric_mean\">Geometric_mean</a> for more details.",
 			comment = "The operator casts all the numerical element of the list into float. "
 					+ "The elements that are not numerical are discarded.",
 			special_cases = { "" },
@@ -1227,7 +1227,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "the harmonic mean of the elements of the operand. "
-					+ "See <A href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</A> for more details.",
+					+ "See <a href=\"http://en.wikipedia.org/wiki/Harmonic_mean\">Harmonic_mean</a> for more details.",
 			comment = "The operator casts all the numerical element of the list into float."
 					+ " The elements that are not numerical are discarded.",
 			special_cases = { "" },
@@ -1636,7 +1636,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "the deviation from the mean of all the elements of the operand. "
-					+ "See <A href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</A> for more details.",
+					+ "See <a href= \"http://en.wikipedia.org/wiki/Absolute_deviation\" >Mean_deviation</a> for more details.",
 			comment = "The operator casts all the numerical element of the list into float."
 					+ " The elements that are not numerical are discarded.",
 			examples = { @example (
@@ -2583,7 +2583,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "the standard deviation on the elements of the operand. "
-					+ "See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> "
+					+ "See <a href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</a> "
 					+ "for more details.",
 			comment = "The operator casts all the numerical element of the list into float. "
 					+ "The elements that are not numerical are discarded.",
@@ -2749,7 +2749,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC })
 	@doc (
 			value = "the variance of the elements of the operand. "
-					+ "See <A href=\"http://en.wikipedia.org/wiki/Variance\">Variance</A> for more details.",
+					+ "See <a href=\"http://en.wikipedia.org/wiki/Variance\">Variance</a> for more details.",
 			comment = "The operator casts all the numerical element of the list into float."
 					+ " The elements that are not numerical are discarded. ",
 			examples = { @example (
