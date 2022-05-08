@@ -16,7 +16,7 @@ global {
 	 */
 
 	//define the bounds of the studied area
-	file data_file <-shape_file("../includes/sainte_croix.shp");
+	file data_file <-shape_file("../includes/boundary.shp");
 	
 	//path where to export the created shapefiles
 	string exporting_path <- "results/";
