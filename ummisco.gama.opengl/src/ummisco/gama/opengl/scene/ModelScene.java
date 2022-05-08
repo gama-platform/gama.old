@@ -42,6 +42,10 @@ import ummisco.gama.opengl.scene.layers.OverlayLayerObject;
  */
 public class ModelScene {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The Constant AXES_KEY. */
 	public static final String AXES_KEY = "__axes__0";
 
@@ -71,6 +75,8 @@ public class ModelScene {
 
 	/** The max Z. */
 	final double maxZ;
+
+	int index = 0;
 
 	/**
 	 * Instantiates a new model scene.
@@ -114,7 +120,11 @@ public class ModelScene {
 	 *            the gl
 	 */
 	public void draw(final OpenGL gl) {
-
+		// if (index++ == 0) {
+		// DEBUG.OUT("Drawing the first scene");
+		// } else {
+		// DEBUG.OUT("Drawing scene " + index);
+		// }
 		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		gl.setZIncrement(renderer.getData().isOrtho() ? 0D : zIncrement);
 		// AD called here so that it is inside the keystone drawing. See #3285

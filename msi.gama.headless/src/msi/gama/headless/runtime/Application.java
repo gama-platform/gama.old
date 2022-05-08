@@ -10,14 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,6 +57,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -178,17 +176,6 @@ public class Application implements IApplication {
 				+ "\n\t\t                             -- default usage of GAMA headless" + "\n\t\t" + WRITE_XMI
 				+ " -- write scope provider resource files to disk");
 		DEBUG.OFF();
-	}
-
-	/**
-	 * Check parameters.
-	 *
-	 * @param args
-	 *            the args
-	 * @return true, if successful
-	 */
-	private boolean checkParameters(final List<String> args) {
-		return checkParameters(args, false);
 	}
 
 	/**
@@ -368,8 +355,8 @@ public class Application implements IApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-//			GamaListener.newInstance(this.socket, this);
-			GamaListener gl=new GamaListener(this.socket,this);
+			// GamaListener.newInstance(this.socket, this);
+			GamaListener gl = new GamaListener(this.socket, this);
 		} else {
 			runSimulation(args);
 		}
@@ -588,6 +575,9 @@ public class Application implements IApplication {
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+
+		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
+		GamaExecutorService.CONCURRENCY_THRESHOLD.set(processorQueue.getNumberOfThreads());
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
 

@@ -14,8 +14,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,7 +132,7 @@ public class System {
 	}
 	
 	/**
-	 * Checks if is warning.
+	 * Checks if the url is reachable.
 	 *
 	 * @param scope
 	 *            the scope
@@ -148,18 +148,36 @@ public class System {
 		examples = {
 					@example (value="write sample(is_reachable(\"www.google.com\", 200));",isExecutable = false)})
 	@no_test 
-	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
-		try {
-			InetAddress ad = InetAddress.getByName(address);
-			if (ad != null) return ad.isReachable(timeout);
-		} catch (UnknownHostException e) {
-			return false;
-		} catch (IOException e) {
-			return false;
-		}
-		return false;
+	public static Boolean is_reachable(final IScope scope, final String address, int openPort, final int timeout) {
+	    // Any Open port on other machine
+	    // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
+	    try (Socket soc = new Socket()) {
+	        soc.connect(new InetSocketAddress(address, openPort), timeout);
+	        return true;
+	    } catch (IOException ex) {
+	        return false;
+	    }
 	}
-
+	
+	
+	
+	/**
+	 * Checks if the url is reachable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expr
+	 *            the expr
+	 * @return the boolean
+	 */
+	@operator (
+			value = "is_reachable",
+			concept = IConcept.TEST)
+	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
+		return is_reachable(scope, address, 80, timeout);
+	}
+	
+	
 	/**
 	 * Console.
 	 *

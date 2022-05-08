@@ -62,9 +62,9 @@ experiment "Different radars" type: gui
 
 		display "onvalue_cumulative_bar_chart" type: java2D
 		{
-			chart "onvalue_cumulative_bar_chart" type: radar series_label_position: yaxis x_label: "my_time_label"
+			chart "onvalue_cumulative_bar_chart" type: radar series_label_position: yaxis x_label: "my_time_label" y_range: 100
 			{
-				data "unique data value" value: cos(cycle * 10) accumulate_values: true color: # red;
+				data "unique data value" value: 0.1*cycle*cos(cycle * 10) accumulate_values: true color: # red;
 			}
 
 		}

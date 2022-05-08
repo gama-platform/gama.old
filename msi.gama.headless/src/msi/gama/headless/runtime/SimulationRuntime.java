@@ -59,7 +59,7 @@ public interface SimulationRuntime {
 	 *            the s
 	 */
 	void execute(final Runnable r);
-	
+
 	/**
 	 * Push simulation.
 	 *
@@ -82,5 +82,7 @@ public interface SimulationRuntime {
 	 *            the new number of threads
 	 */
 	void setNumberOfThreads(int numberOfThread);
+
+	int getNumberOfThreads();
 
 }

@@ -2,8 +2,8 @@
 /**
 * Name: comodeling_example_populations_mutating
 * Author: Arthur Brugiere & HUYNH Quang Nghi
-* Description: This is a simple comodel serve to demonstrate the importation and instantiation of micro-model.
-* Here triangle predators can eat any prey, square can eat square and round and round predators can only eat round prey
+* Description: This simple comodel serves to demonstrate the importation and instantiation of micro-model.
+* Here triangle predators can eat any prey, square can eat square and round prey, and round predators can only eat round prey
 * Tags: comodel
 */ 
 

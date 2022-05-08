@@ -236,6 +236,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public OpenGL(final IOpenGLRenderer renderer) {
 		super(renderer);
+//		DEBUG.OUT("Creation of OpenGL");
 		glut = new GLUT();
 		glu = new GLU();
 		// pickingState = renderer.getPickingHelper();
