@@ -49,7 +49,7 @@ set "result=..\plugins\%result%"
 echo %result%
 echo %JAVA_HOME%
 
-if exist ..\headless\ (
+if exist ..\jdk\ (
 	echo "JDK"
 	call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
 ) else (

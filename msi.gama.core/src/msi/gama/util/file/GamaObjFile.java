@@ -8,22 +8,15 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.opengl.files;
+package msi.gama.util.file;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES3;
-import com.jogamp.opengl.util.texture.Texture;
-
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -35,12 +28,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
-import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.opengl.OpenGL;
 
 /**
  * Class GamaObjFile.
@@ -61,25 +52,25 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	public final ArrayList<double[]> setOfVertex = new ArrayList<>();
 
 	/** The set of vertex normals. */
-	private final ArrayList<double[]> setOfVertexNormals = new ArrayList<>();
+	public final ArrayList<double[]> setOfVertexNormals = new ArrayList<>();
 
 	/** The set of vertex textures. */
-	private final ArrayList<double[]> setOfVertexTextures = new ArrayList<>();
+	public final ArrayList<double[]> setOfVertexTextures = new ArrayList<>();
 
 	/** The faces. */
-	private final ArrayList<int[]> faces = new ArrayList<>();
+	public final ArrayList<int[]> faces = new ArrayList<>();
 
 	/** The faces texs. */
-	private final ArrayList<int[]> facesTexs = new ArrayList<>();
+	public final ArrayList<int[]> facesTexs = new ArrayList<>();
 
 	/** The faces norms. */
-	private final ArrayList<int[]> facesNorms = new ArrayList<>();
+	public final ArrayList<int[]> facesNorms = new ArrayList<>();
 
 	/** The mat timings. */
-	private final ArrayList<String[]> matTimings = new ArrayList<>();
+	public final ArrayList<String[]> matTimings = new ArrayList<>();
 
 	/** The materials. */
-	private MtlLoader materials;
+	public MtlLoader materials;
 	// private int objectList;
 	/** The toppoint. */
 	// private int numPolys = 0;
@@ -101,7 +92,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	public double nearpoint = 0f;
 
 	/** The mtl path. */
-	private final String mtlPath;
+	public final String mtlPath;
 
 	/** The loaded. */
 	boolean loaded = false;
@@ -398,133 +389,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			DEBUG.ERR("Could not open file: " + refm);
 			materials = null;
 		}
-	}
-
-	/**
-	 * Method flushBuffer()
-	 *
-	 * @see msi.gama.util.file.GamaFile#flushBuffer() //
-	 */
-	// @Override
-	// protected void flushBuffer() throws GamaRuntimeException {
-	// }
-
-	public void drawToOpenGL(final OpenGL gl) {
-		int nextmat = -1;
-		int matcount = 0;
-		final int totalmats = matTimings.size();
-		String[] nextmatnamearray = null;
-		String nextmatname = null;
-
-		if (totalmats > 0 && materials != null) {
-			nextmatnamearray = matTimings.get(matcount);
-			nextmatname = nextmatnamearray[0];
-			nextmat = Integer.parseInt(nextmatnamearray[1]);
-		}
-		Texture texture = null;
-		final GamaPoint tex = new GamaPoint();
-		final GamaPoint normal = new GamaPoint();
-		final GamaPoint vertex = new GamaPoint();
-		for (int i = 0; i < faces.size(); i++) {
-			if (i == nextmat) {
-				if (texture != null) {
-					texture.destroy(gl.getGL());
-					texture = null;
-				}
-				// gl.getGL().glEnable(GL2.GL_COLOR_MATERIAL);
-				gl.setCurrentColor(materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
-						materials.getKd(nextmatname)[2], materials.getd(nextmatname));
-
-				final String mapKa = materials.getMapKa(nextmatname);
-				final String mapKd = materials.getMapKd(nextmatname);
-				final String mapd = materials.getMapd(nextmatname);
-				if (mapKa != null || mapKd != null || mapd != null) {
-					File f = new File(mtlPath);
-					StringBuilder path = new StringBuilder().append(f.getAbsolutePath().replace(f.getName(), ""));
-					if (mapd != null) {
-						path.append(mapd);
-					} else if (mapKa != null) {
-						path.append(mapKa);
-					} else if (mapKd != null) { path.append(mapKd); }
-					f = new File(path.toString());
-					if (f.exists()) {
-						// Solves Issue #1951. Asynchronous loading of textures
-						// was not possible when displaying the file
-						texture = gl.getTexture(f, false, true);
-						gl.setCurrentTextures(texture.getTextureObject(), texture.getTextureObject());
-						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
-						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
-					}
-
-				}
-				matcount++;
-				if (matcount < totalmats) {
-					nextmatnamearray = matTimings.get(matcount);
-					nextmatname = nextmatnamearray[0];
-					nextmat = Integer.parseInt(nextmatnamearray[1]);
-				}
-			}
-
-			final int[] tempfaces = faces.get(i);
-			final int[] norms = facesNorms.get(i);
-			final int[] texs = facesTexs.get(i);
-
-			//// Quad Begin Header ////
-			final int polytype =
-					tempfaces.length == 3 ? GL.GL_TRIANGLES : tempfaces.length == 4 ? GL2ES3.GL_QUADS : GL2.GL_POLYGON;
-			gl.beginDrawing(polytype);
-			////////////////////////////
-
-			boolean hasNormals = true;
-			for (int w = 0; w < tempfaces.length; w++) {
-				if (norms[w] == 0) {
-					hasNormals = false;
-					break;
-				}
-			}
-
-			final double[] arrayOfVertices = new double[tempfaces.length * 3];
-			for (int w = 0; w < tempfaces.length; w++) {
-				final double[] ordinates = setOfVertex.get(tempfaces[w] - 1);
-				for (int k = 0; k < 3; k++) { arrayOfVertices[w * 3 + k] = ordinates[k]; }
-			}
-			final ICoordinates coords = ICoordinates.ofLength(tempfaces.length + 1);
-			coords.setTo(arrayOfVertices);
-			coords.completeRing();
-
-			if (!hasNormals) { gl.setNormal(coords, !coords.isClockwise()); }
-			for (int w = 0; w < tempfaces.length; w++) {
-				if (tempfaces[w] == 0) { continue; }
-				final boolean hasNormal = norms[w] != 0;
-				final boolean hasTex = texs[w] != 0;
-				if (hasNormal) {
-					final double[] temp_coords = setOfVertexNormals.get(norms[w] - 1);
-					normal.setLocation(temp_coords[0], temp_coords[1], temp_coords[2]);
-				}
-				if (hasTex) {
-					final double[] ordinates = setOfVertexTextures.get(texs[w] - 1);
-					tex.setLocation(ordinates[0], ordinates[1], ordinates[2]);
-					if (1d >= tex.y && -tex.y <= 0) {
-						tex.y = 1d - tex.y;
-					} else {
-						tex.y = Math.abs(tex.y);
-					}
-				}
-				final double[] temp_coords = setOfVertex.get(tempfaces[w] - 1);
-				vertex.setLocation(temp_coords[0], temp_coords[1], temp_coords[2]);
-				gl.drawVertex(vertex, hasNormal ? normal : null, hasTex ? tex : null);
-			}
-
-			//// Quad End Footer /////
-			gl.endDrawing();
-		}
-
-		if (texture != null) {
-			gl.disableTextures();
-			texture.destroy(gl.getGL());
-			texture = null;
-		}
-		// gl.glEndList();
 	}
 
 }
