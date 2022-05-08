@@ -30,7 +30,7 @@ global {
 		
 		create DB_Accessor
 		{ 			
-			do executeUpdate params: PARAMS updateComm: "DELETE FROM district";	
+			do executeUpdate params: PARAMS updateComm: "DELETE FROM buildings";	
 		}
 	}
 }   
@@ -47,7 +47,7 @@ species district {
 		write "begin"+ name;
 	    ask (DB_Accessor) {
 	    	// Using  ST_Force3D() for converting the geometry data to 3D in the case that the geom in table is in 3D      
-			do executeUpdate params: PARAMS updateComm: "INSERT INTO district(ward_name,geom) VALUES('"+myself.ward_name+"',ST_Force3D(ST_Multi(ST_GeomFromText('" + myself.shape +"',32648))))";
+			do executeUpdate params: PARAMS updateComm: "INSERT INTO buildings(name,geom) VALUES('"+myself.ward_name+"',ST_Force3D(ST_Multi(ST_GeomFromText('" + myself.shape +"',32648))))";
 		}	
 	}	
 	aspect default {
