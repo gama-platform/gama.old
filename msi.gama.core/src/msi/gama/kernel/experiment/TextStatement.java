@@ -54,10 +54,15 @@ import msi.gaml.types.IType;
 				optional = true,
 				doc = @doc ("The color with wich the text will be displayed")),
 				@facet (
+						name = IKeyword.BACKGROUND,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("The color of the background of the text")),
+				@facet (
 						name = FONT,
 						type = { IType.FONT, IType.STRING },
 						optional = true,
-						doc = @doc ("the font used to draw the text, if any. Applying this facet to geometries or images has no effect. You can construct here your font with the operator \"font\". ex : font:font(\"Helvetica\", 20 , #plain)")),
+						doc = @doc ("the font used to draw the text, which can be built with the operator \"font\". ex : font:font(\"Helvetica\", 20 , #bold)")),
 				@facet (
 						name = IKeyword.CATEGORY,
 						type = IType.LABEL,
@@ -79,13 +84,14 @@ public class TextStatement extends AbstractStatement implements IExperimentDispl
 		color = getFacet(IKeyword.COLOR);
 		category = getFacet(IKeyword.CATEGORY);
 		font = getFacet(IKeyword.FONT);
+		background = getFacet(IKeyword.BACKGROUND);
 	}
 
 	/** The message. */
 	final IExpression message;
 
 	/** The color. */
-	final IExpression color, category, font;
+	final IExpression color, category, font, background;
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
@@ -104,6 +110,12 @@ public class TextStatement extends AbstractStatement implements IExperimentDispl
 	public Color getColor(final IScope scope) {
 		GamaColor rgb = null;
 		if (color != null) { rgb = Cast.asColor(scope, color.value(scope)); }
+		return rgb;
+	}
+
+	public Color getBackground(final IScope scope) {
+		GamaColor rgb = null;
+		if (background != null) { rgb = Cast.asColor(scope, background.value(scope)); }
 		return rgb;
 	}
 

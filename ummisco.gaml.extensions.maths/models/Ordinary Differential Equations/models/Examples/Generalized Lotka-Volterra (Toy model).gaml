@@ -18,9 +18,22 @@ model GeneralizedLotkaVolterra
 
 global {
 	int max_species <- 8;
-	list<list<string>> animal_names <- [["Goé","land"],["Ga","zelle"],["Tama","noir"],["La","pin"],["Cou","cou"],["Ca","nard"],["Cha","mois"],["Ecu","reuil"],["Elé","phant"],
+	string dummy <- '';
+
+	string language <- "english" among: ["french","english"];
+
+	map<string,list<list<string>>> animal_names <- map(
+										"french"::[["Goé","land"],["Ga","zelle"],["Tama","noir"],["La","pin"],["Cou","cou"],["Ca","nard"],["Cha","mois"],["Ecu","reuil"],["Elé","phant"],
 										["Droma","daire"],["Pé","lican"],["Sou","ris"],["Pou","let"],["Perro","quet"],["Rossi","gnol"],["Gre","nouille"],["Phaco","chère"],["Maque","reau"],
-										["Sar","dine"],["Mou","ton"],["Ser","pent"],["Tor","tue"],["Pu","tois"]];
+										["Sar","dine"],["Mou","ton"],["Ser","pent"],["Tor","tue"],["Pu","tois"]],
+										"english"::[["Chee","tah"],["Gi","raffe"],["Ele","phant"],["Ra","bbit"],["Squi","rrel"],
+										["Chame","leon"],["Bumble","bee"],["Bu","ffalo"],["Ze","bra"],
+										["Rattle","snake"],["Bea","ver"],["Sala","mander"],["Hippo","potamus"],["Pa","rrot"],
+										["Rhino","ceros"],["Kanga","roo"],["Leo","pard"],["Alli","gator"],
+										["Go","rilla"],["Croco","dile"],["Platy","pus"],["Octo","pus"],["Porcu","pine"]]
+										);
+
+
 	list<string> possible_type <-["neutral","positive","negative"];
 	map<string,rgb> type_color <- ["neutral"::rgb(240,240,240),"negative"::rgb(250,65,65),"positive"::rgb(150,217,100)];
 	
@@ -35,7 +48,7 @@ global {
 	float hKR4 <- 0.01;
 	
 	init{
-		create population_count;
+	//	create population_count;
 		loop i from: 0 to: max_species-1{
 			color_list[i] <- rgb(int(240/max_species*i),int(240/max_species*i),255);
 		}
@@ -56,15 +69,6 @@ global {
 	}	
 }
 
-species population_count{
-	list<float> pop <- list_with(max_species,0.0);
-	
-	reflex update_count{
-		loop i from: 0 to: max_species-1{
-			pop[i] <- (species_list[i] != nil)?species_list[i].pop:0;
-		}
-	}
-}
 
 species animal{
 	float t;
@@ -130,7 +134,7 @@ species solver_and_scheduler{
 				}else{
 					// add a new animal species
 					create animal{
-						name <- animal_names[rnd(length(animal_names)-1)][0]+animal_names[rnd(length(animal_names)-1)][1];
+						name <- animal_names[language][rnd(length(animal_names[language])-1)][0]+animal_names[language][rnd(length(animal_names[language])-1)][1];
 						species_list[selected_button.grid_y - 1] <- self;
 						r <- rnd(100)/100;
 						k <- 30.0+rnd(50);
@@ -229,23 +233,26 @@ grid button width:max_species+1 height:max_species+1
 
 
 
-experiment simulation type: gui autorun: true {
+experiment simulation type: gui autorun: true  {
 	float minimum_cycle_duration <- 0.1;
+	parameter "Language for animal names" var: language category: "language";
+ 	parameter "Click on '?'s to add animal species, then click on grey squares to change types of interactions.\n'+' means that the upper species has a positive impact on the left species (e.g. the left one eats the top one). '-' is for negative impact and grey for neutral. The interaction graph is shown in the lower-right corner."
+ 		var: dummy category: "Help";
+ 			
 	output { 
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
-		display action_button name:"Interaction matrix" {
+		display action_button name:"Interaction matrix" toolbar: false{
 			species button aspect:modern ;
 			event mouse_down action:activate_act;    
 		}
-		display LV name: "Time series" refresh: every(1#cycle) {
-			chart "Population" type: series background: rgb('white') x_range: 200 {
+		display LV name: "Time series" refresh: every(1#cycle) type: java2D toolbar: false{
+			chart "Population size" type: series background: rgb('white') x_range: 200 x_tick_line_visible: false{
 				loop i from: 0 to: max_species-1{
-					data "espèce "+i value: first(population_count).pop[i] color: (species_list[i] != nil)?color_list[i]:rgb(0,0,0,0) marker: false;
-					data "espèce "+i value: first(solver_and_scheduler).pop[i] color: (species_list[i] != nil)?color_list[i]:rgb(0,0,0,0) marker: false;
+					data "Species "+i value: first(solver_and_scheduler).pop[i] color: (species_list[i] != nil)?color_list[i]:rgb(0,0,0,0) marker: false;
 				}
 			}
 		}
-		display "Interaction graph" {
+		display "Interaction graph" type: java2D {
 			graphics "edges" {
 				loop edge over: the_graph.edges {
 					float angle <- (pair<animal,animal>(edge)).key towards (pair<animal,animal>(edge)).value;

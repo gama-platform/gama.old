@@ -1,8 +1,10 @@
 /***
 * Name: Influence of the integration step
 * Author: Tri, Nghi, Benoit
-* Description: The aim is to show the influence of the integration step on the result precision.
-* 			   Notice that a step of value 1.0 is not realistic, but this value is necessary with the RK4 method to show the influence of the integration step.
+* Description:  The aim is to show the influence of the integration step on the result precision.
+* 				The solutions of the Lotka-Volterra are periodic. When the integration step is not
+* 				small enough, this periodicity is lost, as illustrated with h=1.
+* 
 * Tags: equation, math
 ***/
 
@@ -36,14 +38,36 @@ species userLV {
 }
 
 experiment examples type: gui {
-	output {		
-		display LV  {
-			chart 'examplesUserLV' type: series background: #lightgray {
-				data "x" value: first(userLV).x color: #yellow;
-				data "y" value: first(userLV).y color: #blue;
-				data "x1" value: last(userLV).x color: #red;
-				data "y1" value: last(userLV).y color: #green;				
+	float minimum_cycle_duration <- 0.05#s;
+	output {	
+		layout horizontal([vertical([0::100,1::100])::100,2::100]) tabs: false;	
+		display "h=0.01"  toolbar: false{
+			chart 'Lotka-Voltera dynamics (time series)' type: series 
+				background: rgb(47,47,47) color: #white
+				y_label: "pop" x_tick_line_visible: false{
+				data "x (h=0.01)" value: first(userLV).x[] color: rgb(52,152,219) marker: false thickness: 2;
+				data "y (h=0.01)" value: first(userLV).y[] color: rgb(41,128,185) marker: false thickness: 2;
+//				data "x (h=1)" value: last(userLV).x color: rgb(243,156,18) marker: false thickness: 2;
+//				data "y (h=1)" value: last(userLV).y color: rgb(230,126,34) marker: false thickness: 2;				
 			}			
+		}
+		display "h=1"   toolbar: false{
+			chart 'Lotka-Voltera dynamics (time series)' type: series 
+			background: rgb(47,47,47) color: #white
+			y_label: "pop" x_tick_line_visible: false{
+//				data "x (h=0.01)" value: first(userLV).x color: rgb(52,152,219) marker: false thickness: 2;
+//				data "y (h=0.01)" value: first(userLV).y color: rgb(41,128,185) marker: false thickness: 2;
+				data "x (h=1)" value: last(userLV).x[] color: rgb(243,156,18) marker: false thickness: 2;
+				data "y (h=1)" value: last(userLV).y[] color: rgb(230,126,34) marker: false thickness: 2;				
+			}			
+		}		
+		display "Phase Portrait"  toolbar: false {
+		chart 'Lotka-Voltera dynamics (phase portrait)' type: xy 
+			background: rgb(47,47,47) color: #white y_label: "y" x_label: "x"
+			x_range: {0,8} y_range: {0,5.3}{
+				data "h=0.01" value: [first(userLV).x,first(userLV).y] color: rgb(52,152,219) marker: false;			
+				data "h=1" value: [last(userLV).x,last(userLV).y] color: rgb(243,156,18) marker: false;			
+			}		
 		}						
 	}
 }
