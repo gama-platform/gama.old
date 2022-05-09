@@ -172,9 +172,6 @@ init {
 	//Number of times to retry if connection cannot be established
 	write sample(gama.pref_http_retry_number);
 
-	//Path to JRI library ($R_HOME/library/rJava/jri/libjri.jnilib) (http://www.r-project.org)
-	write sample(gama.pref_lib_r);
-
 	//Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)
 	write sample(gama.pref_lib_spatialite);
 
@@ -186,9 +183,6 @@ init {
 
 	//Trigger warnings when the percentage of available memory is below
 	write sample(gama.pref_memory_threshold);
-
-	//Optimize agents memory
-	write sample(gama.pref_optimize_agent_memory);
 
 	//Optimize the 'at_distance' operator
 	write sample(gama.pref_optimize_at_distance);
@@ -424,9 +418,6 @@ init {
 	//Number of times to retry if connection cannot be established
 	gama.pref_http_retry_number <- 3;
 
-	//Path to JRI library ($R_HOME/library/rJava/jri/libjri.jnilib) (http://www.r-project.org)
-	gama.pref_lib_r <- file('/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib');
-
 	//Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)
 	gama.pref_lib_spatialite <- file('/Users/drogoul/Documents/Git/gama/msi.gama.models/models/Features/Data Importation/models/Enter path');
 
@@ -438,9 +429,6 @@ init {
 
 	//Trigger warnings when the percentage of available memory is below
 	gama.pref_memory_threshold <- 20;
-
-	//Optimize agents memory
-	gama.pref_optimize_agent_memory <- true;
 
 	//Optimize the 'at_distance' operator
 	gama.pref_optimize_at_distance <- true;
