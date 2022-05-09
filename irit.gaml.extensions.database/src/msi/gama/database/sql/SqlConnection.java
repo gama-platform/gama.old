@@ -55,9 +55,6 @@ public abstract class SqlConnection {
 	/** The Constant POSTGIS. */
 	static final String POSTGIS = "postgis";
 	
-	/** The Constant MSSQL. */
-	static final String MSSQL = "sqlserver";
-	
 	/** The Constant SQLITE. */
 	public static final String SQLITE = "sqlite";
 	
@@ -65,43 +62,40 @@ public abstract class SqlConnection {
 	public static final String GEOMETRYTYPE = "GEOMETRY";
 	
 	/** The Constant CHAR. */
-	static final String CHAR = "CHAR";
+	protected static final String CHAR = "CHAR";
 	
 	/** The Constant VARCHAR. */
-	static final String VARCHAR = "VARCHAR";
+	protected static final String VARCHAR = "VARCHAR";
 	
 	/** The Constant NVARCHAR. */
-	static final String NVARCHAR = "NVARCHAR";
+	protected static final String NVARCHAR = "NVARCHAR";
 	
 	/** The Constant TEXT. */
-	static final String TEXT = "TEXT";
+	protected static final String TEXT = "TEXT";
 	
 	/** The Constant BLOB. */
-	static final String BLOB = "BLOB";
+	protected static final String BLOB = "BLOB";
 	
 	/** The Constant TIMESTAMP. */
-	static final String TIMESTAMP = "TIMESTAMP";
+	protected static final String TIMESTAMP = "TIMESTAMP";
 	
 	/** The Constant DATETIME. */
-	static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL,
+	protected static final String DATETIME = "DATETIME"; // MSSQL,Postgres, MySQL,
 
 	/** The Constant DATE. */
-	static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
+	protected static final String DATE = "DATE"; // MSSQL,Postgres, MySQL, SQlite
 	
 	/** The Constant YEAR. */
-	static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
+	protected static final String YEAR = "YEAR"; // Postgres, MySQL(yyyy)
 	
 	/** The Constant TIME. */
-	static final String TIME = "TIME"; // MySQL ('00:00:00')
+	protected static final String TIME = "TIME"; // MySQL ('00:00:00')
 	
 	/** The Constant NULLVALUE. */
-	static final String NULLVALUE = "NULL";
+	protected static final String NULLVALUE = "NULL";
 
 	/** The Constant MYSQLDriver. */
 	static final String MYSQLDriver = "com.mysql.cj.jdbc.Driver";
-	
-	/** The Constant MSSQLDriver. */
-	static final String MSSQLDriver = "net.sourceforge.jtds.jdbc.Driver";
 	
 	/** The Constant SQLITEDriver. */
 	static final String SQLITEDriver = "org.sqlite.JDBC";
@@ -289,7 +283,7 @@ public abstract class SqlConnection {
 	 * @param password the password
 	 * @param transformed the transformed
 	 */
-	SqlConnection(final String venderName, final String url, final String port, final String dbName,
+	public SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password, final Boolean transformed) {
 		this.vender = venderName;
 		this.url = url;

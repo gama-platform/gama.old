@@ -12,8 +12,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-8.0.27.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-8.0.27.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

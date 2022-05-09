@@ -13,6 +13,7 @@ package msi.gama.database.sql;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.locationtech.jts.geom.Geometry;
@@ -39,6 +40,8 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SqlUtils {
 
+	public static Map<String,ISqlConnector> externalConnectors = new HashMap<>();
+	
 	/**
 	 * Creates the connection object.
 	 *
@@ -57,7 +60,7 @@ public class SqlUtils {
 		final String passwd = (String) params.get("passwd");
 		final boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
 
-		SqlConnection sqlConn;
+		SqlConnection sqlConn = null;
 		// create connection
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
 			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
@@ -68,14 +71,23 @@ public class SqlUtils {
 			} else {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, transform);
 			}
-		} else if (dbtype.equalsIgnoreCase(SqlConnection.MSSQL)) {
-			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd, transform);
+//		} else if (dbtype.equalsIgnoreCase(SqlConnection.MSSQL)) {
+//			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd, transform);
 		} else if (dbtype.equalsIgnoreCase(SqlConnection.MYSQL)) {
 			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd, transform);
 		} else if (dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) || dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
 			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd, transform);
 		} else {
-			throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype, scope);
+			for(String connectorName : externalConnectors.keySet()) {
+				if (dbtype.equalsIgnoreCase(connectorName)) {
+					sqlConn = externalConnectors.get(connectorName).connection(dbtype, host, port, database, user, passwd, transform);
+					break;
+				}
+			}
+			
+			if(sqlConn == null) {
+				throw GamaRuntimeException.error("GAMA does not support databases of type: " + dbtype, scope);				
+			}
 		}
 		if (DEBUG.IS_ON()) {
 			DEBUG.OUT("SqlUtils.createConnection:" + sqlConn.toString());
@@ -116,7 +128,7 @@ public class SqlUtils {
 	 *
 	 * @throws IOException, ParseException
 	 */
-	static Geometry read(final byte[] b) throws IOException, ParseException {
+	public static Geometry read(final byte[] b) throws IOException, ParseException {
 		final WKBReader wkb = new WKBReader();
 		final Geometry geom = wkb.read(b);
 		return geom;

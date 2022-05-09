@@ -33,6 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
+import msi.gama.database.sql.SqlUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -63,7 +64,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	private static final String POSTGIS = "postgis";
 
 	/** The Constant MSSQL. */
-	private static final String MSSQL = "sqlserver";
+//	private static final String MSSQL = "sqlserver";
 
 	/** The Constant SQLITE. */
 	private static final String SQLITE = "spatialite";
@@ -175,7 +176,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 */
 	// Connect connection parameters with connection attributes of the object
 	private Map<String, Object> createConnectionParams(final IScope scope) {
-		final Map<String, Object> connectionParameters = new HashMap<>();
+		Map<String, Object> connectionParameters = new HashMap<>();
 
 		if (GamaSqlConnection.POSTGRES.equalsIgnoreCase(dbtype) || GamaSqlConnection.POSTGIS.equalsIgnoreCase(dbtype)) {
 			connectionParameters.put("host", host);
@@ -193,14 +194,6 @@ public class GamaSqlConnection extends GamaGisFile {
 			connectionParameters.put(JDBCDataStoreFactory.DATABASE.key, database);
 			connectionParameters.put(JDBCDataStoreFactory.USER.key, user);
 			connectionParameters.put(JDBCDataStoreFactory.PASSWD.key, passwd);
-		} else if (GamaSqlConnection.MSSQL.equalsIgnoreCase(dbtype)) {
-			connectionParameters.put("host", host);
-			connectionParameters.put("dbtype", dbtype);
-			connectionParameters.put("port", port);
-			connectionParameters.put("database", database);
-			connectionParameters.put("user", user);
-			connectionParameters.put("passwd", passwd);
-
 		} else if (GamaSqlConnection.SQLITE.equalsIgnoreCase(dbtype)) {
 			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
 			// String EXTRelativeLocation =
@@ -208,6 +201,15 @@ public class GamaSqlConnection extends GamaGisFile {
 			connectionParameters.put("dbtype", dbtype);
 			connectionParameters.put("database", DBRelativeLocation);
 
+		} else {
+			for(String connectorName : SqlUtils.externalConnectors.keySet()) {
+				if (dbtype.equalsIgnoreCase(connectorName)) {
+					connectionParameters = SqlUtils.externalConnectors.get(connectorName)
+							.getConnectionParameters(host, dbtype, port, database, user, passwd);
+					break;
+				}
+			}
+			
 		}
 		return connectionParameters;
 	}

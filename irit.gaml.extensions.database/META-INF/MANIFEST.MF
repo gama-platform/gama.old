@@ -9,13 +9,10 @@ Require-Bundle: msi.gama.ext,
 Export-Package: irit.gaml.extensions.database.skills,
  irit.gaml.extensions.database.species,
  msi.gama.database.geosql,
- msi.gama.database.mdx,
  msi.gama.database.sql
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: msi.gama.database.Activator
 Automatic-Module-Name: irit.gaml.extensions.database
 Bundle-ClassPath: .,
- lib/olap4j 1.2.0/jars/olap4j-1.2.0.jar,
- lib/olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar,
  lib/mysql-connector-java-8.0.27.jar
