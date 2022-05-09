@@ -115,18 +115,18 @@ public class Experiment implements IExperiment {
 //		if (currentExperiment == null) throw GamaRuntimeException
 //				.error("Experiment " + expName + " does not exist. Please check its name.", getRuntimeScope());
 		curExperiment.setHeadless(true);
-//		for (final Map.Entry<String, Object> entry : params.entrySet()) {
-//
-//			final IParameter.Batch v = currentExperiment.getParameterByTitle(entry.getKey());
-//			if (v != null) {
-//				currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
-//						entry.getValue());
-//			} else {
-//				currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
-//						entry.getValue());
-//			}
-//
-//		}
+		for (final Map.Entry<String, Object> entry : params.entrySet()) {
+
+			final IParameter.Batch v = curExperiment.getParameterByTitle(entry.getKey());
+			if (v != null) {
+				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), entry.getKey(),
+						entry.getValue());
+			} else {
+				curExperiment.setParameterValue(curExperiment.getExperimentScope(), entry.getKey(),
+						entry.getValue());
+			}
+
+		}
 		curExperiment.open(seed);
 		GAMA.getControllers().add(curExperiment.getController());
 		this.currentExperiment = curExperiment;

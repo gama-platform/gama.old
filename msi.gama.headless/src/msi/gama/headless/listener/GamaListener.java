@@ -62,9 +62,6 @@ public class GamaListener {
 	 */
 	public void createSocketServer(final int port, final Application a) {
 		instance = new GamaWebSocketServer(port, a, this);
-		instance.endpoints.put("/compile", new CompileEndPoint());
-		instance.endpoints.put("/launch", new LaunchEndPoint());
-		instance.endpoints.put("/output", new OutputEndPoint());
 		instance.start();
 		System.out.println("ChatServer started on port: " + instance.getPort());
 		bufferStream = new WebSocketPrintStream(System.out, instance);

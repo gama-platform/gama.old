@@ -46,7 +46,7 @@
         <setEntry value="org.apache.batik.util@default:default"/>
         <setEntry value="org.apache.commons.cli@default:default"/>
         <setEntry value="org.apache.commons.compress@default:default"/>
-        <setEntry value="org.apache.commons.io@default:default"/>
+        <setEntry value="org.apache.commons.io*2.8.0.v20210415-0900@default:default"/>
         <setEntry value="org.apache.commons.jxpath@default:default"/>
         <setEntry value="org.apache.commons.lang@default:default"/>
         <setEntry value="org.apache.commons.logging@default:default"/>
@@ -80,7 +80,7 @@
         <setEntry value="org.eclipse.core.runtime@default:true"/>
         <setEntry value="org.eclipse.core.variables@default:default"/>
         <setEntry value="org.eclipse.debug.core@default:default"/>
-        <setEntry value="org.eclipse.e4.core.commands@default:default"/>
+        <setEntry value="org.eclipse.e4.core.commands*1.0.100.v20211204-1536@default:default"/>
         <setEntry value="org.eclipse.e4.core.contexts@default:default"/>
         <setEntry value="org.eclipse.e4.core.di.annotations@default:default"/>
         <setEntry value="org.eclipse.e4.core.di.extensions.supplier@default:default"/>
@@ -88,7 +88,7 @@
         <setEntry value="org.eclipse.e4.core.di@default:default"/>
         <setEntry value="org.eclipse.e4.core.services@default:default"/>
         <setEntry value="org.eclipse.e4.emf.xpath@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.bindings@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.bindings*0.13.100.v20210722-1426@default:default"/>
         <setEntry value="org.eclipse.e4.ui.css.core@default:default"/>
         <setEntry value="org.eclipse.e4.ui.css.swt.theme@default:default"/>
         <setEntry value="org.eclipse.e4.ui.css.swt@default:default"/>
@@ -99,11 +99,11 @@
         <setEntry value="org.eclipse.e4.ui.services@default:default"/>
         <setEntry value="org.eclipse.e4.ui.swt.win32@default:false"/>
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.addons.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench.swt@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench*1.13.100.v20211019-0756@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.addons.swt*1.4.400.v20211102-0453@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.renderers.swt*0.15.400.v20220308-0630@default:default"/>
+        <setEntry value="org.eclipse.e4.ui.workbench.swt*0.16.400.v20220222-1128@default:default"/>
         <setEntry value="org.eclipse.e4.ui.workbench3@default:default"/>
-        <setEntry value="org.eclipse.e4.ui.workbench@default:default"/>
         <setEntry value="org.eclipse.emf.codegen.ecore@default:default"/>
         <setEntry value="org.eclipse.emf.codegen@default:default"/>
         <setEntry value="org.eclipse.emf.common@default:default"/>
