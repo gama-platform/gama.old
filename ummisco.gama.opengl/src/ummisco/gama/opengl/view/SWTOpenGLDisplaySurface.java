@@ -63,7 +63,6 @@ import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -159,13 +158,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public BufferedImage getImage(final int w, final int h) {
-		while (!isRendered()) {
-			try {
-				Thread.sleep(1);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		// while (!isRendered()) {
+		// try {
+		// Thread.sleep(1);
+		// } catch (final InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// }
+
 		final GLAutoDrawable glad = renderer.getCanvas();
 		if (glad == null || glad.getGL() == null || glad.getGL().getContext() == null) return null;
 		final boolean current = glad.getGL().getContext().isCurrent();
@@ -215,8 +215,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
 
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		final int width = DPIHelper.autoScaleDown(ww);
-		final int height = DPIHelper.autoScaleDown(hh);
+		final int width = ww;
+		final int height = hh;
+
+		// final int width = DPIHelper.autoScaleDown(ww);
+		// final int height = DPIHelper.autoScaleDown(hh);
 		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		final Graphics graphics = screenshot.getGraphics();
 
