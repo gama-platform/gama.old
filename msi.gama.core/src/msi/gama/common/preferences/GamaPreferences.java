@@ -758,12 +758,12 @@ public class GamaPreferences {
 						() -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
 
 		/** The Constant jriFile. */
-		public static final String jriFile = isMac() ? "libjri.jnilib" : isLinux() ? "libjri.so" : "jri.dll";
+		// public static final String jriFile = isMac() ? "libjri.jnilib" : isLinux() ? "libjri.so" : "jri.dll";
 
-		/** The Constant LIB_R. */
-		public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
-				"Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
-				() -> new GenericFile(getDefaultRPath(), false), IType.FILE, true).in(NAME, PATHS);
+		// /** The Constant LIB_R. */
+		// public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
+		// "Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
+		// () -> new GenericFile(getDefaultRPath(), false), IType.FILE, true).in(NAME, PATHS);
 		/**
 		 * GeoTools
 		 */
