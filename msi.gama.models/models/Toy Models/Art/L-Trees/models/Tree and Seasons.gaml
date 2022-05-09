@@ -24,14 +24,13 @@ global {
 	init {
 		create plant_seed {
 			location <- seed_pos;
+			write location;
 		}
 
 		create seasons number: 1 {
 			season <- self;
 		}
-
 	}
-
 }
 
 species seasons {
@@ -403,7 +402,8 @@ experiment "Random" type: gui autorun: true {
 	output {
 		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: false fullscreen: true {
 			light #ambient intensity: 150;
-			camera #default location: {50.0,250,200} target: {50.0,50.0,0.0};
+			rotation angle: cycle/1000000 dynamic: true;
+			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -426,7 +426,8 @@ experiment "4 simulations" type: gui autorun: true {
 	output {
 		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: false {
 			light #ambient intensity: 150;	
-			camera #default location: {50.0,250,200} target: {50.0,50.0,0.0};
+			rotation angle: cycle/1000000 dynamic: true;
+			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
@@ -434,7 +435,7 @@ experiment "4 simulations" type: gui autorun: true {
 			species fruit aspect: default;
 		}
 
-		layout #split toolbars: false tabs: false parameters: false consoles: false navigator: false controls:false tray: false;
+		layout #split toolbars: false tabs: false parameters: false consoles: false navigator: false controls: false tray: false;
 	}
 
 }
@@ -444,9 +445,9 @@ experiment L_Tri type: gui autorun: true {
 	float seed <- 0.05387546426306633;
 	output {
 		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: true {
-			light #ambient intensity:150;
-			light #default intensity: 120;
-			camera #default location: {50.0,250,200} target: {50.0,50.0,0.0};
+			light #ambient intensity: 150;
+			rotation angle: cycle/1000000 dynamic: true;
+			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;
 			species branch aspect: default;
 			species leaf aspect: default;
 			species trunk aspect: default;
