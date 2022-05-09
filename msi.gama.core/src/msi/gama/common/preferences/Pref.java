@@ -88,7 +88,7 @@ public class Pref<T> implements IParameter {
 	// List<T> values;
 
 	/** The max. */
-	Comparable min, max;
+	Comparable min, max, step;
 
 	/** The slider. */
 	boolean slider = true; // by default
@@ -196,6 +196,11 @@ public class Pref<T> implements IParameter {
 	public Pref<T> between(final Comparable mini, final Comparable maxi) {
 		this.min = mini;
 		this.max = maxi;
+		return this;
+	}
+
+	public Pref<T> step(final Comparable step) {
+		this.step = step;
 		return this;
 	}
 
@@ -453,7 +458,7 @@ public class Pref<T> implements IParameter {
 
 	@Override
 	public Comparable getStepValue(final IScope scope) {
-		return null;
+		return step;
 	}
 
 	/**

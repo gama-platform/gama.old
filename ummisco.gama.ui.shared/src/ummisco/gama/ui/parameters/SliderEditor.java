@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.SimpleSlider;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
@@ -41,6 +42,10 @@ import ummisco.gama.ui.resources.IGamaColors;
  *
  */
 public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<T> {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The nb ints. */
 	protected int nbInts;
@@ -126,7 +131,9 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 			super.computeFormatterParameters();
 			formatter.setMaximumIntegerDigits(nbInts);
 			formatter.setMinimumIntegerDigits(nbInts);
-			final String[] segments = String.valueOf(getStepValue()).split("\\.");
+			String s = String.valueOf(getStepValue());
+			s = s.contains(".") ? s.replaceAll("0*$", "").replaceAll("\\.$", "") : s;
+			final String[] segments = s.split("\\.");
 			if (segments.length > 1) {
 				nbFracs = segments[1].length();
 			} else {
@@ -258,6 +265,9 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	protected void updateToolbar() {
 		super.updateToolbar();
 		// Avoids invisible exception (see #2044)
+		// DEBUG.OUT(
+		// "Value of " + currentValue + " formatted: " + formatter.format(currentValue == null ? 0 : currentValue)
+		// + " / Max Fracs : " + formatter.getMaximumFractionDigits());
 		editorToolbar.updateValue(formatter.format(currentValue == null ? 0 : currentValue));
 	}
 

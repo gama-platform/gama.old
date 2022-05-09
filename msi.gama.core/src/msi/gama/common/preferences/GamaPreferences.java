@@ -164,8 +164,9 @@ public class GamaPreferences {
 		public static final Pref<GamaColor>[] SIMULATION_COLORS = new Pref[5];
 
 		/** The keep navigator state. */
-		public static Pref<Boolean> KEEP_NAVIGATOR_STATE = create("pref_keep_navigator_state",
-				"Maintain the state of the navigator across sessions", true, IType.BOOL, false).in(NAME, STARTUP);
+		public static Pref<Boolean> KEEP_NAVIGATOR_STATE =
+				create("pref_keep_navigator_state", "Maintain the state of the navigator across sessions", true,
+						IType.BOOL, false).in(NAME, STARTUP).hidden();
 
 		static {
 			for (var i = 0; i < 5; i++) {
@@ -587,15 +588,15 @@ public class GamaPreferences {
 		 */
 		public static final Pref<Double> OPENGL_ZOOM =
 				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
-						.in(NAME, RENDERING).between(0, 1);
+						.in(NAME, RENDERING).between(0, 1).step(0.01);
 
 		public static final Pref<Double> OPENGL_KEYBOARD = create("pref_display_keyboard_factor",
 				"Set the sensitivity of the keyboard movements  (0 for slow, 1 for fast)", 0.5, IType.FLOAT, true)
-						.in(NAME, RENDERING).between(0.01, 1);
+						.in(NAME, RENDERING).between(0.01, 1.0).step(0.01);
 
 		public static final Pref<Double> OPENGL_MOUSE = create("pref_display_mouse_factor",
-				"set the sensitivity of the mouse/trackpad movements  (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
-						.in(NAME, RENDERING).between(0.01, 1);
+				"Set the sensitivity of the mouse/trackpad movements  (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
+						.in(NAME, RENDERING).between(0.01, 1.0).step(0.01);
 
 		/** The Constant OPENGL_CAP_FPS. */
 		public static final Pref<Boolean> OPENGL_CAP_FPS =
@@ -621,10 +622,10 @@ public class GamaPreferences {
 				create("pref_display_camera", "Default camera to use when none is specified", "From above",
 						IType.STRING, true).among(ICameraDefinition.PRESETS).in(NAME, RENDERING);
 
-		/** The Constant OPENGL_CLIPBOARD_CAM. */
-		public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
-				"Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
-				true).in(NAME, RENDERING);
+		// /** The Constant OPENGL_CLIPBOARD_CAM. */
+		// public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
+		// "Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
+		// true).in(NAME, RENDERING);
 
 		/** The Constant OPENGL_USE_IMAGE_CACHE. */
 		public static final Pref<Boolean> OPENGL_USE_IMAGE_CACHE = create("pref_display_use_cache",
@@ -708,9 +709,9 @@ public class GamaPreferences {
 						}).hidden();
 
 		/** The Constant AGENT_OPTIMIZATION. */
-		public static final Pref<Boolean> AGENT_OPTIMIZATION =
-				create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
-						OPTIMIZATIONS);
+		// public static final Pref<Boolean> AGENT_OPTIMIZATION =
+		// create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
+		// OPTIMIZATIONS);
 
 		/** The Constant AT_DISTANCE_OPTIMIZATION. */
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =

@@ -25,7 +25,6 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -392,8 +391,7 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	protected boolean useMinimalAgents() {
 		if (!canUseMinimalAgents || parent != null && parent != this && !getParent().useMinimalAgents()) return false;
-		if (!hasFacet("use_regular_agents")) return GamaPreferences.External.AGENT_OPTIMIZATION.getValue();
-		return FALSE.equals(getLitteral("use_regular_agents"));
+		return !hasFacet("use_regular_agents") || FALSE.equals(getLitteral("use_regular_agents"));
 	}
 
 	/**
