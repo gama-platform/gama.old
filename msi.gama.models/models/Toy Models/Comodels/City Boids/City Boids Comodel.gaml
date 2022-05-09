@@ -55,8 +55,10 @@ global
 		//tell the Boids to step a cycle
 		ask (Boids."Adapter of Boids" collect each.simulation){ do _step_;}
 		
-		//tell the City to step a cycle
-		ask (City."Adapter" collect each.simulation){ do _step_;}
+		//tell the City to step one per 100 cycle
+		if(cycle mod 100=0){			
+			ask (City."Adapter" collect each.simulation){ do _step_;}
+		}
 	}
 
 }

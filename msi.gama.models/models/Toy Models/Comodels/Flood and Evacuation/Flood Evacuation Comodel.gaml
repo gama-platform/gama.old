@@ -29,8 +29,8 @@ global
 		//create the Evacuation micro-model's experiment
 		create Evacuation."Adapter of Evacuation" number:length(offset)
 		{
-			centroid <- offset[int(self)];
-			target_point <- exits[int(self)];
+			centroid <- myself.offset[int(self)];
+			target_point <- myself.exits[int(self)];
 			//transform the environment and the agents to new location (near the river)
 			do transform_environment;
 			loop t over: list(building)
