@@ -51,7 +51,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial;
 import msi.gaml.types.Types;
 import ummisco.gama.network.websocket.Endpoint;
-import ummisco.gama.network.websocket.IGamaWebSocketServer; 
+import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 public class GamaWebSocketServer extends IGamaWebSocketServer {
 
@@ -65,7 +65,8 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 		this._listener = _listener;
 	}
 
-	private Application app; 
+	private Application app;
+
 	public GamaWebSocketServer(int port, Application a, GamaListener l) {
 		super(new InetSocketAddress(port));
 		app = a;
@@ -76,10 +77,10 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 //		conn.send("Welcome " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the server!");
 //		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
-																			// connected
+		// connected
 		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 
-		String path = URI.create(handshake.getResourceDescriptor()).getPath(); 
+		String path = URI.create(handshake.getResourceDescriptor()).getPath();
 	}
 
 	public Application getDefaultApp() {
@@ -114,17 +115,20 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 				map = GamaMapFactory.create();
 				map.put(IKeyword.CONTENTS, o);
 			}
-			
+
 //			System.out.println(map.get("type"));
 			String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-			switch (map.get("type").toString()) {
+			socket_id = map.get("socket_id").toString();
+			final String cmd_type = map.get("type").toString();
+			switch (cmd_type) {
 			case "launch":
 				System.out.println(map.get("model"));
 				System.out.println(map.get("experiment"));
 				try {
-					launchGamlSimulation( socket,
+					launchGamlSimulation(socket,
 							Arrays.asList("-gaml", ".", map.get("experiment").toString(), map.get("model").toString()),
-							Boolean.parseBoolean(map.get("auto-export").toString()) ? false : true,(GamaJsonList)map.get("parameters"));
+							Boolean.parseBoolean(map.get("auto-export").toString()) ? false : true,
+							(GamaJsonList) map.get("parameters"));
 				} catch (IOException | GamaHeadlessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -136,6 +140,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).userStart();
 				}
+				socket.send(cmd_type);
 				break;
 			case "step":
 				System.out.println("step " + exp_id);
@@ -143,6 +148,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).userStep();
 				}
+				socket.send(cmd_type);
 				break;
 			case "stepBack":
 				System.out.println("stepBack " + exp_id);
@@ -150,6 +156,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).userStepBack();
 				}
+				socket.send(cmd_type);
 				break;
 			case "pause":
 				System.out.println("pause " + exp_id);
@@ -157,6 +164,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).directPause();
 				}
+				socket.send(cmd_type);
 				break;
 			case "stop":
 				System.out.println("stop " + exp_id);
@@ -165,6 +173,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 					get_listener().getExperiment(socket_id, exp_id).directPause();
 					get_listener().getExperiment(socket_id, exp_id).dispose();
 				}
+				socket.send(cmd_type);
 				break;
 			case "reload":
 				System.out.println("reload " + exp_id);
@@ -172,18 +181,16 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).userReload();
 				}
+				socket.send(cmd_type);
 				break;
 			case "output":
-				socket_id = map.get("socket_id").toString();
-
-//				System.out.println(map.get("species"));
 				if (get_listener().getExperiment(socket_id, exp_id) != null
-				&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
+						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					final boolean wasPaused = get_listener().getExperiment(socket_id, exp_id).isPaused();
 					get_listener().getExperiment(socket_id, exp_id).directPause();
 					IList<? extends IShape> agents = get_listener().getExperiment(socket_id, exp_id).getSimulation()
 							.getSimulation().getPopulationFor(map.get("species").toString());
-					
+
 					try {
 						IList ll = (IList) map.get("attributes");
 						socket.send(SaveHelper.buildGeoJSon(get_listener().getExperiment(socket_id, exp_id)
@@ -198,19 +205,17 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 				}
 				break;
 			case "expression":
-				socket_id = map.get("socket_id").toString();
-
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					final boolean wasPaused = get_listener().getExperiment(socket_id, exp_id).isPaused();
 					get_listener().getExperiment(socket_id, exp_id).directPause();
 					try {
-						String res="{\"result\":"+Jsoner.serialize(processInput(
-							get_listener().getExperiment(socket_id, exp_id).getExperiment().getAgent(),
-							map.get("expr").toString()))+"}";
+						String res = "{\"result\":" + Jsoner.serialize(
+								processInput(get_listener().getExperiment(socket_id, exp_id).getExperiment().getAgent(),
+										map.get("expr").toString()))
+								+ "}";
 						socket.send(res);
 					} catch (GamaRuntimeException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} finally {
 						if (!wasPaused)
@@ -230,11 +235,13 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				socket.send(cmd_type);
 				break;
 			}
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace(); 
+			e1.printStackTrace();
+			socket.send(e1.getMessage());
 		}
 	}
 
@@ -259,7 +266,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 
 	@Override
 	public void onStart() {
-		System.out.println("Server started!");
+		System.out.println("Gama Listener started on port: " + getPort());
 		// setConnectionLostTimeout(0);
 		// setConnectionLostTimeout(100);
 	}
@@ -335,8 +342,8 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 	 * @throws IOException           Signals that an I/O exception has occurred.
 	 * @throws GamaHeadlessException the gama headless exception
 	 */
-	public void launchGamlSimulation(WebSocket socket, final List<String> args,
-			final boolean export, final GamaJsonList params) throws IOException, GamaHeadlessException {
+	public void launchGamlSimulation(WebSocket socket, final List<String> args, final boolean export,
+			final GamaJsonList params) throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
 		File ff = new File(pathToModel);
@@ -352,7 +359,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 		ManualExperimentJob selectedJob = null;
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(argExperimentName)) {
-				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket,params);
+				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket, params);
 				selectedJob.setExport(export);
 
 				break;
@@ -360,17 +367,16 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 		}
 		if (selectedJob == null)
 			return;
-		Globals.OUTPUT_PATH = args.get(args.size() - 3); 
+		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 		selectedJob.directOpenExperiment();
 		if (get_listener().getExperimentsOf("" + socket.hashCode()) == null) {
 			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<String, ManualExperimentJob>();
 			get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
 
 		}
-		get_listener().getExperimentsOf("" + socket.hashCode())
-				.put(selectedJob.getExperimentID(), selectedJob);
+		get_listener().getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
 
-		final int size = selectedJob.getListenedVariables().length;
+//		final int size = selectedJob.getListenedVariables().length;
 //		String lst_out = "";
 //		if (size != 0) {
 //			for (int i = 0; i < size; i++) {
@@ -380,15 +386,14 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 //		}
 		IAgent agt = selectedJob.getSimulation().getSimulation();
 
-		IShape geom = agt.getGeometry();//Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
-		String res="{"
-				+ " \"type\": \"exp\","
-				+ " \"socket_id\": \""+ socket.hashCode() +"\","
-				+ " \"exp_id\": \""+ selectedJob.getExperimentID() +"\","
-				+ " \"number_displays\": \""+ size +"\","
-				+ "	\"lat\": \""+ geom.getLocation().x +"\","
-				+ "	\"lon\": \""+ geom.getLocation().y +"\""  
-				+ "	}"; 
+//		IShape geom = agt.getGeometry();
+//		Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
+		String res = "{" + " \"type\": \"exp\"," + " \"socket_id\": \"" + socket.hashCode() + "\"," + " \"exp_id\": \""
+				+ selectedJob.getExperimentID() + "\""
+//				+ " \"number_displays\": \""+ size +"\","
+//				+ "	\"lat\": \""+ geom.getLocation().x +"\","
+//				+ "	\"lon\": \""+ geom.getLocation().y +"\""  
+				+ "	}";
 //		System.out.println("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
 //		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
@@ -398,11 +403,11 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 			selectedJob.exportVariables();
 		getDefaultApp().processorQueue.execute(selectedJob.executionThread);
 	}
-	
+
 	protected String processInput(final IAgent agt, final String s) {
-		IAgent agent=agt;// = getListeningAgent();
-		if(agent==null) {
-			agent=GAMA.getPlatformAgent();
+		IAgent agent = agt;// = getListeningAgent();
+		if (agent == null) {
+			agent = GAMA.getPlatformAgent();
 		}
 		final IScope scope = new ExecutionScope(agent.getScope().getRoot(), " in console");// agent.getScope();
 		if (agent == null || agent.dead()) {
