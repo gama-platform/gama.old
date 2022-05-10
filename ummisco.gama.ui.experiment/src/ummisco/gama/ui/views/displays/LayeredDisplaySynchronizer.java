@@ -25,7 +25,7 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 	static final Integer TOKEN = 0;
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The queues. */
@@ -34,6 +34,7 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 
 	/** The surface. */
 	IDisplaySurface surface;
+	String name;
 
 	/**
 	 * Sets the surface.
@@ -44,13 +45,16 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 	@Override
 	public void setSurface(final IDisplaySurface surface) {
 		this.surface = surface;
-		if (surface != null) { surface.setDisplaySynchronizer(this); }
+		if (surface != null) {
+			surface.setDisplaySynchronizer(this);
+			name = surface.getOutput().getName();
+		}
 
 	}
 
 	@Override
 	public void waitForSurfaceToBeRealized() {
-		// DEBUG.OUT("Waiting for surface to realize: " + Thread.currentThread().getName());
+		// DEBUG.OUT("Waiting for surface to realize: " + Thread.currentThread().getName() + " on " + name);
 		try {
 			realisationQueue.take();
 		} catch (InterruptedException e) {}
@@ -58,19 +62,19 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 
 	@Override
 	public void signalSurfaceIsRealized() {
-		// DEBUG.OUT("Signalling that surface is realized: " + Thread.currentThread().getName());
+		// DEBUG.OUT("Signalling that surface is realized: " + Thread.currentThread().getName() + " on " + name);
 		realisationQueue.offer(TOKEN);
 	}
 
 	@Override
 	public void signalRenderingIsFinished() {
-		// DEBUG.OUT("Signalling that surface is rendered: " + Thread.currentThread().getName());
+//		DEBUG.OUT("Signalling that surface is rendered: " + Thread.currentThread().getName() + " on " + name);
 		renderQueue.offer(TOKEN);
 	}
 
 	@Override
 	public void waitForRenderingToBeFinished() {
-		// DEBUG.OUT("Waiting for surface to be rendered: " + Thread.currentThread().getName());
+//		DEBUG.OUT("Waiting for surface to be rendered: " + Thread.currentThread().getName() + " on " + name);
 		try {
 			renderQueue.take();
 		} catch (final InterruptedException e) {}
@@ -78,7 +82,7 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 
 	@Override
 	public void waitForViewUpdateAuthorisation() {
-		// DEBUG.OUT("Waiting for view to update: " + Thread.currentThread().getName());
+		// DEBUG.OUT("Waiting for view to update: " + Thread.currentThread().getName() + " on " + name);
 		try {
 			updateQueue.take();
 		} catch (InterruptedException e) {}
@@ -86,7 +90,7 @@ public class LayeredDisplaySynchronizer implements IDisplaySynchronizer {
 
 	@Override
 	public void authorizeViewUpdate() {
-		// DEBUG.OUT("Signalling that view can be updated: " + Thread.currentThread().getName());
+		// DEBUG.OUT("Signalling that view can be updated: " + Thread.currentThread().getName() + " on " + name);
 		updateQueue.offer(TOKEN);
 	}
 

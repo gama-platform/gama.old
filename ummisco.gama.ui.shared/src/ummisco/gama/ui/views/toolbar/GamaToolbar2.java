@@ -104,14 +104,10 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	@Override
-	public void setVisible(final boolean visible) {
-		isVisible = visible;
-	}
+	public void setVisible(final boolean visible) { isVisible = visible; }
 
 	@Override
-	public boolean isVisible() {
-		return isVisible;
-	}
+	public boolean isVisible() { return isVisible; }
 
 	/**
 	 * Creates the layout.
@@ -545,17 +541,15 @@ public class GamaToolbar2 extends Composite {
 			final int style, final boolean forceText, final Control control,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final var tb = getToolbar(side);
-		if (side == SWT.LEFT && tb.getItemCount() == 0 && (PlatformHelper.isWindows())) {
+		if (side == SWT.LEFT && tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
 			int h = height;
-			if (control != null) {
-				h = Math.max(h,control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4;
-			}
+			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
 			final var icon = GamaIcons.createSizer(getBackground(), 2, h);
 			final var button = new ToolItem(tb, SWT.NONE);
 			final var im = GamaIcons.create(icon.getCode()).image();
 			button.setImage(im);
 			button.setDisabledImage(icon.image());
-			if (!PlatformHelper.isLinux()) { button.setEnabled(false); }
+			button.setEnabled(false);
 		}
 		final var button = new ToolItem(tb, style);
 		if (text != null && forceText) { button.setText(text); }
@@ -568,9 +562,10 @@ public class GamaToolbar2 extends Composite {
 		if (control != null) {
 			// GamaColors.setBackground(control, getBackground());
 			button.setControl(control);
+			control.requestLayout();
 		}
 		normalizeToolbars();
-
+		tb.requestLayout();
 		return button;
 	}
 
@@ -580,9 +575,7 @@ public class GamaToolbar2 extends Composite {
 	private void normalizeToolbars() {
 		// final int n = right.getItemCount();
 		var size = 0;
-		for (final ToolItem t : right.getItems()) {
-			size += t.getWidth();
-		}
+		for (final ToolItem t : right.getItems()) { size += t.getWidth(); }
 		((GridData) right.getLayoutData()).minimumWidth = size;
 	}
 
@@ -610,9 +603,7 @@ public class GamaToolbar2 extends Composite {
 	 * @param toggle
 	 *            the new toogle action
 	 */
-	public void setToogleAction(final ToggleAction toggle) {
-		this.toggle = toggle;
-	}
+	public void setToogleAction(final ToggleAction toggle) { this.toggle = toggle; }
 
 	/**
 	 * Hide.
@@ -630,9 +621,9 @@ public class GamaToolbar2 extends Composite {
 		toggle.run(); // will make it true
 	}
 
-	public void setDefaultHeight(int height) {
+	public void setDefaultHeight(final int height) {
 		this.height = height;
-		
+
 	}
 
 }
