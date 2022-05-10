@@ -99,7 +99,7 @@ public class XmlToWiki {
 		System.out.print("Creation of the wiki page for the Index.......");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Index-xml2md.xsl",
-				Constants.WIKI_FOLDER + File.separator + "Index" + suffix + ".md");
+				Constants.WIKI_FOLDER + File.separator + "Exhaustive-list-of-GAMA-Keywords" + suffix + ".md");
 		System.out.println("Done");
 
 		// JSON
