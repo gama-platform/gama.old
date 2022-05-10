@@ -33,6 +33,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.GamaJsonList;
+import msi.gaml.compilation.GAML;
+import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.types.Types;
 import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
 /**
@@ -44,7 +48,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 //	public boolean paused = false;
 	public boolean stepping = false;
 //	public Thread internalThread;
-
+	GamaJsonList params;
 	/** The scope. */
 	IScope scope;
 	/**
@@ -126,10 +130,11 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		do_export = b;
 	}
 
-	public ManualExperimentJob(ExperimentJob clone, IGamaWebSocketServer s, WebSocket sk) {
+	public ManualExperimentJob(ExperimentJob clone, IGamaWebSocketServer s, WebSocket sk, final GamaJsonList p) {
 		super(clone);
 		server = (GamaWebSocketServer) s;
 		socket = sk;
+		params = p;
 		commands = new ArrayBlockingQueue<>(10);
 //		this.experiment = experiment;
 		executionThread = new MyRunnable(this);
@@ -423,6 +428,40 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	 */
 	IScope getScope() {
 		return scope == null ? this.getSimulation().getExperimentPlan().getExperimentScope() : scope;
+	}
+
+	@Override
+	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+			IOException, GamaHeadlessException {
+
+		this.load();
+		this.listenedVariables = new ListenedVariable[outputs.size()];
+
+		for (final Parameter temp : parameters) {
+			if (temp.getName() == null || "".equals(temp.getName())) {
+				this.simulator.setParameter(temp.getVar(), temp.getValue());
+			} else {
+				this.simulator.setParameter(temp.getName(), temp.getValue());
+			}
+		}
+		this.setup();
+		simulator.setup(experimentName, this.seed,params);
+		for (int i = 0; i < outputs.size(); i++) {
+			final Output temp = outputs.get(i);
+			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getWidth(), temp.getHeight(),
+					temp.getFrameRate(), simulator.getTypeOf(temp.getName()), temp.getOutputPath());
+		}
+
+		// Initialize the enCondition
+		if (untilCond == null || "".equals(untilCond)) {
+			endCondition = IExpressionFactory.FALSE_EXPR;
+		} else {
+			endCondition = GAML.getExpressionFactory().createExpr(untilCond, simulator.getModel().getDescription());
+			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
+		}
+		if (endCondition.getGamlType() != Types.BOOL)
+			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",
+					simulator.getSimulation().getScope());
 	}
 
 	@Override

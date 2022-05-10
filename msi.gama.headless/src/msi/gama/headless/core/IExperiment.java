@@ -13,6 +13,7 @@ package msi.gama.headless.core;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -47,7 +48,7 @@ public interface IExperiment {
 	 * @param experimentName the new up
 	 */
 	public void setup(final String experimentName);
-	
+
 	/**
 	 * Setup.
 	 *
@@ -55,6 +56,14 @@ public interface IExperiment {
 	 * @param seed the seed
 	 */
 	public void setup(final String experimentName, final double seed);
+	
+	/**
+	 * Setup.
+	 *
+	 * @param experimentName the experiment name
+	 * @param seed the seed
+	 */
+	public void setup(final String experimentName, final double seed, final GamaJsonList params);
 	
 	/**
 	 * Step.

@@ -24,8 +24,11 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
+import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.types.Types;
 
 /**
  * The Class Experiment.
@@ -100,6 +103,38 @@ public class Experiment implements IExperiment {
 		this.loadCurrentExperiment(expName);
 	}
 
+	@Override
+	public void setup(final String expName, final double sd, GamaJsonList params) {
+		this.seed = sd;
+		this.loadCurrentExperiment(expName,params);
+	}
+
+	/**
+	 * Load current experiment.
+	 *
+	 * @param expName
+	 *            the exp name
+	 */
+	private synchronized void loadCurrentExperiment(final String expName, GamaJsonList p) {
+		this.experimentName = expName;
+		this.currentStep = 0;
+		
+		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
+		curExperiment.setHeadless(true);
+
+		if(p!=null) {				
+			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {
+				IMap<String, Object> m=(IMap<String, Object>)O;
+ 				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),m.get("value"));
+			}
+		} 
+		curExperiment.open(seed);
+		GAMA.getControllers().add(curExperiment.getController());
+		this.currentExperiment = curExperiment;
+ 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
+		this.currentExperiment.setHeadless(true);
+	}
+	
 	/**
 	 * Load current experiment.
 	 *
@@ -109,28 +144,7 @@ public class Experiment implements IExperiment {
 	private synchronized void loadCurrentExperiment(final String expName) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-		
-		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
-
-//		if (currentExperiment == null) throw GamaRuntimeException
-//				.error("Experiment " + expName + " does not exist. Please check its name.", getRuntimeScope());
-		curExperiment.setHeadless(true);
-		for (final Map.Entry<String, Object> entry : params.entrySet()) {
-
-			final IParameter.Batch v = curExperiment.getParameterByTitle(entry.getKey());
-			if (v != null) {
-				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), entry.getKey(),
-						entry.getValue());
-			} else {
-				curExperiment.setParameterValue(curExperiment.getExperimentScope(), entry.getKey(),
-						entry.getValue());
-			}
-
-		}
-		curExperiment.open(seed);
-		GAMA.getControllers().add(curExperiment.getController());
-		this.currentExperiment = curExperiment;
-//		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
+		this.currentExperiment = GAMA.addHeadlessExperiment(model, experimentName, this.params, seed);
 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		this.currentExperiment.setHeadless(true);
 	}

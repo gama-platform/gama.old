@@ -20,7 +20,7 @@ public class CompileEndPoint implements Endpoint {
 
 	@Override
 	public void onOpen(WebSocket socket) {
-		socket.send("Hello!");
+//		socket.send("Hello!");
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class CompileEndPoint implements Endpoint {
 		fos.close();
 		System.out.println(Globals.TEMP_PATH+"/tmp"+socket);
 		Files.extractFolder(null,Globals.TEMP_PATH+"/tmp"+socket.hashCode()+".zip",Globals.TEMP_PATH+"/tmp"+socket.hashCode());
-		socket.send(Globals.TEMP_PATH+"/tmp"+socket.hashCode());
+//		socket.send(Globals.TEMP_PATH+"/tmp"+socket.hashCode());
 //		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
 //		ObjectInput in = null;
 //		ExperimentJob selectedJob = null;

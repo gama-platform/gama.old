@@ -80,10 +80,10 @@ public class ExperimentJob implements IExperimentJob {
 	protected ListenedVariable[] listenedVariables;
 	
 	/** The parameters. */
-	private List<Parameter> parameters;
+	protected List<Parameter> parameters;
 	
 	/** The outputs. */
-	private List<Output> outputs;
+	protected List<Output> outputs;
 	
 	/** The output file. */
 	protected Writer outputFile;
@@ -92,13 +92,13 @@ public class ExperimentJob implements IExperimentJob {
 	private String sourcePath;
 	
 	/** The experiment name. */
-	private String experimentName;
+	protected String experimentName;
 	
 	/** The model name. */
 	private String modelName;
 	
 	/** The seed. */
-	private double seed;
+	protected double seed;
 	/**
 	 * current step
 	 */
@@ -113,7 +113,7 @@ public class ExperimentJob implements IExperimentJob {
 	public long finalStep;
 	
 	/** The until cond. */
-	private String untilCond;
+	protected String untilCond;
 	
 	/** The end condition. */
 	IExpression endCondition;
