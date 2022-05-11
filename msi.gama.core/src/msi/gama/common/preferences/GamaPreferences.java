@@ -11,8 +11,6 @@
 package msi.gama.common.preferences;
 
 import static msi.gama.common.preferences.GamaPreferenceStore.getStore;
-import static msi.gama.runtime.PlatformHelper.isLinux;
-import static msi.gama.runtime.PlatformHelper.isMac;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -751,12 +749,12 @@ public class GamaPreferences {
 		/**
 		 * Paths to libraries
 		 */
-		public static final String PATHS = "External libraries support";
-
-		/** The Constant LIB_SPATIALITE. */
-		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
-				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
-						() -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
+//		public static final String PATHS = "External libraries support";
+//
+//		/** The Constant LIB_SPATIALITE. */
+//		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
+//				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
+//						() -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
 
 		/** The Constant jriFile. */
 		// public static final String jriFile = isMac() ? "libjri.jnilib" : isLinux() ? "libjri.so" : "jri.dll";
@@ -823,11 +821,11 @@ public class GamaPreferences {
 		 * @return the default R path
 		 */
 		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
-		private static String getDefaultRPath() {
-			if (isMac()) return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-			if (isLinux()) return "/usr/local/lib/libjri.so";
-			return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
-		}
+//		private static String getDefaultRPath() {
+//			if (isMac()) return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
+//			if (isLinux()) return "/usr/local/lib/libjri.so";
+//			return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
+//		}
 	}
 
 	/** The prefs. */

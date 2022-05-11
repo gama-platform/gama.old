@@ -4,7 +4,6 @@ import java.util.Map;
 
 import irit.gaml.extensions.database.utils.sql.ISqlConnector;
 import irit.gaml.extensions.database.utils.sql.SqlConnection;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.IScope;
 
@@ -16,12 +15,7 @@ public class SqliteConnector implements ISqlConnector {
 		SqlConnection sqlConn;
 		
 		final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, dbName, true);
-		final String EXTRelativeLocation = GamaPreferences.External.LIB_SPATIALITE.value(scope).getPath(scope);
-		if (EXTRelativeLocation != null && !EXTRelativeLocation.equalsIgnoreCase("")) {
-			sqlConn = new SqliteConnection(venderName, DBRelativeLocation, EXTRelativeLocation, transformed); 
-		} else {
-			sqlConn = new SqliteConnection(venderName, DBRelativeLocation, transformed);
-		}
+		sqlConn = new SqliteConnection(venderName, DBRelativeLocation, transformed);
 		
 		return sqlConn;
 	}
