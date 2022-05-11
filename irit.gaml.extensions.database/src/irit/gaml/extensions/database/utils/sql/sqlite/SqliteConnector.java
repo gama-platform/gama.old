@@ -1,5 +1,6 @@
 package irit.gaml.extensions.database.utils.sql.sqlite;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import irit.gaml.extensions.database.utils.sql.ISqlConnector;
@@ -21,10 +22,16 @@ public class SqliteConnector implements ISqlConnector {
 	}
 
 	@Override
-	public Map<String, Object> getConnectionParameters(String host, String dbtype, String port, String database,
+	public Map<String, Object> getConnectionParameters(final IScope scope, String host, String dbtype, String port, String database,
 			String user, String passwd) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Map<String,Object> params = new HashMap<>();
+		
+		final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
+		params.put("dbtype", "sqlite");
+		params.put("database", DBRelativeLocation);
+
+		return params;
 	}
 
 }

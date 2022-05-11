@@ -88,8 +88,8 @@ public abstract class SqlConnection implements AutoCloseable {
 	/** The Constant SQLITEDriver. */
 	protected static final String SQLITEDriver = "org.sqlite.JDBC";
 	
-	/** The Constant POSTGRESDriver. */
-	protected static final String POSTGRESDriver = "org.postgresql.Driver";
+//	/** The Constant POSTGRESDriver. */
+//	protected static final String POSTGRESDriver = "org.postgresql.Driver";
 
 	/** The vender. */
 	protected String vender = "";
@@ -514,25 +514,11 @@ public abstract class SqlConnection implements AutoCloseable {
 		int n = 0;
 		try (Connection conn = connectDB(); final Statement st = conn.createStatement();) {
 
-			// if ( DEBUG ) {
-			// DEBUG.OUT("Update Command:" + updateComm);
-			// }
-
 			n = st.executeUpdate(updateComm);
-			// if ( DEBUG ) {
-			// DEBUG.OUT("Updated records :" + n);
-			// }
-
-			// st=null;
-			// System.gc();
 
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString(), scope);
 		}
-
-		// if ( DEBUG ) {
-		// scope.getGui().informConsole(updateComm + " was run");
-		// }
 
 		return n;
 

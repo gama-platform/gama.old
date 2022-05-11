@@ -70,7 +70,8 @@ public class SQLSkill extends Skill {
 	 */
 	// added from MaeliaSkill
 	@action (
-			name = "timeStamp")
+			name = "timeStamp",
+			doc = @doc(deprecated = "Use machine_time instead"))
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
 		final Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
@@ -90,7 +91,8 @@ public class SQLSkill extends Skill {
 					name = "dateFormat",
 					type = IType.STRING,
 					optional = false,
-					doc = @doc ("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")) })
+					doc = @doc (value = "date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ",
+								deprecated = "Use machine_time instead")) })
 	public String getCurrentDateTime(final IScope scope) throws GamaRuntimeException {
 		final String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
 		final DateFormat datef = new SimpleDateFormat(dateFormat);
@@ -111,7 +113,8 @@ public class SQLSkill extends Skill {
 					name = "dateFormat",
 					type = IType.STRING,
 					optional = false,
-					doc = @doc ("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")),
+					doc = @doc (value = "date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ",
+							deprecated = "Use date instead")),
 					@arg (
 							name = "dateStr",
 							type = IType.STRING,
@@ -205,13 +208,10 @@ public class SQLSkill extends Skill {
 							doc = @doc ("List of values that are used to replace question mark")) })
 	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException {
 
-		// final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		int row_count = -1;
-//		SqlConnection sqlConn;
 		try (final SqlConnection sqlConn = SqlUtils.createConnectionObject(scope); ) {
-//			sqlConn = SqlUtils.createConnectionObject(scope);
 			if (values.size() > 0) {
 				row_count = sqlConn.executeUpdateDB(scope, updateComm, values);
 			} else {
@@ -219,7 +219,6 @@ public class SQLSkill extends Skill {
 			}
 
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString(), scope);
 		}
@@ -266,29 +265,19 @@ public class SQLSkill extends Skill {
 							type = IType.LIST,
 							optional = false,
 							doc = @doc ("List of values that are used to insert into table. Columns and values must have same size"))
-			// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc
-			// =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
 			})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
-//		SqlConnection sqlConn;
-		// final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		final String table_name = (String) scope.getArg("into", IType.STRING);
 		final IList<Object> cols = (IList<Object>) scope.getArg("columns", IType.LIST);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		int rec_no = -1;
 		try (final SqlConnection sqlConn = SqlUtils.createConnectionObject(scope); ) {
-//			sqlConn = SqlUtils.createConnectionObject(scope);
-			// Connection conn=sqlConn.connectDB();
 			if (cols.size() > 0) {
 				rec_no = sqlConn.insertDB(scope, table_name, cols, values);
 			} else {
 				rec_no = sqlConn.insertDB(scope, table_name, values);
 			}
-			// conn.close();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString(), scope);
@@ -332,44 +321,21 @@ public class SQLSkill extends Skill {
 							type = IType.LIST,
 							optional = true,
 							doc = @doc ("List of values that are used to replace question marks"))
-			// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc
-			// =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
-
 			})
 	public IList select_QM(final IScope scope) throws GamaRuntimeException {
 
-		// final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);Ò
 		final String selectComm = (String) scope.getArg("select", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
-		// thai.truongminh@gmail.com
-		// Move transform arg of select to a key in params
-		// boolean transform = scope.hasArg("transform") ? (Boolean)
-		// scope.getArg("transform", IType.BOOL) : true;
-		// boolean transform = params.containsKey("transform") ? (Boolean)
-		// params.get("transform") : true;
 
-//		SqlConnection sqlConn;
 		IList<? super IList<Object>> repRequest;
 		try (final SqlConnection sqlConn = SqlUtils.createConnectionObject(scope); ) {
-//			sqlConn = SqlUtils.createConnectionObject(scope);
 			if (values.size() > 0) {
 				repRequest = sqlConn.executeQueryDB(scope, selectComm, values);
 			} else {
 				repRequest = sqlConn.selectDB(scope, selectComm);
 			}
-			// Transform GIS to Absolute (Geometry in GAMA)
-			// AD: now made directly in the select / query
-			// if ( transform ) {
-			// return sqlConn.fromGisToAbsolute(scope, repRequest);
-			// } else {
-			// return repRequest;
-			// }
 			return repRequest;
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString(), scope);
 		}

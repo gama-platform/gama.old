@@ -1,5 +1,6 @@
 package irit.gaml.extensions.database.utils.sql.postgres;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import irit.gaml.extensions.database.utils.sql.ISqlConnector;
@@ -15,10 +16,19 @@ public class PostgresConnector implements ISqlConnector {
 	}
 
 	@Override
-	public Map<String, Object> getConnectionParameters(String host, String dbtype, String port, String database,
+	public Map<String, Object> getConnectionParameters(final IScope scope, String host, String dbtype, String port, String database,
 			String user, String passwd) {
-		// TODO Auto-generated method stub
-		return null;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("dbtype", "postgis");
+        params.put("host", host);
+        params.put("port", port);
+        params.put("schema", "public");
+        params.put("database", database);
+        params.put("user", user);
+        params.put("passwd", passwd);
+		
+		return params;
 	}
 
 }

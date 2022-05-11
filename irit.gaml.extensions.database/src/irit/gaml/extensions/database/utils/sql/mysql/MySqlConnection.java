@@ -79,7 +79,7 @@ public class MySqlConnection extends SqlConnection {
 	 * @param password the password
 	 * @param transformed the transformed
 	 */
-	MySqlConnection(final IScope scope, final String venderName, final String url, final String port, final String dbName,
+	public MySqlConnection(final IScope scope, final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password, final Boolean transformed) {
 		super(venderName, url, port, dbName, userName, password, transformed);
 		

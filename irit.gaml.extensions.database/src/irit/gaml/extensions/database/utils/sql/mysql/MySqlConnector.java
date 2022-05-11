@@ -1,6 +1,9 @@
 package irit.gaml.extensions.database.utils.sql.mysql;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import org.geotools.data.mysql.MySQLDataStoreFactory;
 
 import irit.gaml.extensions.database.utils.sql.ISqlConnector;
 import irit.gaml.extensions.database.utils.sql.SqlConnection;
@@ -15,10 +18,18 @@ public class MySqlConnector implements ISqlConnector{
 	}
 
 	@Override
-	public Map<String, Object> getConnectionParameters(String host, String dbtype, String port, String database,
+	public Map<String, Object> getConnectionParameters(final IScope scope, String host, String dbtype, String port, String database,
 			String user, String passwd) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Map<String,Object> params = new HashMap<>();
+		params.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
+		params.put(MySQLDataStoreFactory.HOST.key, host);
+		params.put(MySQLDataStoreFactory.PORT.key, Integer.valueOf(port));
+		params.put(MySQLDataStoreFactory.DATABASE.key, database);
+		params.put(MySQLDataStoreFactory.USER.key, user);
+		params.put(MySQLDataStoreFactory.PASSWD.key, passwd);
+		
+		return params;
 	}
 
 }

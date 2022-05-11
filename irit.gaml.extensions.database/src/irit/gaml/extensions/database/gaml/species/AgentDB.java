@@ -113,7 +113,6 @@ public class AgentDB extends GamlAgent {
 			conn.close();
 			isConnection = false;
 		} catch (final SQLException e) {
-			// e.printStackTrace();
 			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString(), scope);
 		} catch (final NullPointerException npe) {
 			if (conn == null) throw GamaRuntimeException
@@ -122,13 +121,6 @@ public class AgentDB extends GamlAgent {
 		return null;
 
 	}
-
-	// @action(name = "helloWorld")
-	// public Object helloWorld(final IScope scope) throws GamaRuntimeException
-	// {
-	// scope.getGui().informConsole("Hello World");
-	// return null;
-	// }
 
 	// Get current time of system
 	/**
@@ -143,7 +135,8 @@ public class AgentDB extends GamlAgent {
 			name = "timeStamp",
 			doc = @doc (
 					value = "Get the current time of the system.",
-					returns = "Current time of the system in millisecondes"))
+					returns = "Current time of the system in millisecondes",
+					deprecated = "Use machine_time instead"))
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
 		return System.currentTimeMillis();
 	}
@@ -175,20 +168,6 @@ public class AgentDB extends GamlAgent {
 
 		params = (java.util.Map<String, String>) scope.getArg("params", IType.MAP);
 
-		// final String dbtype = params.get("dbtype");
-		// Note BG: before 13/06/2020, SQLite was not supported in AgentDB.
-		// The reason is not clear, a guess is that when an agent update the database file,
-		// the file is locked and thus another agent cannot try to update it.
-		// As a consequence it is recommended to have a single AgentDB connected to SQLite DB file.
-
-		// final String dbtype = params.get("dbtype");
-		// SqlConnection sqlConn;
-		// if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
-		// throw GamaRuntimeException.error(
-		// "AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for
-		// further info).",
-		// scope);
-		// }
 		if (isConnection)
 			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened", scope);
 		try {
@@ -260,12 +239,6 @@ public class AgentDB extends GamlAgent {
 							type = IType.LIST,
 							optional = true,
 							doc = @doc ("List of values that are used to replace question marks"))
-			// , @arg(name = "transform", type = IType.BOOL, optional = true,
-			// doc =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
-
 			},
 			doc = @doc (
 					value = "Make a connection to DBMS and execute the select statement.",
@@ -275,8 +248,6 @@ public class AgentDB extends GamlAgent {
 		if (!isConnection) throw GamaRuntimeException.error("AgentDB.select: Connection was not established ", scope);
 		final String selectComm = (String) scope.getArg("select", IType.STRING);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
-		// Boolean transform = scope.hasArg("transform") ? (Boolean)
-		// scope.getArg("transform", IType.BOOL) : false;
 		IList<? super IList<? super IList>> repRequest;
 		// get data
 		try {
@@ -285,8 +256,6 @@ public class AgentDB extends GamlAgent {
 			} else {
 				repRequest = sqlConn.selectDB(scope, conn, selectComm);
 			}
-			// if ( transform ) { return sqlConn.fromGisToAbsolute(gis,
-			// repRequest); }
 			return repRequest;
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -322,11 +291,6 @@ public class AgentDB extends GamlAgent {
 							type = IType.LIST,
 							optional = true,
 							doc = @doc ("List of values that are used to replace question mark"))
-			// , @arg(name = "transform", type = IType.BOOL, optional = true,
-			// doc =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
 			},
 			doc = @doc (
 					value = "- Make a connection to DBMS - Executes the SQL statement in this PreparedStatement object, which must be an SQL\n"
@@ -437,11 +401,6 @@ public class AgentDB extends GamlAgent {
 							type = IType.LIST,
 							optional = false,
 							doc = @doc ("List of values that are used to insert into table. Columns and values must have same size"))
-			// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc
-			// =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
 			},
 			doc = @doc (
 					value = "- Make a connection to DBMS - Executes the insert statement.",
@@ -452,22 +411,12 @@ public class AgentDB extends GamlAgent {
 		final String table_name = (String) scope.getArg("into", IType.STRING);
 		final IList<Object> cols = (IList<Object>) scope.getArg("columns", IType.LIST);
 		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
-		// thai.truongminh@gmail.com
-		// Move transform arg of select to a key in params
-		// boolean transform = scope.hasArg("transform") ? (Boolean)
-		// scope.getArg("transform", IType.BOOL) : true;
-		// boolean transform = params.containsKey("transform") ? (Boolean)
-		// params.get("transform") : true;
 		int rec_no = -1;
 
 		try {
 			if (cols.size() > 0) {
-				// rec_no = sqlConn.insertDB(scope, conn, table_name, cols,
-				// values, transform);
 				rec_no = sqlConn.insertDB(scope, conn, table_name, cols, values);
 			} else {
-				// rec_no = sqlConn.insertDB(scope, table_name, values,
-				// transform);
 				rec_no = sqlConn.insertDB(scope, conn, table_name, values);
 			}
 		} catch (final Exception e) {

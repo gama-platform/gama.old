@@ -11,19 +11,16 @@
 package irit.gaml.extensions.database.utils.geosql;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
-import org.geotools.data.mysql.MySQLDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.jdbc.JDBCDataStoreFactory;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -31,10 +28,8 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import irit.gaml.extensions.database.utils.sql.ISqlConnector;
 import irit.gaml.extensions.database.utils.sql.SqlUtils;
-import irit.gaml.extensions.database.utils.sql.mysql.MySqlConnection;
-import irit.gaml.extensions.database.utils.sql.postgres.PostgresConnection;
-import irit.gaml.extensions.database.utils.sql.sqlite.SqliteConnection;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
@@ -56,18 +51,6 @@ import ummisco.gama.dev.utils.DEBUG;
 // DataStore.dispose(); //close connection;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSqlConnection extends GamaGisFile {
-
-//	/** The Constant MYSQL. */
-//	private static final String MYSQL = "mysql";
-
-//	/** The Constant POSTGRES. */
-//	private static final String POSTGRES = "postgres";
-
-//	/** The Constant POSTGIS. */
-//	private static final String POSTGIS = "postgis";
-
-//	/** The Constant SQLITE. */
-//	private static final String SQLITE = "spatialite";
 
 	/** The dbtype. */
 	private String dbtype = "";
@@ -176,42 +159,8 @@ public class GamaSqlConnection extends GamaGisFile {
 	 */
 	// Connect connection parameters with connection attributes of the object
 	private Map<String, Object> createConnectionParams(final IScope scope) {
-		Map<String, Object> connectionParameters = new HashMap<>();
-
-		if (PostgresConnection.POSTGRES.equalsIgnoreCase(dbtype) || PostgresConnection.POSTGIS.equalsIgnoreCase(dbtype)) {
-			connectionParameters.put("host", host);
-			connectionParameters.put("dbtype", dbtype);
-			connectionParameters.put("port", port);
-			connectionParameters.put("database", database);
-			connectionParameters.put("user", user);
-			connectionParameters.put("passwd", passwd);
-			// advanced
-
-		} else if (MySqlConnection.MYSQL.equalsIgnoreCase(dbtype)) {
-			connectionParameters.put(MySQLDataStoreFactory.DBTYPE.key, dbtype);
-			connectionParameters.put(JDBCDataStoreFactory.HOST.key, host);
-			connectionParameters.put(MySQLDataStoreFactory.PORT.key, Integer.valueOf(port));
-			connectionParameters.put(JDBCDataStoreFactory.DATABASE.key, database);
-			connectionParameters.put(JDBCDataStoreFactory.USER.key, user);
-			connectionParameters.put(JDBCDataStoreFactory.PASSWD.key, passwd);
-		} else if (SqliteConnection.SQLITE.equalsIgnoreCase(dbtype)) {
-			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			// String EXTRelativeLocation =
-			// GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
-			connectionParameters.put("dbtype", dbtype);
-			connectionParameters.put("database", DBRelativeLocation);
-
-		} else {
-			for(String connectorName : SqlUtils.externalConnectors.keySet()) {
-				if (dbtype.equalsIgnoreCase(connectorName)) {
-					connectionParameters = SqlUtils.externalConnectors.get(connectorName)
-							.getConnectionParameters(host, dbtype, port, database, user, passwd);
-					break;
-				}
-			}
-			
-		}
-		return connectionParameters;
+		ISqlConnector connector = SqlUtils.externalConnectors.get(dbtype);
+		return connector.getConnectionParameters(scope, host, dbtype, port, database, user, passwd);
 	}
 
 	/**

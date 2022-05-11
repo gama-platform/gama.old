@@ -28,7 +28,6 @@ global {
 
 species DB_connection_tester skills: [SQLSKILL] {
 	init {
-		write "Current Time " + timeStamp();
 		write "Connection to MySQL is " +  testConnection(MySQL);
 		write "Connection to SQLITE is " +  testConnection(SQLITE);
 		write "Connection to POSTGRESQL is " +  testConnection(POSTGRES);

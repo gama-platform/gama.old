@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package irit.gaml.extensions.database.utils.sql.sqlite;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,15 +19,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import org.sqlite.SQLiteConfig;
 
 import irit.gaml.extensions.database.utils.sql.SqlConnection;
 import irit.gaml.extensions.database.utils.sql.SqlUtils;
-import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -52,12 +46,6 @@ public class SqliteConnection extends SqlConnection {
 
 	/** The Constant SQLITE. */
 	public static final String SQLITE = "sqlite";	
-
-	/** The Constant SQLITE. */
-	public static final String SPATIALITE = "spatialite";
-	
-	/** The Constant WKT2GEO. */
-	private static final String WKT2GEO = "GeomFromText";
 
 	/**
 	 * Instantiates a new sqlite connection.
@@ -96,23 +84,12 @@ public class SqliteConnection extends SqlConnection {
 			throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
 		Connection conn = null;
 		try {
-			if (!SQLITE.equalsIgnoreCase(vender))
-				throw new ClassNotFoundException("SqliteConnection.connectSQL: The " + vender + " is not supported!");
-			Class.forName(SQLITEDriver).newInstance();
+			Class.forName(SQLITEDriver);  //s.newInstance();
 			final SQLiteConfig config = new SQLiteConfig();
-			config.enableLoadExtension(true);
 			conn = DriverManager.getConnection("jdbc:sqlite:" + dbName, config.toProperties());
-			// load Spatialite extension library
-			if (extension != null && new File(extension).exists()) { load_extension(conn, extension); }
 		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new ClassNotFoundException(e.toString());
-		} catch (final InstantiationException e) {
-			e.printStackTrace();
-			throw new InstantiationException(e.toString());
-		} catch (final IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalAccessException(e.toString());
 		} catch (final SQLException e) {
 			e.printStackTrace();
 			throw new SQLException(e.toString());
@@ -207,18 +184,11 @@ public class SqliteConnection extends SqlConnection {
 			// Insert command
 			// set parameter value
 			valueStr = "";
-			final IProjection saveGis = getSavingGisProjection(scope);
+
 			for (int i = 0; i < col_no; i++) {
 				// Value list begin-------------------------------------------
 				if (values.get(i) == null) {
 					valueStr = valueStr + NULLVALUE;
-				} else if (GEOMETRYTYPE.equalsIgnoreCase((String) col_Types.get(i))) { // for
-
-					final WKTReader wkt = new WKTReader();
-					Geometry geo = wkt.read(values.get(i).toString());
-					// DEBUG.LOG(geo.toString());
-					if (transformed) { geo = saveGis.inverseTransform(geo); }
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 				} else if (CHAR.equalsIgnoreCase((String) col_Types.get(i))
 						|| VARCHAR.equalsIgnoreCase((String) col_Types.get(i))
 						|| NVARCHAR.equalsIgnoreCase((String) col_Types.get(i))
@@ -244,7 +214,7 @@ public class SqliteConnection extends SqlConnection {
 
 			if (DEBUG.IS_ON()) { DEBUG.OUT("SqliteConnection.getInsertString:" + insertStr); }
 
-		} catch (final SQLException | ParseException e) {
+		} catch (final SQLException e ) { 
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString(), scope);
 		}
@@ -289,12 +259,6 @@ public class SqliteConnection extends SqlConnection {
 				// Value list begin-------------------------------------------
 				if (values.get(i) == null) {
 					valueStr = valueStr + NULLVALUE;
-				} else if (GEOMETRYTYPE.equalsIgnoreCase((String) col_Types.get(i))) { // for
-					final WKTReader wkt = new WKTReader();
-					Geometry geo = wkt.read(values.get(i).toString());
-					if (transformed) { geo = getSavingGisProjection(scope).inverseTransform(geo); }
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
-
 				} else if (CHAR.equalsIgnoreCase((String) col_Types.get(i))
 						|| VARCHAR.equalsIgnoreCase((String) col_Types.get(i))
 						|| NVARCHAR.equalsIgnoreCase((String) col_Types.get(i))
@@ -317,7 +281,7 @@ public class SqliteConnection extends SqlConnection {
 			insertStr.append(table_name).append("(").append(colStr).append(") ").append("VALUES(").append(valueStr)
 					.append(")");
 
-		} catch (final SQLException | ParseException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString(), scope);
 		}
@@ -375,33 +339,8 @@ public class SqliteConnection extends SqlConnection {
 		}
 		return columnType;
 	}
-
-	/**
-	 * Load extension.
-	 *
-	 * @param conn
-	 *            the conn
-	 * @param extension
-	 *            the extension
-	 * @throws SQLException
-	 *             the SQL exception
-	 */
-	// 23-July-2013
-	private void load_extension(final Connection conn, final String extension) throws SQLException {
-		// load Spatialite extension library
-		try (final Statement stmt = conn.createStatement();) {
-			stmt.setQueryTimeout(30); // set timeout to 30 sec.
-			stmt.execute("SELECT load_extension('" + extension.replace('\\', '/') + "')");
-		} catch (final SQLException e) {
-			throw e;
-		}
-	}
 	
 	@Override
-	public void close() throws Exception {
-//		throw new NotImplementedException("Close not implemented");
-	}
-	
-	
+	public void close() throws Exception { }
 
 }
