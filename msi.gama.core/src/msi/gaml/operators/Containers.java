@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Containers.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Containers.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -1109,7 +1108,7 @@ public class Containers {
 	@operator (
 			value = "all_indexes_of",
 			can_be_const = true,
-			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			content_type = ITypeProvider.KEY_TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.LIST },
 			concept = { IConcept.LIST })
 	@doc (
@@ -2662,9 +2661,8 @@ public class Containers {
 							equals = "[2::4, 4::8, 6::12] ") },
 			see = {})
 	public static IMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
-		if (!(filter instanceof BinaryOperator))
+		if (!(filter instanceof BinaryOperator pair))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
-		final BinaryOperator pair = (BinaryOperator) filter;
 		if (!"::".equals(pair.getName()))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
 		final IExpression key = pair.arg(0);
@@ -2883,7 +2881,7 @@ public class Containers {
 			see = { "sum" })
 	@test ("mean ([4.5, 3.5, 5.5, 7.0]) with_precision 3 = 5.125")
 	public static Object opMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
-	
+
 		final Object s = sum(scope, l);
 		int size = l.length(scope);
 		if (size == 0) { size = 1; }
