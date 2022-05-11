@@ -15,5 +15,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: irit.gaml.extensions.database.Activator
 Automatic-Module-Name: irit.gaml.extensions.database
-Bundle-ClassPath: .,
- lib/mysql-connector-java-8.0.27.jar
+Bundle-ClassPath: .
