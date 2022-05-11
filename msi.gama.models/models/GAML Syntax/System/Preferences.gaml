@@ -172,9 +172,6 @@ init {
 	//Number of times to retry if connection cannot be established
 	write sample(gama.pref_http_retry_number);
 
-	//Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)
-	write sample(gama.pref_lib_spatialite);
-
 	//If true, when running out of memory, GAMA will try to close the experiment, otherwise it exits
 	write sample(gama.pref_memory_action);
 
@@ -417,9 +414,6 @@ init {
 
 	//Number of times to retry if connection cannot be established
 	gama.pref_http_retry_number <- 3;
-
-	//Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)
-	gama.pref_lib_spatialite <- file('/Users/drogoul/Documents/Git/gama/msi.gama.models/models/Features/Data Importation/models/Enter path');
 
 	//If true, when running out of memory, GAMA will try to close the experiment, otherwise it exits
 	gama.pref_memory_action <- true;
