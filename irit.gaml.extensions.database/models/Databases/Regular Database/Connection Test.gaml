@@ -7,8 +7,8 @@
 model test_connection
 
 global {
-	map<string, string> MySQL <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
-	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'Postgres', 'database'::'postgres', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
+	map<string, string> MySQL <- ['host'::'localhost', 'dbtype'::'mysql', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
+	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'postgres', 'database'::'postgres', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
 	map<string, string> SQLITE <- ['dbtype'::'sqlite', 'database'::'../includes/meteo.db'];
 	init {
 		

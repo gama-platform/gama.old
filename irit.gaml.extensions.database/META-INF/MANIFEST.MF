@@ -6,13 +6,14 @@ Bundle-Version: 1.8.2.qualifier
 Require-Bundle: msi.gama.ext,
  msi.gama.core,
  org.eclipse.osgi
-Export-Package: irit.gaml.extensions.database.skills,
- irit.gaml.extensions.database.species,
- msi.gama.database.geosql,
- msi.gama.database.sql
+Export-Package: irit.gaml.extensions.database.gaml.skills,
+ irit.gaml.extensions.database.gaml.species,
+ irit.gaml.extensions.database.utils,
+ irit.gaml.extensions.database.utils.geosql,
+ irit.gaml.extensions.database.utils.sql
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Bundle-Activator: msi.gama.database.Activator
+Bundle-Activator: irit.gaml.extensions.database.Activator
 Automatic-Module-Name: irit.gaml.extensions.database
 Bundle-ClassPath: .,
  lib/mysql-connector-java-8.0.27.jar

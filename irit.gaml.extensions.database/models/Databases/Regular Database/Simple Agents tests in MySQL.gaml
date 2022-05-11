@@ -38,7 +38,7 @@
 model simpleSQL_DBSpecies_MySQL
 
 global {
-	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'testDB', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
+	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'mysql', 'database'::'testDB', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	init {
 		write "This model will work only if MySQL database server is installed and launched," color: #red;
 		write "and if the database testDB has been created." color: #red;
@@ -97,10 +97,9 @@ species DB_Accessor parent: AgentDB {
 
 	reflex drop {
 		do executeUpdate updateComm: "DROP TABLE registration";
-		write "Registration table has been dropped.";
+		write "Registration table has been dropped." color: #red;
+		write "Another simulation step will throw an exception as the database is not available anymore." color: #red;
 	}
-
 }
 
-experiment simple_SQL_exp type: gui {
-}     
+experiment simple_SQL_exp type: gui {}     

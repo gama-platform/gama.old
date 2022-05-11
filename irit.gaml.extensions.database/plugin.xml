@@ -8,7 +8,7 @@
      <extension
          point="gama.create">
       <implementation
-            class="msi.gama.database.CreateFromDatabaseDelegate"
+            class="irit.gaml.extensions.database.utils.CreateFromDatabaseDelegate"
             description="Create agents from databases">
       </implementation>
    </extension>

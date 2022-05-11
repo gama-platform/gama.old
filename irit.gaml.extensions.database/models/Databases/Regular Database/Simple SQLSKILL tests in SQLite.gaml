@@ -33,6 +33,7 @@ global {
 		}
 
 		ask (DB_Accessor) {
+			do executeUpdate params: PARAMS updateComm: "DROP TABLE IF EXISTS registration";					
 			do executeUpdate params: PARAMS updateComm: "CREATE TABLE registration" + "(id INTEGER PRIMARY KEY, " + " first TEXT NOT NULL, " + " last TEXT NOT NULL, " + " age INTEGER);";
 			write "REGISTRATION table has been created.";
 			do executeUpdate params: PARAMS updateComm: "INSERT INTO registration " + "VALUES(100, 'Zara', 'Ali', 18);";
@@ -43,9 +44,7 @@ global {
 			write "Five records have been inserted.";
 			write "Click on <<Step>> button to view selected data";
 		}
-
 	}
-
 }
 
 species DB_Accessor skills: [SQLSKILL] {
@@ -66,10 +65,9 @@ species DB_Accessor skills: [SQLSKILL] {
 
 	reflex drop {
 		do executeUpdate params: PARAMS updateComm: "DROP TABLE registration";
-		write "Registration table has been dropped.";
+		write "Registration table has been dropped." color: #red;
+		write "Another simulation step will throw an exception as the database is not available anymore." color: #red;
 	}
-
 }
 
-experiment simple_SQL_exp type: gui {
-}     
+experiment simple_SQL_exp type: gui {}     
