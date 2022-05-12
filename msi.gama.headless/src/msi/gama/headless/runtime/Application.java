@@ -173,8 +173,8 @@ public class Application implements IApplication {
 				+ "\n\t\t" + BUILD_XML_PARAMETER + " [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
 				+ "\n\t\t                             -- build an xml parameter file from a model"
 				+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
-				+ "\n\t\t                             -- default usage of GAMA headless" + "\n\t\t" + WRITE_XMI
-				+ " -- write scope provider resource files to disk");
+				+ "\n\t\t                             -- default usage of GAMA headless");
+				// + "\n\t\t" + WRITE_XMI  + " -- write scope provider resource files to disk");
 		DEBUG.OFF();
 	}
 
