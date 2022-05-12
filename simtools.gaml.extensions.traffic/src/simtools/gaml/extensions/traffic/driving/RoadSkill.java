@@ -512,9 +512,9 @@ public class RoadSkill extends Skill {
 		int numLanesOccupied = DrivingSkill.getNumLanesOccupied(vehicle);
 		int numSegments = getNumSegments(road);
 		List<Double> lengths = getSegmentLengths(road);
-
 		GamaPoint roadEndPt = getTargetNode(road).getLocation();
-		boolean violatingOneway = !DrivingSkill.getCurrentTarget(vehicle).getLocation().equals(roadEndPt);
+		IAgent target = DrivingSkill.getCurrentTarget(vehicle);
+		boolean violatingOneway = target != null && target.getLocation().equals(roadEndPt);
 
 		int segmentIdx = !violatingOneway ? 0 : getNumSegments(road) - 1;
 		for (int i = 0; i < numLanesOccupied; i += 1) {
