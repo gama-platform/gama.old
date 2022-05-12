@@ -54,5 +54,5 @@ if exist ..\jdk\ (
 	call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
 ) else (
 	echo "JAVA_HOME"
-  	call "%JAVA_HOME%\java.exe" -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
+  	call "%JAVA_HOME%\bin\java.exe" -cp !result! -Xms512m -Xmx%memory% -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data "%workDir%" !param! 
 )
