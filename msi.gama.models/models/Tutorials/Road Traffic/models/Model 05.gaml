@@ -48,7 +48,7 @@ global {
 		}
 	}
 	
-	reflex update_graph{
+	reflex update_graph{ 
 		map<road,float> weights_map <- road as_map (each:: (each.destruction_coeff * each.shape.perimeter));
 		the_graph <- the_graph with_weights weights_map;
 	}

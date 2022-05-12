@@ -27,15 +27,19 @@ import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 import ummisco.gama.network.websocket.IGamaWebSocketServer;
 
@@ -48,7 +52,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 //	public boolean paused = false;
 	public boolean stepping = false;
 //	public Thread internalThread;
-	GamaJsonList params;
+	public GamaJsonList params;
 	/** The scope. */
 	IScope scope;
 	/**
@@ -83,10 +87,10 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	/**
 	 * The Class OwnRunnable.
 	 */
-	static class MyRunnable implements Runnable {
+	public static class MyRunnable implements Runnable {
 
 		/** The sim. */
-		final ManualExperimentJob sim;
+		final ManualExperimentJob mexp;
 
 		/**
 		 * Instantiates a new own runnable.
@@ -94,7 +98,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		 * @param s the s
 		 */
 		MyRunnable(final ManualExperimentJob s) {
-			sim = s;
+			mexp = s;
 		}
 
 		/**
@@ -102,8 +106,16 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		 */
 		@Override
 		public void run() {
-			while (sim.experimentAlive) {
-				sim.step();
+			while (mexp.experimentAlive) {
+				if (mexp.simulator.isInterrupted()) {
+					break;
+				}
+				final SimulationAgent sim = mexp.simulator.getSimulation();
+				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
+				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
+					break;
+				}
+				mexp.step();
 			}
 		}
 	}
@@ -124,14 +136,8 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		}
 	}, "Front end controller");
 
-	private boolean do_export = true;
-
-	public void setExport(final boolean b) {
-		do_export = b;
-	}
-
-	public ManualExperimentJob(ExperimentJob clone, IGamaWebSocketServer s, WebSocket sk, final GamaJsonList p) {
-		super(clone);
+	public ManualExperimentJob(ExperimentJob j, IGamaWebSocketServer s, WebSocket sk, final GamaJsonList p) {
+		super(j);
 		server = (GamaWebSocketServer) s;
 		socket = sk;
 		params = p;
@@ -143,6 +149,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		try {
 			lock.acquire();
 		} catch (final InterruptedException e) {
+			e.printStackTrace();
 		}
 		commandThread.start();
 //		executionThread.start();
@@ -160,8 +167,6 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	@Override
 	public void doStep() {
 		this.step = simulator.step();
-		if (do_export)
-			this.exportVariables();
 	}
 
 	/**
@@ -184,17 +189,21 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		switch (command) {
 		case _OPEN:
 			try {
-				loadAndBuild();
-//				this.getSimulation().getExperimentPlan().open();
+				this.loadAndBuild(params);
+////				this.getSimulation().getExperimentPlan().open();
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
 					| GamaHeadlessException e) {
 				e.printStackTrace();
 			}
 //			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
 //			try {
-//				new Thread(() -> experiment.open()).start();
+//				load();
+//				simulator.setup(experimentName, this.seed, params);
+//
+////				this.getSimulation().getExperimentPlan().open();
+////				new Thread(() -> experiment.open()).start();
 //			} catch (final Exception e) {
-//				DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
+////				DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
 //				closeExperiment(e);
 //			}
 			break;
@@ -225,17 +234,29 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 			break;
 		case _RELOAD:
 //			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
+			executionThread=null;
+			executionThread = new MyRunnable(this);
 			try {
-				final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
+				lock.acquire();
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+			try {
+//				final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
 				pause();
 //				scope.getGui().getStatus().waitStatus("Reloading...");
-				this.getSimulation().getExperimentPlan().reload();
-				if (wasRunning) {
-					processUserCommand(_START);
-				} else {
-//					scope.getGui().getStatus().informStatus("Experiment reloaded");
-				}
+				this.getSimulation().getExperimentPlan().getAgent().dispose();
+				initParam(params);
+
+				this.getSimulation().getExperimentPlan().open();
+//				this.getSimulation().getExperimentPlan().reload();
+//				if (wasRunning) {
+//					processUserCommand(_START);
+//				} else {
+////					scope.getGui().getStatus().informStatus("Experiment reloaded");
+//				}
 			} catch (final GamaRuntimeException e) {
+				e.printStackTrace();
 				closeExperiment(e);
 			} catch (final Throwable e) {
 				closeExperiment(GamaRuntimeException.create(e, scope));
@@ -430,34 +451,37 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		return scope == null ? this.getSimulation().getExperimentPlan().getExperimentScope() : scope;
 	}
 
-	@Override
-	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
-			IOException, GamaHeadlessException {
+	public void loadAndBuild(GamaJsonList p) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException, IOException, GamaHeadlessException {
 
 		this.load();
-		this.listenedVariables = new ListenedVariable[outputs.size()];
+		this.setup();
+//		initParam(p);
+		simulator.setup(experimentName, this.seed, p);
+		initEndContion("");
 
-		for (final Parameter temp : parameters) {
-			if (temp.getName() == null || "".equals(temp.getName())) {
-				this.simulator.setParameter(temp.getVar(), temp.getValue());
-			} else {
-				this.simulator.setParameter(temp.getName(), temp.getValue());
+	}
+
+	public void initParam(GamaJsonList p) {
+		params = p;
+		if (params != null) {
+			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
+			for (var O : ((GamaJsonList) params).listValue(null, Types.MAP, false)) {
+				IMap<String, Object> m = (IMap<String, Object>) O;
+				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
+						m.get("value"));
 			}
 		}
-		this.setup();
-		simulator.setup(experimentName, this.seed,params);
-		for (int i = 0; i < outputs.size(); i++) {
-			final Output temp = outputs.get(i);
-			this.listenedVariables[i] = new ListenedVariable(temp.getName(), temp.getWidth(), temp.getHeight(),
-					temp.getFrameRate(), simulator.getTypeOf(temp.getName()), temp.getOutputPath());
-		}
+	}
 
-		// Initialize the enCondition
-		if (untilCond == null || "".equals(untilCond)) {
+	// Initialize the enCondition
+	public void initEndContion(String cond) {
+		if (cond == null || "".equals(cond)) {
 			endCondition = IExpressionFactory.FALSE_EXPR;
 		} else {
-			endCondition = GAML.getExpressionFactory().createExpr(untilCond, simulator.getModel().getDescription());
-			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(), true);
+			endCondition = GAML.getExpressionFactory().createExpr(cond, simulator.getModel().getDescription());
+			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(),
+			// true);
 		}
 		if (endCondition.getGamlType() != Types.BOOL)
 			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",

@@ -39,6 +39,7 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
@@ -127,8 +128,8 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 				try {
 					launchGamlSimulation(socket,
 							Arrays.asList("-gaml", ".", map.get("experiment").toString(), map.get("model").toString()),
-							Boolean.parseBoolean(map.get("auto-export").toString()) ? false : true,
-							(GamaJsonList) map.get("parameters"));
+							(GamaJsonList) map.get("parameters"),
+							map.get("until") != null ? map.get("until").toString() : "");
 				} catch (IOException | GamaHeadlessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -179,7 +180,13 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 				System.out.println("reload " + exp_id);
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
-					get_listener().getExperiment(socket_id, exp_id).userReload();
+					ManualExperimentJob job=get_listener().getExperiment(socket_id, exp_id);
+					job.params=(GamaJsonList) map.get("parameters");
+					job.initEndContion(map.get("until") != null ? map.get("until").toString() : "");
+					job.userReload();
+//					(GamaJsonList) map.get("parameters"),
+//					job.executionThread.run();
+					getDefaultApp().processorQueue.execute(job.executionThread);
 				}
 				socket.send(cmd_type);
 				break;
@@ -192,9 +199,11 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 							.getSimulation().getPopulationFor(map.get("species").toString());
 
 					try {
-						IList ll = (IList) map.get("attributes");
+						final IList ll = map.get("attributes") != null ? (IList) map.get("attributes")
+								: GamaListFactory.EMPTY_LIST;
+						final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
 						socket.send(SaveHelper.buildGeoJSon(get_listener().getExperiment(socket_id, exp_id)
-								.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll));
+								.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll, crs));
 					} catch (GamaRuntimeException | IOException | SchemaException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -342,8 +351,8 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 	 * @throws IOException           Signals that an I/O exception has occurred.
 	 * @throws GamaHeadlessException the gama headless exception
 	 */
-	public void launchGamlSimulation(WebSocket socket, final List<String> args, final boolean export,
-			final GamaJsonList params) throws IOException, GamaHeadlessException {
+	public void launchGamlSimulation(WebSocket socket, final List<String> args, final GamaJsonList params,
+			final String end) throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
 		File ff = new File(pathToModel);
@@ -360,8 +369,6 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(argExperimentName)) {
 				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket, params);
-				selectedJob.setExport(export);
-
 				break;
 			}
 		}
@@ -369,6 +376,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 			return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 		selectedJob.directOpenExperiment();
+		selectedJob.initEndContion(end);
 		if (get_listener().getExperimentsOf("" + socket.hashCode()) == null) {
 			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<String, ManualExperimentJob>();
 			get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
@@ -384,7 +392,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 //				lst_out += "@" + v.getName();
 //			}
 //		}
-		IAgent agt = selectedJob.getSimulation().getSimulation();
+//		IAgent agt = selectedJob.getSimulation().getSimulation();
 
 //		IShape geom = agt.getGeometry();
 //		Spatial.Projections.transform_CRS(agt.getScope(), agt.getGeometry(), "EPSG:4326");
@@ -398,9 +406,7 @@ public class GamaWebSocketServer extends IGamaWebSocketServer {
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
 //		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		socket.send(res);
-		if (export)
-			selectedJob.exportVariables();
+		socket.send(res); 
 		getDefaultApp().processorQueue.execute(selectedJob.executionThread);
 	}
 

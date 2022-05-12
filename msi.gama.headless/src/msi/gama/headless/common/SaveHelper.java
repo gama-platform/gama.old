@@ -60,8 +60,8 @@ import msi.gaml.types.Types;
 
 public class SaveHelper {// extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	public static IProjection defineProjection2(final IScope scope) {
-		String code = "EPSG:4326";
+	public static IProjection defineProjection2(final IScope scope,final String gis_code) {
+		String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
 //		if (crsCode != null) {
 //			final IType type = crsCode.getGamlType();
 //			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
@@ -265,8 +265,9 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 
 	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
 			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
-	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents, final IList<String> filterAttr)
-			throws IOException, SchemaException, GamaRuntimeException {
+
+	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents,
+			final IList<String> filterAttr, final String gis_code) throws IOException, SchemaException, GamaRuntimeException {
 
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
@@ -284,7 +285,9 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 			for (final String var : species.getAttributeNames()) {
 //				System.out.println(var);
 //				if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
-				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) { attributes.put(var, species.getVarExpr(var, false)); }
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) {
+					attributes.put(var, species.getVarExpr(var, false));
+				}
 			}
 			for (final String e : attributes.keySet()) {
 				if (e == null) {
@@ -298,7 +301,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 				specs.append(',').append(name).append(':').append(type);
 			}
 			// }
-			final IProjection proj = defineProjection2(scope);
+			final IProjection proj = defineProjection2(scope,gis_code);
 
 			// AD 11/02/15 Added to allow saving to new directories
 			if (agents == null || agents.isEmpty())
