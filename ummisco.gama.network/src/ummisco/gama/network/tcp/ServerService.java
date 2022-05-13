@@ -112,7 +112,7 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 				DEBUG.LOG("Socket error" + e1);
 				/// isOnline = false;
 			} catch (final Exception e) {
-				DEBUG.LOG("Exception occured in socket");
+				DEBUG.LOG("Exception occured in socket "+e.getMessage());
 			}
 		}
 	}

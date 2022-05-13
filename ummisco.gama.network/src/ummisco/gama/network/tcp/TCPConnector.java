@@ -102,7 +102,7 @@ public class TCPConnector extends Connector {
 					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
 						extractAndApplyCommand(sender, message);
 					} else {
-						final String r = MessageFactory.unpackReceiverName(message);
+						final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
 						storeMessage(r, message);
 					}
 				}
