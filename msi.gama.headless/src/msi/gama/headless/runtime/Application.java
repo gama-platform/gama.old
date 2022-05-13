@@ -574,7 +574,7 @@ public class Application implements IApplication {
 		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createFileURI(pathToModel), errors);
+		final IModel mdl = builder.compile(URI.createURI(pathToModel), errors);
 
 		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
 		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getNumberOfThreads());
