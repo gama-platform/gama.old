@@ -57,9 +57,9 @@ import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class LayerDisplayOutput.
@@ -116,7 +116,9 @@ import msi.gaml.types.IType;
 						name = "synchronized",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Indicates whether the display should be directly synchronized with the simulation")),
+						doc = @doc (
+								deprecated = "Synchronized is now a property of 'output' or 'permanent' and is not available anymore as a per-view property",
+								value = "Indicates whether the display should be directly synchronized with the simulation")),
 				@facet (
 						name = "antialias",
 						type = IType.BOOL,
@@ -348,6 +350,10 @@ import msi.gaml.types.IType;
 										isExecutable = false) }) })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The layers. */
 	private final List<AbstractLayerStatement> layers;
 
@@ -426,23 +432,24 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// Are we in OpenGL world ?
 			IExpressionDescription type = d.getFacet(TYPE);
 			final boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
-			if(type==null) {
-				type=LabelExpressionDescription
+			if (type == null) {
+				type = LabelExpressionDescription
 						.create(isOpenGLDefault ? LayeredDisplayData.OPENGL : LayeredDisplayData.JAVA2D);
 				d.setFacet(TYPE, type);
 			}
-			String cand="";
+			String cand = "";
 			// Addresses and fixes Issue 833.
 			final String s = type.getExpression().literalValue();
 			if (!IGui.DISPLAYS.containsKey(s) && !msi.gama.runtime.GAMA.isInHeadLessMode()) {
 				// In headless mode, all displays should be accepted
-				cand=IGui.DISPLAYS.keySet().stream().findFirst().get();
+				cand = IGui.DISPLAYS.keySet().stream().findFirst().get();
 
-				d.warning(s + " is not a valid display type. Valid types are:" + IGui.DISPLAYS.keySet()+". Gama will fallback to first valid type ("+cand+")",
+				d.warning(
+						s + " is not a valid display type. Valid types are:" + IGui.DISPLAYS.keySet()
+								+ ". Gama will fallback to first valid type (" + cand + ")",
 						IGamlIssue.UNKNOWN_KEYWORD, TYPE);
-				
-				d.setFacet(TYPE, LabelExpressionDescription
-						.create(cand));
+
+				d.setFacet(TYPE, LabelExpressionDescription.create(cand));
 			}
 
 			// final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
@@ -581,9 +588,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			layer.setDisplayOutput(this);
 			if (!getScope().init(layer).passed()) return false;
 		}
-
-		final IExpression sync = getFacet("synchronized");
-		if (sync != null) { setSynchronized(Cast.asBool(getScope(), sync.value(getScope()))); }
+		//
+		// final IExpression sync = getFacet("synchronized");
+		// if (sync != null) { setSynchronized(Cast.asBool(getScope(), sync.value(getScope()))); }
 
 		createSurface(getScope());
 		return true;
@@ -600,9 +607,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		if (surface == null) return;
-		getData().update(getScope(), description.getFacets());
 
+		if (surface == null) return;
+		DEBUG.OUT("Entering update of the output");
+		getData().update(getScope(), description.getFacets());
 		if (overlayInfo != null) { getScope().step(overlayInfo); }
 
 		super.update();
@@ -612,7 +620,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void dispose() {
 		if (disposed) return;
-		setSynchronized(false);
+		// setSynchronized(false);
 		super.dispose();
 		if (surface != null) { surface.dispose(); }
 		surface = null;
@@ -750,15 +758,20 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	// objects can have an easy access to the value (and modify it). Also allows
 	// modelers to declare this property directly in the model.
 
-	@Override
-	public void setSynchronized(final boolean sync) {
-		getData().setSynchronized(sync);
-		super.setSynchronized(sync);
+	// @Override
+	// public void setSynchronized(final boolean sync) {
+	// // getData().setSynchronized(sync);
+	// super.setSynchronized(sync);
+	//
+	// }
 
-	}
-
-	@Override
-	public boolean isSynchronized() { return super.isSynchronized() && getData().isSynchronized(); }
+	/**
+	 * Checks if is synchronized.
+	 *
+	 * @return true, if is synchronized
+	 */
+	// @Override
+	// public boolean isSynchronized() { return super.isSynchronized() && getData().isSynchronized(); }
 
 	/**
 	 * Gets the index.

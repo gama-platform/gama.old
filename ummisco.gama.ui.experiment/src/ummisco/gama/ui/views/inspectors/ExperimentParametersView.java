@@ -104,9 +104,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					if (sim == null) return;
 					WorkbenchHelper.runInUI("", 0, m -> {
 						if ("None".equals(CORE_DISPLAY_LAYOUT.getValue())) {
-							ArrangeDisplayViews.executeInteger(IUnits.split);
+							ArrangeDisplayViews.execute(IUnits.split);
 						} else {
-							ArrangeDisplayViews.executeInteger(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+							ArrangeDisplayViews.execute(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 						}
 					});
 				}, SWT.RIGHT);

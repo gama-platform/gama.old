@@ -159,14 +159,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			// if (ok(partRef)) {
-			// // DEBUG.STACK();
-			// WorkbenchHelper.runInUI("", 200, m -> {
-			// DEBUG.OUT("Part Activated:" + partRef.getTitle());
-			// view.showCanvas();
-			// if (overlay != null) { overlay.display(); }
-			// });
-			// }
+			if (ok(partRef)) {
+				// DEBUG.STACK();
+				WorkbenchHelper.runInUI("", 0, m -> {
+					DEBUG.OUT("Part Activated:" + partRef.getTitle());
+					view.showCanvas();
+					if (overlay != null) { overlay.display(); }
+				});
+			}
 		}
 
 		@Override
@@ -194,7 +194,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			// selected. After tests, the same happens on Linux and Windows -- so the test is generalized.
 			if (/* (PlatformHelper.isMac() || PlatformHelper.isLinux()) && */ !PerspectiveHelper.keepTabs()) return;
 			if (ok(partRef)) {
-				WorkbenchHelper.runInUI("", 200, m -> {
+				WorkbenchHelper.runInUI("", 0, m -> {
 					DEBUG.OUT("Part hidden:" + partRef.getTitle());
 					view.hideCanvas();
 					if (overlay != null) { overlay.hide(); }
@@ -205,7 +205,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		@Override
 		public void partVisible(final IWorkbenchPartReference partRef) {
 			if (ok(partRef)) {
-				WorkbenchHelper.runInUI("", 200, m -> {
+				WorkbenchHelper.runInUI("", 0, m -> {
 					DEBUG.OUT("Part Visible:" + partRef.getTitle());
 					view.showCanvas();
 					if (overlay != null) { overlay.display(); }

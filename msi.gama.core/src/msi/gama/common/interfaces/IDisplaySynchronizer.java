@@ -22,22 +22,22 @@ public interface IDisplaySynchronizer {
 	 * Allows any object calling this method to release the thread waiting for the scene to be rendered (called by the
 	 * rendering processes or when this surface is disposed). Nothing to do by default
 	 */
-	void signalRenderingIsFinished();
+	// void signalRenderingIsFinished();
+	//
+	// /**
+	// * Makes any thread calling this method wait until either the scene is rendered or the surface is disposed
+	// */
+	// void waitForRenderingToBeFinished();
 
-	/**
-	 * Makes any thread calling this method wait until either the scene is rendered or the surface is disposed
-	 */
-	void waitForRenderingToBeFinished();
-
-	/**
-	 * Allows any object calling this method to release the thread waiting for the view to be updated
-	 */
-	void authorizeViewUpdate();
-
-	/**
-	 * Makes any thread calling this method wait until can be updated
-	 */
-	void waitForViewUpdateAuthorisation();
+	// /**
+	// * Allows any object calling this method to release the thread waiting for the view to be updated
+	// */
+	// void authorizeViewUpdate();
+	//
+	// /**
+	// * Makes any thread calling this method wait until can be updated
+	// */
+	// void waitForViewUpdateAuthorisation();
 
 	/**
 	 * Wait for surface to be realized.

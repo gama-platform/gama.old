@@ -11,13 +11,13 @@
 package ummisco.gama.ui.views.displays;
 
 import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_BORDER;
-import static msi.gama.common.preferences.GamaPreferences.Runtime.CORE_SYNC;
 
 import java.awt.Color;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Point;
@@ -31,7 +31,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
@@ -75,13 +74,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public LayeredDisplayDecorator decorator;
 
 	/** The synchronizer. */
-	public final IDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
+	// public final IDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
 
 	/** The disposed. */
 	public volatile boolean disposed = false;
 
-	/** The in init phase. */
-	protected volatile boolean inInitPhase = true;
+	// /** The in init phase. */
+	// protected volatile boolean inInitPhase = true;
 
 	/** The closing. */
 	private volatile boolean closing = false;
@@ -132,6 +131,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 	@Override
 	public void addOutput(final IDisplayOutput out) {
+
+		if (out == getOutput()) return; // Check if it is ok in terms of relaunch
+		DEBUG.OUT("Adding Output " + out.getName());
 		super.addOutput(out);
 		if (out instanceof LayeredDisplayOutput) {
 			final IScope scope = out.getScope();
@@ -204,7 +206,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		centralPanel = new CentralPanel(c);
 		createSurfaceComposite(centralPanel);
 		surfaceComposite.setLayoutData(fullData());
-		getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
+		// getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
 		decorator.createDecorations();
 		c.requestLayout();
 		boolean[] toggle = { true };
@@ -305,13 +307,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			}
 		}
-		synchronizer.authorizeViewUpdate();
+		// synchronizer.authorizeViewUpdate();
 		// }
-		if (updateThread != null) {
-			updateThread.interrupt();
-			DEBUG.OUT("Update thread disposed for " + getTitle());
-			updateThread = null;
-		}
+		// if (updateThread != null) {
+		// updateThread.interrupt();
+		// DEBUG.OUT("Update thread disposed for " + getTitle());
+		// updateThread = null;
+		// }
 		if (decorator != null) { decorator.dispose(); }
 		super.widgetDisposed(e);
 	}
@@ -354,58 +356,75 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public Control[] getZoomableControls() { return new Control[] { getParentComposite() }; }
 
 	@Override
-	protected GamaUIJob createUpdateJob() {
-		return new GamaUIJob() {
+	protected Job createUpdateJob() {
+		return new Job(getTitle()) {
 
 			@Override
-			protected UpdatePriority jobPriority() {
-				return UpdatePriority.HIGHEST;
-			}
+			protected IStatus run(final IProgressMonitor monitor) {
+				DEBUG.OUT("UPDATE THREAD: Entering");
+				final IDisplaySurface surface = getDisplaySurface();
+				// synchronizer.waitForSurfaceToBeRealized();
+				DEBUG.OUT("UPDATE THREAD: Surface has been realized");
 
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
+				if (!disposed && !surface.isDisposed()) {
+					try {
+						// synchronizer.waitForViewUpdateAuthorisation();
+
+						DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
+						surface.updateDisplay(false);
+						if (surface.getData().isAutosave()) { takeSnapshot(); }
+						// inInitPhase = false;
+
+					} catch (Exception e) {
+						DEBUG.OUT("Error when updating " + getTitle() + ": " + e.getMessage());
+					}
+				}
 				return Status.OK_STATUS;
 			}
 		};
 	}
 
-	/** The update thread. */
-	Thread updateThread;
-
-	/**
-	 * Inits the update thread.
-	 */
-	private void initUpdateThread() {
-		updateThread = new Thread(() -> {
-			final IDisplaySurface surface = getDisplaySurface();
-			synchronizer.waitForSurfaceToBeRealized();
-			DEBUG.OUT("Surface has been realized");
-
-			while (!disposed && !surface.isDisposed()) {
-				try {
-					synchronizer.waitForViewUpdateAuthorisation();
-					surface.updateDisplay(false);
-					if (surface.getData().isAutosave()) { takeSnapshot(); }
-					inInitPhase = false;
-
-				} catch (Exception e) {
-					DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
-				}
-			}
-		});
-	}
+	// /** The update thread. */
+	// Thread updateThread;
+	//
+	// /**
+	// * Inits the update thread.
+	// */
+	// private void initUpdateThread() {
+	// updateThread = new Thread(() -> {
+	// DEBUG.OUT("UPDATE THREAD: Entering");
+	// final IDisplaySurface surface = getDisplaySurface();
+	// synchronizer.waitForSurfaceToBeRealized();
+	// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
+	//
+	// while (!disposed && !surface.isDisposed()) {
+	// try {
+	// synchronizer.waitForViewUpdateAuthorisation();
+	//
+	// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
+	// surface.updateDisplay(false);
+	// if (surface.getData().isAutosave()) { takeSnapshot(); }
+	// // inInitPhase = false;
+	//
+	// } catch (Exception e) {
+	// DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
+	// }
+	// }
+	// });
+	// }
 
 	@Override
 	public void update(final IDisplayOutput out) {
-		if (updateThread == null || !updateThread.isAlive()) {
-			initUpdateThread();
-			synchronizer.setSurface(getDisplaySurface());
-			updateThread.start();
-		}
-		synchronizer.authorizeViewUpdate();
-		if (!inInitPhase && out.isSynchronized() && canBeSynchronized()) {
-			synchronizer.waitForRenderingToBeFinished();
-		}
+		super.update(out);
+		// if (updateThread == null || !updateThread.isAlive()) {
+		// synchronizer.setSurface(getDisplaySurface());
+		// initUpdateThread();
+		// updateThread.start();
+		// }
+		// synchronizer.authorizeViewUpdate();
+		// if (/* !inInitPhase && */GAMA.getGui().isSynchronized() && canBeSynchronized()) {
+		// synchronizer.waitForRenderingToBeFinished();
+		// }
 	}
 
 	/**
@@ -428,7 +447,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		output.dispose();
 		outputs.remove(output);
 		if (outputs.isEmpty()) {
-			synchronizer.authorizeViewUpdate();
+			// synchronizer.authorizeViewUpdate();
 			close(GAMA.getRuntimeScope());
 		}
 	}
@@ -483,5 +502,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		});
 
 	}
+
+	@Override
+	public boolean isVisible() { return getDisplaySurface().isVisible(); }
 
 }

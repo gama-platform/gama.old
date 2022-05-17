@@ -58,6 +58,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -664,5 +665,17 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
+
+	@Override
+	public boolean isSynchronized() {
+		IExperimentPlan exp = GAMA.getExperiment();
+		if (exp == null || exp.getAgent() == null) return false;
+		IOutputManager manager = exp.getAgent().getOutputManager();
+		if (manager.isSynchronized()) return true;
+		for (SimulationAgent sim : exp.getAgent().getSimulationPopulation()) {
+			if (sim.getOutputManager().isSynchronized()) return true;
+		}
+		return false;
+	}
 
 }

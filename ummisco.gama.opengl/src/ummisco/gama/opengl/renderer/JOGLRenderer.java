@@ -26,6 +26,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.charts.ChartOutput;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
@@ -88,7 +89,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	/** The disposed. */
 	// State
-	protected volatile boolean inited, visible, disposed;
+	protected volatile boolean inited, disposed;
 
 	/** The canvas. */
 	// Canvas
@@ -143,7 +144,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) { WorkbenchHelper.asyncRun(() -> canvas.setVisible(visible)); }
+		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) { WorkbenchHelper.asyncRun(() -> canvas.setVisible(true)); }
 		openGL.setGL2(drawable.getGL().getGL2());
 		cameraHelper.initialize();
 		openGL.initializeGLStates(data.getBackgroundColor());
@@ -171,20 +172,22 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean beginDrawingLayers() {
-		while (!inited) {
-			try {
-				Thread.sleep(10);
-			} catch (final InterruptedException e) {
-				return false;
-			}
-		}
+		if (isNotReadyToUpdate()) return false;
+		// while (!inited) {
+		// try {
+		// Thread.sleep(10);
+		// } catch (final InterruptedException e) {
+		// return false;
+		// }
+		// }
 		return sceneHelper.beginUpdatingScene();
 
 	}
 
 	@Override
 	public boolean isNotReadyToUpdate() {
-		if (data.isSynchronized()) return false;
+		if (!inited || !getCanvas().getVisibleStatus()) return true;
+		if (GAMA.getGui().isSynchronized()) return false;
 		return sceneHelper.isNotReadyToUpdate();
 	}
 
@@ -220,12 +223,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 			lightHelper.draw();
 			sceneHelper.draw();
 		}
-
-		if (!visible) {
-			// We make the canvas visible only after a first display has occured
-			WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
-			visible = true;
-		}
+		//
+		// if (!visible) {
+		// // We make the canvas visible only after a first display has occured
+		// WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
+		// visible = true;
+		// }
 
 	}
 
@@ -245,6 +248,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL.reshape(gl, width, height);
 		// sceneHelper.reshape(width, height);
 		surface.updateDisplay(true);
+		getCanvas().updateVisibleStatus(getCanvas().isVisible());
 	}
 
 	@Override

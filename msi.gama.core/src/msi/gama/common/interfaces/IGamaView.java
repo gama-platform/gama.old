@@ -327,4 +327,11 @@ public interface IGamaView {
 		void initFor(final IScope scope, final UserPanelStatement panel);
 	}
 
+	/**
+	 * Checks if is visible.
+	 *
+	 * @return true, if is visible
+	 */
+	boolean isVisible();
+
 }

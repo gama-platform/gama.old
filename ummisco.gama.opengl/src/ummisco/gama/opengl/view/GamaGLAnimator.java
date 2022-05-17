@@ -211,7 +211,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 			fpsTotal = fpsTotalFrames * 1000f / fpsTotalDuration;
 			fpsLastUpdateTime = now;
 			if (DEBUG.IS_ON()) {
-				StringBuilder sb = new StringBuilder();
+				// StringBuilder sb = new StringBuilder();
 				String fpsLastS = String.valueOf(fpsLast);
 				fpsLastS = fpsLastS.substring(0, fpsLastS.indexOf('.') + 2);
 			}

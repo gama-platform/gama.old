@@ -596,4 +596,11 @@ public interface IGui {
 	 */
 	boolean isInDisplayThread();
 
+	/**
+	 * Checks if is synchronized.
+	 *
+	 * @return true, if is synchronized
+	 */
+	boolean isSynchronized();
+
 }

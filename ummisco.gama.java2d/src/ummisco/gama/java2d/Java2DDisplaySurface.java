@@ -37,7 +37,6 @@ import org.eclipse.swt.SWT;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
@@ -127,7 +126,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	int frames;
 
 	/** The synchronizer. */
-	private IDisplaySynchronizer synchronizer;
+	// private IDisplaySynchronizer synchronizer;
 
 	/** The rendered. */
 	private volatile boolean rendered = false;
@@ -496,7 +495,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		g2d.dispose();
 		frames++;
 		rendered = true;
-		if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
+		getOutput().setRendered(true);
+		// if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
 	}
 
 	/**
@@ -804,8 +804,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
-	@Override
-	public boolean isRendered() { return rendered; }
+	// @Override
+	// public boolean isRendered() { return rendered; }
 
 	@Override
 	public boolean isDisposed() { return disposed; }
@@ -818,10 +818,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
-	@Override
-	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
-		synchronizer = s;
-		synchronizer.signalSurfaceIsRealized();
-	}
+	// @Override
+	// public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
+	// synchronizer = s;
+	// synchronizer.signalSurfaceIsRealized();
+	// }
 
 }

@@ -45,6 +45,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 		final SWTOpenGLDisplaySurface surface =
 				(SWTOpenGLDisplaySurface) GAMA.getGui().createDisplaySurfaceFor(getOutput(), parent);
 		surfaceComposite = surface.renderer.getCanvas();
+		// synchronizer.setSurface(getDisplaySurface());
 		surface.outputReloaded();
 		return surfaceComposite;
 	}
@@ -94,7 +95,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	 */
 	@Override
 	public void hideCanvas() {
-		getGLCanvas().setWindowVisible(false);
+		getGLCanvas().setVisible(false);
 	}
 
 	/**
@@ -102,7 +103,8 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	 */
 	@Override
 	public void showCanvas() {
-		getGLCanvas().setWindowVisible(true);
+		getGLCanvas().setVisible(true);
+		getGLCanvas().reparentWindow();
 	}
 
 	/**
@@ -115,6 +117,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected boolean canBeSynchronized() {
+		if (getGLCanvas().getVisibleStatus()) return true;
 		Window w = getGLCanvas().getNEWTWindow();
 		return w == null || w.isVisible();
 	}
