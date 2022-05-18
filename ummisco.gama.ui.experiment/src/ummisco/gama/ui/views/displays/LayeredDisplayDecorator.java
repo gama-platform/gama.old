@@ -354,10 +354,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						view.getOutput().setPaused(true);
 					}
 					// Seems necessary in addition to the IPartListener
-					// WorkbenchHelper.run(() -> {
-					if (PlatformHelper.isMac() && overlay != null) { overlay.hide(); }
-					// view.hideCanvas();
-					// });
+					WorkbenchHelper.run(() -> {
+						if (PlatformHelper.isMac() && overlay != null) { overlay.hide(); }
+						view.hideCanvas();
+					});
 				} else {
 					// Issue #2639
 					if (PlatformHelper.isMac() && !view.isOpenGL()) {
@@ -368,11 +368,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 							&& view.getDisplaySurface() != null) {
 						view.getOutput().setPaused(previousState);
 					}
-					// Seems necessary in addition to the IPartListener
-					// WorkbenchHelper.asyncRun(() -> {
-					if (PlatformHelper.isMac() && overlay != null) { overlay.display(); }
-					// view.showCanvas();
-					// });
+					// Necessary in addition to the IPartListener as there is no way to distinguish between the wrong
+					// "hidden" event and the good one when there are no tabs.
+					WorkbenchHelper.asyncRun(() -> {
+						if (PlatformHelper.isMac() && overlay != null) { overlay.display(); }
+						view.showCanvas();
+					});
 				}
 
 			}
