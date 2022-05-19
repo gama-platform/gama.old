@@ -32,7 +32,7 @@ public class GamaAgentConverterNetwork implements Converter {
 	ConverterScope convertScope;
 
 	/**
-	 * Instantiates a new gama agent converter network.
+	 * Instantiates a new gama agent converter MPI.
 	 *
 	 * @param s the s
 	 */
@@ -42,8 +42,6 @@ public class GamaAgentConverterNetwork implements Converter {
 
 	@Override
 	public boolean canConvert(final Class arg0) {
-		// return (arg0.equals(GamlAgent.class) ||
-		// arg0.equals(MinimalAgent.class));
 		if (GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0)
 				|| GamlAgent.class.equals(arg0.getSuperclass())) {
 			return true;
@@ -73,9 +71,11 @@ public class GamaAgentConverterNetwork implements Converter {
 //		return converter.unmarshal(reader, arg1, msa);
 //		
 		SavedAgentProvider.push(msa);
-		var tmp = arg1.convertAnother(msa, SavedAgent.class);
+		arg1.convertAnother(msa, SavedAgent.class);
 		SavedAgentProvider.pop();
+		
 		return (SavedAgent)msa;
+		//return msa.restoreTo(convertScope.scope, convertScope.scope.getSimulation().getPopulationFor(msa.getSpecies()));
 //		var context = new AgentUnmarshallingContext(arg1, msa);
 //		context.convertAnother(msa, SavedAgent.class, null);
 //		msa = (MutableSavedAgent) arg1.convertAnother(msa, SavedAgent.class);

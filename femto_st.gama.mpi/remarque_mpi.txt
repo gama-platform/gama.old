@@ -1,0 +1,58 @@
+
+MPI : 
+
+
+-Séparation des logs dans des fichiers différents
+
+-Automatisation du MPI.finalize (propreté de la gestion MPI)
+
+-Run du step en même temps sur chaque proc ? (synchro nécéssaire à la fin d'un step pour l'update)
+
+-Création d'un agent en entrée de OLZ (quid de l'agent déja présent dans l'OLZ de l'autre ? 2 agents sont pas liés ?)
+
+-Largeur des OLZ ? (perception la plus grande du modèle ?)
+
+-Liaison nécéssaire entre les agents partagé en OLZ pour les 2 processeurs (+répercussions des changements sur les 2 procs)
+
+-Sérialization de certains éléments impossible (ex: grid)
+
+-Retour de recv devrait être une lsite d'agent et pas une IList
+
+
+-----------------------------------------------
+
+Point avec NICO : 08/02/22
+
+
+evaluate_sub_model : DEPRECATED
+
+Création d'un sous model via un import + run du step via le controller mpi -> Getter + Setter des infos clés du sous model
+
+import "prey_predator.gaml" as SubModel : accès au sous modèle via SubModel.Experiment.data où Experiment = expérience du sous modèle et data = variable du sous modèle
+
+-----------------------------------------------
+
+Réunion MPI 08/02/22  (Laurent + Paul Breugnot)
+
+
+initialisation : initializer à la main
+
+-> random nb agent/proc + traitement parallel de l'attribution de chaque agent à un proc + chaque proc avec ses agents : random on position
+
+
+
+-----------------------------------------------
+
+Etat MPI 02/03/22
+
+
+Fonctionnalités :
+- Processeurs PAIR -> envoi puis réception
+- Processeurs IMPAIR -> réception puis envoi
+- Ajout des logs du terminal selon le processeur dans logs/1/rank.X où X est le numéro du processeur
+- Vérification du fonctionnement des zones en 3D pour les OLZ
+Bug :
+- Duplication des agents dans les OLZ (à corriger en liant les agents créer dans les OLZ avec les agents originaux provenant des zones de traitement des processus)
+- Serialisation impossible d'un agent de type grid (à voir comment sérialiser simplement une cellule de la grille plutôt que des sérialiser toute la grille)
+- Récupération de la taille du modèle impossible si celle-ci à été redéfinie par l'utilisateur (à voir avec un expert gaml
+- Crash du deserialize d'une liste du même type que l'objet sérialiser  : com.thoughtworks.xstream.converters.ConversionException: Invalid reference  -> reference du model 1 ne correspond pas au référence du model 2

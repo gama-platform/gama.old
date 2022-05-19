@@ -49,7 +49,7 @@
 							<tasks>
 								<!--
 								MacOS
-								x64 -->
+								x64
 								<copy file="../ummisco.gama.product/extraresources/Model.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
 								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
@@ -60,7 +60,7 @@
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
-								<!-- aarch64 -->
+
 								<copy file="../ummisco.gama.product/extraresources/Model.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Resources/" />
 								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
@@ -71,17 +71,14 @@
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
-								
-								<!--
-								Windows
-								-->
+
 								<copy
 									todir="./target/products/ummisco.gama.application.product/win32/win32/x86_64/headless">
 									<fileset
 										dir="../ummisco.gama.product/extraresources/headless/windows" />
 								</copy>
 								
-								<!--
+								
 								Linux
 								-->
 								<copy file="../ummisco.gama.product/launcher_icons/icon.icns"

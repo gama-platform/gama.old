@@ -2435,6 +2435,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return bands.get(getIndex());
 			}
 
+			@Override
+			public int getUniqueID() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public void setUniqueID(int uID) {
+			}
+
 		}
 
 	}

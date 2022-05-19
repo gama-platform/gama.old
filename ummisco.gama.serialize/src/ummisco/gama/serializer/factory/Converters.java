@@ -14,6 +14,7 @@ import com.thoughtworks.xstream.converters.Converter;
 
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterMPI;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
 import ummisco.gama.serializer.gamaType.converters.GamaBDIPlanConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
@@ -130,6 +131,49 @@ public abstract class Converters {
 	{
 		return loadConverterNetwork(cs);
 	}	
+	
+	/**
+	 * Load converter MPI.
+	 *
+	 * @param cs the cs
+	 * @return the converter[]
+	 */
+	private static Converter[] loadConverterMPI(ConverterScope cs)
+	{
+		Converter[] converters= new Converter[15];
+		converters[0]= new GamaBasicTypeConverter(cs);
+		converters[1]=new GamaAgentConverterMPI(cs); /// 
+		converters[2]=new GamaListConverterNetwork(cs);
+		converters[3]=new GamaMapConverter(cs);
+		converters[4]=new GamaPairConverter();
+		converters[5]=new GamaMatrixConverter(cs);
+		converters[6]=new GamaGraphConverter(cs);		
+		converters[7]=new GamaFileConverter(cs);
+		converters[8]=new GamaColorConverter();
+
+		converters[9]=new LogConverter();
+		converters[10]=new SavedAgentConverter(cs);
+		
+		converters[11]= new GamaPopulationConverter(cs);
+		converters[12]= new GamaSpeciesConverter(cs);
+		converters[13]= new GamaPathConverter(cs);	
+		
+		converters[14]= new GamaBDIPlanConverter(cs);	
+		
+		return converters;
+	}
+	
+	/**
+	 * Converter MPI factory.
+	 *
+	 * @param cs the cs
+	 * @return the converter[]
+	 */
+	public static Converter[] converterMPIFactory(ConverterScope cs)
+	{
+		return loadConverterMPI(cs);
+	}	
+	
 	
 	// END TODO
 }

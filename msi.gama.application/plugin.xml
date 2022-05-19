@@ -33,14 +33,6 @@
                name="preferenceCustomization"
                value="plugin_customization.ini">
          </property>
-         <property
-               name="startupForegroundColor"
-               value="165E93">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="230,490,500,16">
-         </property>
       </product>
    </extension>
 

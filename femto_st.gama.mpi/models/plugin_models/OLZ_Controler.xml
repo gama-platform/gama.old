@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulation id="0" sourcePath="OLZ_Controler.gaml" experiment="main">
+  <Parameters>
+  </Parameters>
+  <Outputs>
+    <!--<Output id="1" name="display1" framerate="1" />-->
+  </Outputs>
+</Simulation>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulation id="0" sourcePath="predatorPreyParallelControler2Proc.gaml" finalStep="10" experiment="ParallelControler">
+  <Parameters>
+  </Parameters>
+</Simulation>

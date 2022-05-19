@@ -54,7 +54,6 @@
 --add-exports=java.base/java.lang=ALL-UNNAMED
 --add-exports=java.desktop/sun.awt=ALL-UNNAMED
 --add-exports=java.desktop/sun.java2d=ALL-UNNAMED
- -Dsun.java2d.uiScale.enabled=false
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread 
          -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -67,7 +66,7 @@
       location="msi.gama.application"
       startupProgressRect="71,515,500,12" />
    <launcher name="Gama">
-      <linux icon="launcher_icons/icon.icns"/>
+      <linux icon="launcher_icons/icon.xpm"/>
       <macosx icon="launcher_icons/icon.icns"/>
       <win useIco="true">
          <ico path="launcher_icons/icon.ico"/>
@@ -99,6 +98,7 @@
       <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
+      <plugin id="femto_st.gama.mpi"/>
       <plugin id="idees.gama.mapcomparison"/>
       <plugin id="irit.gaml.extensions.database"/>
       <plugin id="irit.gaml.extensions.test"/>
@@ -278,6 +278,7 @@
       <feature id="ummisco.gama.feature.models" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.modeling.ui" installMode="root"/>
+      <feature id="femto_st.gama.feature.mpi" version="1.8.2.qualifier" installMode="root"/>
    </features>
 
    <configurations>
@@ -293,6 +294,21 @@
    </configurations>
 
    <repositories>
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
       <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
       <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
       <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />

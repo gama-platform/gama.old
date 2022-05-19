@@ -1076,6 +1076,9 @@ public interface IKeyword {
 
 	/** The shape. */
 	String SHAPE = "shape";
+	
+	/** The hash code. */
+	String UNIQUEID = "UNIQUEID";
 
 	/** The show. */
 	String SHOW = "show";

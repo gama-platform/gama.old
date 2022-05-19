@@ -539,4 +539,14 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
+
+	@Override
+	public int getUniqueID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setUniqueID(int uID) {
+	}
 }

@@ -25,6 +25,7 @@ import static msi.gama.common.interfaces.IKeyword.NEIGHBORS;
 import static msi.gama.common.interfaces.IKeyword.NEIGHBOURS;
 import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.TARGET;
+import static msi.gama.common.interfaces.IKeyword.UNIQUEID;
 import static msi.gama.common.interfaces.IKeyword.WIDTH;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
 import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
@@ -500,9 +501,17 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					init.remove(SHAPE);
 				} else if (init.containsKey(LOCATION)) {
 					a.setLocation((GamaPoint) init.get(LOCATION));
-					init.remove(LOCATION);
 				}
 			}
+			if(a.getUniqueID() == 0)
+			{
+				System.out.println("Creating new uniquedID "+a.hashCode());
+				a.setUniqueID(a.hashCode()); // todo here flag
+			}else
+			{
+				System.out.println("THIS AGENTALREADY HAS AN UNIQUE ID ?? "+a.hashCode());
+			}
+			
 			list.add(a);
 		}
 		addAll(list);

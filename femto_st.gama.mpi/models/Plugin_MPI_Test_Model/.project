@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Plugin_MPI_Test_Model</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
+		<nature>msi.gama.application.gamaNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>external/predatorPreyParallelControler.gaml</name>
+			<type>1</type>
+			<location>C:/Users/lucas/git/gama.experimental/femto_st.gama.mpi/models/parallelPredatorPrey/predatorPreyParallelControler.gaml</location>
+		</link>
+		<link>
+			<name>models/OLZ.gaml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/plugin_models/OLZ.gaml</locationURI>
+		</link>
+		<link>
+			<name>models/OLZ_Controler.gaml</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/plugin_models/OLZ_Controler.gaml</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

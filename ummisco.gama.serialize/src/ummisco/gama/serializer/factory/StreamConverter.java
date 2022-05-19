@@ -238,6 +238,76 @@ public abstract class StreamConverter {
 	public static Object convertNetworkStreamToObject(final IScope scope, final String data) {
 		return loadAndBuildNetwork(new ConverterScope(scope),String.class).fromXML(data);
 	}
+	
+	
+	
+	/**
+	 * Load and build MPI.
+	 *
+	 * @param cs
+	 *            the cs
+	 * @return the x stream
+	 */
+	// TODO To remove when possible
+	public static XStream loadAndBuildMPI(final ConverterScope cs, final Object o) {
+
+		XStream streamer=getXStreamInstance(o.getClass());
+		final Converter[] cnv = Converters.converterMPIFactory(cs);
+		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer,c); }
+		return streamer;
+	}
+
+	/**
+	 * Convert MPI object to stream.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 * @return the string
+	 */
+	public static synchronized String convertMPIObjectToStream(final ConverterScope scope, final Object o) {
+		return loadAndBuildMPI(scope,o).toXML(o);
+	}
+
+	/**
+	 * Convert MPI object to stream.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 * @return the string
+	 */
+	public static synchronized String convertMPIObjectToStream(final IScope scope, final Object o) {
+		return loadAndBuildMPI(new ConverterScope(scope),o).toXML(o);
+	}
+
+	/**
+	 * Convert MPI stream to object.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param data
+	 *            the data
+	 * @return the object
+	 */
+	public static synchronized Object convertMPIStreamToObject(final ConverterScope scope, final String data) {
+		return loadAndBuildMPI(scope,String.class).fromXML(data);
+	}
+
+	/**
+	 * Convert MPI stream to object.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param data
+	 *            the data
+	 * @return the object
+	 */
+	public static synchronized Object convertMPIStreamToObject(final IScope scope, final String data) {
+		return loadAndBuildMPI(new ConverterScope(scope),String.class).fromXML(data);
+	}
 
 	// END TODO
 }

@@ -15,8 +15,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
@@ -24,6 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 
@@ -40,6 +43,19 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/** The index. */
 	int index;
 	
+	/** The species **/
+	String species;
+	
+	/** The source **/
+	String source;
+
+	/** The alias **/
+	String alias;
+	
+	/** The uniqueID **/
+	int uniqueID;
+	
+	
 	/** The inner populations. */
 	Map<String, List<SavedAgent>> innerPopulations;
 
@@ -49,6 +65,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 		result.putAll(this);
 		result.innerPopulations = innerPopulations;
 		result.index = index;
+		result.species = species;
+		result.source = source;
+		result.alias = alias;
+		result.uniqueID = uniqueID;
 		return result;
 	}
 
@@ -70,6 +90,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		this();
 		index = agent.getIndex();
+		species = agent.getSpeciesName();
+		source = agent.getScope().getExperiment().getSpeciesName();
+		alias = ((ModelDescription) agent.getScope().getSimulation().getSpecies().getDescription()).getAlias();
+		uniqueID = agent.getUniqueID();
 		saveAttributes(scope, agent);
 		if (agent instanceof IMacroAgent) {
 			saveMicroAgents(scope, (IMacroAgent) agent);
@@ -146,7 +170,71 @@ public class SavedAgent extends GamaMap<String, Object> {
 	public int getIndex() {
 		return index;
 	}
+	
+	/**
+	 * Set the species.
+	 */
+	public void setSpecies(String spcs) {
+		species = spcs;
+	}
+	
+	/**
+	 * Gets the species.
+	 *
+	 * @return the species
+	 */
+	 public String getSpecies() {
+		return species;
+	}
+	
+	/**
+	 * Gets the alias.
+	 *
+	 * @return the alias
+	 */
+	 public String getAlias(){
+		return alias;
+	}
+	 
+	 /**
+	 * Set the alias.
+	 */
+	public void setAlias(String als) {
+		alias = als;
+	}
+	
+	/**
+	 * Gets the source.
+	 *
+	 * @return the source
+	 */
+	 public String getSource(){
+		return source;
+	}
+	 
+	 /**
+	 * Set the source.
+	 */
+	public void setSource(String src) {
+		source = src;
+	}
 
+	/**
+	 * Gets the hashcode.
+	 *
+	 * @return the hashcode
+	 */
+	 public int getUniqueID(){
+		return uniqueID;
+	}
+	 
+	 /**
+	 * Set the hashcode.
+	 */
+	public void setUniqueID(int uID) {
+		uniqueID = uID;
+	}
+	
 	/**
 	 * Saves agent's attributes to a map.
 	 *
@@ -155,7 +243,15 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 */
 	private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final ISpecies species = agent.getSpecies();
+
+		System.out.println("begin of specVar");
+		for (final String specVar : species.getVarNames()) 
+		{
+			System.out.println("specVar = "+specVar);
+		}
+		System.out.println("end of specVar");
 		for (final String specVar : species.getVarNames()) {
+			
 			if (UNSAVABLE_VARIABLES.contains(specVar)) {
 				continue;
 			}
@@ -207,6 +303,11 @@ public class SavedAgent extends GamaMap<String, Object> {
 			}
 			put(specVar, species.getVar(specVar).value(scope, agent));
 		}
+
+		if(agent.getUniqueID() != 0)
+		{
+			put("uniqueID", agent.getUniqueID());
+		}
 	}
 
 	/**
@@ -243,6 +344,55 @@ public class SavedAgent extends GamaMap<String, Object> {
 			throws GamaRuntimeException {
 		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
 		agentAttrs.add(this);
+		agentAttrs.get(0).put("uniqueID", this.getUniqueID());
+		for(var auto : agentAttrs)
+		{
+			System.out.println("auto = "+auto.toString());
+			for(var auto2 : auto.entrySet())
+			{
+				System.out.println(auto2.getKey() + " = "+auto2.getValue());
+			}
+		}
+		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
+		restoreMicroAgents(scope, restoredAgents.get(0));
+
+		return restoredAgents.get(0);
+	}
+	
+	/**
+	 * @param scope
+	 *            Restores the saved agent as a member of the target population.
+	 *
+	 * @param targetPopulation
+	 *            The population that the saved agent will be restored to.
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
+	public IAgent restoreToMPI(final IScope scope, final IPopulation<? extends IAgent> targetPopulation, int uniqueID)
+			throws GamaRuntimeException {
+		System.out.println("RESTORING NEW AGENTS WITH UNIQUEID = "+uniqueID);
+		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
+		agentAttrs.add(this);
+		for(var auto : agentAttrs)
+		{
+			System.out.println("auto = "+auto.toString());
+			for(var auto2 : auto.entrySet())
+			{
+				System.out.println(auto2.getKey() + " = "+auto2.getValue());
+			}
+		}
+		
+		IAgent agentCopy = targetPopulation.stream().filter(agent -> agent.getUniqueID() == uniqueID).findAny().orElse(null);
+		List<Integer> uniqueIDList = targetPopulation.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
+		for(var auto : uniqueIDList)
+		{
+			System.out.println("XXXX = "+auto);
+		}
+		if(agentCopy != null)
+		{	
+			System.out.println("FOUUUUUUUND this agent = "+agentCopy);
+			return agentCopy;
+		}
 		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
 		restoreMicroAgents(scope, restoredAgents.get(0));
 
@@ -256,12 +406,31 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 * @throws GamaRuntimeException
 	 */
 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
+		System.out.println("restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents");
+		// todo check unique ID of all the agents in the pop
 		if (innerPopulations != null) {
 			for (final String microPopName : innerPopulations.keySet()) {
 				final IPopulation<? extends IAgent> microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
 
 				if (microPop != null) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
+					List<Integer> uniqueIDList = savedMicros.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
+					for(var auto : uniqueIDList)
+					{
+						System.out.println("UNQIUEDDIIDIDIDDIID = "+auto);
+					}
+					if(uniqueIDList.contains(host.getUniqueID()))
+					{
+						System.out.println("Micro Agent already created in the simulation");
+						return;
+					}
+					for(SavedAgent sa : savedMicros)
+					{
+						if(sa.getUniqueID() == host.getUniqueID())
+						{
+							return;
+						}
+					}
 					final List<Map<String, Object>> microAttrs = new ArrayList<>();
 					for (final SavedAgent sa : savedMicros) {
 						microAttrs.add(sa);
@@ -273,8 +442,14 @@ public class SavedAgent extends GamaMap<String, Object> {
 					for (int i = 0; i < microAgents.size(); i++) {
 						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
 					}
+				}else
+				{
+					System.out.println("microPop ================== null");
 				}
 			}
+		}else
+		{
+			System.out.println("innerPopulations ================== null");
 		}
 	}
 }

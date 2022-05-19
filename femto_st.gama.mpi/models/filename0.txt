@@ -1,0 +1,2987 @@
+Hello
+MyRank = 0
+sizeNetwork = 2
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1943504976
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 17191
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.13721880003684983</minx>
+              <maxx>0.13721880003684983</maxx>
+              <miny>41.9578150111154</miny>
+              <maxy>41.9578150111154</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.13721880003684983</x>
+                <y>41.9578150111154</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.15113103102605654</x>
+          <y>40.95791179088411</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>240929841</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>17.751755004692367</minx>
+              <maxx>17.751755004692367</maxx>
+              <miny>25.929587064015397</miny>
+              <maxy>25.929587064015397</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>17.751755004692367</x>
+                <y>25.929587064015397</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+            <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>223.85160279071778</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>5.408036897408552</x>
+            <y>14.071027734791326</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>18.472891569287185</x>
+                        <y>26.62238000220428</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>5.408036897408552</x>
+                        <y>14.071027734791326</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.path.GamaSpatialPath/edges/contentTypeListReducer"/>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>17.030618440097548</x>
+          <y>25.236794125826513</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor reference="../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.GamaColor_-NamedGamaColor"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>3</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1660210758</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent3</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>2.890043786703245</minx>
+              <maxx>2.890043786703245</maxx>
+              <miny>45.587169861182744</miny>
+              <maxy>45.587169861182744</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>2.890043786703245</x>
+                <y>45.587169861182744</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+            <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>339.75665094501414</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>41.63748188800375</x>
+            <y>31.297595038493327</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>1.9518122795261716</x>
+                        <y>45.933178009844355</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>41.63748188800375</x>
+                        <y>31.297595038493327</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.path.GamaSpatialPath/edges/contentTypeListReducer"/>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>3.828275293880319</x>
+          <y>45.241161712521134</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor reference="../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.GamaColor_-NamedGamaColor"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.1372188000368498 41.9578150111154) at {0.13721880003684983,41.9578150111154,0.0}, heading=270.79713783506367, current_path=path between {0.13721880003684983,41.9578150111154,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.13721880003684983,41.9578150111154,0.0}, destination={0.15113103102605654,40.95791179088411,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.1372188000368498 41.9578150111154) at {0.13721880003684983,41.9578150111154,0.0}
+heading = 270.79713783506367
+current_path = path between {0.13721880003684983,41.9578150111154,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.13721880003684983,41.9578150111154,0.0}
+destination = {0.15113103102605654,40.95791179088411,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 424760482
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 240929841
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 240929841
+auto = {name=movingAgent0, shape=POINT (17.751755004692367 25.929587064015397) at {17.751755004692367,25.929587064015397,0.0}, heading=223.85160279071778, current_path=path between {17.751755004692367,25.929587064015397,0.0} and {5.408036897408552,14.071027734791326,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (18.472891569287185 26.62238000220428, 5.408036897408552 14.071027734791326) at {11.940464233347868,20.346703868497805,0.0}, location={17.751755004692367,25.929587064015397,0.0}, destination={17.030618440097548,25.236794125826513,0.0}, col=rgb (0, 0, 0, 255), target={5.408036897408552,14.071027734791326,0.0}}
+name = movingAgent0
+shape = POINT (17.751755004692367 25.929587064015397) at {17.751755004692367,25.929587064015397,0.0}
+heading = 223.85160279071778
+current_path = path between {17.751755004692367,25.929587064015397,0.0} and {5.408036897408552,14.071027734791326,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (18.472891569287185 26.62238000220428, 5.408036897408552 14.071027734791326) at {11.940464233347868,20.346703868497805,0.0}
+location = {17.751755004692367,25.929587064015397,0.0}
+destination = {17.030618440097548,25.236794125826513,0.0}
+col = rgb (0, 0, 0, 255)
+target = {5.408036897408552,14.071027734791326,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 424760482
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 2030109219
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1660210758
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1660210758
+auto = {name=movingAgent3, shape=POINT (2.890043786703245 45.587169861182744) at {2.890043786703245,45.587169861182744,0.0}, heading=339.75665094501414, current_path=path between {2.890043786703245,45.587169861182744,0.0} and {41.63748188800375,31.297595038493327,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}, location={2.890043786703245,45.587169861182744,0.0}, destination={3.828275293880319,45.241161712521134,0.0}, col=rgb (0, 0, 0, 255), target={41.63748188800375,31.297595038493327,0.0}}
+name = movingAgent3
+shape = POINT (2.890043786703245 45.587169861182744) at {2.890043786703245,45.587169861182744,0.0}
+heading = 339.75665094501414
+current_path = path between {2.890043786703245,45.587169861182744,0.0} and {41.63748188800375,31.297595038493327,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}
+location = {2.890043786703245,45.587169861182744,0.0}
+destination = {3.828275293880319,45.241161712521134,0.0}
+col = rgb (0, 0, 0, 255)
+target = {41.63748188800375,31.297595038493327,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 424760482
+XXXX = 2030109219
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1255423127
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1126853840
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, movingAgent0, movingAgent3, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 17191
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>240929841</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>17.030618440097548</minx>
+              <maxx>17.030618440097548</maxx>
+              <miny>25.236794125826513</miny>
+              <maxy>25.236794125826513</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>17.030618440097548</x>
+                <y>25.236794125826513</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>223.85160279071778</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>5.408036897408552</x>
+            <y>14.071027734791326</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>18.472891569287185</x>
+                        <y>26.62238000220428</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>5.408036897408552</x>
+                        <y>14.071027734791326</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>16.30948187550273</x>
+          <y>24.54400118763763</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.15113103102605652</minx>
+              <maxx>0.15113103102605652</maxx>
+              <miny>40.95791179088411</miny>
+              <maxy>40.95791179088411</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.15113103102605652</x>
+                <y>40.95791179088411</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+            <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.path.GamaSpatialPath/edges/contentTypeListReducer"/>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.16504326201526323</x>
+          <y>39.95800857065282</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor reference="../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.GamaColor_-NamedGamaColor"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>3</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1660210758</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent3</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>3.828275293880319</minx>
+              <maxx>3.828275293880319</maxx>
+              <miny>45.241161712521134</miny>
+              <maxy>45.241161712521134</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>3.828275293880319</x>
+                <y>45.241161712521134</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+            <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>339.7566509450141</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>41.63748188800375</x>
+            <y>31.297595038493327</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>1.9518122795261716</x>
+                        <y>45.933178009844355</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>41.63748188800375</x>
+                        <y>31.297595038493327</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.path.GamaSpatialPath/edges/contentTypeListReducer"/>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>4.7665068010573926</x>
+          <y>44.89515356385952</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor reference="../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.GamaColor_-NamedGamaColor"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 240929841
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 240929841
+auto = {name=movingAgent0, shape=POINT (17.030618440097548 25.236794125826513) at {17.030618440097548,25.236794125826513,0.0}, heading=223.85160279071778, current_path=path between {17.030618440097548,25.236794125826513,0.0} and {5.408036897408552,14.071027734791326,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (18.472891569287185 26.62238000220428, 5.408036897408552 14.071027734791326) at {11.940464233347868,20.346703868497805,0.0}, location={17.030618440097548,25.236794125826513,0.0}, destination={16.30948187550273,24.54400118763763,0.0}, col=rgb (0, 0, 0, 255), target={5.408036897408552,14.071027734791326,0.0}}
+name = movingAgent0
+shape = POINT (17.030618440097548 25.236794125826513) at {17.030618440097548,25.236794125826513,0.0}
+heading = 223.85160279071778
+current_path = path between {17.030618440097548,25.236794125826513,0.0} and {5.408036897408552,14.071027734791326,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (18.472891569287185 26.62238000220428, 5.408036897408552 14.071027734791326) at {11.940464233347868,20.346703868497805,0.0}
+location = {17.030618440097548,25.236794125826513,0.0}
+destination = {16.30948187550273,24.54400118763763,0.0}
+col = rgb (0, 0, 0, 255)
+target = {5.408036897408552,14.071027734791326,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 102993193
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.1511310310260565 40.95791179088411) at {0.15113103102605652,40.95791179088411,0.0}, heading=270.79713783506367, current_path=path between {0.15113103102605652,40.95791179088411,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.15113103102605652,40.95791179088411,0.0}, destination={0.16504326201526323,39.95800857065282,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.1511310310260565 40.95791179088411) at {0.15113103102605652,40.95791179088411,0.0}
+heading = 270.79713783506367
+current_path = path between {0.15113103102605652,40.95791179088411,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.15113103102605652,40.95791179088411,0.0}
+destination = {0.16504326201526323,39.95800857065282,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1126241161
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1660210758
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1660210758
+auto = {name=movingAgent3, shape=POINT (3.828275293880319 45.241161712521134) at {3.828275293880319,45.241161712521134,0.0}, heading=339.7566509450141, current_path=path between {3.828275293880319,45.241161712521134,0.0} and {41.63748188800375,31.297595038493327,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}, location={3.828275293880319,45.241161712521134,0.0}, destination={4.7665068010573926,44.89515356385952,0.0}, col=rgb (0, 0, 0, 255), target={41.63748188800375,31.297595038493327,0.0}}
+name = movingAgent3
+shape = POINT (3.828275293880319 45.241161712521134) at {3.828275293880319,45.241161712521134,0.0}
+heading = 339.7566509450141
+current_path = path between {3.828275293880319,45.241161712521134,0.0} and {41.63748188800375,31.297595038493327,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}
+location = {3.828275293880319,45.241161712521134,0.0}
+destination = {4.7665068010573926,44.89515356385952,0.0}
+col = rgb (0, 0, 0, 255)
+target = {41.63748188800375,31.297595038493327,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+XXXX = 1126241161
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 270257306
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1923651234
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent0, movingAgent1, movingAgent3, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 11942
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.1650432620152632</minx>
+              <maxx>0.1650432620152632</maxx>
+              <miny>39.95800857065282</miny>
+              <maxy>39.95800857065282</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.1650432620152632</x>
+                <y>39.95800857065282</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.17895549300446992</x>
+          <y>38.95810535042153</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>3</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1660210758</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent3</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>4.7665068010573926</minx>
+              <maxx>4.7665068010573926</maxx>
+              <miny>44.89515356385952</miny>
+              <maxy>44.89515356385952</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>4.7665068010573926</x>
+                <y>44.89515356385952</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/keysType"/>
+            <dataType class="msi.gaml.types.GamaNoType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/attributes/dataType"/>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>339.7566509450141</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>41.63748188800375</x>
+            <y>31.297595038493327</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>1.9518122795261716</x>
+                        <y>45.933178009844355</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>41.63748188800375</x>
+                        <y>31.297595038493327</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.path.GamaSpatialPath/edges/contentTypeListReducer"/>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>5.704738308234466</x>
+          <y>44.54914541519791</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor reference="../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.util.GamaColor_-NamedGamaColor"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.1650432620152632 39.95800857065282) at {0.1650432620152632,39.95800857065282,0.0}, heading=270.79713783506367, current_path=path between {0.1650432620152632,39.95800857065282,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.1650432620152632,39.95800857065282,0.0}, destination={0.17895549300446992,38.95810535042153,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.1650432620152632 39.95800857065282) at {0.1650432620152632,39.95800857065282,0.0}
+heading = 270.79713783506367
+current_path = path between {0.1650432620152632,39.95800857065282,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.1650432620152632,39.95800857065282,0.0}
+destination = {0.17895549300446992,38.95810535042153,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1449610539
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1660210758
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1660210758
+auto = {name=movingAgent3, shape=POINT (4.7665068010573926 44.89515356385952) at {4.7665068010573926,44.89515356385952,0.0}, heading=339.7566509450141, current_path=path between {4.7665068010573926,44.89515356385952,0.0} and {41.63748188800375,31.297595038493327,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}, location={4.7665068010573926,44.89515356385952,0.0}, destination={5.704738308234466,44.54914541519791,0.0}, col=rgb (0, 0, 0, 255), target={41.63748188800375,31.297595038493327,0.0}}
+name = movingAgent3
+shape = POINT (4.7665068010573926 44.89515356385952) at {4.7665068010573926,44.89515356385952,0.0}
+heading = 339.7566509450141
+current_path = path between {4.7665068010573926,44.89515356385952,0.0} and {41.63748188800375,31.297595038493327,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (1.9518122795261716 45.933178009844355, 41.63748188800375 31.297595038493327) at {21.79464708376496,38.61538652416884,0.0}
+location = {4.7665068010573926,44.89515356385952,0.0}
+destination = {5.704738308234466,44.54914541519791,0.0}
+col = rgb (0, 0, 0, 255)
+target = {41.63748188800375,31.297595038493327,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+XXXX = 1449610539
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1486928279
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1553933915
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, movingAgent3, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6699
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.1789554930044699</minx>
+              <maxx>0.1789554930044699</maxx>
+              <miny>38.95810535042153</miny>
+              <maxy>38.95810535042153</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.1789554930044699</x>
+                <y>38.95810535042153</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.1928677239936766</x>
+          <y>37.958202130190244</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.1789554930044699 38.95810535042153) at {0.1789554930044699,38.95810535042153,0.0}, heading=270.79713783506367, current_path=path between {0.1789554930044699,38.95810535042153,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.1789554930044699,38.95810535042153,0.0}, destination={0.1928677239936766,37.958202130190244,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.1789554930044699 38.95810535042153) at {0.1789554930044699,38.95810535042153,0.0}
+heading = 270.79713783506367
+current_path = path between {0.1789554930044699,38.95810535042153,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.1789554930044699,38.95810535042153,0.0}
+destination = {0.1928677239936766,37.958202130190244,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1719575730
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1756976653
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6720
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.19286772399367658</minx>
+              <maxx>0.19286772399367658</maxx>
+              <miny>37.958202130190244</miny>
+              <maxy>37.958202130190244</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.19286772399367658</x>
+                <y>37.958202130190244</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>0.9999999999999999</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.2067799549828833</x>
+          <y>36.958298909958955</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.1928677239936766 37.958202130190244) at {0.19286772399367658,37.958202130190244,0.0}, heading=270.79713783506367, current_path=path between {0.19286772399367658,37.958202130190244,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=0.9999999999999999, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.19286772399367658,37.958202130190244,0.0}, destination={0.2067799549828833,36.958298909958955,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.1928677239936766 37.958202130190244) at {0.19286772399367658,37.958202130190244,0.0}
+heading = 270.79713783506367
+current_path = path between {0.19286772399367658,37.958202130190244,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 0.9999999999999999
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.19286772399367658,37.958202130190244,0.0}
+destination = {0.2067799549828833,36.958298909958955,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1355666515
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 564974707
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6706
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.20677995498288326</minx>
+              <maxx>0.20677995498288326</maxx>
+              <miny>36.958298909958955</miny>
+              <maxy>36.958298909958955</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.20677995498288326</x>
+                <y>36.958298909958955</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.22069218597208998</x>
+          <y>35.958395689727666</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.2067799549828833 36.958298909958955) at {0.20677995498288326,36.958298909958955,0.0}, heading=270.79713783506367, current_path=path between {0.20677995498288326,36.958298909958955,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.20677995498288326,36.958298909958955,0.0}, destination={0.22069218597208998,35.958395689727666,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.2067799549828833 36.958298909958955) at {0.20677995498288326,36.958298909958955,0.0}
+heading = 270.79713783506367
+current_path = path between {0.20677995498288326,36.958298909958955,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.20677995498288326,36.958298909958955,0.0}
+destination = {0.22069218597208998,35.958395689727666,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1752700699
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+XXXX = 564974707
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 588180678
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6705
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.22069218597208995</minx>
+              <maxx>0.22069218597208995</maxx>
+              <miny>35.958395689727666</miny>
+              <maxy>35.958395689727666</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.22069218597208995</x>
+                <y>35.958395689727666</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.23460441696129666</x>
+          <y>34.95849246949638</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.2206921859720899 35.958395689727666) at {0.22069218597208995,35.958395689727666,0.0}, heading=270.79713783506367, current_path=path between {0.22069218597208995,35.958395689727666,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.22069218597208995,35.958395689727666,0.0}, destination={0.23460441696129666,34.95849246949638,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.2206921859720899 35.958395689727666) at {0.22069218597208995,35.958395689727666,0.0}
+heading = 270.79713783506367
+current_path = path between {0.22069218597208995,35.958395689727666,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.22069218597208995,35.958395689727666,0.0}
+destination = {0.23460441696129666,34.95849246949638,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 429765548
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+XXXX = 564974707
+XXXX = 588180678
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1979693985
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6702
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.23460441696129664</minx>
+              <maxx>0.23460441696129664</maxx>
+              <miny>34.95849246949638</miny>
+              <maxy>34.95849246949638</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.23460441696129664</x>
+                <y>34.95849246949638</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.24851664795050335</x>
+          <y>33.95858924926509</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.2346044169612966 34.95849246949638) at {0.23460441696129664,34.95849246949638,0.0}, heading=270.79713783506367, current_path=path between {0.23460441696129664,34.95849246949638,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.23460441696129664,34.95849246949638,0.0}, destination={0.24851664795050335,33.95858924926509,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.2346044169612966 34.95849246949638) at {0.23460441696129664,34.95849246949638,0.0}
+heading = 270.79713783506367
+current_path = path between {0.23460441696129664,34.95849246949638,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.23460441696129664,34.95849246949638,0.0}
+destination = {0.24851664795050335,33.95858924926509,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1820774338
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+XXXX = 564974707
+XXXX = 588180678
+XXXX = 1979693985
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 696540214
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6701
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.24851664795050332</minx>
+              <maxx>0.24851664795050332</maxx>
+              <miny>33.95858924926509</miny>
+              <maxy>33.95858924926509</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.24851664795050332</x>
+                <y>33.95858924926509</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>1.0</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.26242887893971006</x>
+          <y>32.9586860290338</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.2485166479505033 33.95858924926509) at {0.24851664795050332,33.95858924926509,0.0}, heading=270.79713783506367, current_path=path between {0.24851664795050332,33.95858924926509,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=1.0, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.24851664795050332,33.95858924926509,0.0}, destination={0.26242887893971006,32.9586860290338,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.2485166479505033 33.95858924926509) at {0.24851664795050332,33.95858924926509,0.0}
+heading = 270.79713783506367
+current_path = path between {0.24851664795050332,33.95858924926509,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 1.0
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.24851664795050332,33.95858924926509,0.0}
+destination = {0.26242887893971006,32.9586860290338,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1257727061
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+XXXX = 564974707
+XXXX = 588180678
+XXXX = 1979693985
+XXXX = 696540214
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1521208631
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 
+startListener 
+startListener started
+RequestListenerThread Run begin 
+MPI BARRIER WAITING = 0
+waiting 0 .... 
+MPI BARRIER END = 0
+requestOrdinal = 1
+requestOrdinal sent
+before receiving sizeOfMessage
+sizeOfMessage = 6705
+before receiving message
+message <list>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>1</index>
+    <species>movingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1676452981</uniqueID>
+    <variables>
+      <keys>
+        <string>name</string>
+        <string>shape</string>
+        <string>heading</string>
+        <string>current_path</string>
+        <string>real_speed</string>
+        <string>speed</string>
+        <string>current_edge</string>
+        <string>location</string>
+        <string>destination</string>
+        <string>col</string>
+        <string>target</string>
+      </keys>
+      <data>
+        <string>movingAgent1</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>0.26242887893971</minx>
+              <maxx>0.26242887893971</maxx>
+              <miny>32.9586860290338</miny>
+              <maxy>32.9586860290338</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory">
+              <precisionModel>
+                <modelType>
+                  <name>FLOATING</name>
+                </modelType>
+                <scale>0.0</scale>
+              </precisionModel>
+              <coordinateSequenceFactory class="msi.gama.common.geometry.GamaCoordinateSequenceFactory"/>
+              <SRID>0</SRID>
+            </factory>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point>
+                <x>0.26242887893971</x>
+                <y>32.9586860290338</y>
+                <z>0.0</z>
+              </point>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+          <attributes class="msi.gama.util.GamaMap">
+            <keysType class="msi.gaml.types.GamaStringType">
+              <GamaType>string</GamaType>
+            </keysType>
+            <dataType class="msi.gaml.types.GamaNoType">
+              <GamaType>unknown</GamaType>
+            </dataType>
+            <valuesMapReducer>
+              <entry>
+                <string>index_on_path_segment</string>
+                <int>0</int>
+              </entry>
+              <entry>
+                <string>index_on_path</string>
+                <int>0</int>
+              </entry>
+            </valuesMapReducer>
+          </attributes>
+        </msi.gama.metamodel.shape.GamaShape>
+        <double>270.79713783506367</double>
+        <msi.gama.util.path.GamaSpatialPath>
+          <start class="msi.gama.metamodel.shape.GamaPoint" reference="../../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+          <target class="msi.gama.metamodel.shape.GamaPoint">
+            <x>0.6240102710466988</x>
+            <y>6.97102102951046</y>
+            <z>0.0</z>
+          </target>
+          <edges class="msi.gama.util.GamaList">
+            <valuesListReducer>
+              <msi.gama.metamodel.shape.GamaShape>
+                <geometry class="org.locationtech.jts.geom.LineString">
+                  <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+                  <SRID>0</SRID>
+                  <points class="msi.gama.common.geometry.GamaCoordinateSequence">
+                    <dimension>3</dimension>
+                    <points>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.12330656904764314</x>
+                        <y>42.95771823134669</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                      <msi.gama.metamodel.shape.GamaPoint>
+                        <x>0.6240102710466988</x>
+                        <y>6.97102102951046</y>
+                        <z>0.0</z>
+                      </msi.gama.metamodel.shape.GamaPoint>
+                    </points>
+                  </points>
+                </geometry>
+              </msi.gama.metamodel.shape.GamaShape>
+            </valuesListReducer>
+            <contentTypeListReducer class="msi.gaml.types.GamaGeometryType">
+              <GamaType>geometry</GamaType>
+            </contentTypeListReducer>
+          </edges>
+        </msi.gama.util.path.GamaSpatialPath>
+        <double>0.9999999999999999</double>
+        <double>1.0</double>
+        <msi.gama.metamodel.shape.GamaShape reference="../msi.gama.util.path.GamaSpatialPath/edges/valuesListReducer/msi.gama.metamodel.shape.GamaShape"/>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.metamodel.shape.GamaShape/geometry/coordinates/point"/>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>0.27634110992891675</x>
+          <y>31.95878280880251</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <msi.gama.util.GamaColor_-NamedGamaColor>
+          <r>0.0</r>
+          <g>0.0</g>
+          <b>0.0</b>
+          <a>255.0</a>
+        </msi.gama.util.GamaColor_-NamedGamaColor>
+        <msi.gama.metamodel.shape.GamaPoint reference="../msi.gama.util.path.GamaSpatialPath/target"/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+  <msi.gama.metamodel.agent.MinimalAgent>
+    <index>0</index>
+    <species>standingAgent</species>
+    <source>movingExp</source>
+    <alias>pp</alias>
+    <uniqueID>1589633786</uniqueID>
+    <variables>
+      <keys>
+        <string>location</string>
+        <string>name</string>
+        <string>shape</string>
+        <string>closest</string>
+      </keys>
+      <data>
+        <msi.gama.metamodel.shape.GamaPoint>
+          <x>25.0</x>
+          <y>27.0</y>
+          <z>0.0</z>
+        </msi.gama.metamodel.shape.GamaPoint>
+        <string>standingAgent0</string>
+        <msi.gama.metamodel.shape.GamaShape>
+          <geometry class="org.locationtech.jts.geom.Point">
+            <envelope>
+              <minx>25.0</minx>
+              <maxx>25.0</maxx>
+              <miny>27.0</miny>
+              <maxy>27.0</maxy>
+            </envelope>
+            <factory class="msi.gama.common.geometry.GamaGeometryFactory" reference="../../../../../../msi.gama.metamodel.agent.MinimalAgent/variables/data/msi.gama.metamodel.shape.GamaShape/geometry/factory"/>
+            <SRID>0</SRID>
+            <coordinates class="msi.gama.common.geometry.UniqueCoordinateSequence">
+              <point reference="../../../../msi.gama.metamodel.shape.GamaPoint"/>
+              <dimension>3</dimension>
+            </coordinates>
+          </geometry>
+        </msi.gama.metamodel.shape.GamaShape>
+        <null/>
+      </data>
+    </variables>
+  </msi.gama.metamodel.agent.MinimalAgent>
+</list>
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1676452981
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1676452981
+auto = {name=movingAgent1, shape=POINT (0.26242887893971 32.9586860290338) at {0.26242887893971,32.9586860290338,0.0}, heading=270.79713783506367, current_path=path between {0.26242887893971,32.9586860290338,0.0} and {0.6240102710466988,6.97102102951046,0.0}, real_speed=0.9999999999999999, speed=1.0, current_edge=LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}, location={0.26242887893971,32.9586860290338,0.0}, destination={0.27634110992891675,31.95878280880251,0.0}, col=rgb (0, 0, 0, 255), target={0.6240102710466988,6.97102102951046,0.0}}
+name = movingAgent1
+shape = POINT (0.26242887893971 32.9586860290338) at {0.26242887893971,32.9586860290338,0.0}
+heading = 270.79713783506367
+current_path = path between {0.26242887893971,32.9586860290338,0.0} and {0.6240102710466988,6.97102102951046,0.0}
+real_speed = 0.9999999999999999
+speed = 1.0
+current_edge = LINESTRING (0.1233065690476431 42.95771823134669, 0.6240102710466988 6.97102102951046) at {0.373658420047171,24.964369630428575,0.0}
+location = {0.26242887893971,32.9586860290338,0.0}
+destination = {0.27634110992891675,31.95878280880251,0.0}
+col = rgb (0, 0, 0, 255)
+target = {0.6240102710466988,6.97102102951046,0.0}
+XXXX = 16213070
+XXXX = 844995198
+XXXX = 1645581946
+XXXX = 2030109219
+XXXX = 102993193
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1841269537
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+unmarshal MPI 
+variables in agent = 
+msa.getAlias()+"."+msa.getSource() = pp.movingExp
+msa.getUniqueID() = 1589633786
+convertScope.scope.getSimulation().getExternMicroPopulationFor("pp.movingExp") = Population of movingExp
+RESTORING NEW AGENTS WITH UNIQUEID = 1589633786
+auto = {location={25.0,27.0,0.0}, name=standingAgent0, shape=POINT (25 27) at {25.0,27.0,0.0}, closest=null}
+location = {25.0,27.0,0.0}
+name = standingAgent0
+shape = POINT (25 27) at {25.0,27.0,0.0}
+closest = null
+XXXX = 1223859131
+XXXX = 1126853840
+XXXX = 1923651234
+XXXX = 1553933915
+XXXX = 1756976653
+XXXX = 564974707
+XXXX = 588180678
+XXXX = 1979693985
+XXXX = 696540214
+XXXX = 1521208631
+CREATING ALL THESE AGENTS
+SETTER UNIQUEID = 1536429490
+restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents
+innerPopulations ================== null
+IAgent : 
+
+
+returning getAgentInNeighborInnerOLZ to gaml = [movingAgent1, standingAgent0]
+MPI BARRIER WAITING = 0
+MPI BARRIER END = 0
+stopListener 

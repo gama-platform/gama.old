@@ -22,6 +22,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MutableSavedAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.util.IMap;
@@ -49,6 +50,23 @@ public class SavedAgentConverter implements Converter {
 		final SavedAgent savedAgt = (SavedAgent) arg0;
 		writer.startNode("index");
 		writer.setValue("" + savedAgt.getIndex());
+		writer.endNode();
+		
+		writer.startNode("species");
+		writer.setValue("" + savedAgt.getSpecies());
+		writer.endNode();
+		
+		writer.startNode("source");
+		writer.setValue("" + savedAgt.getSource());
+		writer.endNode();
+		
+		writer.startNode("alias");
+		writer.setValue("" + savedAgt.getAlias());
+		writer.endNode();
+		
+
+		writer.startNode("uniqueID");
+		writer.setValue("" + savedAgt.getUniqueID());
 		writer.endNode();
 
 		final ArrayList<String> keys = new ArrayList<>();
@@ -87,12 +105,39 @@ public class SavedAgentConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1, MutableSavedAgent base) {
 
 		reader.moveDown();
-		final String indexStr = reader.getValue();
+		final String indexStr = reader.getValue();	
 		
 		final MutableSavedAgent agtToReturn = base != null ? base : new MutableSavedAgent();
 		
 		final Integer index = Integer.parseInt(indexStr);
 		agtToReturn.setIndex(index);
+		
+		reader.moveUp();
+		reader.moveDown();
+		final String species = reader.getValue();
+		agtToReturn.setSpecies(species);	
+		
+		reader.moveUp();
+		reader.moveDown();
+		final String source = reader.getValue();
+		agtToReturn.setSource(source);
+		
+		reader.moveUp();
+		reader.moveDown();
+		final String alias = reader.getValue();
+		agtToReturn.setAlias(alias);
+	
+		reader.moveUp();
+		reader.moveDown();
+		final int uniqueID = Integer.parseInt(reader.getValue());
+		System.out.println("OK BEBE MONTRE MOI + "+uniqueID);
+		agtToReturn.setUniqueID(uniqueID);
+
+		System.out.println("variables in agent = ");
+		for(var auto : agtToReturn.entrySet())
+		{
+			System.out.println(auto.getKey() + " = " +auto.getValue());
+		}
 		
 		reader.moveUp();
 		reader.moveDown();

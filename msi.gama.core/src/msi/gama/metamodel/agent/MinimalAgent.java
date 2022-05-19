@@ -55,8 +55,8 @@ public class MinimalAgent extends AbstractAgent {
 	/** The geometry. */
 	protected final IShape geometry;
 
-	/** The hash code. */
-	private final int hashCode;
+	/** The uniqueID. */
+	private int uniqueID;
 
 	/**
 	 * @param s
@@ -79,7 +79,8 @@ public class MinimalAgent extends AbstractAgent {
 	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
 		super(index);
 		this.population = population;
-		this.hashCode = Objects.hash(getPopulation(), index);
+		this.uniqueID = Objects.hash(getPopulation(), index);
+		System.out.println("MinimalAgent unique ID construfctot = " + this.uniqueID);
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
@@ -144,6 +145,17 @@ public class MinimalAgent extends AbstractAgent {
 	public void setName(final String name) {
 		this.name = name;
 		notifyVarValueChange(IKeyword.NAME, name);
+	}
+	
+	@Override
+	public void setUniqueID(int uID) {
+		System.out.println("SETTER UNIQUEID = "+uID);
+		this.uniqueID = uID;
+	}
+	
+	@Override
+	public int getUniqueID() {
+		return uniqueID;
 	}
 
 	@SuppressWarnings ("rawtypes")
@@ -270,10 +282,5 @@ public class MinimalAgent extends AbstractAgent {
 			name = ISpecies.stepActionName)
 	public Object _step_(final IScope scope) {
 		return super.step(scope);
-	}
-
-	@Override
-	public final int hashCode() {
-		return hashCode;
 	}
 }

@@ -1,0 +1,129 @@
+
+My shape POLYGON ((0 0, 0 25, 50 25, 50 0, 0 0))
+My rank is 0
+NetSize 2
+My cell is cell[0]
+neighbors 1
+outer_OLZ_area POLYGON ((0 -5, -0.9754516100806433 -4.903926402016151, -1.9134171618254516 -4.619397662556432, -2.777851165098011 -4.157348061512726, -3.5355339059327386 -3.5355339059327373, -4.157348061512727 -2.77785116509801, -4.619397662556434 -1.9134171618254483, -4.903926402016152 -0.9754516100806419, -5 0, -5 25, -4.903926402016152 25.975451610080643, -4.619397662556434 26.91341716182545, -4.157348061512726 27.77785116509801, -3.5355339059327373 28.535533905932738, -2.77785116509801 29.157348061512728, -1.9134171618254485 29.619397662556434, -0.975451610080641 29.903926402016154, 0 30, 50 30, 50.97545161008064 29.903926402016154, 51.91341716182545 29.619397662556434, 52.777851165098014 29.157348061512728, 53.53553390593274 28.535533905932738, 54.15734806151273 27.77785116509801, 54.61939766255644 26.91341716182545, 54.903926402016154 25.97545161008064, 55 25, 55 0, 54.903926402016154 -0.9754516100806412, 54.61939766255644 -1.913417161825449, 54.15734806151273 -2.777851165098011, 53.53553390593274 -3.5355339059327373, 52.777851165098014 -4.157348061512726, 51.91341716182545 -4.619397662556434, 50.97545161008064 -4.903926402016152, 50 -5, 0 -5), (0 0, 0 25, 50 25, 50 0, 0 0))
+inner_OLZ_area POLYGON ((5 0, 4.024548389919357 0.0960735979838487, 3.0865828381745484 0.3806023374435679, 2.222148834901989 0.8426519384872737, 1.4644660940672614 1.4644660940672627, 0.8426519384872728 2.22214883490199, 0.3806023374435661 3.086582838174552, 0.0960735979838478 4.024548389919358, 0 5, 0 20, 0.0960735979838478 20.975451610080643, 0.3806023374435661 21.91341716182545, 0.8426519384872737 22.77785116509801, 1.4644660940672627 23.535533905932738, 2.22214883490199 24.157348061512728, 3.0865828381745515 24.619397662556434, 4.024548389919359 24.903926402016154, 5 25, 45 25, 45.97545161008064 24.903926402016154, 46.91341716182545 24.619397662556434, 47.777851165098014 24.157348061512728, 48.53553390593274 23.535533905932738, 49.15734806151273 22.77785116509801, 49.61939766255644 21.91341716182545, 49.903926402016154 20.97545161008064, 50 20, 50 5, 49.903926402016154 4.024548389919358, 49.61939766255644 3.086582838174551, 49.15734806151273 2.222148834901989, 48.53553390593274 1.4644660940672627, 47.777851165098014 0.8426519384872737, 46.91341716182545 0.3806023374435661, 45.97545161008064 0.0960735979838478, 45 0, 5 0), (5 5, 5 20, 45 20, 45 5, 5 5))
+main_area POLYGON ((0 0, 0 25, 50 25, 50 0, 0 0))
+--------0----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[1],movingAgent[2],movingAgent[3],movingAgent[4],standingAgent[0],cell[0],cell[1]]
+Agents insideMain = [movingAgent[4],movingAgent[2]]
+Agents inside_outer_OLZ = [standingAgent[0],movingAgent[0]]
+Agents inside_inner_OLZ = []
+agent deleted = null, movingAgent1, movingAgent3
+Agents in INNER + MAIN + OUTER : [movingAgent[4],movingAgent[2],standingAgent[0],movingAgent[0]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[5],movingAgent[6],movingAgent[7],standingAgent[1]]
+b3
+b4
+--------1----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[5],movingAgent[6],movingAgent[7],standingAgent[0],standingAgent[1],cell[0],cell[1]]
+Agents insideMain = [movingAgent[2],movingAgent[4]]
+Agents inside_outer_OLZ = [standingAgent[1],standingAgent[0],movingAgent[0],movingAgent[6]]
+Agents inside_inner_OLZ = []
+agent deleted = null, movingAgent1, movingAgent3
+Agents in INNER + MAIN + OUTER : [movingAgent[2],movingAgent[4],standingAgent[1],standingAgent[0],movingAgent[0],movingAgent[6]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[8],movingAgent[9],movingAgent[10],standingAgent[2]]
+b3
+b4
+--------2----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[9],movingAgent[10],standingAgent[0],standingAgent[1],standingAgent[2],cell[0],cell[1]]
+Agents insideMain = [movingAgent[0],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[2]]
+Agents inside_outer_OLZ = [standingAgent[0],standingAgent[2],standingAgent[1]]
+Agents inside_inner_OLZ = [movingAgent[8],movingAgent[0],movingAgent[6]]
+agent deleted = null, movingAgent1, movingAgent3
+Agents in INNER + MAIN + OUTER : [movingAgent[0],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[2],standingAgent[0],standingAgent[2],standingAgent[1]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[11],movingAgent[12],standingAgent[3]]
+b3
+b4
+--------3----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[11],movingAgent[12],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],cell[0],cell[1]]
+Agents insideMain = [movingAgent[4],movingAgent[8],movingAgent[6],movingAgent[0],movingAgent[2]]
+Agents inside_outer_OLZ = [standingAgent[2],standingAgent[1],standingAgent[3],standingAgent[0]]
+Agents inside_inner_OLZ = [movingAgent[6],movingAgent[8],movingAgent[0]]
+agent deleted = null, movingAgent1, movingAgent3
+Agents in INNER + MAIN + OUTER : [movingAgent[4],movingAgent[8],movingAgent[6],movingAgent[0],movingAgent[2],standingAgent[2],standingAgent[1],standingAgent[3],standingAgent[0]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[13],standingAgent[4]]
+b3
+b4
+--------4----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[13],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],cell[0],cell[1]]
+Agents insideMain = [movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[0],movingAgent[2]]
+Agents inside_outer_OLZ = [standingAgent[0],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[1]]
+Agents inside_inner_OLZ = [movingAgent[0],movingAgent[8],movingAgent[6]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[0],movingAgent[2],standingAgent[0],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[1]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[14],standingAgent[5]]
+b3
+b4
+--------5----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[14],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[5],cell[0],cell[1]]
+Agents insideMain = [movingAgent[0],movingAgent[2],movingAgent[8],movingAgent[6],movingAgent[4]]
+Agents inside_outer_OLZ = [standingAgent[3],standingAgent[5],standingAgent[4],standingAgent[2],standingAgent[1],standingAgent[0]]
+Agents inside_inner_OLZ = [movingAgent[0],movingAgent[6],movingAgent[8]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[0],movingAgent[2],movingAgent[8],movingAgent[6],movingAgent[4],standingAgent[3],standingAgent[5],standingAgent[4],standingAgent[2],standingAgent[1],standingAgent[0]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[15],standingAgent[6]]
+b3
+b4
+--------6----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[15],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[5],standingAgent[6],cell[0],cell[1]]
+Agents insideMain = [movingAgent[6],movingAgent[8],movingAgent[2],movingAgent[0],movingAgent[4]]
+Agents inside_outer_OLZ = [standingAgent[0],standingAgent[3],standingAgent[2],standingAgent[6],standingAgent[1],standingAgent[4],standingAgent[5]]
+Agents inside_inner_OLZ = [movingAgent[6],movingAgent[2],movingAgent[8],movingAgent[0]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[6],movingAgent[8],movingAgent[2],movingAgent[0],movingAgent[4],standingAgent[0],standingAgent[3],standingAgent[2],standingAgent[6],standingAgent[1],standingAgent[4],standingAgent[5]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[16],standingAgent[7]]
+b3
+b4
+--------7----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[16],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[5],standingAgent[6],standingAgent[7],cell[0],cell[1]]
+Agents insideMain = [movingAgent[8],movingAgent[2],movingAgent[6],movingAgent[4],movingAgent[0]]
+Agents inside_outer_OLZ = [standingAgent[1],standingAgent[2],standingAgent[4],standingAgent[6],standingAgent[0],standingAgent[7],standingAgent[5],standingAgent[3]]
+Agents inside_inner_OLZ = [movingAgent[6],movingAgent[2],movingAgent[0],movingAgent[8]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[8],movingAgent[2],movingAgent[6],movingAgent[4],movingAgent[0],standingAgent[1],standingAgent[2],standingAgent[4],standingAgent[6],standingAgent[0],standingAgent[7],standingAgent[5],standingAgent[3]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[17],standingAgent[8]]
+b3
+b4
+--------8----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[17],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[5],standingAgent[6],standingAgent[7],standingAgent[8],cell[0],cell[1]]
+Agents insideMain = [movingAgent[2],movingAgent[6],movingAgent[0],movingAgent[4],movingAgent[8]]
+Agents inside_outer_OLZ = [standingAgent[1],standingAgent[5],standingAgent[2],standingAgent[7],standingAgent[3],standingAgent[0],standingAgent[8],standingAgent[4],standingAgent[6]]
+Agents inside_inner_OLZ = [movingAgent[8],movingAgent[6],movingAgent[2],movingAgent[0]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[2],movingAgent[6],movingAgent[0],movingAgent[4],movingAgent[8],standingAgent[1],standingAgent[5],standingAgent[2],standingAgent[7],standingAgent[3],standingAgent[0],standingAgent[8],standingAgent[4],standingAgent[6]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[18],standingAgent[9]]
+b3
+b4
+--------9----------
+ALL agents in the model = [OLZ_model[0],movingAgent[0],movingAgent[2],movingAgent[4],movingAgent[6],movingAgent[8],movingAgent[18],standingAgent[0],standingAgent[1],standingAgent[2],standingAgent[3],standingAgent[4],standingAgent[5],standingAgent[6],standingAgent[7],standingAgent[8],standingAgent[9],cell[0],cell[1]]
+Agents insideMain = [movingAgent[0],movingAgent[4],movingAgent[8],movingAgent[6],movingAgent[2]]
+Agents inside_outer_OLZ = [standingAgent[0],standingAgent[9],standingAgent[4],standingAgent[3],standingAgent[1],standingAgent[2],standingAgent[5],standingAgent[7],standingAgent[6],standingAgent[8]]
+Agents inside_inner_OLZ = [movingAgent[2]]
+agent deleted = null, movingAgent1
+Agents in INNER + MAIN + OUTER : [movingAgent[0],movingAgent[4],movingAgent[8],movingAgent[6],movingAgent[2],standingAgent[0],standingAgent[9],standingAgent[4],standingAgent[3],standingAgent[1],standingAgent[2],standingAgent[5],standingAgent[7],standingAgent[6],standingAgent[8]]
+b1
+b2
+getAgentInNeighborInnerOLZ = [movingAgent[19],standingAgent[10]]
+b3
+b4

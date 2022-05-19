@@ -64,7 +64,10 @@ import msi.gaml.variables.IVariable;
 				type = IType.POINT,
 				depends_on = IKeyword.SHAPE,
 				doc = { @doc ("Returns the location of the agent") }),
-
+		@variable (
+				name = IKeyword.UNIQUEID,
+				type = IType.INT,
+				doc = { @doc ("Returns the uniqueID of the agent") }),
 		@variable (
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
@@ -199,6 +202,25 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @return the index
 	 */
 	int getIndex();
+	
+
+	/**
+	 * Gets the uniqueID.
+	 *
+	 * @return the index
+	 */
+	@getter (IKeyword.UNIQUEID)
+	int getUniqueID();
+	
+	
+	/**
+	 * Sets the uniqueID var value.
+	 *
+	 * @param uID
+	 *            the uniqueID
+	 */
+	@setter (IKeyword.UNIQUEID)
+	void setUniqueID(int uID);
 
 	/**
 	 * Gets the species name.
@@ -580,5 +602,4 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	default void setGeometricalType(final Type t) {
 		getGeometry().setGeometricalType(t);
 	}
-
 }
