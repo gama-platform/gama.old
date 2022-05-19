@@ -30,15 +30,15 @@ public class GamaListener {
 		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "../temp";
 
 		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
-		File f = new File(Globals.TEMP_PATH);
-		deleteFolder(f);
-		// check if the directory can be created
-		// using the abstract path name
-		if (f.mkdir()) {
-			System.out.println("TEMP Directory is created");
-		} else {
-			System.out.println("TEMP Directory cannot be created");
-		}
+//		File f = new File(Globals.TEMP_PATH);
+//		deleteFolder(f);
+//		// check if the directory can be created
+//		// using the abstract path name
+//		if (f.mkdir()) {
+//			System.out.println("TEMP Directory is created");
+//		} else {
+//			System.out.println("TEMP Directory cannot be created");
+//		}
 		createSocketServer(p, a);
 	}
 
