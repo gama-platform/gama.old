@@ -208,6 +208,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				WorkbenchHelper.runInUI("", 0, m -> {
 					DEBUG.OUT("Part Visible:" + partRef.getTitle());
 					view.showCanvas();
+					IDisplaySurface s = view.getDisplaySurface();
+					if (s != null) { s.getOutput().update(); }
 					if (overlay != null) { overlay.display(); }
 				});
 			}
@@ -372,7 +374,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 					// "hidden" event and the good one when there are no tabs.
 					WorkbenchHelper.asyncRun(() -> {
 						if (PlatformHelper.isMac() && overlay != null) { overlay.display(); }
-						view.showCanvas();
+						// view.showCanvas();
 					});
 				}
 

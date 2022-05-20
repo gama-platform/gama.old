@@ -34,7 +34,6 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -42,7 +41,6 @@ import msi.gama.outputs.SnapshotMaker;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
@@ -206,20 +204,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		centralPanel = new CentralPanel(c);
 		createSurfaceComposite(centralPanel);
 		surfaceComposite.setLayoutData(fullData());
-		// getOutput().setSynchronized(getOutput().isSynchronized() || CORE_SYNC.getValue());
 		decorator.createDecorations();
 		c.requestLayout();
-		boolean[] toggle = { true };
-		if (getOutput().getData().fullScreen() > -1) {
-			new Thread(() -> {
-				DEBUG.OUT("Fullscreen thread started");
-				if (GamaPreferences.Runtime.CORE_ASK_FULLSCREEN.getValue()) {
-					toggle[0] = Messages.question("Toggle fullscreen confirmation", "Do you want to go fullscreen ?");
-				}
-				DEBUG.OUT("Going full screen");
-				WorkbenchHelper.runInUI("FS", 500, m -> toggleFullScreen());
-			}).start();
-		}
 	}
 
 	/**

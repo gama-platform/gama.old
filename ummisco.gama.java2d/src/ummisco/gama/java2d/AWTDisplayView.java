@@ -43,6 +43,14 @@ public class AWTDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
+	public void ownCreatePartControl(final Composite c) {
+		super.ownCreatePartControl(c);
+		if (getOutput().getData().fullScreen() > -1) {
+			new Thread(() -> { WorkbenchHelper.runInUI("FS", 1000, m -> toggleFullScreen()); }).start();
+		}
+	}
+
+	@Override
 	public void focusCanvas() {
 		WorkbenchHelper.asyncRun(() -> centralPanel.forceFocus());
 	}

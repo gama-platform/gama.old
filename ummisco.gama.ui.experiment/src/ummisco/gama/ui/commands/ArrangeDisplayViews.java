@@ -29,6 +29,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -38,9 +41,14 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
+import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+
+/**
+ * The Class ArrangeDisplayViews.
+ */
 
 /**
  * The Class ArrangeDisplayViews.
@@ -160,13 +168,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		// DEBUG.TO_STRING(StreamEx.of(holders).map(MPlaceholder::getElementId).toArray()));
 		holders.forEach(ph -> {
 			if (ph.getRef() instanceof MPart part) {
-				// getPartService().showPart(part, PartState.ACTIVATE);
+
 				// Necessary as otherwise the Java2D display does not show up if it is alone
 				ph.setToBeRendered(true);
 				ph.setVisible(true);
-				getPartService().activate(part, true);
-				getPartService().bringToTop(part);
-
+				getPartService().showPart(part, PartState.VISIBLE);
+				// getPartService().activate(part, true);
+				// getPartService().bringToTop(part);
 			}
 
 		});
@@ -179,13 +187,35 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	public static void decorateDisplays() {
 		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
-		// DEBUG.OUT("Displays to decorate "
-		// + DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+		DEBUG.OUT("Displays to decorate "
+				+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
 		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }
 			v.showOverlay(PerspectiveHelper.showOverlays());
 		});
+		displays.forEach(v -> {
+			if (v.getOutput().getData().fullScreen() > -1) {
+				WorkbenchHelper.runInUI("FS", 100, m -> {
+					WorkbenchHelper.getPage().bringToTop((IWorkbenchPart) v);
+					v.showCanvas();
+					v.focusCanvas();
+					v.getOutput().update();
+
+					// v.toggleFullScreen();
+				});
+			}
+
+		});
+
+		// displays.forEach(v -> {
+		// if (v.getOutput().getData().fullScreen() > -1) {
+		// // new Thread(() -> {
+		// // DEBUG.OUT("Fullscreen thread started");
+		// v.toggleFullScreen();
+		// // }).start();
+		// }
+		// });
 	}
 
 	/**

@@ -116,6 +116,12 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
+	public void ownCreatePartControl(final Composite c) {
+		super.ownCreatePartControl(c);
+		getSurfaceComposite().forceFocus();
+	}
+
+	@Override
 	protected boolean canBeSynchronized() {
 		if (getGLCanvas().getVisibleStatus()) return true;
 		Window w = getGLCanvas().getNEWTWindow();

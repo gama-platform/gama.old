@@ -172,7 +172,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean beginDrawingLayers() {
-		if (isNotReadyToUpdate()) return false;
+		if (isNotReadyToUpdate()) {
+			DEBUG.OUT(">>> " + getSurface().getOutput().getName() + " is not ready to update");
+			return false;
+		}
 		// while (!inited) {
 		// try {
 		// Thread.sleep(10);
@@ -229,7 +232,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		// WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
 		// visible = true;
 		// }
-
+		if (first && getData().fullScreen() > -1) {
+			first = false;
+			WorkbenchHelper.runInUI("FS", 100, m -> this.getSurface().getOutput().getView().toggleFullScreen());
+		}
 	}
 
 	/** The first. */
