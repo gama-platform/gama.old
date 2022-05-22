@@ -112,7 +112,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		final Point o = getSurfaceComposite().toDisplay(0, 0);
 		final Point s = getSurfaceComposite().getSize();
 		Rectangle r = new Rectangle(o.x, o.y, s.x, s.y);
-		DEBUG.OUT("Looking in surfaceComposite rectangle " + r);
+		// DEBUG.OUT("Looking in surfaceComposite rectangle " + r);
 
 		return r.contains(x, y);
 	}
@@ -131,7 +131,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void addOutput(final IDisplayOutput out) {
 
 		if (out == getOutput()) return; // Check if it is ok in terms of relaunch
-		DEBUG.OUT("Adding Output " + out.getName());
+		// DEBUG.OUT("Adding Output " + out.getName());
 		super.addOutput(out);
 		if (out instanceof LayeredDisplayOutput) {
 			final IScope scope = out.getScope();
@@ -347,16 +347,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				DEBUG.OUT("UPDATE THREAD: Entering");
+				// DEBUG.OUT("UPDATE THREAD: Entering");
 				final IDisplaySurface surface = getDisplaySurface();
 				// synchronizer.waitForSurfaceToBeRealized();
-				DEBUG.OUT("UPDATE THREAD: Surface has been realized");
+				// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
 
 				if (!disposed && !surface.isDisposed()) {
 					try {
 						// synchronizer.waitForViewUpdateAuthorisation();
 
-						DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
+						// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
 						surface.updateDisplay(false);
 						if (surface.getData().isAutosave()) { takeSnapshot(); }
 						// inInitPhase = false;
@@ -490,6 +490,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public boolean isVisible() { return getDisplaySurface().isVisible(); }
+	public boolean isVisible() { return getDisplaySurface().isVisible() || isFullScreen(); }
 
 }

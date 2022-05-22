@@ -103,7 +103,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void update() throws GamaRuntimeException {
 		if (view != null) {
-			DEBUG.OUT("Output asking view to update");
+			// DEBUG.OUT("Output asking view to update");
 			view.update(this);
 		}
 	}

@@ -123,7 +123,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected boolean canBeSynchronized() {
-		if (getGLCanvas().getVisibleStatus()) return true;
+		if (getGLCanvas().getVisibleStatus() || isFullScreen()) return true;
 		Window w = getGLCanvas().getNEWTWindow();
 		return w == null || w.isVisible();
 	}

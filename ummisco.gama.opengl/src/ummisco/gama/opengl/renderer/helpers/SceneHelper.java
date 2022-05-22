@@ -59,7 +59,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 */
 	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
-		DEBUG.OUT("Creating the SceneHelper");
+		// DEBUG.OUT("Creating the SceneHelper");
 	}
 
 	@Override

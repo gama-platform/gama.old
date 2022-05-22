@@ -360,11 +360,11 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the new window visible
 	 */
 	public boolean setWindowVisible(final boolean b) {
-		DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
+		// DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return false;
 		final Window w = (Window) drawable;
 		if (!w.isNativeValid()) return false;
-		DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
+		// DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
 		w.setVisible(b);
 		DEBUG.OUT("Make GLWindow " + name + " visible " + b + " succeeded");
 		// surface.synchronizer.signalSurfaceIsRealized();

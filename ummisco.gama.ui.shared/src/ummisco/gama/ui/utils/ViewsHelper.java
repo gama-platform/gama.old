@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IViewPart;
@@ -212,7 +214,19 @@ public class ViewsHelper {
 		if (view != null) return view;
 		Control c = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getCursorControl());
 		DEBUG.OUT("Second try with control under mouse -- " + c);
-		if (c instanceof InnerComponent) return ((InnerComponent) c).getView();
+		if (c instanceof CTabFolder t) {
+
+			// DEBUG.OUT("Tab detected ");
+
+			CTabItem i = t.getSelection();
+			if (i != null) {
+				for (IDisplaySurface d : allDisplaySurfaces()) {
+					if (d.getOutput().getName().equals(i.getText())) return d.getOutput().getView();
+				}
+			}
+		}
+
+		if (c instanceof InnerComponent i) return i.getView();
 		final IWorkbenchPage page = getPage();
 		if (page == null) return null;
 		final Point p = WorkbenchHelper.getDisplay().getCursorLocation();

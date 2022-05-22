@@ -30,7 +30,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Iterables;
@@ -41,7 +40,6 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
-import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -124,7 +122,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			final List<MPlaceholder> holders = collectAndPrepareDisplayViews();
 			if (tree != null) {
 				GamaNode<String> child = tree.getRoot().getChildren().get(0);
-				DEBUG.LOG("Tree root = " + child.getData() + " weight " + child.getWeight());
+				// DEBUG.LOG("Tree root = " + child.getData() + " weight " + child.getWeight());
 				if (child.getWeight() == null) { child.setWeight(5000); }
 				final MPartStack displayStack = getDisplaysPlaceholder();
 				if (displayStack == null) return;
@@ -187,8 +185,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 */
 	public static void decorateDisplays() {
 		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
-		DEBUG.OUT("Displays to decorate "
-				+ DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+		// DEBUG.OUT("Displays to decorate "
+		// + DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
 		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }

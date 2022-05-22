@@ -222,7 +222,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
-			DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
+			// DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
 			fs.setImage(GamaIcons.create("display.fullscreen2").image());
 			// Toolbar
 			if (!toolbar.isDisposed()) {

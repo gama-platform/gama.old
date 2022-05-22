@@ -609,7 +609,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void update() throws GamaRuntimeException {
 
 		if (surface == null) return;
-		DEBUG.OUT("Entering update of the output");
+		// DEBUG.OUT("Entering update of the output");
 		getData().update(getScope(), description.getFacets());
 		if (overlayInfo != null) { getScope().step(overlayInfo); }
 

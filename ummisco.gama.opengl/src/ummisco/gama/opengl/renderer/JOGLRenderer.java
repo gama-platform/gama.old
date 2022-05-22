@@ -103,11 +103,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	public JOGLRenderer(final IDisplaySurface surface) {
 		setDisplaySurface(surface);
-		keystoneHelper = createKeystoneHelper();
+		keystoneHelper = new KeystoneHelper(this);
 		pickingHelper = new PickingHelper(this);
 		lightHelper = new LightHelper(this);
 		cameraHelper = new CameraHelper(this);
-		sceneHelper = createSceneHelper();
+		sceneHelper = new SceneHelper(this);
 	}
 
 	@Override
@@ -115,24 +115,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		super.setDisplaySurface(d);
 		d.getScope().setGraphics(this);
 		openGL = new OpenGL(this);
-	}
-
-	/**
-	 * Creates the scene helper.
-	 *
-	 * @return the scene helper
-	 */
-	protected SceneHelper createSceneHelper() {
-		return new SceneHelper(this);
-	}
-
-	/**
-	 * Creates the keystone helper.
-	 *
-	 * @return the keystone helper
-	 */
-	protected KeystoneHelper createKeystoneHelper() {
-		return new KeystoneHelper(this);
 	}
 
 	@Override
@@ -172,10 +154,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean beginDrawingLayers() {
-		if (isNotReadyToUpdate()) {
-			DEBUG.OUT(">>> " + getSurface().getOutput().getName() + " is not ready to update");
+		if (isNotReadyToUpdate()) // DEBUG.OUT(">>> " + getSurface().getOutput().getName() + " is not ready to update");
 			return false;
-		}
 		// while (!inited) {
 		// try {
 		// Thread.sleep(10);
@@ -189,7 +169,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean isNotReadyToUpdate() {
-		if (!inited || !getCanvas().getVisibleStatus()) return true;
+		if (super.isNotReadyToUpdate() || !inited || !getCanvas().getVisibleStatus()) return true;
 		if (GAMA.getGui().isSynchronized()) return false;
 		return sceneHelper.isNotReadyToUpdate();
 	}

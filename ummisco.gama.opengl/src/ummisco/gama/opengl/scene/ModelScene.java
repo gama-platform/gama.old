@@ -330,11 +330,11 @@ public class ModelScene {
 	 * @return
 	 */
 	public ModelScene copyStatic() {
-		DEBUG.OUT("Creating static scene");
+		// DEBUG.OUT("Creating static scene");
 		final ModelScene newScene = new ModelScene(renderer, false);
 		layers.forEach((name, layer) -> {
 			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
-				DEBUG.OUT("===>> Adding " + name + " as static ");
+				// DEBUG.OUT("===>> Adding " + name + " as static ");
 				newScene.layers.put(name, layer);
 			}
 		});
