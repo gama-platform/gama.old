@@ -235,6 +235,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			normalParentOfFullScreenControl.requestLayout();
 			destroyFullScreenShell();
 		} else {
+			ViewsHelper.activate(view);
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
 			fs.setImage(GamaIcons.create("display.fullscreen3").image());
@@ -420,6 +421,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		fullScreenShell.dispose();
 		fullScreenShell = null;
 		ViewsHelper.unregisterFullScreenView(view);
+		ViewsHelper.activate(view);
 	}
 
 	/**

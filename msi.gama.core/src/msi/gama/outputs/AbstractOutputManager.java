@@ -316,7 +316,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 				}
 			}
 		}

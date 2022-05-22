@@ -296,4 +296,14 @@ public class ViewsHelper {
 		});
 	}
 
+	/**
+	 * Activate.
+	 *
+	 * @param view
+	 *            the view
+	 */
+	public static void activate(final IWorkbenchPart view) {
+		WorkbenchHelper.getPage().activate(view);
+	}
+
 }

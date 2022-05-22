@@ -104,7 +104,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	@Override
 	public void showCanvas() {
 		getGLCanvas().setVisible(true);
-		getGLCanvas().reparentWindow();
+		// getGLCanvas().reparentWindow();
 	}
 
 	/**

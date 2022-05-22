@@ -184,7 +184,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			setLayout(emptyLayout());
 			setLayoutData(fullData());
 			setParentComposite(this);
-			// form.setMaximizedControl(this);
 		}
 
 		/**
@@ -352,7 +351,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 				// synchronizer.waitForSurfaceToBeRealized();
 				// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
 
-				if (!disposed && !surface.isDisposed()) {
+				if (surface != null && !disposed && !surface.isDisposed()) {
 					try {
 						// synchronizer.waitForViewUpdateAuthorisation();
 
@@ -482,7 +481,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		closing = true;
 		WorkbenchHelper.asyncRun(() -> {
 			try {
-				if (getDisplaySurface() != null) { getDisplaySurface().dispose(); }
+				IDisplaySurface surface = getDisplaySurface();
+				if (surface != null) { surface.dispose(); }
 				ViewsHelper.hideView(this);
 			} catch (final Exception e) {}
 		});
@@ -490,6 +490,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public boolean isVisible() { return getDisplaySurface().isVisible() || isFullScreen(); }
+	public boolean isVisible() {
+		IDisplaySurface surface = getDisplaySurface();
+		return surface != null && surface.isVisible() || isFullScreen();
+	}
 
 }
