@@ -125,7 +125,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 	@Override
 	public boolean stop() {
 		this.stopRequested = true;
-		// if (PlatformHelper.isARM() && WorkbenchHelper.isDisplayThread()) return true;
+		if (WorkbenchHelper.isDisplayThread()) return true;
 		try {
 			this.animatorThread.join();
 		} catch (final InterruptedException e) {} finally {
