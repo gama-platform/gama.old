@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * CommandEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * TextDisplayer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -32,6 +32,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 
+	/** The text. */
 	StyledText text;
 
 	/**
@@ -85,7 +86,7 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 		java.awt.Color b = getStatement().getBackground(getScope());
 		Color color = c == null ? null : GamaColors.toSwtColor(c);
 		Color back = b == null ? null : GamaColors.toSwtColor(b);
-		text = new StyledText(composite, SWT.BORDER | SWT.WRAP | SWT.READ_ONLY);
+		text = new StyledText(composite, SWT.WRAP | SWT.READ_ONLY);
 		text.setJustify(true);
 		text.setMargins(4, 4, 4, 4);
 		if (back != null) {

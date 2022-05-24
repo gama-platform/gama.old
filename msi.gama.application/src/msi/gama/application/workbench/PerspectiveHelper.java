@@ -347,14 +347,12 @@ public class PerspectiveHelper {
 			try {
 				page.setPerspective(descriptor);
 			} catch (final NullPointerException e) {
-				// DEBUG.ERR(
-				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
-				// Working around the bug in e4...");
+				DEBUG.ERR("NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
 				page.setPerspective(descriptor);
 			}
 			activateAutoSave(withAutoSave);
 			if (isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId)) {
-				// DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
+				DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
@@ -677,7 +675,7 @@ public class PerspectiveHelper {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
 				deletePerspectiveFromApplication(currentSimulationPerspective);
-				// DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
+				DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
 		}

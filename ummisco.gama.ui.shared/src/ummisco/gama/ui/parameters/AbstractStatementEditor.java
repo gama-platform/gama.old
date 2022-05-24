@@ -68,7 +68,7 @@ public abstract class AbstractStatementEditor<T extends INamed> extends Abstract
 	protected final int[] getToolItems() { return new int[0]; }
 
 	@Override
-	protected final Object retrieveValueOfParameter() throws GamaRuntimeException {
+	protected final Object retrieveValueOfParameter(final boolean b) throws GamaRuntimeException {
 		return null;
 	}
 

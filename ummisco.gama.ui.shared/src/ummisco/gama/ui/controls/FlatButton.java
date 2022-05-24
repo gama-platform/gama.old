@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FlatButton.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FlatButton.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -426,7 +426,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			gc.setFont(getFont());
 			final Point extent = gc.textExtent(text + "...");
 			gc.dispose();
-			preferredWidth += extent.x + FlatButton.innerMarginWidth * 2;
+			preferredWidth += extent.x + FlatButton.innerMarginWidth;
 			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
 		}
 		preferredWidth += rightPadding;
