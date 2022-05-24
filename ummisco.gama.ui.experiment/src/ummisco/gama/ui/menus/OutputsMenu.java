@@ -80,7 +80,7 @@ public class OutputsMenu extends ContributionItem {
 				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
 		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
-		menuItem(main, e -> GAMA.getExperiment().unSynchronizeAllOutputs(),
+		menuItem(main, e -> GAMA.getExperiment().desynchronizeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
 	}
 

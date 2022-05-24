@@ -119,24 +119,22 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 */
 	void resume();
 
-	/**
-	 * Asks this manager to synchronize all of its display outputs with the simulation. see
-	 * {@link IDisplayOutput#setSynchronized(boolean)}
-	 */
-	void synchronize();
-
-	/**
-	 * Asks this manager to desynchronize all of its display outputs with the simulation. see
-	 * {@link IDisplayOutput#setSynchronized(boolean)}
-	 */
-	void unSynchronize();
-
-	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	boolean isSynchronized();
+	// /**
+	// * Asks this manager to synchronize all of its display outputs with the simulation.
+	// */
+	// void synchronize();
+	//
+	// /**
+	// * Asks this manager to desynchronize all of its display outputs with the simulation.
+	// */
+	// void desynchronize();
+	//
+	// /**
+	// * Checks if is synchronized.
+	// *
+	// * @return true, if is synchronized
+	// */
+	// boolean isSynchronized();
 
 	/**
 	 * Asks this manager to close all of its outputs (see {@link IOutput#close()}

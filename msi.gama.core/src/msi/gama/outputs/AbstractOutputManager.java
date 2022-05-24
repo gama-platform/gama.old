@@ -19,7 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
@@ -68,7 +68,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	protected int displayIndex;
 
 	/** The sync. */
-	protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
+	// protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/**
 	 * Instantiates a new abstract output manager.
@@ -119,7 +119,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		try {
 			// AD: explicit addition of an ArrayList to prevent dispose errors
 			// (when outputs remove themselves from the list)
-			sync = false;
+			GAMA.desynchronizeFrontmostExperiment();
 			for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
 			clear();
 		} catch (final Exception e) {
@@ -174,26 +174,26 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.setPaused(false); }
 	}
 
-	@Override
-	public void synchronize() {
-		// for (final IDisplayOutput o : getDisplayOutputs()) {
+	// @Override
+	// public void synchronize() {
+	// // for (final IDisplayOutput o : getDisplayOutputs()) {
+	//
+	// sync = true;
+	//
+	// // /* o.setSynchronized(true); */ }
+	// }
+	//
+	// @Override
+	// public void desynchronize() {
+	// // for (final IDisplayOutput o : getDisplayOutputs()) {
+	//
+	// sync = false;
+	//
+	// // /* o.setSynchronized(false); */ }
+	// }
 
-		sync = true;
-
-		// /* o.setSynchronized(true); */ }
-	}
-
-	@Override
-	public void unSynchronize() {
-		// for (final IDisplayOutput o : getDisplayOutputs()) {
-
-		sync = false;
-
-		// /* o.setSynchronized(false); */ }
-	}
-
-	@Override
-	public boolean isSynchronized() { return sync; }
+	// @Override
+	// public boolean isSynchronized() { return sync; }
 
 	@Override
 	public void close() {
@@ -213,7 +213,15 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
-		sync = this.getFacetValue(scope, "synchronized", false);
+		if (this.hasFacet("synchronized")) {
+			boolean sync = this.getFacetValue(scope, "synchronized", false);
+			if (sync) {
+				scope.getExperiment().getSpecies().synchronizeAllOutputs();
+			} else {
+				scope.getExperiment().getSpecies().desynchronizeAllOutputs();
+			}
+			GAMA.getGui().updateExperimentSyncState(scope);
+		}
 		boolean atLeastOneOutputAutosaving = false;
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 			if (!open(scope, output)) return false;
@@ -222,7 +230,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			}
 		}
 		atLeastOneOutputAutosaving |= evaluateAutoSave(scope);
-		if (atLeastOneOutputAutosaving) { synchronize(); }
+		if (atLeastOneOutputAutosaving) { GAMA.synchronizeFrontmostExperiment(); }
 
 		return true;
 	}
@@ -311,7 +319,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		getDisplayOutputs().forEach(each -> { each.setRendered(false); });
 		outputs.forEach((name,
 				each) -> { if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); } });
-		if (isSynchronized() && !inInitPhase) {
+		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
 				try {
 					Thread.sleep(5);

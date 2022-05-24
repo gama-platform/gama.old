@@ -615,7 +615,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final LayeredDisplayOutput output = view.getOutput();
 		if (output == null) return;
 		final boolean paused = output.isPaused();
-		final boolean synced = GAMA.getGui().isSynchronized();
+		final boolean synced = GAMA.isSynchronized();
 		final IDisplaySurface surface = view.getDisplaySurface();
 		if (surface != null) { surface.getModelCoordinatesInfo(sb); }
 		if (paused) { sb.append(" | Paused"); }

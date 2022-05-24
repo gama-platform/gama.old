@@ -447,6 +447,14 @@ public interface IGui {
 	void updateExperimentState(IScope scope, String state);
 
 	/**
+	 * Update experiment sync state.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
+	default void updateExperimentSyncState(final IScope scope) {}
+
+	/**
 	 * Update experiment state.
 	 *
 	 * @param scope
@@ -601,6 +609,6 @@ public interface IGui {
 	 *
 	 * @return true, if is synchronized
 	 */
-	boolean isSynchronized();
+	// boolean isSynchronized();
 
 }

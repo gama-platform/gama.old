@@ -88,7 +88,7 @@ public interface IExperimentPlan extends ISpecies {
 	/**
 	 * Un synchronize all outputs.
 	 */
-	void unSynchronizeAllOutputs();
+	void desynchronizeAllOutputs();
 
 	/**
 	 * Close all outputs.
@@ -273,6 +273,18 @@ public interface IExperimentPlan extends ISpecies {
 	 */
 	boolean shouldBeBenchmarked();
 
+	/**
+	 * Gets the texts.
+	 *
+	 * @return the texts
+	 */
 	List<TextStatement> getTexts();
+
+	/**
+	 * Checks if is synchronized.
+	 *
+	 * @return true, if is synchronized
+	 */
+	boolean isSynchronized();
 
 }

@@ -58,7 +58,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -582,9 +581,25 @@ public class SwtGui implements IGui {
 		return RUNNING;
 	}
 
+	/**
+	 * Update experiment sync state.
+	 *
+	 * @param scope
+	 *            the scope
+	 */
+	public void updateExperimentSyncState(final IScope scope) {
+		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
+		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
+				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+		if (stateProvider != null) {
+			WorkbenchHelper.run(() -> stateProvider.updateSyncStateTo(GAMA.isSynchronized()));
+		}
+
+	}
+
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		DEBUG.OUT("STATE: " + forcedState);
+		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
@@ -666,16 +681,16 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
 
-	@Override
-	public boolean isSynchronized() {
-		IExperimentPlan exp = GAMA.getExperiment();
-		if (exp == null || exp.getAgent() == null) return false;
-		IOutputManager manager = exp.getAgent().getOutputManager();
-		if (manager.isSynchronized()) return true;
-		for (SimulationAgent sim : exp.getAgent().getSimulationPopulation()) {
-			if (sim.getOutputManager().isSynchronized()) return true;
-		}
-		return false;
-	}
+	// @Override
+	// public boolean isSynchronized() {
+	// IExperimentPlan exp = GAMA.getExperiment();
+	// if (exp == null || exp.getAgent() == null) return false;
+	// IOutputManager manager = exp.getAgent().getOutputManager();
+	// if (manager.isSynchronized()) return true;
+	// for (SimulationAgent sim : exp.getAgent().getSimulationPopulation()) {
+	// if (sim.getOutputManager().isSynchronized()) return true;
+	// }
+	// return false;
+	// }
 
 }

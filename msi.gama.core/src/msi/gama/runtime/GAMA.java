@@ -620,4 +620,30 @@ public class GAMA {
 		benchmarkAgent = null;
 	}
 
+	/**
+	 * Toggle sync frontmost experiment.
+	 */
+	public static void desynchronizeFrontmostExperiment() {
+		getExperiment().desynchronizeAllOutputs();
+	}
+
+	/**
+	 * Checks if is synchronized.
+	 *
+	 * @return true, if is synchronized
+	 */
+	public static boolean isSynchronized() {
+		IExperimentPlan plan = getExperiment();
+		if (plan == null) return false;
+		return plan.isSynchronized();
+	}
+
+	/**
+	 * Synchronize experiment.
+	 */
+	public static void synchronizeFrontmostExperiment() {
+		getExperiment().synchronizeAllOutputs();
+
+	}
+
 }

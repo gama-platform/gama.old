@@ -95,7 +95,7 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
-		while (GAMA.getGui().isSynchronized() && backScene != null) {
+		while (GAMA.isSynchronized() && backScene != null) {
 			try {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {

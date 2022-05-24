@@ -170,7 +170,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public boolean isNotReadyToUpdate() {
 		if (super.isNotReadyToUpdate() || !inited || !getCanvas().getVisibleStatus()) return true;
-		if (GAMA.getGui().isSynchronized()) return false;
+		if (GAMA.isSynchronized()) return false;
 		return sceneHelper.isNotReadyToUpdate();
 	}
 

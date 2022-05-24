@@ -550,6 +550,23 @@
                </visibleWhen>
             </control>
             <command
+                  commandId="msi.gama.application.commands.SynchronizeExperiment"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/display.sync3.png"
+                  label="Synchronize Experiment"
+                  style="toggle">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reload4.png"
                   label="Reload Experiment"
@@ -798,6 +815,20 @@
          <enabledWhen>
             <reference
                   definitionId="isInModelingPerspective">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="ummisco.gama.ui.commands.SynchronizeExperimentHandler"
+            commandId="msi.gama.application.commands.SynchronizeExperiment">
+         <activeWhen>
+            <reference
+                  definitionId="isSimulationReady">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <reference
+                  definitionId="isSimulationReady">
             </reference>
          </enabledWhen>
       </handler>
@@ -1065,6 +1096,16 @@
             categoryId="msi.gama.category"
             id="ummisco.gama.ui.resetPerspective"
             name="Reset Perspective...">
+      </command>
+      <command
+            categoryId="msi.gama.category"
+            defaultHandler="ummisco.gama.ui.commands.SynchronizeExperimentHandler"
+            id="msi.gama.application.commands.SynchronizeExperiment"
+            name="Synchronize Experiment">
+         <state
+               class="ummisco.gama.ui.commands.SyncExperimentState"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
       </command>
    </extension>
    <extension

@@ -500,7 +500,7 @@ public class HeadlessListener implements IGui {
 	@Override
 	public IDisplaySurface getFrontmostDisplaySurface() { return null; }
 
-	@Override
-	public boolean isSynchronized() { return false; }
+	// @Override
+	// public boolean isSynchronized() { return false; }
 
 }
