@@ -6,8 +6,7 @@ Bundle-Version: 1.8.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Import-Package: org.locationtech.jts.geom
-Export-Package: simtools.gaml.extensions.traffic.driving,
- simtools.gaml.extensions.traffic.publictransport
+Export-Package: simtools.gaml.extensions.traffic.driving
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
