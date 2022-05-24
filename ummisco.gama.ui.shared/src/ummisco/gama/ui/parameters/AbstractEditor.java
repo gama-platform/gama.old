@@ -135,7 +135,7 @@ public abstract class AbstractEditor<T>
 		computeMaxMinAndStepValues();
 		listener = l;
 		try {
-			currentValue = originalValue = retrieveValueOfParameter();
+			currentValue = originalValue = retrieveValueOfParameter(false);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
@@ -213,10 +213,14 @@ public abstract class AbstractEditor<T>
 	 *             the gama runtime exception
 	 */
 	@SuppressWarnings ("unchecked")
-	protected T retrieveValueOfParameter() throws GamaRuntimeException {
+	protected T retrieveValueOfParameter(final boolean retrieveVarValue) throws GamaRuntimeException {
 		try {
 			Object result;
-			if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
+			if (scope != null && agent == null && retrieveVarValue) {
+				// We are in a case where this is an experiment/simulation parameter and we want to retrieve the "deep"
+				// value of it
+				result = scope.getAgentVarValue(getAgent(), param.getName());
+			} else if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
 				result = param.value(scope);
 			} else {
 				result = scope.getAgentVarValue(getAgent(), param.getName());
@@ -480,9 +484,9 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public void updateWithValueOfParameter() {
+	public void updateWithValueOfParameter(final boolean retrieveVarValue) {
 		try {
-			final var newVal = retrieveValueOfParameter();
+			final var newVal = retrieveValueOfParameter(retrieveVarValue);
 			currentValue = newVal;
 			asyncRun(() -> {
 				internalModification = true;

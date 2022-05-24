@@ -74,6 +74,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		final var colors = getParam().getColor(getScope());
+		final String[] labels = getParam().getLabels(getScope());
 		var left = IGamaColors.OK.color();
 		var right = IGamaColors.ERROR.color();
 		if (colors != null) {
@@ -84,7 +85,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 				right = GamaColors.get(colors.get(1)).color();
 			}
 		}
-		button = new SwitchButton(comp, SWT.CHECK, left, right);
+		button = new SwitchButton(comp, SWT.CHECK, left, right, labels);
 		button.addSelectionListener(this);
 		return button;
 	}
