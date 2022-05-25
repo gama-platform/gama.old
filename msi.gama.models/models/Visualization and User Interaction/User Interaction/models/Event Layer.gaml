@@ -20,7 +20,7 @@ global
 	//creation of the agents
 		create cell number: nbAgent
 		{
-			color <- °green;
+			colour <- #darkgreen;
 		}
        create dummy number:1 returns: temp with: [dummyRadius :: radius];
        pointClicked <- first(temp);
@@ -35,7 +35,7 @@ global
 		list<cell> selected_agents <- cell overlapping (circle(10) at_location #user_location);
 		ask selected_agents
 		{
-			color <- color = °green ? °pink : °green;
+			colour <- colour = #lightgreen ? #darkgreen : #lightgreen;
 		}
 
 	}
@@ -76,7 +76,7 @@ global
 //Species cells moving randomly
 species cell skills: [moving]
 {
-	rgb color;
+	rgb colour;
 	bool is_square <- false;
 	reflex mm
 	{
@@ -85,7 +85,7 @@ species cell skills: [moving]
 
 	aspect default
 	{
-		draw is_square ? square(2) : circle(1) color: color;
+		draw is_square ? square(2) : circle(1) color: colour;
 	}
 
 }
@@ -115,24 +115,25 @@ experiment Displays type: gui
 		layout horizontal([0::5000,1::5000]) tabs:true editors: false;
 		display View_change_color
 		{
-			species cell aspect: default;
+			species cell;
 			species dummy transparency:0.9 aspect: aspect4ViewChangeColor ;
 			// event, launches the action change_color if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// the action can be either in the experiment or in the global section. If it is defined in both, the one in the experiment will be chosen in priority
 			event mouse_down action: change_color;
-			event mouse_down action: draw_clicked_area_in_view_color;
+			event mouse_move action: draw_clicked_area_in_view_color;
 			event mouse_exit action: hide_clicked_area;
 			
 		}
 
 		display View_change_shape type: opengl
 		{
+			light #ambient active: false;
 			species cell;
 			species dummy transparency:0.9 aspect: aspect4ViewChangeShape ;
 			//event, launches the action change_shape if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// The block is executed in the context of the experiment, so we have to ask the simulation to do it. 
 			event mouse_down action: change_shape;
-			event mouse_down action: draw_clicked_area_in_view_shape;
+			event mouse_move action: draw_clicked_area_in_view_shape;
 			event mouse_exit action: hide_clicked_area;
 		}
 
