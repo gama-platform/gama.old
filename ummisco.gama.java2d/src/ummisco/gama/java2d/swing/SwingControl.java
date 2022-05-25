@@ -12,6 +12,7 @@ package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -41,9 +42,20 @@ public abstract class SwingControl extends Composite {
 	/** The applet. */
 	JApplet applet;
 
+	/** The multi listener. */
+	KeyListener multiListener;
+
 	/** The frame. */
 	Frame frame;
 
+	/**
+	 * Gets the frame.
+	 *
+	 * @return the frame
+	 */
+	public Frame getFrame() { return frame; }
+
+	/** The surface. */
 	Java2DDisplaySurface surface;
 
 	/** The populated. */
@@ -134,6 +146,8 @@ public abstract class SwingControl extends Composite {
 	public void setBounds(final int x, final int y, final int width, final int height) {
 		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
+		// See Issue #3426
+		if (multiListener != null) { frame.addKeyListener(multiListener); }
 		super.setBounds(x, y, width, height);
 		// Assignment necessary for #3313 and #3239
 		WorkbenchHelper.asyncRun(() -> EventQueue.invokeLater(() -> {
@@ -142,5 +156,13 @@ public abstract class SwingControl extends Composite {
 		}));
 
 	}
+
+	/**
+	 * Sets the key listener.
+	 *
+	 * @param adapter
+	 *            the new key listener
+	 */
+	public void setKeyListener(final KeyListener adapter) { multiListener = adapter; }
 
 }

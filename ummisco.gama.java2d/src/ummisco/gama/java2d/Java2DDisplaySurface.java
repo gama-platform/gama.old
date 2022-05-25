@@ -155,6 +155,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		setBackground(output.getData().getBackgroundColor());
 		setName(output.getName());
 		layerManager = new LayerManager(this, output);
+
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
@@ -187,6 +188,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void dispatchKeyEvent(final char e) {
+		DEBUG.OUT("Key received by the surface " + e);
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
@@ -376,12 +378,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 		updateDisplay(true);
 	}
-
-	@Override
-	public void validate() {}
-
-	@Override
-	public void doLayout() {}
+	//
+	// @Override
+	// public void validate() {}
+	//
+	// @Override
+	// public void doLayout() {}
 
 	/**
 	 * Zoom.
@@ -804,9 +806,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
-	// @Override
-	// public boolean isRendered() { return rendered; }
-
 	@Override
 	public boolean isDisposed() { return disposed; }
 
@@ -817,11 +816,5 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		return f;
 
 	}
-
-	// @Override
-	// public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
-	// synchronizer = s;
-	// synchronizer.signalSurfaceIsRealized();
-	// }
 
 }
