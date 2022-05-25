@@ -220,7 +220,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			} else {
 				scope.getExperiment().getSpecies().desynchronizeAllOutputs();
 			}
-			GAMA.getGui().updateExperimentSyncState(scope);
 		}
 		boolean atLeastOneOutputAutosaving = false;
 		for (final IOutput output : ImmutableList.copyOf(this)) {

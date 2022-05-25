@@ -321,27 +321,23 @@ public class PerspectiveHelper {
 			final boolean withAutoSave, final boolean memorizeEditors) {
 		if (perspectiveId == null) return false;
 		if (perspectiveId.equals(currentPerspectiveId)) return true;
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		// } catch (final Exception e) {
+		// try {
+		// page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
+		// } catch (final Exception e1) {
+		// e1.printStackTrace();
+		// }
+		// e.printStackTrace();
+		// }
+		if (page == null) return false;
 
-		IWorkbenchPage activePage = null;
-		try {
-			activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		} catch (final Exception e) {
-			try {
-				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
-			} catch (final Exception e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		}
-		if (activePage == null) return false;
+		if (GamaPreferences.Modeling.EDITOR_PERSPECTIVE_SAVE.getValue()) { page.saveAllEditors(false); }
 
-		if (GamaPreferences.Modeling.EDITOR_PERSPECTIVE_SAVE.getValue()) { activePage.saveAllEditors(false); }
+		if (memorizeEditors) { memorizeActiveEditor(page); }
 
-		if (memorizeEditors) { memorizeActiveEditor(activePage); }
-
-		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
+		final IPerspectiveDescriptor oldDescriptor = page.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
-		final IWorkbenchPage page = activePage;
 		final WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
 		final Runnable r = () -> {
 			try {

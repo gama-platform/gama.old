@@ -581,22 +581,6 @@ public class SwtGui implements IGui {
 		return RUNNING;
 	}
 
-	/**
-	 * Update experiment sync state.
-	 *
-	 * @param scope
-	 *            the scope
-	 */
-	public void updateExperimentSyncState(final IScope scope) {
-		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
-				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
-		if (stateProvider != null) {
-			WorkbenchHelper.run(() -> stateProvider.updateSyncStateTo(GAMA.isSynchronized()));
-		}
-
-	}
-
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
 		// DEBUG.OUT("STATE: " + forcedState);

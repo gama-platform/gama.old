@@ -24,12 +24,4 @@ public interface ISimulationStateProvider {
 	 */
 	void updateStateTo(final String state);
 
-	/**
-	 * Update sync state to.
-	 *
-	 * @param state
-	 *            the state
-	 */
-	void updateSyncStateTo(final Boolean state);
-
 }
