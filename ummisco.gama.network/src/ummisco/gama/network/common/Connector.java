@@ -229,7 +229,7 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void joinAGroup(final IAgent agt, final String groupName) {
-		if (isRaw) return;
+//		if (isRaw) return;
 		if (!this.receivedMessage.containsKey(agt)) {
 			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
 		}
