@@ -196,7 +196,7 @@ public class LayeredDisplayData {
 	private boolean isToolbarVisible = GamaPreferences.Displays.CORE_DISPLAY_TOOLBAR.getValue();
 
 	/** The is synchronized. */
-	private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
+	// private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/** The display type. */
 	private String displayType =
@@ -514,20 +514,20 @@ public class LayeredDisplayData {
 		if (isSplittingLayers) { notifyListeners(Changes.SPLIT_LAYER, s); }
 	}
 
-	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	public boolean isSynchronized() { return isSynchronized; }
-
-	/**
-	 * Sets the synchronized.
-	 *
-	 * @param isSynchronized
-	 *            the new synchronized
-	 */
-	public void setSynchronized(final boolean isSynchronized) { this.isSynchronized = isSynchronized; }
+	// /**
+	// * Checks if is synchronized.
+	// *
+	// * @return true, if is synchronized
+	// */
+	// public boolean isSynchronized() { return isSynchronized; }
+	//
+	// /**
+	// * Sets the synchronized.
+	// *
+	// * @param isSynchronized
+	// * the new synchronized
+	// */
+	// public void setSynchronized(final boolean isSynchronized) { this.isSynchronized = isSynchronized; }
 
 	/**
 	 * @return the zoomLevel

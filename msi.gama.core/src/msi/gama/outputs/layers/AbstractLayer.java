@@ -37,6 +37,7 @@ public abstract class AbstractLayer implements ILayer {
 	/** The has been drawn once. */
 	volatile boolean hasBeenDrawnOnce;
 
+	/** The counter. */
 	volatile int counter;
 
 	/** The data. */
@@ -93,19 +94,27 @@ public abstract class AbstractLayer implements ILayer {
 	 */
 	@Override
 	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
-		// Necessary to handle Issue #3392
-		if (!hasBeenDrawnOnce) {
-			counter++;
-			hasBeenDrawnOnce = scope.getExperiment().getSpecies().isAutorun() ? counter > 10 : counter == 1;
-		}
 
-		if (!shouldDraw(g)) // DEBUG.OUT("Refuses to draw " + this.getName() + " with counter " + counter);
+		// if (g.isNotReadyToUpdate()) {
+		// DEBUG.OUT("Does not draw" + this.getName() + " because the renderer is not ready to update");
+		// return;
+		// }
+
+		if (!data.isVisible() || !g.is2D() && !data.isDynamic() && hasBeenDrawnOnce) // DEBUG.OUT("Does not draw" +
+																						// this.getName() + "
+			// because it is static and it has been drawn already "
+			// + counter + " times : " + hasBeenDrawnOnce);
 			return;
-		g.setAlpha(1 - getData().getTransparency(scope));
+		g.setAlpha(1 - data.getTransparency(scope));
 		g.beginDrawingLayer(this);
 		privateDraw(scope, g);
 		g.endDrawingLayer(this);
-
+		// Necessary to handle Issue #3392
+		if (!hasBeenDrawnOnce) {
+			hasBeenDrawnOnce = true;
+			// counter++;
+			// hasBeenDrawnOnce = scope.getExperiment().getSpecies().isAutorun() ? counter > 10 : counter == 1;
+		}
 	}
 
 	/**

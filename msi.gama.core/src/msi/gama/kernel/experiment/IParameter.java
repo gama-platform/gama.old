@@ -51,6 +51,9 @@ public interface IParameter extends IExperimentDisplayable {
 	/** The empty strings. */
 	String[] EMPTY_STRINGS = {};
 
+	/** The empty strings. */
+	String[] SWITCH_STRINGS = { "True", "False" };
+
 	/**
 	 * Sets the value.
 	 *
@@ -280,5 +283,16 @@ public interface IParameter extends IExperimentDisplayable {
 	 * @param b
 	 */
 	void setDefined(boolean b);
+
+	/**
+	 * Gets the labels.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the labels
+	 */
+	default String[] getLabels(final IScope scope) {
+		return SWITCH_STRINGS;
+	}
 
 }

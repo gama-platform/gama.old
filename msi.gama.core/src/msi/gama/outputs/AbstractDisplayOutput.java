@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractDisplayOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -16,6 +16,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class AbstractDisplayOutput.
@@ -24,13 +25,21 @@ import msi.gaml.descriptions.IDescription;
  */
 public abstract class AbstractDisplayOutput extends AbstractOutput implements IDisplayOutput {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The virtual. */
 	final boolean virtual;
+
+	/** The rendered. */
+	volatile boolean rendered;
 
 	/**
 	 * Instantiates a new abstract display output.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AbstractDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -39,13 +48,13 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	/** The disposed. */
 	protected boolean disposed = false;
-	
+
 	/** The synchro. */
-	protected boolean synchro = false;
-	
+	// protected boolean synchro = false;
+
 	/** The in init phase. */
-	protected boolean inInitPhase = true;
-	
+	// protected boolean inInitPhase = true;
+
 	/** The view. */
 	protected IGamaView view;
 
@@ -57,14 +66,12 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	};
 
 	@Override
-	public boolean isVirtual() {
-		return virtual;
-	}
+	public boolean isVirtual() { return virtual; }
 
 	@Override
 	public void open() {
 		super.open();
-		GAMA.getGui().run("Opening " + getName(), opener, shouldOpenAsynchronously());
+		GAMA.getGui().run("Opening " + getName(), opener, false);
 	}
 
 	/**
@@ -72,9 +79,9 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	 *
 	 * @return true, if successful
 	 */
-	public boolean shouldOpenAsynchronously() {
-		return true;
-	}
+	// public boolean shouldOpenAsynchronously() {
+	// return true;
+	// }
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
@@ -95,24 +102,40 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		if (view != null) { view.update(this); }
+		if (view != null) {
+			// DEBUG.OUT("Output asking view to update");
+			view.update(this);
+		}
 	}
 
 	@Override
-	public boolean isUnique() {
-		return false;
+	public boolean isRendered() {
+		if (view != null && !view.isVisible()) return true;
+		if (!this.isRefreshable() || !this.isOpen() || this.isPaused()) return true;
+		return rendered;
 	}
 
+	/**
+	 * Sets the rendered.
+	 *
+	 * @param b
+	 *            the b
+	 * @return true, if successful
+	 */
 	@Override
-	public boolean isSynchronized() {
-		return synchro;
-	}
+	public void setRendered(final boolean b) { rendered = b; }
 
 	@Override
-	public void setSynchronized(final boolean sync) {
-		synchro = sync;
-		if (view != null) { view.updateToolbarState(); }
-	}
+	public boolean isUnique() { return false; }
+
+	// @Override
+	// public boolean isSynchronized() { return synchro; }
+
+	// @Override
+	// public void setSynchronized(final boolean sync) {
+	// // synchro = sync;
+	// if (view != null) { view.updateToolbarState(); }
+	// }
 
 	@Override
 	public void setPaused(final boolean pause) {
@@ -121,9 +144,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	}
 
 	@Override
-	public IGamaView getView() {
-		return view;
-	}
+	public IGamaView getView() { return view; }
 
 	@Override
 	public String getId() {
@@ -133,13 +154,9 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 
-	@Override
-	public boolean isInInitPhase() {
-		return inInitPhase;
-	}
-
-	@Override
-	public void setInInitPhase(final boolean state) {
-		inInitPhase = state;
-	}
+	// @Override
+	// public boolean isInInitPhase() { return inInitPhase; }
+	//
+	// @Override
+	// public void setInInitPhase(final boolean state) { inInitPhase = state; }
 }

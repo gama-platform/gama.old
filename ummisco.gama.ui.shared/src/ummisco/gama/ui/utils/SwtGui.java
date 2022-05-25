@@ -583,7 +583,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		DEBUG.OUT("STATE: " + forcedState);
+		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
@@ -664,5 +664,17 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
+
+	// @Override
+	// public boolean isSynchronized() {
+	// IExperimentPlan exp = GAMA.getExperiment();
+	// if (exp == null || exp.getAgent() == null) return false;
+	// IOutputManager manager = exp.getAgent().getOutputManager();
+	// if (manager.isSynchronized()) return true;
+	// for (SimulationAgent sim : exp.getAgent().getSimulationPopulation()) {
+	// if (sim.getOutputManager().isSynchronized()) return true;
+	// }
+	// return false;
+	// }
 
 }

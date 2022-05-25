@@ -230,6 +230,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	// private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = GamaMapFactory.create();
 
+	/** The texts. */
 	protected final List<TextStatement> texts = GamaListFactory.create();
 
 	/** The explorable parameters. */
@@ -267,6 +268,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/** The benchmarkable. */
 	private final boolean benchmarkable;
+
+	/** The sync. */
+	private volatile boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/**
 	 * The Class ExperimentPopulation.
@@ -742,6 +746,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public Map<String, IParameter> getParameters() { return parameters; }
 
+	@Override
 	public List<TextStatement> getTexts() { return texts; }
 
 	@Override
@@ -847,12 +852,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void synchronizeAllOutputs() {
-		for (final IOutputManager manager : getActiveOutputManagers()) { manager.synchronize(); }
+		sync = true;
 	}
 
 	@Override
-	public void unSynchronizeAllOutputs() {
-		for (final IOutputManager manager : getActiveOutputManagers()) { manager.unSynchronize(); }
+	public void desynchronizeAllOutputs() {
+		sync = false;
 	}
 
 	@Override
@@ -899,5 +904,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean shouldBeBenchmarked() {
 		return benchmarkable;
 	}
+
+	@Override
+	public boolean isSynchronized() { return sync; }
 
 }

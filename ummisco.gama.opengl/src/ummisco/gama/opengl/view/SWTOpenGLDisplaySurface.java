@@ -38,7 +38,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -109,7 +108,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	IGraphicsScope scope;
 
 	/** The synchronizer. */
-	public IDisplaySynchronizer synchronizer;
+	// public IDisplaySynchronizer synchronizer;
 
 	/** The parent. */
 	final Composite parent;
@@ -133,7 +132,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copyForGraphics("in opengl display"));
 		renderer = createRenderer();
-		animator = new GamaGLCanvas(parent, renderer, output.getName()).getAnimator();
+		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		layerManager = new LayerManager(this, output);
 		// temp_focus = output.getFacet(IKeyword.FOCUS);
 		animator.start();
@@ -651,7 +650,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
-		if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
+		if (getOutput() != null) {
+			getOutput().setRendered(true);
+			// if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
+		}
 	}
 
 	@Override
@@ -739,11 +741,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	// return d.isRealized();
 	// }
 
-	@Override
-	public boolean isRendered() {
-		if (renderer == null || renderer.getSceneHelper().getSceneToRender() == null) return false;
-		return renderer.getSceneHelper().getSceneToRender().rendered();
-	}
+	// @Override
+	// public boolean isRendered() {
+	// if (renderer == null || renderer.getSceneHelper().getSceneToRender() == null) return false;
+	// return renderer.getSceneHelper().getSceneToRender().rendered();
+	// }
 
 	@Override
 	public boolean isDisposed() { return disposed; }
@@ -799,10 +801,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	}
 
+	// @Override
+	// public void setDisplaySynchronizer(final IDisplaySynchronizer s) { synchronizer = s; }
+
 	@Override
-	public void setDisplaySynchronizer(final IDisplaySynchronizer s) {
-		synchronizer = s;
-		synchronizer.signalSurfaceIsRealized();
+	public boolean isVisible() {
+		if (renderer == null) return false;
+		return renderer.getCanvas().getVisibleStatus();
 	}
 
 }
