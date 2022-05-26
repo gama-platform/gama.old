@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -144,11 +143,11 @@ public abstract class GamaViewPart extends ViewPart
 	 *
 	 * @return the top composite
 	 */
-	public Composite getTopComposite() {
-		Composite c = rootComposite;
-		while (!(c.getParent() instanceof CTabFolder)) { c = c.getParent(); }
-		return c;
-	}
+	// public Composite getTopComposite() {
+	// Composite c = rootComposite;
+	// while (!(c.getParent() instanceof CTabFolder)) { c = c.getParent(); }
+	// return c;
+	// }
 
 	@Override
 	public void addStateListener(final StateListener listener) {
@@ -249,7 +248,7 @@ public abstract class GamaViewPart extends ViewPart
 		final Point o = rootComposite.toDisplay(0, 0);
 		final Point s = rootComposite.getSize();
 		Rectangle r = new Rectangle(o.x, o.y, s.x, s.y);
-		DEBUG.OUT("Looking in rootComposite rectangle " + r);
+		// DEBUG.OUT("Looking in rootComposite rectangle " + r);
 		return r.contains(x, y);
 	}
 
@@ -258,7 +257,7 @@ public abstract class GamaViewPart extends ViewPart
 		this.rootComposite = composite;
 		// DEBUG.OUT("Root Composite is " + composite.getClass().getSimpleName());
 		composite.addDisposeListener(this);
-		getTopComposite().addControlListener(this);
+		// getTopComposite().addControlListener(this);
 		if (needsOutput() && getOutput() == null) return;
 		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
 		ownCreatePartControl(getParentComposite());

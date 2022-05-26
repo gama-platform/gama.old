@@ -95,10 +95,10 @@ public abstract class SwingControl extends Composite {
 		if (isDisposed()) return;
 		if (!populated) {
 			populated = true;
-
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
 				frame.setAlwaysOnTop(false);
+				if (multiListener != null) { frame.addKeyListener(multiListener); }
 				applet = new JApplet();
 				surface = createSwingComponent();
 				applet.getContentPane().add(surface);
@@ -147,13 +147,20 @@ public abstract class SwingControl extends Composite {
 		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		// See Issue #3426
-		if (multiListener != null) { frame.addKeyListener(multiListener); }
+
 		super.setBounds(x, y, width, height);
 		// Assignment necessary for #3313 and #3239
-		WorkbenchHelper.asyncRun(() -> EventQueue.invokeLater(() -> {
-			// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
-			surface.setSize(width, height);
-		}));
+		WorkbenchHelper.asyncRun(() -> {
+			// getParent().requestLayout();
+			EventQueue.invokeLater(() -> {
+				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
+				// frame.setBounds(x, y, width, height);
+				// frame.setVisible(false);
+				surface.setSize(width, height);
+				// frame.setVisible(true);
+			});
+
+		});
 
 	}
 

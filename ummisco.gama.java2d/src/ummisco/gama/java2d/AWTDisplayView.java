@@ -51,6 +51,16 @@ public class AWTDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
+	public void setFocus() {
+		// Uncommenting this method seems to fix #3325. Should be tested !
+		// DEBUG.OUT("Part " + getTitle() + " gaining focus");
+		if (getParentComposite() != null && !getParentComposite().isDisposed()
+				&& !getParentComposite().isFocusControl()) {
+			getParentComposite().forceFocus(); // Necessary ?
+		}
+	}
+
+	@Override
 	public void focusCanvas() {
 		WorkbenchHelper.asyncRun(() -> centralPanel.forceFocus());
 	}

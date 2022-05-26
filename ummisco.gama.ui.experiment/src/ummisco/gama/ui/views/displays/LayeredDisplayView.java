@@ -240,15 +240,17 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		return new GridData(SWT.FILL, SWT.FILL, true, true);
 	}
 
-	@Override
-	public void setFocus() {
-		// Uncommenting this method seems to fix #3325. Should be tested !
-		// DEBUG.OUT("Part " + getTitle() + " gaining focus");
-		if (getParentComposite() != null && !getParentComposite().isDisposed()
-				&& !getParentComposite().isFocusControl()) {
-			getParentComposite().forceFocus(); // Necessary ?
-		}
-	}
+	// @Override
+	// // Creates a problem on macOS, where the opengl view would block the change of perspective if not activated once.
+	// // Now only implemented in AWTDisplayView (should be tested on Windows)
+	// public void setFocus() {
+	// // Uncommenting this method seems to fix #3325. Should be tested !
+	// // DEBUG.OUT("Part " + getTitle() + " gaining focus");
+	// if (getParentComposite() != null && !getParentComposite().isDisposed()
+	// && !getParentComposite().isFocusControl()) {
+	// getParentComposite().forceFocus(); // Necessary ?
+	// }
+	// }
 
 	/**
 	 * Creates the surface composite.

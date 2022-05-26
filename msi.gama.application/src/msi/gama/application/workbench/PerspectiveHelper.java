@@ -339,8 +339,15 @@ public class PerspectiveHelper {
 		final IPerspectiveDescriptor oldDescriptor = page.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+
 		final Runnable r = () -> {
+			// if (PlatformHelper.isMac() && !isSimulationPerspective(perspectiveId)) {
+			// List<IGamaView.Display> displays = StreamEx.of(page.getViewReferences()).map(a -> a.getView(false))
+			// .select(IGamaView.Display.class).toList();
+			// if (displays.size() > 0) { page.activate((IWorkbenchPart) displays.get(0)); }
+			// }
 			try {
+
 				page.setPerspective(descriptor);
 			} catch (final NullPointerException e) {
 				DEBUG.ERR("NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");

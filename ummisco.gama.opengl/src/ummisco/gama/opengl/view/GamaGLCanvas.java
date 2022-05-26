@@ -471,7 +471,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 
 	@Override
 	public void setVisible(final boolean v) {
-		DEBUG.OUT("VISIBLE changed through composite : " + v);
+		// DEBUG.OUT("VISIBLE changed through composite : " + v);
 		visible = v;
 		setWindowVisible(v);
 		if (!isDisposed()) { super.setVisible(v); }
@@ -491,7 +491,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the v
 	 */
 	public void updateVisibleStatus(final boolean v) {
-		DEBUG.OUT("VISIBLE changed through display : " + v);
+		// DEBUG.OUT("VISIBLE changed through display : " + v);
 		visible = v;
 	}
 
