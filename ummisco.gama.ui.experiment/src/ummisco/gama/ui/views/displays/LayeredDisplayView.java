@@ -357,7 +357,9 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 						// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
 						surface.updateDisplay(false);
-						if (surface.getData().isAutosave()) { takeSnapshot(); }
+						if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
+							WorkbenchHelper.run(() -> takeSnapshot());
+						}
 						// inInitPhase = false;
 
 					} catch (Exception e) {
@@ -465,6 +467,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void takeSnapshot() {
 		Rectangle dim = WorkbenchHelper.displaySizeOf(surfaceComposite);
 		java.awt.Rectangle r = new java.awt.Rectangle(dim.x, dim.y, dim.width, dim.height);
+		// if (dim.width == 0 || dim.height == 0) {
+		// WorkbenchHelper.run(() -> {
+		// ViewsHelper.bringToFront(this);
+		// takeSnapshot();
+		// });
+		// return;
+		// }
 		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), r);
 	}
 

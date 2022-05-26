@@ -10,10 +10,16 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,6 +41,8 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.util.awt.ImageUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -157,28 +165,41 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public BufferedImage getImage(final int w, final int h) {
-		// while (!isRendered()) {
-		// try {
-		// Thread.sleep(1);
-		// } catch (final InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// }
-
+		if (w == 0 || h == 0 || !renderer.hasDrawnOnce()) return null;
 		final GLAutoDrawable glad = renderer.getCanvas();
-		if (glad == null || glad.getGL() == null || glad.getGL().getContext() == null) return null;
-		final boolean current = glad.getGL().getContext().isCurrent();
-		if (!current) { glad.getGL().getContext().makeCurrent(); }
-		final BufferedImage image = getImage(glad.getGL().getGL2(), w, h);
-		// final AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
-		// final BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
+		if (glad == null) return null;
+		GL2 gl = glad.getGL().getGL2();
+		if (gl == null) return null;
+		GLContext context = gl.getContext();
+		if (context == null) return null;
+		final boolean current = context.isCurrent();
+		if (!current) { context.makeCurrent(); }
+		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+
+		final ByteBuffer buffer = getBuffer(w, h);
+		// be sure we are reading from the right fbo (here is supposed to be the default one)
+		// bind the right buffer to read from
+		gl.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
+		gl.glReadPixels(0, 0, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorModel cm = new ComponentColorModel(cs, new int[] { 8, 8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
+				DataBuffer.TYPE_BYTE);
+		SampleModel sm = cm.createCompatibleSampleModel(w, h);
+		WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
+		BufferedImage image = new BufferedImage(cm, raster, false, null);
+		ImageUtil.flipImageVertically(image);
 		if (!current) { glad.getGL().getContext().release(); }
 		return image;
-		// return ImageUtils.resize(image, w, h);
 	}
 
 	/** The buffer. */
 	ByteBuffer buffer;
+
+	/** The dbuf. */
+	DataBuffer dbuf;
+
+	/** The at. */
+	AffineTransform at;
 
 	/**
 	 * Gets the buffer.
@@ -193,53 +214,28 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 		if (buffer == null || buffer.capacity() != w * h * 4) {
 			buffer = Buffers.newDirectByteBuffer(w * h * 4);
+			// Build a wrapper around the buffer (to use for the raster of the image)
+			dbuf = new DataBuffer(DataBuffer.TYPE_BYTE, w * h * 4) {
+				@Override
+				public void setElem(final int bank, final int i, final int val) {
+					buffer.put(i, (byte) val);
+				}
+
+				@Override
+				public int getElem(final int bank, final int i) {
+					return buffer.get(i);
+				}
+			};
+			// Build the affine transform to flip the image
+			at = new AffineTransform();
+			at.concatenate(AffineTransform.getScaleInstance(1, -1));
+			at.concatenate(AffineTransform.getTranslateInstance(0, h));
+
 		} else {
 			buffer.rewind();
 		}
 
 		return buffer;
-	}
-
-	/**
-	 * Gets the image.
-	 *
-	 * @param gl3
-	 *            the gl 3
-	 * @param ww
-	 *            the ww
-	 * @param hh
-	 *            the hh
-	 * @return the image
-	 */
-	protected BufferedImage getImage(final GL2 gl3, final int ww, final int hh) {
-
-		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
-		final int width = ww;
-		final int height = hh;
-
-		// final int width = DPIHelper.autoScaleDown(ww);
-		// final int height = DPIHelper.autoScaleDown(hh);
-		final BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		final Graphics graphics = screenshot.getGraphics();
-
-		final ByteBuffer buffer = getBuffer(width, height);
-		// be sure you are reading from the right fbo (here is supposed to be the default one)
-		// bind the right buffer to read from
-		gl3.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
-		// if the width is not multiple of 4, set unpackPixel = 1
-		gl3.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-
-		for (int h = 0; h < height; h++) {
-			for (int w = 0; w < width; w++) {
-				// The color are the three consecutive bytes, it's like referencing
-				// to the next consecutive array elements, so we got red, green, blue..
-				// red, green, blue, and so on..+ ", "
-				graphics.setColor(new Color(buffer.get() & 0xff, buffer.get() & 0xff, buffer.get() & 0xff));
-				buffer.get(); // consume alpha
-				graphics.drawRect(w, height - h - 1, 1, 1); // height - h is for flipping the image
-			}
-		}
-		return screenshot;
 	}
 
 	/**

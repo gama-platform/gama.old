@@ -152,4 +152,11 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 */
 	boolean open(IScope scope, IOutput output);
 
+	/**
+	 * Checks if is sync.
+	 *
+	 * @return true, if is sync
+	 */
+	boolean isSync();
+
 }

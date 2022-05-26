@@ -60,6 +60,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 27 avr. 2015
  *
  */
+
+/**
+ * The Class JOGLRenderer.
+ */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRenderer {
 
@@ -212,9 +216,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		// WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
 		// visible = true;
 		// }
-		if (first && getData().fullScreen() > -1) {
+
+		if (first) {
 			first = false;
-			WorkbenchHelper.runInUI("FS", 100, m -> this.getSurface().getOutput().getView().toggleFullScreen());
+			if (getData().fullScreen() > -1) {
+				WorkbenchHelper.runInUI("FS", 100, m -> this.getSurface().getOutput().getView().toggleFullScreen());
+			}
 		}
 	}
 
@@ -522,5 +529,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public boolean isDisposed() { return disposed; }
+
+	@Override
+	public boolean hasDrawnOnce() {
+		return !first;
+	}
 
 }

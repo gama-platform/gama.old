@@ -506,11 +506,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				exploration = (IExploration) s;
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
-			} else if (s instanceof SimulationOutputManager) {
+			} else if (s instanceof SimulationOutputManager som) {
+				if (som.isSync()) { sync = true; }
 				if (originalSimulationOutputs != null) {
-					originalSimulationOutputs.setChildren((SimulationOutputManager) s);
+					originalSimulationOutputs.setChildren(som);
 				} else {
-					originalSimulationOutputs = (SimulationOutputManager) s;
+					originalSimulationOutputs = som;
 				}
 			} else if (s instanceof IParameter.Batch pb) {
 				if (isBatch() && pb.canBeExplored()) {
@@ -522,11 +523,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				final String parameterName = p.getName();
 				final boolean already = parameters.containsKey(parameterName);
 				if (!already) { parameters.put(parameterName, p); }
-			} else if (s instanceof ExperimentOutputManager) {
+			} else if (s instanceof ExperimentOutputManager eom) {
+				if (eom.isSync()) { sync = true; }
 				if (experimentOutputs != null) {
-					experimentOutputs.setChildren((ExperimentOutputManager) s);
+					experimentOutputs.setChildren(eom);
 				} else {
-					experimentOutputs = (ExperimentOutputManager) s;
+					experimentOutputs = eom;
 				}
 			}
 		}

@@ -306,4 +306,14 @@ public class ViewsHelper {
 		WorkbenchHelper.getPage().activate(view);
 	}
 
+	/**
+	 * Bring to front.
+	 *
+	 * @param view
+	 *            the view
+	 */
+	public static void bringToFront(final IWorkbenchPart view) {
+		WorkbenchHelper.getPage().bringToTop(view);
+	}
+
 }

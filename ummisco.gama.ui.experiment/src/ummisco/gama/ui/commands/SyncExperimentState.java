@@ -28,6 +28,7 @@ public class SyncExperimentState extends State {
 
 	@Override
 	public void setValue(final Object value) {
+		super.setValue(value);
 		if (value instanceof Boolean b) {
 			if (b) {
 				GAMA.synchronizeFrontmostExperiment();

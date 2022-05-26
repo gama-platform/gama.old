@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IOpenGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IOpenGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer;
 
@@ -32,7 +32,8 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 	/**
 	 * Sets the canvas.
 	 *
-	 * @param canvas the new canvas
+	 * @param canvas
+	 *            the new canvas
 	 */
 	void setCanvas(GamaGLCanvas canvas);
 
@@ -65,7 +66,8 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 	/**
 	 * Gets the real world point from window point.
 	 *
-	 * @param mouse the mouse
+	 * @param mouse
+	 *            the mouse
 	 * @return the real world point from window point
 	 */
 	GamaPoint getRealWorldPointFromWindowPoint(final GamaPoint mouse);
@@ -156,5 +158,12 @@ public interface IOpenGLRenderer extends GLEventListener, IGraphics.ThreeD {
 	 * @return true, if is disposed
 	 */
 	boolean isDisposed();
+
+	/**
+	 * Checks for drawn once.
+	 *
+	 * @return true, if successful
+	 */
+	boolean hasDrawnOnce();
 
 }

@@ -17,8 +17,6 @@ import static org.eclipse.e4.ui.workbench.modeling.EModelService.IN_ACTIVE_PERSP
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -33,7 +31,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IGamaView;
@@ -129,8 +126,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				displayStack.setToBeRendered(true);
 				final MElementContainer<?> root = displayStack.getParent();
 				displayStack.getChildren().addAll(holders);
-				// holders.forEach(ph -> { displayStack.getChildren().add(ph); });
-				// hideDisplays(root, displayStack, holders);
 				process(root, child, holders);
 				showDisplays(root, holders);
 			} else {
@@ -199,21 +194,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 					v.showCanvas();
 					v.focusCanvas();
 					v.getOutput().update();
-
-					// v.toggleFullScreen();
+					//
+					// // v.toggleFullScreen();
 				});
 			}
 
 		});
 
-		// displays.forEach(v -> {
-		// if (v.getOutput().getData().fullScreen() > -1) {
-		// // new Thread(() -> {
-		// // DEBUG.OUT("Fullscreen thread started");
-		// v.toggleFullScreen();
-		// // }).start();
-		// }
-		// });
 	}
 
 	/**
@@ -263,9 +250,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				h.getTransientData().put(DISPLAY_INDEX_KEY, String.valueOf(currentIndex - 1));
 			}
 		}
-
-		DEBUG.OUT(Sets.newHashSet(Iterables.transform(holders, @Nullable MPlaceholder::getElementId)));
-
+		// DEBUG.OUT(Sets.newHashSet(Iterables.transform(holders, @Nullable MPlaceholder::getElementId)));
 		return holders;
 	}
 

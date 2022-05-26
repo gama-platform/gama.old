@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -68,7 +69,15 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	protected int displayIndex;
 
 	/** The sync. */
-	// protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
+	protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
+
+	/**
+	 * Checks if is sync.
+	 *
+	 * @return the sync
+	 */
+	@Override
+	public boolean isSync() { return sync; }
 
 	/**
 	 * Instantiates a new abstract output manager.
@@ -79,6 +88,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 		autosave = desc.getFacetExpr(IKeyword.AUTOSAVE);
+		sync = "true".equals(desc.getLitteral("synchronized")) || !"false".equals(desc.getLitteral(IKeyword.AUTOSAVE));
 	}
 
 	@Override
@@ -152,9 +162,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
 			} else if (s instanceof IOutput o) {
+				if (o instanceof IDisplayOutput && ((IDisplayOutput) o).isAutoSave()) { sync = true; }
 				add(o);
 				o.setUserCreated(false);
-				if (o instanceof LayeredDisplayOutput) { ((LayeredDisplayOutput) o).setIndex(displayIndex++); }
+				if (o instanceof LayeredDisplayOutput ldo) { ldo.setIndex(displayIndex++); }
 			}
 		}
 	}
@@ -213,23 +224,24 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
-		if (this.hasFacet("synchronized")) {
-			boolean sync = this.getFacetValue(scope, "synchronized", false);
-			if (sync) {
-				scope.getExperiment().getSpecies().synchronizeAllOutputs();
-			} else {
-				scope.getExperiment().getSpecies().desynchronizeAllOutputs();
-			}
-		}
-		boolean atLeastOneOutputAutosaving = false;
+		// if (this.hasFacet("synchronized")) {
+		// boolean sync = this.getFacetValue(scope, "synchronized", false);
+		// if (sync) {
+		// scope.getExperiment().getSpecies().synchronizeAllOutputs();
+		// } else {
+		// scope.getExperiment().getSpecies().desynchronizeAllOutputs();
+		// }
+		// }
+		// boolean atLeastOneOutputAutosaving = false;<>
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 			if (!open(scope, output)) return false;
-			if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
-				atLeastOneOutputAutosaving = true;
-			}
+			// if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
+			// atLeastOneOutputAutosaving = true;
+			// }
 		}
-		atLeastOneOutputAutosaving |= evaluateAutoSave(scope);
-		if (atLeastOneOutputAutosaving) { GAMA.synchronizeFrontmostExperiment(); }
+		// atLeastOneOutputAutosaving |=
+		evaluateAutoSave(scope);
+		// if (atLeastOneOutputAutosaving) { GAMA.synchronizeFrontmostExperiment(); }
 
 		return true;
 	}
