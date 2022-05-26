@@ -241,7 +241,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL.reshape(gl, width, height);
 		// sceneHelper.reshape(width, height);
 		surface.updateDisplay(true);
-		getCanvas().updateVisibleStatus(getCanvas().isVisible());
+		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) getCanvas().updateVisibleStatus(getCanvas().isVisible());
 	}
 
 	@Override

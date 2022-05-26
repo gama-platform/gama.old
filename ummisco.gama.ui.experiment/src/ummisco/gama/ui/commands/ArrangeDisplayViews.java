@@ -56,21 +56,27 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 *
 	 * @return the part service
 	 */
-	private static EPartService getPartService() { return WorkbenchHelper.getService(EPartService.class); }
+	private static EPartService getPartService() {
+		return WorkbenchHelper.getService(EPartService.class);
+	}
 
 	/**
 	 * Gets the application.
 	 *
 	 * @return the application
 	 */
-	private static MApplication getApplication() { return WorkbenchHelper.getService(MApplication.class); }
+	private static MApplication getApplication() {
+		return WorkbenchHelper.getService(MApplication.class);
+	}
 
 	/**
 	 * Gets the model service.
 	 *
 	 * @return the model service
 	 */
-	private static EModelService getModelService() { return WorkbenchHelper.getService(EModelService.class); }
+	private static EModelService getModelService() {
+		return WorkbenchHelper.getService(EModelService.class);
+	}
 
 	static {
 		DEBUG.ON();
@@ -128,9 +134,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				displayStack.getChildren().addAll(holders);
 				process(root, child, holders);
 				showDisplays(root, holders);
-			} else {
-				decorateDisplays();
 			}
+			decorateDisplays();
+
 		} catch (Exception e) {
 			DEBUG.ERR(e);
 		}
@@ -172,7 +178,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 		});
 
-		decorateDisplays();
 	}
 
 	/**
@@ -200,6 +205,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			}
 
 		});
+		// displays.forEach((d)-> ViewsHelper.activate((IWorkbenchPart) d));
 
 	}
 
@@ -229,7 +235,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			if (container.equals(uiRoot)) { holder.setContainerData(weight); }
 			container.getChildren().add(holder);
 		} else {
-			for (final GamaNode<String> node : treeRoot.getChildren()) { process(container, node, holders); }
+			for (final GamaNode<String> node : treeRoot.getChildren()) {
+				process(container, node, holders);
+			}
 		}
 	}
 

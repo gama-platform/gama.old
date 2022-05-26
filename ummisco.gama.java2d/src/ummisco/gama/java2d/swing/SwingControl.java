@@ -53,7 +53,9 @@ public abstract class SwingControl extends Composite {
 	 *
 	 * @return the frame
 	 */
-	public Frame getFrame() { return frame; }
+	public Frame getFrame() {
+		return frame;
+	}
 
 	/** The surface. */
 	Java2DDisplaySurface surface;
@@ -101,6 +103,8 @@ public abstract class SwingControl extends Composite {
 				if (multiListener != null) { frame.addKeyListener(multiListener); }
 				applet = new JApplet();
 				surface = createSwingComponent();
+				if (PlatformHelper.isWindows())
+					surface.setVisibility(() -> WorkbenchHelper.run(() -> SwingControl.this.isVisible()));
 				applet.getContentPane().add(surface);
 				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
@@ -170,6 +174,8 @@ public abstract class SwingControl extends Composite {
 	 * @param adapter
 	 *            the new key listener
 	 */
-	public void setKeyListener(final KeyListener adapter) { multiListener = adapter; }
+	public void setKeyListener(final KeyListener adapter) {
+		multiListener = adapter;
+	}
 
 }
