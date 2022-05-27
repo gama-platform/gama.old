@@ -17,6 +17,7 @@ import com.jogamp.newt.Window;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
@@ -105,7 +106,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	public void showCanvas() {
 		getGLCanvas().setVisible(true);
 		// Maybe only necessary on macOS ? Prevents JOGL views to move over Java2D views created before
-		getGLCanvas().reparentWindow();
+		if (PlatformHelper.isMac()) { getGLCanvas().reparentWindow(); }
 	}
 
 	/**
