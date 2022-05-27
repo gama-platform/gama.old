@@ -171,7 +171,8 @@ public abstract class SwingControl extends Composite {
 		super.setBounds(x, y, width, height);
 		// Assignment necessary for #3313 and #3239
 		WorkbenchHelper.asyncRun(() -> {
-			// getParent().requestLayout();
+			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
+			if (PlatformHelper.isWindows()) this.requestLayout();
 			EventQueue.invokeLater(() -> {
 				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
 				// frame.setBounds(x, y, width, height);
