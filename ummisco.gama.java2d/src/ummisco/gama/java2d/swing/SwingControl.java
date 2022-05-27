@@ -16,6 +16,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JApplet;
 
@@ -45,8 +46,10 @@ public abstract class SwingControl extends Composite {
 	/** The applet. */
 	JApplet applet;
 
+
 	/** The multi listener. */
-	KeyListener multiListener;
+	KeyListener linuxKeyListener;
+	MouseMotionListener linuxMouseListener;
 
 	/** The frame. */
 	Frame frame;
@@ -117,8 +120,13 @@ public abstract class SwingControl extends Composite {
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
 				frame.setAlwaysOnTop(false);
-				if (multiListener != null) { frame.addKeyListener(multiListener); }
+				if (linuxKeyListener != null) {
+					frame.addKeyListener(linuxKeyListener);
+				}
 				applet = new JApplet();
+				if (linuxMouseListener != null) {
+					applet.addMouseMotionListener(linuxMouseListener);
+				}
 				surface = createSwingComponent();
 				if (PlatformHelper.isWindows()) { surface.setVisibility(() -> visible); }
 				applet.getContentPane().add(surface);
@@ -185,12 +193,18 @@ public abstract class SwingControl extends Composite {
 
 	}
 
+
 	/**
 	 * Sets the key listener.
 	 *
-	 * @param adapter
-	 *            the new key listener
+	 * @param adapter the new key listener
 	 */
-	public void setKeyListener(final KeyListener adapter) { multiListener = adapter; }
+	public void setKeyListener(final KeyListener adapter) {
+		linuxKeyListener = adapter;
+	}
+
+	public void setMouseListener(MouseMotionListener adapter) {
+		linuxMouseListener = adapter;
+	}
 
 }

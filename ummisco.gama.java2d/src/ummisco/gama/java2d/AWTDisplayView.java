@@ -77,6 +77,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 			// See Issue #3426
 			SwingControl control = (SwingControl) surfaceComposite;
 			control.setKeyListener(listener.getKeyAdapterForAWT());
+			if (PlatformHelper.isLinux()) control.setMouseListener(listener.getMouseAdapterForAWT());
 		}
 		return listener;
 	}

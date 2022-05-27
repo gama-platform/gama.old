@@ -223,4 +223,18 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 		};
 	}
 
+	public java.awt.event.MouseMotionListener getMouseAdapterForAWT() {
+		return new java.awt.event.MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(java.awt.event.MouseEvent e) {
+				delegate.dragDetected(e.getX(), e.getY());	
+			}
+
+			@Override
+			public void mouseMoved(java.awt.event.MouseEvent e) {
+				delegate.mouseMove(e.getX(), e.getY(), (e.getModifiers()) != 0);				
+			}} ;
+	}
+
 }
