@@ -160,15 +160,10 @@ public abstract class Connector implements IConnector {
 					return allMessage;
 				}
 				case PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
-					ArrayList<IAgent> bb = this.boxFollower.get(groupName);
-					if (bb == null) {
-						bb = this.boxFollower.get(this.boxFollower.keySet().toArray()[0]);
-					}
+					final ArrayList<IAgent> bb = this.boxFollower.get(groupName)==null? this.boxFollower.get("ALL"): this.boxFollower.get(groupName);
 					for (final IAgent agt : bb) {
 						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
-						if (messages != null) {
-							messages.add(message);
-						}
+						if (messages != null) { messages.add(message); }
 					}
 					break;
 				}
