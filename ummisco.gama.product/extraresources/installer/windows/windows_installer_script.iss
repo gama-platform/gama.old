@@ -6,7 +6,7 @@
 #define AppExeName "Gama.exe"
 #define AppDirPath ".\gama_input"
 #define MsiOutputFilename "Gama_installer_x86_64"
-#define LicensePath "..\..\..\..\LICENSE"
+#define LicensePath ".\LICENSE"
 #define SetupIconPath ".\icon256.ico"
 #define OutputDirPath ".\gama_output"
 
