@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
@@ -122,7 +122,6 @@ import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gama.runtime.PlatformHelper;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.dev.utils.FLAGS;
@@ -525,7 +524,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		t.setWidth(t.getWidth() + buttonPadding);
 		final FlatButton b = (FlatButton) t.getControl();
 		b.setRightPadding(buttonPadding);
-		//b.setImageHeight(maxImageHeight);
+		// b.setImageHeight(maxImageHeight);
 		b.setToolTipText("Executes the " + type + " experiment " + text);
 		b.addSelectionListener(listener);
 		t.setData("index", index);
@@ -546,7 +545,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) return;
 				toolbar.wipe(SWT.LEFT, true);
-				toolbar.setDefaultHeight(maxImageHeight );
+				toolbar.setDefaultHeight(maxImageHeight);
 
 				final var c = state.getColor();
 				var msg = state.getStatus();
@@ -896,6 +895,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	protected void uninstallTextDragAndDrop(final ISourceViewer viewer) {
 		dndHandler.uninstall();
+	}
+
+	/**
+	 * Creates a composite ruler to be used as the vertical ruler by this editor. Subclasses may re-implement this
+	 * method.
+	 *
+	 * @return the vertical ruler
+	 */
+	@Override
+	protected CompositeRuler createCompositeRuler() {
+		return new CompositeRuler(6);
 	}
 
 	/**

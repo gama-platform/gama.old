@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlAnnotationImageProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlAnnotationImageProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
@@ -26,6 +26,7 @@ import org.eclipse.xtext.ui.editor.validation.XtextAnnotation;
 
 import com.google.inject.Inject;
 
+import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 
@@ -45,7 +46,7 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
-	
+
 	/** The Constant nonFixables. */
 	private static final Map<String, GamaIcon> nonFixables = new HashMap() {
 
@@ -56,7 +57,7 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
 		}
 	};
-	
+
 	/** The Constant deleted. */
 	private static final Map<String, GamaIcon> deleted = new HashMap() {
 
@@ -81,36 +82,62 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 		GamaIcon result = null;
 		if (annotation.isMarkedDeleted()) {
 			result = deleted.get(annotation.getType());
-		} else {
-			if (annotation instanceof MarkerAnnotation) {
-				final MarkerAnnotation ma = (MarkerAnnotation) annotation;
-				if (ma.isQuickFixableStateSet() && ma.isQuickFixable()) {
-					result = fixables.get(annotation.getType());
-				} else {
-					result = nonFixables.get(annotation.getType());
-				}
-			} else if (annotation instanceof ProjectionAnnotation) {
-				return null;
-				// ProjectionAnnotation projection = (ProjectionAnnotation)
-				// annotation;
-				// if ( projection.isCollapsed() ) {
-				// return GamaIcons.create("marker.collapsed2").image();
-				// } else {
-				// return GamaIcons.create("marker.expanded2").image();
-				// }
-			} else if (annotation instanceof XtextAnnotation) {
-				final XtextAnnotation ma = (XtextAnnotation) annotation;
-				if (ma.isQuickFixable()) {
-					result = fixables.get(annotation.getType());
-				} else {
-					result = nonFixables.get(annotation.getType());
-				}
-			}
+		} else if (annotation instanceof MarkerAnnotation ma) {
+			result = getImage(annotation.getType());
+			// if (ma.isQuickFixableStateSet() && ma.isQuickFixable()) {
+			// result = fixables.get(annotation.getType());
+			// } else {
+			// result = nonFixables.get(annotation.getType());
+			// }
+		} else if (annotation instanceof ProjectionAnnotation)
+			return null;
+		// ProjectionAnnotation projection = (ProjectionAnnotation)
+		// annotation;
+		// if ( projection.isCollapsed() ) {
+		// return GamaIcons.create("marker.collapsed2").image();
+		// } else {
+		// return GamaIcons.create("marker.expanded2").image();
+		// }
+		else if (annotation instanceof XtextAnnotation ma) {
+			result = getImage(annotation.getType());
+			// if (ma.isQuickFixable()) {
+			// result = fixables.get(annotation.getType());
+			// } else {
+			// result = nonFixables.get(annotation.getType());
+			// }
 		}
-		if (result != null) { return result.image(); }
+		if (result != null) return result.image();
 		// DEBUG.LOG("Image not found for type: " +
 		// annotation.getType());
 		return super.getManagedImage(annotation);
+	}
+
+	/**
+	 * Gets the image.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the image
+	 */
+	public GamaIcon getImage(final String type) {
+		switch (type) {
+			case ERROR_ANNOTATION_TYPE:
+				if (!ThemeHelper.isDark())
+					return GamaIcons.create("marker.error2");
+				else
+					return GamaIcons.create("marker.error2.dark");
+			case WARNING_ANNOTATION_TYPE:
+				return GamaIcons.create("marker.warning2");
+			case INFO_ANNOTATION_TYPE:
+				if (!ThemeHelper.isDark())
+					return GamaIcons.create("marker.info2");
+				else
+					return GamaIcons.create("marker.info2.dark");
+			case "org.eclipse.ui.workbench.texteditor.task":
+				return GamaIcons.create("marker.task2");
+			default:
+				return null;
+		}
 	}
 
 }
