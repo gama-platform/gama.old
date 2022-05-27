@@ -23,9 +23,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
 import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -53,26 +56,40 @@ public abstract class SwingControl extends Composite {
 	 *
 	 * @return the frame
 	 */
-	public Frame getFrame() {
-		return frame;
-	}
+	public Frame getFrame() { return frame; }
 
 	/** The surface. */
 	Java2DDisplaySurface surface;
 
 	/** The populated. */
-	boolean populated = false;
+	volatile boolean populated = false;
+
+	/** The visible. */
+	volatile boolean visible = false;
 
 	/**
 	 * Instantiates a new swing control.
 	 *
 	 * @param parent
 	 *            the parent
+	 * @param awtDisplayView
 	 * @param style
 	 *            the style
 	 */
-	public SwingControl(final Composite parent, final int style) {
+	public SwingControl(final Composite parent, final AWTDisplayView view, final int style) {
 		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
+		WorkbenchHelper.getPage().addPartListener(new IPartListener2() {
+
+			@Override
+			public void partHidden(final IWorkbenchPartReference partRef) {
+				if (partRef.getPart(false).equals(view)) { visible = false; }
+			}
+
+			@Override
+			public void partVisible(final IWorkbenchPartReference partRef) {
+				if (partRef.getPart(false).equals(view)) { visible = true; }
+			}
+		});
 		setLayout(new FillLayout());
 	}
 
@@ -103,8 +120,7 @@ public abstract class SwingControl extends Composite {
 				if (multiListener != null) { frame.addKeyListener(multiListener); }
 				applet = new JApplet();
 				surface = createSwingComponent();
-				if (PlatformHelper.isWindows())
-					surface.setVisibility(() -> WorkbenchHelper.run(() -> SwingControl.this.isVisible()));
+				if (PlatformHelper.isWindows()) { surface.setVisibility(() -> visible); }
 				applet.getContentPane().add(surface);
 				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
@@ -174,8 +190,6 @@ public abstract class SwingControl extends Composite {
 	 * @param adapter
 	 *            the new key listener
 	 */
-	public void setKeyListener(final KeyListener adapter) {
-		multiListener = adapter;
-	}
+	public void setKeyListener(final KeyListener adapter) { multiListener = adapter; }
 
 }
