@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.serializer.gamaType.converters;
+package msi.gaml.architecture.simplebdi;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -16,8 +16,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.architecture.simplebdi.BDIPlan;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.serializer.gamaType.converters.AbstractGamaConverter;
 
 /**
  * The Class GamaBDIPlanConverter.

@@ -10,6 +10,11 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.factory;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -22,12 +27,12 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaPath;
-import msi.gaml.architecture.simplebdi.BDIPlan;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+import ummisco.gama.serializer.gamaType.converter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
-import ummisco.gama.serializer.gamaType.converters.GamaBDIPlanConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaColorConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
@@ -57,27 +62,38 @@ public abstract class Converters {
 	/** The Constant NETWORK. */
 	private final static IGamaConverter[] NETWORK;
 
+	/** The Constant DISCOVERED. */
+	private final static IGamaConverter[] DISCOVERED;
+
 	static {
-		// AD TODO These tables need to be built dynamically
-		REGULAR = new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
+		final List<IGamaConverter> converters = new ArrayList<>();
+		Types.builtInTypes.getAllTypes().forEach(t -> {
+			converter converter = t.getClass().getAnnotation(converter.class);
+			if (converter != null) {
+				try {
+					Constructor<? extends IGamaConverter> constructor = converter.value().getConstructor(Class.class);
+					converters.add(constructor.newInstance(t.toClass()));
+				} catch (Exception e) {}
+			}
+		});
+		DISCOVERED = converters.toArray(new IGamaConverter[converters.size()]);
+		REGULAR = concat(new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
 				new GamaAgentConverter(IAgent.class), new GamaListConverter(IList.class),
 				new GamaMapConverter(IMap.class), new GamaPairConverter(GamaPair.class),
 				new GamaMatrixConverter(IMatrix.class), new GamaGraphConverter(IGraph.class),
 				new GamaFileConverter(IGamaFile.class), new GamaColorConverter(GamaColor.class),
 				new LogConverter(Object.class), new SavedAgentConverter(SavedAgent.class),
 				new GamaPopulationConverter(IPopulation.class), new GamaSpeciesConverter(ISpecies.class),
-				new ReferenceAgentConverter(ReferenceAgent.class), new GamaPathConverter(GamaPath.class),
-				new GamaBDIPlanConverter(BDIPlan.class) };
+				new ReferenceAgentConverter(ReferenceAgent.class), new GamaPathConverter(GamaPath.class) }, DISCOVERED);
 
-		NETWORK = new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
+		NETWORK = concat(new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
 				new GamaAgentConverterNetwork(IAgent.class), new GamaListConverterNetwork(IList.class),
 				new GamaMapConverter(IMap.class), new GamaPairConverter(GamaPair.class),
 				new GamaMatrixConverter(IMatrix.class), new GamaGraphConverter(IGraph.class),
 				new GamaFileConverter(IGamaFile.class), new GamaColorConverter(GamaColor.class),
 				new LogConverter(Object.class), new SavedAgentConverter(SavedAgent.class),
 				new GamaPopulationConverter(IPopulation.class), new GamaSpeciesConverter(ISpecies.class),
-				/* new ReferenceAgentConverter(ReferenceAgent.class), */new GamaPathConverter(GamaPath.class),
-				new GamaBDIPlanConverter(BDIPlan.class) };
+				new GamaPathConverter(GamaPath.class) }, DISCOVERED);
 	}
 
 	/**
@@ -104,5 +120,21 @@ public abstract class Converters {
 		return NETWORK;
 	}
 
+	/**
+	 * Concat with array copy.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param array1
+	 *            the array 1
+	 * @param array2
+	 *            the array 2
+	 * @return the t[]
+	 */
+	static <T> T[] concat(final T[] array1, final T[] array2) {
+		T[] result = Arrays.copyOf(array1, array1.length + array2.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
 	// END TODO
 }
