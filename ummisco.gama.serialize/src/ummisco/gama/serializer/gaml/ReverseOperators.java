@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ReverseOperators.java, in ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ReverseOperators.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.serializer.gaml;
 
@@ -42,16 +42,18 @@ public class ReverseOperators {
 	/**
 	 * Serialize.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return the string
 	 */
 	@operator (
 			value = "serialize")
 	@doc (
 			value = "It serializes any object, i.e.transforms it into a string.",
-			see =  "serialize_agent")
-	@no_test()
+			see = "serialize_agent")
+	@no_test ()
 	public static String serialize(final IScope scope, final Object o) {
 		DEBUG.OUT("**** Serialize Object ****");
 		return StreamConverter.convertObjectToStream(scope, o);
@@ -60,8 +62,10 @@ public class ReverseOperators {
 	/**
 	 * Unserialize.
 	 *
-	 * @param scope the scope
-	 * @param s the s
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
 	 * @return the object
 	 */
 	@operator (
@@ -77,8 +81,10 @@ public class ReverseOperators {
 	/**
 	 * Serialize agent.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
 	 * @return the string
 	 */
 	@operator (
@@ -95,14 +101,16 @@ public class ReverseOperators {
 	/**
 	 * Un serialize simulation from file.
 	 *
-	 * @param scope the scope
-	 * @param file the file
+	 * @param scope
+	 *            the scope
+	 * @param file
+	 *            the file
 	 * @return the int
 	 */
 	@operator (
 			value = "restore_simulation_from_file")
 	@doc (
-			value = "Restores a simulation from a saved simulation file.", 
+			value = "Restores a simulation from a saved simulation file.",
 			comment = "This operator should be used in a reflex of an experiment and it will remove the current simulation and replace it  by the new restored simulation",
 			see = "restore_simulation")
 	@no_test
@@ -113,39 +121,40 @@ public class ReverseOperators {
 	/**
 	 * Un serialize simulation from XML.
 	 *
-	 * @param scope the scope
-	 * @param simul the simul
+	 * @param scope
+	 *            the scope
+	 * @param simul
+	 *            the simul
 	 * @return the int
 	 */
 	@operator (
 			value = "restore_simulation")
 	@doc (
-			value = "restores a simulation from a string value containing a serialized simulation.", 
+			value = "restores a simulation from a string value containing a serialized simulation.",
 			comment = "This operator should be used in a reflex of an experiment and it will remove the current simulation and replace it by the new restored simulation",
 			see = "restore_simulation_from_file")
 	@no_test
 	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
-		final ConverterScope cScope = new ConverterScope(scope);
-		final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
-
+		final XStream xstream = StreamConverter.loadAndBuild(scope, ConverterScope.class);
 		final SavedAgent saveAgt = (SavedAgent) xstream.fromXML(simul);
 		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		final SimulationAgent simAgent = expAgt.getSimulation();
-
 		simAgent.updateWith(scope, saveAgt);
-
 		return 1;
 	}
 
 	/**
 	 * Save agent.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param pathname the pathname
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param pathname
+	 *            the pathname
 	 * @return the int
 	 */
-	// TODO : This should become a part of the save statement 
+	// TODO : This should become a part of the save statement
 	@operator (
 			value = "save_agent")
 	@doc (
@@ -165,18 +174,14 @@ public class ReverseOperators {
 
 		FileWriter fw = null;
 		try {
-			if (path.equals("")) { return -1; }
-			
+			if ("".equals(path)) return -1;
+
 			final File f = new File(path);
-			
+
 			final File parent = f.getParentFile();
-			if (!parent.exists()) {
-				parent.mkdirs();
-			}
-									
-			if (!f.exists()) {
-				f.createNewFile();
-			}
+			if (!parent.exists()) { parent.mkdirs(); }
+
+			if (!f.exists()) { f.createNewFile(); }
 			fw = new FileWriter(f);
 
 			// Write the Metadata
@@ -197,8 +202,10 @@ public class ReverseOperators {
 	/**
 	 * Save simulation.
 	 *
-	 * @param scope the scope
-	 * @param pathname the pathname
+	 * @param scope
+	 *            the scope
+	 * @param pathname
+	 *            the pathname
 	 * @return the int
 	 */
 	@operator (
@@ -217,8 +224,10 @@ public class ReverseOperators {
 	/**
 	 * Serialize network.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return the string
 	 */
 	// TODO to remove when possible
@@ -235,8 +244,10 @@ public class ReverseOperators {
 	/**
 	 * Unserialize network.
 	 *
-	 * @param scope the scope
-	 * @param s the s
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
 	 * @return the object
 	 */
 	@operator (

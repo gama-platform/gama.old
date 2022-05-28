@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentBackwardAgent.java, in ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentBackwardAgent.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.serializer.experiment;
 
@@ -38,16 +38,19 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	/** The history tree. */
 	GamaTree<String> historyTree;
-	
+
 	/** The current node. */
 	GamaNode<String> currentNode;
 
 	/**
 	 * Instantiates a new experiment backward agent.
 	 *
-	 * @param s the s
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param s
+	 *            the s
+	 * @param index
+	 *            the index
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
@@ -56,7 +59,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	/**
 	 * Redefinition of the callback method
-	 * 
+	 *
 	 * @see msi.gama.metamodel.agent.GamlAgent#_init_(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -98,15 +101,13 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 				final String previousState = previousNode.getData();
 
 				if (previousState != null) {
-					final ConverterScope cScope = new ConverterScope(scope);
-					final XStream xstream = StreamConverter.loadAndBuild(cScope,cScope.getClass());
+					final XStream xstream = StreamConverter.loadAndBuild(scope, ConverterScope.class);
 
 					// get the previous state
 					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
 
 					// Update of the simulation
 					final SimulationAgent currentSimAgt = getSimulation();
-
 					currentSimAgt.updateWith(scope, agt);
 
 					// useful to recreate the random generator
@@ -115,9 +116,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 					final Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
 
 					final IOutputManager outputs = getSimulation().getOutputManager();
-					if (outputs != null) {
-						outputs.step(scope);
-					}
+					if (outputs != null) { outputs.step(scope); }
 
 					// Recreate the random generator and set it to the same state as the saved one
 					if (((ExperimentPlan) this.getSpecies()).keepsSeed()) {
@@ -150,12 +149,10 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	public boolean canStepBack() {
 
 		final int current_cycle = getSimulation().getCycle(this.getScope());
-		return (current_cycle > 0) ? true : false;
+		return current_cycle > 0;
 		// return currentNode != null && currentNode.getParent() != null;
 	}
 
 	@Override
-	public boolean isMemorize() {
-		return true;
-	}
+	public boolean isMemorize() { return true; }
 }

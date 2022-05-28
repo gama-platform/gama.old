@@ -1,66 +1,60 @@
 /*******************************************************************************************************
  *
- * GamaPointConverter.java, in ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaPointConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import com.thoughtworks.xstream.converters.Converter;
+import static java.lang.Double.parseDouble;
+
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 
 /**
  * The Class GamaPointConverter.
  */
-public class GamaPointConverter implements Converter {
+public class GamaPointConverter extends AbstractGamaConverter<GamaPoint, GamaPoint> {
 
 	/** The Constant TAG. */
-	private final static String TAG="GamaPoint";
-	
+	private final static String TAG = "GamaPoint";
+
 	/** The Constant SEPARATOR. */
-	private final static String SEPARATOR=":";
-	@Override
-	public boolean canConvert(Class arg0) {
-		if(GamaPoint.class.equals(arg0)){return true;}
-		
-		Class<?>[] allInterface=arg0.getInterfaces();
-		for( Class<?> c:allInterface)
-		{
-			if(c.equals(GamaPoint.class))
-				return true;
-		}
-		return false;
+	private final static String SEPARATOR = ":";
+
+	/**
+	 * Instantiates a new gama point converter.
+	 *
+	 * @param target
+	 *            the target
+	 */
+	public GamaPointConverter(final Class<GamaPoint> target) {
+		super(target);
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
-		GamaPoint pt = (GamaPoint) arg0;
-		String line=pt.getX()+SEPARATOR+pt.getY()+SEPARATOR+pt.getZ();
+	public void write(IScope scope, final GamaPoint pt, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+		String line = pt.getX() + SEPARATOR + pt.getY() + SEPARATOR + pt.getZ();
 		writer.startNode(TAG);
 		writer.setValue(line);
-	    writer.endNode();
+		writer.endNode();
 	}
 
 	@Override
-	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
-		// TODO Auto-generated method stub
-		double x,y,z;
+	public GamaPoint read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
 		String[] lines = reader.getValue().split(SEPARATOR);
 		reader.moveUp();
-		x= Double.valueOf(lines[0]).doubleValue();
-		y= Double.valueOf(lines[1]).doubleValue();
-		z= Double.valueOf(lines[2]).doubleValue();
-		return new GamaPoint(x,y,z);
+		return new GamaPoint(parseDouble(lines[0]), parseDouble(lines[1]), parseDouble(lines[2]));
 	}
 
 }

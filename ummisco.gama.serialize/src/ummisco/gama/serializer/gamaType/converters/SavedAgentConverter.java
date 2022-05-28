@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SavedAgentConverter.java, in ummisco.gama.serialize, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SavedAgentConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -24,29 +23,37 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.MutableSavedAgent;
 import msi.gama.metamodel.agent.SavedAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.IMap;
 
 /**
  * The Class SavedAgentConverter.
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class SavedAgentConverter implements Converter {
+public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, SavedAgent> {
 
 	/**
 	 * Instantiates a new saved agent converter.
 	 *
-	 * @param s the s
+	 * @param target
+	 *            the target
 	 */
-	public SavedAgentConverter(final ConverterScope s) {}
-
-	@Override
-	public boolean canConvert(final Class arg0) {
-		return SavedAgent.class.isAssignableFrom(arg0);
+	public SavedAgentConverter(final Class<SavedAgent> target) {
+		super(target);
 	}
 
+	/**
+	 * Serialize.
+	 * @param writer
+	 *            the writer
+	 * @param context
+	 *            the context
+	 * @param arg0
+	 *            the arg 0
+	 */
 	@Override
-	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		final SavedAgent savedAgt = (SavedAgent) arg0;
+	public void write(IScope scope, final SavedAgent savedAgt,
+			final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		writer.startNode("index");
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
@@ -61,7 +68,6 @@ public class SavedAgentConverter implements Converter {
 				datas.add(val);
 			}
 		}
-
 		writer.startNode("variables");
 		writer.startNode("keys");
 		context.convertAnother(keys);
@@ -80,20 +86,13 @@ public class SavedAgentConverter implements Converter {
 	}
 
 	@Override
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		return unmarshal(reader, arg1, SavedAgentProvider.getCurrent());
-	}
-	
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1, MutableSavedAgent base) {
-
+	public SavedAgent read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
 		final String indexStr = reader.getValue();
-		
-		final MutableSavedAgent agtToReturn = base != null ? base : new MutableSavedAgent();
-		
+		MutableSavedAgent agtToReturn = SavedAgentProvider.getCurrent();
+		if (agtToReturn == null) { agtToReturn = new MutableSavedAgent(); }
 		final Integer index = Integer.parseInt(indexStr);
 		agtToReturn.setIndex(index);
-		
 		reader.moveUp();
 		reader.moveDown();
 		reader.moveDown();
@@ -103,9 +102,7 @@ public class SavedAgentConverter implements Converter {
 		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveUp();
-		for (int ii = 0; ii < keys.size(); ii++) {
-			agtToReturn.put(keys.get(ii), datas.get(ii));
-		}
+		for (int ii = 0; ii < keys.size(); ii++) { agtToReturn.put(keys.get(ii), datas.get(ii)); }
 		Map<String, List<SavedAgent>> inPop = null;
 
 		if (reader.hasMoreChildren()) {
@@ -114,8 +111,7 @@ public class SavedAgentConverter implements Converter {
 			agtToReturn.setInnerPop(inPop);
 			reader.moveUp();
 		}
-		
-		return (SavedAgent)agtToReturn;
+		return agtToReturn;
 	}
 
 }
