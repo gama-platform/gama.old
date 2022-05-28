@@ -63,16 +63,15 @@ public interface IGamaConverter<Input, Output> extends Converter, IScoped {
 	}
 
 	/**
-	 * Read. Builds an "Output" object from the stream available in reader.
+	 * Read. Return an "Output" object obtained from the reader
 	 *
 	 * @param scope
-	 *            TODO
-	 * @param arg0
-	 *            the arg 0
-	 * @param arg1
-	 *            the arg 1
-	 *
-	 * @return the t
+	 *            the scope
+	 * @param reader
+	 *            the reader
+	 * @param context
+	 *            the context
+	 * @return the output
 	 */
 	Output read(IScope scope, HierarchicalStreamReader reader, UnmarshallingContext context);
 
