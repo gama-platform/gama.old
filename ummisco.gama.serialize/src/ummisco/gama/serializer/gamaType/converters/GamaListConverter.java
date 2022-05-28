@@ -36,17 +36,18 @@ public class GamaListConverter extends AbstractGamaConverter<IList, IList> {
 	}
 
 	@Override
-	public void write(IScope scope, final IList list, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+	public void write(final IScope scope, final IList list, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : IList " + list.getClass() + " " + list.getGamlType().getContentType());
-		arg2.convertAnother(new GamaListReducer(list));
+		context.convertAnother(new GamaListReducer(list));
 		DEBUG.OUT("END --- ConvertAnother : IList ");
 
 	}
 
 	@Override
-	public IList read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		final GamaListReducer rmt = (GamaListReducer) arg1.convertAnother(null, GamaListReducer.class);
-		return rmt.constructObject(getScope());
+	public IList read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+		final GamaListReducer rmt = (GamaListReducer) context.convertAnother(null, GamaListReducer.class);
+		return rmt.constructObject(scope);
 	}
 
 }

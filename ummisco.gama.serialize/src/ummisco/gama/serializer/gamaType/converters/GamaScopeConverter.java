@@ -44,18 +44,16 @@ public class GamaScopeConverter extends AbstractGamaConverter<IScope, String> {
 		// The experiment ???
 		writer.startNode("Simulations");
 		final ExperimentAgent expAgt = (ExperimentAgent) scopeToSave.getExperiment();
-
 		for (final IAgent agt : expAgt.getSimulationPopulation()) {
 			// Each simulation
 			DEBUG.OUT("ConvertAnother : ScopeConverter " + agt.getClass());
 			context.convertAnother(agt);
 		}
-
 		writer.endNode();
 	}
 
 	@Override
-	public String read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public String read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
 		try {
 			return reader.getValue();

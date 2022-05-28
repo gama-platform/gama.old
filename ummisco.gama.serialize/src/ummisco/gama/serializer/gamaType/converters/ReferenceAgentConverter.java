@@ -15,6 +15,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.reference.ReferenceAgent;
 import ummisco.gama.serializer.gamaType.reference.ReferenceToAgent;
@@ -36,19 +37,19 @@ public class ReferenceAgentConverter extends AbstractGamaConverter<ReferenceAgen
 	}
 
 	@Override
-	public void write(IScope scope, final ReferenceAgent refSavedAgt,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final ReferenceAgent refSavedAgt, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		writer.startNode("attributeValue");
 		context.convertAnother(refSavedAgt.getAttributeValue());
 		writer.endNode();
 	}
 
 	@Override
-	public ReferenceAgent read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public ReferenceAgent read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext arg1) {
 		reader.moveDown();
 		try {
-			final ReferenceToAgent refAttrValue = (ReferenceToAgent) arg1.convertAnother(null, ReferenceToAgent.class);
-			return new ReferenceAgent(null, null, refAttrValue);
+			return new ReferenceAgent(null, null, (IAgent) arg1.convertAnother(null, ReferenceToAgent.class));
 		} finally {
 			reader.moveUp();
 		}

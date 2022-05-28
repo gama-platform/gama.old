@@ -36,17 +36,18 @@ public class GamaFileConverter extends AbstractGamaConverter<IGamaFile, IGamaFil
 	}
 
 	@Override
-	public void write(IScope scope, final IGamaFile gamaFile,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final IGamaFile gamaFile, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : GamaFileConverter " + gamaFile.getClass());
-		context.convertAnother(new GamaFileReducer(getScope(), gamaFile));
+		context.convertAnother(new GamaFileReducer(scope, gamaFile));
 		DEBUG.OUT("===========END ConvertAnother : GamaFile");
 	}
 
 	@Override
-	public IGamaFile read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public IGamaFile read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
 		final GamaFileReducer rmt = (GamaFileReducer) context.convertAnother(null, GamaFileReducer.class);
-		return rmt.constructObject(getScope());
+		return rmt.constructObject(scope);
 	}
 
 }

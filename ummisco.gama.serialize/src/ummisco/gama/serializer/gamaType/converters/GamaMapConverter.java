@@ -37,19 +37,19 @@ public class GamaMapConverter extends AbstractGamaConverter<IMap, IMap> {
 
 	@Override
 	public boolean canConvert(final Class clazz) {
-		if (SavedAgent.class.isAssignableFrom(clazz)) return false;
-		return super.canConvert(clazz);
+		return !SavedAgent.class.isAssignableFrom(clazz) && super.canConvert(clazz);
 	}
 
 	@Override
-	public void write(IScope scope, final IMap map, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
-		arg2.convertAnother(new GamaMapReducer(map));
+	public void write(final IScope scope, final IMap map, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
+		context.convertAnother(new GamaMapReducer(map));
 	}
 
 	@Override
-	public IMap read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public IMap read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		final GamaMapReducer rmt = (GamaMapReducer) arg1.convertAnother(null, GamaMapReducer.class);
-		return rmt.constructObject(getScope());
+		return rmt.constructObject(scope);
 	}
 
 }

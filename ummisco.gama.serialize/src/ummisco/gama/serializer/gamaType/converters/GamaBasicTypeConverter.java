@@ -38,28 +38,22 @@ public class GamaBasicTypeConverter extends AbstractGamaConverter<IType, IType> 
 	private final static String TAG = "GamaType";
 
 	@Override
-	public void write(IScope scope, final IType type, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+	public void write(final IScope scope, final IType type, final HierarchicalStreamWriter writer,
+			final MarshallingContext arg2) {
 		DEBUG.OUT("==GamaType  " + type);
-		// System.out.println("==GamaType " + arg0);
 		writer.startNode(TAG);
 		writer.setValue("" + type.getName());
-		// writer.setValue(""+arg0.getClass());
 		writer.endNode();
 	}
 
-	// TODO
 	@Override
-	public IType read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public IType read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
-		final IType<?> t = getScope().getType(reader.getValue());
-		// ModelDescription modelDesc = ((ModelDescription)
-		// convertScope.getScope().getModelContext());
-		// IType t = ((ModelDescription)
-		// convertScope.getScope().getModelContext()).getTypesManager().get(type)
-		// String val = reader.getValue();
-		reader.moveUp();
-
-		return t;
+		try {
+			return scope.getType(reader.getValue());
+		} finally {
+			reader.moveUp();
+		}
 	}
 
 }

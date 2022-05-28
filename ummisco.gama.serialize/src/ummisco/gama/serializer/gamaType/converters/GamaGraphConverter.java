@@ -35,14 +35,15 @@ public class GamaGraphConverter extends AbstractGamaConverter<IGraph, IGraph> {
 	}
 
 	@Override
-	public void write(IScope scope, final IGraph graph, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
-		arg2.convertAnother(new GamaGraphReducer(getScope(), graph));
+	public void write(final IScope scope, final IGraph graph, final HierarchicalStreamWriter writer,
+			final MarshallingContext arg2) {
+		arg2.convertAnother(new GamaGraphReducer(scope, graph));
 	}
 
 	@Override
-	public IGraph read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public IGraph read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final GamaGraphReducer rmt = (GamaGraphReducer) context.convertAnother(null, GamaGraphReducer.class);
-		return rmt.constructObject(getScope());
+		return rmt.constructObject(scope);
 	}
 
 }

@@ -42,19 +42,22 @@ public class GamaPointConverter extends AbstractGamaConverter<GamaPoint, GamaPoi
 	}
 
 	@Override
-	public void write(IScope scope, final GamaPoint pt, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
-		String line = pt.getX() + SEPARATOR + pt.getY() + SEPARATOR + pt.getZ();
+	public void write(final IScope scope, final GamaPoint pt, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		writer.startNode(TAG);
-		writer.setValue(line);
+		writer.setValue(pt.x + SEPARATOR + pt.y + SEPARATOR + pt.z);
 		writer.endNode();
 	}
 
 	@Override
-	public GamaPoint read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		reader.moveDown();
-		String[] lines = reader.getValue().split(SEPARATOR);
-		reader.moveUp();
-		return new GamaPoint(parseDouble(lines[0]), parseDouble(lines[1]), parseDouble(lines[2]));
+	public GamaPoint read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+		try {
+			reader.moveDown();
+			String[] lines = reader.getValue().split(SEPARATOR);
+			return new GamaPoint(parseDouble(lines[0]), parseDouble(lines[1]), parseDouble(lines[2]));
+		} finally {
+			reader.moveUp();
+		}
 	}
 
 }

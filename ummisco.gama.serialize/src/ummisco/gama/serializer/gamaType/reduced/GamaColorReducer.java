@@ -47,7 +47,7 @@ public class GamaColorReducer {
 	 *
 	 * @return the object
 	 */
-	public Object constructObject() {
+	public GamaColor constructObject() {
 		return new GamaColor(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
 	}
 

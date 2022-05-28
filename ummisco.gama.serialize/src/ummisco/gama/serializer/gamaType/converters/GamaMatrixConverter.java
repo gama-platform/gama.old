@@ -37,17 +37,18 @@ public class GamaMatrixConverter extends AbstractGamaConverter<IMatrix, IMatrix>
 	}
 
 	@Override
-	public void write(IScope scope, final IMatrix mat, final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final IMatrix mat, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : GamaMatrix " + mat.getClass());
-		context.convertAnother(new GamaMatrixReducer(getScope(), mat));
+		context.convertAnother(new GamaMatrixReducer(scope, mat));
 		DEBUG.OUT("END --- ConvertAnother : GamaMatrix ");
 
 	}
 
 	@Override
-	public IMatrix read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		final GamaMatrixReducer rmt = (GamaMatrixReducer) arg1.convertAnother(null, GamaMatrixReducer.class);
-		return rmt.constructObject(getScope());
+	public IMatrix read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+		final GamaMatrixReducer rmt = (GamaMatrixReducer) context.convertAnother(null, GamaMatrixReducer.class);
+		return rmt.constructObject(scope);
 	}
 
 }

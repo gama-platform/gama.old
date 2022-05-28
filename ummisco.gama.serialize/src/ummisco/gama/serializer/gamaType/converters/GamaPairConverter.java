@@ -44,8 +44,8 @@ public class GamaPairConverter extends AbstractGamaConverter<GamaPair, GamaPair>
 	}
 
 	@Override
-	public GamaPair read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		final GamaPairReducer rmt = (GamaPairReducer) arg1.convertAnother(null, GamaPairReducer.class);
+	public GamaPair read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+		final GamaPairReducer rmt = (GamaPairReducer) context.convertAnother(null, GamaPairReducer.class);
 		return rmt.constructObject();
 	}
 

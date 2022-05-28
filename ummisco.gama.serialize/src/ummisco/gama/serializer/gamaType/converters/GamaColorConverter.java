@@ -39,18 +39,19 @@ public class GamaColorConverter extends AbstractGamaConverter<GamaColor, GamaCol
 	}
 
 	@Override
-	public void write(IScope scope, final GamaColor arg0, final HierarchicalStreamWriter arg1, final MarshallingContext arg2) {
-		final GamaColor mc = arg0;
+	public void write(final IScope scope, final GamaColor color, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
+		final GamaColor mc = color;
 		DEBUG.OUT("ConvertAnother : GamaColor " + mc.getClass());
-		arg2.convertAnother(new GamaColorReducer(mc));
+		context.convertAnother(new GamaColorReducer(mc));
 		DEBUG.OUT("END -- ConvertAnother : GamaColor " + mc.getClass());
-
 	}
 
 	@Override
-	public GamaColor read(IScope scope, final HierarchicalStreamReader arg0, final UnmarshallingContext arg1) {
-		final GamaColorReducer gcr = (GamaColorReducer) arg1.convertAnother(null, GamaColorReducer.class);
-		return (GamaColor) gcr.constructObject();
+	public GamaColor read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
+		final GamaColorReducer gcr = (GamaColorReducer) context.convertAnother(null, GamaColorReducer.class);
+		return gcr.constructObject();
 	}
 
 }

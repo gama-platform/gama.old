@@ -38,21 +38,24 @@ public class GamaPopulationConverter extends AbstractGamaConverter<IPopulation, 
 	}
 
 	@Override
-	public void write(IScope scope, final IPopulation pop,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final IPopulation pop, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : GamaPopulationConverter " + pop.getClass());
 		writer.startNode("agentSetFromPopulation");
-		context.convertAnother(pop.getAgents(getScope()));
+		context.convertAnother(pop.getAgents(scope));
 		writer.endNode();
 		DEBUG.OUT("===========END ConvertAnother : GamaSavedAgentConverter");
 	}
 
 	@Override
-	public IList<IAgent> read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public IList<IAgent> read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
 		reader.moveDown();
-		final IList<IAgent> list = (IList<IAgent>) context.convertAnother(null, IList.class);
-		reader.moveUp();
-		return list;
+		try {
+			return (IList<IAgent>) context.convertAnother(null, IList.class);
+		} finally {
+			reader.moveUp();
+		}
 	}
 
 }

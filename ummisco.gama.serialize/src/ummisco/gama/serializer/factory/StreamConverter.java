@@ -10,9 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.factory;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
@@ -28,26 +27,11 @@ import msi.gaml.compilation.kernel.GamaClassLoader;
  */
 public abstract class StreamConverter {
 
-	/** The streamer. */
-	// static XStream streamer;
-	//
-	// static {
-	// streamer = new XStream(new DomDriver());
-	// streamer.addPermission(AnyTypePermission.ANY);
-	// streamer.setClassLoader(GamaClassLoader.getInstance());
-	// }
-	private static Map<Class<?>, XStream> xStreamMap = Collections.synchronizedMap(new HashMap<Class<?>, XStream>());
+	/** The x stream map. */
+	private static Map<Class<?>, XStream> REGULAR_STREAMS = new ConcurrentHashMap<>();
 
-	/**
-	 * Gets the x stream instance.
-	 *
-	 * @param clazz
-	 *            the clazz
-	 * @return the x stream instance
-	 */
-	private static XStream getXStreamInstance(final Class<?> clazz) {
-		return getXStreamInstance(clazz, false);
-	}
+	/** The network streams. */
+	private static Map<Class<?>, XStream> NETWORK_STREAMS = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets the x stream instance.
@@ -56,63 +40,20 @@ public abstract class StreamConverter {
 	 *            the clazz
 	 * @param toJSON
 	 *            the to JSON
+	 * @param cnv
 	 * @return the x stream instance
 	 */
-	private static XStream getXStreamInstance(final Class<?> clazz, final boolean toJSON) {
-		if (xStreamMap.containsKey(clazz)) return xStreamMap.get(clazz);
-		synchronized (clazz) {
-			if (xStreamMap.containsKey(clazz)) return xStreamMap.get(clazz);
-			XStream xStream;
-			if (toJSON) {
-				xStream = new XStream(new JettisonMappedXmlDriver());
-			} else {
-				xStream = new XStream(new DomDriver());
-			}
-			xStream.ignoreUnknownElements();
-			xStream.processAnnotations(clazz);
-			xStream.addPermission(AnyTypePermission.ANY);
-			xStream.setClassLoader(GamaClassLoader.getInstance());
-			xStreamMap.put(clazz, xStream);
-			return xStream;
-		}
-	}
-
-	/**
-	 * From XML.
-	 *
-	 * @param xml
-	 *            the xml
-	 * @param type
-	 *            the type
-	 * @return the object
-	 */
-	public static Object fromXML(final String xml, final Class type) {
-		return getXStreamInstance(type).fromXML(xml);
-
-	}
-
-	/**
-	 * To xml.
-	 *
-	 * @param obj
-	 *            the obj
-	 * @return the string
-	 */
-	public static String toXml(final Object obj) {
-		return getXStreamInstance(obj.getClass()).toXML(obj);
-
-	}
-
-	/**
-	 * Register converter.
-	 *
-	 * @param dataStreamer
-	 *            the data streamer
-	 * @param c
-	 *            the c
-	 */
-	public static void registerConverter(final XStream st, final Converter c) {
-		st.registerConverter(c);
+	private static XStream getXStreamInstance(final Map<Class<?>, XStream> streams, final Class<?> clazz,
+			final boolean toJSON, final Converter[] cnv) {
+		if (streams.containsKey(clazz)) return streams.get(clazz);
+		XStream xStream = new XStream(toJSON ? new JettisonMappedXmlDriver() : new DomDriver());
+		xStream.ignoreUnknownElements();
+		xStream.processAnnotations(clazz);
+		xStream.addPermission(AnyTypePermission.ANY);
+		xStream.setClassLoader(GamaClassLoader.getInstance());
+		for (final Converter c : cnv) { xStream.registerConverter(c); }
+		streams.put(clazz, xStream);
+		return xStream;
 	}
 
 	/**
@@ -150,12 +91,8 @@ public abstract class StreamConverter {
 	 *            the to JSON
 	 * @return the x stream
 	 */
-	public static XStream loadAndBuild(final IScope cs, final Object o, final boolean toJSON) {
-		final Converter[] cnv = Converters.converterFactory(cs);
-		XStream streamer = getXStreamInstance(o.getClass(), toJSON);
-		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer, c); }
-		// dataStreamer.setMode(XStream.ID_REFERENCES);
-		return streamer;
+	private static XStream loadAndBuild(final IScope cs, final Object o, final boolean toJSON) {
+		return getXStreamInstance(REGULAR_STREAMS, o.getClass(), toJSON, Converters.converterFactory(cs));
 	}
 
 	/**
@@ -168,7 +105,7 @@ public abstract class StreamConverter {
 	 * @return the string
 	 */
 	public static synchronized String convertObjectToStream(final IScope scope, final Object o) {
-		return loadAndBuild(scope, o).toXML(o);
+		return loadAndBuild(scope, o, false).toXML(o);
 	}
 
 	/**
@@ -181,7 +118,7 @@ public abstract class StreamConverter {
 	 * @return the object
 	 */
 	public static Object convertStreamToObject(final IScope scope, final String data) {
-		return loadAndBuild(scope, String.class).fromXML(data);
+		return loadAndBuild(scope, String.class, false).fromXML(data);
 	}
 
 	/**
@@ -191,13 +128,8 @@ public abstract class StreamConverter {
 	 *            the cs
 	 * @return the x stream
 	 */
-	// TODO To remove when possible
-	public static XStream loadAndBuildNetwork(final IScope cs, final Object o) {
-
-		XStream streamer = getXStreamInstance(o.getClass());
-		final Converter[] cnv = Converters.converterNetworkFactory(cs);
-		for (final Converter c : cnv) { StreamConverter.registerConverter(streamer, c); }
-		return streamer;
+	private static XStream loadAndBuildNetwork(final IScope cs, final Object o) {
+		return getXStreamInstance(NETWORK_STREAMS, o.getClass(), false, Converters.converterNetworkFactory(cs));
 	}
 
 	/**
@@ -226,5 +158,4 @@ public abstract class StreamConverter {
 		return loadAndBuildNetwork(scope, String.class).fromXML(data);
 	}
 
-	// END TODO
 }

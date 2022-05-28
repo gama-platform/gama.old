@@ -43,22 +43,23 @@ public class GamaAgentConverter extends AbstractGamaConverter<IAgent, IAgent> {
 	}
 
 	@Override
-	public void write(IScope scope, final IAgent agt, final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final IAgent agt, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		writer.startNode("agentReference");
 		DEBUG.OUT("ConvertAnother : AgentConverter " + agt.getClass());
-		final ReferenceAgent refAft = new ReferenceAgent(null, null, agt);
-		context.convertAnother(refAft);
+		context.convertAnother(new ReferenceAgent(null, null, agt));
 		DEBUG.OUT("===========END ConvertAnother : GamaAgent");
 		writer.endNode();
 	}
 
 	@Override
-	public IAgent read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-		// TODO manage MinimalAgent and MinimalGridAgent
+	public IAgent read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
-		final ReferenceAgent agt = (ReferenceAgent) arg1.convertAnother(null, ReferenceAgent.class);
-		reader.moveUp();
-		return agt;
+		try {
+			return (ReferenceAgent) arg1.convertAnother(null, ReferenceAgent.class);
+		} finally {
+			reader.moveUp();
+		}
 	}
 
 }

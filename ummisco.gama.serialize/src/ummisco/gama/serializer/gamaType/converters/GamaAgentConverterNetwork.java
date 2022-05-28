@@ -37,35 +37,20 @@ public class GamaAgentConverterNetwork extends AbstractGamaConverter<IAgent, Sav
 	}
 
 	@Override
-	public void write(IScope scope, final IAgent agt, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		// writer.startNode("save_agent network");
-		context.convertAnother(new SavedAgent(getScope(), agt));
+	public void write(final IScope scope, final IAgent agt, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
+		context.convertAnother(new SavedAgent(scope, agt));
 		DEBUG.OUT("===========END ConvertAnother : GamaAgent Network");
-		// System.out.println("===========END ConvertAnother : GamaAgent Network");
-		// writer.endNode();
-
 	}
 
 	@Override
-	public SavedAgent read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
-
+	public SavedAgent read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
 		MutableSavedAgent msa = new MutableSavedAgent();
-		// var converter = new SavedAgentConverter(convertScope);
-		// arg1.convertAnother(msa, getClass())
-		// return converter.unmarshal(reader, arg1, msa);
-		//
 		SavedAgentProvider.push(msa);
-		var tmp = arg1.convertAnother(msa, SavedAgent.class);
+		context.convertAnother(msa, SavedAgent.class);
 		SavedAgentProvider.pop();
 		return msa;
-		// var context = new AgentUnmarshallingContext(arg1, msa);
-		// context.convertAnother(msa, SavedAgent.class, null);
-		// msa = (MutableSavedAgent) arg1.convertAnother(msa, SavedAgent.class);
-		// reader.moveUp();
-		// System.out.println("lecture d'un save agent " + rmt.getName()+" " +rmt.values());
-
-		// return msa;
-
 	}
 
 }

@@ -24,9 +24,6 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamaShapeFileConverter extends AbstractGamaConverter<GamaShapeFile, GamaShapeFile> {
 
-	/** The Constant TAG. */
-	private final static String TAG = "GamaShapeFile";
-
 	/**
 	 * Instantiates a new gama shape file converter.
 	 *
@@ -38,21 +35,24 @@ public class GamaShapeFileConverter extends AbstractGamaConverter<GamaShapeFile,
 	}
 
 	@Override
-	public void write(IScope scope, final GamaShapeFile shpFile,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final GamaShapeFile shpFile, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : GamaShapeFileConverter " + shpFile.getClass());
-		writer.startNode(TAG);
-		writer.setValue(shpFile.getFile(getScope()).getAbsolutePath());
+		writer.startNode("GamaShapeFile");
+		writer.setValue(shpFile.getFile(scope).getAbsolutePath());
 		writer.endNode();
 		DEBUG.OUT("===========END ConvertAnother : GamaShapeFile");
 	}
 
 	@Override
-	public GamaShapeFile read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public GamaShapeFile read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext arg1) {
 		reader.moveDown();
-		final GamaShapeFile shp = new GamaShapeFile(getScope(), reader.getValue());
-		reader.moveUp();
-		return shp;
+		try {
+			return new GamaShapeFile(scope, reader.getValue());
+		} finally {
+			reader.moveUp();
+		}
 	}
 
 }

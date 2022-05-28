@@ -37,17 +37,18 @@ public class GamaPathConverter extends AbstractGamaConverter<GamaPath, GamaPath>
 	}
 
 	@Override
-	public void write(IScope scope, final GamaPath path,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final GamaPath path, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : GamaPath " + path.getClass());
 		context.convertAnother(new GamaPathReducer(path));
 		DEBUG.OUT("END -- ConvertAnother : GamaPath " + path.getClass());
 	}
 
 	@Override
-	public GamaPath read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public GamaPath read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
 		final GamaPathReducer rmt = (GamaPathReducer) context.convertAnother(null, GamaPathReducer.class);
-		return rmt.constructObject(getScope());
+		return rmt.constructObject(scope);
 	}
 
 }

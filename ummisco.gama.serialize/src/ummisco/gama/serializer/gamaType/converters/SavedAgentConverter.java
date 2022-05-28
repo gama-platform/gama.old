@@ -19,8 +19,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.MutableSavedAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.runtime.IScope;
@@ -44,6 +43,7 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 
 	/**
 	 * Serialize.
+	 *
 	 * @param writer
 	 *            the writer
 	 * @param context
@@ -52,8 +52,8 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 	 *            the arg 0
 	 */
 	@Override
-	public void write(IScope scope, final SavedAgent savedAgt,
-			final HierarchicalStreamWriter writer, final MarshallingContext context) {
+	public void write(final IScope scope, final SavedAgent savedAgt, final HierarchicalStreamWriter writer,
+			final MarshallingContext context) {
 		writer.startNode("index");
 		writer.setValue("" + savedAgt.getIndex());
 		writer.endNode();
@@ -63,7 +63,7 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 
 		for (final String ky : savedAgt.getKeys()) {
 			final Object val = savedAgt.get(ky);
-			if (!(val instanceof ExperimentAgent) && !(val instanceof SimulationAgent)) {
+			if (!(val instanceof ITopLevelAgent)) {
 				keys.add(ky);
 				datas.add(val);
 			}
@@ -86,7 +86,7 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 	}
 
 	@Override
-	public SavedAgent read(IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public SavedAgent read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		reader.moveDown();
 		final String indexStr = reader.getValue();
 		MutableSavedAgent agtToReturn = SavedAgentProvider.getCurrent();
@@ -96,10 +96,10 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 		reader.moveUp();
 		reader.moveDown();
 		reader.moveDown();
-		final ArrayList<String> keys = (ArrayList<String>) arg1.convertAnother(null, ArrayList.class);
+		final ArrayList<String> keys = (ArrayList<String>) context.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveDown();
-		final ArrayList<Object> datas = (ArrayList<Object>) arg1.convertAnother(null, ArrayList.class);
+		final ArrayList<Object> datas = (ArrayList<Object>) context.convertAnother(null, ArrayList.class);
 		reader.moveUp();
 		reader.moveUp();
 		for (int ii = 0; ii < keys.size(); ii++) { agtToReturn.put(keys.get(ii), datas.get(ii)); }
@@ -107,7 +107,7 @@ public class SavedAgentConverter extends AbstractGamaConverter<SavedAgent, Saved
 
 		if (reader.hasMoreChildren()) {
 			reader.moveDown();
-			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, IMap.class);
+			inPop = (Map<String, List<SavedAgent>>) context.convertAnother(null, IMap.class);
 			agtToReturn.setInnerPop(inPop);
 			reader.moveUp();
 		}
