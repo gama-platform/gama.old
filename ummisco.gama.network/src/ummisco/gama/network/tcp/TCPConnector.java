@@ -103,7 +103,7 @@ public class TCPConnector extends Connector {
 						extractAndApplyCommand(sender, message);
 					} else {
 						final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
-						storeMessage(r, message);
+						storeMessage(sender, r, message);
 					}
 				}
 
@@ -152,7 +152,7 @@ public class TCPConnector extends Connector {
 						extractAndApplyCommand(sender, message);
 					} else {
 						final String rer = MessageFactory.unpackReceiverName(message);
-						storeMessage(rer, message);
+						storeMessage(server, rer, message);
 					}
 				}
 			};

@@ -121,7 +121,7 @@ public class ClientServiceThread extends Thread {
 				clientCommand = clientCommand.replaceAll("@n@", "\n");
 				clientCommand = clientCommand.replaceAll("@b@@r@", "\b\r");
 				final ConnectorMessage msg =
-						MessageFactory.unPackNetworkMessage(myClientSocket.toString(), clientCommand);
+						MessageFactory.unPackNetworkMessage(myClientSocket.toString(),myAgent.toString(), clientCommand);
 
 				// NetworkMessage msg=new
 				// NetworkMessage(myClientSocket.toString(), clientCommand);

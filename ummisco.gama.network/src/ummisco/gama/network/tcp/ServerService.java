@@ -12,6 +12,7 @@ package ummisco.gama.network.tcp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -140,12 +141,15 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
 		if (currentSocket == null || !isOnline()) return;
-		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
 		message = message.replace("\n", "@n@");
 		message = message.replace("\b\r", "@b@@r@");
-		sender.println(message + "\n");
+		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
+		sender.println(message );//+"\n" 
 		sender.flush();
-
+		
+//		DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());  
+//		outToServer.writeUTF(message +"\n");
+//		outToServer.flush();
 	}
 
 }

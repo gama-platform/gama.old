@@ -84,7 +84,7 @@ public final class MQTTConnector extends Connector {
 		@Override
 		public void messageArrived(final String topic, final MqttMessage message) throws Exception {
 			final String body = message.toString();
-			storeMessage(topic, body);
+			storeMessage("unknown", topic, body);
 		}
 	}
 

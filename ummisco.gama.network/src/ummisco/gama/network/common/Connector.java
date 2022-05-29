@@ -127,9 +127,9 @@ public abstract class Connector implements IConnector {
 	 * @throws GamaNetworkException
 	 *             the gama network exception
 	 */
-	public void storeMessage(final String topic, final String content) throws GamaNetworkException {
+	public void storeMessage(final String sender, final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
-		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(topic, content);
+		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(sender, topic, content);
 		if (!this.localMemberNames.containsKey(msg.getSender())) {
 			pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
 		}

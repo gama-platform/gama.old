@@ -101,7 +101,7 @@ public class WebSocketConnector extends Connector {
 						extractAndApplyCommand(sender, message);
 					} else {
 						final String r = MessageFactory.unpackReceiverName(message);
-						storeMessage(r, message);
+						storeMessage(sender, r, message);
 					}
 				}
 			};
@@ -114,7 +114,7 @@ public class WebSocketConnector extends Connector {
 						extractAndApplyCommand(sender, message);
 					} else {
 						final String rer = MessageFactory.unpackReceiverName(message);
-						storeMessage(rer, message);
+						storeMessage(sender, rer, message);
 					}
 				}
 			};
