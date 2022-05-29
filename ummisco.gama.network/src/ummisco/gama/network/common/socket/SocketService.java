@@ -45,6 +45,14 @@ public interface SocketService {
 	 * @param message the message
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
+	void sendMessage(String message, String receiver) throws IOException;
+
+	/**
+	 * Send message.
+	 *
+	 * @param message the message
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	void sendMessage(String message) throws IOException;
 
 	/**

@@ -153,6 +153,11 @@ public abstract class WebSocketServerService extends Thread implements SocketSer
 	}
 
 	@Override
+	public void sendMessage(final String msg, final String receiver) throws IOException {
+
+	}
+	
+	@Override
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
 		if (currentSocket == null || !isOnline())

@@ -124,6 +124,11 @@ public abstract class WebSocketClientService extends Thread implements SocketSer
 	}
 
 	@Override
+	public void sendMessage(final String message, final String receiver) throws IOException {
+		 
+	}
+
+	@Override
 	public void sendMessage(final String message) throws IOException {
 		if (socket == null || !isOnline()) return;
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);

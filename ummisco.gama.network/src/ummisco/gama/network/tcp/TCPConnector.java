@@ -11,6 +11,7 @@
 package ummisco.gama.network.tcp;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -21,6 +22,7 @@ import ummisco.gama.network.common.CommandMessage;
 import ummisco.gama.network.common.CommandMessage.CommandType;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
+import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.AbstractProtocol;
@@ -31,21 +33,21 @@ import ummisco.gama.network.common.socket.SocketService;
  */
 public class TCPConnector extends Connector {
 
-	/** The  tcp server. */
+	/** The tcp server. */
 	public static String _TCP_SERVER = "__tcp_server";
-	
-	/** The  tcp socket. */
+
+	/** The tcp socket. */
 	public static String _TCP_SOCKET = "__tcp_socket";
-	
-	/** The  tcp client. */
+
+	/** The tcp client. */
 	public static String _TCP_CLIENT = "__tcp_client";
-	
-	/** The  tcp so timeout. */
+
+	/** The tcp so timeout. */
 	public static Integer _TCP_SO_TIMEOUT = 100;
 
 	/** The default host. */
 	public static String DEFAULT_HOST = "localhost";
-	
+
 	/** The default port. */
 	public static String DEFAULT_PORT = "1988";
 
@@ -61,7 +63,7 @@ public class TCPConnector extends Connector {
 	/**
 	 * Instantiates a new TCP connection.
 	 *
-	 * @param scope the scope
+	 * @param scope    the scope
 	 * @param isServer the is server
 	 */
 	public TCPConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
@@ -73,7 +75,7 @@ public class TCPConnector extends Connector {
 	/**
 	 * Extract and apply command.
 	 *
-	 * @param sender the sender
+	 * @param sender  the sender
 	 * @param message the message
 	 */
 	protected void extractAndApplyCommand(final String sender, final String message) {
@@ -90,72 +92,64 @@ public class TCPConnector extends Connector {
 
 	@Override
 	protected void connectToServer(final IAgent agent) throws GamaNetworkException {
-		if (isConnected) { return; }
+		if (isConnected) {
+			return;
+		}
 
 		final String server = this.getConfigurationParameter(SERVER_URL);
 		final int port = Integer.valueOf(this.getConfigurationParameter(SERVER_PORT)).intValue();
 		if (this.isServer) {
-			socket = new ServerService(port) {
+			socket = new ServerService(agent, port, this) {
 				@Override
 				public void receivedMessage(final String sender, final String message) {
-					final MessageType mte = MessageFactory.identifyMessageType(message);
-					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-						extractAndApplyCommand(sender, message);
-					} else {
-						final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
-						storeMessage(sender, r, message);
-					}
+					System.out.println(sender+" "+message);
+//					final MessageType mte = MessageFactory.identifyMessageType(message);
+//					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+//						extractAndApplyCommand(sender, message);
+//					} else {
+//						final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
+//						storeMessage(sender, r, message);
+//					}
 				}
 
 				@Override
 				public void onOpen(AbstractProtocol conn) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onClose(AbstractProtocol conn, int code, String reason, boolean remote) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onMessage(AbstractProtocol conn, String message) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onMessage(AbstractProtocol conn, ByteBuffer message) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onError(AbstractProtocol conn, Exception ex) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void onStart() {
 					// TODO Auto-generated method stub
-					
+
 				}
 			};
 		} else {
-			socket = new ClientService(server, port, this) {
-				@Override
-				public void receivedMessage(final String sender, final String message) {
-					final MessageType mte = MessageFactory.identifyMessageType(message);
-					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-						extractAndApplyCommand(sender, message);
-					} else {
-						final String rer = MessageFactory.unpackReceiverName(message);
-						storeMessage(server, rer, message);
-					}
-				}
-			};
+			socket = new GamaClientService(server, port, this);
 		}
 		try {
 			socket.startService();
@@ -163,6 +157,30 @@ public class TCPConnector extends Connector {
 			e.printStackTrace();
 		}
 		this.setConnected();
+	}
+
+	public class GamaClientService extends ClientService {
+
+		public GamaClientService(String server, int port, IConnector connector) {
+			super(server, port, connector);
+			// TODO Auto-generated constructor stub
+		}
+
+		public GamaClientService(Socket clientSocket) {
+			super(clientSocket);
+		}
+
+		@Override
+		public void receivedMessage(final String sender, final String message) {
+			final MessageType mte = MessageFactory.identifyMessageType(message);
+			if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+				extractAndApplyCommand(sender, message);
+			} else {
+				final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
+				storeMessage(sender, r, message);
+			}
+		}
+
 	}
 
 	@Override
@@ -195,13 +213,13 @@ public class TCPConnector extends Connector {
 		socket = null;
 		this.isConnected = false;
 	}
-  
+
 	@Override
 	protected void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException {
 		try {
 			if (socket != null) {
-				socket.sendMessage(content);
+				socket.sendMessage(content,receiver);
 			}
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
@@ -210,7 +228,7 @@ public class TCPConnector extends Connector {
 	}
 
 	@Override
-	public SocketService getSocketService() { 
+	public SocketService getSocketService() {
 		return socket;
 	}
 
