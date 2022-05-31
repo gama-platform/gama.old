@@ -438,12 +438,20 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		super.createPartControl(editor);
 		editor.addControlListener(new ControlListener() {
 
+			long lastEvent;
+
 			@Override
 			public void controlMoved(final ControlEvent e) {}
 
 			@Override
 			public void controlResized(final ControlEvent e) {
-				WorkbenchHelper.asyncRun(() -> updateToolbar(state, true));
+				WorkbenchHelper.asyncRun(() -> {
+					long time = System.currentTimeMillis();
+					if (time - lastEvent > 500) {
+						lastEvent = time;
+						updateToolbar(state, true);
+					}
+				});
 			}
 		});
 		toolbarParent.requestLayout();
