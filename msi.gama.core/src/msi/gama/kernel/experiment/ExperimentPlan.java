@@ -507,7 +507,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if (s instanceof SimulationOutputManager som) {
-				if (som.isSync()) { sync = true; }
+				if (som.isSync()) { synchronizeAllOutputs(); }
 				if (originalSimulationOutputs != null) {
 					originalSimulationOutputs.setChildren(som);
 				} else {
@@ -524,7 +524,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				final boolean already = parameters.containsKey(parameterName);
 				if (!already) { parameters.put(parameterName, p); }
 			} else if (s instanceof ExperimentOutputManager eom) {
-				if (eom.isSync()) { sync = true; }
+				if (eom.isSync()) { synchronizeAllOutputs(); }
 				if (experimentOutputs != null) {
 					experimentOutputs.setChildren(eom);
 				} else {

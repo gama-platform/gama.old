@@ -88,7 +88,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 		autosave = desc.getFacetExpr(IKeyword.AUTOSAVE);
-		sync = "true".equals(desc.getLitteral("synchronized")) || !"false".equals(desc.getLitteral(IKeyword.AUTOSAVE));
+		sync = "true".equals(desc.getLitteral("synchronized"))
+				|| desc.hasFacet(IKeyword.AUTOSAVE) && !"false".equals(desc.getLitteral(IKeyword.AUTOSAVE));
 	}
 
 	@Override
