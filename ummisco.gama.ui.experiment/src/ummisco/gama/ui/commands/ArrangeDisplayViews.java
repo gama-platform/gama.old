@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import com.google.common.collect.Iterables;
 
 import msi.gama.application.workbench.PerspectiveHelper;
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.tree.GamaNode;
@@ -56,27 +57,21 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	 *
 	 * @return the part service
 	 */
-	private static EPartService getPartService() {
-		return WorkbenchHelper.getService(EPartService.class);
-	}
+	private static EPartService getPartService() { return WorkbenchHelper.getService(EPartService.class); }
 
 	/**
 	 * Gets the application.
 	 *
 	 * @return the application
 	 */
-	private static MApplication getApplication() {
-		return WorkbenchHelper.getService(MApplication.class);
-	}
+	private static MApplication getApplication() { return WorkbenchHelper.getService(MApplication.class); }
 
 	/**
 	 * Gets the model service.
 	 *
 	 * @return the model service
 	 */
-	private static EModelService getModelService() {
-		return WorkbenchHelper.getService(EModelService.class);
-	}
+	private static EModelService getModelService() { return WorkbenchHelper.getService(EModelService.class); }
 
 	static {
 		DEBUG.ON();
@@ -131,6 +126,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				if (displayStack == null) return;
 				displayStack.setToBeRendered(true);
 				final MElementContainer<?> root = displayStack.getParent();
+
 				displayStack.getChildren().addAll(holders);
 				process(root, child, holders);
 				showDisplays(root, holders);
@@ -187,6 +183,12 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		List<IGamaView.Display> displays = ViewsHelper.getDisplayViews(null);
 		// DEBUG.OUT("Displays to decorate "
 		// + DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
+
+		if (PerspectiveHelper.getBackground() != null) {
+			ThemeHelper.changeSashBackground(PerspectiveHelper.getBackground());
+			PerspectiveHelper.getActiveSimulationPerspective().setRestoreBackground(ThemeHelper::restoreSashBackground);
+		}
+
 		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }
@@ -235,9 +237,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			if (container.equals(uiRoot)) { holder.setContainerData(weight); }
 			container.getChildren().add(holder);
 		} else {
-			for (final GamaNode<String> node : treeRoot.getChildren()) {
-				process(container, node, holders);
-			}
+			for (final GamaNode<String> node : treeRoot.getChildren()) { process(container, node, holders); }
 		}
 	}
 

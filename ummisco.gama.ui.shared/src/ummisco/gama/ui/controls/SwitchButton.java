@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
+import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -129,8 +130,9 @@ public class SwitchButton extends Canvas {
 	 *            the unselected background color
 	 */
 	public SwitchButton(final Composite parent, final int style, final Color selectedBackgroundColor,
-			final Color unselectedBackgroundColor, final String[] labels) {
+			final Color unselectedBackgroundColor, final String[] strings) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
+		String[] labels = strings == null || strings.length < 2 ? IParameter.SWITCH_STRINGS : strings;
 		this.trueText = " " + labels[0] + " ";
 		this.falseText = " " + labels[1] + " ";
 		this.text = "";

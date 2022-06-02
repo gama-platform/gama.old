@@ -432,6 +432,14 @@ public interface IUnits {
 			doc = @doc ("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)")) double zoom =
 					1;
 
+	/** The fullscreen. */
+	@constant (
+			value = "fullscreen",
+			category = IConstantCategory.GRAPHIC,
+			concept = { IConcept.GRAPHIC, IConcept.DISPLAY },
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns whether the display is currently fullscreen or not")) boolean fullscreen =
+					false;
+
 	/** The px. */
 	@constant (
 			value = "pixels",

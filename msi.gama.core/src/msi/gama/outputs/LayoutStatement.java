@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayoutStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LayoutStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -82,6 +82,11 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("Whether the bottom tray is visible or not (true by default)")),
 				@facet (
+						name = "background",
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Whether the whole interface of GAMA should be colored or not (nil by default)")),
+				@facet (
 						name = "tabs",
 						type = IType.BOOL,
 						optional = true,
@@ -101,7 +106,8 @@ public class LayoutStatement extends Symbol {
 	/**
 	 * Instantiates a new layout statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public LayoutStatement(final IDescription desc) {
 		super(desc);

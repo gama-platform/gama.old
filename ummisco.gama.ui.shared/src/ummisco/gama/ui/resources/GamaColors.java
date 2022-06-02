@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -423,30 +424,8 @@ public class GamaColors {
 	 *            the c
 	 * @return the background CSS property
 	 */
-	public static String getCSSProperty(final String prop, final Color c) {
-		return " " + prop + ": " + String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()) + ";";
-	}
-
-	/**
-	 * Gets the background CSS property.
-	 *
-	 * @param c
-	 *            the c
-	 * @return the background CSS property
-	 */
-	public static String getCSSProperty(final String prop, final java.awt.Color c) {
-		return " " + prop + ": " + String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()) + ";";
-	}
-
-	/**
-	 * Gets the background CSS property.
-	 *
-	 * @param c
-	 *            the c
-	 * @return the background CSS property
-	 */
 	public static String getCSSProperty(final String prop, final GamaUIColor c) {
-		return getCSSProperty(prop, c.color());
+		return ThemeHelper.getCSSProperty(prop, c.color());
 	}
 
 	/**
@@ -459,7 +438,11 @@ public class GamaColors {
 	 */
 	public static void setBackground(final Control w, final Color c) {
 		w.setBackground(c);
-		w.setData("style", getCSSProperty("background-color", c));
+		if (c == null) {
+			w.setData("style", null);
+		} else {
+			w.setData("style", ThemeHelper.getCSSProperty("background-color", c));
+		}
 	}
 
 	/**
@@ -472,7 +455,11 @@ public class GamaColors {
 	 */
 	public static void setForeground(final Control w, final Color c) {
 		w.setForeground(c);
-		w.setData("style", getCSSProperty("color", c));
+		if (c == null) {
+			w.setData("style", null);
+		} else {
+			w.setData("style", ThemeHelper.getCSSProperty("color", c));
+		}
 	}
 
 	/**
@@ -488,7 +475,14 @@ public class GamaColors {
 	public static void setBackAndForeground(final Control w, final Color b, final Color f) {
 		w.setBackground(b);
 		w.setForeground(f);
-		w.setData("style", getCSSProperty("background-color", b) + getCSSProperty("color", f));
+		if (b == null) {
+			setForeground(w, f);
+		} else if (f == null) {
+			setBackground(w, b);
+		} else {
+			w.setData("style",
+					ThemeHelper.getCSSProperty("background-color", b) + ThemeHelper.getCSSProperty("color", f));
+		}
 	}
 
 }

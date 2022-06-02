@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UnitConstantExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * UnitConstantExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.units;
 
@@ -41,12 +41,18 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	/**
 	 * Creates the.
 	 *
-	 * @param val the val
-	 * @param t the t
-	 * @param unit the unit
-	 * @param doc the doc
-	 * @param isTime the is time
-	 * @param names the names
+	 * @param val
+	 *            the val
+	 * @param t
+	 *            the t
+	 * @param unit
+	 *            the unit
+	 * @param doc
+	 *            the doc
+	 * @param isTime
+	 *            the is time
+	 * @param names
+	 *            the names
 	 * @return the unit constant expression
 	 */
 	// Already cached in IExpressionFactory.UNIT_EXPRS
@@ -56,6 +62,8 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		switch (unit) {
 			case "zoom":
 				return new ZoomUnitExpression(unit, doc);
+			case "fullscreen":
+				return new FullScreenExpression(unit, doc);
 			case "pixels":
 			case "px":
 				return new PixelUnitExpression(unit, doc);
@@ -77,27 +85,32 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 				return new CurrentErrorUnitExpression(doc);
 
 		}
-		if (isTime) { return new TimeUnitConstantExpression(val, t, unit, doc, names); }
+		if (isTime) return new TimeUnitConstantExpression(val, t, unit, doc, names);
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 
 	/** The documentation. */
 	String documentation;
-	
+
 	/** The alternate names. */
 	final List<String> alternateNames;
-	
+
 	/** The is deprecated. */
 	private boolean isDeprecated;
 
 	/**
 	 * Instantiates a new unit constant expression.
 	 *
-	 * @param val the val
-	 * @param t the t
-	 * @param name the name
-	 * @param doc the doc
-	 * @param names the names
+	 * @param val
+	 *            the val
+	 * @param t
+	 *            the t
+	 * @param name
+	 *            the name
+	 * @param doc
+	 *            the doc
+	 * @param names
+	 *            the names
 	 */
 	public UnitConstantExpression(final Object val, final IType<?> t, final String name, final String doc,
 			final String[] names) {
@@ -106,9 +119,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		documentation = doc;
 		alternateNames = new ArrayList<>();
 		alternateNames.add(name);
-		if (names != null) {
-			alternateNames.addAll(Arrays.asList(names));
-		}
+		if (names != null) { alternateNames.addAll(Arrays.asList(names)); }
 	}
 
 	@Override
@@ -117,37 +128,27 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public String getDocumentation() {
-		return documentation;
-	}
+	public String getDocumentation() { return documentation; }
 
 	@Override
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
-	public void setName(final String n) {
-		this.name = n;
-	}
+	public void setName(final String n) { this.name = n; }
 
 	@Override
 	public String getTitle() {
 		String prefix;
 		if (type.equals(Types.COLOR)) {
 			prefix = "Constant color ";
+		} else if (getClass().equals(UnitConstantExpression.class)) {
+			prefix = "Constant ";
 		} else {
-			if (getClass().equals(UnitConstantExpression.class)) {
-				prefix = "Constant ";
-			} else {
-				prefix = "Mutable value ";
-			}
+			prefix = "Mutable value ";
 		}
-		String s = prefix + serialize(false);
-		if (alternateNames.size() > 1) {
-			s += " (" + alternateNames + ")";
-		}
-		return s;
+		StringBuilder s = new StringBuilder().append(prefix).append(serialize(false));
+		if (alternateNames.size() > 1) { s.append(" (").append(alternateNames).append(")"); }
+		return s.toString();
 	}
 
 	@Override
@@ -169,9 +170,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public IExpression getExpression() {
-		return this;
-	}
+	public IExpression getExpression() { return this; }
 
 	@Override
 	public IExpressionDescription compileAsLabel() {
@@ -184,9 +183,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public EObject getTarget() {
-		return null;
-	}
+	public EObject getTarget() { return null; }
 
 	@Override
 	public void setTarget(final EObject target) {}
@@ -209,7 +206,8 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	/**
 	 * Sets the deprecated.
 	 *
-	 * @param deprecated the new deprecated
+	 * @param deprecated
+	 *            the new deprecated
 	 */
 	public void setDeprecated(final String deprecated) {
 		isDeprecated = true;
@@ -221,8 +219,6 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	 *
 	 * @return true, if is deprecated
 	 */
-	public boolean isDeprecated() {
-		return isDeprecated;
-	}
+	public boolean isDeprecated() { return isDeprecated; }
 
 }
