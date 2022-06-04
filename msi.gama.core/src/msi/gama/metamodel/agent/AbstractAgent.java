@@ -483,17 +483,17 @@ public abstract class AbstractAgent implements IAgent {
 	@action (
 			name = "tell",
 			args = { @arg (
-					name = "message",
+					name = "msg",
 					type = IType.STRING,
 					doc = @doc ("The message to display")),
 					@arg (
 							name = "add_name",
 							optional = true,
 							type = IType.BOOL,
-							doc = @doc ("The name of the agent that uses the action is displayed?"))})
+							doc = @doc ("Should the name of the agent that uses the action be displayed?")) })
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
-		Boolean addName = !scope.hasArg("add_name") || Cast.asBool(scope, scope.getArg("add_name", IType.BOOL));
-		final String s = (addName ? (getName() + " says : ") : "") + scope.getArg("message", IType.STRING);
+		boolean addName = !scope.hasArg("add_name") || Cast.asBool(scope, scope.getArg("add_name", IType.BOOL));
+		final String s = (addName ? getName() + " says : " : "") + scope.getArg("msg", IType.STRING);
 		scope.getGui().tell(s);
 		return s;
 	}
