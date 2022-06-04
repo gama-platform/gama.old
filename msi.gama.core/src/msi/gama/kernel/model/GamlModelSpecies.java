@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlModelSpecies.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlModelSpecies.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.model;
 
@@ -33,6 +33,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -117,17 +118,18 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	/** The experiments. */
 	protected final Map<String, IExperimentPlan> experiments = GamaMapFactory.create();
-	
+
 	/** The titled experiments. */
 	protected final Map<String, IExperimentPlan> titledExperiments = GamaMapFactory.create();
-	
+
 	/** The all species. */
 	protected Map<String, ISpecies> allSpecies;
 
 	/**
 	 * Instantiates a new gaml model species.
 	 *
-	 * @param description the description
+	 * @param description
+	 *            the description
 	 */
 	public GamlModelSpecies(final IDescription description) {
 		super(description);
@@ -135,37 +137,28 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public ModelDescription getDescription() {
-		return (ModelDescription) description;
-	}
+	public ModelDescription getDescription() { return (ModelDescription) description; }
 
 	@Override
-	public Collection<String> getImportedPaths() {
-		return getDescription().getAlternatePaths();
-	}
+	public Collection<String> getImportedPaths() { return getDescription().getAlternatePaths(); }
 
 	@Override
-	public String getWorkingPath() {
-		return getDescription().getModelFolderPath();
-	}
+	public String getWorkingPath() { return getDescription().getModelFolderPath(); }
 
 	@Override
-	public String getFilePath() {
-		return getDescription().getModelFilePath();
-	}
+	public String getFilePath() { return getDescription().getModelFilePath(); }
 
 	@Override
-	public String getProjectPath() {
-		return getDescription().getModelProjectPath();
-	}
+	public String getProjectPath() { return getDescription().getModelProjectPath(); }
 
 	/**
 	 * Adds the experiment.
 	 *
-	 * @param exp the exp
+	 * @param exp
+	 *            the exp
 	 */
 	protected void addExperiment(final IExperimentPlan exp) {
-		if (exp == null) { return; }
+		if (exp == null) return;
 		experiments.put(exp.getName(), exp);
 		titledExperiments.put(exp.getFacet(IKeyword.TITLE).literalValue(), exp);
 		exp.setModel(this);
@@ -178,16 +171,12 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		if (e == null) {
 			// Otherwise with its title
 			e = titledExperiments.get(s);
-			if (e == null) {
-				// Finally, if the string is an int, we try to get the n-th
-				// experiment
-				if (StringUtils.isNumeric(s)) {
-					final int i = Integer.parseInt(s);
-					final List<String> names = new ArrayList(experiments.keySet());
-					if (names.size() > 0) {
-						e = getExperiment(names.get(i));
-					}
-				}
+			// Finally, if the string is an int, we try to get the n-th
+			// experiment
+			if ((e == null) && StringUtils.isNumeric(s)) {
+				final int i = Integer.parseInt(s);
+				final List<String> names = new ArrayList(experiments.keySet());
+				if (names.size() > 0) { e = getExperiment(names.get(i)); }
 			}
 		}
 		return e;
@@ -196,20 +185,17 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (final IExperimentPlan exp : experiments.values()) {
-			exp.dispose();
-		}
+		for (final IExperimentPlan exp : experiments.values()) { exp.dispose(); }
 		experiments.clear();
 		titledExperiments.clear();
-		if (allSpecies != null) {
-			allSpecies.clear();
-		}
+		if (allSpecies != null) { allSpecies.clear(); }
 	}
 
 	@Override
 	public ISpecies getSpecies(final String speciesName) {
-		if (speciesName == null) { return null; }
-		if (speciesName.equals(getName())) { return this; }
+		if (speciesName == null) return null;
+		if (speciesName.equals(getName())) return this;
+		if (IKeyword.MODEL.equals(speciesName)) return GamaMetaModel.INSTANCE.getAbstractModelSpecies();
 		/*
 		 * the original is: return getAllSpecies().get(speciesName);
 		 */
@@ -224,7 +210,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 					final ISpecies mm = entry.getValue();
 					if (mm instanceof GamlModelSpecies) {
 						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-						if (sp != null) { return sp; }
+						if (sp != null) return sp;
 					}
 				}
 			}
@@ -234,8 +220,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public ISpecies getSpecies(final String speciesName, final SpeciesDescription specDes) {
-		if (speciesName == null) { return null; }
-		if (speciesName.equals(getName())) { return this; }
+		if (speciesName == null) return null;
+		if (speciesName.equals(getName())) return this;
 		// hqnghi 11/Oct/13
 		// get experiementSpecies in any model
 		ISpecies sp = getExperiment(speciesName);
@@ -244,12 +230,11 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 				final ISpecies mm = entry.getValue();
 				if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
 					sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-					if (sp != null) { return sp; }
+					if (sp != null) return sp;
 				}
 			}
 		}
-		sp = getAllSpecies().get(speciesName);
-		return sp;
+		return getAllSpecies().get(speciesName);
 	}
 
 	@Override
@@ -266,9 +251,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 				allSpecies.put(currentSpecies.getName(), currentSpecies);
 				final List<ISpecies> theMicroSpecies = currentSpecies.getMicroSpecies();
 				for (final ISpecies microSpec : theMicroSpecies) {
-					if (microSpec.getMacroSpecies().equals(currentSpecies)) {
-						speciesStack.push(microSpec);
-					}
+					if (microSpec.getMacroSpecies().equals(currentSpecies)) { speciesStack.push(microSpec); }
 				}
 			}
 		}
@@ -308,11 +291,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public List<TestStatement> getAllTests() {
 
 		final List<TestStatement> tests = new ArrayList<>();
-		final Consumer<IStatement> filter = t -> {
-			if (t instanceof TestStatement) {
-				tests.add((TestStatement) t);
-			}
-		};
+		final Consumer<IStatement> filter = t -> { if (t instanceof TestStatement) { tests.add((TestStatement) t); } };
 		// Fix Issue #2659
 		// getBehaviors().forEach(filter);
 		getAllSpecies().values().forEach(s -> s.getBehaviors().forEach(filter));

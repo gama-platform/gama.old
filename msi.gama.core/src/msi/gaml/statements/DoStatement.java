@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DoStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DoStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -44,6 +44,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.DoStatement.DoSerializer;
 import msi.gaml.statements.DoStatement.DoValidator;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -187,7 +188,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (!DO_FACETS.contains(key)) { return null; }
+			if (!DO_FACETS.contains(key)) return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -210,14 +211,14 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			SpeciesDescription sd = desc.getSpeciesContext();
 			if (sd != null && isSuperInvocation) {
 				sd = sd.getParent();
-				if (sd != null && sd.isBuiltIn()) {
-					desc.error("Action " + action + " cannot be invoked on " + sd.getName(), IGamlIssue.UNKNOWN_ACTION,
-							ACTION, action, sd.getName());
-					return;
-				}
+				// if (sd != null && sd.isBuiltIn()) {
+				// desc.error("Action " + action + " cannot be invoked on " + sd.getName(), IGamlIssue.UNKNOWN_ACTION,
+				// ACTION, action, sd.getName());
+				// return;
+				// }
 
 			}
-			if (sd == null) { return; }
+			if (sd == null) return;
 			// TODO What about actions defined in a macro species (not the
 			// global one, which is filtered before) ?
 			if (!sd.hasAction(action, false)) {
@@ -225,8 +226,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 						action, sd.getName());
 			}
 			final ActionDescription ad = sd.getAction(action);
-			if (ad instanceof PrimitiveDescription) {
-				final PrimitiveDescription pd = (PrimitiveDescription) ad;
+			if (ad instanceof PrimitiveDescription pd) {
 				final String dep = pd.getDeprecated();
 				if (dep != null) {
 					desc.warning("Action " + action + " is deprecated: " + dep, IGamlIssue.DEPRECATED, ACTION);
@@ -238,23 +238,24 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	/** The args. */
 	Arguments args;
-	
+
 	/** The return string. */
 	String returnString;
-	
+
 	/** The target species. */
 	final String targetSpecies;
-	
+
 	/** The function. */
 	final IExpression function;
-	
+
 	/** The Constant DO_FACETS. */
 	public static final Set<String> DO_FACETS = DescriptionFactory.getAllowedFacetsFor(IKeyword.DO, IKeyword.INVOKE);
 
 	/**
 	 * Instantiates a new do statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public DoStatement(final IDescription desc) {
 		super(desc);
@@ -273,25 +274,22 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public void enterScope(final IScope scope) {
-		if (returnString != null) {
-			scope.addVarWithValue(returnString, null);
-		}
+		if (returnString != null) { scope.addVarWithValue(returnString, null); }
 		super.enterScope(scope);
 	}
 
 	@Override
-	public void setFormalArgs(final Arguments args) {
-		this.args = args;
-	}
+	public void setFormalArgs(final Arguments args) { this.args = args; }
 
 	/**
 	 * Gets the runtime args.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the runtime args
 	 */
 	public Arguments getRuntimeArgs(final IScope scope) {
-		if (args == null) { return null; }
+		if (args == null) return null;
 		// Dynamic arguments necessary (see #2943, #2922, plus issue with multiple parallel simulations)
 		return args.resolveAgainst(scope);
 	}
@@ -301,15 +299,20 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	 * and we have to find the corresponding action. Otherwise, we return the species of the agent
 	 */
 	private ISpecies getContext(final IScope scope) {
+//		if ((targetSpecies != null) && "model".equals(targetSpecies)) {
+//
+//			DEBUG.OUT("Model found to execute " + name);
+//
+//		}
+
 		return targetSpecies != null ? scope.getModel().getSpecies(targetSpecies) : scope.getAgent().getSpecies();
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final ISpecies species = getContext(scope);
-		if (species == null) {
+		if (species == null)
 			throw GamaRuntimeException.error("Impossible to find a species to execute " + getName(), scope);
-		}
 		final IStatement.WithArgs executer = species.getAction(name);
 		Object result = null;
 		if (executer != null) {
@@ -317,13 +320,10 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			result = er.getValue();
 		} else if (function != null) {
 			result = function.value(scope);
-		} else {
+		} else
 			throw GamaRuntimeException.error("Impossible to find action " + getName() + " in " + species.getName(),
 					scope);
-		}
-		if (returnString != null) {
-			scope.setVarValue(returnString, result);
-		}
+		if (returnString != null) { scope.setVarValue(returnString, result); }
 		return result;
 	}
 
