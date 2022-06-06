@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * ChartLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -18,6 +17,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope.IGraphicsScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 1 avr. 2010
@@ -30,7 +30,8 @@ public class ChartLayer extends AbstractLayer {
 	/**
 	 * Instantiates a new chart layer.
 	 *
-	 * @param model the model
+	 * @param model
+	 *            the model
 	 */
 	public ChartLayer(final ILayerStatement model) {
 		super(model);
@@ -50,6 +51,11 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public String getType() { return "Chart layer"; }
+
+	@Override
+	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
+		super.draw(scope, g);
+	}
 
 	@Override
 	public void privateDraw(final IGraphicsScope scope, final IGraphics dg) {
