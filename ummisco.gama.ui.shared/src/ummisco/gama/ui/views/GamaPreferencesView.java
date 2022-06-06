@@ -216,17 +216,13 @@ public class GamaPreferencesView {
 			final var ed = editors.get(activable);
 			if (ed == null) {
 				activations.put(activable, value);
-			} else {
-				ed.setActive(value);
-			}
+			} else if (WorkbenchHelper.isDisplayThread()) { ed.setActive(value); }
 		}
 		for (final String deactivable : e.getDisablement()) {
 			final var ed = editors.get(deactivable);
 			if (ed == null) {
 				activations.put(deactivable, !value);
-			} else {
-				ed.setActive(!(Boolean) value);
-			}
+			} else if (WorkbenchHelper.isDisplayThread()) { ed.setActive(!(Boolean) value); }
 		}
 	}
 
@@ -239,9 +235,10 @@ public class GamaPreferencesView {
 	 *            the value
 	 */
 	void checkRefreshables(final Pref e) {
+		if (!WorkbenchHelper.isDisplayThread()) return;
 		for (final String activable : e.getRefreshment()) {
 			final var ed = editors.get(activable);
-			if (ed != null) { ed.updateWithValueOfParameter(false); }
+			if (ed != null && WorkbenchHelper.isDisplayThread()) { ed.updateWithValueOfParameter(false); }
 		}
 	}
 
