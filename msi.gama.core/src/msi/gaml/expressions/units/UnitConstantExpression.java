@@ -64,6 +64,8 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 				return new ZoomUnitExpression(unit, doc);
 			case "fullscreen":
 				return new FullScreenExpression(unit, doc);
+			case "hidpi":
+				return new HiDPIExpression(unit, doc);
 			case "pixels":
 			case "px":
 				return new PixelUnitExpression(unit, doc);

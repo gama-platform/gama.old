@@ -246,6 +246,13 @@ public interface IGamaView {
 		 * Focus canvas.
 		 */
 		default void focusCanvas() {}
+
+		/**
+		 * Checks if this view belongs to a HIDPI Monitor (i.e. if a zoom is applied).
+		 *
+		 * @return the boolean
+		 */
+		boolean isHiDPI();
 	}
 
 	/**

@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -27,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
@@ -58,6 +61,12 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	static {
 		DEBUG.OFF();
 	}
+
+	/** The is hi DPI. */
+	boolean isHiDPI;
+
+	/** The shell listener. */
+	ControlListener shellListener;
 
 	/** The real index. */
 	protected int realIndex = -1;
@@ -125,6 +134,19 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			getOutput().getData().addListener(decorator);
 			setPartName(getOutput().getName());
 		}
+		shellListener = new ControlListener() {
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				computeHiDPI();
+			}
+
+			@Override
+			public void controlMoved(final ControlEvent e) {
+				computeHiDPI();
+			}
+		};
+		site.getShell().addControlListener(shellListener);
 	}
 
 	@Override
@@ -494,8 +516,16 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			try {
 				IDisplaySurface surface = getDisplaySurface();
 				if (surface != null) { surface.dispose(); }
-				ViewsHelper.hideView(this);
 			} catch (final Exception e) {}
+		});
+
+	}
+
+	@Override
+	public void dispose() {
+		WorkbenchHelper.run(() -> {
+			if (getSite() != null) { getSite().getShell().removeControlListener(shellListener); }
+			super.dispose();
 		});
 
 	}
@@ -505,5 +535,18 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		IDisplaySurface surface = getDisplaySurface();
 		return surface != null && surface.isVisible() || isFullScreen();
 	}
+
+	/**
+	 * Compute hi DPI.
+	 *
+	 * @return true, if successful
+	 */
+	public void computeHiDPI() {
+		Monitor monitor = ViewsHelper.getMonitorOf(this);
+		isHiDPI = monitor == null ? false : monitor.getZoom() > 100;
+	}
+
+	@Override
+	public boolean isHiDPI() { return isHiDPI; }
 
 }

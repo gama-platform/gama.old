@@ -440,6 +440,14 @@ public interface IUnits {
 			doc = @doc ("This unit, only available when running aspects or declaring displays, returns whether the display is currently fullscreen or not")) boolean fullscreen =
 					false;
 
+	/** The hidpi. */
+	@constant (
+			value = "hidpi",
+			category = IConstantCategory.GRAPHIC,
+			concept = { IConcept.GRAPHIC, IConcept.DISPLAY },
+			doc = @doc ("This unit, only available when running aspects or declaring displays, returns whether the display is currently in HiDPI mode or not")) boolean hidpi =
+					false;
+
 	/** The px. */
 	@constant (
 			value = "pixels",

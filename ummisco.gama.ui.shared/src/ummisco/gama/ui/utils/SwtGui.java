@@ -100,7 +100,7 @@ import ummisco.gama.ui.resources.GamaColors;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The all tests running. */
@@ -670,16 +670,11 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
 
-	// @Override
-	// public boolean isSynchronized() {
-	// IExperimentPlan exp = GAMA.getExperiment();
-	// if (exp == null || exp.getAgent() == null) return false;
-	// IOutputManager manager = exp.getAgent().getOutputManager();
-	// if (manager.isSynchronized()) return true;
-	// for (SimulationAgent sim : exp.getAgent().getSimulationPopulation()) {
-	// if (sim.getOutputManager().isSynchronized()) return true;
-	// }
-	// return false;
-	// }
+	@Override
+	public boolean isHiDPI() {
+		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
+		DEBUG.OUT("Primary Monitor Zoom = " + zoom);
+		return zoom > 100;
+	}
 
 }

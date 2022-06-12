@@ -433,11 +433,24 @@ public class WorkbenchHelper {
 		}
 	}
 
-	public static int getMonitorUnderCursor() {
+	/**
+	 * Gets the monitor under cursor.
+	 *
+	 * @return the monitor under cursor
+	 */
+	public static int getMonitorUnderCursor() { return getMonitorContaining(getDisplay().getCursorLocation()); }
+
+	/**
+	 * Gets the monitor containing.
+	 *
+	 * @param toFind
+	 *            the to find
+	 * @return the monitor containing
+	 */
+	public static int getMonitorContaining(final Point toFind) {
 		int closest = Integer.MAX_VALUE;
 		Monitor[] monitors = getDisplay().getMonitors();
 		int result = 0;
-		Point toFind = getDisplay().getCursorLocation();
 		for (int i = 0; i < monitors.length; i++) {
 			Monitor current = monitors[i];
 			Rectangle clientArea = current.getClientArea();
@@ -447,6 +460,24 @@ public class WorkbenchHelper {
 				closest = distance;
 				result = i;
 			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gets the monitor containing.
+	 *
+	 * @param toFind
+	 *            the to find
+	 * @return the monitor containing
+	 */
+	public static int getMonitorContaining(final Rectangle toFind) {
+		Monitor[] monitors = getDisplay().getMonitors();
+		int result = 0;
+		for (int i = 0; i < monitors.length; i++) {
+			Monitor current = monitors[i];
+			Rectangle clientArea = current.getClientArea();
+			if (clientArea.intersects(toFind)) return i;
 		}
 		return result;
 	}

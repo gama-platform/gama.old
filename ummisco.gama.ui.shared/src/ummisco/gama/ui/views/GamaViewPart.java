@@ -341,7 +341,6 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void dispose() {
-		// DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
 		toolbarUpdater = null;
 		WorkbenchHelper.run(super::dispose);
 

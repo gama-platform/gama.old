@@ -14,7 +14,6 @@ import static ummisco.gama.ui.utils.WorkbenchHelper.getPage;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -23,6 +22,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -46,7 +46,7 @@ public class ViewsHelper {
 	static volatile boolean isRequesting;
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/**
@@ -209,11 +209,11 @@ public class ViewsHelper {
 	public static IGamaView.Display findFrontmostGamaViewUnderMouse() {
 		// First the full screen view
 		int m = WorkbenchHelper.run(WorkbenchHelper::getMonitorUnderCursor);
-		DEBUG.OUT("First try with fullscreen on monitor " + m + " -- " + FULLSCREEN_VIEWS);
+		// DEBUG.OUT("First try with fullscreen on monitor " + m + " -- " + FULLSCREEN_VIEWS);
 		IGamaView.Display view = WorkbenchHelper.run(() -> FULLSCREEN_VIEWS.get(m));
 		if (view != null) return view;
 		Control c = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getCursorControl());
-		DEBUG.OUT("Second try with control under mouse -- " + c);
+		// DEBUG.OUT("Second try with control under mouse -- " + c);
 		if (c instanceof CTabFolder t) {
 
 			// DEBUG.OUT("Tab detected ");
@@ -232,9 +232,9 @@ public class ViewsHelper {
 		final Point p = WorkbenchHelper.getDisplay().getCursorLocation();
 		final List<IGamaView.Display> displays =
 				WorkbenchHelper.run(() -> getDisplayViews(part -> page.isPartVisible(part)));
-		DEBUG.OUT("Third try with view -- at coordinates " + p + " -- in " + new HashSet<>(displays));
+		// DEBUG.OUT("Third try with view -- at coordinates " + p + " -- in " + new HashSet<>(displays));
 		for (IGamaView.Display v : displays) { if (v.containsPoint(p.x, p.y)) return v; }
-		DEBUG.OUT("No view under mouse");
+		// DEBUG.OUT("No view under mouse");
 		return null;
 	}
 
@@ -314,6 +314,18 @@ public class ViewsHelper {
 	 */
 	public static void bringToFront(final IWorkbenchPart view) {
 		WorkbenchHelper.getPage().bringToTop(view);
+	}
+
+	/**
+	 * Gets the monitor of.
+	 *
+	 * @param layeredDisplayView
+	 *            the layered display view
+	 * @return the monitor of
+	 */
+	public static Monitor getMonitorOf(final IWorkbenchPart view) {
+		return WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getMonitors()[WorkbenchHelper
+				.getMonitorContaining(view.getSite().getShell().getBounds())]);
 	}
 
 }
