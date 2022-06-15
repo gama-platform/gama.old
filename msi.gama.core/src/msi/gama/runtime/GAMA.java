@@ -624,7 +624,8 @@ public class GAMA {
 	 * Toggle sync frontmost experiment.
 	 */
 	public static void desynchronizeFrontmostExperiment() {
-		getExperiment().desynchronizeAllOutputs();
+		IExperimentPlan exp = getExperiment();
+		if (exp != null) { exp.desynchronizeAllOutputs(); }
 	}
 
 	/**
