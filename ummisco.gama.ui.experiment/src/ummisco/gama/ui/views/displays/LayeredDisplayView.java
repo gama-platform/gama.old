@@ -63,7 +63,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	/** The is hi DPI. */
-	boolean isHiDPI;
+	volatile boolean isHiDPI;
 
 	/** The shell listener. */
 	ControlListener shellListener;
@@ -516,6 +516,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			try {
 				IDisplaySurface surface = getDisplaySurface();
 				if (surface != null) { surface.dispose(); }
+				ViewsHelper.hideView(this);
 			} catch (final Exception e) {}
 		});
 
