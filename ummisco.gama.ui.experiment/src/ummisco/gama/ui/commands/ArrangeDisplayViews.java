@@ -36,6 +36,7 @@ import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.util.tree.GamaNode;
 import msi.gama.util.tree.GamaTree;
 import ummisco.gama.dev.utils.DEBUG;
@@ -195,7 +196,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			v.showOverlay(PerspectiveHelper.showOverlays());
 		});
 		displays.forEach(v -> {
-			if (v.getOutput().getData().fullScreen() > -1) {
+			LayeredDisplayOutput output = v.getOutput();
+			if (output != null && output.getData().fullScreen() > -1) {
 				WorkbenchHelper.runInUI("FS", 100, m -> {
 					WorkbenchHelper.getPage().bringToTop((IWorkbenchPart) v);
 					v.showCanvas();
