@@ -85,7 +85,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The animator. */
@@ -422,11 +422,14 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public GamaPoint getModelCoordinates() {
-		final GamaPoint mp = renderer.getCameraHelper().getMousePosition();
-		if (mp == null) return null;
-		final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
-		if (p == null) return null;
-		return new GamaPoint(p.x, -p.y);
+		return renderer.getCameraHelper().getWorldPositionOfMouse().yNegated();
+		// final GamaPoint mp = renderer.getCameraHelper().getMousePosition();
+		// DEBUG.OUT("Coordinates in display " + mp);
+		// if (mp == null) return null;
+		// final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
+		// DEBUG.OUT("Coordinates in env " + p);
+		// if (p == null) return null;
+		// return new GamaPoint(p.x, -p.y);
 	}
 
 	@Override
@@ -594,11 +597,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				envInWorld.centre(), envInWorld, new Different(), false);
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
-		images.put(renderer.getOpenGLHelper().isStickyROI() ? "Hide region" : "Keep region visible",
+		images.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
 				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
 		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
-		actions.put(renderer.getOpenGLHelper().isStickyROI() ? "Hide region" : "Keep region visible",
-				() -> renderer.getOpenGLHelper().toogleROI());
+		actions.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
+				() -> renderer.getCameraHelper().toogleROI());
 		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomFocus(env));
 		WorkbenchHelper.run(() -> {
 			final Menu menu = menuManager.buildROIMenu((int) renderer.getCameraHelper().getMousePosition().x,
@@ -609,7 +612,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				public void menuHidden(final MenuEvent e) {
 					animator.resume();
 					// Will be run after the selection
-					WorkbenchHelper.asyncRun(() -> renderer.getOpenGLHelper().cancelROI());
+					WorkbenchHelper.asyncRun(() -> renderer.getCameraHelper().cancelROI());
 
 				}
 
@@ -747,7 +750,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public boolean isDisposed() { return disposed; }
 
 	@Override
-	public Envelope3D getROIDimensions() { return renderer.getOpenGLHelper().getROIEnvelope(); }
+	public Envelope3D getROIDimensions() { return renderer.getCameraHelper().getROIEnvelope(); }
 
 	@Override
 	public void dispatchKeyEvent(final char e) {

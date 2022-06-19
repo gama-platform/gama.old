@@ -241,7 +241,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL.reshape(gl, width, height);
 		// sceneHelper.reshape(width, height);
 		surface.updateDisplay(true);
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) getCanvas().updateVisibleStatus(getCanvas().isVisible());
+		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) { getCanvas().updateVisibleStatus(getCanvas().isVisible()); }
 	}
 
 	@Override
@@ -469,7 +469,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final GamaPoint mouse) {
-		return openGL.getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
+		return getCameraHelper().getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
 	}
 
 	@Override

@@ -12,11 +12,15 @@ package ummisco.gama.opengl.renderer.helpers;
 
 import static msi.gama.util.GamaListFactory.createWithoutCasting;
 
+import java.nio.FloatBuffer;
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLRunnable;
 import com.jogamp.opengl.glu.GLU;
 
@@ -29,6 +33,7 @@ import msi.gama.runtime.PlatformHelper;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
@@ -54,6 +59,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	/** The mouse position. */
 	// Mouse
 	private final GamaPoint mousePosition = new GamaPoint(0, 0);
+
+	private final GamaPoint positionInTheWorld = new GamaPoint();
 
 	/** The last mouse pressed position. */
 	protected final GamaPoint lastMousePressedPosition = new GamaPoint(0, 0);
@@ -103,6 +110,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	/** The use num keys. */
 	private final boolean useNumKeys = GamaPreferences.Displays.OPENGL_NUM_KEYS_CAM.getValue();
+
+	/** The roi envelope. */
+	Envelope3D roiEnvelope;
+
+	/** The is ROI sticky. */
+	private boolean isROISticky;
 
 	/**
 	 * Instantiates a new abstract camera.
@@ -254,7 +267,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		if (!data.isCameraLocked()) {
 			// And we animate it if the keyboard is invoked
-			if (isForward()) {
+			if (goesForward) {
 				if (ctrlPressed) {
 					if (flipped) {
 						if (phi - getKeyboardSensivity() > 0) {
@@ -278,7 +291,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					translateCameraFromScreenPlan(0.0, -getKeyboardSensivity());
 				}
 			}
-			if (isBackward()) {
+			if (goesBackward) {
 				if (ctrlPressed) {
 					if (flipped) {
 						if (phi + getKeyboardSensivity() < 180) {
@@ -302,7 +315,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					translateCameraFromScreenPlan(0.0, getKeyboardSensivity());
 				}
 			}
-			if (isStrafeLeft()) {
+			if (strafeLeft) {
 				if (ctrlPressed) {
 					if (flipped) {
 						theta = theta + -getKeyboardSensivity();
@@ -316,7 +329,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					translateCameraFromScreenPlan(-getKeyboardSensivity(), 0.0);
 				}
 			}
-			if (isStrafeRight()) {
+			if (strafeRight) {
 				if (ctrlPressed) {
 					if (flipped) {
 						theta = theta + getKeyboardSensivity();
@@ -496,7 +509,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	protected void internalMouseMove(final int x, final int y, final int button, final boolean buttonPressed,
 			final boolean isCtrl, final boolean isShift) {
 
-		// Do it before the mouse position is newly set (in super.internalMouseMove)
+		// Do it before the mouse position is newly set
 		if (keystoneMode) {
 			final int selectedCorner = getRenderer().getKeystoneHelper().getCornerSelected();
 			if (selectedCorner != -1) {
@@ -512,12 +525,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			}
 			mousePosition.x = x;
 			mousePosition.y = y;
+			computeMouseLocationInTheWorld();
 			setCtrlPressed(isCtrl);
 			setShiftPressed(isShift);
 			return;
 		}
 		mousePosition.x = x;
 		mousePosition.y = y;
+		computeMouseLocationInTheWorld();
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
 
@@ -578,14 +593,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = x;
 			getMousePosition().y = y;
-			getRenderer().getOpenGLHelper().defineROI(
-					new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y),
-					new GamaPoint(getMousePosition().x, getMousePosition().y));
-		} else if (getRenderer().getOpenGLHelper()
-				.mouseInROI(new GamaPoint(getMousePosition().x, getMousePosition().y))) {
-			GamaPoint p = getRenderer().getRealWorldPointFromWindowPoint(getMousePosition());
-			p = p.minus(getRenderer().getOpenGLHelper().getROIEnvelope().centre());
-			getRenderer().getOpenGLHelper().getROIEnvelope().translate(p.x, p.y);
+			defineROI(new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y));
+		} else if (mouseInROI(new GamaPoint(getMousePosition().x, getMousePosition().y))) {
+			GamaPoint p = getWorldPositionOfMouse();
+			p = p.minus(roiEnvelope.centre());
+			roiEnvelope.translate(p.x, p.y);
 		} else if (!data.isCameraLocked()) {
 			int horizMovement = (int) (x - lastMousePressedPosition.x);
 			int vertMovement = (int) (y - lastMousePressedPosition.y);
@@ -731,8 +743,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		lastMousePressedPosition.setLocation(x, y, 0);
 		// Activate Picking when press and right click
 		if (button == 3 && !keystoneMode) {
-			if (renderer.getOpenGLHelper().mouseInROI(lastMousePressedPosition)) {
-				renderer.getSurface().selectionIn(renderer.getOpenGLHelper().getROIEnvelope());
+			if (mouseInROI(lastMousePressedPosition)) {
+				renderer.getSurface().selectionIn(getROIEnvelope());
 			} else if (renderer.getSurface().canTriggerContextualMenu()) {
 				renderer.getPickingHelper().setPicking(true);
 			}
@@ -798,7 +810,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the e
 	 */
 	private void startROI() {
-		renderer.getOpenGLHelper().defineROI(new GamaPoint(firstMousePressedPosition), new GamaPoint(mousePosition));
+		defineROI(new GamaPoint(firstMousePressedPosition));
 		ROICurrentlyDrawn = true;
 	}
 
@@ -807,9 +819,60 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	void finishROISelection() {
 		if (ROICurrentlyDrawn) {
-			final Envelope3D env = renderer.getOpenGLHelper().getROIEnvelope();
+			final Envelope3D env = getROIEnvelope();
 			if (env != null) { renderer.getSurface().selectionIn(env); }
 		}
+	}
+
+	public GamaPoint getWorldPositionOfMouse() { return positionInTheWorld; }
+
+	FloatBuffer pixelDepth = Buffers.newDirectFloatBuffer(1);
+
+	/**
+	 * Gets the world position from the mouse position. Less computationally intensive and more accurate for planar
+	 * surfaces. Requires however to be done in the GL context
+	 *
+	 * @param mouse
+	 *            the mouse
+	 * @return the world position from
+	 */
+	public void computeMouseLocationInTheWorld() {
+		OpenGL gl = renderer.getOpenGLHelper();
+		final double[] wcoord = new double[4];
+		final int[] viewport = gl.viewport;
+		final double mvmatrix[] = gl.mvmatrix;
+		final double projmatrix[] = gl.projmatrix;
+		final int x = (int) mousePosition.x, y = viewport[3] - (int) mousePosition.y;
+		pixelDepth.rewind();
+		gl.getGL().glReadPixels(x, y, 1, 1, GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, pixelDepth);
+		// DEBUG.OUT("Value retrieved for Z : " + pixelDepth.get(0));
+		glu.gluUnProject(x, y, pixelDepth.get(0), mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		positionInTheWorld.setLocation(wcoord[0], wcoord[1], 0);
+	}
+
+	/**
+	 * Different method from above, as it might be used in non openGL contexts
+	 *
+	 * @param mouse
+	 * @return
+	 */
+	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
+		final GamaPoint camLoc = getPosition();
+		OpenGL gl = renderer.getOpenGLHelper();
+		if (gl == null) return new GamaPoint();
+		final double[] wcoord = new double[4];
+		final int[] viewport = gl.viewport;
+		final double mvmatrix[] = gl.mvmatrix;
+		final double projmatrix[] = gl.projmatrix;
+		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
+		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		glu.gluUnProject(x, y, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v3 = v2.minus(v1).normalized();
+		final double distance = camLoc.z / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3);
+		final GamaPoint worldCoordinates = camLoc.plus(v3.times(distance));
+		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
 	//
@@ -858,34 +921,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * @return the sensivity
 	 */
 	protected double getSensivity() { return GamaPreferences.Displays.OPENGL_MOUSE.getValue(); }
-
-	/**
-	 * Checks if is forward.
-	 *
-	 * @return true, if is forward
-	 */
-	protected boolean isForward() { return goesForward; }
-
-	/**
-	 * Checks if is backward.
-	 *
-	 * @return true, if is backward
-	 */
-	protected boolean isBackward() { return goesBackward; }
-
-	/**
-	 * Checks if is strafe left.
-	 *
-	 * @return true, if is strafe left
-	 */
-	protected boolean isStrafeLeft() { return strafeLeft; }
-
-	/**
-	 * Checks if is strafe right.
-	 *
-	 * @return true, if is strafe right
-	 */
-	protected boolean isStrafeRight() { return strafeRight; }
 
 	/**
 	 * Gets the renderer.
@@ -1369,6 +1404,64 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		text.append(" ").append(IKeyword.TARGET).append(": ")
 				.append(new GamaPoint(data.getCameraTarget()).yNegated().withPrecision(4).serialize(false)).append(";");
 		return text.toString();
+	}
+
+	/**
+	 * Toogle ROI.
+	 */
+	public void toogleROI() {
+		isROISticky = !isROISticky;
+	}
+
+	/**
+	 * Checks if is sticky ROI.
+	 *
+	 * @return true, if is sticky ROI
+	 */
+	public boolean isStickyROI() { return isROISticky; }
+
+	/**
+	 * Gets the ROI envelope.
+	 *
+	 * @return the ROI envelope
+	 */
+	public Envelope3D getROIEnvelope() { return roiEnvelope; }
+
+	/**
+	 * Cancel ROI.
+	 */
+	public void cancelROI() {
+		if (isROISticky) return;
+		roiEnvelope = null;
+	}
+
+	/**
+	 * Define ROI.
+	 *
+	 * @param mouseStart
+	 *            the mouse start
+	 * @param mouseEnd
+	 *            the mouse end
+	 */
+	public void defineROI(final GamaPoint mouseStart) {
+		final GamaPoint start = getWorldPositionFrom(mouseStart);
+
+		roiEnvelope =
+				Envelope3D.of(start.x, positionInTheWorld.x, start.y, positionInTheWorld.y, 0, getMaxEnvDim() / 20d);
+	}
+
+	/**
+	 * Mouse in ROI.
+	 *
+	 * @param mousePosition
+	 *            the mouse position
+	 * @return true, if successful
+	 */
+	public boolean mouseInROI(final GamaPoint mousePosition) {
+		final Envelope3D env = getROIEnvelope();
+		if (env == null) return false;
+		final GamaPoint p = getWorldPositionFrom(mousePosition);
+		return env.contains(p);
 	}
 
 }
