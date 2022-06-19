@@ -22,13 +22,17 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.network.common.CommandMessage;
 import ummisco.gama.network.common.IConnector;
+import ummisco.gama.network.common.MessageFactory;
+import ummisco.gama.network.common.CommandMessage.CommandType;
+import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class ClientService.
  */
-public abstract class ClientService extends Thread implements SocketService {
+public class ClientService extends Thread implements SocketService {
 	
 	/** The socket. */
 	protected Socket socket;
@@ -47,7 +51,8 @@ public abstract class ClientService extends Thread implements SocketService {
 	
 	/** The is alive. */
 	protected boolean isAlive;
-	// private IConnector modelConnector;
+	
+	protected IConnector connector;
 
 	/**
 	 * Instantiates a new client service.
@@ -60,6 +65,7 @@ public abstract class ClientService extends Thread implements SocketService {
 		// this.modelConnector = connector;
 		this.port = port;
 		this.server = server;
+		this.connector = connector;
 	}
 
 	/**
@@ -69,10 +75,11 @@ public abstract class ClientService extends Thread implements SocketService {
 	 * @param port the port
 	 * @param connector the connector
 	 */
-	public ClientService(final Socket sk) {
+	public ClientService(final Socket sk, final IConnector connector) {
 		this.socket=sk;
 		this.server = sk.getInetAddress().getHostAddress();
 		this.port = sk.getPort();
+		this.connector = connector;
 	}
 
 	@Override
@@ -135,6 +142,17 @@ public abstract class ClientService extends Thread implements SocketService {
 			DEBUG.LOG("Socket error" + e1);
 		}
 
+	} 
+
+	@Override
+	public void receivedMessage(final String sender, final String message) {
+		final MessageType mte = MessageFactory.identifyMessageType(message);
+		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+			((TCPConnector)connector).extractAndApplyCommand(sender, message);
+		} else { 
+			final String r = ((TCPConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
+			((TCPConnector)connector).storeMessage(sender, r, message);
+		}
 	}
 
 	@Override

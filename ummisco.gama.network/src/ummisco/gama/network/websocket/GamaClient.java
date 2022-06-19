@@ -31,14 +31,17 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.handshake.ServerHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -46,72 +49,54 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.skills.INetworkSkill;
-import ummisco.gama.network.tcp.ServerService;
+import ummisco.gama.network.tcp.ClientService;
 import ummisco.gama.network.tcp.TCPConnector;
- 
-public class GamaServer extends WebSocketServer {
+
+/**
+ * A simple WebSocketServer implementation. Keeps track of a "chatroom".
+ */
+public class GamaClient extends WebSocketClient {
+	public GamaClient(URI serverUri, ClientService cs) {
+		super(serverUri);
+		myService=cs;
+	}
+	private ClientService myService;
 //	private IAgent myAgent;
-	private ServerService myService;
-	public GamaServer(int port, ServerService agt) throws UnknownHostException {
-		super(new InetSocketAddress(port));
+//	public GamaClient(int port, IAgent agt) throws UnknownHostException {
+//		super(new InetSocketAddress(port));
 //		myAgent=agt;
-		myService=agt;
-	}
+//	}
 
-	public GamaServer(InetSocketAddress address) {
-		super(address);
-	}
-
-	public GamaServer(int port, Draft_6455 draft) {
-		super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
+//	public GamaClient(int port, Draft_6455 draft) {
+//		super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
+//	}
+  
+	@Override
+	public void onClose(int arg0, String arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-//		conn.send("Welcome " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the server!");  
-//		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
-																			// connected
-		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		 
+	public void onError(Exception arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-		broadcast(conn + " has left the room!");
-		System.out.println(conn + " has left the room!");
-	}
-
-	@Override
-	public void onMessage(WebSocket conn, String message) {
-//		broadcast(message);
-		System.out.println(conn + ": " + message);
+	public void onMessage(String message) { 
+		System.out.println( ": " + message);
 		String msg = message;
 		msg = msg.replaceAll("@n@", "\n");
 		msg = msg.replaceAll("@b@@r@", "\b\r");
-		myService.receivedMessage(conn.toString(), msg);
-
+		myService.receivedMessage("", msg);
+		
 	}
 
 	@Override
-	public void onMessage(WebSocket conn, ByteBuffer message) {
-		broadcast(message.array());
-		System.out.println(conn + ": " + message);
-	}
-
-	@Override
-	public void onError(WebSocket conn, Exception ex) {
-		ex.printStackTrace();
-		if (conn != null) {
-			// some errors like port binding failed may not be assignable to a specific
-			// websocket
-		}
-	}
-
-	@Override
-	public void onStart() {
-		System.out.println("Server started!");
-		setConnectionLostTimeout(0);
-		setConnectionLostTimeout(100);
+	public void onOpen(ServerHandshake arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
