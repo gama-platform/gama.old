@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import mpi.MPI;
 import mpi.MPIException;
 import mpi.Status;
+import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.ext.kml.Polygon;
@@ -30,6 +31,8 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.variable;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
@@ -45,21 +48,24 @@ import ummisco.gama.serializer.factory.StreamConverter;
 
 /**
 
-todo coding camp: 
+todo: 
 
-- Centraliser la création de nouveaux individus 
-- Détection de la présence d'un individu dans un proc avant la création de celui-ci depuis une OLZ
-- Fix référence sur un agent lors d'un envoie par MPI (ref nul si sur un autre proc)
+- Cr�ation des agents avec un uniqueID (done) (update with MPI rank)
+- Repassage sur les agents dans les OLZ attribution d'un uniqueID
+
+- Fix reference sur un agent lors d'un envoie par MPI (ref nul si sur un autre proc)
 		-> copie de la ref 
 			-> boucle possible ?
-- Thread unique plutôt qu'un thread par slave
-	-> comment avoir le controle sur mpirun ? 
-		-> création du thread avant le mpi run ? 
-				-> nouveau type d'exp
-					-> cette exp lance mpirun après avoir crée le thread unique
-- 
+			
+- Thread unique plutot qu'un thread par slave (complexe car d�pendant de l'interface du cluster)
+ */
 
-
+/*
+ * 
+ * Testing class for SlaveMPI development (no need to recompile all GAMA to get headless version)
+ * TestMPI dont use MPI and his only used to test some feature before the deployment on SlaveMPI
+ * TestMPI can be used in GUI GAMA.
+ * 
  */
 class TestThread extends Thread
 {
@@ -118,21 +124,42 @@ class TestThread extends Thread
 	}
 }
 
-@species(name = "TestMPI")
-@doc ("TestMPI")
+@species(name = "TestMPI",  skills={ "MPI_Plugin" })
+@doc ("SlaveMPI to process step and communication between others slave")
+@vars({
+	@variable (
+			name = IMPISkill.OUTER_OLZ_AREA, 
+			type = IType.GEOMETRY, 
+			init = "",
+			doc = { @doc ("Shape of the outer olz area")}),
+	@variable (
+			name = IMPISkill.INNER_OLZ_AREA, 
+			type = IType.GEOMETRY, 
+			init = "",
+			doc = { @doc ("Shape of the inner olz area")}),
+	@variable (
+			name = IMPISkill.MY_RANK, 
+			type = IType.INT, 
+			init = "",
+			doc = { @doc ("Rank of the slave")}),
+})
 public class TestMPI extends GamlAgent 
 {
 	TestThread tt;
+	int myRank;
+	
 	public TestMPI(IPopulation<? extends IAgent> s, int index) {
+		
 		super(s, index);
-
+		//UniqueIDProviderService.getInstance().initMPI(27); todo uncomment
+		
 		System.out.println("TESTMPI agent");
 		try 
 		{
 			//PrintStream fileOut = new PrintStream("C:\\Users\\lucas\\git\\gama.experimental\\femto_st.gama.mpi\\models\\Plugin_MPI_Test_Model\\models\\filename.txt");
 			//System.setOut(fileOut);
 			
-		} catch (SecurityException /*| IOException */ e) {
+		} catch (SecurityException /*| IOException*/ e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -201,7 +228,10 @@ public class TestMPI extends GamlAgent
 		System.out.println("seri = "+seri);
 
 		IAgent deseri = (IAgent) StreamConverter.convertMPIStreamToObject(scope, seri);
-		System.out.println("deseri hash= "+deseri.getUniqueID());
+		if(deseri != null)
+		{			
+			System.out.println("deseri hash= "+deseri.getUniqueID());
+		}
 		
 		return deseri;
 	}
@@ -215,16 +245,28 @@ public class TestMPI extends GamlAgent
 	)
 	public Object seri_list(IScope scope)
 	{
-		System.out.println(" heloo = "+(IList) scope.getArg("agent", IType.LIST));
+		System.out.println("Serializing this list = "+(IList) scope.getArg("agent", IType.LIST));
 		String seri = StreamConverter.convertMPIObjectToStream(scope, (IList) scope.getArg("agent", IType.LIST));
-		System.out.println("seri = "+seri);
+		System.out.println("Serialized list = "+seri);
 
 		List<IAgent> deseri = (List<IAgent>) StreamConverter.convertMPIStreamToObject(scope, seri);
-		System.out.println(" deseri "+deseri);
+		System.out.println("Deserialized list "+deseri);
 		
 		return deseri;
 	}
 	
 	
+	
+	@action(name = IMPISkill.GET_AGENT_IN_NEIGHBOR_INNER_OLZ,
+			args = { @arg (
+					name = IMPISkill.NEIGHBORS_RANK,
+					type = IType.INT,
+					doc = @doc ("neighbor rank")),
+			}
+	)
+	public ArrayList<IAgent> getAgentInNeighborInnerOLZ(IScope scope) 
+	{
+		return new ArrayList<IAgent>();
+	}
 	
 }

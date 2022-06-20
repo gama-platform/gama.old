@@ -543,7 +543,7 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public int getUniqueID() {
 		// TODO Auto-generated method stub
-		return 0;
+		return -79;
 	}
 
 	@Override

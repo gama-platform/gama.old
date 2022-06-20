@@ -28,7 +28,8 @@ public class Activator implements BundleActivator {
 		GamaBundleLoader.preBuildContributions();
 		GamaExecutorService.reset();
 		Dates.initialize();
-
+		// todo start service uniqueID provider 
+		IUniqueIDProviderService provider = UniqueIDProviderService.getInstance();
 	}
 
 	@Override

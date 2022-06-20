@@ -232,6 +232,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 * Set the hashcode.
 	 */
 	public void setUniqueID(int uID) {
+		System.out.println("SAVED AGENT UNIQUE SETTER " + uID);
 		uniqueID = uID;
 	}
 	
@@ -303,11 +304,6 @@ public class SavedAgent extends GamaMap<String, Object> {
 			}
 			put(specVar, species.getVar(specVar).value(scope, agent));
 		}
-
-		if(agent.getUniqueID() != 0)
-		{
-			put("uniqueID", agent.getUniqueID());
-		}
 	}
 
 	/**
@@ -344,7 +340,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 			throws GamaRuntimeException {
 		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
 		agentAttrs.add(this);
-		agentAttrs.get(0).put("uniqueID", this.getUniqueID());
+		//agentAttrs.get(0).put("uniqueID", this.getUniqueID());
 		for(var auto : agentAttrs)
 		{
 			System.out.println("auto = "+auto.toString());
@@ -373,26 +369,22 @@ public class SavedAgent extends GamaMap<String, Object> {
 		System.out.println("RESTORING NEW AGENTS WITH UNIQUEID = "+uniqueID);
 		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
 		agentAttrs.add(this);
-		for(var auto : agentAttrs)
+		/*for(var auto : agentAttrs)
 		{
 			System.out.println("auto = "+auto.toString());
 			for(var auto2 : auto.entrySet())
 			{
 				System.out.println(auto2.getKey() + " = "+auto2.getValue());
 			}
+		}*/
+
+		List<Integer> uniqueIDList = targetPopulation.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
+		if(uniqueIDList.contains(uniqueID))
+		{
+			System.out.println("Agent already created in the current population");
+			return null;
 		}
 		
-		IAgent agentCopy = targetPopulation.stream().filter(agent -> agent.getUniqueID() == uniqueID).findAny().orElse(null);
-		List<Integer> uniqueIDList = targetPopulation.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
-		for(var auto : uniqueIDList)
-		{
-			System.out.println("XXXX = "+auto);
-		}
-		if(agentCopy != null)
-		{	
-			System.out.println("FOUUUUUUUND this agent = "+agentCopy);
-			return agentCopy;
-		}
 		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
 		restoreMicroAgents(scope, restoredAgents.get(0));
 
@@ -406,7 +398,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 * @throws GamaRuntimeException
 	 */
 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
-		System.out.println("restoreMicroAgents restoreMicroAgentsrestoreMicroAgentsrestoreMicroAgents");
+		System.out.println("restoreMicroAgents begin");
 		// todo check unique ID of all the agents in the pop
 		if (innerPopulations != null) {
 			for (final String microPopName : innerPopulations.keySet()) {
@@ -417,29 +409,18 @@ public class SavedAgent extends GamaMap<String, Object> {
 					List<Integer> uniqueIDList = savedMicros.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
 					for(var auto : uniqueIDList)
 					{
-						System.out.println("UNQIUEDDIIDIDIDDIID = "+auto);
-					}
-					if(uniqueIDList.contains(host.getUniqueID()))
-					{
-						System.out.println("Micro Agent already created in the simulation");
-						return;
-					}
-					for(SavedAgent sa : savedMicros)
-					{
-						if(sa.getUniqueID() == host.getUniqueID())
-						{
-							return;
-						}
+						System.out.println("Micro agent uniqueID " + auto);
 					}
 					final List<Map<String, Object>> microAttrs = new ArrayList<>();
-					for (final SavedAgent sa : savedMicros) {
+					for (final SavedAgent sa : savedMicros) 
+					{
 						microAttrs.add(sa);
 					}
 
-					final List<? extends IAgent> microAgents =
-							microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
+					final List<? extends IAgent> microAgents = microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
 
-					for (int i = 0; i < microAgents.size(); i++) {
+					for (int i = 0; i < microAgents.size(); i++) 
+					{
 						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
 					}
 				}else

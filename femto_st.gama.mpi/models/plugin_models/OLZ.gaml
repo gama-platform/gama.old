@@ -16,16 +16,12 @@ global
 	
 	init
 	{
-		gridX <- 5;
-		gridY <- 7;
-		
-		create standingAgent
+		/*create standingAgent
 		{
 			self.location <- {25,27,0};
-		}
+		}*/
 
 		create movingAgent number: 5;
-		//create followingAgent number: 1;
 	}
 }
 
@@ -154,8 +150,6 @@ experiment movingExp type: gui
 		{
 			species cell aspect: olz;
 			species movingAgent aspect: classic;
-			species standingAgent aspect: classic;
-			species followingAgent aspect: classic;
 		}
 	}
 }

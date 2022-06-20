@@ -92,6 +92,9 @@ public class Application implements IApplication {
 
 	/** The Constant TEST_LIBRARY_PARAMETER. */
 	final public static String TEST_LIBRARY_PARAMETER = "-test";
+	
+	/** The Constant TEST_LIBRARY_PARAMETER. */
+	final public static String TATA = "-tata";
 
 	/** The Constant BUILD_XML_PARAMETER. */
 	final public static String BUILD_XML_PARAMETER = "-xml";
@@ -247,6 +250,10 @@ public class Application implements IApplication {
 		if (args.contains(BUILD_XML_PARAMETER)) {
 			size = size - 4;
 			mustContainInFile = mustContainOutFolder = false;
+		}
+		
+		if (args.contains(TATA)) {
+			System.out.println("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		}
 
 		// Runner verification

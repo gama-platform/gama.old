@@ -11,11 +11,13 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -43,6 +45,7 @@ import ummisco.gama.serializer.factory.StreamConverter;
  * 
  * todo check Scheduler       
  * 1 Thread with Nx(N-1) requests >>>>> N Thread with (N-1) requests
+  		-> Lancer un thread d'écoute au début de la simulation
  * 
  * une cellule -> une liste de cellule (modulable)
  		map : cellule_name  ->  rank of owner
@@ -54,15 +57,15 @@ import ummisco.gama.serializer.factory.StreamConverter;
 		pour taille de grille custom
 		
  * todo check NetworkSkills
- * todo define type simulation
- * todo define type experiment : MPI (cant run it in GUI or runmpi in bacth)
+ * todo define type d'experiment (MPI_experiment)
  * todo shapefile au lieu de grille
  * 
  * todo : initialisation de la simulation   (à discuter avec Alexis)
  		-> parralélisation de l'init de la simulation
  		
  		
- * todo : Check si l'agent existe déja avant de l'envoyé 
+ * todo : si agent se situe sur une OLZ à l'init : donner un uniqueID de l'une des 2 zones et la transmettre à l'autre proc		
+ * done : Check si l'agent existe déja avant de l'envoyé 
  */
 
 
@@ -438,15 +441,15 @@ class DistributionUtils
 			
 			ArrayList<IAgent> rcvMesg = (ArrayList<IAgent>) StreamConverter.convertMPIStreamToObject(scope, new String(message));
 			System.out.println("IAgent : \n\n");
-			/*for(var auto : rcvMesg)
+			for(var auto : rcvMesg)
 			{
 				System.out.println("auto class name = "+auto.getClass().getName());
 				System.out.println("auto index "+auto.getIndex());
 				System.out.println("auto getGamlType "+auto.getGamlType());
 				System.out.println("auto getName "+auto.getName());
+				System.out.println("auto getUniqueID "+auto.getUniqueID());
 				//System.out.println("auto getGamlType "+auto.restoreTo(scope, scope.getSimulation().getPopulation()));
-				
-			}*/
+			}
 			//System.out.println("rcvMesg Object "+ rcvMesg);
 			
 			return rcvMesg;
@@ -491,21 +494,17 @@ public class SlaveMPI extends GamlAgent {
 
 		try 
 		{
-			final String[] arg = {};
-			MPI.InitThread(arg, MPI.THREAD_MULTIPLE);
-			myRank = MPI.COMM_WORLD.getRank(); 
-
-			System.out.println("Hello b");
+			System.out.println("Starting MPI");
 			
 			PrintStream fileOut = new PrintStream("filename"+myRank+".txt");
 			System.setOut(fileOut);
 			
 			System.out.println("Hello");
-			System.out.println("MyRank = "+myRank);
-			System.out.println("sizeNetwork = "+MPI.COMM_WORLD.getSize());
+			System.out.println("MyRank = " + myRank);
+			System.out.println("SizeNetwork = " + MPI.COMM_WORLD.getSize());
 		} catch (MPIException | IOException e) 
 		{
-			System.out.println("MPIException "+e);
+			System.out.println("MPIException " + e);
 		}
 		
 		// todo define this ^ in other function to be called after the init of everyone
@@ -569,6 +568,7 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInOuterOLZ = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_OUTER_OLZ);
 		System.out.println("returning getAgentInNeighborOuterOLZ to gaml = "+agentsInOuterOLZ);
+		agentsInOuterOLZ.removeAll(Collections.singleton(null));
 		return agentsInOuterOLZ;
 	}
 	
@@ -583,6 +583,8 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInInnerOLZ = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_INNER_OLZ);
 		System.out.println("returning getAgentInNeighborInnerOLZ to gaml = "+agentsInInnerOLZ);
+		agentsInInnerOLZ.removeAll(Collections.singleton(null));
+		
 		return agentsInInnerOLZ;
 	}
 	
@@ -597,6 +599,7 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInMain = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_MAIN_AREA);
 		System.out.println("returning agentsInMain to gaml = "+agentsInMain);
+		agentsInMain.removeAll(Collections.singleton(null));
 		return agentsInMain;
 	}
 	

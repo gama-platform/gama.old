@@ -64,7 +64,6 @@ public class SavedAgentConverter implements Converter {
 		writer.setValue("" + savedAgt.getAlias());
 		writer.endNode();
 		
-
 		writer.startNode("uniqueID");
 		writer.setValue("" + savedAgt.getUniqueID());
 		writer.endNode();
@@ -130,7 +129,7 @@ public class SavedAgentConverter implements Converter {
 		reader.moveUp();
 		reader.moveDown();
 		final int uniqueID = Integer.parseInt(reader.getValue());
-		System.out.println("OK BEBE MONTRE MOI + "+uniqueID);
+		System.out.println("UNIQUE ID FROM DESERI + "+uniqueID);
 		agtToReturn.setUniqueID(uniqueID);
 
 		System.out.println("variables in agent = ");

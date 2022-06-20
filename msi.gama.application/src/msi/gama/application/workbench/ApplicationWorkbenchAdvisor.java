@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,6 +32,7 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 
 import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
@@ -39,6 +42,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.file.IGamaFile;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The Class ApplicationWorkbenchAdvisor.
@@ -94,9 +98,14 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
 		DEBUG.LOG("Arguments received by GAMA : " + DEBUG.TO_STRING(args));
+		System.out.println("Arguments received by GAMA : " + DEBUG.TO_STRING(args));
 		if (args.length > 0) {
 			int i = 0;
 			if (args[0].contains("--launcher.defaultAction")) { i += 2; }
+			if (Arrays.asList(args).contains("-MPI")) {
+				System.out.println("MPI FLAGS ------------------------------------");
+				FLAGS.USE_MPI = true;
+			}
 			if (i < args.length) {
 				String exp = args[i];
 				if (!exp.endsWith(".gamr")) {

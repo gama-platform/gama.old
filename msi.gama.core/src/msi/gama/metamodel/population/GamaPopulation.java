@@ -481,6 +481,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public IList<T> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException {
+		System.out.println("createAgents start");
 		if (number == 0) return GamaListFactory.EMPTY_LIST;
 		final IList<T> list = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
@@ -503,15 +504,15 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					a.setLocation((GamaPoint) init.get(LOCATION));
 				}
 			}
+			System.out.println(a.getName() + "(UniqueID) = "+a.getUniqueID());
 			if(a.getUniqueID() == 0)
 			{
-				System.out.println("Creating new uniquedID "+a.hashCode());
-				a.setUniqueID(a.hashCode()); // todo here flag
+				System.out.println("Creating new UniqueID " + a.hashCode());
+				a.setUniqueID(a.hashCode()); // todo here flag mpi rank
 			}else
 			{
-				System.out.println("THIS AGENTALREADY HAS AN UNIQUE ID ?? "+a.hashCode());
+				System.out.println("This agent already habe an UniqueID " + a.getUniqueID());
 			}
-			
 			list.add(a);
 		}
 		addAll(list);

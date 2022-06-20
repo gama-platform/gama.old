@@ -12,7 +12,10 @@ Require-Bundle: msi.gama.core,
 Bundle-ClassPath: .,
  ext/mpi.jar
 Import-Package: femto_st.gama.mpi,
+ org.osgi.framework;version="1.10.0",
  ummisco.gama.serializer.factory
 Export-Package: femto_st.gama.mpi,
  mpi
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: femto_st.gama.mpi.UniqueIDProviderActivator
 

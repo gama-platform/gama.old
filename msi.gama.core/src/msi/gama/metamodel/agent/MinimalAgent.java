@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
 
+import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
@@ -79,8 +80,12 @@ public class MinimalAgent extends AbstractAgent {
 	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry) {
 		super(index);
 		this.population = population;
-		this.uniqueID = Objects.hash(getPopulation(), index);
-		System.out.println("MinimalAgent unique ID construfctot = " + this.uniqueID);
+		
+		this.setUniqueID(UniqueIDProviderService.getInstance().register());			
+		
+		//this.setUniqueID(Objects.hash(getPopulation(), index)); // todo service provider	
+		this.setUniqueID(UniqueIDProviderService.getInstance().register());
+		System.out.println(this.name + " MinimalAgent unique ID construtor = " + this.uniqueID);
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
@@ -149,7 +154,13 @@ public class MinimalAgent extends AbstractAgent {
 	
 	@Override
 	public void setUniqueID(int uID) {
-		System.out.println("SETTER UNIQUEID = "+uID);
+		System.out.println(this.name + " MINIMAL SETTER UNIQUEID = "+uID);
+		
+		if(uID == 0) // todo check why uID = 0 on some calls at init
+		{
+			return;
+		}
+		
 		this.uniqueID = uID;
 	}
 	

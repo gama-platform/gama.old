@@ -116,5 +116,11 @@ public class FLAGS {
 	 * few glitches remain (esp. on macOS). True by defautl
 	 */
 	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
+	
+
+	/**
+	 * Used in femto_st.gama.mpi to check if the openMPI lib is used in the current instance of GAMA. False by default
+	 */
+	public static boolean USE_MPI = false;
 
 }
