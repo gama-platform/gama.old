@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IDisplayOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -27,7 +27,7 @@ public interface IDisplayOutput extends IOutput {
 	 *
 	 * @return true if this output is synchronized, false otherwise
 	 */
-	boolean isSynchronized();
+	// boolean isSynchronized();
 
 	/**
 	 * The output should synchronize its operations with the simulation thread if the parameter passed is true, and is
@@ -37,7 +37,7 @@ public interface IDisplayOutput extends IOutput {
 	 * @param sync
 	 *            true if the output should synchronize, false otherwise
 	 */
-	void setSynchronized(final boolean sync);
+	// void setSynchronized(final boolean sync);
 
 	/**
 	 * If only one output of this kind is allowed in the UI (i.e. there can only be one instance of the corresponding
@@ -62,14 +62,14 @@ public interface IDisplayOutput extends IOutput {
 	 *
 	 * @return
 	 */
-	boolean isInInitPhase();
+	// boolean isInInitPhase();
 
 	/**
 	 * Sets whether the output is initializing or not.
 	 *
 	 * @param state
 	 */
-	void setInInitPhase(boolean state);
+	// void setInInitPhase(boolean state);
 
 	/**
 	 * Returns whether the output has been described as 'virtual', i.e. not showable on screen and only used for display
@@ -84,13 +84,26 @@ public interface IDisplayOutput extends IOutput {
 	 *
 	 * @return true, if is auto save
 	 */
-	default boolean isAutoSave() {
-		return false;
-	}
+	default boolean isAutoSave() { return false; }
 
 	/**
 	 * Returns the GamaView associated with this output
 	 */
 
 	IGamaView getView();
+
+	/**
+	 * Checks if is rendered.
+	 *
+	 * @return true, if is rendered
+	 */
+	boolean isRendered();
+
+	/**
+	 * Sets the rendered.
+	 *
+	 * @param b the new rendered
+	 */
+	void setRendered(boolean b);
+
 }

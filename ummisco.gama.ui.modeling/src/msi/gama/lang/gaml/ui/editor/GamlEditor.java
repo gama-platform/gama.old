@@ -1,17 +1,14 @@
 /*******************************************************************************************************
  *
- * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
-
-import static msi.gama.common.interfaces.IKeyword.BATCH;
-import static msi.gama.common.interfaces.IKeyword.MEMORIZE;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,9 +51,13 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -64,6 +65,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 // import org.eclipse.text.templates.TemplatePersistenceData;
@@ -102,6 +104,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.GamlFileExtension;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -122,12 +125,13 @@ import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gama.runtime.PlatformHelper;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
+import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -156,20 +160,31 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	/** The images. */
 	static Map<String, Image> images = new HashMap();
 
+	/** The menu images. */
+	static Map<String, Image> menu_images = new HashMap();
+
 	/** The max image height. */
 	static int maxImageHeight = 0;
 
 	/** The button padding. How much space between each experiment button */
 	static int buttonPadding = 4;
 	static {
+		DEBUG.OFF();
 		final var store = EditorsUI.getPreferenceStore();
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
 		store.setValue("spellingEnabled", false);
-		images.put(IKeyword.BATCH, GamaIcons.create(IGamaIcons.BUTTON_BATCH).image());
-		images.put(IKeyword.MEMORIZE, GamaIcons.create(IGamaIcons.BUTTON_BACK).image());
-		images.put("regular", GamaIcons.create(IGamaIcons.BUTTON_GUI).image());
-		images.put("new", GamaIcons.create("small.plus").image());
+		images.put(IKeyword.BATCH, GamaIcons.create("small.exp.batch.white").image());
+		images.put(IKeyword.MEMORIZE, GamaIcons.create("small.exp.back.white").image());
+		images.put("regular", GamaIcons.create("small.exp.run.white").image());
+		menu_images.put(IKeyword.BATCH,
+				GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BATCH : IGamaIcons.MENU_BATCH).image());
+		menu_images.put(IKeyword.MEMORIZE,
+				GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BACK : IGamaIcons.MENU_BACK).image());
+		menu_images.put("regular",
+				GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
+
+		images.put("new", GamaIcons.create("small.exp.plus").image());
 		for (Image im : images.values()) { maxImageHeight = Math.max(maxImageHeight, im.getBounds().height); }
 	}
 
@@ -421,7 +436,25 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());
 		super.createPartControl(editor);
-		toolbarParent.layout();
+		editor.addControlListener(new ControlListener() {
+
+			long lastEvent;
+
+			@Override
+			public void controlMoved(final ControlEvent e) {}
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				WorkbenchHelper.asyncRun(() -> {
+					long time = System.currentTimeMillis();
+					if (time - lastEvent > 500) {
+						lastEvent = time;
+						updateToolbar(state, true);
+					}
+				});
+			}
+		});
+		toolbarParent.requestLayout();
 		installGestures();
 		// this.getStyledText().setEditable(!FLAGS.IS_READ_ONLY);
 	}
@@ -507,33 +540,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	/**
-	 * Enable button.
-	 *
-	 * @param index
-	 *            the index
-	 * @param text
-	 *            the text
-	 * @param listener
-	 *            the listener
-	 */
-	private void enableExperimentButton(final int index, final String text, final SelectionListener listener) {
-		if (text == null) return;
-		final var expType = state.types.get(index);
-		final var type = BATCH.equals(expType) ? "batch" : MEMORIZE.equals(expType) ? "memorize" : "regular";
-		final var image = images.get(type);
-		final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
-		t.setWidth(t.getWidth() + buttonPadding);
-		final FlatButton b = (FlatButton) t.getControl();
-		b.setRightPadding(buttonPadding);
-		//b.setImageHeight(maxImageHeight);
-		b.setToolTipText("Executes the " + type + " experiment " + text);
-		b.addSelectionListener(listener);
-		t.setData("index", index);
-		b.setData("exp", text);
-
-	}
-
-	/**
 	 * Update toolbar.
 	 *
 	 * @param newState
@@ -542,11 +548,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 *            the force state
 	 */
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
+		DEBUG.OUT("Updating toolbar for " + this.getTitle());
 		if (forceState || !state.equals(newState)) {
 			WorkbenchHelper.runInUI("Editor refresh", 50, m -> {
 				if (toolbar == null || toolbar.isDisposed()) return;
 				toolbar.wipe(SWT.LEFT, true);
-				toolbar.setDefaultHeight(maxImageHeight );
+				toolbar.setDefaultHeight(maxImageHeight);
 
 				final var c = state.getColor();
 				var msg = state.getStatus();
@@ -566,24 +573,29 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				} else {
 					listener = new OpenExperimentSelectionListener(GamlEditor.this, newState, runner);
 				}
-
 				if (msg != null) {
 					final var t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
-
-				} else {
-					var i = 0;
-					if (newState.showExperiments) {
-						for (final String e : state.abbreviations) {
-							enableExperimentButton(i++, e, listener);
-
+					final FlatButton b = (FlatButton) t.getControl();
+					b.setRightPadding(buttonPadding);
+				} else if (newState.showExperiments) {
+					if (GamaPreferences.Modeling.EDITOR_EXPERIMENT_MENU.getValue()) {
+						displayExperimentMenu(newState, listener);
+					} else if (newState.abbreviations.size() <= 1
+							|| !GamaPreferences.Modeling.EDITOR_COLLAPSE_BUTTONS.getValue()) {
+						displayExperimentButtons(newState, listener);
+					} else {
+						int width = computeWidth(newState);
+						if (width > toolbar.getSize().x - toolbar.getToolbar(SWT.RIGHT).getSize().x) {
+							displayExperimentMenu(newState, listener);
+						} else {
+							displayExperimentButtons(newState, listener);
 						}
 					}
-				}
-				if (newState.showExperiments
-						&& !GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
-					toolbar.button(IGamaColors.NEUTRAL, "Add experiment", images.get("new"),
-							new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
-							SWT.LEFT);
+					if (!GamlFileExtension.isExperiment(getDocument().getAdapter(IFile.class).getName())) {
+						toolbar.button(IGamaColors.NEUTRAL, "Add Experiment", images.get("new"),
+								new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT)),
+								SWT.LEFT);
+					}
 				}
 
 				toolbar.refresh(true);
@@ -591,6 +603,99 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			});
 		}
 
+	}
+
+	/**
+	 * Compute width.
+	 *
+	 * @param newState
+	 *            the new state
+	 * @return the int
+	 */
+	private int computeWidth(final GamlEditorState newState) {
+		int width = 0;
+		FlatButton t;
+		for (final String text : newState.abbreviations) {
+			if (text == null) { continue; }
+			t = FlatButton.button(toolbar.getToolbar(SWT.LEFT), IGamaColors.OK, text, images.get(IKeyword.BATCH));
+			width += t.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
+			t.dispose();
+		}
+		t = FlatButton.button(toolbar.getToolbar(SWT.LEFT), IGamaColors.OK, "Add Experiment", images.get("new"));
+		width += t.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
+		t.dispose();
+		return width;
+	}
+
+	/**
+	 * Display experiment buttons.
+	 *
+	 * @param newState
+	 *            the new state
+	 * @param listener
+	 *            the listener
+	 */
+	private void displayExperimentButtons(final GamlEditorState state, final Selector listener) {
+		var index = 0;
+		for (final String text : state.abbreviations) {
+			if (text == null) return;
+			final var expType = state.types.get(index++);
+			final var type = IKeyword.BATCH.equals(expType) ? "batch" : IKeyword.MEMORIZE.equals(expType) ? "memorize"
+					: "regular";
+			final var image = images.get(type);
+			final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
+			// t.setWidth(t.getWidth() + buttonPadding);
+			final FlatButton b = (FlatButton) t.getControl();
+			b.setRightPadding(buttonPadding);
+			// b.setImageHeight(maxImageHeight);
+			b.setToolTipText("Executes the " + type + " experiment " + text);
+			b.addSelectionListener(listener);
+			t.setData("index", index);
+			b.setData("exp", text);
+		}
+	}
+
+	/**
+	 * Display experiment menu.
+	 *
+	 * @param state
+	 *            the state
+	 * @param listener
+	 *            the listener
+	 */
+	private void displayExperimentMenu(final GamlEditorState state, final Selector listener) {
+
+		final var menu = toolbar.menu(IGamaColors.OK, "Run Experiment...", SWT.LEFT);
+		final FlatButton b = (FlatButton) menu.getControl();
+		b.setRightPadding(buttonPadding);
+
+		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {
+
+			Menu menu;
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				if (menu == null) {
+					menu = new Menu(toolbar.getShell(), SWT.POP_UP);
+					fillMenu();
+				}
+				final Point point = toolbar.toDisplay(new Point(e.x, e.y + toolbar.getSize().y));
+				menu.setLocation(point.x, point.y);
+				menu.setVisible(true);
+			}
+
+			private void fillMenu() {
+				var index = 0;
+				for (final String text : state.abbreviations) {
+					if (text == null) return;
+					final var expType = state.types.get(index++);
+					final String type = IKeyword.BATCH.equals(expType) ? "batch"
+							: IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
+					final Image image = menu_images.get(type);
+					GamaMenu.action(menu, text, listener, image).setData("exp", text);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -896,6 +1001,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	protected void uninstallTextDragAndDrop(final ISourceViewer viewer) {
 		dndHandler.uninstall();
+	}
+
+	/**
+	 * Creates a composite ruler to be used as the vertical ruler by this editor. Subclasses may re-implement this
+	 * method.
+	 *
+	 * @return the vertical ruler
+	 */
+	@Override
+	protected CompositeRuler createCompositeRuler() {
+		return new CompositeRuler(6);
 	}
 
 	/**

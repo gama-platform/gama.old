@@ -60,15 +60,23 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	/** The canvas. */
 	final Control canvas;
 
+	/** The surface. */
+	SWTOpenGLDisplaySurface surface;
+
 	/** The drawable. */
 	final GLAutoDrawable drawable;
 
+	/** The fps delegate. */
 	final FPSCounter fpsDelegate;
 
 	/** The detached. */
 	protected boolean detached = false;
 
+	/** The name. */
 	final String name;
+
+	/** The visible. */
+	volatile boolean visible;
 
 	/**
 	 * Instantiates a new gama GL canvas.
@@ -80,9 +88,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 * @param name
 	 *            for debug purposes
 	 */
-	public GamaGLCanvas(final Composite parent, final IOpenGLRenderer renderer, final String name) {
+	public GamaGLCanvas(final Composite parent, final IOpenGLRenderer renderer, final SWTOpenGLDisplaySurface surface) {
 		super(parent, SWT.NONE);
-		this.name = name;
+		this.surface = surface;
+		this.name = surface.getOutput().getName();
 		parent.setLayout(new FillLayout());
 		this.setLayout(new FillLayout());
 		final var cap = defineCapabilities();
@@ -333,11 +342,15 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		DEBUG.OUT("Entering making GLWindow " + name + " reparent ");
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
 		final Window w = (Window) drawable;
-		if (setWindowVisible(false)) {
-			w.setFullscreen(true);
-			w.setFullscreen(false);
-			setWindowVisible(true);
-		}
+		// if (setWindowVisible(false)) {
+		// w.setFullscreen(true);
+		// w.setFullscreen(false);
+		// setWindowVisible(true);
+		// }
+		setWindowVisible(false);
+		w.setFullscreen(true);
+		w.setFullscreen(false);
+		setWindowVisible(true);
 	}
 
 	/**
@@ -347,13 +360,14 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the new window visible
 	 */
 	public boolean setWindowVisible(final boolean b) {
-		DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
+		// DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
 		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return false;
 		final Window w = (Window) drawable;
 		if (!w.isNativeValid()) return false;
-		DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
+		// DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
 		w.setVisible(b);
 		DEBUG.OUT("Make GLWindow " + name + " visible " + b + " succeeded");
+		// surface.synchronizer.signalSurfaceIsRealized();
 		return true;
 	}
 
@@ -455,18 +469,30 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	@Override
 	public float getTotalFPS() { return fpsDelegate.getTotalFPS(); }
 
-	// @Override
-	// public boolean isVisible() {
-	// if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return canvas.isVisible();
-	// final Window w = (Window) drawable;
-	// return super.isVisible() && w.isNativeValid() && w.isVisible();
-	// }
-	//
-	// @Override
-	// // public void setVisible(final boolean v) {}
-	//
-	// public void setVisible(final boolean v) {
-	// super.setVisible(v);
-	// }
+	@Override
+	public void setVisible(final boolean v) {
+		// DEBUG.OUT("VISIBLE changed through composite : " + v);
+		visible = v;
+		setWindowVisible(v);
+		if (!isDisposed()) { super.setVisible(v); }
+	}
+
+	/**
+	 * Gets the visible status.
+	 *
+	 * @return the visible status
+	 */
+	public boolean getVisibleStatus() { return visible; }
+
+	/**
+	 * Update visible status.
+	 *
+	 * @param v
+	 *            the v
+	 */
+	public void updateVisibleStatus(final boolean v) {
+		// DEBUG.OUT("VISIBLE changed through display : " + v);
+		visible = v;
+	}
 
 }

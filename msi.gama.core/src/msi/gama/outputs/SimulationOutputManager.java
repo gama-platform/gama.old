@@ -36,12 +36,18 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
 		concept = {})
-@facets (@facet (
-		name = IKeyword.AUTOSAVE,
-		type = { IType.BOOL, IType.STRING },
+@facets ({ @facet (
+		name = "synchronized",
+		type = IType.BOOL,
 		optional = true,
-		doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
-				+ "Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")))
+		doc = @doc (
+				value = "Indicates whether the displays that compose this output should be synchronized with the simulation cycles")),
+		@facet (
+				name = IKeyword.AUTOSAVE,
+				type = { IType.BOOL, IType.STRING },
+				optional = true,
+				doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
+						+ "Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")) })
 
 @inside (
 		kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })

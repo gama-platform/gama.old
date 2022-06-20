@@ -323,8 +323,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
-	@Override
-	public boolean isRendered() { return true; }
+	// @Override
+	// public boolean isRendered() { return true; }
 
 	/*
 	 * (non-Javadoc)
@@ -359,5 +359,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void setMenuManager(final Object displaySurfaceMenu) {}
+
+	@Override
+	public boolean isVisible() { return true; }
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DisplayLayoutFactory.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DisplayLayoutFactory.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
@@ -33,10 +33,8 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 
 		// On macOS, the simple use of 'asyncRun' prevents java2D views to be displayed in mixed environments (e.g. "3
 		// simulations" in Ant Foraging).
-		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
-			// WorkbenchHelper.asyncRun( () -> {
-			ArrangeDisplayViews.execute(layout);
-		});
+		// WorkbenchHelper.runInUI("Arranging views", 0, m -> {
+		WorkbenchHelper.asyncRun(() -> { ArrangeDisplayViews.execute(layout); });
 
 	}
 

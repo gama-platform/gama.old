@@ -16,7 +16,10 @@ import static com.google.common.collect.Iterables.transform;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -50,7 +53,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @author drogoul
  */
 public abstract class GamaViewPart extends ViewPart
-		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
+		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer, ControlListener {
 
 	static {
 		DEBUG.ON();
@@ -66,7 +69,7 @@ public abstract class GamaViewPart extends ViewPart
 	protected GamaToolbar2 toolbar;
 
 	/** The update job. */
-	private GamaUIJob updateJob;
+	private Job updateJob;
 
 	/** The toolbar updater. */
 	private StateListener toolbarUpdater;
@@ -126,14 +129,25 @@ public abstract class GamaViewPart extends ViewPart
 		/**
 		 * Run synchronized.
 		 */
-		public void runSynchronized() {
-			WorkbenchHelper.run(() -> runInUIThread(null));
-		}
+		// public void runSynchronized() {
+		// WorkbenchHelper.run(() -> runInUIThread(null));
+		// }
 
 	}
 
 	@Override
 	public void reset() {}
+
+	/**
+	 * Gets the top composite.
+	 *
+	 * @return the top composite
+	 */
+	// public Composite getTopComposite() {
+	// Composite c = rootComposite;
+	// while (!(c.getParent() instanceof CTabFolder)) { c = c.getParent(); }
+	// return c;
+	// }
 
 	@Override
 	public void addStateListener(final StateListener listener) {
@@ -234,14 +248,16 @@ public abstract class GamaViewPart extends ViewPart
 		final Point o = rootComposite.toDisplay(0, 0);
 		final Point s = rootComposite.getSize();
 		Rectangle r = new Rectangle(o.x, o.y, s.x, s.y);
-		DEBUG.OUT("Looking in rootComposite rectangle " + r);
+		// DEBUG.OUT("Looking in rootComposite rectangle " + r);
 		return r.contains(x, y);
 	}
 
 	@Override
 	public void createPartControl(final Composite composite) {
 		this.rootComposite = composite;
+		// DEBUG.OUT("Root Composite is " + composite.getClass().getSimpleName());
 		composite.addDisposeListener(this);
+		// getTopComposite().addControlListener(this);
 		if (needsOutput() && getOutput() == null) return;
 		this.setParentComposite(GamaToolbarFactory.createToolbars(this, composite));
 		ownCreatePartControl(getParentComposite());
@@ -271,7 +287,7 @@ public abstract class GamaViewPart extends ViewPart
 	 *
 	 * @return the update job
 	 */
-	protected final GamaUIJob getUpdateJob() {
+	protected final Job getUpdateJob() {
 		if (updateJob == null) { updateJob = createUpdateJob(); }
 		return updateJob;
 	}
@@ -281,17 +297,17 @@ public abstract class GamaViewPart extends ViewPart
 	 *
 	 * @return the gama UI job
 	 */
-	protected abstract GamaUIJob createUpdateJob();
+	protected abstract Job createUpdateJob();
 
 	@Override
 	public void update(final IDisplayOutput output) {
-		final GamaUIJob job = getUpdateJob();
+		final Job job = getUpdateJob();
 		if (job != null) {
-			if (output.isSynchronized()) {
-				job.runSynchronized();
-			} else {
-				job.schedule();
-			}
+			// if (GAMA.getGui().isSynchronized()) {
+			// job.runSynchronized();
+			// } else {
+			job.schedule();
+			// }
 		}
 	}
 
@@ -325,7 +341,6 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void dispose() {
-		// DEBUG.OUT("+++ Part " + this.getPartName() + " is being disposed");
 		toolbarUpdater = null;
 		WorkbenchHelper.run(super::dispose);
 
@@ -432,5 +447,18 @@ public abstract class GamaViewPart extends ViewPart
 	 *            the new parent composite
 	 */
 	public void setParentComposite(final Composite parent) { this.parent = parent; }
+
+	@Override
+	public boolean isVisible() { return true; }
+
+	@Override
+	public void controlMoved(final ControlEvent e) {
+		DEBUG.OUT("View " + this.getTitle() + " moved to " + rootComposite.getParent().toDisplay(0, 0));
+	}
+
+	@Override
+	public void controlResized(final ControlEvent e) {
+		DEBUG.OUT("View " + this.getTitle() + " resized to " + rootComposite.getSize());
+	}
 
 }

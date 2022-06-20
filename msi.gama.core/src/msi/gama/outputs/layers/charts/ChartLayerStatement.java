@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ChartLayerStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -274,6 +274,16 @@ import msi.gaml.types.Types;
 								deprecated = "Use a font in label_font instead",
 								value = "Label font size")),
 				@facet (
+						name = IKeyword.TRANSPARENCY,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the transparency level of the layer (between 0 -- opaque -- and 1 -- fully transparent)")),
+				@facet (
+						name = IKeyword.VISIBLE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Defines whether this layer is visible or not")),
+				@facet (
 						name = ChartLayerStatement.LABELFONTSTYLE,
 						type = IType.ID,
 						values = { "plain", "bold", "italic" },
@@ -349,22 +359,22 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	/** The Constant XRANGE. */
 	public static final String XRANGE = "x_range";
-	
+
 	/** The Constant YRANGE. */
 	public static final String YRANGE = "y_range";
-	
+
 	/** The Constant Y2RANGE. */
 	public static final String Y2RANGE = "y2_range";
 
 	/** The Constant XLABEL. */
 	public static final String XLABEL = "x_label";
-	
+
 	/** The Constant YLABEL. */
 	public static final String YLABEL = "y_label";
-	
+
 	/** The Constant Y2LABEL. */
 	public static final String Y2LABEL = "y2_label";
-	
+
 	/** The Constant MEMORIZE. */
 	public static final String MEMORIZE = "memorize";
 
@@ -373,79 +383,79 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	/** The Constant X_LOGSCALE. */
 	public static final String X_LOGSCALE = "x_log_scale";
-	
+
 	/** The Constant Y_LOGSCALE. */
 	public static final String Y_LOGSCALE = "y_log_scale";
-	
+
 	/** The Constant Y2_LOGSCALE. */
 	public static final String Y2_LOGSCALE = "y2_log_scale";
 
 	/** The Constant YTICKUNIT. */
 	public static final String YTICKUNIT = "y_tick_unit";
-	
+
 	/** The Constant Y2TICKUNIT. */
 	public static final String Y2TICKUNIT = "y2_tick_unit";
-	
+
 	/** The Constant XTICKUNIT. */
 	public static final String XTICKUNIT = "x_tick_unit";
 
 	/** The Constant XTICKLINEVISIBLE. */
 	public static final String XTICKLINEVISIBLE = "x_tick_line_visible";
-	
+
 	/** The Constant YTICKLINEVISIBLE. */
 	public static final String YTICKLINEVISIBLE = "y_tick_line_visible";
-	
+
 	/** The Constant TICKLINECOLOR. */
 	public static final String TICKLINECOLOR = "tick_line_color";
 
 	/** The Constant TITLEVISIBLE. */
 	public static final String TITLEVISIBLE = "title_visible";
-	
+
 	/** The Constant XTICKVALUEVISIBLE. */
 	public static final String XTICKVALUEVISIBLE = "x_tick_values_visible";
-	
+
 	/** The Constant YTICKVALUEVISIBLE. */
 	public static final String YTICKVALUEVISIBLE = "y_tick_values_visible";
 
 	/** The Constant TICKFONTFACE. */
 	public static final String TICKFONTFACE = "tick_font";
-	
+
 	/** The Constant TICKFONTSIZE. */
 	public static final String TICKFONTSIZE = "tick_font_size";
-	
+
 	/** The Constant TICKFONTSTYLE. */
 	public static final String TICKFONTSTYLE = "tick_font_style";
 
 	/** The Constant LABELTEXTCOLOR. */
 	public static final String LABELTEXTCOLOR = "label_text_color";
-	
+
 	/** The Constant LABELBACKGROUNDCOLOR. */
 	public static final String LABELBACKGROUNDCOLOR = "label_background_color";
-	
+
 	/** The Constant LABELFONTFACE. */
 	public static final String LABELFONTFACE = "label_font";
-	
+
 	/** The Constant LABELFONTSIZE. */
 	public static final String LABELFONTSIZE = "label_font_size";
-	
+
 	/** The Constant LABELFONTSTYLE. */
 	public static final String LABELFONTSTYLE = "label_font_style";
 
 	/** The Constant LEGENDFONTFACE. */
 	public static final String LEGENDFONTFACE = "legend_font";
-	
+
 	/** The Constant LEGENDFONTSIZE. */
 	public static final String LEGENDFONTSIZE = "legend_font_size";
-	
+
 	/** The Constant LEGENDFONTSTYLE. */
 	public static final String LEGENDFONTSTYLE = "legend_font_style";
 
 	/** The Constant TITLEFONTFACE. */
 	public static final String TITLEFONTFACE = "title_font";
-	
+
 	/** The Constant TITLEFONTSIZE. */
 	public static final String TITLEFONTSIZE = "title_font_size";
-	
+
 	/** The Constant TITLEFONTSTYLE. */
 	public static final String TITLEFONTSTYLE = "title_font_style";
 
@@ -463,7 +473,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		/**
 		 * Instantiates a new data declaration sequence.
 		 *
-		 * @param desc the desc
+		 * @param desc
+		 *            the desc
 		 */
 		public DataDeclarationSequence(final IDescription desc) {
 			super(desc);
@@ -482,7 +493,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	/** The last values. */
 	final Map<String, Double> lastValues;
-	
+
 	/** The data declaration. */
 	DataDeclarationSequence dataDeclaration = new DataDeclarationSequence(getDescription());
 
@@ -491,15 +502,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 *
 	 * @return the output
 	 */
-	public ChartOutput getOutput() {
-		return chartoutput;
-	}
+	public ChartOutput getOutput() { return chartoutput; }
 
 	/**
 	 * Instantiates a new chart layer statement.
 	 *
-	 * @param desc the desc
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public ChartLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -526,9 +537,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 *
 	 * @return the data set
 	 */
-	public ChartDataSet getDataSet() {
-		return chartdataset;
-	}
+	public ChartDataSet getDataSet() { return chartdataset; }
 
 	// What can not change at eery step
 	@Override
@@ -597,9 +606,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			chartoutput.setUseYLabels(scope, expval);
 		}
 		scope.addVarWithValue(ChartLayerStatement.CHARTDATASET, chartdataset);
-		for (final IStatement s : dataDeclaration.getCommands()) {
-			scope.execute(s);
-		}
+		for (final IStatement s : dataDeclaration.getCommands()) { scope.execute(s); }
 		chartdataset = (ChartDataSet) scope.getVarValue(ChartLayerStatement.CHARTDATASET);
 		chartoutput.initChart_post_data_init(scope);
 		chartoutput.updateOutput(scope);
@@ -610,7 +617,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Gets the chart name.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the chart name
 	 */
 	private String getChartName(final IScope scope) {
@@ -620,7 +628,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Update values.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 */
 	// what can be updated at each step
@@ -743,20 +752,20 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		chartoutput.setBackgroundColorValue(scope, colorvalue);
 
 		color = getFacet(LABELTEXTCOLOR);
-		if (color != null) { 
+		if (color != null) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 			chartoutput.setLabelTextColorValue(scope, colorvalue);
 		}
-		
+
 		color = getFacet(LABELBACKGROUNDCOLOR);
-		if (color != null) { 
+		if (color != null) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 			chartoutput.setLabelBackgroundColorValue(scope, colorvalue);
 		}
-		
+
 		color = getFacet(IKeyword.BACKGROUND);
-		if (color != null) { 
-			colorvalue = Cast.asColor(scope, color.value(scope)); 
+		if (color != null) {
+			colorvalue = Cast.asColor(scope, color.value(scope));
 			chartoutput.setBackgroundColorValue(scope, colorvalue);
 		}
 		GamaFont font = null;
@@ -839,7 +848,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	/**
 	 * To font style.
 	 *
-	 * @param style the style
+	 * @param style
+	 *            the style
 	 * @return the int
 	 */
 	int toFontStyle(final String style) {

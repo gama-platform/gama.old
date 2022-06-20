@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGeometryType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaGeometryType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -96,12 +96,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param copy
+	 *            the copy
 	 * @return the i shape
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IShape staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -206,7 +211,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the multi polygon.
 	 *
-	 * @param lpoints the lpoints
+	 * @param lpoints
+	 *            the lpoints
 	 * @return the i shape
 	 */
 	// A.G 28/05/2015 ADDED for gamanalyser
@@ -241,9 +247,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the triangle.
 	 *
-	 * @param base the base
-	 * @param height the height
-	 * @param location the location
+	 * @param base
+	 *            the base
+	 * @param height
+	 *            the height
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildTriangle(final double base, final double height, final GamaPoint location) {
@@ -265,8 +274,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the triangle.
 	 *
-	 * @param side_size the side size
-	 * @param location the location
+	 * @param side_size
+	 *            the side size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildTriangle(final double side_size, final GamaPoint location) {
@@ -289,9 +300,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the rectangle.
 	 *
-	 * @param width the width
-	 * @param height the height
-	 * @param location the location
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildRectangle(final double width, final double height, final GamaPoint location) {
@@ -329,7 +343,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the line.
 	 *
-	 * @param location2 the location 2
+	 * @param location2
+	 *            the location 2
 	 * @return the i shape
 	 */
 	public static IShape buildLine(final IShape location2) {
@@ -339,8 +354,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the line.
 	 *
-	 * @param location1 the location 1
-	 * @param location2 the location 2
+	 * @param location1
+	 *            the location 1
+	 * @param location2
+	 *            the location 2
 	 * @return the i shape
 	 */
 	public static IShape buildLine(final IShape location1, final IShape location2) {
@@ -357,9 +374,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the line cylinder.
 	 *
-	 * @param location1 the location 1
-	 * @param location2 the location 2
-	 * @param radius the radius
+	 * @param location1
+	 *            the location 1
+	 * @param location2
+	 *            the location 2
+	 * @param radius
+	 *            the radius
 	 * @return the i shape
 	 */
 	public static IShape buildLineCylinder(final IShape location1, final IShape location2, final double radius) {
@@ -372,9 +392,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the plan.
 	 *
-	 * @param location1 the location 1
-	 * @param location2 the location 2
-	 * @param depth the depth
+	 * @param location1
+	 *            the location 1
+	 * @param location2
+	 *            the location 2
+	 * @param depth
+	 *            the depth
 	 * @return the i shape
 	 */
 	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
@@ -387,7 +410,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the polyline.
 	 *
-	 * @param points the points
+	 * @param points
+	 *            the points
 	 * @return the i shape
 	 */
 	public static IShape buildPolyline(final List<IShape> points) {
@@ -400,8 +424,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the polyline cylinder.
 	 *
-	 * @param points the points
-	 * @param radius the radius
+	 * @param points
+	 *            the points
+	 * @param radius
+	 *            the radius
 	 * @return the i shape
 	 */
 	public static IShape buildPolylineCylinder(final List<IShape> points, final double radius) {
@@ -414,8 +440,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the polyplan.
 	 *
-	 * @param points the points
-	 * @param depth the depth
+	 * @param points
+	 *            the points
+	 * @param depth
+	 *            the depth
 	 * @return the i shape
 	 */
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
@@ -428,7 +456,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Creates the point.
 	 *
-	 * @param location the location
+	 * @param location
+	 *            the location
 	 * @return the gama shape
 	 */
 	public static GamaShape createPoint(final IShape location) {
@@ -439,8 +468,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the square.
 	 *
-	 * @param side_size the side size
-	 * @param location the location
+	 * @param side_size
+	 *            the side size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildSquare(final double side_size, final GamaPoint location) {
@@ -450,8 +481,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the cube.
 	 *
-	 * @param side_size the side size
-	 * @param location the location
+	 * @param side_size
+	 *            the side size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildCube(final double side_size, final GamaPoint location) {
@@ -466,10 +499,14 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the box.
 	 *
-	 * @param width the width
-	 * @param height the height
-	 * @param depth the depth
-	 * @param location the location
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param depth
+	 *            the depth
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildBox(final double width, final double height, final double depth,
@@ -483,9 +520,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the hexagon.
 	 *
-	 * @param size the size
-	 * @param x the x
-	 * @param y the y
+	 * @param size
+	 *            the size
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 * @return the i shape
 	 */
 	public static IShape buildHexagon(final double size, final double x, final double y) {
@@ -495,8 +535,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the hexagon.
 	 *
-	 * @param size the size
-	 * @param location the location
+	 * @param size
+	 *            the size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildHexagon(final double size, final GamaPoint location) {
@@ -506,9 +548,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the hexagon.
 	 *
-	 * @param sizeX the size X
-	 * @param sizeY the size Y
-	 * @param location the location
+	 * @param sizeX
+	 *            the size X
+	 * @param sizeY
+	 *            the size Y
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildHexagon(final double sizeX, final double sizeY, final GamaPoint location) {
@@ -531,8 +576,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the circle.
 	 *
-	 * @param radius the radius
-	 * @param location the location
+	 * @param radius
+	 *            the radius
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildCircle(final double radius, final GamaPoint location) {
@@ -549,9 +596,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the ellipse.
 	 *
-	 * @param xRadius the x radius
-	 * @param yRadius the y radius
-	 * @param location the location
+	 * @param xRadius
+	 *            the x radius
+	 * @param yRadius
+	 *            the y radius
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildEllipse(final double xRadius, final double yRadius, final GamaPoint location) {
@@ -574,9 +624,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the squircle.
 	 *
-	 * @param xRadius the x radius
-	 * @param power the power
-	 * @param location the location
+	 * @param xRadius
+	 *            the x radius
+	 * @param power
+	 *            the power
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildSquircle(final double xRadius, final double power, final GamaPoint location) {
@@ -611,9 +664,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			final boolean filled, final GamaPoint location) {
 		if (amplitude <= 0 || xRadius <= 0) return new GamaShape(location);
 		final GeometricShapeFactory factory = new GeometricShapeFactory(GeometryUtils.GEOMETRY_FACTORY);
-		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue()); // WARNING AD Arbitrary number.
-																						// Maybe add a
-		// parameter and/or preference ?
+		factory.setNumPoints(GamaPreferences.Displays.DISPLAY_SLICE_NUMBER.getValue());
 		factory.setCentre(location);
 		factory.setSize(xRadius);
 		final double ampl = Maths.checkHeading(amplitude);
@@ -637,9 +688,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the cylinder.
 	 *
-	 * @param radius the radius
-	 * @param depth the depth
-	 * @param location the location
+	 * @param radius
+	 *            the radius
+	 * @param depth
+	 *            the depth
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildCylinder(final double radius, final double depth, final GamaPoint location) {
@@ -652,8 +706,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the sphere.
 	 *
-	 * @param radius the radius
-	 * @param location the location
+	 * @param radius
+	 *            the radius
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	// FIXME: Be sure that a buffer on a sphere returns a sphere.
@@ -667,9 +723,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the cone 3 D.
 	 *
-	 * @param radius the radius
-	 * @param depth the depth
-	 * @param location the location
+	 * @param radius
+	 *            the radius
+	 * @param depth
+	 *            the depth
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildCone3D(final double radius, final double depth, final GamaPoint location) {
@@ -682,8 +741,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the teapot.
 	 *
-	 * @param size the size
-	 * @param location the location
+	 * @param size
+	 *            the size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildTeapot(final double size, final GamaPoint location) {
@@ -696,8 +757,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the pyramid.
 	 *
-	 * @param side_size the side size
-	 * @param location the location
+	 * @param side_size
+	 *            the side size
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildPyramid(final double side_size, final GamaPoint location) {
@@ -713,8 +776,10 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the arrow.
 	 *
-	 * @param head the head
-	 * @param size the size
+	 * @param head
+	 *            the head
+	 * @param size
+	 *            the size
 	 * @return the i shape
 	 */
 	public static IShape buildArrow(final GamaPoint head, final double size) {
@@ -724,11 +789,16 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the arrow.
 	 *
-	 * @param tail the tail
-	 * @param head the head
-	 * @param arrowWidth the arrow width
-	 * @param arrowLength the arrow length
-	 * @param closed the closed
+	 * @param tail
+	 *            the tail
+	 * @param head
+	 *            the head
+	 * @param arrowWidth
+	 *            the arrow width
+	 * @param arrowLength
+	 *            the arrow length
+	 * @param closed
+	 *            the closed
 	 * @return the i shape
 	 */
 	public static IShape buildArrow(final GamaPoint tail, final GamaPoint head, final double arrowWidth,
@@ -758,10 +828,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Geometries to geometry.
 	 *
-	 * @param scope the scope
-	 * @param ags the ags
+	 * @param scope
+	 *            the scope
+	 * @param ags
+	 *            the ags
 	 * @return the gama shape
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
 			throws GamaRuntimeException {
@@ -815,10 +888,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Points to geometry.
 	 *
-	 * @param scope the scope
-	 * @param coordinates the coordinates
+	 * @param scope
+	 *            the scope
+	 * @param coordinates
+	 *            the coordinates
 	 * @return the gama shape
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static GamaShape pointsToGeometry(final IScope scope, final IContainer<?, GamaPoint> coordinates)
 			throws GamaRuntimeException {
@@ -837,9 +913,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the link.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param target the target
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
 	 * @return the gama shape
 	 */
 	public static GamaShape buildLink(final IScope scope, final IShape source, final IShape target) {
@@ -849,10 +928,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Pair to geometry.
 	 *
-	 * @param scope the scope
-	 * @param p the p
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
 	 * @return the i shape
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IShape pairToGeometry(final IScope scope, final GamaPair p) throws GamaRuntimeException {
 		final IShape first = staticCast(scope, p.first(), null, false);
@@ -865,7 +947,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the multi geometry.
 	 *
-	 * @param shapes the shapes
+	 * @param shapes
+	 *            the shapes
 	 * @return the i shape
 	 */
 	public static IShape buildMultiGeometry(final IList<IShape> shapes) {
@@ -879,7 +962,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the multi geometry.
 	 *
-	 * @param shapes the shapes
+	 * @param shapes
+	 *            the shapes
 	 * @return the i shape
 	 */
 	public static IShape buildMultiGeometry(final IShape... shapes) {
@@ -892,9 +976,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	/**
 	 * Builds the cross.
 	 *
-	 * @param xRadius the x radius
-	 * @param width the width
-	 * @param location the location
+	 * @param xRadius
+	 *            the x radius
+	 * @param width
+	 *            the width
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	public static IShape buildCross(final Double xRadius, final Double width, final GamaPoint location) {

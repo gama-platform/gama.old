@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IParameterEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IParameterEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.interfaces;
 
@@ -51,14 +51,16 @@ public interface IParameterEditor<T> extends IScoped {
 	IParameter getParam();
 
 	/**
-	 * Update with value of parameter.
+	 * Update with value of parameter. The parameter, if true, forces the experiment to look for an updated value of the
+	 * targeted variable
 	 */
-	void updateWithValueOfParameter();
+	void updateWithValueOfParameter(boolean retrieveVarValue);
 
 	/**
 	 * Sets the active.
 	 *
-	 * @param value the new active
+	 * @param value
+	 *            the new active
 	 */
 	void setActive(Boolean value);
 
@@ -74,28 +76,28 @@ public interface IParameterEditor<T> extends IScoped {
 	 */
 
 	int PLUS = 0;
-	
+
 	/** The minus. */
 	int MINUS = 1;
-	
+
 	/** The edit. */
 	int EDIT = 2;
-	
+
 	/** The inspect. */
 	int INSPECT = 3;
-	
+
 	/** The browse. */
 	int BROWSE = 4;
-	
+
 	/** The change. */
 	int CHANGE = 5;
-	
+
 	/** The revert. */
 	int REVERT = 6;
-	
+
 	/** The define. */
 	int DEFINE = 7;
-	
+
 	/** The value. */
 	int VALUE = 8;
 

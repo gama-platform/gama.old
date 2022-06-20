@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * SingleThreadGLAnimator.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * GamaGLAnimator.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -9,8 +9,6 @@
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
-
-import static msi.gama.runtime.PlatformHelper.isARM;
 
 import java.io.PrintStream;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +18,6 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -128,7 +125,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 	@Override
 	public boolean stop() {
 		this.stopRequested = true;
-		if (PlatformHelper.isARM() && WorkbenchHelper.isDisplayThread()) return true;
+		if (WorkbenchHelper.isDisplayThread()) return true;
 		try {
 			this.animatorThread.join();
 		} catch (final InterruptedException e) {} finally {
@@ -164,9 +161,9 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 		// while (!window.isRealized()) {}
 		while (!stopRequested) {
 			try {
-				if (isARM()) {
-					WorkbenchHelper.run(() -> { if (drawable.isRealized()) { drawable.display(); } });
-				} else if (drawable.isRealized()) { drawable.display(); }
+				// if (isARM() || PlatformHelper.isLinux()) {
+				WorkbenchHelper.run(() -> { if (drawable.isRealized()) { drawable.display(); } });
+				// } else if (drawable.isRealized()) { drawable.display(); }
 				if (capFPS) {
 					final long frameDuration = 1000 / targetFPS;
 					final long timeSleep = frameDuration - fpsLastPeriod;
@@ -211,7 +208,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 			fpsTotal = fpsTotalFrames * 1000f / fpsTotalDuration;
 			fpsLastUpdateTime = now;
 			if (DEBUG.IS_ON()) {
-				StringBuilder sb = new StringBuilder();
+				// StringBuilder sb = new StringBuilder();
 				String fpsLastS = String.valueOf(fpsLast);
 				fpsLastS = fpsLastS.substring(0, fpsLastS.indexOf('.') + 2);
 			}

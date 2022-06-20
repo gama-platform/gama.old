@@ -230,6 +230,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	// private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = GamaMapFactory.create();
 
+	/** The texts. */
 	protected final List<TextStatement> texts = GamaListFactory.create();
 
 	/** The explorable parameters. */
@@ -267,6 +268,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/** The benchmarkable. */
 	private final boolean benchmarkable;
+
+	/** The sync. */
+	private volatile boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/**
 	 * The Class ExperimentPopulation.
@@ -502,11 +506,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				exploration = (IExploration) s;
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
-			} else if (s instanceof SimulationOutputManager) {
+			} else if (s instanceof SimulationOutputManager som) {
+				if (som.isSync()) { synchronizeAllOutputs(); }
 				if (originalSimulationOutputs != null) {
-					originalSimulationOutputs.setChildren((SimulationOutputManager) s);
+					originalSimulationOutputs.setChildren(som);
 				} else {
-					originalSimulationOutputs = (SimulationOutputManager) s;
+					originalSimulationOutputs = som;
 				}
 			} else if (s instanceof IParameter.Batch pb) {
 				if (isBatch() && pb.canBeExplored()) {
@@ -518,11 +523,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				final String parameterName = p.getName();
 				final boolean already = parameters.containsKey(parameterName);
 				if (!already) { parameters.put(parameterName, p); }
-			} else if (s instanceof ExperimentOutputManager) {
+			} else if (s instanceof ExperimentOutputManager eom) {
+				if (eom.isSync()) { synchronizeAllOutputs(); }
 				if (experimentOutputs != null) {
-					experimentOutputs.setChildren((ExperimentOutputManager) s);
+					experimentOutputs.setChildren(eom);
 				} else {
-					experimentOutputs = (ExperimentOutputManager) s;
+					experimentOutputs = eom;
 				}
 			}
 		}
@@ -742,6 +748,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public Map<String, IParameter> getParameters() { return parameters; }
 
+	@Override
 	public List<TextStatement> getTexts() { return texts; }
 
 	@Override
@@ -847,12 +854,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void synchronizeAllOutputs() {
-		for (final IOutputManager manager : getActiveOutputManagers()) { manager.synchronize(); }
+		sync = true;
 	}
 
 	@Override
-	public void unSynchronizeAllOutputs() {
-		for (final IOutputManager manager : getActiveOutputManagers()) { manager.unSynchronize(); }
+	public void desynchronizeAllOutputs() {
+		sync = false;
 	}
 
 	@Override
@@ -899,5 +906,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean shouldBeBenchmarked() {
 		return benchmarkable;
 	}
+
+	@Override
+	public boolean isSynchronized() { return sync; }
 
 }

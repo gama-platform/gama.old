@@ -596,4 +596,18 @@ public interface IGui {
 	 */
 	boolean isInDisplayThread();
 
+	/**
+	 * Checks if is hi DPI.
+	 *
+	 * @return true, if is hi DPI
+	 */
+	default boolean isHiDPI() { return false; }
+
+	/**
+	 * Checks if is synchronized.
+	 *
+	 * @return true, if is synchronized
+	 */
+	// boolean isSynchronized();
+
 }

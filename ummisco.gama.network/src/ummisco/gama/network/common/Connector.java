@@ -68,7 +68,7 @@ public abstract class Connector implements IConnector {
 	boolean forceNetworkUse = false;
 
 	/** TCP message is raw or composite. */
-	protected boolean isRaw = false;
+	private boolean isRaw = false;
 
 	/**
 	 * Instantiates a new connector.
@@ -127,9 +127,9 @@ public abstract class Connector implements IConnector {
 	 * @throws GamaNetworkException
 	 *             the gama network exception
 	 */
-	public void storeMessage(final String topic, final String content) throws GamaNetworkException {
+	public void storeMessage(final String sender, final String topic, final String content) throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
-		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(topic, content);
+		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(sender, topic, content);
 		if (!this.localMemberNames.containsKey(msg.getSender())) {
 			pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
 		}
@@ -160,15 +160,10 @@ public abstract class Connector implements IConnector {
 					return allMessage;
 				}
 				case PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
-					ArrayList<IAgent> bb = this.boxFollower.get(groupName);
-					if (bb == null) {
-						bb = this.boxFollower.get(this.boxFollower.keySet().toArray()[0]);
-					}
+					final ArrayList<IAgent> bb = this.boxFollower.get(groupName)==null? this.boxFollower.get("ALL"): this.boxFollower.get(groupName);
 					for (final IAgent agt : bb) {
 						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
-						if (messages != null) {
-							messages.add(message);
-						}
+						if (messages != null) { messages.add(message); }
 					}
 					break;
 				}
@@ -188,7 +183,7 @@ public abstract class Connector implements IConnector {
 		}
 
 		if (!this.localMemberNames.containsKey(receiver)) {
-			if (!isRaw) {
+			if (!isRaw()) {
 				final CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(), content);
 				if (cmsg.getSender() instanceof IAgent) {
 					cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
@@ -229,7 +224,7 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void joinAGroup(final IAgent agt, final String groupName) {
-		if (isRaw) return;
+//		if (isRaw) return;
 		if (!this.receivedMessage.containsKey(agt)) {
 			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
 		}
@@ -255,7 +250,7 @@ public abstract class Connector implements IConnector {
 		}
 		if (!this.isConnected) { connectToServer(agent); }
 
-		if (this.receivedMessage.get(agent) == null && !isRaw) { joinAGroup(agent, netAgent); }
+		if (this.receivedMessage.get(agent) == null && !isRaw()) { joinAGroup(agent, netAgent); }
 	}
 
 	/**
@@ -327,5 +322,13 @@ public abstract class Connector implements IConnector {
 	 */
 	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException;
+
+	public boolean isRaw() {
+		return isRaw;
+	}
+
+	public void setRaw(boolean isRaw) {
+		this.isRaw = isRaw;
+	}
 
 }

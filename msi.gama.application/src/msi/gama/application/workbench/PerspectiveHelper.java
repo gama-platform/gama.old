@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PerspectiveHelper.java, in msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PerspectiveHelper.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -64,7 +65,7 @@ public class PerspectiveHelper {
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 
 	/** The current simulation perspective. */
-	public static volatile IPerspectiveDescriptor currentSimulationPerspective = null;
+	public static volatile SimulationPerspectiveDescriptor currentSimulationPerspective = null;
 
 	/** The active editor. */
 	public static IEditorInput activeEditor;
@@ -321,40 +322,41 @@ public class PerspectiveHelper {
 			final boolean withAutoSave, final boolean memorizeEditors) {
 		if (perspectiveId == null) return false;
 		if (perspectiveId.equals(currentPerspectiveId)) return true;
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		// } catch (final Exception e) {
+		// try {
+		// page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
+		// } catch (final Exception e1) {
+		// e1.printStackTrace();
+		// }
+		// e.printStackTrace();
+		// }
+		if (page == null) return false;
 
-		IWorkbenchPage activePage = null;
-		try {
-			activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		} catch (final Exception e) {
-			try {
-				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
-			} catch (final Exception e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-		}
-		if (activePage == null) return false;
+		if (GamaPreferences.Modeling.EDITOR_PERSPECTIVE_SAVE.getValue()) { page.saveAllEditors(false); }
 
-		if (GamaPreferences.Modeling.EDITOR_PERSPECTIVE_SAVE.getValue()) { activePage.saveAllEditors(false); }
+		if (memorizeEditors) { memorizeActiveEditor(page); }
 
-		if (memorizeEditors) { memorizeActiveEditor(activePage); }
-
-		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
+		final IPerspectiveDescriptor oldDescriptor = page.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
-		final IWorkbenchPage page = activePage;
 		final WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+
 		final Runnable r = () -> {
+			// if (PlatformHelper.isMac() && !isSimulationPerspective(perspectiveId)) {
+			// List<IGamaView.Display> displays = StreamEx.of(page.getViewReferences()).map(a -> a.getView(false))
+			// .select(IGamaView.Display.class).toList();
+			// if (displays.size() > 0) { page.activate((IWorkbenchPart) displays.get(0)); }
+			// }
 			try {
+
 				page.setPerspective(descriptor);
 			} catch (final NullPointerException e) {
-				// DEBUG.ERR(
-				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
-				// Working around the bug in e4...");
+				DEBUG.ERR("NPE in WorkbenchPage.setPerspective(). See Issue #1602. Working around the bug in e4...");
 				page.setPerspective(descriptor);
 			}
 			activateAutoSave(withAutoSave);
 			if (isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId)) {
-				// DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
+				DEBUG.OUT("Destroying perspective " + oldDescriptor.getId());
 				page.closePerspective(oldDescriptor, false, false);
 				getPerspectiveRegistry().deletePerspective(oldDescriptor);
 			}
@@ -364,14 +366,14 @@ public class PerspectiveHelper {
 				// Early activation or deactivation of editors based on the global preference
 				page.setEditorAreaVisible(!GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue());
 				deleteCurrentSimulationPerspective();
-				currentSimulationPerspective = descriptor;
+				currentSimulationPerspective = (SimulationPerspectiveDescriptor) descriptor;
 			}
 			applyActiveEditor(page);
 			final Boolean showControls = keepControls();
 			if (showControls != null) { window.setCoolBarVisible(showControls); }
 			final Boolean keepTray = keepTray();
 			if (keepTray != null) { showBottomTray(window, keepTray); }
-			// DEBUG.OUT("Perspective " + perspectiveId + " opened ");
+			DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
 		if (immediately) {
 			Display.getDefault().syncExec(r);
@@ -482,6 +484,17 @@ public class PerspectiveHelper {
 	}
 
 	/**
+	 * Gets the background.
+	 *
+	 * @return the background
+	 */
+	public final static Color getBackground() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if (d instanceof SimulationPerspectiveDescriptor) return ((SimulationPerspectiveDescriptor) d).getBackground();
+		return null;
+	}
+
+	/**
 	 * Show overlays.
 	 *
 	 * @return true, if successful
@@ -532,6 +545,29 @@ public class PerspectiveHelper {
 
 		/** The keep tray. */
 		Boolean keepTray = true;
+
+		/** The background. */
+		Color background = null;
+
+		/** The restore background. */
+		private Runnable restoreBackground;
+
+		/**
+		 * Gets the restore background.
+		 *
+		 * @return the restore background
+		 */
+		public Runnable getRestoreBackground() { return restoreBackground; }
+
+		/**
+		 * Sets the restore background.
+		 *
+		 * @param restoreBackground
+		 *            the new restore background
+		 */
+		public void setRestoreBackground(final Runnable restoreBackground) {
+			this.restoreBackground = restoreBackground;
+		}
 
 		/**
 		 * Instantiates a new simulation perspective descriptor.
@@ -652,6 +688,21 @@ public class PerspectiveHelper {
 			return keepTray;
 		}
 
+		/**
+		 * Gets the background.
+		 *
+		 * @return the background
+		 */
+		public Color getBackground() { return background; }
+
+		/**
+		 * Sets the background.
+		 *
+		 * @param c
+		 *            the new background
+		 */
+		public void setBackground(final Color c) { background = c; }
+
 	}
 
 	/**
@@ -676,8 +727,12 @@ public class PerspectiveHelper {
 			if (page != null) {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
+				if (currentSimulationPerspective.getRestoreBackground() != null) {
+					currentSimulationPerspective.getRestoreBackground().run();
+					currentSimulationPerspective.setRestoreBackground(null);
+				}
 				deletePerspectiveFromApplication(currentSimulationPerspective);
-				// DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
+				DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
 		}

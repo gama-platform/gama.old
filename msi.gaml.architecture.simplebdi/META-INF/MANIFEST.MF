@@ -4,7 +4,8 @@ Bundle-Name: Simple bdi architecture
 Bundle-SymbolicName: msi.gaml.architecture.simplebdi;singleton:=true
 Bundle-Version: 1.8.2.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext
+ msi.gama.ext,
+ ummisco.gama.serialize;bundle-version="1.8.2"
 Export-Package: msi.gaml.architecture.simplebdi
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

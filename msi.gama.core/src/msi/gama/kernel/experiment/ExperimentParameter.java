@@ -65,6 +65,10 @@ import msi.gaml.variables.Variable;
 /**
  * The Class ExperimentParameter.
  */
+
+/**
+ * The Class ExperimentParameter.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
@@ -160,10 +164,22 @@ import msi.gaml.variables.Variable;
 								+ "define the left and right sections only (thumb will be dark green); 1 color will define the left section and the thumb. "
 								+ "For switches, 2 colors will define the background for respectively the left 'true' and right 'false' sections. 1 color will define both backgrounds")),
 				@facet (
+						name = "labels",
+						type = IType.LIST,
+						of = IType.STRING,
+						optional = true,
+						doc = @doc ("The labels that will be displayed for switches (instead of True/False)")),
+				@facet (
 						name = IKeyword.STEP,
 						type = IType.FLOAT,
 						optional = true,
 						doc = @doc ("the increment step (mainly used in batch mode to express the variation step between simulation)")),
+
+				@facet (
+						name = "read_only",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether this parameter is read-only or editable")),
 				@facet (
 						name = IKeyword.AMONG,
 						type = IType.LIST,
@@ -213,7 +229,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	// private List amongValue;
 
 	/** The enables. */
-	final private String[] disables, enables, extensions, updates;
+	final private String[] disables, enables, extensions, updates, labels;
 
 	/** The unit label. */
 	String varName, title, category, unitLabel;
@@ -284,13 +300,21 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		final IExpressionDescription e = getDescription().getFacet(IKeyword.ENABLES);
 		final IExpressionDescription f = getDescription().getFacet(IKeyword.EXTENSIONS);
 		final IExpressionDescription g = getDescription().getFacet(IKeyword.UPDATES);
+		final IExpressionDescription h = getDescription().getFacet("labels");
+
 		disables = d != null ? d.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		enables = e != null ? e.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		extensions = f != null ? f.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
 		updates = g != null ? g.getStrings(getDescription(), false).toArray(new String[0]) : EMPTY_STRINGS;
+		String[] tab = h != null ? h.getStrings(getDescription(), false).toArray(new String[0]) : SWITCH_STRINGS;
+		labels = tab.length != 2 ? SWITCH_STRINGS : tab;
 		final VariableDescription targetedGlobalVar = findTargetedVar(sd);
 		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
 		isEditable = !targetedGlobalVar.isNotModifiable();
+		if (isEditable) {
+			final IExpression ed = getFacet("read_only");
+			if (ed != null) { isEditable = !Cast.asBool(runtimeScope, ed.value(runtimeScope)); }
+		}
 		isExperiment = targetedGlobalVar.isDefinedInExperiment();
 
 		setCategory(desc.getLitteral(IKeyword.CATEGORY));
@@ -373,6 +397,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		this.title = title;
 		disables = EMPTY_STRINGS;
 		enables = EMPTY_STRINGS;
+		labels = EMPTY_STRINGS;
 		this.canBeNull = canBeNull;
 		// this.order = p.getDefinitionOrder();
 		// this.amongValue = among;
@@ -864,6 +889,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public boolean isWorkspace() {
 		if (inWorkspace == null) return false;
 		return GAMA.run(s -> Cast.asBool(s, inWorkspace.value(s)));
+	}
+
+	@Override
+	public String[] getLabels(final IScope scope) {
+		return labels;
 	}
 
 }

@@ -21,6 +21,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -88,6 +89,7 @@ import ummisco.gama.ui.parameters.EditorsDialog;
 import ummisco.gama.ui.parameters.GamaWizard;
 import ummisco.gama.ui.parameters.GamaWizardDialog;
 import ummisco.gama.ui.parameters.GamaWizardPage;
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -98,7 +100,7 @@ import ummisco.gama.ui.parameters.GamaWizardPage;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The all tests running. */
@@ -450,6 +452,8 @@ public class SwtGui implements IGui {
 		final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
 		final Boolean showControls = layout.getFacetValue(scope, "controls", null);
 		final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
+		final GamaColor color = layout.getFacetValue(scope, "background", null);
+		Color background = color == null ? null : GamaColors.toSwtColor(color);
 		boolean showEditors;
 		if (layout.hasFacet("editors")) {
 			showEditors = layout.getFacetValue(scope, "editors", false);
@@ -479,6 +483,7 @@ public class SwtGui implements IGui {
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);
 				sd.keepTray(keepTray);
+				sd.setBackground(background);
 			}
 		});
 
@@ -583,7 +588,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
-		DEBUG.OUT("STATE: " + forcedState);
+		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
@@ -664,5 +669,12 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean isInDisplayThread() { return EventQueue.isDispatchThread() || Display.getCurrent() != null; }
+
+	@Override
+	public boolean isHiDPI() {
+		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
+		DEBUG.OUT("Primary Monitor Zoom = " + zoom);
+		return zoom > 100;
+	}
 
 }

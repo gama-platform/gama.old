@@ -153,13 +153,22 @@ public interface IGamaIcons {
 	// Editor specific
 
 	/** The button gui. */
-	String BUTTON_GUI = "small.run";
+	String BUTTON_GUI = "small.exp.run.white";
 
 	/** The button batch. */
-	String BUTTON_BATCH = "small.batch";
+	String BUTTON_BATCH = "small.exp.batch.white";
 
 	/** The button back. */
-	String BUTTON_BACK = "small.run.and.back";
+	String BUTTON_BACK = "small.exp.back.white";
+
+	/** The button gui. */
+	String MENU_GUI = "small.exp.run.green";
+
+	/** The button batch. */
+	String MENU_BATCH = "small.exp.batch.green";
+
+	/** The button back. */
+	String MENU_BACK = "small.exp.back.green";
 
 	// Small Icons
 

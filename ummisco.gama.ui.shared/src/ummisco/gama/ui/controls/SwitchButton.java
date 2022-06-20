@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SwitchButton.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SwitchButton.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
+import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -110,7 +111,7 @@ public class SwitchButton extends Canvas {
 	 */
 	public SwitchButton(final Composite parent, final int style, final String trueText, final String falseText,
 			final String text) {
-		this(parent, style, IGamaColors.OK.color(), IGamaColors.ERROR.color());
+		this(parent, style, IGamaColors.OK.color(), IGamaColors.ERROR.color(), new String[] { trueText, falseText });
 		this.trueText = trueText;
 		this.falseText = falseText;
 		this.text = text;
@@ -119,16 +120,21 @@ public class SwitchButton extends Canvas {
 	/**
 	 * Instantiates a new switch button.
 	 *
-	 * @param parent the parent
-	 * @param style the style
-	 * @param selectedBackgroundColor the selected background color
-	 * @param unselectedBackgroundColor the unselected background color
+	 * @param parent
+	 *            the parent
+	 * @param style
+	 *            the style
+	 * @param selectedBackgroundColor
+	 *            the selected background color
+	 * @param unselectedBackgroundColor
+	 *            the unselected background color
 	 */
 	public SwitchButton(final Composite parent, final int style, final Color selectedBackgroundColor,
-			final Color unselectedBackgroundColor) {
+			final Color unselectedBackgroundColor, final String[] strings) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		this.trueText = " True ";
-		this.falseText = " False ";
+		String[] labels = strings == null || strings.length < 2 ? IParameter.SWITCH_STRINGS : strings;
+		this.trueText = " " + labels[0] + " ";
+		this.falseText = " " + labels[1] + " ";
 		this.text = "";
 		this.trueBackgroundColor = selectedBackgroundColor;
 		this.falseBackgroundColor = unselectedBackgroundColor;
@@ -171,9 +177,7 @@ public class SwitchButton extends Canvas {
 	}
 
 	@Override
-	public int getBackgroundMode() {
-		return SWT.INHERIT_NONE;
-	}
+	public int getBackgroundMode() { return SWT.INHERIT_NONE; }
 
 	/**
 	 * Draw the switch button
@@ -299,9 +303,7 @@ public class SwitchButton extends Canvas {
 	/**
 	 * @return the selection state of the button
 	 */
-	public boolean getSelection() {
-		return this.selection;
-	}
+	public boolean getSelection() { return this.selection; }
 
 	/**
 	 * @param selection
@@ -317,8 +319,6 @@ public class SwitchButton extends Canvas {
 	 *
 	 * @return the text corresponding to the button (default is "")
 	 */
-	public String getText() {
-		return this.text;
-	}
+	public String getText() { return this.text; }
 
 }

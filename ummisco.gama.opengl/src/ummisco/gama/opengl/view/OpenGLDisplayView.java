@@ -17,6 +17,7 @@ import com.jogamp.newt.Window;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
@@ -45,6 +46,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 		final SWTOpenGLDisplaySurface surface =
 				(SWTOpenGLDisplaySurface) GAMA.getGui().createDisplaySurfaceFor(getOutput(), parent);
 		surfaceComposite = surface.renderer.getCanvas();
+		// synchronizer.setSurface(getDisplaySurface());
 		surface.outputReloaded();
 		return surfaceComposite;
 	}
@@ -94,7 +96,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	 */
 	@Override
 	public void hideCanvas() {
-		getGLCanvas().setWindowVisible(false);
+		getGLCanvas().setVisible(false);
 	}
 
 	/**
@@ -102,7 +104,9 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	 */
 	@Override
 	public void showCanvas() {
-		getGLCanvas().setWindowVisible(true);
+		getGLCanvas().setVisible(true);
+		// Maybe only necessary on macOS ? Prevents JOGL views to move over Java2D views created before
+		if (PlatformHelper.isMac()) { getGLCanvas().reparentWindow(); }
 	}
 
 	/**
@@ -114,7 +118,14 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	}
 
 	@Override
+	public void ownCreatePartControl(final Composite c) {
+		super.ownCreatePartControl(c);
+		getSurfaceComposite().forceFocus();
+	}
+
+	@Override
 	protected boolean canBeSynchronized() {
+		if (getGLCanvas().getVisibleStatus() || isFullScreen()) return true;
 		Window w = getGLCanvas().getNEWTWindow();
 		return w == null || w.isVisible();
 	}

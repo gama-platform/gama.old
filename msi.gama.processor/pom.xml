@@ -49,7 +49,7 @@
 							<dependency>
 								<groupId>org.apache.maven.wagon</groupId>
 								<artifactId>wagon-ssh</artifactId>
-								<version>2.12</version>
+								<version>3.5.1</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -99,12 +99,12 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh-external</artifactId>
-				<version>2.12</version>
+				<version>3.5.1</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>2.12</version>
+				<version>3.5.1</version>
 			</extension>
 		</extensions>
 

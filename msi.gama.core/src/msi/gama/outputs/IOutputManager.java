@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IOutputManager.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -119,17 +119,22 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 */
 	void resume();
 
-	/**
-	 * Asks this manager to synchronize all of its display outputs with the simulation. see
-	 * {@link IDisplayOutput#setSynchronized(boolean)}
-	 */
-	void synchronize();
-
-	/**
-	 * Asks this manager to desynchronize all of its display outputs with the simulation. see
-	 * {@link IDisplayOutput#setSynchronized(boolean)}
-	 */
-	void unSynchronize();
+	// /**
+	// * Asks this manager to synchronize all of its display outputs with the simulation.
+	// */
+	// void synchronize();
+	//
+	// /**
+	// * Asks this manager to desynchronize all of its display outputs with the simulation.
+	// */
+	// void desynchronize();
+	//
+	// /**
+	// * Checks if is synchronized.
+	// *
+	// * @return true, if is synchronized
+	// */
+	// boolean isSynchronized();
 
 	/**
 	 * Asks this manager to close all of its outputs (see {@link IOutput#close()}
@@ -146,5 +151,12 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 * @return true if the output has been opened or was already open, false otherwise (if it cannot be opened)
 	 */
 	boolean open(IScope scope, IOutput output);
+
+	/**
+	 * Checks if is sync.
+	 *
+	 * @return true, if is sync
+	 */
+	boolean isSync();
 
 }
