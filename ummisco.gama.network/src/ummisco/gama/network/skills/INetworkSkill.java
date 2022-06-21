@@ -94,7 +94,7 @@ public interface INetworkSkill {
 
 	/** The simulate step. */
 	// SKILL TEST
-	String SIMULATE_STEP = "simulate_step";
+	String FETCH_MESSAGE_FROM_NETWORK = "fetch_message_from_network";
 
 	/** The max data packet size. */
 	// UDP data packet max size
