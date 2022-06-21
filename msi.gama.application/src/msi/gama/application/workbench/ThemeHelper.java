@@ -33,8 +33,6 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -105,9 +103,7 @@ public class ThemeHelper {
 	/** The Constant CORE_THEME_LIGHT. */
 	public static final Pref<Boolean> CORE_THEME_LIGHT =
 			create("pref_theme_light", "Light theme", true, IType.BOOL, false).in(NAME, APPEARANCE).restartRequired()
-					.onChange(v -> {
-						chooseThemeBasedOnPreferences();
-					});
+					.onChange(v -> { chooseThemeBasedOnPreferences(); });
 
 	/**
 	 * Chooses a light/dark theme based on the GAMA preferences and the actual theme
@@ -322,49 +318,6 @@ public class ThemeHelper {
 		} catch (IOException e) {
 			sb.append("\nError: ").append(e.getLocalizedMessage());
 		}
-	}
-
-	/** The original background. */
-	static Color originalBackground = isDark() ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK)
-			: Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
-
-	/**
-	 * Change sash background.
-	 *
-	 * @param c
-	 *            the c
-	 */
-	public static void changeSashBackground(final Color c) {
-		injectCSS(".MPartSashContainer {" + getCSSProperty("background-color", c) + "; }");
-	}
-
-	/**
-	 * Restore sash background.
-	 */
-	public static void restoreSashBackground() {
-		changeSashBackground(originalBackground);
-	}
-
-	/**
-	 * Gets the background CSS property.
-	 *
-	 * @param c
-	 *            the c
-	 * @return the background CSS property
-	 */
-	public static String getCSSProperty(final String prop, final Color c) {
-		return " " + prop + ": " + String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()) + ";";
-	}
-
-	/**
-	 * Gets the background CSS property.
-	 *
-	 * @param c
-	 *            the c
-	 * @return the background CSS property
-	 */
-	public static String getCSSProperty(final String prop, final java.awt.Color c) {
-		return " " + prop + ": " + String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()) + ";";
 	}
 
 	/**

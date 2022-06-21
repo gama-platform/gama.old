@@ -1,11 +1,12 @@
 /*******************************************************************************************************
  *
- * Strings.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * Strings.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -45,17 +46,15 @@ public class Strings {
 
 	/** The Constant LN. */
 	public static final String LN = java.lang.System.lineSeparator();
-
+	
 	/** The Constant TAB. */
 	public static final String TAB = "\t";
 
 	/**
 	 * Op plus.
 	 *
-	 * @param a
-	 *            the a
-	 * @param b
-	 *            the b
+	 * @param a the a
+	 * @param b the b
 	 * @return the string
 	 */
 	@operator (
@@ -81,15 +80,11 @@ public class Strings {
 	/**
 	 * Op plus.
 	 *
-	 * @param scope
-	 *            the scope
-	 * @param a
-	 *            the a
-	 * @param b
-	 *            the b
+	 * @param scope the scope
+	 * @param a the a
+	 * @param b the b
 	 * @return the string
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
+	 * @throws GamaRuntimeException the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.PLUS,
@@ -109,10 +104,8 @@ public class Strings {
 	/**
 	 * Op in.
 	 *
-	 * @param pattern
-	 *            the pattern
-	 * @param target
-	 *            the target
+	 * @param pattern the pattern
+	 * @param target the target
 	 * @return the boolean
 	 */
 	@operator (
@@ -133,10 +126,8 @@ public class Strings {
 	/**
 	 * Op contains.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
+	 * @param target the target
+	 * @param pattern the pattern
 	 * @return the boolean
 	 */
 	@operator (
@@ -157,10 +148,8 @@ public class Strings {
 	/**
 	 * Op contains any.
 	 *
-	 * @param target
-	 *            the target
-	 * @param l
-	 *            the l
+	 * @param target the target
+	 * @param l the l
 	 * @return the boolean
 	 */
 	@operator (
@@ -173,17 +162,17 @@ public class Strings {
 					value = "\"abcabcabc\" contains_any [\"ca\",\"xy\"]",
 					equals = "true"))
 	public static Boolean opContainsAny(final String target, final IList l) {
-		for (final Object o : l) { if (o instanceof String && opContains(target, (String) o)) return true; }
+		for (final Object o : l) {
+			if (o instanceof String && opContains(target, (String) o)) return true;
+		}
 		return false;
 	}
 
 	/**
 	 * Op contains all.
 	 *
-	 * @param target
-	 *            the target
-	 * @param l
-	 *            the l
+	 * @param target the target
+	 * @param l the l
 	 * @return the boolean
 	 */
 	@operator (
@@ -198,17 +187,17 @@ public class Strings {
 							value = "\"abcabcabc\" contains_all [\"ca\",\"xy\"]",
 							equals = "false")))
 	public static Boolean opContainsAll(final String target, final IList l) {
-		for (final Object o : l) { if (!(o instanceof String) || !opContains(target, (String) o)) return false; }
+		for (final Object o : l) {
+			if (!(o instanceof String) || !opContains(target, (String) o)) return false;
+		}
 		return true;
 	}
 
 	/**
 	 * Op index of.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
+	 * @param target the target
+	 * @param pattern the pattern
 	 * @return the integer
 	 */
 	@operator (
@@ -229,10 +218,8 @@ public class Strings {
 	/**
 	 * Op last index of.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
+	 * @param target the target
+	 * @param pattern the pattern
 	 * @return the integer
 	 */
 	@operator (
@@ -253,12 +240,9 @@ public class Strings {
 	/**
 	 * Op copy.
 	 *
-	 * @param target
-	 *            the target
-	 * @param beginIndex
-	 *            the begin index
-	 * @param endIndex
-	 *            the end index
+	 * @param target the target
+	 * @param beginIndex the begin index
+	 * @param endIndex the end index
 	 * @return the string
 	 */
 	@operator (
@@ -280,12 +264,9 @@ public class Strings {
 	/**
 	 * Op tokenize.
 	 *
-	 * @param scope
-	 *            the scope
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
+	 * @param scope the scope
+	 * @param target the target
+	 * @param pattern the pattern
 	 * @return the i list
 	 */
 	@operator (
@@ -308,14 +289,10 @@ public class Strings {
 	/**
 	 * Op tokenize.
 	 *
-	 * @param scope
-	 *            the scope
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
-	 * @param completeSep
-	 *            the complete sep
+	 * @param scope the scope
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param completeSep the complete sep
 	 * @return the i list
 	 */
 	@operator (
@@ -344,12 +321,9 @@ public class Strings {
 	/**
 	 * Op replace.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
-	 * @param replacement
-	 *            the replacement
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param replacement the replacement
 	 * @return the string
 	 */
 	@operator (
@@ -370,12 +344,9 @@ public class Strings {
 	/**
 	 * Op replace regex.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
-	 * @param replacement
-	 *            the replacement
+	 * @param target the target
+	 * @param pattern the pattern
+	 * @param replacement the replacement
 	 * @return the string
 	 */
 	@operator (
@@ -397,10 +368,8 @@ public class Strings {
 	/**
 	 * Op regex matches.
 	 *
-	 * @param target
-	 *            the target
-	 * @param pattern
-	 *            the pattern
+	 * @param target the target
+	 * @param pattern the pattern
 	 * @return the i list
 	 */
 	@operator (
@@ -430,8 +399,7 @@ public class Strings {
 	/**
 	 * Checks if is gama number.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the boolean
 	 */
 	@operator (
@@ -541,8 +509,7 @@ public class Strings {
 	/**
 	 * Reverse.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -565,8 +532,7 @@ public class Strings {
 	/**
 	 * Checks if is empty.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the boolean
 	 */
 	@operator (
@@ -587,8 +553,7 @@ public class Strings {
 	/**
 	 * First.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -610,8 +575,7 @@ public class Strings {
 	/**
 	 * Last.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -633,8 +597,7 @@ public class Strings {
 	/**
 	 * Length.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the integer
 	 */
 	@operator (
@@ -656,10 +619,8 @@ public class Strings {
 	/**
 	 * Gets the.
 	 *
-	 * @param lv
-	 *            the lv
-	 * @param rv
-	 *            the rv
+	 * @param lv the lv
+	 * @param rv the rv
 	 * @return the string
 	 */
 	@operator (
@@ -678,8 +639,7 @@ public class Strings {
 	/**
 	 * As char.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -701,10 +661,8 @@ public class Strings {
 	/**
 	 * Indent.
 	 *
-	 * @param s
-	 *            the s
-	 * @param nb
-	 *            the nb
+	 * @param s the s
+	 * @param nb the nb
 	 * @return the string
 	 */
 	@operator (
@@ -720,7 +678,9 @@ public class Strings {
 	static public String indent(final String s, final int nb) {
 		if (nb <= 0) return s;
 		final StringBuilder sb = new StringBuilder(nb);
-		for (int i = 0; i < nb; i++) { sb.append(TAB); }
+		for (int i = 0; i < nb; i++) {
+			sb.append(TAB);
+		}
 		final String t = sb.toString();
 		return s.replaceAll("(?m)^", t);
 	}
@@ -728,8 +688,7 @@ public class Strings {
 	/**
 	 * To lower case.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -751,8 +710,7 @@ public class Strings {
 	/**
 	 * To upper case.
 	 *
-	 * @param s
-	 *            the s
+	 * @param s the s
 	 * @return the string
 	 */
 	@operator (
@@ -769,29 +727,6 @@ public class Strings {
 	static public String toUpperCase(final String s) {
 		if (s == null) return s;
 		return s.toUpperCase();
-	}
-
-	/**
-	 * Capitalize.
-	 *
-	 * @param str
-	 *            the str
-	 * @return the string
-	 */
-	@operator (
-			value = "capitalize",
-			can_be_const = true,
-			category = { IOperatorCategory.STRING },
-			concept = { IConcept.STRING })
-	@doc (
-			value = "Returns a string where the first letter is capitalized",
-			examples = @example (
-					value = "capitalize(\"abc\")",
-					equals = "'Abc'"),
-			see = { "lower_case", "upper_case" })
-	public static String capitalize(final String str) {
-		if (str == null || str.isEmpty()) return str;
-		return str.substring(0, 1).toUpperCase().concat(str.substring(1));
 	}
 
 }

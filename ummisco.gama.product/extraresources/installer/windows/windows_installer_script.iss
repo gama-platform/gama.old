@@ -11,7 +11,7 @@
 #define OutputDirPath ".\gama_output"
 
 #define MyAppName "Gama"
-#define MyAppVersion "1.8.2-RC1"
+#define MyAppVersion "1.8.2"
 #define MyAppPublisher "UMI 209 UMMISCO IRD/SU & Partners"
 #define MyAppURL "https://www.gama-platform.org"
 #define MyAppAssocName MyAppName + " File"
@@ -29,11 +29,10 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf64}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 LicenseFile={#LicensePath}
-ArchitecturesAllowed=x64
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
@@ -76,7 +75,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#AppDirPath}\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#AppDirPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;Permissions: users-full
+Source: "{#AppDirPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -92,5 +91,4 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
 

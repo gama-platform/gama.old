@@ -19,15 +19,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-
 import org.eclipse.core.runtime.Platform;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -162,31 +157,6 @@ public class System {
 	    } catch (IOException ex) {
 	        return false;
 	    }
-	}
-	
-	@operator (
-			value = "play_sound",
-			can_be_const = true,
-			concept = IConcept.SOUND)
-	@doc (value = "Play a wave file",
-		examples = {
-					@example (value="bool sound_ok <- play_sound('beep.wav');",isExecutable = false)})
-	@no_test 
-	public static Boolean playSound(final IScope scope, final String source) {
-		 try {
-			 final String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, source, true);
-			 File f = new File(soundFilePath);
-			 if (f == null || !f.exists()) 
-				 return false;
-			 Clip clip = AudioSystem.getClip();
-		     AudioInputStream inputStream = AudioSystem.getAudioInputStream(f);
-		     clip.open(inputStream);
-		     clip.start();
-		     
-		 } catch (Exception e) {
-			 throw GamaRuntimeException.error(e.toString(), scope);
-		 }
-		 return true;
 	}
 	
 	

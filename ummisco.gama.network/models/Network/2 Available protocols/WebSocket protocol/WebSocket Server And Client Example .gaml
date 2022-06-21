@@ -1,7 +1,7 @@
 /**
 * Name: Socket_TCP_HelloWorld_Server
 * Author: Arnaud Grignard
-* Description: Two clients are communicated throught the Socket WebSocket protocol.
+* Description: Two clients are communicated throught the Socket TCP protocol.
 * Tags: Network, TCP, Socket
 */
 model WebSocket_HelloWorld
@@ -23,7 +23,7 @@ global{
 
 	action create_server {
 		create Server number: 2 {
-			do connect protocol: "websocket_server" port: 3001 with_name:name force_network_use:true;
+			do connect protocol: "websocket_server" port: 3001 with_name:name;
 			do join_group with_name: "server_group";
 			id <- id + 1;
 			color <- rnd_color(255);
@@ -38,7 +38,7 @@ global{
 	action create_client {
 		create Client number: 2 {
 		// replace the "localhost" address by the IP address of the other computer 
-			do connect to: "localhost" protocol: "websocket_client" port: 3001 with_name: name  force_network_use:true;
+			do connect to: "localhost" protocol: "websocket_client" port: 3001 with_name: name;
 			do join_group with_name: "client_group";
 			id <- id + 1;
 			color <- rgb(rnd(255)); 

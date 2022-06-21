@@ -16,7 +16,6 @@ import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
@@ -359,10 +358,7 @@ public class SimulationClock {
 	 *
 	 * @return the delay in milliseconds
 	 */
-	public double getDelayInMilliseconds() {
-		IExperimentAgent agent = clockScope.getExperiment();
-		return agent == null ? 0 : agent.getMinimumDuration() * 1000;
-	}
+	public double getDelayInMilliseconds() { return clockScope.getExperiment().getMinimumDuration() * 1000; }
 
 	/**
 	 * Gets the current date.

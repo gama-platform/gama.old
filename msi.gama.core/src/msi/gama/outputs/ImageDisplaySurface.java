@@ -492,8 +492,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
 	 */
-	// @Override
-	// public boolean isRendered() { return true; }
+	@Override
+	public boolean isRendered() { return true; }
 
 	@Override
 	public boolean isDisposed() { return false; }
@@ -529,8 +529,5 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public void setMenuManager(final Object displaySurfaceMenu) {}
-
-	@Override
-	public boolean isVisible() { return true; }
 
 }

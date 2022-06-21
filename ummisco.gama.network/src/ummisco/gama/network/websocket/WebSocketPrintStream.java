@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-import org.java_websocket.server.WebSocketServer;
-
 public class WebSocketPrintStream extends PrintStream{
 	public WebSocketPrintStream(String fileName, Charset charset) throws IOException {
 		super(fileName, charset);
@@ -52,8 +50,8 @@ public class WebSocketPrintStream extends PrintStream{
 		// TODO Auto-generated constructor stub
 	}
 	
-	WebSocketServer mm;
-	public WebSocketPrintStream(OutputStream out, WebSocketServer myChatServer) {
+	IGamaWebSocketServer mm;
+	public WebSocketPrintStream(OutputStream out, IGamaWebSocketServer myChatServer) {
 		super(out);
 		mm=myChatServer;
 	}

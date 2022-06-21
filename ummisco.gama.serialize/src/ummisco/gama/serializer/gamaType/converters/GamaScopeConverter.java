@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * GamaScopeConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * GamaScopeConverter.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -23,43 +24,54 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class GamaScopeConverter.
  */
-public class GamaScopeConverter extends AbstractGamaConverter<IScope, String> {
+public class GamaScopeConverter implements Converter {
 
-	/**
-	 * Instantiates a new gama scope converter.
-	 *
-	 * @param target
-	 *            the target
-	 */
-	public GamaScopeConverter(final Class<IScope> target) {
-		super(target);
+	@Override
+	public boolean canConvert(final Class arg0) {
+		if (ExperimentAgent.ExperimentAgentScope.class.equals(arg0)) { return true; }
+
+		final Class<?>[] allInterface = arg0.getInterfaces();
+		for (final Class<?> c : allInterface) {
+			if (c.equals(IScope.class)) { return true; }
+		}
+		return false;
 	}
 
 	@Override
-	public void write(final IScope scope, final IScope scopeToSave, final HierarchicalStreamWriter writer,
-			final MarshallingContext context) {
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
+		final IScope scope = (IScope) arg0;
 		writer.startNode("IScope");
-		writer.setValue(scopeToSave.getName().toString());
+		writer.setValue(scope.getName().toString());
 		writer.endNode();
+
 		// The experiment ???
+
 		writer.startNode("Simulations");
-		final ExperimentAgent expAgt = (ExperimentAgent) scopeToSave.getExperiment();
+		final ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		// The model / global
+		// IModel model = expAgt.getModel();
+		// Collection<IVariable> vars = model.getVars();
+
+		// SimulationPopulation simPop = expAgt.getSimulationPopulation();
+
 		for (final IAgent agt : expAgt.getSimulationPopulation()) {
 			// Each simulation
+			// SimulationAgent simAgt = (SimulationAgent) agt;
+			// System.out.println("ConvertAnother : ScopeConverter " + agt.getClass());
 			DEBUG.OUT("ConvertAnother : ScopeConverter " + agt.getClass());
 			context.convertAnother(agt);
 		}
+
 		writer.endNode();
 	}
 
 	@Override
-	public String read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
-		try {
-			return reader.getValue();
-		} finally {
-			reader.moveUp();
-		}
+		final String res = reader.getValue();
+		reader.moveUp();
+
+		return res;
 	}
 
 }

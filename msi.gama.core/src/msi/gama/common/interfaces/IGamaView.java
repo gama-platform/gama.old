@@ -246,13 +246,6 @@ public interface IGamaView {
 		 * Focus canvas.
 		 */
 		default void focusCanvas() {}
-
-		/**
-		 * Checks if this view belongs to a HIDPI Monitor (i.e. if a zoom is applied).
-		 *
-		 * @return the boolean
-		 */
-		boolean isHiDPI();
 	}
 
 	/**
@@ -333,12 +326,5 @@ public interface IGamaView {
 		 */
 		void initFor(final IScope scope, final UserPanelStatement panel);
 	}
-
-	/**
-	 * Checks if is visible.
-	 *
-	 * @return true, if is visible
-	 */
-	boolean isVisible();
 
 }

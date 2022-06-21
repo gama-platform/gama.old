@@ -123,7 +123,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 					param.addChangedListener((scope, val) -> {
 						for (final String other : refreshments) {
 							final IParameterEditor ed = getEditorForVar(other);
-							if (ed != null) { ed.updateWithValueOfParameter(true); }
+							if (ed != null) { ed.updateWithValueOfParameter(); }
 						}
 					});
 				}
@@ -159,7 +159,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public void updateItemValues() {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
-			for (final IParameterEditor gp : entry.getValue().values()) { gp.updateWithValueOfParameter(false); }
+			for (final IParameterEditor gp : entry.getValue().values()) { gp.updateWithValueOfParameter(); }
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DisplayOverlay.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * DisplayOverlay.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
@@ -43,7 +43,6 @@ import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterTarget;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
-import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
@@ -615,7 +614,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final LayeredDisplayOutput output = view.getOutput();
 		if (output == null) return;
 		final boolean paused = output.isPaused();
-		final boolean synced = GAMA.isSynchronized();
+		final boolean synced = output.getData().isSynchronized();
 		final IDisplaySurface surface = view.getDisplaySurface();
 		if (surface != null) { surface.getModelCoordinatesInfo(sb); }
 		if (paused) { sb.append(" | Paused"); }

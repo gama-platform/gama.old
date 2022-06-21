@@ -60,13 +60,11 @@ public class WorkaroundForIssue2476 {
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				DEBUG.OUT("Mouse move on applet");
 				setMousePosition(surface, e.getX(), e.getY());
 			}
 
 			@Override
 			public void mouseDragged(final java.awt.event.MouseEvent e) {
-				DEBUG.OUT("Mouse drag on applet");
 				surface.draggedTo(e.getX(), e.getY());
 			}
 		});

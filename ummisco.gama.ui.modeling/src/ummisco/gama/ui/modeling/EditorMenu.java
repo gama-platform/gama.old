@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EditorMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * EditorMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.modeling;
 
@@ -39,7 +39,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -244,8 +243,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(
-						GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
+				expItem.setImage(GamaIcons.create(IGamaIcons.BUTTON_GUI).image());
 				expItem.addSelectionListener(OtherAdapter);
 			}
 		}

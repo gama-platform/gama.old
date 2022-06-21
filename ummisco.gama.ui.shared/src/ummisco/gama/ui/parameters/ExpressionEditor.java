@@ -60,7 +60,7 @@ public class ExpressionEditor extends ExpressionBasedEditor<IExpression> {
 	}
 
 	@Override
-	public IExpression retrieveValueOfParameter(final boolean retrieveVarValue) {
+	public IExpression retrieveValueOfParameter() {
 		return (IExpression) param.value(getScope());
 	}
 

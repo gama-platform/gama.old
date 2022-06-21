@@ -25,7 +25,7 @@ import static msi.gaml.operators.IUnits.vertical;
 import static one.util.streamex.StreamEx.of;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.DISPLAY_INDEX_KEY;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.getDisplaysPlaceholder;
-import static ummisco.gama.ui.commands.ArrangeDisplayViews.collectAndPrepareDisplayViews;
+import static ummisco.gama.ui.commands.ArrangeDisplayViews.listDisplayViews;
 import static ummisco.gama.ui.utils.ViewsHelper.getDisplayViews;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class LayoutTreeConverter {
 	 */
 	public GamaTree<String> convert(final int layout) {
 		if (layout < 0 || layout >= GamaPreferences.Displays.LAYOUTS.size()) return null;
-		collectAndPrepareDisplayViews();
+		listDisplayViews();
 		final int[] indices = of(getDisplayViews(null)).mapToInt(Display::getIndex).toArray();
 		// Issue #2740 -- proceed anyway with only 1 display
 		// if (indices.length <= 1) { return null; }

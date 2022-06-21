@@ -22,37 +22,32 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.network.common.CommandMessage;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.common.MessageFactory;
-import ummisco.gama.network.common.CommandMessage.CommandType;
-import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.SocketService;
 
 /**
  * The Class ClientService.
  */
-public class ClientService extends Thread implements SocketService {
+public abstract class ClientService extends Thread implements SocketService {
 	
 	/** The socket. */
-	protected Socket socket;
+	private Socket socket;
 	
 	/** The server. */
-	protected final String server;
+	private final String server;
 	
 	/** The port. */
-	protected final int port;
+	private final int port;
 	
 	/** The receiver. */
-	protected BufferedReader receiver;
+	private BufferedReader receiver;
 	
 	/** The sender. */
-	protected PrintWriter sender;
+	private PrintWriter sender;
 	
 	/** The is alive. */
-	protected boolean isAlive;
-	
-	protected IConnector connector;
+	private boolean isAlive;
+	// private IConnector modelConnector;
 
 	/**
 	 * Instantiates a new client service.
@@ -65,21 +60,6 @@ public class ClientService extends Thread implements SocketService {
 		// this.modelConnector = connector;
 		this.port = port;
 		this.server = server;
-		this.connector = connector;
-	}
-
-	/**
-	 * Instantiates a new client service.
-	 *
-	 * @param server the server
-	 * @param port the port
-	 * @param connector the connector
-	 */
-	public ClientService(final Socket sk, final IConnector connector) {
-		this.socket=sk;
-		this.server = sk.getInetAddress().getHostAddress();
-		this.port = sk.getPort();
-		this.connector = connector;
 	}
 
 	@Override
@@ -96,9 +76,8 @@ public class ClientService extends Thread implements SocketService {
 
 	@Override
 	public void startService() throws UnknownHostException, IOException {
-		if(socket==null) {
-			socket = new Socket(this.server, this.port);
-		}
+		socket = new Socket(this.server, this.port);
+
 		isAlive = true;
 
 		this.start();
@@ -132,7 +111,7 @@ public class ClientService extends Thread implements SocketService {
 				String msg = receiver.readLine();
 				msg = msg.replaceAll("@n@", "\n");
 				msg = msg.replaceAll("@b@@r@", "\b\r");
-				receivedMessage(this.socket.toString(), msg);
+				receivedMessage(this.socket.getInetAddress() + ":" + this.port, msg);
 			}
 		} catch (final SocketTimeoutException e) {
 			DEBUG.LOG("Socket timeout");
@@ -142,31 +121,15 @@ public class ClientService extends Thread implements SocketService {
 			DEBUG.LOG("Socket error" + e1);
 		}
 
-	} 
-
-	@Override
-	public void receivedMessage(final String sender, final String message) {
-		final MessageType mte = MessageFactory.identifyMessageType(message);
-		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-			((TCPConnector)connector).extractAndApplyCommand(sender, message);
-		} else { 
-			final String r = ((TCPConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
-			((TCPConnector)connector).storeMessage(sender, r, message);
-		}
 	}
 
 	@Override
-	public void sendMessage(final String message, final String receiver) throws IOException {
+	public void sendMessage(final String message) throws IOException {
 		if (socket == null || !isOnline()) return;
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 		final String msg = message.replaceAll("\n", "@n@").replaceAll("\b\r", "@b@@r@");
 		sender.println(msg + "\n");
 		sender.flush();
-	}
-	
-	@Override
-	public void sendMessage(final String message) throws IOException {
-		
 	}
 
 }

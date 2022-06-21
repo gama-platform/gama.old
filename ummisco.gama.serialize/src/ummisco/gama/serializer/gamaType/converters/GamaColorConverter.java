@@ -1,57 +1,58 @@
-/*******************************************************************************************************
- *
- * GamaColorConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
- ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
+import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.gamaType.reduced.GamaColorReducer;
 
-/**
- * The Class GamaColorConverter.
- */
-@SuppressWarnings ("rawtypes")
-public class GamaColorConverter extends AbstractGamaConverter<GamaColor, GamaColor> {
+@SuppressWarnings("rawtypes")
+public class GamaColorConverter implements Converter {
 
-	/**
-	 * Instantiates a new gama color converter.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param target
-	 *            the target
-	 */
-	public GamaColorConverter(final Class<GamaColor> target) {
-		super(target);
+	@Override
+	public boolean canConvert(final Class arg0) {
+		
+		if (GamaColor.class.equals(arg0)) {
+			return true;
+		}
+
+		final Class<?>[] allInterface = arg0.getInterfaces();
+		for (final Class<?> c : allInterface) {
+			if (c.equals(GamaColor.class))
+				return true;
+		}
+		
+		final Class superClass = arg0.getSuperclass();
+		if (superClass != null) {
+			return canConvert(superClass);
+		}
+		
+		return false;
 	}
 
 	@Override
-	public void write(final IScope scope, final GamaColor color, final HierarchicalStreamWriter writer,
-			final MarshallingContext context) {
-		final GamaColor mc = color;
+	public void marshal(Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2) {
+		final GamaColor mc = (GamaColor) arg0;
 		DEBUG.OUT("ConvertAnother : GamaColor " + mc.getClass());
-		context.convertAnother(new GamaColorReducer(mc));
+		arg2.convertAnother(new GamaColorReducer(mc));
 		DEBUG.OUT("END -- ConvertAnother : GamaColor " + mc.getClass());
+		
 	}
 
 	@Override
-	public GamaColor read(final IScope scope, final HierarchicalStreamReader reader,
-			final UnmarshallingContext context) {
-		final GamaColorReducer gcr = (GamaColorReducer) context.convertAnother(null, GamaColorReducer.class);
+	public Object unmarshal(HierarchicalStreamReader arg0, UnmarshallingContext arg1) {
+		final GamaColorReducer gcr = (GamaColorReducer) arg1.convertAnother(null, GamaColorReducer.class);
 		return gcr.constructObject();
 	}
+	
+	
+	
+	
+	
+	
 
 }

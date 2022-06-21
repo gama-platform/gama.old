@@ -54,26 +54,15 @@ import ummisco.gama.dev.utils.DEBUG;
 						deprecated = "Use the layout statement inside 'output' or 'permanent'",
 						value = "Either #none, to indicate that no layout will be imposed, or one of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views. In addition, it is possible to define a custom layout using the horizontal() and vertical() operators")),
 				@facet (
-						name = "synchronized",
-						type = IType.BOOL,
-						optional = true,
-						doc = @doc (
-								value = "Indicates whether the displays that compose this output should be synchronized with the simulation cycles")),
-				@facet (
 						name = "toolbars",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc (
-								deprecated = "Use the layout statement inside 'output' or 'permanent'",
-								value = "Whether the displays should show their toolbar or not")),
+						doc = @doc ("Whether the displays should show their toolbar or not")),
 				@facet (
 						name = "tabs",
 						type = IType.BOOL,
 						optional = true,
-
-						doc = @doc (
-								deprecated = "Use the layout statement inside 'output' or 'permanent'",
-								value = "Whether the displays should show their tab or not")) })
+						doc = @doc ("Whether the displays should show their tab or not")) })
 
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })

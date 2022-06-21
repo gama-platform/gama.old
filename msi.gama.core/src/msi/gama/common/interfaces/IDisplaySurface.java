@@ -314,7 +314,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/**
 	 * @return true if the surface has been "rendered" (i.e. all the layers have been displayed)
 	 */
-	// boolean isRendered();
+	boolean isRendered();
 
 	/**
 	 * @return true if the surface has been 'disposed' already
@@ -397,7 +397,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 * @param layeredDisplaySynchronizer
 	 *            the new display synchronizer
 	 */
-	// default void setDisplaySynchronizer(final IDisplaySynchronizer layeredDisplaySynchronizer) {}
+	default void setDisplaySynchronizer(final IDisplaySynchronizer layeredDisplaySynchronizer) {}
 
 	/**
 	 * Gets the scope.
@@ -406,12 +406,5 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 */
 	@Override
 	IGraphicsScope getScope();
-
-	/**
-	 * Checks if is visible.
-	 *
-	 * @return true, if is visible
-	 */
-	boolean isVisible();
 
 }

@@ -166,7 +166,7 @@ public class DiffusionStatement extends AbstractStatement {
 			// desc.error("Diffusions can only be executed on list of agents", IGamlIssue.GENERAL);
 			// }
 
-			spec = desc.getFacetExpr(IKeyword.MIN);
+			spec = desc.getFacetExpr(IKeyword.MINVALUE);
 			if (spec != null && spec.isConst()) {
 				final double min = Cast.asFloat(null, spec.literalValue());
 				if (min < 0) {
@@ -225,7 +225,7 @@ public class DiffusionStatement extends AbstractStatement {
 		 */
 		private DiffusionData(final IScope scope) {
 			variableName = Cast.asString(scope, getFacetValue(scope, IKeyword.VAR));
-			minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MIN, 0.0));
+			minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
 			if (minValue < 0) throw GamaRuntimeException.error("Facet \"min_value\" cannot be smaller than 0 !", scope);
 			useConvolution = IKeyword.CONVOLUTION.equals(getLiteral(IKeyword.METHOD, IKeyword.CONVOLUTION));
 			isGradient = IKeyword.GRADIENT.equals(getLiteral(IKeyword.PROPAGATION, IKeyword.DIFFUSION));

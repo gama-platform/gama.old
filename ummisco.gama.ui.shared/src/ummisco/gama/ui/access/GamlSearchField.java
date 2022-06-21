@@ -220,7 +220,9 @@ public class GamlSearchField {
 			protected void handleElementSelected(final String text, final GamlAccessEntry entry) {
 				if (entry == null) return;
 				final IGamlDescription element = entry.element;
-				final String search = "https://gama-platform.org/search?q=" + element.getName();
+				final String cat = entry.getSearchCategory();
+				final String name = element.getName();
+				final String search = "https://gama-platform.org/search?tag=" + cat + "&title=" + name;
 				// DEBUG.OUT("Search phrase: " + search);
 				WebHelper.openPage(search);
 

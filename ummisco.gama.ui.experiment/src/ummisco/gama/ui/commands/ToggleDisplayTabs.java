@@ -30,7 +30,7 @@ public class ToggleDisplayTabs extends AbstractHandler {
 			sd.keepTabs(!sd.keepTabs());
 		}
 		ArrangeDisplayViews
-				.execute(new LayoutTreeConverter().convertCurrentLayout(ArrangeDisplayViews.collectAndPrepareDisplayViews()));
+				.execute(new LayoutTreeConverter().convertCurrentLayout(ArrangeDisplayViews.listDisplayViews()));
 		return this;
 	}
 

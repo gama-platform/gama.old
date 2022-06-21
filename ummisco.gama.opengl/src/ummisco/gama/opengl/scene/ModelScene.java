@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
+import msi.gama.common.interfaces.IDisplaySynchronizer;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -75,7 +76,6 @@ public class ModelScene {
 	/** The max Z. */
 	final double maxZ;
 
-	/** The index. */
 	int index = 0;
 
 	/**
@@ -147,9 +147,8 @@ public class ModelScene {
 
 		gl.setZIncrement(0);
 		rendered = true;
-		// IDisplaySynchronizer sync = gl.getRenderer().getSurface().synchronizer;
-		renderer.getSurface().getOutput().setRendered(true);
-		// if (sync != null) { sync.signalRenderingIsFinished(); }
+		IDisplaySynchronizer sync = gl.getRenderer().getSurface().synchronizer;
+		if (sync != null) { sync.signalRenderingIsFinished(); }
 		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 
@@ -330,13 +329,9 @@ public class ModelScene {
 	 * @return
 	 */
 	public ModelScene copyStatic() {
-		// DEBUG.OUT("Creating static scene");
 		final ModelScene newScene = new ModelScene(renderer, false);
 		layers.forEach((name, layer) -> {
-			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
-				// DEBUG.OUT("===>> Adding " + name + " as static ");
-				newScene.layers.put(name, layer);
-			}
+			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) { newScene.layers.put(name, layer); }
 		});
 
 		return newScene;
@@ -346,7 +341,6 @@ public class ModelScene {
 	 *
 	 */
 	public void invalidateLayers() {
-		DEBUG.OUT("Invalidating all layers");
 		layers.forEach((name, layer) -> { layer.invalidate(); });
 	}
 

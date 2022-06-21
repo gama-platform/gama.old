@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaListReducer.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * GamaListReducer.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
@@ -25,29 +25,30 @@ import ummisco.gama.serializer.gamaType.reference.ReferenceList;
  */
 @SuppressWarnings ({ "rawtypes" })
 public class GamaListReducer {
-
+	
 	/** The values list reducer. */
 	private ArrayList<Object> valuesListReducer = new ArrayList<>();
-
+	
 	/** The content type list reducer. */
 	private final IType contentTypeListReducer;
 
 	/**
 	 * Instantiates a new gama list reducer.
 	 *
-	 * @param l
-	 *            the l
+	 * @param l the l
 	 */
 	public GamaListReducer(final IList l) {
 		contentTypeListReducer = l.getGamlType().getContentType();
-		valuesListReducer.addAll(l);
+
+		for (final Object p : l) {
+			valuesListReducer.add(p);
+		}
 	}
 
 	/**
 	 * Construct object.
 	 *
-	 * @param scope
-	 *            the scope
+	 * @param scope the scope
 	 * @return the i list
 	 */
 	public IList constructObject(final IScope scope) {
@@ -61,6 +62,13 @@ public class GamaListReducer {
 
 		return isReference ? new ReferenceList(this)
 				: GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+		
+//		if(isReference) {
+//			unreferenceReducer(scope.getSimulation());
+//			return new ReferenceList(this);
+//		} else {
+//			return GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
+//		}
 	}
 
 	/**
@@ -68,20 +76,23 @@ public class GamaListReducer {
 	 *
 	 * @return the values list reducer
 	 */
-	public ArrayList<Object> getValuesListReducer() { return valuesListReducer; }
+	public ArrayList<Object> getValuesListReducer() {
+		return valuesListReducer;
+	}
 
 	/**
 	 * Gets the content type list reducer.
 	 *
 	 * @return the content type list reducer
 	 */
-	public IType getContentTypeListReducer() { return contentTypeListReducer; }
+	public IType getContentTypeListReducer() {
+		return contentTypeListReducer;
+	}
 
 	/**
 	 * Unreference reducer.
 	 *
-	 * @param sim
-	 *            the sim
+	 * @param sim the sim
 	 */
 	public void unreferenceReducer(final SimulationAgent sim) {
 		final ArrayList<Object> listWithoutRef = new ArrayList<>();

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGraphReducer.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * GamaGraphReducer.java, in ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
@@ -19,7 +19,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.IReference;
 import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.IGraph;
 import msi.gaml.types.GamaGraphType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -30,36 +29,34 @@ import ummisco.gama.serializer.gamaType.reference.ReferenceGraph;
  */
 @SuppressWarnings ({ "rawtypes" })
 public class GamaGraphReducer {
-
+	
 	/** The node type graph reducer. */
 	private final IType nodeTypeGraphReducer;
-
+	
 	/** The edge type graph reducer. */
 	private final IType edgeTypeGraphReducer;
 
 	/** The edges graph reducer. */
 	// private GamaMap valuesGraphReducer;
 	private IList edgesGraphReducer;
-
+	
 	/** The edges weights graph reducer. */
 	private IMap edgesWeightsGraphReducer;
-
+	
 	/** The spatial. */
 	private final boolean spatial;
-
+	
 	/** The directed. */
 	private final boolean directed;
 
 	/**
 	 * Instantiates a new gama graph reducer.
 	 *
-	 * @param scope
-	 *            the scope
-	 * @param g
-	 *            the g
+	 * @param scope the scope
+	 * @param g the g
 	 */
 	@SuppressWarnings ("unchecked")
-	public GamaGraphReducer(final IScope scope, final IGraph<?, ?> g) {
+	public GamaGraphReducer(final IScope scope, final GamaGraph<?, ?> g) {
 		spatial = g instanceof GamaSpatialGraph;
 		directed = g.isDirected();
 
@@ -88,40 +85,45 @@ public class GamaGraphReducer {
 	 * @return the edges graph reducer
 	 */
 	// public GamaMap getValuesGraphReducer() {return valuesGraphReducer; }
-	public IList getEdgesGraphReducer() { return edgesGraphReducer; }
+	public IList getEdgesGraphReducer() {
+		return edgesGraphReducer;
+	}
 
 	/**
 	 * Gets the weights graph reducer.
 	 *
 	 * @return the weights graph reducer
 	 */
-	public IMap getWeightsGraphReducer() { return edgesWeightsGraphReducer; }
+	public IMap getWeightsGraphReducer() {
+		return edgesWeightsGraphReducer;
+	}
 
 	/**
 	 * Sets the edges graph reducer.
 	 *
-	 * @param m
-	 *            the new edges graph reducer
+	 * @param m the new edges graph reducer
 	 */
 	// public void setValuesGraphReducer(GamaMap m) { valuesGraphReducer = m; }
-	public void setEdgesGraphReducer(final IList m) { edgesGraphReducer = m; }
+	public void setEdgesGraphReducer(final IList m) {
+		edgesGraphReducer = m;
+	}
 
 	/**
 	 * Sets the edges weights graph reducer.
 	 *
-	 * @param w
-	 *            the w
+	 * @param w the w
 	 */
-	public void setEdgesWeightsGraphReducer(final IMap<Object, Object> w) { edgesWeightsGraphReducer = w; }
+	public void setEdgesWeightsGraphReducer(final IMap<Object, Object> w) {
+		edgesWeightsGraphReducer = w;
+	}
 
 	/**
 	 * Construct object.
 	 *
-	 * @param scope
-	 *            the scope
+	 * @param scope the scope
 	 * @return the gama graph
 	 */
-	public IGraph constructObject(final IScope scope) {
+	public GamaGraph constructObject(final IScope scope) {
 		// GamaGraph graph = (GamaGraph) GamaGraphType.from(scope, valuesGraphReducer, spatial);
 		GamaGraph graph;
 		// if(IReference.isReference(valuesGraphReducer) || IReference.isReference(edgesWeightsGraphReducer)) {
@@ -144,8 +146,7 @@ public class GamaGraphReducer {
 	/**
 	 * Unreference reducer.
 	 *
-	 * @param sim
-	 *            the sim
+	 * @param sim the sim
 	 */
 	@SuppressWarnings ("unchecked")
 	public void unreferenceReducer(final SimulationAgent sim) {

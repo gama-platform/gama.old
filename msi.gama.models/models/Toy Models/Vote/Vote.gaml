@@ -122,7 +122,7 @@ global {
 	reflex resultats_finaux when: time = 72 {
 		candidate elected <- active_candidates with_max_of (each.percentage_vote);
 		//Display a window telling who is the winner and halt the model
-		do tell msg: "The winner is " + elected.name; 
+		do tell message: "The winner is " + elected.name; 
 		do pause;
 	}
 	

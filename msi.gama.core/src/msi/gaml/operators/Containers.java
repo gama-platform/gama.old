@@ -1126,7 +1126,7 @@ public class Containers {
 			see = { "index_of", "last_index_of" })
 	public static IList all_indexes_of2(final IScope scope, final IList c, final Object o) {
 		final IList results = GamaListFactory.create(Types.INT);
-		for (int i = 0; i < notNull(scope, c).size(); i++) { if (o.equals(c.get(scope, i))) { results.add(i); } }
+		for (int i = 0; i < notNull(scope, c).size(); i++) { if (o == c.get(scope, i)) { results.add(i); } }
 		return results;
 
 		// Note: I also tested the following version with streams, but it was around 2 times slower...

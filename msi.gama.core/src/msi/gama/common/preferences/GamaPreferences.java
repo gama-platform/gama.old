@@ -33,7 +33,6 @@ import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.FileUtils;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.PlatformHelper;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
@@ -285,19 +284,6 @@ public class GamaPreferences {
 		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
 				.create("pref_editor_mark_occurrences", "Mark occurrences of symbols", true, IType.BOOL, false)
 				.in(NAME, TEXT);
-
-		/** The Constant EDITOR_EXPERIMENT_MENU. */
-		public static final Pref<Boolean> EDITOR_EXPERIMENT_MENU =
-				GamaPreferences
-						.create("pref_editor_experiment_menu",
-								"Always display experiments as a menu rather than buttons", false, IType.BOOL, false)
-						.deactivates("pref_editor_collapse_buttons").in(NAME, TEXT);
-
-		/** The Constant EDITOR_COLLAPSE_BUTTONS. */
-		public static final Pref<Boolean> EDITOR_COLLAPSE_BUTTONS = GamaPreferences.create(
-				"pref_editor_collapse_buttons",
-				"Display experiments as a menu when the combined width of the buttons exceed the width of the toolbar",
-				PlatformHelper.isLinux(), IType.BOOL, false).in(NAME, TEXT);
 
 		// .activates("pref_tests_period");
 		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
@@ -602,12 +588,10 @@ public class GamaPreferences {
 				create("pref_display_zoom_factor", "Set the zoom factor (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0, 1).step(0.01);
 
-		/** The Constant OPENGL_KEYBOARD. */
 		public static final Pref<Double> OPENGL_KEYBOARD = create("pref_display_keyboard_factor",
 				"Set the sensitivity of the keyboard movements  (0 for slow, 1 for fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0.01, 1.0).step(0.01);
 
-		/** The Constant OPENGL_MOUSE. */
 		public static final Pref<Double> OPENGL_MOUSE = create("pref_display_mouse_factor",
 				"Set the sensitivity of the mouse/trackpad movements  (0 for slow, 1 fast)", 0.5, IType.FLOAT, true)
 						.in(NAME, RENDERING).between(0.01, 1.0).step(0.01);
@@ -765,12 +749,12 @@ public class GamaPreferences {
 		/**
 		 * Paths to libraries
 		 */
-		// public static final String PATHS = "External libraries support";
-		//
-		// /** The Constant LIB_SPATIALITE. */
-		// public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
-		// create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
-		// () -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
+//		public static final String PATHS = "External libraries support";
+//
+//		/** The Constant LIB_SPATIALITE. */
+//		public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
+//				create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
+//						() -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
 
 		/** The Constant jriFile. */
 		// public static final String jriFile = isMac() ? "libjri.jnilib" : isLinux() ? "libjri.so" : "jri.dll";
@@ -837,11 +821,11 @@ public class GamaPreferences {
 		 * @return the default R path
 		 */
 		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
-		// private static String getDefaultRPath() {
-		// if (isMac()) return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-		// if (isLinux()) return "/usr/local/lib/libjri.so";
-		// return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
-		// }
+//		private static String getDefaultRPath() {
+//			if (isMac()) return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
+//			if (isLinux()) return "/usr/local/lib/libjri.so";
+//			return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
+//		}
 	}
 
 	/** The prefs. */

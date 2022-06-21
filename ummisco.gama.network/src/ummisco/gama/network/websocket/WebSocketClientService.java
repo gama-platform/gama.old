@@ -19,84 +19,117 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.common.MessageFactory;
-import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.SocketService;
-import ummisco.gama.network.tcp.ClientService;
-import ummisco.gama.network.tcp.TCPConnector;
 
 /**
  * The Class ClientService.
  */
-public class WebSocketClientService extends ClientService {
-
+public abstract class WebSocketClientService extends Thread implements SocketService {
+	
 	/** The socket. */
-	protected GamaClient socket;
+	private Socket socket;
+	
+	/** The server. */
+	private final String server;
+	
+	/** The port. */
+	private final int port;
+	
+	/** The receiver. */
+	private BufferedReader receiver;
+	
+	/** The sender. */
+	private PrintWriter sender;
+	
+	/** The is alive. */
+	private boolean isAlive;
+	// private IConnector modelConnector;
 
-	public WebSocketClientService(Socket sk, IConnector connector) {
-		super(sk, connector);
+	/**
+	 * Instantiates a new client service.
+	 *
+	 * @param server the server
+	 * @param port the port
+	 * @param connector the connector
+	 */
+	public WebSocketClientService(final String server, final int port, final IConnector connector) {
+		// this.modelConnector = connector;
+		this.port = port;
+		this.server = server;
 	}
 
-	public WebSocketClientService(String server, int port, IConnector connector) {
-		super(server, port, connector);
+	@Override
+	public String getRemoteAddress() {
+		if (socket == null) return null;
+		return this.socket.getInetAddress() + ":" + this.port;
+	}
+
+	@Override
+	public String getLocalAddress() {
+		if (socket == null) return null;
+		return this.socket.getLocalAddress() + ":" + this.port;
 	}
 
 	@Override
 	public void startService() throws UnknownHostException, IOException {
-		if (socket == null) {
-			try {
-				socket = new GamaClient(new URI("ws://" + this.server + ":" + this.port), this);
-				socket.connect();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		socket = new Socket(this.server, this.port);
+
 		isAlive = true;
 
 		this.start();
 
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void run() {
-		while (this.isAlive) {
-		}
-
-	}
-
-	@Override
-	public void receivedMessage(final String sender, final String message) {
-		final MessageType mte = MessageFactory.identifyMessageType(message);
-		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-			((WebSocketConnector)connector).extractAndApplyCommand(sender, message);
-		} else { 
-			final String r = ((WebSocketConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
-			((WebSocketConnector)connector).storeMessage(sender, r, message);
-		}
-	}
-
 	@Override
 	public void stopService() {
 		this.isAlive = false;
-		if (sender != null) {
-			sender.close();
-		}
+		if (sender != null) { sender.close(); }
 		try {
-			if (receiver != null) {
-				receiver.close();
-			}
+			if (receiver != null) { receiver.close(); }
 			socket.close();
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public boolean isOnline() {
+		return isAlive;
+	}
+
+	@SuppressWarnings ("unchecked")
+	@Override
+	public void run() {
+		try {
+			while (this.isAlive) {
+				receiver = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				String msg = receiver.readLine();
+				msg = msg.replaceAll("@n@", "\n");
+				msg = msg.replaceAll("@b@@r@", "\b\r");
+				receivedMessage(this.socket.getInetAddress() + ":" + this.port, msg);
+			}
+		} catch (final SocketTimeoutException e) {
+			DEBUG.LOG("Socket timeout");
+		} catch (final SocketException e) {
+			DEBUG.LOG("Socket closed");
+		} catch (final IOException e1) {
+			DEBUG.LOG("Socket error" + e1);
+		}
+
+	}
+
+	@Override
+	public void sendMessage(final String message) throws IOException {
+		if (socket == null || !isOnline()) return;
+		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+		final String msg = message.replaceAll("\n", "@n@").replaceAll("\b\r", "@b@@r@");
+		sender.println(msg + "\n");
+		sender.flush();
+	}
+
 }

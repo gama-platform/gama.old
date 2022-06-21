@@ -50,18 +50,6 @@ public class NetworkMessage implements ConnectorMessage {
 	/**
 	 * Instantiates a new network message.
 	 *
-	 * @param to the to
-	 * @param data the data
-	 */
-	protected NetworkMessage(final String from, final String to, final String data, final boolean isPlain) {
-		this.from = from;
-		this.to = to;
-		this.content = data;
-		isPlainMessage = isPlain;
-	}
-	/**
-	 * Instantiates a new network message.
-	 *
 	 * @param from the from
 	 * @param to the to
 	 * @param data the data

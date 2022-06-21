@@ -27,16 +27,11 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class SnapshotMaker.
  */
 public class SnapshotMaker {
-
-	static {
-		DEBUG.ON();
-	}
 
 	/** The robot. */
 	final Robot robot;
@@ -65,12 +60,8 @@ public class SnapshotMaker {
 		final int w = (int) data.getImageDimension().getX();
 		final int h = (int) data.getImageDimension().getY();
 
-		int width = w == -1 ? surface.getWidth() : w;
-		int height = h == -1 ? surface.getHeight() : h;
-		if (width == 0 || height == 0) {
-			width = composite.width;
-			height = composite.height;
-		}
+		final int width = w == -1 ? surface.getWidth() : w;
+		final int height = h == -1 ? surface.getHeight() : h;
 		final String autosavePath = data.getAutosavePath();
 
 		String fileName;
@@ -88,7 +79,6 @@ public class SnapshotMaker {
 		BufferedImage image = null;
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
-				DEBUG.OUT("Trying to snapshot with dimensions " + composite);
 				image = robot.createScreenCapture(composite);
 				image = ImageUtils.resize(image, width, height);
 			} catch (final Exception e) {
@@ -96,10 +86,7 @@ public class SnapshotMaker {
 			}
 		}
 		// in case it has not worked, snapshot is still null
-		if (image == null) {
-			DEBUG.OUT("Trying to snapshot with dimensions " + width + " " + height);
-			image = surface.getImage(width, height);
-		}
+		if (image == null) { image = surface.getImage(width, height); }
 		if (scope.interrupted() || image == null) return;
 
 		try {

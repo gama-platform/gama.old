@@ -1,11 +1,12 @@
 /*******************************************************************************************************
  *
- * EventLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * EventLayer.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -194,10 +195,10 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 		final GamaPoint pp = getModelCoordinatesFrom(x, y, surface);
 		if (pp == null) return;
 		// DEBUG.OUT("Coordinates in env (before test)" + pp);
-		// if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
-		// || pp.getY() >= surface.getEnvHeight()) {
-		// if (MOUSE_EXITED != listenedEvent && MOUSE_ENTERED != listenedEvent) return;
-		// }
+		if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
+				|| pp.getY() >= surface.getEnvHeight()) {
+			if (MOUSE_EXITED != listenedEvent && MOUSE_ENTERED != listenedEvent) return;
+		}
 		// DEBUG.OUT("Coordinates in env (after test)" + pp);
 		GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 

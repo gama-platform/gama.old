@@ -4,7 +4,7 @@
 <product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/msi.gama.application/branding_icons/icon128.png"/>
+      <image path="branding_icons/icon128.png"/>
       <text>
          GAMA Platform - V1.8.2 http://gama-platform.org
 
@@ -62,20 +62,19 @@
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/branding_icons/icon16.png" i32="/msi.gama.application/branding_icons/icon32.png" i48="/msi.gama.application/branding_icons/icon48.png" i64="/msi.gama.application/branding_icons/icon64.png" i128="/msi.gama.application/branding_icons/icon128.png" i256="/msi.gama.application/branding_icons/icon256.png"/>
+   <windowImages i16="branding_icons/icon16.png" i32="branding_icons/icon32.png" i48="branding_icons/icon48.png" i64="branding_icons/icon64.png" i128="branding_icons/icon128.png" i256="branding_icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
       startupProgressRect="71,515,500,12" />
    <launcher name="Gama">
-      <linux icon="/ummisco.gama.product/launcher_icons/icon.xpm"/>
-      <macosx icon="/ummisco.gama.product/launcher_icons/icon.icns"/>
+      <linux icon="launcher_icons/icon.icns"/>
+      <macosx icon="launcher_icons/icon.icns"/>
       <win useIco="true">
-         <ico path="/ummisco.gama.product/launcher_icons/icon.ico"/>
+         <ico path="launcher_icons/icon.ico"/>
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -283,8 +282,9 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.8.2" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="eclipse.buildId" value="${build.id}" />
+      <property name="version" value="1.8.2" />
       <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 

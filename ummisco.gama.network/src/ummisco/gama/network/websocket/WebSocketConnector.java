@@ -23,24 +23,22 @@ import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.SocketService;
-import ummisco.gama.network.tcp.ClientService;
-import ummisco.gama.network.tcp.ServerService;
 
 /**
  * The Class TCPConnection.
  */
 public class WebSocketConnector extends Connector {
 	
-	/** The websocket server. */
+	/** The  tcp server. */
 	public static String _WEBSOCKET_SERVER = "__websocket_server";
 	
-	/** The websocket socket. */
+	/** The  tcp socket. */
 	public static String _WEBSOCKET_SOCKET = "__websocket_socket";
 	
-	/** The websocket client. */
+	/** The  tcp client. */
 	public static String _WEBSOCKET_CLIENT = "__websocket_client";
 	
-	/** The websocket so timeout. */
+	/** The  tcp so timeout. */
 	public static Integer _WEBSOCKET_SO_TIMEOUT = 100;
 
 	/** The default host. */
@@ -66,7 +64,7 @@ public class WebSocketConnector extends Connector {
 	 */
 	public WebSocketConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
 		this.isServer = isServer;
-		this.setRaw(isRaw);
+		this.isRaw = isRaw;
 		this.remoteBoxName = new ArrayList<>();
 	}
 
@@ -90,16 +88,36 @@ public class WebSocketConnector extends Connector {
 
 	@Override
 	protected void connectToServer(final IAgent agent) throws GamaNetworkException {
-		if (isConnected) {
-			return;
-		}
+		if (isConnected) { return; }
 
 		final String server = this.getConfigurationParameter(SERVER_URL);
 		final int port = Integer.valueOf(this.getConfigurationParameter(SERVER_PORT)).intValue();
 		if (this.isServer) {
-			socket = new WebSocketServerService(agent, port, this);
+			socket = new WebSocketServerService(port) {
+				@Override
+				public void receivedMessage(final String sender, final String message) {
+					final MessageType mte = MessageFactory.identifyMessageType(message);
+					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+						extractAndApplyCommand(sender, message);
+					} else {
+						final String r = MessageFactory.unpackReceiverName(message);
+						storeMessage(r, message);
+					}
+				}
+			};
 		} else {
-			socket = new WebSocketClientService(server, port, this);
+			socket = new WebSocketClientService(server, port, this) {
+				@Override
+				public void receivedMessage(final String sender, final String message) {
+					final MessageType mte = MessageFactory.identifyMessageType(message);
+					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+						extractAndApplyCommand(sender, message);
+					} else {
+						final String rer = MessageFactory.unpackReceiverName(message);
+						storeMessage(rer, message);
+					}
+				}
+			};
 		}
 		try {
 			socket.startService();

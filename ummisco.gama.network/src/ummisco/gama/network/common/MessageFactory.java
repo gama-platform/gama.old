@@ -124,14 +124,14 @@ public final class MessageFactory {
 	 * @param data the data
 	 * @return the network message
 	 */
-	public static NetworkMessage unPackNetworkMessage(final String sender, final String reciever, final String data) {
+	public static NetworkMessage unPackNetworkMessage(final String reciever, final String data) {
 		final String key = new String(keyChain);
 		MessageType ctype = identifyMessageType(data);
 		
 		if (ctype == MessageType.COMMAND_MESSAGE)
 			return null;
 		if (ctype==MessageType.PLAIN_MESSAGE)
-			return new NetworkMessage(sender, reciever, data, true);
+			return new NetworkMessage(reciever, data);
 
 		final int size = MAX_HEADER_SIZE < data.length() ? MAX_HEADER_SIZE : data.length();
 		final String header = data.substring(0, size);

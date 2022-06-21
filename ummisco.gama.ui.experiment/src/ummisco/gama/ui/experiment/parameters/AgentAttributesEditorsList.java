@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AgentAttributesEditorsList.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * AgentAttributesEditorsList.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
 
@@ -34,10 +34,10 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	/** The Constant DEAD_MARKER. */
 	private static final String DEAD_MARKER = " dead at step ";
-
+	
 	/** The Constant AGENT_MARKER. */
 	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
-
+	
 	/** The Constant HIDDEN. */
 	private static final Set<String> HIDDEN =
 			new HashSet<>(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
@@ -85,7 +85,9 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	public void updateItemValues() {
 		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			if (!entry.getKey().dead()) {
-				for (final IParameterEditor<?> gp : entry.getValue().values()) { gp.updateWithValueOfParameter(false); }
+				for (final IParameterEditor<?> gp : entry.getValue().values()) {
+					gp.updateWithValueOfParameter();
+				}
 
 			}
 		}

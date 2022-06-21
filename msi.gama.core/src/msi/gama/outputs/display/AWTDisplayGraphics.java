@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AWTDisplayGraphics.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * AWTDisplayGraphics.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 
 package msi.gama.outputs.display;
@@ -32,7 +32,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
@@ -40,11 +39,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.locationtech.jts.awt.PointTransformation;
 import org.locationtech.jts.awt.ShapeWriter;
@@ -53,10 +48,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.geom.Puntal;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
@@ -95,7 +86,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 	/** The normal renderer. */
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
-
+	
 	/** The temporary envelope. */
 	private Rectangle2D temporaryEnvelope = null;
 
@@ -130,7 +121,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 
 	/** The pf. */
 	private final Java2DPointTransformation pf = new Java2DPointTransformation();
-
+	
 	/** The sw. */
 	private final ShapeWriter sw = new ShapeWriter(pf);
 
@@ -159,8 +150,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Instantiates a new AWT display graphics.
 	 *
-	 * @param g2
-	 *            the g 2
+	 * @param g2 the g 2
 	 */
 	public AWTDisplayGraphics(final Graphics2D g2) {
 		setGraphics2D(g2);
@@ -248,19 +238,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 			// currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + curWidth / 2d, curY + curHeight / 2d);
 		}
 
-		BufferedImage after = img;
-		Point2D.Double point = new Point2D.Double(curWidth, curHeight);
-		try {
-			Map<Point2D, BufferedImage> sizes = cache.get(img);
-			if (sizes.containsKey(point)) {
-				after = sizes.get(point);
-			} else {
-				after = resize(img, (int) Math.round(curWidth), (int) Math.round(curHeight));
-			}
-		} catch (ExecutionException e) {}
-
-		// imageTransform.scale(curWidth / img.getWidth(), curHeight / img.getHeight());
-		currentRenderer.drawImage(after, imageTransform, null);
+		imageTransform.scale(curWidth / img.getWidth(), curHeight / img.getHeight());
+		currentRenderer.drawImage(img, imageTransform, null);
 		// currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
 		// (int) curHeight, null);
 		if (attributes.getBorder() != null) { drawGridLine(img, attributes.getBorder()); }
@@ -269,40 +248,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 		if (highlight) { highlightRectangleInPixels(rect); }
 		return rect.getBounds2D();
 	}
-
-	/**
-	 * Resize.
-	 *
-	 * @param img
-	 *            the img
-	 * @param newW
-	 *            the new W
-	 * @param newH
-	 *            the new H
-	 * @return the buffered image
-	 */
-	public static BufferedImage resize(final BufferedImage img, final int newW, final int newH) {
-		Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = dimg.createGraphics();
-		g2d.drawImage(tmp, 0, 0, null);
-		g2d.dispose();
-
-		return dimg;
-	}
-
-	/** The cache. */
-	static LoadingCache<BufferedImage, Map<Point2D, BufferedImage>> cache =
-			CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS).removalListener(notif -> {
-				Map<Point2D, BufferedImage> map = (Map<Point2D, BufferedImage>) notif.getValue();
-				map.forEach((a, b) -> { b.flush(); });
-			}).build(new CacheLoader<>() {
-
-				@Override
-				public Map<Point2D, BufferedImage> load(final BufferedImage arg0) throws Exception {
-					return new HashMap<>();
-				}
-			});
 
 	/**
 	 * Method drawString.
@@ -366,8 +311,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Sets the font.
 	 *
-	 * @param f
-	 *            the new font
+	 * @param f the new font
 	 */
 	private void setFont(final Font f) {
 		final Font font = surface == null ? f : surface.computeFont(f);
@@ -416,10 +360,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Draw grid line.
 	 *
-	 * @param image
-	 *            the image
-	 * @param lineColor
-	 *            the line color
+	 * @param image the image
+	 * @param lineColor the line color
 	 */
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 
@@ -452,8 +394,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Highlight rectangle in pixels.
 	 *
-	 * @param r
-	 *            the r
+	 * @param r the r
 	 */
 	private void highlightRectangleInPixels(final Rectangle2D r) {
 		if (r == null) return;
@@ -507,8 +448,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Sets the graphics 2 D.
 	 *
-	 * @param g
-	 *            the new graphics 2 D
+	 * @param g the new graphics 2 D
 	 */
 	public void setGraphics2D(final Graphics2D g) {
 		normalRenderer = g;
@@ -519,10 +459,11 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/**
 	 * Sets the untranslated graphics 2 D.
 	 *
-	 * @param g
-	 *            the new untranslated graphics 2 D
+	 * @param g the new untranslated graphics 2 D
 	 */
-	public void setUntranslatedGraphics2D(final Graphics2D g) { overlayRenderer = g; }
+	public void setUntranslatedGraphics2D(final Graphics2D g) {
+		overlayRenderer = g;
+	}
 
 	@Override
 	public boolean cannotDraw() {

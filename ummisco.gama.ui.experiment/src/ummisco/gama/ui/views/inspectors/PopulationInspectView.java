@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PopulationInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * PopulationInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ILazyContentProvider;
@@ -92,56 +91,56 @@ public class PopulationInspectView extends GamaViewPart
 
 	/** The export folder. */
 	protected static String exportFolder = "exports";
-
+	
 	/** The Constant ID. */
 	public static final String ID = IGui.TABLE_VIEW_ID;
-
+	
 	/** The Constant ID_ATTRIBUTE. */
 	public static final String ID_ATTRIBUTE = "#";
 	// public static final String CUSTOM = "custom";
 
 	/** The Constant SAVE. */
 	public final static int SAVE = 0;
-
+	
 	/** The Constant LOCK. */
 	public final static int LOCK = 1;
-
+	
 	/** The Constant POP. */
 	public final static int POP = 2;
-
+	
 	/** The Constant EXPR. */
 	public final static int EXPR = 3;
-
+	
 	/** The Constant DONT_INSPECT_BY_DEFAULT. */
 	public static final List<String> DONT_INSPECT_BY_DEFAULT =
 			Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
-
+	
 	/** The scope. */
 	private IScope scope;
-
+	
 	/** The locked. */
 	volatile boolean locked;
-
+	
 	/** The population menu. */
 	// volatile boolean refreshing;
 	ToolItem populationMenu;
-
+	
 	/** The viewer. */
 	TableViewer viewer;
-
+	
 	/** The attributes menu. */
 	Composite attributesMenu;
-
+	
 	/** The comparator. */
 	AgentComparator comparator;
-
+	
 	/** The editor. */
 	ExpressionControl editor;
 	// private String speciesName;
 
 	/** The elements. */
 	IAgent[] elements = {};
-
+	
 	/** The selected columns. */
 	// Font currentFont = new Font(WorkbenchHelper.getDisplay(), GamaFonts.getSmallFont().getFontData());
 	Map<String, List<String>> selectedColumns = new HashMap();
@@ -185,7 +184,7 @@ public class PopulationInspectView extends GamaViewPart
 	final private AgentContentProvider provider = new AgentContentProvider();
 
 	@Override
-	protected Job createUpdateJob() {
+	protected GamaUIJob createUpdateJob() {
 		return new GamaUIJob() {
 
 			@Override
@@ -214,7 +213,9 @@ public class PopulationInspectView extends GamaViewPart
 	}
 
 	@Override
-	public InspectDisplayOutput getOutput() { return (InspectDisplayOutput) super.getOutput(); }
+	public InspectDisplayOutput getOutput() {
+		return (InspectDisplayOutput) super.getOutput();
+	}
 
 	@Override
 	public void addOutput(final IDisplayOutput output) {
@@ -281,10 +282,8 @@ public class PopulationInspectView extends GamaViewPart
 	/**
 	 * Change part name.
 	 *
-	 * @param name
-	 *            the name
-	 * @param complete
-	 *            the complete
+	 * @param name the name
+	 * @param complete the complete
 	 */
 	private void changePartName(final String name, final boolean complete) {
 		if (name == null) return;
@@ -304,8 +303,7 @@ public class PopulationInspectView extends GamaViewPart
 	/**
 	 * Creates the menus.
 	 *
-	 * @param parent
-	 *            the parent
+	 * @param parent the parent
 	 */
 	private void createMenus(final Composite parent) {
 		final ScrolledComposite scroll = new ScrolledComposite(parent, SWT.V_SCROLL);
@@ -329,7 +327,9 @@ public class PopulationInspectView extends GamaViewPart
 	void fillAttributeMenu() {
 		// Not yet declared or already disposed
 		if (getOutput() == null || attributesMenu == null || attributesMenu.isDisposed()) return;
-		for (final Control c : attributesMenu.getChildren()) { c.dispose(); }
+		for (final Control c : attributesMenu.getChildren()) {
+			c.dispose();
+		}
 		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
 		attributesLabel.setText("Attributes");
 		// attributesLabel.setFont(GamaFonts.getNavigHeaderFont());
@@ -417,7 +417,10 @@ public class PopulationInspectView extends GamaViewPart
 	List<String> getAttributesSelection() {
 		final ArrayList<String> result = new ArrayList<>();
 		for (final Control c : attributesMenu.getChildren()) {
-			if (c instanceof SwitchButton b && b.getSelection()) { result.add(b.getText()); }
+			if (c instanceof SwitchButton) {
+				final SwitchButton b = (SwitchButton) c;
+				if (b.getSelection()) { result.add(b.getText()); }
+			}
 		}
 		return result;
 	}
@@ -470,8 +473,7 @@ public class PopulationInspectView extends GamaViewPart
 	/**
 	 * Creates the viewer.
 	 *
-	 * @param parent
-	 *            the parent
+	 * @param parent the parent
 	 */
 	private void createViewer(final Composite parent) {
 		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -535,14 +537,15 @@ public class PopulationInspectView extends GamaViewPart
 		final List<String> selection = new ArrayList(getAttributesSelection());
 		selection.remove(ID_ATTRIBUTE);
 		selection.add(0, ID_ATTRIBUTE);
-		for (final String title : selection) { createTableViewerColumn(title, 100, 0); }
+		for (final String title : selection) {
+			createTableViewerColumn(title, 100, 0);
+		}
 	}
 
 	/**
 	 * Gets the column label provider.
 	 *
-	 * @param title
-	 *            the title
+	 * @param title the title
 	 * @return the column label provider
 	 */
 	private ColumnLabelProvider getColumnLabelProvider(final String title) {
@@ -554,8 +557,10 @@ public class PopulationInspectView extends GamaViewPart
 				if (agent.dead() && !ID_ATTRIBUTE.equals(title)) return "N/A";
 				if (ID_ATTRIBUTE.equals(title)) return String.valueOf(agent.getIndex());
 				// final Object value;
-				if (agent.getSpecies().hasVar(title)) return Cast.toGaml(getScope().getAgentVarValue(agent, title));
-				return Cast.toGaml(agent.getAttribute(title));
+				if (agent.getSpecies().hasVar(title))
+					return Cast.toGaml(getScope().getAgentVarValue(agent, title));
+				else
+					return Cast.toGaml(agent.getAttribute(title));
 			}
 		};
 	}
@@ -563,10 +568,8 @@ public class PopulationInspectView extends GamaViewPart
 	/**
 	 * Gets the selection adapter.
 	 *
-	 * @param column
-	 *            the column
-	 * @param name
-	 *            the name
+	 * @param column the column
+	 * @param name the name
 	 * @return the selection adapter
 	 */
 	private SelectionAdapter getSelectionAdapter(final TableColumn column, final String name) {
@@ -587,12 +590,9 @@ public class PopulationInspectView extends GamaViewPart
 	/**
 	 * Creates the table viewer column.
 	 *
-	 * @param title
-	 *            the title
-	 * @param bound
-	 *            the bound
-	 * @param colNumber
-	 *            the col number
+	 * @param title the title
+	 * @param bound the bound
+	 * @param colNumber the col number
 	 * @return the table viewer column
 	 */
 	private TableViewerColumn createTableViewerColumn(final String title, final int bound, final int colNumber) {
@@ -619,10 +619,10 @@ public class PopulationInspectView extends GamaViewPart
 
 		/** The attribute. */
 		private String attribute = null;
-
+		
 		/** The direction. */
 		private int direction = SWT.UP;
-
+		
 		/** The string comparator. */
 		private final NaturalOrderComparator stringComparator = new NaturalOrderComparator();
 
@@ -631,13 +631,14 @@ public class PopulationInspectView extends GamaViewPart
 		 *
 		 * @return the direction
 		 */
-		public int getDirection() { return direction; }
+		public int getDirection() {
+			return direction;
+		}
 
 		/**
 		 * Sets the column.
 		 *
-		 * @param column
-		 *            the new column
+		 * @param column the new column
 		 */
 		public void setColumn(final String column) {
 			if (column.equals(attribute)) {
@@ -675,13 +676,22 @@ public class PopulationInspectView extends GamaViewPart
 						} else {
 							final IVariable v = getOutput().getSpecies().getVar(attribute);
 							final int id = v.getType().id();
-							rc = switch (id) {
-								case IType.INT -> ((Integer) v1).compareTo((Integer) v2);
-								case IType.FLOAT -> ((Double) v1).compareTo((Double) v2);
-								case IType.STRING -> stringComparator.compare(v1, v2);
-								case IType.POINT -> ((GamaPoint) v1).compareTo((GamaPoint) v2);
-								default -> Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
-							};
+							switch (id) {
+								case IType.INT:
+									rc = ((Integer) v1).compareTo((Integer) v2);
+									break;
+								case IType.FLOAT:
+									rc = ((Double) v1).compareTo((Double) v2);
+									break;
+								case IType.STRING:
+									rc = stringComparator.compare(v1, v2);
+									break;
+								case IType.POINT:
+									rc = ((GamaPoint) v1).compareTo((GamaPoint) v2);
+									break;
+								default:
+									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
+							}
 						}
 					}
 				} catch (final Exception ex) {
@@ -705,7 +715,9 @@ public class PopulationInspectView extends GamaViewPart
 	 *
 	 * @return the scope
 	 */
-	IScope getScope() { return scope; }
+	IScope getScope() {
+		return scope;
+	}
 
 	/**
 	 * The Class NaturalOrderComparator.
@@ -715,10 +727,8 @@ public class PopulationInspectView extends GamaViewPart
 		/**
 		 * Compare right.
 		 *
-		 * @param a
-		 *            the a
-		 * @param b
-		 *            the b
+		 * @param a the a
+		 * @param b the b
 		 * @return the int
 		 */
 		int compareRight(final String a, final String b) {
@@ -729,10 +739,13 @@ public class PopulationInspectView extends GamaViewPart
 				final char ca = charAt(a, ia);
 				final char cb = charAt(b, ib);
 
-				if (!Character.isDigit(ca) && !Character.isDigit(cb)) return bias;
-				if (!Character.isDigit(ca)) return -1;
-				if (!Character.isDigit(cb)) return +1;
-				if (ca < cb) {
+				if (!Character.isDigit(ca) && !Character.isDigit(cb))
+					return bias;
+				else if (!Character.isDigit(ca))
+					return -1;
+				else if (!Character.isDigit(cb))
+					return +1;
+				else if (ca < cb) {
 					if (bias == 0) { bias = -1; }
 				} else if (ca > cb) {
 					if (bias == 0) { bias = +1; }
@@ -790,8 +803,9 @@ public class PopulationInspectView extends GamaViewPart
 					// will want to call strcmp to break the tie.
 					return nza - nzb;
 
-				if (ca < cb) return -1;
-				if (ca > cb) return +1;
+				if (ca < cb)
+					return -1;
+				else if (ca > cb) return +1;
 
 				++ia;
 				++ib;
@@ -802,10 +816,8 @@ public class PopulationInspectView extends GamaViewPart
 		/**
 		 * Char at.
 		 *
-		 * @param s
-		 *            the s
-		 * @param i
-		 *            the i
+		 * @param s the s
+		 * @param i the i
 		 * @return the char
 		 */
 		char charAt(final String s, final int i) {
@@ -841,16 +853,22 @@ public class PopulationInspectView extends GamaViewPart
 			final List<String[]> contents = new ArrayList<>();
 			final String[] headers = new String[columns.length];
 			int columnIndex = 0;
-			for (final TableColumn column : columns) { headers[columnIndex++] = column.getText(); }
+			for (final TableColumn column : columns) {
+				headers[columnIndex++] = column.getText();
+			}
 			contents.add(headers);
 			final TableItem[] items = table.getItems();
 			for (final TableItem item : items) {
 				final String[] row = new String[columns.length];
-				for (int i = 0; i < columns.length; i++) { row[i] = item.getText(i); }
+				for (int i = 0; i < columns.length; i++) {
+					row[i] = item.getText(i);
+				}
 				contents.add(row);
 			}
 			try {
-				for (final String[] ss : contents) { writer.writeRecord(ss); }
+				for (final String[] ss : contents) {
+					writer.writeRecord(ss);
+				}
 
 			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e, getScope());

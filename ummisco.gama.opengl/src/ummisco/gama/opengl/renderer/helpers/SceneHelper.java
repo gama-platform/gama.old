@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -45,7 +44,6 @@ public class SceneHelper extends AbstractRendererHelper {
 	/** The front scene. */
 	volatile ModelScene frontScene;
 
-	/** The index. */
 	int index;
 
 	/** The garbage. */
@@ -59,7 +57,7 @@ public class SceneHelper extends AbstractRendererHelper {
 	 */
 	public SceneHelper(final IOpenGLRenderer renderer) {
 		super(renderer);
-		// DEBUG.OUT("Creating the SceneHelper");
+		DEBUG.OUT("Creating the SceneHelper");
 	}
 
 	@Override
@@ -95,7 +93,7 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
-		while (GAMA.isSynchronized() && backScene != null) {
+		while (getData().isSynchronized() && backScene != null) {
 			try {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {
@@ -119,7 +117,8 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @return true, if is not ready to update
 	 */
 	public boolean isNotReadyToUpdate() {
-		if (frontScene != null && !frontScene.rendered()) return true;
+		if (frontScene == null) return false;
+		if (!frontScene.rendered()) return true;
 		return false;
 	}
 

@@ -114,13 +114,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	/** The viewport. */
 	// Matrices of the display
-	public final int[] viewport = new int[4];
+	final int[] viewport = new int[4];
 
 	/** The mvmatrix. */
-	public final double mvmatrix[] = new double[16];
+	final double mvmatrix[] = new double[16];
 
 	/** The projmatrix. */
-	public final double projmatrix[] = new double[16];
+	final double projmatrix[] = new double[16];
 
 	/** The gl. */
 	// The real openGL context
@@ -198,8 +198,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	// World
 	final GamaPoint ratios = new GamaPoint();
 
+	/** The roi envelope. */
+	Envelope3D roiEnvelope;
+
 	/** The rotation mode. */
 	private boolean rotationMode;
+
+	/** The is ROI sticky. */
+	private boolean isROISticky;
 
 	/** The current normal. */
 	// Working objects
@@ -230,7 +236,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public OpenGL(final IOpenGLRenderer renderer) {
 		super(renderer);
-		// DEBUG.OUT("Creation of OpenGL");
+//		DEBUG.OUT("Creation of OpenGL");
 		glut = new GLUT();
 		glu = new GLU();
 		// pickingState = renderer.getPickingHelper();
@@ -452,6 +458,28 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		final double[] coord = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, coord, 0);
 		return coord;
+	}
+
+	/**
+	 * Gets the world position from.
+	 *
+	 * @param mouse
+	 *            the mouse
+	 * @return the world position from
+	 */
+	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
+		final GamaPoint camera = getData().getCameraPos();
+		if (gl == null) return new GamaPoint();
+		final double[] wcoord = new double[4];
+		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
+		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		glu.gluUnProject(x, y, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
+		final GamaPoint v3 = v2.minus(v1).normalized();
+		final double distance = camera.z / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3);
+		final GamaPoint worldCoordinates = camera.plus(v3.times(distance));
+		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
 	}
 
 	/**
@@ -1538,7 +1566,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void endScene() {
 		boolean drawFPS = getData().isShowfps();
 		boolean drawRotation = rotationMode && SHOULD_DRAW_ROTATION_SPHERE;
-		boolean drawROI = renderer.getCameraHelper().getROIEnvelope() != null;
+		boolean drawROI = roiEnvelope != null;
 		if (drawFPS || drawRotation || drawROI) { disableTextures(); }
 		drawFPS(drawFPS);
 		drawROI(drawROI);
@@ -1686,7 +1714,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the do it
 	 */
 	public void drawROI(final boolean doIt) {
-		if (doIt) { geometryDrawer.drawROIHelper(renderer.getCameraHelper().getROIEnvelope()); }
+		if (doIt) { geometryDrawer.drawROIHelper(roiEnvelope); }
 	}
 
 	/**
@@ -1710,6 +1738,63 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 			final double distance = getData().getCameraPos().minus(target).norm();
 			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 8d));
 		}
+	}
+
+	/**
+	 * Toogle ROI.
+	 */
+	public void toogleROI() {
+		isROISticky = !isROISticky;
+	}
+
+	/**
+	 * Checks if is sticky ROI.
+	 *
+	 * @return true, if is sticky ROI
+	 */
+	public boolean isStickyROI() { return isROISticky; }
+
+	/**
+	 * Gets the ROI envelope.
+	 *
+	 * @return the ROI envelope
+	 */
+	public Envelope3D getROIEnvelope() { return roiEnvelope; }
+
+	/**
+	 * Cancel ROI.
+	 */
+	public void cancelROI() {
+		if (isROISticky) return;
+		roiEnvelope = null;
+	}
+
+	/**
+	 * Define ROI.
+	 *
+	 * @param mouseStart
+	 *            the mouse start
+	 * @param mouseEnd
+	 *            the mouse end
+	 */
+	public void defineROI(final GamaPoint mouseStart, final GamaPoint mouseEnd) {
+		final GamaPoint start = getWorldPositionFrom(mouseStart);
+		final GamaPoint end = getWorldPositionFrom(mouseEnd);
+		roiEnvelope = Envelope3D.of(start.x, end.x, start.y, end.y, 0, getMaxEnvDim() / 20d);
+	}
+
+	/**
+	 * Mouse in ROI.
+	 *
+	 * @param mousePosition
+	 *            the mouse position
+	 * @return true, if successful
+	 */
+	public boolean mouseInROI(final GamaPoint mousePosition) {
+		final Envelope3D env = getROIEnvelope();
+		if (env == null) return false;
+		final GamaPoint p = getWorldPositionFrom(mousePosition);
+		return env.contains(p);
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NavigatorSearchControl.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * NavigatorSearchControl.java, in ummisco.gama.ui.navigator, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
@@ -60,7 +60,8 @@ public class NavigatorSearchControl {
 	 * @return true, if successful
 	 */
 	boolean shouldSelect(final Object o) {
-		if (!(o instanceof WrappedGamaFile file)) return false;
+		if (!(o instanceof WrappedGamaFile)) return false;
+		final WrappedGamaFile file = (WrappedGamaFile) o;
 		if (file.getName().toLowerCase().contains(pattern) || file.hasTag(pattern)) return true;
 		return false;
 	}
@@ -155,12 +156,11 @@ public class NavigatorSearchControl {
 
 	/** The tree viewer. */
 	CommonViewer treeViewer;
-
-	/**
-	 * List of expanded elements at the start of a search used internally to restore the state before search
-	 **/
+	
+	/** List of expanded elements at the start of a search
+	 * used internally to restore the state before search**/
 	private Object[] expandedElementsBeforeSearch = null;
-
+	
 	/** The filter. */
 	final NamePatternFilter filter = new NamePatternFilter();
 
@@ -209,12 +209,14 @@ public class NavigatorSearchControl {
 		data.heightHint = 16;
 		data.widthHint = 100;
 		find.setLayoutData(data);
+		// find.setBackground(IGamaColors.WHITE.color());
+		// find.setForeground(IGamaColors.BLACK.color());
 		find.setMessage(EMPTY);
+
 
 		toolbar.control(parent == toolbar ? find : parent, 100);
 		GamaColors.setBackground(find, c);
-		GamaColors.setForeground(find,
-				ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.VERY_DARK_GRAY.color());
+		GamaColors.setForeground(find, ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.VERY_DARK_GRAY.color());
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 
@@ -270,7 +272,9 @@ public class NavigatorSearchControl {
 	 * Do search.
 	 */
 	public void doSearch() {
-		if (expandedElementsBeforeSearch == null) { expandedElementsBeforeSearch = treeViewer.getExpandedElements(); }
+		if(expandedElementsBeforeSearch == null) {
+			expandedElementsBeforeSearch = treeViewer.getExpandedElements();
+		}
 		treeViewer.getControl().setRedraw(false);
 		filter.reset();
 		if (!Arrays.asList(treeViewer.getFilters()).contains(filter)) {
@@ -292,7 +296,7 @@ public class NavigatorSearchControl {
 		} else {
 			treeViewer.refresh(false);
 		}
-		if (expandedElementsBeforeSearch != null) {
+		if(expandedElementsBeforeSearch != null) {
 			treeViewer.collapseAll();
 			treeViewer.setExpandedElements(expandedElementsBeforeSearch);
 			expandedElementsBeforeSearch = null;

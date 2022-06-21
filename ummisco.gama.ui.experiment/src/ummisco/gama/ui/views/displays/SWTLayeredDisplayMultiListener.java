@@ -46,7 +46,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 		MouseTrackListener, MouseWheelListener, KeyListener, DragDetectListener, FocusListener, IDisposable {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The delegate. */
@@ -91,7 +91,6 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 		control.addMouseTrackListener(this);
 		control.addMouseMoveListener(this);
 		control.addFocusListener(this);
-
 	}
 
 	/**
@@ -194,47 +193,6 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void focusLost(final FocusEvent e) {
 		delegate.focusLost();
-	}
-
-	/**
-	 * Gets the key adapter for AWT. See Issue #3426
-	 *
-	 * @return the key adapter for AWT
-	 */
-	public java.awt.event.KeyListener getKeyAdapterForAWT() {
-		return new java.awt.event.KeyListener() {
-
-			long previous;
-
-			@Override
-			public void keyTyped(final java.awt.event.KeyEvent e) {
-				// Necessary to filter by the time to avoid repetitions
-				if (e.getWhen() == previous) return;
-				previous = e.getWhen();
-				// DEBUG.OUT("Key received by the AWT listener " + e.getKeyChar() + " " + e.getWhen());
-				delegate.keyPressed(e.getKeyChar());
-			}
-
-			@Override
-			public void keyPressed(final java.awt.event.KeyEvent e) {}
-
-			@Override
-			public void keyReleased(final java.awt.event.KeyEvent e) {}
-		};
-	}
-
-	public java.awt.event.MouseMotionListener getMouseAdapterForAWT() {
-		return new java.awt.event.MouseMotionListener() {
-
-			@Override
-			public void mouseDragged(java.awt.event.MouseEvent e) {
-				delegate.dragDetected(e.getX(), e.getY());	
-			}
-
-			@Override
-			public void mouseMoved(java.awt.event.MouseEvent e) {
-				delegate.mouseMove(e.getX(), e.getY(), (e.getModifiers()) != 0);				
-			}} ;
 	}
 
 }

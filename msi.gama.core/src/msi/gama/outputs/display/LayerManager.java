@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LayerManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * LayerManager.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -169,6 +169,7 @@ public class LayerManager implements ILayerManager {
 			changed |= dis.getData().compute(scope, g);
 		}
 		if (changed) { forceRedrawingLayers(); }
+
 		if (g.beginDrawingLayers()) {
 			try {
 				// We separate in two phases: updating of the data and then drawing

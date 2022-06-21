@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * OutputsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * OutputsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package ummisco.gama.ui.menus;
 
@@ -46,8 +46,7 @@ public class OutputsMenu extends ContributionItem {
 		/**
 		 * Widget default selected.
 		 *
-		 * @param e
-		 *            the e
+		 * @param e the e
 		 */
 		@Override
 		default void widgetDefaultSelected(final SelectionEvent e) {
@@ -80,19 +79,16 @@ public class OutputsMenu extends ContributionItem {
 				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
 		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
-		menuItem(main, e -> GAMA.getExperiment().desynchronizeAllOutputs(),
+		menuItem(main, e -> GAMA.getExperiment().unSynchronizeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
 	}
 
 	/**
 	 * Management sub menu.
 	 *
-	 * @param main
-	 *            the main
-	 * @param scope
-	 *            the scope
-	 * @param manager
-	 *            the manager
+	 * @param main the main
+	 * @param scope the scope
+	 * @param manager the manager
 	 */
 	public void managementSubMenu(final Menu main, final IScope scope, final IOutputManager manager) {
 		if (Iterables.isEmpty(manager.getDisplayOutputs())) return;
@@ -100,20 +96,18 @@ public class OutputsMenu extends ContributionItem {
 		item.setText(manager.toString());
 		final Menu sub = new Menu(item);
 		item.setMenu(sub);
-		for (final IDisplayOutput output : manager.getDisplayOutputs()) { outputSubMenu(sub, scope, manager, output); }
+		for (final IDisplayOutput output : manager.getDisplayOutputs()) {
+			outputSubMenu(sub, scope, manager, output);
+		}
 	}
 
 	/**
 	 * Output sub menu.
 	 *
-	 * @param main
-	 *            the main
-	 * @param scope
-	 *            the scope
-	 * @param manager
-	 *            the manager
-	 * @param output
-	 *            the output
+	 * @param main the main
+	 * @param scope the scope
+	 * @param manager the manager
+	 * @param output the output
 	 */
 	public void outputSubMenu(final Menu main, final IScope scope, final IOutputManager manager,
 			final IDisplayOutput output) {
@@ -129,14 +123,15 @@ public class OutputsMenu extends ContributionItem {
 				menuItem(sub, e -> output.setPaused(true), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
 			}
 			menuItem(sub, e -> output.update(), create("action.update2").image(), "Force update");
-			// if (output.isSynchronized()) {
-			// menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
-			// "Desynchronize");
-			// } else {
-			// menuItem(sub, e -> output.setSynchronized(true), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
-			// "Synchronize");
-			// }
-			if (output instanceof LayeredDisplayOutput ldo) {
+			if (output.isSynchronized()) {
+				menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
+						"Desynchronize");
+			} else {
+				menuItem(sub, e -> output.setSynchronized(true), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
+						"Synchronize");
+			}
+			if (output instanceof LayeredDisplayOutput) {
+				LayeredDisplayOutput ldo = (LayeredDisplayOutput) output;
 				GamaMenu.separate(sub);
 				menuItem(sub, e -> ldo.zoom(1), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN).image(), "Zoom in");
 				menuItem(sub, e -> ldo.zoom(0), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(), "Zoom to fit view");
@@ -154,19 +149,17 @@ public class OutputsMenu extends ContributionItem {
 	}
 
 	@Override
-	public boolean isDynamic() { return true; }
+	public boolean isDynamic() {
+		return true;
+	}
 
 	/**
 	 * Menu item.
 	 *
-	 * @param parent
-	 *            the parent
-	 * @param listener
-	 *            the listener
-	 * @param image
-	 *            the image
-	 * @param prefix
-	 *            the prefix
+	 * @param parent the parent
+	 * @param listener the listener
+	 * @param image the image
+	 * @param prefix the prefix
 	 * @return the menu item
 	 */
 	private static MenuItem menuItem(final Menu parent, final ISelecter listener, final Image image,

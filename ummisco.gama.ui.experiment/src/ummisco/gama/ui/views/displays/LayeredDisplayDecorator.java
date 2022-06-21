@@ -159,14 +159,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			if (ok(partRef)) {
-				// DEBUG.STACK();
-				WorkbenchHelper.runInUI("", 0, m -> {
-					DEBUG.OUT("Part Activated:" + partRef.getTitle());
-					view.showCanvas();
-					if (overlay != null) { overlay.display(); }
-				});
-			}
+			// if (ok(partRef)) {
+			// // DEBUG.STACK();
+			// WorkbenchHelper.runInUI("", 200, m -> {
+			// DEBUG.OUT("Part Activated:" + partRef.getTitle());
+			// view.showCanvas();
+			// if (overlay != null) { overlay.display(); }
+			// });
+			// }
 		}
 
 		@Override
@@ -194,7 +194,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			// selected. After tests, the same happens on Linux and Windows -- so the test is generalized.
 			if (/* (PlatformHelper.isMac() || PlatformHelper.isLinux()) && */ !PerspectiveHelper.keepTabs()) return;
 			if (ok(partRef)) {
-				WorkbenchHelper.runInUI("", 0, m -> {
+				WorkbenchHelper.runInUI("", 200, m -> {
 					DEBUG.OUT("Part hidden:" + partRef.getTitle());
 					view.hideCanvas();
 					if (overlay != null) { overlay.hide(); }
@@ -205,11 +205,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		@Override
 		public void partVisible(final IWorkbenchPartReference partRef) {
 			if (ok(partRef)) {
-				WorkbenchHelper.runInUI("", 0, m -> {
+				WorkbenchHelper.runInUI("", 200, m -> {
 					DEBUG.OUT("Part Visible:" + partRef.getTitle());
 					view.showCanvas();
-					IDisplaySurface s = view.getDisplaySurface();
-					if (s != null) { s.getOutput().update(); }
 					if (overlay != null) { overlay.display(); }
 				});
 			}
@@ -222,7 +220,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
-			// DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
+			DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
 			fs.setImage(GamaIcons.create("display.fullscreen2").image());
 			// Toolbar
 			if (!toolbar.isDisposed()) {
@@ -235,7 +233,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			normalParentOfFullScreenControl.requestLayout();
 			destroyFullScreenShell();
 		} else {
-			ViewsHelper.activate(view);
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
 			fs.setImage(GamaIcons.create("display.fullscreen3").image());
@@ -357,10 +354,10 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 						view.getOutput().setPaused(true);
 					}
 					// Seems necessary in addition to the IPartListener
-					WorkbenchHelper.run(() -> {
-						if (PlatformHelper.isMac() && overlay != null) { overlay.hide(); }
-						view.hideCanvas();
-					});
+					// WorkbenchHelper.run(() -> {
+					if (PlatformHelper.isMac() && overlay != null) { overlay.hide(); }
+					// view.hideCanvas();
+					// });
 				} else {
 					// Issue #2639
 					if (PlatformHelper.isMac() && !view.isOpenGL()) {
@@ -371,12 +368,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 							&& view.getDisplaySurface() != null) {
 						view.getOutput().setPaused(previousState);
 					}
-					// Necessary in addition to the IPartListener as there is no way to distinguish between the wrong
-					// "hidden" event and the good one when there are no tabs.
-					WorkbenchHelper.asyncRun(() -> {
-						if (PlatformHelper.isMac() && overlay != null) { overlay.display(); }
-						// view.showCanvas();
-					});
+					// Seems necessary in addition to the IPartListener
+					// WorkbenchHelper.asyncRun(() -> {
+					if (PlatformHelper.isMac() && overlay != null) { overlay.display(); }
+					// view.showCanvas();
+					// });
 				}
 
 			}
@@ -421,7 +417,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		fullScreenShell.dispose();
 		fullScreenShell = null;
 		ViewsHelper.unregisterFullScreenView(view);
-		ViewsHelper.activate(view);
 	}
 
 	/**

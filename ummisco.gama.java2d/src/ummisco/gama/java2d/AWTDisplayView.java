@@ -13,12 +13,9 @@ package ummisco.gama.java2d;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.common.interfaces.IDisposable;
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
-import ummisco.gama.ui.views.displays.SWTLayeredDisplayMultiListener;
 
 /**
  * The Class AWTDisplayView.
@@ -30,7 +27,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 		if (getOutput() == null) return null;
 
-		surfaceComposite = new SwingControl(parent, AWTDisplayView.this, SWT.NO_FOCUS) {
+		surfaceComposite = new SwingControl(parent, SWT.NO_FOCUS) {
 
 			@Override
 			protected Java2DDisplaySurface createSwingComponent() {
@@ -39,25 +36,10 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 		};
 		surfaceComposite.setEnabled(false);
+		// WorkaroundForIssue1594.installOn(this, parent, surfaceComposite, (Java2DDisplaySurface) getDisplaySurface());
+		// WorkaroundForIssue2745.installOn(this);
+		// WorkaroundForIssue1353.install();
 		return surfaceComposite;
-	}
-
-	@Override
-	public void ownCreatePartControl(final Composite c) {
-		super.ownCreatePartControl(c);
-		if (getOutput().getData().fullScreen() > -1) {
-			new Thread(() -> { WorkbenchHelper.runInUI("FS", 1000, m -> toggleFullScreen()); }).start();
-		}
-	}
-
-	@Override
-	public void setFocus() {
-		// Uncommenting this method seems to fix #3325. Should be tested !
-		// DEBUG.OUT("Part " + getTitle() + " gaining focus");
-		if (getParentComposite() != null && !getParentComposite().isDisposed()
-				&& !getParentComposite().isFocusControl()) {
-			getParentComposite().forceFocus(); // Necessary ?
-		}
 	}
 
 	@Override
@@ -68,18 +50,6 @@ public class AWTDisplayView extends LayeredDisplayView {
 	@Override
 	protected boolean canBeSynchronized() {
 		return true;
-	}
-
-	@Override
-	public IDisposable getMultiListener() {
-		SWTLayeredDisplayMultiListener listener = (SWTLayeredDisplayMultiListener) super.getMultiListener();
-		if (PlatformHelper.isMac() || PlatformHelper.isLinux()) {
-			// See Issue #3426
-			SwingControl control = (SwingControl) surfaceComposite;
-			control.setKeyListener(listener.getKeyAdapterForAWT());
-			if (PlatformHelper.isLinux()) control.setMouseListener(listener.getMouseAdapterForAWT());
-		}
-		return listener;
 	}
 
 }
