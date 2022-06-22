@@ -17,10 +17,10 @@ experiment "Different series" type: gui
 	
 
 	
-	output
+	output synchronized: true
 	{
 		layout #split toolbars: false;
-		display "data_cumulative_serie_spline_chart" type: java2D synchronized: true
+		display "data_cumulative_serie_spline_chart" type: java2D
 		{
 			chart "Nice cumulative series chart" type: series background: # darkblue color: # lightgreen axes: # lightgreen title_font: font( 'Serif' , 32.0, #italic)
 			 tick_font: font('Monospaced' , 14 #bold) label_font: font('Serif', 18 #plain) legend_font: font('SanSerif', 18 #bold) x_range: 50 x_tick_unit: 5 x_serie_labels: ("T+" + cycle) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'

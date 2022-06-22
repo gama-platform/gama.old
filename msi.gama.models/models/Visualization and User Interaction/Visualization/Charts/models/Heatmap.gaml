@@ -56,18 +56,25 @@ global
 
 experiment "Different heatmaps" type: gui
 {
-	output
+	output synchronized: true
 	{
-		layout #split parameters: false navigator: false editors: false consoles: false toolbars: false tray: false tabs: false;	
+		layout #split
+		parameters: false 
+		navigator: false 
+		editors: false 
+		consoles: false 
+		toolbars: false 
+		tray: false 
+		tabs: false
+		;	
 		
-		display "NIce Heatmap" type: java2D synchronized: true
+		display "Nice Heatmap" type: opengl
 		{
 			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32.0, #italic) tick_font:
 			font('Monospaced', 14, #bold) label_font: font('Serif', 18, #plain) legend_font: font('SanSerif', 18, #bold) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
 			{
 				data "test" value: mylldata color: [# darkblue, # orange] accumulate_values: false;
 			}
-
 		}
 
 		display "listOflist_heatmap" type: java2D
@@ -104,9 +111,9 @@ experiment "Different heatmaps" type: gui
 
 experiment Heatmap type: gui
 {
-	output
+	output synchronized: true
 	{
-		display "list_heatmap" type: java2D synchronized: true
+		display "list_heatmap" type: java2D
 		{
 			chart "list_heatmap" type: heatmap
 			{

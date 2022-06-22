@@ -24,14 +24,14 @@ global {
 	}
 
 
-experiment "Ripples and Fishes" type: gui {
+experiment "Ripples and Fish" type: gui {
 	
-	output {
-		display Ripples synchronized: true type: opengl camera: #from_up_front
+	output synchronized: true{
+		display Ripples  type: opengl camera: #from_up_front
 		{
 			species fish position: {0,0,0.05};
 			graphics world transparency: 0.4{ 
-				draw cube(100) scaled_by {1,1,0.08}  texture:("../images/water2.gif") ;
+				draw cube(100) scaled_by {1,1,0.08} texture:("../images/water2.gif") ;
 			}
 		}
 	}

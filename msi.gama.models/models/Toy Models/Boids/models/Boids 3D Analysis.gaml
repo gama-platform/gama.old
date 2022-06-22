@@ -443,9 +443,9 @@ experiment "Space & Time Cube" type: gui {
 
 experiment "Multiple views" type: gui {
 	float minimum_cycle_duration <- 0.05;
-	output {
+	output  synchronized: true{
 		layout #split;
-		display RealBoids type: java2D synchronized: true antialias: false{
+		display RealBoids type: java2D antialias: false{
 			image 'background' file: file_path_to_ocean refresh: false;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.25};

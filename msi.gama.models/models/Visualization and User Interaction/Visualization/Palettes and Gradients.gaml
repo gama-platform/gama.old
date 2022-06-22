@@ -21,9 +21,9 @@ global {
 
 
 experiment Palettes type: gui {
-	output {
+	output synchronized: true {
 		layout #split;
-		display "Brewer" type: opengl synchronized: true {
+		display "Brewer" type: opengl {
 			mesh cells  color:(brewer_colors("Set3")) triangulation: true smooth: true;
 		}
 

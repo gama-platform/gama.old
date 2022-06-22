@@ -46,8 +46,8 @@ species paranoid_android skills:[moving]{
 }
 
 experiment OK_Computer type:gui autorun:true{
-	output{
-		display videotape type:opengl background:rgb(0,0,15) axes:false synchronized:true fullscreen:true toolbar:false{
+	output synchronized:true{
+		display videotape type:opengl background:rgb(0,0,15) axes:false fullscreen:true toolbar:false{
 	    species paranoid_android aspect:house_of_cards;
 	    	event["r"]  {pyramid_song<-!pyramid_song;}
 	    	event["a"]  {the_bend<-{1,0,0};}

@@ -455,8 +455,8 @@ experiment MondrianCity type: gui autorun: true{
 	parameter "mobility3 level" var: weight_mobility3 min: 0.1 max: 1.0 step: 0.1 colors: [#gamablue] <-0.5;
 	parameter "Population level" var: population_level min: 0 max: 100 step: 1 colors: [#gamablue] <-50;
 
-	output {
-		display map synchronized:true background:#black toolbar:false type:opengl  axes:false fullscreen:false{
+	output synchronized:true{
+		display map background:#black toolbar:false type:opengl  axes:false fullscreen:false{
 			species cell aspect:default;
 			species road ;
 			species people;

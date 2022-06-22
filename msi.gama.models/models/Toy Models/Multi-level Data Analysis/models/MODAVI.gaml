@@ -278,8 +278,8 @@ global {
 
 
 experiment MODAVI type: gui {
-	output {			
-		display MODAVI type:opengl axes:false synchronized: true {
+	output synchronized: true {			
+		display MODAVI type:opengl axes:false {
 			camera #default location:{world.shape.width*1.5, world.shape.height,world.shape.width*4} target:{world.shape.width*1.5, world.shape.height,0};
 			graphics 'ReferenceModel'{
 				draw "Reference model" at:{200,50,0} size:5 color: #black perspective:false;

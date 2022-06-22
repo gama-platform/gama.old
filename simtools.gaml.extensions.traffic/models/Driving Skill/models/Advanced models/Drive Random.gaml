@@ -118,8 +118,8 @@ experiment ring type: gui {
 		];
 	}
 
-	output {
-		display map type: opengl background: #gray synchronized: true {
+	output synchronized: true {
+		display map type: opengl background: #gray {
 			species road aspect: base;
 			species car_random aspect: base;
 			species motorbike_random aspect: base;
@@ -138,8 +138,8 @@ experiment city type: gui {
 		];
 	}
 
-	output {
-		display map type: opengl background: #gray synchronized: true {
+	output synchronized: true {
+		display map type: opengl background: #gray {
 			species road aspect: base;
 			species car_random aspect: base;
 			species motorbike_random aspect: base;

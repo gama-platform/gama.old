@@ -150,9 +150,9 @@ species boids skills: [moving3D] {
 experiment "3D" type: gui {
 	
 	
-	output {
+	output synchronized: true {
 		
-		display Sky1 type:opengl synchronized: true {
+		display Sky1 type:opengl {
 			species boids aspect: image;
 			species boids_goal;	
 		}
