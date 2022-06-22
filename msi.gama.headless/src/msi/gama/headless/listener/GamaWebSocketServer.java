@@ -179,7 +179,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 //					job.executionThread.run();
 					getDefaultApp().processorQueue.execute(job.executionThread);
 				}
-				socket.send(cmd_type);
 				break;
 			case "output":
 				if (get_listener().getExperiment(socket_id, exp_id) != null
@@ -359,7 +358,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		ManualExperimentJob selectedJob = null;
 		for (final IExperimentJob j : jb) {
 			if (j.getExperimentName().equals(argExperimentName)) {
-				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket, params);
+				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket, params);				
 				break;
 			}
 		}
@@ -397,8 +396,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
 //		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		socket.send(res); 
 		getDefaultApp().processorQueue.execute(selectedJob.executionThread);
+		socket.send(res); 
 	}
 
 	protected String processInput(final IAgent agt, final String s) {

@@ -192,6 +192,13 @@ public interface IExperimentPlan extends ISpecies {
 	IExperimentController getController();
 
 	/**
+	 * Set the controller.
+	 *
+	 * @return the controller
+	 */
+	void setController(IExperimentController ec);
+
+	/**
 	 * @return
 	 */
 	boolean isHeadless();

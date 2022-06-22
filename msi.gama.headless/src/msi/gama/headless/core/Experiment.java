@@ -12,6 +12,7 @@ package msi.gama.headless.core;
 
 import java.util.Map;
 
+import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -104,9 +105,9 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
-	public void setup(final String expName, final double sd, GamaJsonList params) {
+	public void setup(final String expName, final double sd, GamaJsonList params,  ManualExperimentJob ec) {
 		this.seed = sd;
-		this.loadCurrentExperiment(expName,params);
+		this.loadCurrentExperiment(expName,params,ec);
 	}
 
 	/**
@@ -115,12 +116,13 @@ public class Experiment implements IExperiment {
 	 * @param expName
 	 *            the exp name
 	 */
-	private synchronized void loadCurrentExperiment(final String expName, GamaJsonList p) {
+	private synchronized void loadCurrentExperiment(final String expName, GamaJsonList p,  ManualExperimentJob ec) {
 		this.experimentName = expName;
 		this.currentStep = 0;
 		
 		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
 		curExperiment.setHeadless(true);
+		curExperiment.setController(ec);
 
 		if(p!=null) {				
 			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {

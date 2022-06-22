@@ -29,6 +29,7 @@ import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -76,6 +77,9 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	/** The lock. Used to pause the experiment */
 	protected final Semaphore lock = new Semaphore(1);
 
+	/** The agent. */
+	private IExperimentAgent agent;
+	
 	/** The execution thread. */
 //	private final Thread executionThread = new Thread(() -> {
 //		while (experimentAlive) {
@@ -234,22 +238,24 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 			break;
 		case _RELOAD:
 //			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
-			executionThread=null;
-			executionThread = new MyRunnable(this);
-			try {
-				lock.acquire();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
+//			executionThread=null;
+//			executionThread = new MyRunnable(this);
+//			try {
+//				lock.acquire();
+//			} catch (final InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			try {
 //				final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
 				pause();
 //				scope.getGui().getStatus().waitStatus("Reloading...");
-				this.getSimulation().getExperimentPlan().getAgent().dispose();
+//				this.getSimulation().getExperimentPlan().getAgent().dispose();
 				initParam(params);
 
-				this.getSimulation().getExperimentPlan().open();
-//				this.getSimulation().getExperimentPlan().reload();
+//				this.getSimulation().getExperimentPlan().open();
+				this.getSimulation().getExperimentPlan().reload();
+
+				socket.send("reload");
 //				if (wasRunning) {
 //					processUserCommand(_START);
 //				} else {
@@ -312,7 +318,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	@Override
 	public void dispose() {
 		scope = null;
-//		agent = null;
+		agent = null;
 		if (this.getSimulation().getExperimentPlan() != null) {
 			try {
 				pause();
@@ -376,17 +382,14 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 	 * @param agent the agent
 	 */
 	public void schedule(final ExperimentAgent agent) {
-//		this.agent = agent;
+		this.agent = agent;
 		scope = agent.getScope();
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setInterrupted();
-			} else if (agent.getSpecies().isAutorun()) {
-				userStart();
-			}
+			} else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
-			if (scope != null && scope.interrupted()) {
-			} else if (!(e instanceof GamaRuntimeException)) {
+			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 			}
 		}
@@ -420,16 +423,12 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 			}
 		}
 		try {
-//			IScope scope=this.getSimulation().getExperimentPlan().getAgent().getScope();
-//			if (scope == null)
-//				return;
-//			if (!scope.step(this.getSimulation().getExperimentPlan().getAgent()).passed()) {
-//				scope.setInterrupted();
-//				this.pause();
-//			}else {
-//				exportVariables();
-//			}
-			doStep();
+			if (scope == null) return;
+			if (!scope.step(agent).passed()) {
+				scope.setInterrupted();
+				this.pause();
+			}
+//			doStep();
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -457,7 +456,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		this.load();
 		this.setup();
 //		initParam(p);
-		simulator.setup(experimentName, this.seed, p);
+		simulator.setup(experimentName, this.seed, p, this);
 		initEndContion("");
 
 	}

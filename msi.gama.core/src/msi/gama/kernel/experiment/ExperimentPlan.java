@@ -833,6 +833,20 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
+	 * Method setController()
+	 *
+	 * @see msi.gama.kernel.experiment.IExperimentPlan#setController()
+	 */
+	@Override
+	public void setController(final IExperimentController ec) {
+		if (controller != null) {
+			controller.close();
+			controller.dispose();
+		}
+		controller=ec;
+	}
+
+	/**
 	 * Method refreshAllOutputs()
 	 *
 	 * @see msi.gama.kernel.experiment.IExperimentPlan#refreshAllOutputs()
