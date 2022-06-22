@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractValuedDisplayOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractValuedDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -23,17 +23,18 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 
 	/** The expression text. */
 	protected String expressionText = "";
-	
+
 	/** The value. */
 	protected IExpression value;
-	
+
 	/** The last value. */
 	protected Object lastValue = "";
 
 	/**
 	 * Instantiates a new abstract valued display output.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AbstractValuedDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -41,37 +42,35 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 		expressionText = getValue() == null ? "" : getValue().serialize(false);
 	}
 
+	@Override
+	public boolean isRendered() { return true; }
+
 	/**
 	 * Gets the last value.
 	 *
 	 * @return the last value
 	 */
-	public Object getLastValue() {
-		return lastValue;
-	}
+	public Object getLastValue() { return lastValue; }
 
 	/**
 	 * Gets the value.
 	 *
 	 * @return the value
 	 */
-	public IExpression getValue() {
-		return value;
-	}
+	public IExpression getValue() { return value; }
 
 	/**
 	 * Gets the expression text.
 	 *
 	 * @return the expression text
 	 */
-	public String getExpressionText() {
-		return expressionText == null ? "" : expressionText;
-	}
+	public String getExpressionText() { return expressionText == null ? "" : expressionText; }
 
 	/**
 	 * Sets the new expression text.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return true, if successful
 	 */
 	public boolean setNewExpressionText(final String string) {
@@ -83,8 +82,10 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 	/**
 	 * Sets the new expression.
 	 *
-	 * @param expr the new new expression
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param expr
+	 *            the new new expression
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
 		expressionText = expr == null ? "" : expr.serialize(false);
@@ -95,10 +96,9 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 	/**
 	 * Sets the value.
 	 *
-	 * @param value the new value
+	 * @param value
+	 *            the new value
 	 */
-	protected void setValue(final IExpression value) {
-		this.value = value;
-	}
+	protected void setValue(final IExpression value) { this.value = value; }
 
 }
