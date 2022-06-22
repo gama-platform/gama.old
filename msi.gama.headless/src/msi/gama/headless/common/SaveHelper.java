@@ -27,6 +27,7 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.geotools.referencing.CRS;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -44,10 +45,12 @@ import org.opengis.referencing.FactoryException;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.metamodel.topology.projection.SimpleScalingProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
@@ -60,20 +63,76 @@ import msi.gaml.types.Types;
 
 public class SaveHelper {// extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	public static IProjection defineProjection2(final IScope scope,final String gis_code) {
-		String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
+	public static IProjection defineProjection2(final IScope scope, final String gis_code) {
+//		String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
 //		if (crsCode != null) {
 //			final IType type = crsCode.getGamlType();
 //			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
 //				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
 //			} else if (type.id() == IType.STRING) { code = (String) crsCode.value(scope); }
 //		}
+//		IProjection gis; 
+//		try {
+//			gis = scope.getSimulation().getProjectionFactory().getWorld();
+//			gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+//		} catch (final FactoryException e1) {
+//			throw GamaRuntimeException.error(
+//					"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
+//		}
+
+		String code = null;
+		if (gis_code != null) {
+			code = gis_code;
+		}
 		IProjection gis;
-		try {
-			gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-		} catch (final FactoryException e1) {
-			throw GamaRuntimeException.error(
-					"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
+		if (code == null) {
+			final boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
+			if (!useNoSpecific) {
+				code = "EPSG:" + GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
+				try {
+					gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+				} catch (final FactoryException e1) {
+					throw GamaRuntimeException.error(
+							"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ",
+							scope);
+				}
+			} else {
+				gis = scope.getSimulation().getProjectionFactory().getWorld();
+				if (gis == null || gis.getInitialCRS(scope) == null) {
+					final boolean alreadyprojected = GamaPreferences.External.LIB_PROJECTED.getValue();
+					if (alreadyprojected) {
+						code = "EPSG:" + GamaPreferences.External.LIB_TARGET_CRS.getValue();
+					} else {
+						code = "EPSG:" + GamaPreferences.External.LIB_INITIAL_CRS.getValue();
+					}
+					try {
+						gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+					} catch (final FactoryException e1) {
+						throw GamaRuntimeException.error("The code " + code
+								+ " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
+					}
+				}
+			}
+
+		} else {
+			if (code.startsWith("GAMA")) {
+				if ("GAMA".equals(code))
+					return null;
+				final String[] cs = code.split("::");
+				if (cs.length == 2) {
+					final Double val = Double.parseDouble(cs[1]);
+					return new SimpleScalingProjection(val);
+				}
+				return null;
+			}
+
+			try {
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+			} catch (final FactoryException e1) {
+				throw GamaRuntimeException.error(
+						"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ",
+						scope);
+			}
 		}
 
 		return gis;
@@ -220,10 +279,15 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 		// geometry is by convention (in specs) at position 0
 		if (ag.getInnerGeometry() == null)
 			return false;
-		Geometry g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-
-		g = fixesPolygonCWS(g);
-		g = geometryCollectionManagement(g);
+		Geometry g = null;
+		try {
+			g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
+			g = fixesPolygonCWS(g);
+			g = geometryCollectionManagement(g);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			g = ag.getInnerGeometry();
+		}
 
 		values.add(g);
 		if (ag instanceof IAgent) {
@@ -267,7 +331,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
 
 	public static String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents,
-			final IList<String> filterAttr, final String gis_code) throws IOException, SchemaException, GamaRuntimeException {
+			final IList<String> filterAttr, final String gis_code)
+			throws IOException, SchemaException, GamaRuntimeException {
 
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = getGeometryType(agents);
@@ -301,7 +366,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 				specs.append(',').append(name).append(':').append(type);
 			}
 			// }
-			final IProjection proj = defineProjection2(scope,gis_code);
+			final IProjection proj = defineProjection2(scope, gis_code);
 
 			// AD 11/02/15 Added to allow saving to new directories
 			if (agents == null || agents.isEmpty())
