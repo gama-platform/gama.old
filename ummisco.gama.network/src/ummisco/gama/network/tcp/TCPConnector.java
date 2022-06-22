@@ -68,7 +68,7 @@ public class TCPConnector extends Connector {
 	 */
 	public TCPConnector(final IScope scope, final boolean isServer, final boolean isRaw) {
 		this.isServer = isServer;
-		this.isRaw = isRaw;
+		this.setRaw(isRaw);
 		this.remoteBoxName = new ArrayList<>();
 	}
 
@@ -99,57 +99,9 @@ public class TCPConnector extends Connector {
 		final String server = this.getConfigurationParameter(SERVER_URL);
 		final int port = Integer.valueOf(this.getConfigurationParameter(SERVER_PORT)).intValue();
 		if (this.isServer) {
-			socket = new ServerService(agent, port, this) {
-				@Override
-				public void receivedMessage(final String sender, final String message) {
-					System.out.println(sender+" "+message);
-//					final MessageType mte = MessageFactory.identifyMessageType(message);
-//					if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-//						extractAndApplyCommand(sender, message);
-//					} else {
-//						final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
-//						storeMessage(sender, r, message);
-//					}
-				}
-
-				@Override
-				public void onOpen(AbstractProtocol conn) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onClose(AbstractProtocol conn, int code, String reason, boolean remote) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onMessage(AbstractProtocol conn, String message) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onMessage(AbstractProtocol conn, ByteBuffer message) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onError(AbstractProtocol conn, Exception ex) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onStart() {
-					// TODO Auto-generated method stub
-
-				}
-			};
+			socket = new ServerService(agent, port, this);
 		} else {
-			socket = new GamaClientService(server, port, this);
+			socket = new ClientService(server, port, this);
 		}
 		try {
 			socket.startService();
@@ -157,30 +109,6 @@ public class TCPConnector extends Connector {
 			e.printStackTrace();
 		}
 		this.setConnected();
-	}
-
-	public class GamaClientService extends ClientService {
-
-		public GamaClientService(String server, int port, IConnector connector) {
-			super(server, port, connector);
-			// TODO Auto-generated constructor stub
-		}
-
-		public GamaClientService(Socket clientSocket) {
-			super(clientSocket);
-		}
-
-		@Override
-		public void receivedMessage(final String sender, final String message) {
-			final MessageType mte = MessageFactory.identifyMessageType(message);
-			if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-				extractAndApplyCommand(sender, message);
-			} else {
-				final String r = isRaw ? message : MessageFactory.unpackReceiverName(message);
-				storeMessage(sender, r, message);
-			}
-		}
-
 	}
 
 	@Override

@@ -65,7 +65,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		loop while: ((mtime+1000) > machine_time){ }
 		ask Person where(each.name = "Mel")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			if(length(mailbox)>0) {test<-true;}
 				else {test<-false;}
 		}
@@ -82,7 +82,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		loop while: ((mtime+1000) > machine_time){ }
 		ask Person where(each.name = "Melanie")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			list<message> msg <- mailbox;
 			if(first(msg).contents = "Travis is the best tester of the World and of the Universe") {
 				
@@ -106,7 +106,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		loop while: ((mtime+2000) > machine_time){ }
 		ask Person where(each.name = "Geri")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			a1 <- length(mailbox)=1;
 			a2 <- has_more_message();
 			a3 <- first(mailbox) = fetch_message();
@@ -134,7 +134,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		loop while: ((mtime+2000) > machine_time){ }
 		ask Person where(each.name = "Victoria")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			a1 <- length(mailbox)=1;
 			a2 <- has_more_message();
 			a3 <- first(mailbox) = fetch_message();
@@ -159,7 +159,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		p3 <- (a1 and a2 and a3 and a4);
 		ask Person where(each.name = "Travis")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			a1 <- length(mailbox)=1;
 			a2 <- has_more_message();
 			a3 <- first(mailbox) = fetch_message();
@@ -190,7 +190,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		//nobody receive the message
 		ask Person where(each.myGroup = grp)
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			p1 <- p1 and length(mailbox)=0;
 	
 		}
@@ -207,7 +207,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		//check if Spice Girls recieve the message with a good quality
 		ask Person where(each.myGroup = grp)
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			a1 <- length(mailbox)=1;
 			a2 <- has_more_message();
 			a3 <- first(mailbox) = fetch_message();
@@ -219,7 +219,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		//but Travis don't receive the message
 		ask Person where(each.name = "Travis")
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			a1 <- length(mailbox)=0;
 			p1 <- p1 and (a1);
 		}
@@ -238,7 +238,7 @@ experiment "Tests for ummisco.gama.network" type: test skills:[network] {
 		//nobody receive the message because they leave the group
 		ask Person where(each.myGroup = grp)
 		{
-			do simulate_step;
+			do fetch_message_from_network;
 			p1 <- p1 and length(mailbox)=0;
 	
 		}

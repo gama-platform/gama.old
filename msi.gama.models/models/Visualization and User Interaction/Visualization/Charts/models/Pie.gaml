@@ -13,11 +13,11 @@ global
 
 experiment "Different Pies" type: gui
 {
-	output
+	output synchronized: true
 	{
 		layout #split parameters: false navigator: false editors: false consoles: false ;	
 		
-		display "data_pie_chart" type: java2D synchronized: true
+		display "data_pie_chart" type: java2D
 		{
 			chart "Nice Ring Pie Chart" type: pie style: ring background: # darkblue color: # lightgreen label_text_color: #red label_background_color: #lightgray axes: #red  title_font: font( 'Serif', 32.0, #italic)
 			tick_font: font('Monospaced' , 14, #bold) label_font: font('Arial', 32 #bold) x_label: 'Nice Xlabel' y_label:

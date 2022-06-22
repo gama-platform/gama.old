@@ -64,7 +64,13 @@ species people skills: [moving]
 	aspect opengl
 	{ 
 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
-		draw sphere(size/4) lighted: false rotate:heading wireframe: false texture: icon at: location + {0,0,increment} color: rgb (251, 217, 113,255);
+		draw 	sphere(size/4) 
+				lighted: false 
+				rotate:heading 
+				wireframe: false 
+				texture: icon 
+				at: location + {0,0,increment} 
+				color: rgb (251, 217, 113,255);
  	}
  	
  	aspect java2d {
@@ -78,21 +84,21 @@ experiment Icons
 {
 	// We slow down the simulation in order to see something !
 
-	output
+	output synchronized: true
 	{
 		layout #split;
 		
-		display "Colorful in 3D" type: opengl synchronized: true
+		display "Colorful in 3D" type: opengl 
 		{
 			// We simply display people, which will use their aspect named opengl
 			species people aspect: opengl;
 		}
 		
-//		display "Colorful in 2D" type:  java2D {
-//			
-//			// Idem for java2D
-//			species people aspect: java2d;
-//		}
+		display "Colorful in 2D" type:  java2D {
+			
+			// Idem for java2D
+			species people aspect: java2d;
+		}
 
 	}
 

@@ -12,9 +12,7 @@ package ummisco.gama.network.tcp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -22,6 +20,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.IList;
@@ -30,41 +29,38 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
+import ummisco.gama.network.common.socket.AbstractProtocol;
 import ummisco.gama.network.common.socket.IListener;
 import ummisco.gama.network.common.socket.SocketService;
-import ummisco.gama.network.skills.INetworkSkill;
-import ummisco.gama.network.tcp.TCPConnector.GamaClientService;
+import ummisco.gama.network.skills.INetworkSkill; 
 
 /**
  * The Class ServerService.
  */
-public abstract class ServerService extends Thread implements SocketService, IListener {
+public class ServerService extends Thread implements SocketService, IListener {
 
 	/** The server socket. */
-	private ServerSocket serverSocket;
+	protected ServerSocket serverSocket;
 
 	/** The my agent. */
-	private final IAgent myAgent;
+	protected final IAgent myAgent;
 	
 	/** The port. */
-	private final int port;
+	protected final int port;
 
 	/** The is alive. */
-	private boolean isAlive;
+	protected boolean isAlive;
 
 	/** The is online. */
-	private boolean isOnline;
+	protected boolean isOnline;
 
 	/** The sender. */
-	private PrintWriter sender;
-
-	/** The current socket. */
-	private Socket currentSocket;
-
+	protected PrintWriter sender;
+ 
 	/** The receiver. */
 	BufferedReader receiver = null;
 
-	private IConnector modelConnector;
+	protected IConnector connector;
 	/**
 	 * Instantiates a new server service.
 	 * @param agent 
@@ -76,20 +72,20 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 		this.port = port;
 		this.isAlive = false;
 		this.isOnline = false;
-		this.modelConnector=conn;
+		this.connector=conn;
 		this.myAgent=agent;
 	}
 
 	@Override
 	public String getRemoteAddress() {
-		if (currentSocket == null) return null;
-		return this.currentSocket.getInetAddress() + ":" + this.port;
+		if (serverSocket == null) return null;
+		return this.serverSocket.getInetAddress() + ":" + this.port;
 	}
 
 	@Override
 	public String getLocalAddress() {
-		if (currentSocket == null) return null;
-		return this.currentSocket.getLocalAddress() + ":" + this.port;
+		if (serverSocket == null) return null;
+		return this.serverSocket.getLocalSocketAddress() + ":" + this.port;
 	}
 
 	@Override
@@ -140,7 +136,7 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 //						clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
 //						clientSocket.setKeepAlive(true);
 
-						final ClientService cliThread =((TCPConnector) modelConnector).new GamaClientService(clientSocket);
+						final ClientService cliThread = new ClientService(clientSocket,connector);
 						cliThread.startService();
 
 						myAgent.setAttribute(TCPConnector._TCP_CLIENT + clientSocket.toString(), cliThread);
@@ -181,8 +177,7 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 
 		if (sender != null) { sender.close(); }
 		try {
-			if (receiver != null) { receiver.close(); }
-			if (currentSocket != null) { currentSocket.close(); }
+			if (receiver != null) { receiver.close(); } 
 			if (serverSocket != null) { serverSocket.close(); }
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -223,4 +218,50 @@ public abstract class ServerService extends Thread implements SocketService, ILi
 //		outToServer.flush();
 	}
 
+	@Override
+	public void receivedMessage(final String sender, final String message) {
+		final MessageType mte = MessageFactory.identifyMessageType(message);
+		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
+			((TCPConnector)connector).extractAndApplyCommand(sender, message);
+		} else { 
+			final String r = ((TCPConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
+			((TCPConnector)connector).storeMessage(sender, r, message);
+		}
+	}
+
+	@Override
+	public void onOpen(AbstractProtocol conn) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onClose(AbstractProtocol conn, int code, String reason, boolean remote) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMessage(AbstractProtocol conn, String message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMessage(AbstractProtocol conn, ByteBuffer message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onError(AbstractProtocol conn, Exception ex) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onStart() {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -87,9 +87,9 @@ global
 
 experiment main type: gui
 {
-	output
+	output synchronized:true
 	{
-		display "Comodel display" synchronized:true
+		display "Comodel display"
 		{
 			agents "ant_grid" value: Ant.Base accumulate each.get_ant_grid() transparency: 0.7;			
 			agents "agentprey" value: (Organism.Simple accumulate each.get_prey());

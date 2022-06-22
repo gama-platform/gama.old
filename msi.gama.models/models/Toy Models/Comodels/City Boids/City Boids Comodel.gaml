@@ -65,9 +65,9 @@ global
  
 experiment main type: gui
 {   float minimum_cycle_duration <- 0.05;
-	output
+	output synchronized: true
 	{
-		display "Comodel Display"  synchronized: true camera:#isometric type:opengl background:rgb(10,40,55)
+		display "Comodel Display" camera:#isometric type:opengl background:rgb(10,40,55)
 		{
 			agents "Building" value: (City."Adapter" accumulate each.get_building()) aspect:textured;		
 			

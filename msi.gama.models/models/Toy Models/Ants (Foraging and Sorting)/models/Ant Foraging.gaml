@@ -213,7 +213,7 @@ experiment "Classic" type: gui {
 	
 	
 	output {
-		display Ants synchronized: false antialias: false type: opengl {
+		display Ants antialias: false type: opengl {
 			light #ambient intensity: 127;
 			light #default intensity: 127;
 			image terrain refresh: true;

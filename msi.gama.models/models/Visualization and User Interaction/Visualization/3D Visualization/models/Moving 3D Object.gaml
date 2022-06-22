@@ -31,19 +31,19 @@ species boat skills: [moving]{
 		pair<float,point> pitch <-  5 * cos(cycle*10) ::{1,0,0};
 		pair<float,point> roll <- 20*sin(cycle*3)::{0,1,0};
 		pair<float,point> yaw <- 1*sin(cycle*7)::{0,0,1};
-		draw obj_file("../includes/boat/fishing-boat.obj", rotation_composition(r0,pitch,roll,yaw)) at: location + {0,0,9} size: 5 rotate: heading + 90;			
+		draw obj_file("../includes/boat/fishing-boat.obj", rotation_composition(r0,pitch,roll,yaw)) at: location + {0,0,9} size: 5 rotate: heading + 90;
 	}	
 }	
 
 
 experiment Display  type: gui {
-	output {
-		display ComplexObject type: opengl background: #black synchronized: true{
+	output synchronized: true {
+		display ComplexObject type: opengl background: #black{
 			light #ambient intensity: 100;
 			species boat aspect:obj;	
-			graphics world transparency: 0.4{ 
-				draw world depth: 5  texture:("../images/water.gif") ;
-			}			
+			graphics world transparency: 0.4 { 
+				draw world depth: 5 texture:("../images/water.gif") ;
+			}
 		}
 	}
 }

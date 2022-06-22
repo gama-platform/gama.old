@@ -81,10 +81,10 @@ global
 
 experiment main type: gui
 {
-    output
+    output synchronized:true
     {
         //a mixing display of all agents from all populations
-        display "Comodel display" synchronized:true
+        display "Comodel display"
         {
             agents "agentprey" value: (Organism.Simple accumulate each.get_prey());
 

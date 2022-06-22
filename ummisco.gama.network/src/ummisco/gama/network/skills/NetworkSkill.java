@@ -463,9 +463,9 @@ public class NetworkSkill extends MessagingSkill {
 	 *            the scope
 	 */
 	@action (
-			name = INetworkSkill.SIMULATE_STEP,
+			name = INetworkSkill.FETCH_MESSAGE_FROM_NETWORK,
 			doc = @doc (
-					value = "Simulate a step to test the skill. It must be used for Gama-platform test only",
+					value = "Fetch all messages from network to mailbox. Use this in specific case only, this action is done at the end of each step. ",
 					returns = "nothing",
 					examples = { @example ("do simulate_step;\n") }))
 	public boolean fetchMessagesOfAgents(final IScope scope) {

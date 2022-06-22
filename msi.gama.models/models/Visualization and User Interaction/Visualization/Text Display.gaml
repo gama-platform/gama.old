@@ -19,9 +19,9 @@ experiment Strings {
 	image_file g <- image_file("3D Visualization/images/building_texture/texture3.jpg");
 
 
-	output {
+	output synchronized: true{
 		layout #split;
-		display "Strings" type: opengl  synchronized: true axes: false {
+		display "Strings" type: opengl  axes: false {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 5;

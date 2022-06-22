@@ -229,8 +229,8 @@ experiment "Basic" type: gui {
 	//Minimum duration of a step to better see the movements
 	float minimum_cycle_duration <- 0.01;
 
-	output {
-		display Sky type: opengl synchronized: true{ 
+	output synchronized: true {
+		display Sky type: opengl{ 
 			image '../images/sky.jpg' refresh: false;
 			species boids aspect: image;
 			species boids_goal;
@@ -271,8 +271,8 @@ experiment "Interactive" type: gui autorun: true{
 	//Minimum duration of a step to better see the movements
 	float minimum_cycle_duration <- 0.01;
 
-	output {
-		display Sky  background: #blue type: opengl synchronized: true fullscreen: 0 toolbar: false{ 
+	output synchronized: true {
+		display Sky  background: #blue type: opengl fullscreen: 0 toolbar: false{ 
 			image '../images/sky.jpg' refresh: false;
 			species boids aspect: image trace: 10 fading: true ;
 			species boids_goal;

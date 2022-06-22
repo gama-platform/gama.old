@@ -21,6 +21,7 @@ import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -40,14 +41,13 @@ import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.Types;
-import ummisco.gama.network.websocket.IGamaWebSocketServer;
+import msi.gaml.types.Types; 
 
 /**
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob implements IExperimentController {
-	protected GamaWebSocketServer server;
+	protected WebSocketServer server;
 	protected WebSocket socket;
 //	public boolean paused = false;
 	public boolean stepping = false;
@@ -136,9 +136,9 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 		}
 	}, "Front end controller");
 
-	public ManualExperimentJob(ExperimentJob j, IGamaWebSocketServer s, WebSocket sk, final GamaJsonList p) {
+	public ManualExperimentJob(ExperimentJob j, WebSocketServer gamaWebSocketServer, WebSocket sk, final GamaJsonList p) {
 		super(j);
-		server = (GamaWebSocketServer) s;
+		server = gamaWebSocketServer;
 		socket = sk;
 		params = p;
 		commands = new ArrayBlockingQueue<>(10);

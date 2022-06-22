@@ -204,10 +204,10 @@ experiment clustering3D type: gui
 	font regular <- font("Helvetica", 14, # bold);
 	point target <- { 20, 95 };
 	
-	output
+	// The display is explicitly synchronized to avoid concurrency issues (if the points are changed in the simulation while being displayed)
+	output synchronized: true
 	{
-		// The display is explicitly synchronized to avoid concurrency issues (if the points are changed in the simulation while being displayed)
-		display map_kmeans type: opengl synchronized: true
+		display map_kmeans type: opengl
 		{
 			species datapoints aspect: kmeans_aspect3D transparency:0.4;
 			species centroids aspect: kmeans_aspect3D;
