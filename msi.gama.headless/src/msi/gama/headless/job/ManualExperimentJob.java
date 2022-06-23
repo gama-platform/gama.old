@@ -117,6 +117,7 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 				final SimulationAgent sim = mexp.simulator.getSimulation();
 				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
 				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
+					System.out.println("simulation finish");
 					break;
 				}
 				mexp.step();
@@ -250,11 +251,15 @@ public class ManualExperimentJob extends ExperimentJob implements IExperimentCon
 				pause();
 //				scope.getGui().getStatus().waitStatus("Reloading...");
 //				this.getSimulation().getExperimentPlan().getAgent().dispose();
-				initParam(params);
+//				initParam(params);
+				this.getSimulation().getExperimentPlan().getAgent().dispose();
 
 //				this.getSimulation().getExperimentPlan().open();
-				this.getSimulation().getExperimentPlan().reload();
+//				this.getSimulation().getExperimentPlan().reload();
 
+//				this.loadAndBuild(params);
+
+				simulator.setup(experimentName, this.seed, params, this);
 				socket.send("reload");
 //				if (wasRunning) {
 //					processUserCommand(_START);

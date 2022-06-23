@@ -839,7 +839,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public void setController(final IExperimentController ec) {
-		if (controller != null) {
+		if (controller != null && controller.equals(ec)) {
 			controller.close();
 			controller.dispose();
 		}

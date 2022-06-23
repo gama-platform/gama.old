@@ -131,7 +131,9 @@ public class Experiment implements IExperiment {
 			}
 		} 
 		curExperiment.open(seed);
-		GAMA.getControllers().add(curExperiment.getController());
+		if(!GAMA.getControllers().contains(curExperiment.getController())) {
+			GAMA.getControllers().add(curExperiment.getController());
+		}
 		this.currentExperiment = curExperiment;
  		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		this.currentExperiment.setHeadless(true);

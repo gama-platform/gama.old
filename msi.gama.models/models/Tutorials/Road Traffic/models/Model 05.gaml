@@ -24,8 +24,7 @@ global {
 	float destroy <- 0.02;
 	graph the_graph;
 	
-	init {
-		write "init";
+	init { 
 		create building from: shape_file_buildings with: [type::string(read ("NATURE"))] {
 			if type="Industrial" {
 				color <- #blue ;

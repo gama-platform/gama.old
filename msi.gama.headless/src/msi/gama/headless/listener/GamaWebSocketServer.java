@@ -173,8 +173,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					ManualExperimentJob job=get_listener().getExperiment(socket_id, exp_id);
 					job.params=(GamaJsonList) map.get("parameters");
-					job.initEndContion(map.get("until") != null ? map.get("until").toString() : "");
 					job.userReload();
+					job.initEndContion(map.get("until") != null ? map.get("until").toString() : "");
 //					(GamaJsonList) map.get("parameters"),
 //					job.executionThread.run();
 					getDefaultApp().processorQueue.execute(job.executionThread);
