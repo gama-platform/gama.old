@@ -346,7 +346,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		final String pathToModel = args.get(args.size() - 1);
 
 		File ff = new File(pathToModel);
-		System.out.println(ff.getAbsoluteFile().toString());
+//		System.out.println(ff.getAbsoluteFile().toString());
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			System.exit(-1);
 		}
@@ -354,14 +354,14 @@ public class GamaWebSocketServer extends WebSocketServer {
 //		final String argGamlFile = args.get(args.size() - 1); 
 		if (!ff.exists())
 			return;
-		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(ff.getAbsoluteFile().toString());
+//		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(ff.getAbsoluteFile().toString());
 		ManualExperimentJob selectedJob = null;
-		for (final IExperimentJob j : jb) {
-			if (j.getExperimentName().equals(argExperimentName)) {
-				selectedJob = new ManualExperimentJob((ExperimentJob) j, this, socket, params);				
-				break;
-			}
-		}
+//		for (final IExperimentJob j : jb) {
+//			if (j.getExperimentName().equals(argExperimentName)) {
+				selectedJob = new ManualExperimentJob(ff.getAbsoluteFile().toString(),argExperimentName, this, socket, params);				
+//				break;
+//			}
+//		}
 		if (selectedJob == null)
 			return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);

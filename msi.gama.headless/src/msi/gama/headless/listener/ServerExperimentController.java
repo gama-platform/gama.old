@@ -98,7 +98,7 @@ public class ServerExperimentController implements IExperimentController {
 	
 	public  ManualExperimentJob _job;
 	/** The experiment. */
-	private final IExperimentPlan experiment;
+	private IExperimentPlan experiment;
 
 	/** The agent. */
 	private IExperimentAgent agent;
@@ -124,10 +124,11 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(final IExperimentPlan experiment, ManualExperimentJob j) { 
+	public ServerExperimentController(ManualExperimentJob j) { 
 		commands = new ArrayBlockingQueue<>(10);
+		_job=j;
 		executionThread = new MyRunnable(j);
-		this.experiment = experiment;
+//		this.experiment = experiment;
 //		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
@@ -142,7 +143,9 @@ public class ServerExperimentController implements IExperimentController {
 
 	@Override
 	public IExperimentPlan getExperiment() { return experiment; }
-
+	
+	public void setExperiment(final IExperimentPlan exp) { this.experiment=exp; }
+	
 	/**
 	 * Offer.
 	 *

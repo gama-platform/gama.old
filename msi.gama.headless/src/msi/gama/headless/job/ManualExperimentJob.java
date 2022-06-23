@@ -43,36 +43,41 @@ import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.Types; 
+import msi.gaml.types.Types;
 
 /**
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob {
 	protected WebSocketServer server;
-	public WebSocket socket; 
-	public GamaJsonList params; 
-	public IExperimentController controller;
+	public WebSocket socket;
+	public GamaJsonList params;
+	public ServerExperimentController controller;
 
-	public ManualExperimentJob(ExperimentJob j, WebSocketServer gamaWebSocketServer, WebSocket sk, final GamaJsonList p) {
-		super(j);
+	public ManualExperimentJob(final String sourcePath, final String exp, WebSocketServer gamaWebSocketServer,
+			WebSocket sk, final GamaJsonList p) {
+//		(final String sourcePath, final String exp, final long max, final String untilCond,
+//				final double s) 
+		super(sourcePath, exp, 0, "", 0);
 		server = gamaWebSocketServer;
 		socket = sk;
-		params = p;  
-		controller=new ServerExperimentController(j.getSimulation().getExperimentPlan(),this);
+		params = p;
+		controller = new ServerExperimentController(this);
 	}
-	
+
 	@Override
 	public void doStep() {
 //		this.step = simulator.step();
 	}
- 	
-	public void loadAndBuildWithJson( ) throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException, IOException, GamaHeadlessException {
+
+	public void loadAndBuildWithJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+			IOException, GamaHeadlessException {
 
 		this.load();
 		this.setup();
 //		initParam(p);
+
+		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
 		initEndContion("");
 
