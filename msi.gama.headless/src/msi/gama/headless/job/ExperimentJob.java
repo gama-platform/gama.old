@@ -89,20 +89,20 @@ public class ExperimentJob implements IExperimentJob {
 	protected Writer outputFile;
 	
 	/** The source path. */
-	private String sourcePath;
+	protected String sourcePath;
 	
 	/** The experiment name. */
 	public String experimentName;
 	
 	/** The model name. */
-	private String modelName;
+	protected String modelName;
 	
 	/** The seed. */
 	public double seed;
 	/**
 	 * current step
 	 */
-	protected long step;
+	public long step;
 
 	/**
 	 * id of current experiment
@@ -121,7 +121,7 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * simulator to be loaded
 	 */
-	public IRichExperiment simulator;
+	public volatile IRichExperiment simulator;
 
 	/**
 	 * Gets the simulation.

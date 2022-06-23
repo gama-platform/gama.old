@@ -43,7 +43,7 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamlIdiomsProvider; 
+import msi.gaml.compilation.GamlIdiomsProvider;
 
 public class GamaWebSocketServer extends WebSocketServer {
 
@@ -131,8 +131,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).controller.userStart();
-				}
-				socket.send(cmd_type);
+					ManualExperimentJob job = get_listener().getExperiment(socket_id, exp_id);
+					if (job.endCond.equals("")) {socket.send(cmd_type);}
+				}					
 				break;
 			case "step":
 				System.out.println("step " + exp_id);
@@ -171,13 +172,13 @@ public class GamaWebSocketServer extends WebSocketServer {
 				System.out.println("reload " + exp_id);
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
-					ManualExperimentJob job=get_listener().getExperiment(socket_id, exp_id);
-					job.params=(GamaJsonList) map.get("parameters");
+					ManualExperimentJob job = get_listener().getExperiment(socket_id, exp_id);
+					job.params = (GamaJsonList) map.get("parameters");
+					job.endCond = (map.get("until") != null ? map.get("until").toString() : "");
 					job.controller.userReload();
-					job.initEndContion(map.get("until") != null ? map.get("until").toString() : "");
 //					(GamaJsonList) map.get("parameters"),
 //					job.executionThread.run();
-					getDefaultApp().processorQueue.execute(((ServerExperimentController)job.controller).executionThread);
+//					getDefaultApp().processorQueue.execute(((ServerExperimentController)job.controller).executionThread);
 				}
 				break;
 			case "output":
@@ -207,19 +208,13 @@ public class GamaWebSocketServer extends WebSocketServer {
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					final boolean wasPaused = get_listener().getExperiment(socket_id, exp_id).controller.isPaused();
-					get_listener().getExperiment(socket_id, exp_id).controller.directPause();
-					try {
-						String res = "{\"result\":" + Jsoner.serialize(
-								processInput(get_listener().getExperiment(socket_id, exp_id).controller.getExperiment().getAgent(),
-										map.get("expr").toString()))
-								+ "}";
-						socket.send(res);
-					} catch (GamaRuntimeException e1) {
-						e1.printStackTrace();
-					} finally {
+					get_listener().getExperiment(socket_id, exp_id).controller.directPause(); 
+						String res = "{\"result\":" + Jsoner.serialize(processInput(
+								get_listener().getExperiment(socket_id, exp_id).controller.getExperiment().getAgent(),
+								map.get("expr").toString())) + "}";
+						socket.send(res); 
 						if (!wasPaused)
-							get_listener().getExperiment(socket_id, exp_id).controller.userStart();
-					}
+							get_listener().getExperiment(socket_id, exp_id).controller.userStart(); 
 				}
 				break;
 			case "exit":
@@ -358,15 +353,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 		ManualExperimentJob selectedJob = null;
 //		for (final IExperimentJob j : jb) {
 //			if (j.getExperimentName().equals(argExperimentName)) {
-				selectedJob = new ManualExperimentJob(ff.getAbsoluteFile().toString(),argExperimentName, this, socket, params);				
+		selectedJob = new ManualExperimentJob(ff.getAbsoluteFile().toString(), argExperimentName, this, socket, params);
 //				break;
 //			}
 //		}
 		if (selectedJob == null)
 			return;
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
+		selectedJob.endCond=end; 
 		selectedJob.controller.directOpenExperiment();
-		selectedJob.initEndContion(end);
 		if (get_listener().getExperimentsOf("" + socket.hashCode()) == null) {
 			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<String, ManualExperimentJob>();
 			get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
@@ -396,8 +391,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
 //		socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 //				+ geom.getLocation().x + "@" + geom.getLocation().y);
-		getDefaultApp().processorQueue.execute(((ServerExperimentController)selectedJob.controller).executionThread);
-		socket.send(res); 
+		getDefaultApp().processorQueue.execute(((ServerExperimentController) selectedJob.controller).executionThread);
+		socket.send(res);
 	}
 
 	protected String processInput(final IAgent agt, final String s) {
