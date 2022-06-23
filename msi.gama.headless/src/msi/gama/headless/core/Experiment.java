@@ -122,7 +122,7 @@ public class Experiment implements IExperiment {
 		
 		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
 		curExperiment.setHeadless(true);
-		curExperiment.setController(ec);
+		curExperiment.setController(ec.controller);
 
 		if(p!=null) {				
 			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {

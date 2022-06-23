@@ -92,13 +92,13 @@ public class ExperimentJob implements IExperimentJob {
 	private String sourcePath;
 	
 	/** The experiment name. */
-	protected String experimentName;
+	public String experimentName;
 	
 	/** The model name. */
 	private String modelName;
 	
 	/** The seed. */
-	protected double seed;
+	public double seed;
 	/**
 	 * current step
 	 */
@@ -116,7 +116,7 @@ public class ExperimentJob implements IExperimentJob {
 	protected String untilCond;
 	
 	/** The end condition. */
-	IExpression endCondition;
+	public IExpression endCondition;
 
 	/**
 	 * simulator to be loaded
