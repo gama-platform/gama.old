@@ -12,9 +12,12 @@ package msi.gama.headless.job;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -25,6 +28,8 @@ import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.headless.listener.ServerExperimentController;
@@ -33,6 +38,7 @@ import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -41,6 +47,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
@@ -49,12 +56,13 @@ import msi.gaml.types.Types;
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob {
-	protected WebSocketServer server;
+	public GamaWebSocketServer server;
 	public WebSocket socket;
 	public GamaJsonList params;
+	public String endCond="";
 	public ServerExperimentController controller;
 
-	public ManualExperimentJob(final String sourcePath, final String exp, WebSocketServer gamaWebSocketServer,
+	public ManualExperimentJob(final String sourcePath, final String exp, GamaWebSocketServer gamaWebSocketServer,
 			WebSocket sk, final GamaJsonList p) {
 //		(final String sourcePath, final String exp, final long max, final String untilCond,
 //				final double s) 
@@ -67,7 +75,17 @@ public class ManualExperimentJob extends ExperimentJob {
 
 	@Override
 	public void doStep() {
-//		this.step = simulator.step();
+		this.step = simulator.step();
+	}
+
+	@Override
+	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
+			GamaHeadlessException {
+		System.setProperty("user.dir", this.sourcePath);
+		final List<GamlCompilationError> errors = new ArrayList<>();
+		final IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath), errors);
+		this.modelName = mdl.getName();
+		this.simulator = new RichExperiment(mdl);
 	}
 
 	public void loadAndBuildWithJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
@@ -76,10 +94,9 @@ public class ManualExperimentJob extends ExperimentJob {
 		this.load();
 		this.setup();
 //		initParam(p);
-
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
-		initEndContion("");
+		initEndContion(endCond);
 
 	}
 
