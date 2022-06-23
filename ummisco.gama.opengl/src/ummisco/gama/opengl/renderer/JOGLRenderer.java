@@ -469,7 +469,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 */
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final GamaPoint mouse) {
-		return getCameraHelper().getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y));
+		return getCameraHelper().getWorldPositionFrom(new GamaPoint(mouse.x, mouse.y), new GamaPoint());
 	}
 
 	@Override

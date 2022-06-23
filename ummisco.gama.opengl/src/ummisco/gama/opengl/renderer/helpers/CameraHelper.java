@@ -167,13 +167,15 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * Update spherical coordinates from locations.
 	 */
 	public void updateSphericalCoordinatesFromLocations() {
-		final GamaPoint p = getPosition().minus(getTarget());
+		final GamaPoint p = getPosition();
+		final GamaPoint t = getTarget();
+		// final GamaPoint p = getPosition().minus(getTarget());
 		// setDistance(p.norm());
 
-		theta = Maths.toDeg * Math.atan2(p.y, p.x);
+		theta = Maths.toDeg * Math.atan2(p.y - t.y, p.x - t.x);
 		// See issue on camera_pos
 		if (theta == 0) { theta = -90; }
-		phi = Maths.toDeg * Math.acos(p.z / data.getCameraDistance());
+		phi = Maths.toDeg * Math.acos((p.z - t.z) / data.getCameraDistance());
 	}
 
 	/**
@@ -837,17 +839,34 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * @return the world position from
 	 */
 	public void computeMouseLocationInTheWorld() {
+
+		// getWorldPositionFrom(mousePosition, positionInTheWorld);
+		double distance = data.getCameraDistance();
+		double zFar = data.getzFar();
+		double zNear = data.getzNear();
 		OpenGL gl = renderer.getOpenGLHelper();
 		final double[] wcoord = new double[4];
 		final int[] viewport = gl.viewport;
 		final double mvmatrix[] = gl.mvmatrix;
 		final double projmatrix[] = gl.projmatrix;
-		final int x = (int) mousePosition.x, y = viewport[3] - (int) mousePosition.y;
+		final int x = (int) Math.round(mousePosition.x), y = (int) Math.round(viewport[3] - mousePosition.y);
 		pixelDepth.rewind();
 		gl.getGL().glReadPixels(x, y, 1, 1, GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, pixelDepth);
-		// DEBUG.OUT("Value retrieved for Z : " + pixelDepth.get(0));
-		glu.gluUnProject(x, y, pixelDepth.get(0), mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		positionInTheWorld.setLocation(wcoord[0], wcoord[1], 0);
+		double z = pixelDepth.get(0);
+
+		DEBUG.OUT("First value retrieved by gluUnproject for Z : " + z + " computing a camera distance of "
+				+ (1 - z) * (zFar - zNear) + " while the real one is " + distance);
+
+		// z = Math.min(1, 1 - distance / (2 * (zFar - zNear)));
+
+		// DEBUG.OUT("Value retrieved for Z : " + z + " with camera distance " + data.getCameraDistance());
+
+		if (z == 1d) {
+			getWorldPositionFrom(mousePosition, positionInTheWorld);
+		} else {
+			glu.gluUnProject(x, y, z, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+			positionInTheWorld.setLocation(wcoord[0], wcoord[1], 0);
+		}
 	}
 
 	/**
@@ -856,23 +875,18 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 * @param mouse
 	 * @return
 	 */
-	public GamaPoint getWorldPositionFrom(final GamaPoint mouse) {
+	public GamaPoint getWorldPositionFrom(final GamaPoint mouse, final GamaPoint result) {
 		final GamaPoint camLoc = getPosition();
 		OpenGL gl = renderer.getOpenGLHelper();
 		if (gl == null) return new GamaPoint();
 		final double[] wcoord = new double[4];
-		final int[] viewport = gl.viewport;
-		final double mvmatrix[] = gl.mvmatrix;
-		final double projmatrix[] = gl.projmatrix;
-		final double x = (int) mouse.x, y = viewport[3] - (int) mouse.y;
-		glu.gluUnProject(x, y, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		final GamaPoint v1 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
-		glu.gluUnProject(x, y, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
-		final GamaPoint v3 = v2.minus(v1).normalized();
-		final double distance = camLoc.z / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3);
-		final GamaPoint worldCoordinates = camLoc.plus(v3.times(distance));
-		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
+		final double x = (int) mouse.x, y = gl.viewport[3] - (int) mouse.y;
+		glu.gluUnProject(x, y, 0.1, gl.mvmatrix, 0, gl.projmatrix, 0, gl.viewport, 0, wcoord, 0);
+		result.setLocation(wcoord[0], wcoord[1], wcoord[2]);
+		glu.gluUnProject(x, y, 0.9, gl.mvmatrix, 0, gl.projmatrix, 0, gl.viewport, 0, wcoord, 0);
+		result.setLocation(wcoord[0] - result.x, wcoord[1] - result.y, wcoord[2] - result.z).normalize();
+		final double distance = camLoc.z / -result.z;
+		return result.setLocation(result.x * distance + camLoc.x, result.y * distance + camLoc.y, 0);
 	}
 
 	//
@@ -1444,7 +1458,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the mouse end
 	 */
 	public void defineROI(final GamaPoint mouseStart) {
-		final GamaPoint start = getWorldPositionFrom(mouseStart);
+		final GamaPoint start = getWorldPositionFrom(mouseStart, new GamaPoint());
 
 		roiEnvelope =
 				Envelope3D.of(start.x, positionInTheWorld.x, start.y, positionInTheWorld.y, 0, getMaxEnvDim() / 20d);
@@ -1460,7 +1474,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	public boolean mouseInROI(final GamaPoint mousePosition) {
 		final Envelope3D env = getROIEnvelope();
 		if (env == null) return false;
-		final GamaPoint p = getWorldPositionFrom(mousePosition);
+		final GamaPoint p = getWorldPositionFrom(mousePosition, new GamaPoint());
 		return env.contains(p);
 	}
 
