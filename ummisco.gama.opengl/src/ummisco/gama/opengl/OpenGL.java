@@ -407,9 +407,15 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
 		final double maxDim = getMaxEnvDim();
 		double zNear = getZNear();
-		if (zNear < 0.0) { zNear = maxDim / 100d; }
+		if (zNear < 0.0) {
+			zNear = maxDim / 100d;
+			data.setZNear(zNear);
+		}
 		double zFar = getZFar();
-		if (zFar < 0.0) { zFar = maxDim * 100d; }
+		if (zFar < 0.0) {
+			zFar = maxDim * 100d;
+			data.setZFar(zFar);
+		}
 
 		if (!getData().isOrtho()) {
 			try {
@@ -436,7 +442,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		// else {
 		// gl.glOrtho(-maxDim, maxDim, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 		// }
-		gl.glTranslated(0d, 0d, maxDim * 0.2);
+		//
+		// translateBy(0d, 0d, maxDim * 0.2);
 		getRenderer().getCameraHelper().animate();
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);

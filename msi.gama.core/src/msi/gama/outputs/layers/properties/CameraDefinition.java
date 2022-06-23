@@ -95,7 +95,9 @@ public class CameraDefinition extends AbstractDefinition implements ICameraDefin
 			// If it is a symbolic position
 			double w = scope.getSimulation().getWidth();
 			double h = scope.getSimulation().getHeight();
-			double max = Math.max(w, h) * 1.2;
+			double max = Math.max(w, h);
+			// * 1.2; // ??
+
 			location = computeLocation(pos, target, w, h, max);
 		} else {
 			location = Cast.asPoint(scope, temp);
