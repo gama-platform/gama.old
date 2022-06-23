@@ -813,7 +813,7 @@ public class LayeredDisplayData {
 	 * @param zF
 	 *            the new z far
 	 */
-	private void setZFar(final Double zF) {
+	public void setZFar(final Double zF) {
 		zFar = zF;
 
 	}
@@ -824,7 +824,7 @@ public class LayeredDisplayData {
 	 * @param zN
 	 *            the new z near
 	 */
-	private void setZNear(final Double zN) { zNear = zN; }
+	public void setZNear(final Double zN) { zNear = zN; }
 
 	/**
 	 * Update.
