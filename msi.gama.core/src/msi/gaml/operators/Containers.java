@@ -76,6 +76,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.operators.BinaryOperator;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaType;
+import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.IntStreamEx;
@@ -1605,6 +1606,7 @@ public class Containers {
 			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
 			category = IOperatorCategory.CONTAINER,
 			concept = {})
+	@validator (PlusListValidator.class)
 	@doc (
 			usages = @usage (
 					value = "if the right operand is an object of any type (except a container), " + IKeyword.PLUS
@@ -1620,8 +1622,30 @@ public class Containers {
 	@test ("[1,2,3,4,5,6] + 2 = [1,2,3,4,5,6,2]")
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
 		final IList result = notNull(scope, l1).listValue(scope, Types.NO_TYPE, false).copy(scope);
-		result.add(l);
+		result.addValue(scope, l);
 		return result;
+	}
+
+	public static class PlusListValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			IExpression item = arguments[1];
+			IExpression list = arguments[0];
+			IType valueType = arguments[1].getGamlType();
+			IContainerType contentType = (IContainerType) arguments[0].getGamlType().getContentType();
+			if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
+					&& !Types.isEmptyContainerCase(contentType, item)) {
+				StringBuilder message = new StringBuilder("The type of the elements of ").append(list.serialize(false))
+						.append(" (").append(contentType).append(") does not match with the type of the ");
+				message.append("argument");
+				message.append(" (").append(valueType).append("). ");
+				message.append("The argument will be casted to ").append(contentType).append(". ");
+				context.warning(message.toString(), IGamlIssue.WRONG_TYPE, emfContext);
+			}
+			return true;
+		}
+
 	}
 
 	/**
@@ -2661,9 +2685,7 @@ public class Containers {
 							equals = "[2::4, 4::8, 6::12] ") },
 			see = {})
 	public static IMap as_map(final IScope scope, final IContainer original, final IExpression filter) {
-		if (!(filter instanceof BinaryOperator pair))
-			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
-		if (!"::".equals(pair.getName()))
+		if (!(filter instanceof BinaryOperator pair) || !"::".equals(pair.getName()))
 			throw GamaRuntimeException.error("'as_map' expects a pair as second argument", scope);
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
