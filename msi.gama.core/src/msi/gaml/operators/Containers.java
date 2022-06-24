@@ -76,7 +76,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.operators.BinaryOperator;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaType;
-import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.IntStreamEx;
@@ -1633,7 +1632,7 @@ public class Containers {
 			IExpression item = arguments[1];
 			IExpression list = arguments[0];
 			IType valueType = arguments[1].getGamlType();
-			IContainerType contentType = (IContainerType) arguments[0].getGamlType().getContentType();
+			IType contentType = arguments[0].getGamlType().getContentType();
 			if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
 					&& !Types.isEmptyContainerCase(contentType, item)) {
 				StringBuilder message = new StringBuilder("The type of the elements of ").append(list.serialize(false))
