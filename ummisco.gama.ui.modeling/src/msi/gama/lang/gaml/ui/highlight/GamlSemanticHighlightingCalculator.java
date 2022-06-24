@@ -308,7 +308,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 				return text.equals(s.substring(0, length - 1));
 			case '\"':
 			case '\'':
-				return s.charAt(0) == last && text.equals(s.substring(1, length - 1));
+				return s.charAt(0) == last && length > 1 && text.equals(s.substring(1, length - 1));
 
 		}
 		return false;
