@@ -195,10 +195,11 @@ public class ViewsHelper {
 	 * @param gamaViewPart
 	 *            the gama view part
 	 */
-	public static void hideView(final IViewPart gamaViewPart) {
+	public static void hideView(final IViewPart part) {
+		if (part == null) return;
 		final IWorkbenchPage activePage = getPage();
 		if (activePage == null) return;
-		activePage.hideView(gamaViewPart);
+		activePage.hideView(part);
 
 	}
 
@@ -303,7 +304,10 @@ public class ViewsHelper {
 	 *            the view
 	 */
 	public static void activate(final IWorkbenchPart view) {
-		WorkbenchHelper.getPage().activate(view);
+		if (view == null) return;
+		final IWorkbenchPage activePage = getPage();
+		if (activePage == null) return;
+		activePage.activate(view);
 	}
 
 	/**
@@ -313,7 +317,10 @@ public class ViewsHelper {
 	 *            the view
 	 */
 	public static void bringToFront(final IWorkbenchPart view) {
-		WorkbenchHelper.getPage().bringToTop(view);
+		if (view == null) return;
+		final IWorkbenchPage activePage = getPage();
+		if (activePage == null) return;
+		activePage.bringToTop(view);
 	}
 
 	/**
