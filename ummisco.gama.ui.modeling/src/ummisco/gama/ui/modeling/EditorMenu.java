@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.modeling;
 
+import static ummisco.gama.ui.resources.GamaIcons.create;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,67 +65,14 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class EditorMenu extends ContributionItem implements IWorkbenchContribution {
 
-	// private static EditorMenu INSTANCE;
-
 	/** The mark pref. */
-	// MenuItem mark;
 	Pref<Boolean> markPref;
-
-	/**
-	 * Instantiates a new editor menu.
-	 */
-	public EditorMenu() {
-		// INSTANCE = this;
-	}
-
-	// public static EditorMenu getInstance() {
-	// return INSTANCE;
-	// }
-
-	// public void editorChanged() {
-	// line.setSelection(getEditor().isLineNumberRulerVisible());
-	// folding.setSelection(getEditor().isRangeIndicatorEnabled());
-	// box.setSelection(getEditor().isDecorationEnabled());
-	// initializePreferences();
-	// mark.setSelection(markPref.getValue());
-	// }
-
-	/**
-	 * Initialize preferences.
-	 */
-	private void initializePreferences() {
-		// if (markPref == null) {
-		// markPref = GamaPreferences.get("pref_editor_mark_occurrences", Boolean.class);
-		// // final IPreferenceChangeListener<Boolean> change = new IPreferenceChangeListener<Boolean>() {
-		// //
-		// // @Override
-		// // public boolean beforeValueChange(final Boolean newValue) {
-		// // return true;
-		// // }
-		// //
-		// // @Override
-		// // public void afterValueChange(final Boolean newValue) {
-		// // mark.setSelection(newValue);
-		// // }
-		// // };
-		// // markPref.addChangeListener(change);
-		// // final IPreferenceStore store = getEditor().getAdvancedPreferenceStore();
-		// // store.addPropertyChangeListener(event -> {
-		// // final String id = event.getProperty();
-		// // if (id.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)) {
-		// // line.setSelection((Boolean) event.getNewValue());
-		// // }
-		// // });
-		// }
-
-	}
 
 	@Override
 	public void initialize(final IServiceLocator serviceLocator) {}
 
 	@Override
 	public void fill(final Menu m, final int index) {
-
 		final MenuItem menuItem = new MenuItem(m, SWT.CASCADE);
 		menuItem.setText("Model");
 		final Menu menu = new Menu(menuItem);
@@ -151,11 +100,6 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				createOtherExperiments(menu);
 				GamaMenu.separate(menu);
 				createValidate(menu);
-				// line.setSelection(getEditor().isLineNumberRulerVisible());
-				// folding.setSelection(getEditor().isRangeIndicatorEnabled());
-				// box.setSelection(getEditor().isDecorationEnabled());
-				initializePreferences();
-				// mark.setSelection(markPref.getValue());
 			}
 			createValidateAll(menu);
 		});
@@ -405,9 +349,10 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 */
 	private void createBoxToggle(final Menu menu) {
 		final MenuItem box = new MenuItem(menu, SWT.CHECK);
+		boolean selected = getEditor().isDecorationEnabled();
 		box.setText(" Colorize code sections");
-		box.setImage(GamaIcons.create("toggle.box").image());
-		box.setSelection(getEditor().isDecorationEnabled());
+		box.setImage(selected ? create("toggle.box").image() : create("toggle.box").image());
+		box.setSelection(selected);
 		box.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -426,8 +371,10 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createMarkToggle(final Menu menu) {
 		final MenuItem mark = new MenuItem(menu, SWT.CHECK);
 		mark.setText(" Mark occurences of symbols");
-		mark.setImage(GamaIcons.create("toggle.mark").image());
+		boolean selected = markPref.getValue();
 		mark.setSelection(markPref.getValue());
+		mark.setImage(selected ? create("toggle.mark").image() : create("toggle.mark").disabled());
+
 		mark.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -447,8 +394,9 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createOverviewToggle(final Menu menu) {
 		final MenuItem overview = new MenuItem(menu, SWT.CHECK);
 		overview.setText(" Show markers overview");
-		overview.setSelection(getEditor().isOverviewRulerVisible());
-		overview.setImage(GamaIcons.create("toggle.overview").image());
+		boolean selected = getEditor().isOverviewRulerVisible();
+		overview.setSelection(selected);
+		overview.setImage(selected ? create("toggle.overview").image() : create("toggle.overview").disabled());
 		overview.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -470,8 +418,10 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createFoldingToggle(final Menu menu) {
 		final MenuItem folding = new MenuItem(menu, SWT.CHECK);
 		folding.setText(" Fold code sections");
-		folding.setImage(GamaIcons.create("toggle.folding").image());
-		folding.setSelection(getEditor().isRangeIndicatorEnabled());
+
+		boolean selected = getEditor().isRangeIndicatorEnabled();
+		folding.setSelection(selected);
+		folding.setImage(selected ? create("toggle.folding").image() : create("toggle.folding").disabled());
 		folding.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -488,8 +438,9 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createLineToggle(final Menu menu) {
 		final MenuItem line = new MenuItem(menu, SWT.CHECK);
 		line.setText(" Display line number");
-		line.setImage(GamaIcons.create("toggle.numbers").image());
-		line.setSelection(getEditor().isLineNumberRulerVisible());
+		boolean selected = getEditor().isLineNumberRulerVisible();
+		line.setSelection(selected);
+		line.setImage(selected ? create("toggle.numbers").image() : create("toggle.numbers").disabled());
 		line.addSelectionListener(new SelectionAdapter() {
 
 			@Override
