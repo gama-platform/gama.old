@@ -177,9 +177,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void setMenuManager(final Object menuManager) {
-		this.menuManager = (DisplaySurfaceMenu) menuManager;
-	}
+	public void setMenuManager(final Object menuManager) { this.menuManager = (DisplaySurfaceMenu) menuManager; }
 
 	@Override
 	public int getFPS() {
@@ -191,9 +189,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public void dispatchKeyEvent(final char e) {
 		DEBUG.OUT("Key received by the surface " + e);
-		for (final IEventLayerListener gl : listeners) {
-			gl.keyPressed(String.valueOf(e));
-		}
+		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
 	@Override
@@ -216,9 +212,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Point getMousePosition() {
-		return mousePosition;
-	}
+	public Point getMousePosition() { return mousePosition; }
 
 	@Override
 	public void dispatchMouseEvent(final int swtMouseEvent, final int x, final int y) {
@@ -259,23 +253,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public IGraphicsScope getScope() {
-		return scope;
-	}
+	public IGraphicsScope getScope() { return scope; }
 
 	@Override
-	public ILayerManager getManager() {
-		return layerManager;
-	}
+	public ILayerManager getManager() { return layerManager; }
 
 	/**
 	 * Gets the origin.
 	 *
 	 * @return the origin
 	 */
-	Point getOrigin() {
-		return viewPort.getLocation();
-	}
+	Point getOrigin() { return viewPort.getLocation(); }
 
 	@Override
 	public void setFont(final Font f) {}
@@ -345,18 +333,14 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 *
 	 * @return the origin X
 	 */
-	protected int getOriginX() {
-		return getOrigin().x;
-	}
+	protected int getOriginX() { return getOrigin().x; }
 
 	/**
 	 * Gets the origin Y.
 	 *
 	 * @return the origin Y
 	 */
-	protected int getOriginY() {
-		return getOrigin().y;
-	}
+	protected int getOriginY() { return getOrigin().y; }
 
 	/**
 	 * Sets the origin.
@@ -522,9 +506,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 *
 	 * @return the i graphics
 	 */
-	AWTDisplayGraphics getIGraphics() {
-		return (AWTDisplayGraphics) iGraphics;
-	}
+	AWTDisplayGraphics getIGraphics() { return (AWTDisplayGraphics) iGraphics; }
 
 	@Override
 	public GamaPoint getModelCoordinates() {
@@ -560,19 +542,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public double getEnvWidth() {
-		return output.getData().getEnvWidth();
-	}
+	public double getEnvWidth() { return output.getData().getEnvWidth(); }
 
 	@Override
-	public double getEnvHeight() {
-		return output.getData().getEnvHeight();
-	}
+	public double getEnvHeight() { return output.getData().getEnvHeight(); }
 
 	@Override
-	public double getDisplayWidth() {
-		return viewPort.width;
-	}
+	public double getDisplayWidth() { return viewPort.width; }
 
 	/**
 	 * Sets the display width.
@@ -580,19 +556,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @param displayWidth
 	 *            the new display width
 	 */
-	protected void setDisplayWidth(final int displayWidth) {
-		viewPort.width = displayWidth /*- 2*/;
-	}
+	protected void setDisplayWidth(final int displayWidth) { viewPort.width = displayWidth /*- 2*/; }
 
 	@Override
-	public LayeredDisplayData getData() {
-		return output.getData();
-	}
+	public LayeredDisplayData getData() { return output.getData(); }
 
 	@Override
-	public double getDisplayHeight() {
-		return viewPort.height;
-	}
+	public double getDisplayHeight() { return viewPort.height; }
 
 	/**
 	 * Sets the display height.
@@ -600,14 +570,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 * @param displayHeight
 	 *            the new display height
 	 */
-	protected void setDisplayHeight(final int displayHeight) {
-		viewPort.height = displayHeight /*- 2*/;
-	}
+	protected void setDisplayHeight(final int displayHeight) { viewPort.height = displayHeight /*- 2*/; }
 
 	@Override
-	public LayeredDisplayOutput getOutput() {
-		return output;
-	}
+	public LayeredDisplayOutput getOutput() { return output; }
 
 	/**
 	 * New zoom level.
@@ -616,12 +582,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 *            the new zoom level
 	 */
 	public void newZoomLevel(final double newZoomLevel) {
-		getData().setZoomLevel(newZoomLevel, true, false);
+		getData().setZoomLevel(newZoomLevel, true);
 	}
 
 	@Override
 	public double getZoomLevel() {
-		if (getData().getZoomLevel() == null) { getData().setZoomLevel(1.0, true, false); }
+		if (getData().getZoomLevel() == null) { getData().setZoomLevel(1.0, true); }
 		return getData().getZoomLevel();
 	}
 
@@ -728,9 +694,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Collection<IEventLayerListener> getLayerListeners() {
-		return listeners;
-	}
+	public Collection<IEventLayerListener> getLayerListeners() { return listeners; }
 
 	@Override
 	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
@@ -843,9 +807,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public boolean isDisposed() {
-		return disposed;
-	}
+	public boolean isDisposed() { return disposed; }
 
 	@Override
 	public Font computeFont(final Font f) {
@@ -857,10 +819,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	java.util.function.Supplier<Boolean> visibilityBlock;
 
-	public void setVisibility(java.util.function.Supplier<Boolean> visibilityBlock) {
+	public void setVisibility(final java.util.function.Supplier<Boolean> visibilityBlock) {
 		this.visibilityBlock = visibilityBlock;
 	}
 
+	@Override
 	public boolean isVisible() {
 		boolean v = super.isVisible();
 		if (!v) return false;

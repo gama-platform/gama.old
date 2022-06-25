@@ -246,7 +246,7 @@ public class LayerObject {
 	 */
 	protected void increaseZ(final Trace list) {
 		double currentZLayer = renderer.getMaxEnvDim() * layer.getData().getPosition().getZ();
-		currentZLayer += layer.getData().getAddedElevation() * renderer.getMaxEnvDim();
+		// currentZLayer += layer.getData().getAddedElevation() * renderer.getMaxEnvDim();
 		list.offset.z = currentZLayer;
 	}
 

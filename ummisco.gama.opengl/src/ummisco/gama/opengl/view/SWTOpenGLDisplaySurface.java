@@ -293,7 +293,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		// return;
 		renderer.getCameraHelper().initialize();
 		output.getData().resetRotation();
-		output.getData().setZoomLevel(renderer.getCameraHelper().zoomLevel(), true, true);
+		output.getData().setZoomLevel(renderer.getCameraHelper().zoomLevel(), true);
 		// output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true, true);
 		zoomFit = true;
 
@@ -501,9 +501,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public double getZoomLevel() {
-		if (output.getData().getZoomLevel() == null) {
-			output.getData().setZoomLevel(computeInitialZoomLevel(), true, false);
-		}
+		if (output.getData().getZoomLevel() == null) { output.getData().setZoomLevel(computeInitialZoomLevel(), true); }
 		return output.getData().getZoomLevel();
 	}
 
@@ -671,20 +669,20 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			// case CHANGE_CAMERA:
 			// renderer.getCameraHelper().setupCamera();
 			// break;
-			case SPLIT_LAYER:
-				final double gap = (Double) value;
-				// if (DEBUG.IS_ON()) {
-				// DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
-				// }
-				double currentElevation = 0;
+			// case SPLIT_LAYER:
+			// final double gap = (Double) value;
+			// if (DEBUG.IS_ON()) {
+			// DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
+			// }
+			// double currentElevation = 0;
 
-				for (final ILayer layer : this.getManager().getItems()) {
-					layer.getData().addElevation(currentElevation);
-					currentElevation += gap;
-				}
-				renderer.getSceneHelper().layerOffsetChanged();
+			// for (final ILayer layer : this.getManager().getItems()) {
+			// layer.getData().addElevation(currentElevation);
+			// currentElevation += gap;
+			// }
+			// renderer.getSceneHelper().layerOffsetChanged();
 
-				break;
+			// break;
 			// case CAMERA_POS:
 			// renderer.getCameraHelper().updatePosition();
 			// break;

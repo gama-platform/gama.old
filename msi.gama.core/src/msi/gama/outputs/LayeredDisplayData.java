@@ -62,38 +62,11 @@ public class LayeredDisplayData {
 	 */
 	public enum Changes {
 
-		/** The split layer. */
-		SPLIT_LAYER,
-
-		/** The change camera. */
-		CHANGE_CAMERA,
-
-		/** The camera pos. */
-		CAMERA_POS,
-
-		/** The camera target. */
-		CAMERA_TARGET,
-
-		/** The camera preset. */
-		CAMERA_PRESET,
-
 		/** The background. */
 		BACKGROUND,
 
-		/** The highlight. */
-		HIGHLIGHT,
-
 		/** The zoom. */
-		ZOOM,
-
-		/** The keystone. */
-		KEYSTONE,
-
-		/** The antialias. */
-		ANTIALIAS,
-
-		/** The rotation. */
-		ROTATION;
+		ZOOM
 	}
 
 	/** The Constant JAVA2D. */
@@ -241,12 +214,6 @@ public class LayeredDisplayData {
 
 	/** The is drawing environment. */
 	private boolean isDrawingEnvironment = GamaPreferences.Displays.CORE_DRAW_ENV.getValue();
-
-	/** The split distance. */
-	private Double splitDistance;
-
-	/** The is splitting layers. */
-	private boolean isSplittingLayers;
 
 	/** The constant background. */
 	private boolean constantBackground = true;
@@ -450,10 +417,7 @@ public class LayeredDisplayData {
 	 * @param hc
 	 *            the new highlight color
 	 */
-	public void setHighlightColor(final GamaColor hc) {
-		highlightColor = hc;
-		notifyListeners(Changes.HIGHLIGHT, highlightColor);
-	}
+	public void setHighlightColor(final GamaColor hc) { highlightColor = hc; }
 
 	/**
 	 * Checks if is antialias.
@@ -468,66 +432,7 @@ public class LayeredDisplayData {
 	 * @param a
 	 *            the new antialias
 	 */
-	public void setAntialias(final boolean a) {
-		isAntialiasing = a;
-		notifyListeners(Changes.ANTIALIAS, a);
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isLayerSplitted() { return isSplittingLayers; }
-
-	/**
-	 * Sets the layer splitted.
-	 *
-	 * @param s
-	 *            the new layer splitted
-	 */
-	public void setLayerSplitted(final boolean s) {
-		isSplittingLayers = s;
-		if (s) {
-			notifyListeners(Changes.SPLIT_LAYER, splitDistance);
-		} else {
-			notifyListeners(Changes.SPLIT_LAYER, 0d);
-		}
-	}
-
-	/**
-	 * Gets the split distance.
-	 *
-	 * @return the split distance
-	 */
-	public Double getSplitDistance() {
-		if (splitDistance == null) { splitDistance = 0.05; }
-		return splitDistance;
-	}
-
-	/**
-	 * Sets the split distance.
-	 *
-	 * @param s
-	 *            the new split distance
-	 */
-	public void setSplitDistance(final Double s) {
-		splitDistance = s;
-		if (isSplittingLayers) { notifyListeners(Changes.SPLIT_LAYER, s); }
-	}
-
-	// /**
-	// * Checks if is synchronized.
-	// *
-	// * @return true, if is synchronized
-	// */
-	// public boolean isSynchronized() { return isSynchronized; }
-	//
-	// /**
-	// * Sets the synchronized.
-	// *
-	// * @param isSynchronized
-	// * the new synchronized
-	// */
-	// public void setSynchronized(final boolean isSynchronized) { this.isSynchronized = isSynchronized; }
+	public void setAntialias(final boolean a) { isAntialiasing = a; }
 
 	/**
 	 * @return the zoomLevel
@@ -538,7 +443,7 @@ public class LayeredDisplayData {
 	 * @param zoomLevel
 	 *            the zoomLevel to set
 	 */
-	public void setZoomLevel(final Double zoomLevel, final boolean notify, final boolean force) {
+	public void setZoomLevel(final Double zoomLevel, final boolean notify) {
 		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) return;
 		this.zoomLevel = zoomLevel;
 		if (notify) { notifyListeners(Changes.ZOOM, this.zoomLevel); }
@@ -569,8 +474,7 @@ public class LayeredDisplayData {
 	 */
 	public void setKeystone(final List<GamaPoint> value) {
 		if (value == null) return;
-		this.keystone.setTo(value.toArray(new GamaPoint[4]));
-		notifyListeners(Changes.KEYSTONE, this.keystone);
+		keystone.setTo(value.toArray(new GamaPoint[4]));
 	}
 
 	/**
@@ -582,7 +486,6 @@ public class LayeredDisplayData {
 	public void setKeystone(final ICoordinates value) {
 		if (value == null) return;
 		this.keystone.setTo(value.toCoordinateArray());
-		notifyListeners(Changes.KEYSTONE, this.keystone);
 	}
 
 	/**
@@ -688,52 +591,6 @@ public class LayeredDisplayData {
 
 		final IExpression lightOn = facets.getExpr(IKeyword.IS_LIGHT_ON);
 		if (lightOn != null) { setLightOn(Cast.asBool(scope, lightOn.value(scope))); }
-		//
-		// final IExpression light2 = facets.getExpr(IKeyword.DIFFUSE_LIGHT);
-		// // this facet is deprecated...
-		// if (light2 != null) {
-		// setLightActive(1, true);
-		// if (light2.getGamlType().equals(Types.COLOR)) {
-		// setDiffuseLightColor(1, Cast.asColor(scope, light2.value(scope)));
-		// } else {
-		// final int meanValue = Cast.asInt(scope, light2.value(scope));
-		// setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
-		// }
-		// }
-		//
-		// final IExpression light3 = facets.getExpr(IKeyword.DIFFUSE_LIGHT_POS);
-		// // this facet is deprecated...
-		// if (light3 != null) {
-		// setLightActive(1, true);
-		// setLightDirection(1, Cast.asPoint(scope, light3.value(scope)));
-		// }
-
-		// final IExpression drawLights = facets.getExpr(IKeyword.DRAW_DIFFUSE_LIGHT);
-		// if (drawLights != null && Cast.asBool(scope, drawLights.value(scope)) == true) {
-		// // set the drawLight attribute to true for all the already
-		// // existing light
-		// for (int i = 0; i < 8; i++) {
-		// boolean lightAlreadyCreated = false;
-		// for (final LightPropertiesStructure lightProp : getDiffuseLights()) {
-		// if (lightProp.id == i) {
-		// lightProp.drawLight = true;
-		// lightAlreadyCreated = true;
-		// }
-		// }
-		// // if the light does not exist yet, create it by using the
-		// // method "setLightActive", and set the drawLight attr to
-		// // true.
-		// if (!lightAlreadyCreated) {
-		// if (i < 2) {
-		// setLightActive(i, true);
-		// } else {
-		// setLightActive(i, false);
-		// }
-		// setDrawLight(i, true);
-		// }
-		// lightAlreadyCreated = false;
-		// }
-		// }
 
 		initializePresetCameraDefinitions();
 		cameraNameExpression = facets.getExpr(IKeyword.CAMERA);
@@ -961,7 +818,7 @@ public class LayeredDisplayData {
 		resetCamera();
 		camera = cameraDefinitions.get(newValue);
 		if (camera == null) { camera = cameraDefinitions.get(IKeyword.DEFAULT); }
-		notifyListeners(Changes.CAMERA_PRESET, newValue);
+		// notifyListeners(Changes.CAMERA_PRESET, newValue);
 	}
 
 	/**
@@ -977,7 +834,7 @@ public class LayeredDisplayData {
 		// resetCamera();
 		camera = cameraDefinitions.get(newValue);
 		if (camera == null) { camera = cameraDefinitions.get(IKeyword.DEFAULT); }
-		notifyListeners(Changes.CAMERA_PRESET, newValue);
+		// notifyListeners(Changes.CAMERA_PRESET, newValue);
 	}
 
 	/**
@@ -990,7 +847,7 @@ public class LayeredDisplayData {
 	 *            the cameraPos to set
 	 */
 	public void setCameraPos(final GamaPoint point) {
-		if (camera.setLocation(point)) { notifyListeners(Changes.CAMERA_POS, point); }
+		camera.setLocation(point);
 	}
 
 	/**
@@ -1003,7 +860,7 @@ public class LayeredDisplayData {
 	 *            the cameraLookPos to set
 	 */
 	public void setCameraTarget(final GamaPoint point) {
-		if (camera.setTarget(point)) { notifyListeners(Changes.CAMERA_TARGET, point); }
+		camera.setTarget(point);
 	}
 
 	/**

@@ -50,6 +50,40 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		DEBUG.ON();
 	}
 
+	// class IntermediaryState {
+	//
+	// private GamaPoint cameraPos;
+	// private GamaPoint cameraTarget;
+	// private Double zoomLevel;
+	// private String cameraName;
+	// private Double cameraDistance;
+	// private Boolean cameraLocked;
+	//
+	// public void setCameraPos(final GamaPoint p) { cameraPos = p; }
+	//
+	// public void setCameraTarget(final GamaPoint p) { cameraTarget = p; }
+	//
+	// public void setZoomLevel(final Double z) { zoomLevel = z; }
+	//
+	// public void setCameraLocked(final boolean b) { cameraLocked = b; }
+	//
+	// public void setCameraNameFromUser(final String p) { cameraName = p; }
+	//
+	// public void setCameraDistance(final double d) { cameraDistance = d; }
+	//
+	// public void transferToData() {
+	// if (cameraPos != null) { data.setCameraPos(cameraPos); }
+	// if (cameraTarget != null) { data.setCameraTarget(cameraTarget); }
+	// if (cameraLocked != null) { data.setCameraLocked(cameraLocked); }
+	// if (zoomLevel != null) { data.setZoomLevel(zoomLevel, true); }
+	// if (cameraName != null) { data.setCameraNameFromUser(cameraName); }
+	// if (cameraDistance != null) { data.setCameraDistance(cameraDistance); }
+	// }
+	//
+	// }
+
+	// private final IntermediaryState intermediaryState = new IntermediaryState();
+
 	/** The glu. */
 	private final GLU glu;
 
@@ -135,8 +169,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	public void initialize() {
 		flipped = false;
 		initialized = false;
-		// updatePosition();
-		// updateTarget();
 		data.resetCamera();
 		updateSphericalCoordinatesFromLocations();
 	}
@@ -227,13 +259,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		flipped = false;
 		initialized = false;
 		update();
-		data.setZoomLevel(zoomLevel(), true, true);
+		data.setZoomLevel(zoomLevel(), true);
 	}
 
 	/**
 	 * Update.
 	 */
 	public void update() {
+		// data.transferToData();
 		updateSphericalCoordinatesFromLocations();
 		if (initialized) { drawRotationHelper(); }
 		initialized = true;
@@ -414,10 +447,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent e) {
-		invokeOnGLThread(drawable -> {
-			if (!data.isCameraLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
-			return false;
-		});
+		// invokeOnGLThread(drawable -> {
+		if (!data.isCameraLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
+		// return false;
+		// });
 	}
 
 	/**
@@ -460,11 +493,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseMoved(final com.jogamp.newt.event.MouseEvent e) {
-		invokeOnGLThread(drawable -> {
-			internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
-					isControlDown(e), e.isShiftDown());
-			return false;
-		});
+		// invokeOnGLThread(drawable -> {
+		internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
+				isControlDown(e), e.isShiftDown());
+		// return false;
+		// });
 	}
 
 	/**
@@ -643,10 +676,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 				final int corner = clickOnKeystone(x, y);
 				if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
 			} else {
-				invokeOnGLThread(drawable -> {
-					getRenderer().getSurface().zoomFit();
-					return false;
-				});
+				// invokeOnGLThread(drawable -> {
+				getRenderer().getSurface().zoomFit();
+				// return false;
+				// });
 			}
 		}
 	}
@@ -669,12 +702,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
-		invokeOnGLThread(drawable -> {
-			final int x = autoScaleUp(e.getX());
-			final int y = autoScaleUp(e.getY());
-			internalMouseDown(x, y, e.getButton(), isControlDown(e), e.isShiftDown());
-			return false;
-		});
+		// invokeOnGLThread(drawable -> {
+		final int x = autoScaleUp(e.getX());
+		final int y = autoScaleUp(e.getY());
+		internalMouseDown(x, y, e.getButton(), isControlDown(e), e.isShiftDown());
+		// return false;
+		// });
 	}
 
 	/**
@@ -784,12 +817,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseReleased(final com.jogamp.newt.event.MouseEvent e) {
-		invokeOnGLThread(drawable -> {
-			// if (cameraInteraction) {
-			internalMouseUp(e.getButton(), e.isShiftDown());
-			// }
-			return false;
-		});
+		// invokeOnGLThread(drawable -> {
+		// if (cameraInteraction) {
+		internalMouseUp(e.getButton(), e.isShiftDown());
+		// }
+		// return false;
+		// });
 	}
 
 	/**
@@ -1337,7 +1370,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final double step = distance != 0d ? distance / 10d * GamaPreferences.Displays.OPENGL_ZOOM.getValue() : 0.1d;
 		data.setCameraDistance(distance + (in ? -step : step));
 		// zoom(zoomLevel());
-		data.setZoomLevel(zoomLevel(), true, false);
+		data.setZoomLevel(zoomLevel(), true);
 	}
 
 	/**
@@ -1358,7 +1391,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final GamaPoint centre = env.centre();
 		// we suppose y is already negated
 		data.setCameraTarget(new GamaPoint(centre.x, centre.y, centre.z));
-		data.setZoomLevel(zoomLevel(), true, false);
+		data.setZoomLevel(zoomLevel(), true);
 		/**
 		 * Draw rotation helper.
 		 */
@@ -1392,23 +1425,23 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	}
 
 	@Override
-	public Collection<String> getCameraNames() { return getData().getCameraNames(); }
+	public Collection<String> getCameraNames() { return data.getCameraNames(); }
 
 	@Override
 	public void setCameraName(final String p) {
-		getData().setCameraNameFromUser(p);
+		data.setCameraNameFromUser(p);
 		applyPreset(p);
 	}
 
 	@Override
-	public String getCameraName() { return getData().getCameraName(); }
+	public String getCameraName() { return data.getCameraName(); }
 
 	@Override
-	public boolean isCameraLocked() { return getData().isCameraLocked(); }
+	public boolean isCameraLocked() { return data.isCameraLocked(); }
 
 	@Override
 	public void toggleCamera() {
-		getData().setCameraLocked(!getData().isCameraLocked());
+		data.setCameraLocked(!data.isCameraLocked());
 	}
 
 	@Override

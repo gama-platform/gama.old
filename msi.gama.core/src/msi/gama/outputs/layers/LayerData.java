@@ -55,7 +55,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	protected final Point sizeInPixels = new Point();
 
 	/** The added elevation. */
-	protected double addedElevation;
+	// protected double addedElevation;
 
 	/** The size is in pixels. */
 	boolean positionIsInPixels, sizeIsInPixels;
@@ -154,11 +154,11 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		position = create(POSITION, new GamaPoint(x, y, z));
 		positionIsInPixels = false;
 	}
-
-	@Override
-	public void addElevation(final double elevation) {
-		addedElevation = elevation;
-	}
+	//
+	// @Override
+	// public void addElevation(final double elevation) {
+	// addedElevation = elevation;
+	// }
 
 	@Override
 	public final Double getTransparency(final IScope scope) {
@@ -301,7 +301,7 @@ public class LayerData extends AttributeHolder implements ILayerData {
 		if (isVisible() != b) { visible = create(VISIBLE, BOOL, b); }
 	}
 
-	@Override
-	public double getAddedElevation() { return addedElevation; }
+	// @Override
+	// public double getAddedElevation() { return addedElevation; }
 
 }

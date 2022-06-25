@@ -183,13 +183,13 @@ public interface ILayerData {
 	 */
 	void computePixelsDimensions(IGraphics g);
 
-	/**
-	 * Adds the elevation.
-	 *
-	 * @param currentElevation
-	 *            the current elevation
-	 */
-	void addElevation(double currentElevation);
+	// /**
+	// * Adds the elevation.
+	// *
+	// * @param currentElevation
+	// * the current elevation
+	// */
+	// void addElevation(double currentElevation);
 
 	/**
 	 * Sets the visible region.
@@ -211,7 +211,7 @@ public interface ILayerData {
 	 *
 	 * @return the added elevation
 	 */
-	double getAddedElevation();
+	// double getAddedElevation();
 
 	/**
 	 * Whether the layer is to be refreshed dynamically everytime the surface displays itself
