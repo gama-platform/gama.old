@@ -447,10 +447,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent e) {
-		// invokeOnGLThread(drawable -> {
-		if (!data.isCameraLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
-		// return false;
-		// });
+		invokeOnGLThread(drawable -> {
+			if (!data.isCameraLocked()) { internalMouseScrolled((int) e.getRotation()[1]); }
+			return false;
+		});
 	}
 
 	/**
@@ -493,11 +493,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseMoved(final com.jogamp.newt.event.MouseEvent e) {
-		// invokeOnGLThread(drawable -> {
-		internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
-				isControlDown(e), e.isShiftDown());
-		// return false;
-		// });
+		invokeOnGLThread(drawable -> {
+			internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
+					isControlDown(e), e.isShiftDown());
+			return false;
+		});
 	}
 
 	/**
@@ -676,10 +676,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 				final int corner = clickOnKeystone(x, y);
 				if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
 			} else {
-				// invokeOnGLThread(drawable -> {
-				getRenderer().getSurface().zoomFit();
-				// return false;
-				// });
+				invokeOnGLThread(drawable -> {
+					getRenderer().getSurface().zoomFit();
+					return false;
+				});
 			}
 		}
 	}
@@ -702,12 +702,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
-		// invokeOnGLThread(drawable -> {
-		final int x = autoScaleUp(e.getX());
-		final int y = autoScaleUp(e.getY());
-		internalMouseDown(x, y, e.getButton(), isControlDown(e), e.isShiftDown());
-		// return false;
-		// });
+		invokeOnGLThread(drawable -> {
+			final int x = autoScaleUp(e.getX());
+			final int y = autoScaleUp(e.getY());
+			internalMouseDown(x, y, e.getButton(), isControlDown(e), e.isShiftDown());
+			return false;
+		});
 	}
 
 	/**
@@ -817,12 +817,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mouseReleased(final com.jogamp.newt.event.MouseEvent e) {
-		// invokeOnGLThread(drawable -> {
-		// if (cameraInteraction) {
-		internalMouseUp(e.getButton(), e.isShiftDown());
-		// }
-		// return false;
-		// });
+		invokeOnGLThread(drawable -> {
+			// if (cameraInteraction) {
+			internalMouseUp(e.getButton(), e.isShiftDown());
+			// }
+			return false;
+		});
 	}
 
 	/**
