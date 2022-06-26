@@ -50,6 +50,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -129,6 +130,10 @@ import ummisco.gama.dev.utils.DEBUG;
 						deprecated = "Use 'gama.workspace_path' or 'gama.workspace' instead",
 						value = "Contains the absolute path to the workspace of GAMA",
 						comment = "Always terminated with a trailing separator")),
+		@variable (
+				name = IKeyword.PARAMETERS,
+				type = IType.MAP, 
+				doc = @doc ("A parameters set of this experiment agent")),
 		@variable (
 				name = ExperimentAgent.PROJECT_PATH,
 				type = IType.STRING,
@@ -522,6 +527,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			value = PlatformAgent.WORKSPACE_PATH,
 			initializer = true)
 	public String getWorkspacePath() { return GAMA.getPlatformAgent().getWorkspacePath(); }
+
+
+	/**
+	 * Gets the parameters.
+	 *
+	 * @return the parameters
+	 */
+	@getter (IKeyword.PARAMETERS)
+	@doc ("retuns the map of parameters defined in this experiment")
+	public GamaMap<String, Object> getParameters(final IScope scope) {
+		return getParameterValues().getElements();
+	}
 
 	/**
 	 * Gets the project path.
