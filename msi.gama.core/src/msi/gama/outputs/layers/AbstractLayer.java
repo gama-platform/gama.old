@@ -99,7 +99,7 @@ public abstract class AbstractLayer implements ILayer {
 		// DEBUG.OUT("Does not draw" + this.getName() + " because the renderer is not ready to update");
 		// return;
 		// }
-
+		if (data.compute(scope, g)) { forceRedrawingOnce(); }
 		if (!data.isVisible() || !g.is2D() && !data.isDynamic() && hasBeenDrawnOnce) // DEBUG.OUT("Does not draw" +
 																						// this.getName() + "
 			// because it is static and it has been drawn already "

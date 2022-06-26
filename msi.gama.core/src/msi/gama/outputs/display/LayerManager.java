@@ -162,18 +162,20 @@ public class LayerManager implements ILayerManager {
 		// If the experiment is already closed
 		if (scope == null || scope.interrupted()) return;
 		scope.setGraphics(g);
-		boolean changed = false;
+		// boolean changed = false;
 		// First we compute all the data and verify if anything is changed
-		for (final ILayer dis : layers) {
-			if (scope.interrupted()) return;
-			changed |= dis.getData().compute(scope, g);
-		}
-		if (changed) { forceRedrawingLayers(); }
+		// for (final ILayer dis : layers) {
+		// if (scope.interrupted()) return;
+		// changed |= dis.getData().compute(scope, g);
+		// }
+		// if (changed) { forceRedrawingLayers(); }
 		if (g.beginDrawingLayers()) {
 			try {
-				// We separate in two phases: updating of the data and then drawing
+				// We stop separating in two phases: updating of the data and then drawing, as it generates artefacts
+				// like the ones described in #3446
 				for (final ILayer dis : layers) {
 					if (scope.interrupted()) return;
+
 					dis.draw(scope, g);
 				}
 			} catch (final Exception e) {

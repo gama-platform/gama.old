@@ -1,16 +1,16 @@
 /*******************************************************************************************************
  *
- * WorkaroundForIssue2476.java, in ummisco.gama.java2d, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WorkaroundForIssue2476.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.java2d;
 
-import java.awt.Panel;
+import java.awt.Container;
 import java.awt.event.MouseMotionListener;
 
 import org.eclipse.swt.SWT;
@@ -31,9 +31,12 @@ public class WorkaroundForIssue2476 {
 	/**
 	 * Sets the mouse position.
 	 *
-	 * @param surface the surface
-	 * @param x the x
-	 * @param y the y
+	 * @param surface
+	 *            the surface
+	 * @param x
+	 *            the x
+	 * @param y
+	 *            the y
 	 */
 	private static void setMousePosition(final IDisplaySurface surface, final int x, final int y) {
 		surface.setMousePosition(x, y);
@@ -43,10 +46,12 @@ public class WorkaroundForIssue2476 {
 	/**
 	 * Install on.
 	 *
-	 * @param applet the applet
-	 * @param surface the surface
+	 * @param applet
+	 *            the applet
+	 * @param surface
+	 *            the surface
 	 */
-	public static void installOn(final Panel applet, final IDisplaySurface surface) {
+	public static void installOn(final Container applet, final IDisplaySurface surface) {
 		// Install only on Linux
 		if (!msi.gama.runtime.PlatformHelper.isLinux()) return;
 		applet.addMouseWheelListener(e -> {

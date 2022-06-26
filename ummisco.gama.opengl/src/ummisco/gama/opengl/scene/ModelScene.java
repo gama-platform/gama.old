@@ -147,9 +147,7 @@ public class ModelScene {
 
 		gl.setZIncrement(0);
 		rendered = true;
-		// IDisplaySynchronizer sync = gl.getRenderer().getSurface().synchronizer;
 		renderer.getSurface().getOutput().setRendered(true);
-		// if (sync != null) { sync.signalRenderingIsFinished(); }
 		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 
@@ -346,27 +344,8 @@ public class ModelScene {
 	 *
 	 */
 	public void invalidateLayers() {
-		DEBUG.OUT("Invalidating all layers");
+		// DEBUG.OUT("Invalidating all layers");
 		layers.forEach((name, layer) -> { layer.invalidate(); });
 	}
-
-	/**
-	 * Layer offset changed.
-	 */
-	public void layerOffsetChanged() {
-		layers.forEach((name, layer) -> { if (layer.canSplit()) { layer.recomputeOffset(); } });
-
-	}
-
-	/**
-	 * Recompute layout dimensions.
-	 *
-	 * @param gl
-	 *            the gl
-	 */
-	// public void recomputeLayoutDimensions(final OpenGL gl) {
-	// layers.forEach((name, layer) -> { if (layer.isOverlay() || layer.isStatic()) { layer.forceRedraw(gl); } });
-	//
-	// }
 
 }

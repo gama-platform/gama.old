@@ -17,7 +17,6 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope.IGraphicsScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 1 avr. 2010
@@ -51,11 +50,6 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public String getType() { return "Chart layer"; }
-
-	@Override
-	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
-		super.draw(scope, g);
-	}
 
 	@Override
 	public void privateDraw(final IGraphicsScope scope, final IGraphics dg) {

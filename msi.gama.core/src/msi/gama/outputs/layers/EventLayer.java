@@ -212,9 +212,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	protected void privateDraw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {}
 
 	@Override
-	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {
-		getData().compute(scope, g);
-	}
+	public void draw(final IGraphicsScope scope, final IGraphics g) throws GamaRuntimeException {}
 
 	@Override
 	public Boolean isControllable() { return false; }

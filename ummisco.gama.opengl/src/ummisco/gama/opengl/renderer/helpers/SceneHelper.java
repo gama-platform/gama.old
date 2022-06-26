@@ -68,10 +68,10 @@ public class SceneHelper extends AbstractRendererHelper {
 	/**
 	 * Layer offset changed.
 	 */
-	public void layerOffsetChanged() {
-		if (getSceneToRender() == null) return;
-		getSceneToRender().layerOffsetChanged();
-	}
+	// public void layerOffsetChanged() {
+	// if (getSceneToRender() == null) return;
+	// getSceneToRender().layerOffsetChanged();
+	// }
 
 	/**
 	 * Begin drawing layer.
@@ -240,11 +240,6 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * Draw.
 	 */
 	public void draw() {
-		// if (index++ == 0) {
-		// DEBUG.OUT("First SceneHelper draw");
-		// } else {
-		// DEBUG.OUT("SceneHelper draw " + index);
-		// }
 		final OpenGL gl = getOpenGL();
 		// Do some garbage collecting in model scenes
 		garbageCollect(gl);
@@ -265,18 +260,5 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * @return true, if is ready
 	 */
 	public boolean isReady() { return getSceneToRender() != null; }
-
-	/**
-	 * Reshape.
-	 *
-	 * @param width
-	 *            the width
-	 * @param height
-	 *            the height
-	 */
-	// public void reshape(final int width, final int height) {
-	// if (getSceneToRender() == null) return;
-	// getSceneToRender().recomputeLayoutDimensions(this.getOpenGL());
-	// }
 
 }

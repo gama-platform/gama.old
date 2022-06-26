@@ -18,8 +18,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JApplet;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -44,8 +42,7 @@ public abstract class SwingControl extends Composite {
 	}
 
 	/** The applet. */
-	JApplet applet;
-
+	// JApplet applet;
 
 	/** The multi listener. */
 	KeyListener linuxKeyListener;
@@ -85,11 +82,17 @@ public abstract class SwingControl extends Composite {
 
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
-				if (partRef.getPart(false).equals(view)) { visible = false; }
+				if (partRef.getPart(false).equals(view)) {
+					DEBUG.OUT("Hidden event received for " + view.getTitle());
+
+					visible = false;
+				}
 			}
 
 			@Override
 			public void partVisible(final IWorkbenchPartReference partRef) {
+				DEBUG.OUT("Visible event received for " + view.getTitle());
+
 				if (partRef.getPart(false).equals(view)) { visible = true; }
 			}
 		});
@@ -120,18 +123,14 @@ public abstract class SwingControl extends Composite {
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControl.this);
 				frame.setAlwaysOnTop(false);
-				if (linuxKeyListener != null) {
-					frame.addKeyListener(linuxKeyListener);
-				}
-				applet = new JApplet();
-				if (linuxMouseListener != null) {
-					applet.addMouseMotionListener(linuxMouseListener);
-				}
+				if (linuxKeyListener != null) { frame.addKeyListener(linuxKeyListener); }
+				// applet = new JApplet();
+				if (linuxMouseListener != null) { frame.addMouseMotionListener(linuxMouseListener); }
 				surface = createSwingComponent();
 				if (PlatformHelper.isWindows()) { surface.setVisibility(() -> visible); }
-				applet.getContentPane().add(surface);
-				WorkaroundForIssue2476.installOn(applet, surface);
-				frame.add(applet);
+				frame.add(surface);
+				WorkaroundForIssue2476.installOn(frame, surface);
+				// frame.add(applet);
 				if (PlatformHelper.isMac()) {
 					MouseListener ml = new MouseAdapter() {
 
@@ -146,14 +145,14 @@ public abstract class SwingControl extends Composite {
 						}
 
 					};
-					applet.addMouseListener(ml);
+					frame.addMouseListener(ml);
 					surface.addMouseListener(ml);
 
 				}
 			});
 			addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
 				try {
-					frame.remove(applet);
+					frame.remove(surface);
 				} catch (final Exception e) {}
 
 			}));
@@ -180,7 +179,7 @@ public abstract class SwingControl extends Composite {
 		// Assignment necessary for #3313 and #3239
 		WorkbenchHelper.asyncRun(() -> {
 			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
-			if (PlatformHelper.isWindows()) this.requestLayout();
+			if (PlatformHelper.isWindows()) { this.requestLayout(); }
 			EventQueue.invokeLater(() -> {
 				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
 				// frame.setBounds(x, y, width, height);
@@ -193,18 +192,14 @@ public abstract class SwingControl extends Composite {
 
 	}
 
-
 	/**
 	 * Sets the key listener.
 	 *
-	 * @param adapter the new key listener
+	 * @param adapter
+	 *            the new key listener
 	 */
-	public void setKeyListener(final KeyListener adapter) {
-		linuxKeyListener = adapter;
-	}
+	public void setKeyListener(final KeyListener adapter) { linuxKeyListener = adapter; }
 
-	public void setMouseListener(MouseMotionListener adapter) {
-		linuxMouseListener = adapter;
-	}
+	public void setMouseListener(final MouseMotionListener adapter) { linuxMouseListener = adapter; }
 
 }
