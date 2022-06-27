@@ -127,7 +127,13 @@ public class Experiment implements IExperiment {
 		if(p!=null) {				
 			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {
 				IMap<String, Object> m=(IMap<String, Object>)O;
- 				curExperiment.setParameterValue(curExperiment.getExperimentScope(),m.get("name").toString(),m.get("value"));
+				String type = m.get("type").toString();
+				Object v = m.get("value");
+				if (type.equals("int"))
+					v = (Integer.valueOf("" + m.get("value")));
+				if (type.equals("float"))
+					v = (Double.valueOf("" + m.get("value")));
+				curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
 // 				.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),m.get("value"));
 			}
 		} 

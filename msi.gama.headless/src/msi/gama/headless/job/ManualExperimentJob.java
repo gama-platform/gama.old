@@ -106,8 +106,9 @@ public class ManualExperimentJob extends ExperimentJob {
 			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
 			for (var O : ((GamaJsonList) params).listValue(null, Types.MAP, false)) {
 				IMap<String, Object> m = (IMap<String, Object>) O;
-				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
-						m.get("value"));
+ 				curExperiment.setParameterValue(curExperiment.getExperimentScope(),m.get("name").toString(),m.get("value"));
+//				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
+//						m.get("value"));
 			}
 		}
 	}
