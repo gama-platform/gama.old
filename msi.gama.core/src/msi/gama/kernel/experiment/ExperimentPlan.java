@@ -571,6 +571,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public synchronized void open(final Double seed) {
 
 		createAgent(seed);
+		// We add the agent as soon as possible so as to make it possible to evaluate variables in the opening of the
+		// experiment
+		myScope.push(agent);
 		myScope.getGui().prepareForExperiment(myScope, this);
 		IScope scope = agent.getScope();
 		agent.schedule(scope);
@@ -843,7 +846,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			controller.close();
 			controller.dispose();
 		}
-		controller=ec;
+		controller = ec;
 	}
 
 	/**

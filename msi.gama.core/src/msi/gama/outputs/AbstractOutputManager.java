@@ -294,7 +294,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (initialStep(scope, output)) {
 				try {
 					output.open();
-					DEBUG.OUT("Updating the output");
+					// DEBUG.OUT("Updating the output");
 					output.update();
 				} catch (final RuntimeException e) {
 					e.printStackTrace();

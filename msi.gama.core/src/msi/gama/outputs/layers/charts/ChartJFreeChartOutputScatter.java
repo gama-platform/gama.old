@@ -323,7 +323,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			// ((XYShapeRenderer) newr).setDrawOutlines(true);
 		}
 		if (myserie.getMycolor() != null) { newr.setSeriesPaint(0, myserie.getMycolor()); }
-		DEBUG.OUT("Changing series stroke to " + myserie.getLineThickness().value(scope));
+		// DEBUG.OUT("Changing series stroke to " + myserie.getLineThickness().value(scope));
 		newr.setSeriesStroke(0,
 				new BasicStroke(Cast.asFloat(scope, myserie.getLineThickness().value(scope)).floatValue()));
 
