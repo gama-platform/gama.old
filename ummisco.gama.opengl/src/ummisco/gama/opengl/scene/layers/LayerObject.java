@@ -24,6 +24,9 @@ import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.FramedLayerData;
+import msi.gama.outputs.layers.ILayerData;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.matrix.IField;
@@ -327,6 +330,40 @@ public class LayerObject {
 		GamaPoint p = nonNullRotation.getAxis();
 		gl.rotateBy(nonNullRotation.getAngle(), p.x, p.y, p.z);
 		gl.translateBy(-x, y, 0d);
+		addFrame(gl);
+	}
+
+	protected void addFrame(final OpenGL gl) {
+		ILayerData d = layer.getData();
+		if (d instanceof FramedLayerData data) {
+			GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
+			final IScope scope = renderer.getSurface().getScope();
+			final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
+			if (expr != null) {
+				size = Cast.asPoint(scope, expr.value(scope));
+				if (size.x <= 1) { size.x *= renderer.getEnvWidth(); }
+				if (size.y <= 1) { size.y *= renderer.getEnvHeight(); }
+			}
+			gl.pushMatrix();
+			boolean previous = gl.setObjectWireframe(false);
+			try {
+				gl.translateBy(size.x / 2, -size.y / 2, 0);
+				gl.scaleBy(size.x, size.y, 1);
+				if (data.getBackgroundColor(scope) != null) {
+					gl.setCurrentColor(data.getBackgroundColor(scope), 1 - data.getTransparency(scope));
+					gl.drawCachedGeometry(IShape.Type.SQUARE, null);
+				}
+				if (data.getBorderColor() != null) {
+					gl.setObjectWireframe(true);
+					gl.drawCachedGeometry(IShape.Type.SQUARE, data.getBorderColor());
+				}
+
+			} finally {
+				gl.setObjectWireframe(previous);
+				gl.popMatrix();
+			}
+		}
+
 	}
 
 	/**

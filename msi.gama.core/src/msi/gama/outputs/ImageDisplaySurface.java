@@ -533,4 +533,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public boolean isVisible() { return true; }
 
+	@Override
+	public IGraphics getIGraphics() { return displayGraphics; }
+
 }

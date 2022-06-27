@@ -18,6 +18,7 @@ import java.util.Collections;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.metamodel.agent.IAgent;
@@ -362,5 +363,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public boolean isVisible() { return true; }
+
+	@Override
+	public IGraphics getIGraphics() { return null; }
 
 }

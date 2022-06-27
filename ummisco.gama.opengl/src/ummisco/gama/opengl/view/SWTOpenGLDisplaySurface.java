@@ -46,6 +46,7 @@ import com.jogamp.opengl.util.awt.ImageUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -805,6 +806,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public boolean isVisible() {
 		if (renderer == null) return false;
 		return renderer.getCanvas().getVisibleStatus();
+	}
+
+	@Override
+	public IGraphics getIGraphics() { // TODO Auto-generated method stub
+		return renderer;
 	}
 
 }

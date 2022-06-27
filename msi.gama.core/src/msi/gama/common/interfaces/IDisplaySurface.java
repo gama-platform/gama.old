@@ -414,4 +414,6 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 */
 	boolean isVisible();
 
+	IGraphics getIGraphics();
+
 }

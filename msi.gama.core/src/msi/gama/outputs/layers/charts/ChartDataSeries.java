@@ -803,6 +803,6 @@ public class ChartDataSeries {
 	 *
 	 * @return the line thickness
 	 */
-	public double getLineThickness() { return getMysource().getLineThickness(); }
+	public IExpression getLineThickness() { return getMysource().getLineThickness(); }
 
 }

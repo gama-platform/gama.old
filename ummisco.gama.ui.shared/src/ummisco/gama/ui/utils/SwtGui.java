@@ -673,7 +673,7 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean isHiDPI() {
 		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
-		DEBUG.OUT("Primary Monitor Zoom = " + zoom);
+		// DEBUG.OUT("Primary Monitor Zoom = " + zoom);
 		return zoom > 100;
 	}
 

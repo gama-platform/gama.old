@@ -114,7 +114,7 @@ public class OverlayLayerObject extends LayerObject {
 			gl.getGL().glOrtho(0, maxDim, -maxDim / viewRatio, 0, -1, 1);
 		}
 		super.prepareDrawing(gl, list);
-		addFrame(gl);
+
 	}
 
 	@Override

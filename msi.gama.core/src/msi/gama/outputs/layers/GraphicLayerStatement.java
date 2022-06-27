@@ -47,6 +47,17 @@ import ummisco.gama.dev.utils.COUNTER;
 				optional = true,
 				doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer. In case of negative value OpenGl will position the layer out of the environment.")),
 				@facet (
+						name = IKeyword.BACKGROUND,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("the background color of the layer. Default is none")),
+				@facet (
+						name = IKeyword.BORDER,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Color to apply to the border of the rectangular shape of the layer. Default is none")),
+
+				@facet (
 						name = IKeyword.ROTATE,
 						type = { IType.FLOAT },
 						optional = true,

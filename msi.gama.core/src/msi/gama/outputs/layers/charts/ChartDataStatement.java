@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ChartDataStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartDataStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -129,74 +129,75 @@ public class ChartDataStatement extends AbstractStatement {
 
 	/** The Constant MARKER. */
 	public static final String MARKER = "marker";
-	
+
 	/** The Constant USE_SECOND_Y_AXIS. */
 	public static final String USE_SECOND_Y_AXIS = "use_second_y_axis";
-	
+
 	/** The Constant MARKERSHAPE. */
 	public static final String MARKERSHAPE = "marker_shape";
-	
+
 	/** The Constant MARKERSIZE. */
 	public static final String MARKERSIZE = "marker_size";
-	
+
 	/** The Constant FILL. */
 	public static final String FILL = "fill";
-	
+
 	/** The Constant LINE_VISIBLE. */
 	public static final String LINE_VISIBLE = "line_visible";
-	
+
 	/** The Constant CUMUL_VALUES. */
 	public static final String CUMUL_VALUES = "accumulate_values";
-	
+
 	/** The Constant XERR_VALUES. */
 	public static final String XERR_VALUES = "x_err_values";
-	
+
 	/** The Constant YERR_VALUES. */
 	public static final String YERR_VALUES = "y_err_values";
-	
+
 	/** The Constant YMINMAX_VALUES. */
 	public static final String YMINMAX_VALUES = "y_minmax_values";
-	
+
 	/** The Constant MARKER_EMPTY. */
 	public static final String MARKER_EMPTY = "marker_empty";
-	
+
 	/** The Constant MARKER_SQUARE. */
 	public static final String MARKER_SQUARE = "marker_square";
-	
+
 	/** The Constant MARKER_CIRCLE. */
 	public static final String MARKER_CIRCLE = "marker_circle";
-	
+
 	/** The Constant MARKER_UP_TRIANGLE. */
 	public static final String MARKER_UP_TRIANGLE = "marker_up_triangle";
-	
+
 	/** The Constant MARKER_DIAMOND. */
 	public static final String MARKER_DIAMOND = "marker_diamond";
-	
+
 	/** The Constant MARKER_HOR_RECTANGLE. */
 	public static final String MARKER_HOR_RECTANGLE = "marker_hor_rectangle";
-	
+
 	/** The Constant MARKER_DOWN_TRIANGLE. */
 	public static final String MARKER_DOWN_TRIANGLE = "marker_down_triangle";
-	
+
 	/** The Constant MARKER_HOR_ELLIPSE. */
 	public static final String MARKER_HOR_ELLIPSE = "marker_hor_ellipse";
-	
+
 	/** The Constant MARKER_RIGHT_TRIANGLE. */
 	public static final String MARKER_RIGHT_TRIANGLE = "marker_right_triangle";
-	
+
 	/** The Constant MARKER_VERT_RECTANGLE. */
 	public static final String MARKER_VERT_RECTANGLE = "marker_vert_rectangle";
-	
+
 	/** The Constant MARKER_LEFT_TRIANGLE. */
 	public static final String MARKER_LEFT_TRIANGLE = "marker_left_triangle";
-	
+
 	/** The Constant THICKNESS. */
 	public static final String THICKNESS = "thickness";
 
 	/**
 	 * Instantiates a new chart data statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public ChartDataStatement(final IDescription desc) {
 		super(desc);
@@ -216,9 +217,7 @@ public class ChartDataStatement extends AbstractStatement {
 		data.setDataset(scope, graphdataset);
 
 		String stval = getLiteral(IKeyword.STYLE);
-		if (stval != null) {
-			data.setStyle(scope, stval);
-		}
+		if (stval != null) { data.setStyle(scope, stval); }
 
 		boolean boolval = getFacetValue(scope, MARKER, true);
 		data.setMarkerBool(scope, boolval);
@@ -267,7 +266,7 @@ public class ChartDataStatement extends AbstractStatement {
 		expval = getFacet(ChartDataStatement.THICKNESS);
 		if (expval != null) {
 			expval = expval.resolveAgainst(scope);
-			data.setLineThickness(Cast.asFloat(scope, expval.value(scope)));
+			data.setLineThickness(expval);
 		}
 		final Object forcecumul = getFacetValue(scope, ChartDataStatement.CUMUL_VALUES, null);
 		if (forcecumul != null) {

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GraphicLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GraphicLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -24,10 +24,16 @@ public class GraphicLayer extends AbstractLayer {
 	/**
 	 * Instantiates a new graphic layer.
 	 *
-	 * @param layer the layer
+	 * @param layer
+	 *            the layer
 	 */
 	public GraphicLayer(final ILayerStatement layer) {
 		super(layer);
+	}
+
+	@Override
+	protected FramedLayerData createData() {
+		return new FramedLayerData(definition);
 	}
 
 	@Override

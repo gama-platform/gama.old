@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ChartDataListStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartDataListStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -130,7 +130,8 @@ public class ChartDataListStatement extends AbstractStatement {
 	/**
 	 * Instantiates a new chart data list statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public ChartDataListStatement(final IDescription desc) {
 		super(desc);
@@ -151,9 +152,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		data.setDataset(scope, graphdataset);
 
 		String stval = getLiteral(IKeyword.STYLE);
-		if (stval != null) {
-			data.setStyle(scope, stval);
-		}
+		if (stval != null) { data.setStyle(scope, stval); }
 
 		IExpression expval = getFacet(IKeyword.LEGEND).resolveAgainst(scope);
 		data.setNameExp(scope, expval);
@@ -191,7 +190,7 @@ public class ChartDataListStatement extends AbstractStatement {
 		expval = getFacet(ChartDataStatement.THICKNESS);
 		if (expval != null) {
 			expval = expval.resolveAgainst(scope);
-			data.setLineThickness(Cast.asFloat(scope, expval.value(scope)));
+			data.setLineThickness(expval);
 		}
 		boolean boolval = getFacetValue(scope, ChartDataStatement.MARKER, true);
 		data.setMarkerBool(scope, boolval);

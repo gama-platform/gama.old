@@ -329,8 +329,10 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean step(final IScope scope) {
 		getDisplayOutputs().forEach(each -> { each.setRendered(false); });
-		outputs.forEach((name,
-				each) -> { if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); } });
+		outputs.forEach((name, each) -> {
+			if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
+			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
+		});
 		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
 				try {

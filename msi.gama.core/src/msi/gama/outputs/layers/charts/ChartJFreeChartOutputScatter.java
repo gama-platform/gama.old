@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ChartJFreeChartOutputScatter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartJFreeChartOutputScatter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
@@ -58,11 +58,17 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ChartJFreeChartOutputScatter.
  */
 public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/**
 	 * The Class myXYErrorRenderer.
@@ -71,13 +77,13 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		/** The myoutput. */
 		ChartJFreeChartOutputScatter myoutput;
-		
+
 		/** The myid. */
 		String myid;
-		
+
 		/** The use size. */
 		boolean useSize;
-		
+
 		/** The transform. */
 		AffineTransform transform = new AffineTransform();
 
@@ -86,15 +92,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		 *
 		 * @return true, if is use size
 		 */
-		public boolean isUseSize() {
-			return useSize;
-		}
+		public boolean isUseSize() { return useSize; }
 
 		/**
 		 * Sets the use size.
 		 *
-		 * @param scope the scope
-		 * @param useSize the use size
+		 * @param scope
+		 *            the scope
+		 * @param useSize
+		 *            the use size
 		 */
 		public void setUseSize(final IScope scope, final boolean useSize) {
 			this.useSize = useSize;
@@ -104,11 +110,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		/**
 		 * Sets the myid.
 		 *
-		 * @param myid the new myid
+		 * @param myid
+		 *            the new myid
 		 */
-		public void setMyid(final String myid) {
-			this.myid = myid;
-		}
+		public void setMyid(final String myid) { this.myid = myid; }
 
 		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
@@ -116,7 +121,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		/**
 		 * Sets the output.
 		 *
-		 * @param output the new output
+		 * @param output
+		 *            the new output
 		 */
 		public void setOutput(final ChartJFreeChartOutput output) {
 			myoutput = (ChartJFreeChartOutputScatter) output;
@@ -135,12 +141,14 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	/**
 	 * Gets the scale.
 	 *
-	 * @param serie the serie
-	 * @param col the col
+	 * @param serie
+	 *            the serie
+	 * @param col
+	 *            the col
 	 * @return the scale
 	 */
 	double getScale(final String serie, final int col) {
-		if (MarkerScale.containsKey(serie)) { return MarkerScale.get(serie).get(col); }
+		if (MarkerScale.containsKey(serie)) return MarkerScale.get(serie).get(col);
 		return 1;
 	}
 
@@ -150,9 +158,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	/**
 	 * Instantiates a new chart J free chart output scatter.
 	 *
-	 * @param scope the scope
-	 * @param name the name
-	 * @param typeexp the typeexp
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 * @param typeexp
+	 *            the typeexp
 	 */
 	public ChartJFreeChartOutputScatter(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
@@ -166,9 +177,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		jfreedataset.add(0, new XYIntervalSeriesCollection());
 		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		if (reverse_axes) {
-			orientation = PlotOrientation.HORIZONTAL;
-		}
+		if (reverse_axes) { orientation = PlotOrientation.HORIZONTAL; }
 
 		switch (type) {
 			case SERIES_CHART:
@@ -291,8 +300,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	/**
 	 * Reset renderer.
 	 *
-	 * @param scope the scope
-	 * @param serieid the serieid
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
 	 */
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, serieid);
@@ -307,29 +318,21 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		}
 
-		if (newr instanceof XYShapeRenderer) {
-			if (!myserie.getMysource().fillMarker) {
-				((XYShapeRenderer) newr).setUseFillPaint(false);
-				// ((XYShapeRenderer) newr).setDrawOutlines(true);
-			}
+		if (newr instanceof XYShapeRenderer && !myserie.getMysource().fillMarker) {
+			((XYShapeRenderer) newr).setUseFillPaint(false);
+			// ((XYShapeRenderer) newr).setDrawOutlines(true);
 		}
-		if (myserie.getMycolor() != null) {
-			newr.setSeriesPaint(0, myserie.getMycolor());
-		}
-		newr.setSeriesStroke(0, new BasicStroke((float) myserie.getLineThickness()));
+		if (myserie.getMycolor() != null) { newr.setSeriesPaint(0, myserie.getMycolor()); }
+		DEBUG.OUT("Changing series stroke to " + myserie.getLineThickness().value(scope));
+		newr.setSeriesStroke(0,
+				new BasicStroke(Cast.asFloat(scope, myserie.getLineThickness().value(scope)).floatValue()));
 
 		if (newr instanceof myXYErrorRenderer) {
 			((myXYErrorRenderer) newr).setDrawYError(false);
 			((myXYErrorRenderer) newr).setDrawXError(false);
-			if (myserie.isUseYErrValues()) {
-				((myXYErrorRenderer) newr).setDrawYError(true);
-			}
-			if (myserie.isUseXErrValues()) {
-				((myXYErrorRenderer) newr).setDrawXError(true);
-			}
-			if (myserie.getMysource().isUseSize()) {
-				((myXYErrorRenderer) newr).setUseSize(scope, true);
-			}
+			if (myserie.isUseYErrValues()) { ((myXYErrorRenderer) newr).setDrawYError(true); }
+			if (myserie.isUseXErrValues()) { ((myXYErrorRenderer) newr).setDrawXError(true); }
+			if (myserie.getMysource().isUseSize()) { ((myXYErrorRenderer) newr).setUseSize(scope, true); }
 		}
 
 		if (myserie.getMysource().getUniqueMarkerName() != null) {
@@ -442,17 +445,14 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 						// serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));
 					}
 
+				} else if (dataserie.isUseXErrValues()) {
+					newval = new XYIntervalDataItem(XValues.get(i), dataserie.xerrvaluesmin.get(i),
+							dataserie.xerrvaluesmax.get(i), YValues.get(i), YValues.get(i), YValues.get(i));
+					// serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
 				} else {
-					if (dataserie.isUseXErrValues()) {
-						newval = new XYIntervalDataItem(XValues.get(i), dataserie.xerrvaluesmin.get(i),
-								dataserie.xerrvaluesmax.get(i), YValues.get(i), YValues.get(i), YValues.get(i));
-						// serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
-					} else {
-						newval = new XYIntervalDataItem(XValues.get(i), XValues.get(i), XValues.get(i), YValues.get(i),
-								YValues.get(i), YValues.get(i));
-						// serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
-					}
-
+					newval = new XYIntervalDataItem(XValues.get(i), XValues.get(i), XValues.get(i), YValues.get(i),
+							YValues.get(i), YValues.get(i));
+					// serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
 				}
 				serie.add(newval, false);
 			}
@@ -474,8 +474,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	/**
 	 * Format Y axis.
 	 *
-	 * @param scope the scope
-	 * @param axis the axis
+	 * @param scope
+	 *            the scope
+	 * @param axis
+	 *            the axis
 	 * @return the number axis
 	 */
 	public NumberAxis formatYAxis(final IScope scope, final NumberAxis axis) {
@@ -535,20 +537,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			((XYPlot) this.chart.getPlot()).setRangeAxis(logAxis);
 			rangeAxis = logAxis;
 		}
-		if (secondaxis) {
-			if (getY2_LogScale(scope)) {
-				LogarithmicAxis logAxis = new LogarithmicAxis(range2Axis.getLabel());
-				logAxis.setAllowNegativesFlag(true);
-				logAxis = (LogarithmicAxis) formatYAxis(scope, logAxis);
-				((XYPlot) this.chart.getPlot()).setRangeAxis(1, logAxis);
-				range2Axis = logAxis;
-			}
-
+		if (secondaxis && getY2_LogScale(scope)) {
+			LogarithmicAxis logAxis = new LogarithmicAxis(range2Axis.getLabel());
+			logAxis.setAllowNegativesFlag(true);
+			logAxis = (LogarithmicAxis) formatYAxis(scope, logAxis);
+			((XYPlot) this.chart.getPlot()).setRangeAxis(1, logAxis);
+			range2Axis = logAxis;
 		}
 
-		if (!getUseXRangeInterval(scope) && !getUseXRangeMinMax(scope)) {
-			domainAxis.setAutoRange(true);
-		}
+		if (!getUseXRangeInterval(scope) && !getUseXRangeMinMax(scope)) { domainAxis.setAutoRange(true); }
 
 		if (this.getUseXRangeInterval(scope)) {
 			domainAxis.setFixedAutoRange(getXRangeInterval(scope));
@@ -575,9 +572,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		}
 
-		if (!getUseYRangeInterval(scope) && !getUseYRangeMinMax(scope)) {
-			rangeAxis.setAutoRange(true);
-		}
+		if (!getUseYRangeInterval(scope) && !getUseYRangeMinMax(scope)) { rangeAxis.setAutoRange(true); }
 
 		if (this.getUseYRangeInterval(scope)) {
 			rangeAxis.setFixedAutoRange(getYRangeInterval(scope));
@@ -604,9 +599,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 
 		if (secondaxis) {
-			if (!getUseY2RangeInterval(scope) && !getUseY2RangeMinMax(scope)) {
-				range2Axis.setAutoRange(true);
-			}
+			if (!getUseY2RangeInterval(scope) && !getUseY2RangeMinMax(scope)) { range2Axis.setAutoRange(true); }
 
 			if (this.getUseY2RangeInterval(scope)) {
 				range2Axis.setFixedAutoRange(getY2RangeInterval(scope));
@@ -634,21 +627,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		}
 
-		if (getXLabel(scope) != null && !getXLabel(scope).isEmpty()) {
-			domainAxis.setLabel(getXLabel(scope));
+		if (getXLabel(scope) != null && !getXLabel(scope).isEmpty()) { domainAxis.setLabel(getXLabel(scope)); }
+		if (getYLabel(scope) != null && !getYLabel(scope).isEmpty()) { rangeAxis.setLabel(getYLabel(scope)); }
+		if (secondaxis && getY2Label(scope) != null && !getY2Label(scope).isEmpty()) {
+			range2Axis.setLabel(getY2Label(scope));
 		}
-		if (getYLabel(scope) != null && !getYLabel(scope).isEmpty()) {
-			rangeAxis.setLabel(getYLabel(scope));
-		}
-		if (secondaxis) {
-			if (getY2Label(scope) != null && !getY2Label(scope).isEmpty()) {
-				range2Axis.setLabel(getY2Label(scope));
-			}
-
-		}
-		if (this.series_label_position.equals("none")) {
-			this.chart.getLegend().setVisible(false);
-		}
+		if ("none".equals(this.series_label_position)) { this.chart.getLegend().setVisible(false); }
 		if (!this.getXTickValueVisible(scope)) {
 			domainAxis.setTickMarksVisible(false);
 			domainAxis.setTickLabelsVisible(false);
@@ -663,27 +647,27 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (newr instanceof XYLineAndShapeRenderer) {
 			final XYLineAndShapeRenderer serierenderer = (XYLineAndShapeRenderer) getOrCreateRenderer(scope, serieid);
 			if (markershape != null) {
-				if (markershape.equals(ChartDataStatement.MARKER_EMPTY)) {
+				if (ChartDataStatement.MARKER_EMPTY.equals(markershape)) {
 					serierenderer.setSeriesShapesVisible(0, false);
 				} else {
 					Shape myshape = defaultmarkers[0];
-					if (markershape.equals(ChartDataStatement.MARKER_CIRCLE)) {
+					if (ChartDataStatement.MARKER_CIRCLE.equals(markershape)) {
 						myshape = defaultmarkers[1];
-					} else if (markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_UP_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[2];
-					} else if (markershape.equals(ChartDataStatement.MARKER_DIAMOND)) {
+					} else if (ChartDataStatement.MARKER_DIAMOND.equals(markershape)) {
 						myshape = defaultmarkers[3];
-					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE)) {
+					} else if (ChartDataStatement.MARKER_HOR_RECTANGLE.equals(markershape)) {
 						myshape = defaultmarkers[4];
-					} else if (markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_DOWN_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[5];
-					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE)) {
+					} else if (ChartDataStatement.MARKER_HOR_ELLIPSE.equals(markershape)) {
 						myshape = defaultmarkers[6];
-					} else if (markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_RIGHT_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[7];
-					} else if (markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE)) {
+					} else if (ChartDataStatement.MARKER_VERT_RECTANGLE.equals(markershape)) {
 						myshape = defaultmarkers[8];
-					} else if (markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_LEFT_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[9];
 					}
 					serierenderer.setSeriesShape(0, myshape);
@@ -694,27 +678,27 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		} else if (newr instanceof XYShapeRenderer) {
 			final XYShapeRenderer serierenderer = (XYShapeRenderer) getOrCreateRenderer(scope, serieid);
 			if (markershape != null) {
-				if (markershape.equals(ChartDataStatement.MARKER_EMPTY)) {
+				if (ChartDataStatement.MARKER_EMPTY.equals(markershape)) {
 					serierenderer.setSeriesShape(0, null);
 				} else {
 					Shape myshape = defaultmarkers[0];
-					if (markershape.equals(ChartDataStatement.MARKER_CIRCLE)) {
+					if (ChartDataStatement.MARKER_CIRCLE.equals(markershape)) {
 						myshape = defaultmarkers[1];
-					} else if (markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_UP_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[2];
-					} else if (markershape.equals(ChartDataStatement.MARKER_DIAMOND)) {
+					} else if (ChartDataStatement.MARKER_DIAMOND.equals(markershape)) {
 						myshape = defaultmarkers[3];
-					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE)) {
+					} else if (ChartDataStatement.MARKER_HOR_RECTANGLE.equals(markershape)) {
 						myshape = defaultmarkers[4];
-					} else if (markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_DOWN_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[5];
-					} else if (markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE)) {
+					} else if (ChartDataStatement.MARKER_HOR_ELLIPSE.equals(markershape)) {
 						myshape = defaultmarkers[6];
-					} else if (markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_RIGHT_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[7];
-					} else if (markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE)) {
+					} else if (ChartDataStatement.MARKER_VERT_RECTANGLE.equals(markershape)) {
 						myshape = defaultmarkers[8];
-					} else if (markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE)) {
+					} else if (ChartDataStatement.MARKER_LEFT_TRIANGLE.equals(markershape)) {
 						myshape = defaultmarkers[9];
 					}
 					serierenderer.setSeriesShape(0, myshape);
@@ -730,9 +714,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	public void setUseSize(final IScope scope, final String name, final boolean b) {
 		// TODO Auto-generated method stub
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, name);
-		if (newr instanceof myXYErrorRenderer) {
-			((myXYErrorRenderer) newr).setUseSize(scope, b);
-		}
+		if (newr instanceof myXYErrorRenderer) { ((myXYErrorRenderer) newr).setUseSize(scope, b); }
 
 	}
 
@@ -761,7 +743,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			@Override
 			public StringBuffer format(final double number, final StringBuffer toAppendTo, final FieldPosition pos) {
 				final int ind = chartdataset.XSeriesValues.indexOf(number);
-				if (ind >= 0) { return new StringBuffer("" + chartdataset.Xcategories.get(ind)); }
+				if (ind >= 0) return new StringBuffer("" + chartdataset.Xcategories.get(ind));
 				return new StringBuffer("");
 
 			}
@@ -813,11 +795,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		// resetAutorange(scope);
 
-		if (getType() == ChartOutput.SERIES_CHART) {
-			if (xlabel == null) {
-				xlabel = "time";
-			}
-		}
+		if (getType() == ChartOutput.SERIES_CHART && xlabel == null) { xlabel = "time"; }
 		if (getType() == ChartOutput.XY_CHART) {}
 		if (getType() == ChartOutput.SCATTER_CHART) {}
 		if (!this.getXTickValueVisible(scope)) {
@@ -847,24 +825,20 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			final boolean xInt = xx % 1 == 0;
 			final boolean yInt = yy % 1 == 0;
 			String xTitle = xAxis.getLabel();
-			if (StringUtils.isBlank(xTitle)) {
-				xTitle = "X";
-			}
+			if (StringUtils.isBlank(xTitle)) { xTitle = "X"; }
 			String yTitle = yAxis.getLabel();
-			if (StringUtils.isBlank(yTitle)) {
-				yTitle = "Y";
-			}
+			if (StringUtils.isBlank(yTitle)) { yTitle = "Y"; }
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
 			return;
-		} else if (entity instanceof PieSectionEntity) {
+		}
+		if (entity instanceof PieSectionEntity) {
 			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
 			final PieDataset data = ((PieSectionEntity) entity).getDataset();
 			final int index = ((PieSectionEntity) entity).getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return;
 		} else if (entity instanceof CategoryItemEntity) {
 			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 			final String title = columnKey.toString();
@@ -873,7 +847,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-			return;
 		}
 	}
 

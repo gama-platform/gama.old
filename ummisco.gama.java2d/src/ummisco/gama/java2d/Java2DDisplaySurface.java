@@ -506,7 +506,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 *
 	 * @return the i graphics
 	 */
-	AWTDisplayGraphics getIGraphics() { return (AWTDisplayGraphics) iGraphics; }
+	@Override
+	public AWTDisplayGraphics getIGraphics() { return (AWTDisplayGraphics) iGraphics; }
 
 	@Override
 	public GamaPoint getModelCoordinates() {

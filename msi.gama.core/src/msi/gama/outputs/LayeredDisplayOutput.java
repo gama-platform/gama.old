@@ -44,6 +44,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -821,4 +822,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		view = null;
 	}
 
+	@Override
+	protected IGraphicsScope buildScopeFrom(final IScope scope) {
+		return scope.copyForGraphics("of " + getDescription().getKeyword() + " " + getName());
+	}
+
+	@Override
+	public IGraphicsScope getScope() { return (IGraphicsScope) super.getScope(); }
+
+	public void linkScopeWithGraphics() {
+		IGraphicsScope scope = getScope();
+		IDisplaySurface surface = getSurface();
+		if (scope == null || surface == null) return;
+		scope.setGraphics(surface.getIGraphics());
+	}
 }

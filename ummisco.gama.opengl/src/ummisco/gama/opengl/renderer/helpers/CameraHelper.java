@@ -874,9 +874,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	public void computeMouseLocationInTheWorld() {
 
 		// getWorldPositionFrom(mousePosition, positionInTheWorld);
-		double distance = data.getCameraDistance();
-		double zFar = data.getzFar();
-		double zNear = data.getzNear();
+		// double distance = data.getCameraDistance();
+		// double zFar = data.getzFar();
+		// double zNear = data.getzNear();
 		OpenGL gl = renderer.getOpenGLHelper();
 		final double[] wcoord = new double[4];
 		final int[] viewport = gl.viewport;
@@ -887,8 +887,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		gl.getGL().glReadPixels(x, y, 1, 1, GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, pixelDepth);
 		double z = pixelDepth.get(0);
 
-		DEBUG.OUT("First value retrieved by gluUnproject for Z : " + z + " computing a camera distance of "
-				+ (1 - z) * (zFar - zNear) + " while the real one is " + distance);
+		// DEBUG.OUT("First value retrieved by gluUnproject for Z : " + z + " computing a camera distance of "
+		// + (1 - z) * (zFar - zNear) + " while the real one is " + distance);
 
 		// z = Math.min(1, 1 - distance / (2 * (zFar - zNear)));
 

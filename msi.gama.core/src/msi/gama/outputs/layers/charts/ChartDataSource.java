@@ -20,8 +20,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.Types;
 
 /**
  * The Class ChartDataSource.
@@ -154,7 +156,7 @@ public class ChartDataSource {
 	boolean isBoxAndWhiskerData = false;
 
 	/** The line thickness. */
-	double lineThickness = 1.0;
+	IExpression lineThickness = GAML.getExpressionFactory().createConst(1.0, Types.FLOAT);
 
 	/**
 	 * Clone me.
@@ -273,14 +275,16 @@ public class ChartDataSource {
 	 * @param thickness
 	 *            the new line thickness
 	 */
-	public void setLineThickness(final double thickness) { lineThickness = thickness; }
+	public void setLineThickness(final IExpression thickness) {
+		if (thickness != null) { lineThickness = thickness; }
+	}
 
 	/**
 	 * Gets the line thickness.
 	 *
 	 * @return the line thickness
 	 */
-	public double getLineThickness() { return lineThickness; }
+	public IExpression getLineThickness() { return lineThickness; }
 
 	/**
 	 * Gets the colorexp.
