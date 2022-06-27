@@ -133,7 +133,16 @@ public class Experiment implements IExperiment {
 					v = (Integer.valueOf("" + m.get("value")));
 				if (type.equals("float"))
 					v = (Double.valueOf("" + m.get("value")));
-				curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				
+
+				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
+				if (b != null) {
+					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				} else {
+					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				}
+
+//				curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
 // 				.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),m.get("value"));
 			}
 		} 

@@ -38,6 +38,7 @@ import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
@@ -106,7 +107,22 @@ public class ManualExperimentJob extends ExperimentJob {
 			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
 			for (var O : ((GamaJsonList) params).listValue(null, Types.MAP, false)) {
 				IMap<String, Object> m = (IMap<String, Object>) O;
- 				curExperiment.setParameterValue(curExperiment.getExperimentScope(),m.get("name").toString(),m.get("value"));
+				String type = m.get("type").toString();
+				Object v = m.get("value");
+				if (type.equals("int"))
+					v = (Integer.valueOf("" + m.get("value")));
+				if (type.equals("float"))
+					v = (Double.valueOf("" + m.get("value")));
+				
+
+				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
+				if (b != null) {
+					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				} else {
+					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				}
+
+// 				curExperiment.setParameterValue(curExperiment.getExperimentScope(),m.get("name").toString(),m.get("value"));
 //				curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
 //						m.get("value"));
 			}
