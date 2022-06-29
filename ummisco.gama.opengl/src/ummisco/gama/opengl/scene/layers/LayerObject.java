@@ -334,6 +334,7 @@ public class LayerObject {
 	}
 
 	protected void addFrame(final OpenGL gl) {
+		if (layer == null) return;
 		ILayerData d = layer.getData();
 		if (d instanceof FramedLayerData data) {
 			GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());

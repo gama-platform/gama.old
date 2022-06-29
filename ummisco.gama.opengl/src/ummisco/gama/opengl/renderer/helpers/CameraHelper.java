@@ -894,7 +894,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		// DEBUG.OUT("Value retrieved for Z : " + z + " with camera distance " + data.getCameraDistance());
 
-		if (z == 1d) {
+		if (z == 1d || z == 0d) {
 			getWorldPositionFrom(mousePosition, positionInTheWorld);
 		} else {
 			glu.gluUnProject(x, y, z, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
