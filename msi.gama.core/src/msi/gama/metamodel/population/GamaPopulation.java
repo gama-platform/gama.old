@@ -281,13 +281,18 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		} else {
 			mirrorManagement = null;
 		}
-		
-		/*PATRICK TAILLANDIER: the problem of having the host here is that depending on the simulation the 
-		* hashcode will be different... and this hashcode is very important for the manipultion of GamaMap
-		* thus, having two different hashcodes depending on the simulation makes ensure the repication of simulation
-		* So I remove the host for the moment.
-		*/
-		hashCode = Objects.hash(getSpecies());//, getHost());
+
+		/*
+		 * PATRICK TAILLANDIER: the problem of having the host here is that depending on the simulation the hashcode
+		 * will be different... and this hashcode is very important for the manipultion of GamaMap thus, having two
+		 * different hashcodes depending on the simulation makes ensure the repication of simulation So I remove the
+		 * host for the moment.
+		 */
+		/*
+		 * AD: Reverting this as different populations in different hosts should not have the same hash code ! See
+		 * discussion in https://github.com/gama-platform/gama/issues/3339
+		 */
+		hashCode = Objects.hash(getSpecies(), getHost());
 		final boolean[] result = { false, false };
 		species.getDescription().visitChildren(d -> {
 			if (d instanceof ActionDescription && !d.isBuiltIn()) {
