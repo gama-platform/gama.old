@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UserCommandStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * UserCommandStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -34,7 +34,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserInputStatement;
-import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.IDescriptionValidator.ValidNameValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -114,7 +114,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 	/**
 	 * The Class UserCommandValidator.
 	 */
-	public static class UserCommandValidator implements IDescriptionValidator<IDescription> {
+	public static class UserCommandValidator extends ValidNameValidator {
 
 		/*
 		 * (non-Javadoc)
@@ -123,6 +123,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 		 */
 		@Override
 		public void validate(final IDescription description) {
+			super.validate(description);
 			final String action = description.getLitteral(ACTION);
 			if (action != null && action.contains(SYNTHETIC)) {
 				description.warning(
@@ -156,26 +157,27 @@ public class UserCommandStatement extends AbstractStatementSequence
 
 	/** The args. */
 	Arguments args;
-	
+
 	/** The runtime args. */
 	Arguments runtimeArgs;
-	
+
 	/** The action name. */
 	final String actionName;
-	
+
 	/** The category. */
 	String category;
-	
+
 	/** The when. */
 	final IExpression when;
-	
+
 	/** The inputs. */
 	List<UserInputStatement> inputs = new ArrayList<>();
 
 	/**
 	 * Instantiates a new user command statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public UserCommandStatement(final IDescription desc) {
 		super(desc);
@@ -190,14 +192,10 @@ public class UserCommandStatement extends AbstractStatementSequence
 	 *
 	 * @return the inputs
 	 */
-	public List<UserInputStatement> getInputs() {
-		return inputs;
-	}
+	public List<UserInputStatement> getInputs() { return inputs; }
 
 	@Override
-	public void setFormalArgs(final Arguments args) {
-		this.args = args;
-	}
+	public void setFormalArgs(final Arguments args) { this.args = args; }
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
@@ -214,9 +212,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 			if (actionName == null) {
 				if (runtimeArgs != null) { scope.stackArguments(runtimeArgs); }
 				// AD 2/1/16 : Addition of this to address Issue #1339
-				for (final UserInputStatement s : inputs) {
-					if (!scope.execute(s).passed()) return null;
-				}
+				for (final UserInputStatement s : inputs) { if (!scope.execute(s).passed()) return null; }
 				final Object result = super.privateExecuteIn(scope);
 				runtimeArgs = null;
 				return result;
@@ -226,25 +222,21 @@ public class UserCommandStatement extends AbstractStatementSequence
 			boolean isWorkaroundForIssue1595 = false;
 			if (executer == null) {
 				// See Issue #1595
-				if (context instanceof ExperimentPlan) {
-					context = ((ExperimentPlan) context).getModel();
-					executer = context.getAction(actionName);
-					isWorkaroundForIssue1595 = true;
-				} else
+				if (!(context instanceof ExperimentPlan))
 					throw GamaRuntimeException.error("Unknown action: " + actionName, scope);
+				context = ((ExperimentPlan) context).getModel();
+				executer = context.getAction(actionName);
+				isWorkaroundForIssue1595 = true;
 			}
 			final Arguments tempArgs = new Arguments(args);
 			if (runtimeArgs != null) { tempArgs.complementWith(runtimeArgs); }
-			if (isWorkaroundForIssue1595) {
-				final SimulationPopulation simulations = scope.getExperiment().getSimulationPopulation();
-				for (final SimulationAgent sim : simulations.iterable(scope)) {
-					scope.execute(executer, sim, tempArgs);
-				}
-			} else {
+			if (!isWorkaroundForIssue1595) {
 				final Object result = scope.execute(executer, tempArgs).getValue();
 				runtimeArgs = null;
 				return result;
 			}
+			final SimulationPopulation simulations = scope.getExperiment().getSimulationPopulation();
+			for (final SimulationAgent sim : simulations.iterable(scope)) { scope.execute(executer, sim, tempArgs); }
 		}
 		return null;
 	}
@@ -257,7 +249,8 @@ public class UserCommandStatement extends AbstractStatementSequence
 	/**
 	 * Checks if is enabled.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is enabled
 	 */
 	public boolean isEnabled(final IScope scope) {
@@ -267,7 +260,8 @@ public class UserCommandStatement extends AbstractStatementSequence
 	/**
 	 * Gets the color.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the color
 	 */
 	public GamaColor getColor(final IScope scope) {
@@ -279,7 +273,8 @@ public class UserCommandStatement extends AbstractStatementSequence
 	/**
 	 * Checks if is continue.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is continue
 	 */
 	public boolean isContinue(final IScope scope) {
@@ -295,9 +290,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 	}
 
 	@Override
-	public String getTitle() {
-		return getName();
-	}
+	public String getTitle() { return getName(); }
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
