@@ -209,9 +209,38 @@ public class Random {
 	@test ("seed <- 1.0; skew_gauss(0.0, 1.0, 0.7,0.1) = 0.7425668006838585")
 	public static Double opGauss(final IScope scope, final double min, final double max, final double skew,
 			final double bias) {
+		return Random.opGauss(scope,0.0,1.0,min,max,skew,bias);
+	}
+	
+	/**
+	 * Op gauss.
+	 *
+	 * @param scope the scope
+	 * @param min the min
+	 * @param max the max
+	 * @param skew the skew
+	 * @param bias the bias
+	 * @return the double
+	 */
+	@operator (
+			value = "skew_gauss",
+			category = { IOperatorCategory.RANDOM },
+			concept = {})
+	@doc (
+			value = "A value from a skew normally distributed random variable with mean and stdv, min value (the minimum skewed value possible), max value (the maximum skewed value possible), skew (the degree to which the values cluster around the mode of the distribution; higher values mean tighter clustering) and bias (the tendency of the mode to approach the min, max or midpoint value; positive values bias toward max, negative values toward min)."
+					+ "The algorithm was taken from http://stackoverflow.com/questions/5853187/skewing-java-random-number-generation-toward-a-certain-number",
+			examples = { @example (
+					value = "skew_gauss(0.0, 1.0, 0.7, 0.1)",
+					equals = "0.1729218460343077",
+					test = false) },
+			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "truncated_gauss",
+					"weibull_rnd" })
+	@test ("seed <- 1.0; skew_gauss(0.0, 1.0, 0.7,0.1) = 0.7425668006838585")
+	public static Double opGauss(final IScope scope, final double mean, final double stdv, final double min, 
+			final double max, final double skew, final double bias) {
 		final double range = max - min;
 		final double mid = min + range / 2.0;
-		final double unitGaussian = RANDOM(scope).createGaussian(0.0, 1.0);
+		final double unitGaussian = RANDOM(scope).createGaussian(mean, stdv);
 		final double biasFactor = Math.exp(bias);
 		return mid + range * (biasFactor / (biasFactor + Math.exp(-unitGaussian / skew)) - 0.5);
 	}
