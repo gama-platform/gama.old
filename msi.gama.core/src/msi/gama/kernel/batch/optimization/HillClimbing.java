@@ -81,7 +81,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.AGGREGATION,
 						type = IType.LABEL,
 						optional = true,
-						values = { IKeyword.MIN, IKeyword.MAX },
+						values = { IKeyword.MIN, IKeyword.MAX, "avr" },
 						doc = @doc ("the agregation method")) },
 		omissible = IKeyword.NAME)
 @doc (
