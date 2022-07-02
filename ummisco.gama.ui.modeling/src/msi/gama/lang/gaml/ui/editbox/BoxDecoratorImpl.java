@@ -235,7 +235,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		if (r0.width < 1 || r0.height < 1) return;
 
 		final int xOffset = boxText.getHorizontalPixel();
-		final int yOffset = boxText.getTopPixel() - boxText.getLinePixel(2);
+		final int yOffset = boxText.getTopPixel() - boxText.getLinePixel(2); // See issue #3435
 
 		final Image newImage = new Image(null, r0.width, r0.height);
 		final GC gc = new GC(newImage);
