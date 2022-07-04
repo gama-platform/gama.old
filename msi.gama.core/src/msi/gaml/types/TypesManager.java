@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,7 +48,7 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	}
 
 	@Override
-	public Set<IType<?>> getAllTypes() { return new HashSet(types.values()); }
+	public Set<IType<?>> getAllTypes() { return new LinkedHashSet(types.values()); }
 
 	@Override
 	public void setParent(final ITypesManager parent) { this.parent = (TypesManager) parent; }

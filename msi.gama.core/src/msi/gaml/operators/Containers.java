@@ -15,7 +15,6 @@ import static msi.gaml.compilation.GAML.notNull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -2733,9 +2732,9 @@ public class Containers {
 		if (keys.length(scope) != values.length(scope)) {
 			GamaRuntimeException.warning("'create_map' expects two lists of the same length", scope);
 		}
-		final HashSet newSet = new HashSet(keys);
-		if (newSet.size() < keys.length(scope))
-			throw GamaRuntimeException.error("'create_map' expects unique values in the keys list", scope);
+		// final HashSet newSet = new HashSet(keys);
+		// if (newSet.size() < keys.length(scope))
+		// throw GamaRuntimeException.error("'create_map' expects unique values in the keys list", scope);
 		return GamaMapFactory.create(scope, keys.getGamlType(), values.getGamlType(), keys, values);
 	}
 

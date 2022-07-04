@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,7 +36,7 @@ public class GamaMapReducer {
 	private final IType dataType;
 
 	/** The values map reducer. */
-	private Map<Object, Object> valuesMapReducer = new HashMap();
+	private Map<Object, Object> valuesMapReducer = new LinkedHashMap();
 
 	/**
 	 * Instantiates a new gama map reducer.
@@ -79,7 +79,7 @@ public class GamaMapReducer {
 	 */
 	public void unreferenceReducer(final SimulationAgent sim) {
 
-		final HashMap<Object, Object> mapWithoutReferences = new HashMap<>();
+		final Map<Object, Object> mapWithoutReferences = new LinkedHashMap<>();
 
 		for (final Entry e : valuesMapReducer.entrySet()) {
 			mapWithoutReferences.put(IReference.getObjectWithoutReference(e.getKey(), sim),
@@ -116,5 +116,5 @@ public class GamaMapReducer {
 	 * @param m
 	 *            the new values
 	 */
-	public void setValues(final HashMap m) { valuesMapReducer = m; }
+	public void setValues(final Map m) { valuesMapReducer = m; }
 }

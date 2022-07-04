@@ -1,16 +1,16 @@
 /*******************************************************************************************************
  *
- * GridVonNeumannNeighborhood.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GridVonNeumannNeighborhood.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -32,26 +32,19 @@ public class GridVonNeumannNeighborhood extends GridNeighborhood {
 	protected Set<Integer> getNeighborsAtRadius(final int placeIndex, final int radius) {
 		final int y = placeIndex / matrix.numCols;
 		final int x = placeIndex - y * matrix.numCols;
-		// TODO: verify the use of HashSet here, contradictory with the policy of GAMA to not use unordered Sets or maps
-		final Set<Integer> v = new HashSet<>(radius << 2);
+		final Set<Integer> v = new LinkedHashSet<>(radius << 2);
 		int p;
 		for (int i = -radius; i < radius; i++) {
 			p = matrix.getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
-			if (p != -1) {
-				v.add(p);
-			}
+			if (p != -1) { v.add(p); }
 			p = matrix.getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
-			if (p != -1) {
-				v.add(p);
-			}
+			if (p != -1) { v.add(p); }
 		}
 		return v;
 	}
 
 	@Override
-	public boolean isVN() {
-		return true;
-	}
+	public boolean isVN() { return true; }
 
 	/*
 	 * (non-Javadoc)
