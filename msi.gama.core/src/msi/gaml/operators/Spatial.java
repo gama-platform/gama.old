@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Spatial.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Spatial.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -2284,8 +2283,7 @@ public abstract class Spatial {
 		 */
 		private static Geometry difference(final Geometry first, final Geometry g2) {
 			Geometry g1 = first;
-			if (g2 instanceof GeometryCollection) {
-				final GeometryCollection g2c = (GeometryCollection) g2;
+			if (g2 instanceof GeometryCollection g2c) {
 				final int nb = g2c.getNumGeometries();
 				for (int i = 0; i < nb; i++) {
 					g1 = difference(g1, g2c.getGeometryN(i));
@@ -3524,8 +3522,7 @@ public abstract class Spatial {
 			if (geom instanceof Polygon) {
 				result = GeometryUtils.GEOMETRY_FACTORY.createPolygon(GeometryUtils.GEOMETRY_FACTORY
 						.createLinearRing(((Polygon) geom).getExteriorRing().getCoordinates()), null);
-			} else if (geom instanceof MultiPolygon) {
-				final MultiPolygon mp = (MultiPolygon) geom;
+			} else if (geom instanceof MultiPolygon mp) {
 				final Polygon[] polys = new Polygon[mp.getNumGeometries()];
 				for (int i = 0; i < mp.getNumGeometries(); i++) {
 					final Polygon p = (Polygon) mp.getGeometryN(i);
@@ -6943,7 +6940,7 @@ public abstract class Spatial {
 					GamaListFactory.create(Types.LIST.of(agents.getGamlType().getContentType()));
 			final IAgentFilter filter = In.list(scope, agents);
 			if (filter == null) return groups;
-			try (Collector.AsSet<IAgent> clusteredCells = Collector.getSet()) {
+			try (Collector.AsOrderedSet<IAgent> clusteredCells = Collector.getOrderedSet()) {
 				for (final IAgent ag : agents.iterable(scope)) {
 					if (!clusteredCells.contains(ag)) {
 						groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));

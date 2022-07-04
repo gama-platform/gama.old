@@ -1440,7 +1440,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Set<IAgent> getNeighborsPrune(final IScope scope, final IAgent node, final IAgent parent,
 			final boolean[] open) {
 		if (parent == null) return getNeighborhood().getNeighborsIn(scope, node.getIndex(), 1);
-		try (Collector.AsSet<IAgent> neighbors = Collector.getSet()) {
+		try (Collector.AsOrderedSet<IAgent> neighbors = Collector.getOrderedSet()) {
 			final int x = ((IGridAgent) node).getX();
 			final int y = ((IGridAgent) node).getY();
 

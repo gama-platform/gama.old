@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * AgentLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AgentLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -111,7 +110,7 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		try (final Collector.AsSet<IAgent> selectedAgents = Collector.getSet()) {
+		try (final Collector.AsOrderedSet<IAgent> selectedAgents = Collector.getOrderedSet()) {
 			final Rectangle2D selection = new Rectangle2D.Double();
 			selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 					y + IDisplaySurface.SELECTION_SIZE / 2);

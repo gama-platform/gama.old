@@ -644,7 +644,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	// AD TODO Will not work with points and dates for the moment
 
 	public Set<Object> neighborValues(final IScope scope) throws GamaRuntimeException {
-		try (Collector.AsSet<Object> neighborValues = Collector.getSet()) {
+		try (Collector.AsOrderedSet<Object> neighborValues = Collector.getOrderedSet()) {
 			if (getAmongValue(scope) != null && !getAmongValue(scope).isEmpty()) {
 				final int index = getAmongValue(scope).indexOf(this.value(scope));
 				if (index > 0) { neighborValues.add(getAmongValue(scope).get(index - 1)); }

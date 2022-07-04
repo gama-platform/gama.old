@@ -102,7 +102,7 @@ public class GridLayer extends AbstractLayer implements IGridLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		try (Collector.AsSet<IAgent> result = Collector.getSet()) {
+		try (Collector.AsOrderedSet<IAgent> result = Collector.getOrderedSet()) {
 			result.add(getData().getGrid().getAgentAt(getModelCoordinatesFrom(x, y, g)));
 			return result.items();
 		}

@@ -1205,7 +1205,7 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	public Set<IShape> getNeighborsOfRec(final IScope scope, final IShape currentSource, final boolean edge,
 			final double currentDist, final ISpatialGraph graph, final Set<IShape> alr) throws GamaRuntimeException {
-		try (Collector.AsSet<IShape> edges = Collector.getSet()) {
+		try (Collector.AsOrderedSet<IShape> edges = Collector.getOrderedSet()) {
 			final Set<IShape> eds =
 					graph.isDirected() ? graph.outgoingEdgesOf(currentSource) : graph.edgesOf(currentSource);
 			if (!edge) { edges.add(currentSource.getAgent()); }

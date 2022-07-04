@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LabelExpressionDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LabelExpressionDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -40,7 +40,8 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	/**
 	 * Instantiates a new label expression description.
 	 *
-	 * @param label the label
+	 * @param label
+	 *            the label
 	 */
 	private LabelExpressionDescription(final String label) {
 		super((IExpression) null);
@@ -71,9 +72,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 
 	@Override
 	public IExpression getExpression() {
-		if (expression == null) {
-			expression = this;
-		}
+		if (expression == null) { expression = this; }
 		return expression;
 	}
 
@@ -95,7 +94,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		try (Collector.AsSet<String> result = Collector.getSet()) {
+		try (Collector.AsOrderedSet<String> result = Collector.getOrderedSet()) {
 			final StringBuilder b = new StringBuilder();
 			for (final char c : value.toCharArray()) {
 				switch (c) {
@@ -119,7 +118,8 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	/**
 	 * Creates the.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the i expression description
 	 */
 	public static IExpressionDescription create(final String s) {
@@ -127,32 +127,22 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public String getDocumentation() {
-		return "Constant string: " + getName();
-	}
+	public String getDocumentation() { return "Constant string: " + getName(); }
 
 	@Override
-	public String getTitle() {
-		return "constant string '" + getName() + "'";
-	}
+	public String getTitle() { return "constant string '" + getName() + "'"; }
 
 	@Override
-	public String getDefiningPlugin() {
-		return null;
-	}
+	public String getDefiningPlugin() { return null; }
 
 	@Override
-	public String getName() {
-		return value;
-	}
+	public String getName() { return value; }
 
 	@Override
 	public void setName(final String newName) {}
 
 	@Override
-	public IType<String> getGamlType() {
-		return Types.STRING;
-	}
+	public IType<String> getGamlType() { return Types.STRING; }
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
@@ -160,9 +150,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public boolean isConst() {
-		return true;
-	}
+	public boolean isConst() { return true; }
 
 	@Override
 	public String literalValue() {
