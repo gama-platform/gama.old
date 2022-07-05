@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMapFactory.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMapFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -38,18 +38,20 @@ public class GamaMapFactory {
 	 * The Class GamaMapSupplier.
 	 */
 	public static class GamaMapSupplier implements Supplier<IMap> {
-		
+
 		/** The k. */
 		IType k;
-		
+
 		/** The c. */
 		IType c;
 
 		/**
 		 * Instantiates a new gama map supplier.
 		 *
-		 * @param key the key
-		 * @param contents the contents
+		 * @param key
+		 *            the key
+		 * @param contents
+		 *            the contents
 		 */
 		public GamaMapSupplier(final IType key, final IType contents) {
 			k = key;
@@ -79,12 +81,18 @@ public class GamaMapFactory {
 	/**
 	 * Wrap.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param key the key
-	 * @param contents the contents
-	 * @param isOrdered the is ordered
-	 * @param wrapped the wrapped
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param isOrdered
+	 *            the is ordered
+	 * @param wrapped
+	 *            the wrapped
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> wrap(final IType key, final IType contents, final boolean isOrdered,
@@ -95,9 +103,12 @@ public class GamaMapFactory {
 	/**
 	 * Synchronized map.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param target the target
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param target
+	 *            the target
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> synchronizedMap(final IMap<K, V> target) {
@@ -108,10 +119,27 @@ public class GamaMapFactory {
 	}
 
 	/**
+	 * Synchronized map. Only operation that does not return a IMap
+	 *
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param target
+	 *            the target
+	 * @return the i map
+	 */
+	public static <K, V> Map<K, V> synchronizedOrderedMap() {
+		return Collections.synchronizedMap(create());
+	}
+
+	/**
 	 * Concurrent map.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> concurrentMap() {
@@ -133,8 +161,7 @@ public class GamaMapFactory {
 	 * @return the i map
 	 */
 	public static IMap createOrdered() {
-		final IMap map = new GamaMap(DEFAULT_SIZE, Types.NO_TYPE, Types.NO_TYPE);
-		return map;
+		return new GamaMap(DEFAULT_SIZE, Types.NO_TYPE, Types.NO_TYPE);
 		// return new GamaMapSimpleWrapper() {
 		//
 		// @Override
@@ -159,9 +186,7 @@ public class GamaMapFactory {
 		return new GamaMapSimpleWrapper() {
 
 			@Override
-			public boolean isOrdered() {
-				return false;
-			}
+			public boolean isOrdered() { return false; }
 
 			@Override
 			protected Map delegate() {
@@ -173,8 +198,10 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param key the key
-	 * @param contents the contents
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
 	 * @return the i map
 	 */
 	public static IMap create(final IType key, final IType contents) {
@@ -184,9 +211,12 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param key the key
-	 * @param contents the contents
-	 * @param ordered the ordered
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param ordered
+	 *            the ordered
 	 * @return the i map
 	 */
 	public static IMap create(final IType key, final IType contents, final boolean ordered) {
@@ -196,9 +226,12 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param key the key
-	 * @param contents the contents
-	 * @param size the size
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param size
+	 *            the size
 	 * @return the i map
 	 */
 	public static IMap create(final IType key, final IType contents, final int size) {
@@ -208,18 +241,19 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param key the key
-	 * @param contents the contents
-	 * @param size the size
-	 * @param ordered the ordered
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param size
+	 *            the size
+	 * @param ordered
+	 *            the ordered
 	 * @return the i map
 	 */
 	public static IMap create(final IType key, final IType contents, final int size, final boolean ordered) {
-		if (ordered) {
-			return new GamaMap<>(size, key, contents);
-		} else {
-			return new GamaMapWrapper<>(new HashMap(size), key, contents, false);
-		}
+		if (ordered) return new GamaMap<>(size, key, contents);
+		return new GamaMapWrapper<>(new HashMap(size), key, contents, false);
 	}
 
 	/**
@@ -234,12 +268,18 @@ public class GamaMapFactory {
 	/**
 	 * Creates a new GamaMap object.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param key the key
-	 * @param contents the contents
-	 * @param map the map
-	 * @param ordered the ordered
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param map
+	 *            the map
+	 * @param ordered
+	 *            the ordered
 	 * @return the i map< k, v>
 	 */
 	public static <K, V> IMap<K, V> createWithoutCasting(final IType<K> key, final IType<V> contents,
@@ -252,17 +292,23 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param scope the scope
-	 * @param key the key
-	 * @param contents the contents
-	 * @param map the map
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param scope
+	 *            the scope
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param map
+	 *            the map
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> create(final IScope scope, final IType<K> key, final IType<V> contents,
 			final Map<K, V> map) {
-		if (map == null || map.isEmpty()) { return create(key, contents); }
+		if (map == null || map.isEmpty()) return create(key, contents);
 		final IMap<K, V> result = create(key, contents, map.size());
 		map.forEach((k, v) -> result.setValueAtIndex(scope, k, v));
 		return result;
@@ -271,18 +317,25 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param scope the scope
-	 * @param key the key
-	 * @param contents the contents
-	 * @param map the map
-	 * @param ordered the ordered
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param scope
+	 *            the scope
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param map
+	 *            the map
+	 * @param ordered
+	 *            the ordered
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> create(final IScope scope, final IType<K> key, final IType<V> contents,
 			final Map<K, V> map, final boolean ordered) {
-		if (map == null || map.isEmpty()) { return create(key, contents, ordered); }
+		if (map == null || map.isEmpty()) return create(key, contents, ordered);
 		final IMap<K, V> result = create(key, contents, map.size(), ordered);
 		map.forEach((k, v) -> result.setValueAtIndex(scope, k, v));
 		return result;
@@ -291,13 +344,20 @@ public class GamaMapFactory {
 	/**
 	 * Creates the.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
-	 * @param scope the scope
-	 * @param key the key
-	 * @param contents the contents
-	 * @param keys the keys
-	 * @param values the values
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param scope
+	 *            the scope
+	 * @param key
+	 *            the key
+	 * @param contents
+	 *            the contents
+	 * @param keys
+	 *            the keys
+	 * @param values
+	 *            the values
 	 * @return the i map
 	 */
 	public static <K, V> IMap<K, V> create(final IScope scope, final IType<K> key, final IType<V> contents,
@@ -312,16 +372,17 @@ public class GamaMapFactory {
 	/**
 	 * Equals.
 	 *
-	 * @param one the one
-	 * @param two the two
+	 * @param one
+	 *            the one
+	 * @param two
+	 *            the two
 	 * @return true, if successful
 	 */
 	public static boolean equals(final IMap one, final IMap two) {
-		if (one.size() != two.size()) { return false; }
-		final boolean result = one.forEachPair((k1, v1) -> {
-			if (!Objects.equals(v1, two.get(k1))) { return false; }
+		if (one.size() != two.size()) return false;
+		return one.forEachPair((k1, v1) -> {
+			if (!Objects.equals(v1, two.get(k1))) return false;
 			return true;
 		});
-		return result;
 	}
 }
