@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -62,7 +62,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new LinkedHashSet<>();
+		final Set<String> result = new HashSet<>();
 		final StringBuilder b = new StringBuilder();
 		for (final char c : string.toCharArray()) {
 			switch (c) {
