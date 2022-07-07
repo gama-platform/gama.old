@@ -171,7 +171,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		DefaultPieDataset dd = new DefaultPieDataset<>();
 		jfreedataset.add(0, dd);
 		plot.setDataset(dd);
-		IdPosition.clear();
+		idPosition.clear();
 		nbseries = 0;
 	}
 
@@ -179,14 +179,14 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	protected void createNewSerie(final IScope scope, final String serieid) {
 		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
 		// serieid);
-		if (!IdPosition.containsKey(serieid)) {
+		if (!idPosition.containsKey(serieid)) {
 			@SuppressWarnings ("unchecked") final PiePlot<String> plot = (PiePlot<String>) this.chart.getPlot();
 
 			// final DefaultPieDataset firstdataset = (DefaultPieDataset)
 			// plot.getDataset();
 
 			nbseries++;
-			IdPosition.put(serieid, nbseries - 1);
+			idPosition.put(serieid, nbseries - 1);
 			if (IKeyword.EXPLODED.equals(getStyle())) { plot.setExplodePercent(serieid, 0.20); }
 		}
 		// DEBUG.LOG("new serie"+serieid+" at

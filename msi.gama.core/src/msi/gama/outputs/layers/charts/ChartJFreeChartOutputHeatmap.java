@@ -298,7 +298,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		plot.setDataset((MatrixSeriesCollection) jfreedataset.get(0));
 		plot.setRenderer(0, null);
 
-		IdPosition.clear();
+		idPosition.clear();
 	}
 
 	@Override
@@ -312,7 +312,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 		final MatrixSeriesCollection firstdataset = (MatrixSeriesCollection) plot.getDataset();
 
-		if (!IdPosition.containsKey(serieid)) {
+		if (!idPosition.containsKey(serieid)) {
 
 			if (firstdataset.getSeriesCount() == 0) {
 				firstdataset.addSeries(serie);
@@ -327,7 +327,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
 			}
 			plot.setRenderer(jfreedataset.size() - 1, (XYItemRenderer) getOrCreateRenderer(scope, serieid));
-			IdPosition.put(serieid, jfreedataset.size() - 1);
+			idPosition.put(serieid, jfreedataset.size() - 1);
 			// DEBUG.LOG("new serie"+serieid+" at
 			// "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds
 			// "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
@@ -350,7 +350,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 		this.createNewSerie(scope, serieid);
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		final MatrixSeries serie =
-				((MatrixSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
+				((MatrixSeriesCollection) jfreedataset.get(idPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
 		final ArrayList<Double> YValues = dataserie.getYValues(scope);
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);

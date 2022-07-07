@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -41,21 +42,21 @@ import msi.gaml.operators.Cast;
 public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressListener {
 
 	/**
-	 * Creates the compatible image.
+	 * Creates a compatible image.
 	 *
 	 * @param sizeX the size X
 	 * @param sizeY the size Y
 	 * @return the buffered image
 	 */
-	private BufferedImage createCompatibleImage(final int sizeX, final int sizeY) {
-		if ((int) r.getWidth() != sizeX || (int) r.getHeight() != sizeY) {
-			r.setRect(0, 0, sizeX, sizeY);
-			if (cache != null) {
-				cache.flush();
+	private BufferedImage getCompatibleImage(final int sizeX, final int sizeY) {
+		if ((int) area.getWidth() != sizeX || (int) area.getHeight() != sizeY) {
+			area.setRect(0, 0, sizeX, sizeY);
+			if (imageCache != null) {
+				imageCache.flush();
 			}
-			cache = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+			imageCache = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
 		}
-		return cache;
+		return imageCache;
 	}
 
 	/** The Constant defaultmarkers. */
@@ -69,39 +70,26 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	public ChartRenderingInfo info;
 	
 	/** The jfreedataset. */
-	ArrayList<Dataset> jfreedataset = new ArrayList<>();
+	List<Dataset> jfreedataset = new ArrayList<>();
 	
 	/** The chart. */
 	JFreeChart chart = null;
 	
-	/** The r. */
-	Rectangle2D r = new Rectangle2D.Double();
+	Rectangle2D area = new Rectangle2D.Double();
 	
 	/** The cache. */
-	BufferedImage cache;
+	BufferedImage imageCache;
 	
 	/** The defaultrenderer. */
 	AbstractRenderer defaultrenderer;
 	
 	/** The Id position. */
-	HashMap<String, Integer> IdPosition = new HashMap<>(); // serie
-															// id-nb
-															// for
-															// arraylists/table
-															/** The Renderer set. */
-															// requirements
-	HashMap<String, AbstractRenderer> RendererSet = new HashMap<>(); // one
-																		// renderer
-																		// for
-																		// each
-																		/** The nbseries. */
-																		// serie
-	int nbseries = 0; // because there is always one dataset, so it is difficult
-	// A filed aiming at controlling the rate at which charts can be produced. Directly controlled by the
+	HashMap<String, Integer> idPosition = new HashMap<>(); 
+	HashMap<String, AbstractRenderer> RendererSet = new HashMap<>(); 
+	int nbseries = 0;
 	/** The ready. */
 	// ChartProgressListener
 	private volatile boolean ready = true;
-	// to count...
 
 	/**
 	 * Instantiates a new chart J free chart output.
@@ -168,35 +156,47 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		return newChart;
 	}
 
-	/**
-	 * Gets the graphics.
-	 *
-	 * @param sizeX the size X
-	 * @param sizeY the size Y
-	 * @return the graphics
-	 */
-	private Graphics2D getGraphics(final int sizeX, final int sizeY) {
-		return createCompatibleImage(sizeX, sizeY).createGraphics();
-	}
-
-	@Override
+//	@Override
+//	public BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias) {
+//		if (!ready) { return imageCache; }
+//		if (antiAlias != oldAntiAlias) {
+//			oldAntiAlias = antiAlias;
+//			chart.setAntiAlias(antiAlias);
+//			chart.setTextAntiAlias(antiAlias);
+//		}
+//		imageCache = chart.createBufferedImage(sizeX, sizeY, info);
+//		return imageCache;
+//	}
+	
+//
 	public BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias) {
-		if (!ready) { return cache; }
+		if (!ready) { return imageCache; }
 		if (antiAlias != oldAntiAlias) {
 			oldAntiAlias = antiAlias;
 			getJFChart().setAntiAlias(antiAlias);
 			getJFChart().setTextAntiAlias(antiAlias);
 		}
-		final Graphics2D g2D = getGraphics(sizeX, sizeY);
+		
+		if ((int) area.getWidth() != sizeX || (int) area.getHeight() != sizeY) {
+			area.setRect(0, 0, sizeX, sizeY);
+			if (imageCache != null) {
+				imageCache.flush();
+			}
+			imageCache = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+		}
+		
+		final Graphics2D g2D = imageCache.createGraphics();
 		try {
-			chart.draw(g2D, r, info);
+			chart.draw(g2D, area, info);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
 			// Do nothing. See #1605
-			// e.printStackTrace();
+			 e.printStackTrace();
+			 // To force redrawing in case of error. See #3442
+			 ready = true;
 		} finally {
 			g2D.dispose();
 		}
-		return cache;
+		return imageCache;
 
 	}
 
@@ -356,10 +356,10 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	@Override
 	public void dispose(final IScope scope) {
-		if (cache != null) {
-			cache.flush();
+		if (imageCache != null) {
+			imageCache.flush();
 		}
-		cache = null;
+		imageCache = null;
 		clearDataSet(scope);
 		jfreedataset.clear();
 		chart = null;

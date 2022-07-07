@@ -104,10 +104,10 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
 		if (plot.getMaxValue() <= 0.0) plot.setMaxValue(1.0);
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
-		if (!IdPosition.containsKey(serieid)) {
+		if (!idPosition.containsKey(serieid)) {
 			// DEBUG.LOG("pb!!!");
 		} else {
-			final int myrow = IdPosition.get(serieid);
+			final int myrow = idPosition.get(serieid);
 			if (myserie.getMycolor() != null) {
 				plot.setSeriesPaint(myrow, myserie.getMycolor());
 			}
@@ -141,7 +141,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		jfreedataset.clear();
 		jfreedataset.add(0, new DefaultCategoryDataset());
 		plot.setDataset((DefaultCategoryDataset) jfreedataset.get(0));
-		IdPosition.clear();
+		idPosition.clear();
 		nbseries = 0;
 	}
 
@@ -151,7 +151,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		// serieid);
 		// final XYIntervalSeries serie = new
 		// XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);
-		if(!IdPosition.containsKey(serieid)) {
+		if(!idPosition.containsKey(serieid)) {
 
 			final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
 	
@@ -171,7 +171,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 			nbseries++;
 			// plot.setRenderer(nbseries-1,
 			// (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
-			IdPosition.put(serieid, nbseries - 1);
+			idPosition.put(serieid, nbseries - 1);
 		}
 		// DEBUG.LOG("new serie"+serieid+" at
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"

@@ -355,7 +355,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		jfreedataset.add(0, new XYIntervalSeriesCollection());
 		plot.setDataset((XYIntervalSeriesCollection) jfreedataset.get(0));
 		plot.setRenderer(0, null);
-		IdPosition.clear();
+		idPosition.clear();
 	}
 
 	@Override
@@ -367,7 +367,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		final XYIntervalSeriesCollection firstdataset = (XYIntervalSeriesCollection) plot.getDataset();
 
-		if (!IdPosition.containsKey(serieid)) {
+		if (!idPosition.containsKey(serieid)) {
 
 			if (firstdataset.getSeriesCount() == 0) {
 				firstdataset.addSeries(serie);
@@ -382,7 +382,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 			}
 			plot.setRenderer(jfreedataset.size() - 1, (XYItemRenderer) getOrCreateRenderer(scope, serieid));
-			IdPosition.put(serieid, jfreedataset.size() - 1);
+			idPosition.put(serieid, jfreedataset.size() - 1);
 			// DEBUG.LOG("new serie"+serieid+" at
 			// "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds
 			// "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
@@ -398,7 +398,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		final XYIntervalSeries serie =
-				((XYIntervalSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))))
+				((XYIntervalSeriesCollection) jfreedataset.get(idPosition.get(dataserie.getSerieId(scope))))
 						.getSeries(0);
 		serie.clear();
 		final ArrayList<Double> XValues = dataserie.getXValues(scope);
@@ -414,7 +414,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (XValues.size() > 0) {
 			final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
 			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(0);
-			final int ids = IdPosition.get(dataserie.getSerieId(scope));
+			final int ids = idPosition.get(dataserie.getSerieId(scope));
 			if (secondaxis) {
 				// rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
 				// ((XYPlot) this.chart.getPlot()).setRangeAxis(IdPosition.get(dataserie.getSerieId(scope)),rangeAxis);

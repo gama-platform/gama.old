@@ -160,10 +160,10 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 			final BoxAndWhiskerRenderer newr = (BoxAndWhiskerRenderer) plot.getRenderer();
 
 			final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
-			if (!IdPosition.containsKey(serieid)) {
+			if (!idPosition.containsKey(serieid)) {
 				// DEBUG.LOG("pb!!!");
 			} else {
-				final int myrow = IdPosition.get(serieid);
+				final int myrow = idPosition.get(serieid);
 				if (myserie.getMycolor() != null) {
 					newr.setSeriesPaint(myrow, myserie.getMycolor());
 				}
@@ -187,13 +187,13 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 			jfreedataset.add(0, new DefaultBoxAndWhiskerCategoryDataset());
 			plot.setDataset((BoxAndWhiskerCategoryDataset) jfreedataset.get(0));
 			plot.setRenderer(0, null);
-			IdPosition.clear();
+			idPosition.clear();
 			nbseries = 0;
 		}
 
 		@Override
 		protected void createNewSerie(final IScope scope, final String serieid) {
-			if(!IdPosition.containsKey(serieid)) {
+			if(!idPosition.containsKey(serieid)) {
 
 				final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 		
@@ -204,7 +204,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 					plot.setRenderer(nbseries, (BoxAndWhiskerRenderer) getOrCreateRenderer(scope, serieid));
 				} 	
 				nbseries++;
-				IdPosition.put(serieid, nbseries - 1);
+				idPosition.put(serieid, nbseries - 1);
 			}
 
 		}

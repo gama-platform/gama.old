@@ -242,10 +242,10 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// serieid);
 
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
-		if (!IdPosition.containsKey(serieid)) {
+		if (!idPosition.containsKey(serieid)) {
 			// DEBUG.LOG("pb!!!");
 		} else {
-			final int myrow = IdPosition.get(serieid);
+			final int myrow = idPosition.get(serieid);
 			if (myserie.getMycolor() != null) {
 				newr.setSeriesPaint(myrow, myserie.getMycolor());
 			}
@@ -286,7 +286,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		jfreedataset.add(0, new DefaultCategoryDataset());
 		plot.setDataset((DefaultCategoryDataset) jfreedataset.get(0));
 		plot.setRenderer(0, null);
-		IdPosition.clear();
+		idPosition.clear();
 		nbseries = 0;
 	}
 
@@ -296,7 +296,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// serieid);
 		// final XYIntervalSeries serie = new
 		// XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);
-		if(!IdPosition.containsKey(serieid)) {
+		if(!idPosition.containsKey(serieid)) {
 
 			final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 	
@@ -316,7 +316,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			nbseries++;
 			// plot.setRenderer(nbseries-1,
 			// (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
-			IdPosition.put(serieid, nbseries - 1);
+			idPosition.put(serieid, nbseries - 1);
 		}
 
 		// DEBUG.LOG("new serie"+serieid+" at
