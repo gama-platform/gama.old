@@ -329,7 +329,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createValidate(final Menu menu) {
 		final MenuItem validate = new MenuItem(menu, SWT.PUSH);
 		validate.setText(" Validate");
-		validate.setImage(GamaIcons.create("build.project2").image());
+		validate.setImage(create("build.project2").image());
 		validate.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -348,11 +348,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 *
 	 */
 	private void createBoxToggle(final Menu menu) {
-		final MenuItem box = new MenuItem(menu, SWT.CHECK);
+		final MenuItem box = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isDecorationEnabled();
-		box.setText(" Colorize code sections");
-		box.setImage(selected ? create("toggle.box").image() : create("toggle.box").image());
-		box.setSelection(selected);
+		box.setText(selected ? " Uncolorize code sections":" Colorize code sections");
+		box.setImage(create("toggle.box").image());
+		//box.setSelection(selected);
 		box.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -369,11 +369,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 *
 	 */
 	private void createMarkToggle(final Menu menu) {
-		final MenuItem mark = new MenuItem(menu, SWT.CHECK);
-		mark.setText(" Mark occurences of symbols");
+		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
 		boolean selected = markPref.getValue();
-		mark.setSelection(markPref.getValue());
-		mark.setImage(selected ? create("toggle.mark").image() : create("toggle.mark").disabled());
+		mark.setText(selected ? " Do not mark symbols occurences":" Mark occurences of symbols");
+		//mark.setSelection(markPref.getValue());
+		mark.setImage(create("toggle.mark").image());
 
 		mark.addSelectionListener(new SelectionAdapter() {
 
@@ -392,11 +392,11 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 *            the menu
 	 */
 	private void createOverviewToggle(final Menu menu) {
-		final MenuItem overview = new MenuItem(menu, SWT.CHECK);
-		overview.setText(" Show markers overview");
+		final MenuItem overview = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isOverviewRulerVisible();
-		overview.setSelection(selected);
-		overview.setImage(selected ? create("toggle.overview").image() : create("toggle.overview").disabled());
+		overview.setText(selected ? " Hide markers overview":" Show markers overview");
+		//overview.setSelection(selected);
+		overview.setImage(create("toggle.overview").image());
 		overview.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -416,12 +416,13 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 *
 	 */
 	private void createFoldingToggle(final Menu menu) {
-		final MenuItem folding = new MenuItem(menu, SWT.CHECK);
-		folding.setText(" Fold code sections");
-
+		final MenuItem folding = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isRangeIndicatorEnabled();
+		folding.setText(selected ? " Unfold code sections":" Fold code sections");
+
+
 		folding.setSelection(selected);
-		folding.setImage(selected ? create("toggle.folding").image() : create("toggle.folding").disabled());
+		folding.setImage(create("toggle.folding").image());
 		folding.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -436,11 +437,12 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 *
 	 */
 	private void createLineToggle(final Menu menu) {
-		final MenuItem line = new MenuItem(menu, SWT.CHECK);
-		line.setText(" Display line number");
+		final MenuItem line = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isLineNumberRulerVisible();
-		line.setSelection(selected);
-		line.setImage(selected ? create("toggle.numbers").image() : create("toggle.numbers").disabled());
+		line.setText(selected ? " Hide line numbers":" Display line numbers");
+
+		//line.setSelection(selected);
+		line.setImage(create("toggle.numbers").image());
 		line.addSelectionListener(new SelectionAdapter() {
 
 			@Override
