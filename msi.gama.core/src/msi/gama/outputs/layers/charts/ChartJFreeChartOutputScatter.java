@@ -235,17 +235,21 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	@Override
 	public void initdataset() {
 		super.initdataset();
-		if (getType() == ChartOutput.SERIES_CHART) {
-			chartdataset.setCommonXSeries(true);
-			chartdataset.setByCategory(false);
-		}
-		if (getType() == ChartOutput.XY_CHART) {
-			chartdataset.setCommonXSeries(false);
-			chartdataset.setByCategory(false);
-		}
-		if (getType() == ChartOutput.SCATTER_CHART) {
-			chartdataset.setCommonXSeries(false);
-			chartdataset.setByCategory(false);
+		switch (type) {
+			case ChartOutput.SERIES_CHART:
+				chartdataset.setCommonXSeries(true);
+				chartdataset.setByCategory(false);
+				break;
+			case ChartOutput.XY_CHART:
+				chartdataset.setCommonXSeries(false);
+				chartdataset.setByCategory(false);
+				break;
+			case ChartOutput.SCATTER_CHART:
+				chartdataset.setCommonXSeries(false);
+				chartdataset.setByCategory(false);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -720,7 +724,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	protected void initRenderer(final IScope scope) {
-		// TODO Auto-generated method stub
 		final XYPlot plot = (XYPlot) this.chart.getPlot();
 		defaultrenderer = new myXYErrorRenderer();
 		plot.setRenderer((myXYErrorRenderer) defaultrenderer);
@@ -795,9 +798,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		// resetAutorange(scope);
 
-		if (getType() == ChartOutput.SERIES_CHART && xlabel == null) { xlabel = "time"; }
-		if (getType() == ChartOutput.XY_CHART) {}
-		if (getType() == ChartOutput.SCATTER_CHART) {}
+		if (type == ChartOutput.SERIES_CHART && xlabel == null) { xlabel = "time"; }
 		if (!this.getXTickValueVisible(scope)) {
 			pp.getDomainAxis().setTickMarksVisible(false);
 			pp.getDomainAxis().setTickLabelsVisible(false);

@@ -1,20 +1,18 @@
 /*******************************************************************************************************
  *
- * ChartOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ChartOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 
@@ -34,79 +32,79 @@ public abstract class ChartOutput {
 
 	/** The Constant SERIES_CHART. */
 	static final int SERIES_CHART = 0;
-	
+
 	/** The Constant HISTOGRAM_CHART. */
 	static final int HISTOGRAM_CHART = 1;
-	
+
 	/** The Constant PIE_CHART. */
 	static final int PIE_CHART = 2;
-	
+
 	/** The Constant XY_CHART. */
 	static final int XY_CHART = 3;
-	
+
 	/** The Constant BOX_WHISKER_CHART. */
 	static final int BOX_WHISKER_CHART = 4;
-	
+
 	/** The Constant SCATTER_CHART. */
 	static final int SCATTER_CHART = 5;
-	
+
 	/** The Constant RADAR_CHART. */
 	static final int RADAR_CHART = 6;
-	
+
 	/** The Constant HEATMAP_CHART. */
 	static final int HEATMAP_CHART = 7;
 
 	/** The last update cycle. */
 	public int lastUpdateCycle = -1;
-	
+
 	/** The ismyfirststep. */
 	public boolean ismyfirststep = true;
 
 	/** The chname. */
 	String chname = "";
-	
+
 	/** The xlabel. */
 	String xlabel = null;
-	
+
 	/** The ylabel. */
 	String ylabel = null;
-	
+
 	/** The y 2 label. */
 	String y2label = null;
-	
+
 	/** The chartdataset. */
 	ChartDataSet chartdataset;
-	
+
 	/** The type. */
 	int type = SERIES_CHART;
-	
+
 	/** The reverse axes. */
 	boolean reverse_axes = false;
-	
+
 	/** The x logscale. */
 	boolean x_logscale = false;
-	
+
 	/** The y logscale. */
 	boolean y_logscale = false;
-	
+
 	/** The y 2 logscale. */
 	boolean y2_logscale = false;
-	
+
 	/** The use second y axis. */
 	boolean use_second_y_axis = false;
 
 	/** The title visible. */
 	boolean title_visible = true;
-	
+
 	/** The x tick value visible. */
 	boolean x_tick_value_visible = true;
-	
+
 	/** The y tick value visible. */
 	boolean y_tick_value_visible = true;
-	
+
 	/** The x tick line visible. */
 	boolean x_tick_line_visible = true;
-	
+
 	/** The y tick line visible. */
 	boolean y_tick_line_visible = true;
 
@@ -115,59 +113,58 @@ public abstract class ChartOutput {
 
 	/** The axes color. */
 	Color axesColor = null;
-	
+
 	/** The background color. */
 	Color labelBackgroundColor = null;
-	
+
 	/** The background color. */
 	Color labelTextColor = null;
-	
-	
+
 	/** The text color. */
 	Color textColor = null;
-	
+
 	/** The tick color. */
 	Color tickColor = null;
 
 	/** The tick font face. */
 	String tickFontFace = Font.SANS_SERIF;
-	
+
 	/** The tick font size. */
 	int tickFontSize = 10;
-	
+
 	/** The tick font style. */
 	int tickFontStyle = Font.PLAIN;
-	
+
 	/** The label font face. */
 	String labelFontFace = Font.SANS_SERIF;
-	
+
 	/** The label font size. */
 	int labelFontSize = 12;
-	
+
 	/** The label font style. */
 	int labelFontStyle = Font.BOLD;
-	
+
 	/** The legend font face. */
 	String legendFontFace = Font.SANS_SERIF;
-	
+
 	/** The legend font size. */
 	int legendFontSize = 10;
-	
+
 	/** The legend font style. */
 	int legendFontStyle = Font.ITALIC;
-	
+
 	/** The title font face. */
 	String titleFontFace = Font.SERIF;
-	
+
 	/** The title font size. */
 	int titleFontSize = 14;
-	
+
 	/** The title font style. */
 	int titleFontStyle = Font.BOLD;
 
 	/** The series label position. */
 	String series_label_position = "default";
-	
+
 	/** The style. */
 	String style = IKeyword.DEFAULT;
 
@@ -176,29 +173,29 @@ public abstract class ChartOutput {
 						// understand how to use it...
 
 	/** The xrangemax. */
-						double xrangeinterval, xrangemin, xrangemax;
-	
+	double xrangeinterval, xrangemin, xrangemax;
+
 	/** The usexrangeminmax. */
 	boolean usexrangeinterval = false, usexrangeminmax = false;
 
 	/** The yrangemax. */
 	double yrangeinterval, yrangemin, yrangemax;
-	
+
 	/** The useyrangeminmax. */
 	boolean useyrangeinterval = false, useyrangeminmax = false;
 
 	/** The y 2 rangemax. */
 	double y2rangeinterval, y2rangemin, y2rangemax;
-	
+
 	/** The usey 2 rangeminmax. */
 	boolean usey2rangeinterval = false, usey2rangeminmax = false;
 
 	/** The xtickunit. */
 	double xtickunit = -1;
-	
+
 	/** The ytickunit. */
 	double ytickunit = -1;
-	
+
 	/** The y 2 tickunit. */
 	double y2tickunit = -1;
 
@@ -214,61 +211,40 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the image.
 	 *
-	 * @param sizeX the size X
-	 * @param sizeY the size Y
-	 * @param antiAlias the anti alias
+	 * @param sizeX
+	 *            the size X
+	 * @param sizeY
+	 *            the size Y
+	 * @param antiAlias
+	 *            the anti alias
 	 * @return the image
 	 */
 	public abstract BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias);
 
 	/**
-	 * Draw.
-	 *
-	 * @param currentRenderer the current renderer
-	 * @param rect the rect
-	 * @param antialias the antialias
-	 */
-	public abstract void draw(Graphics2D currentRenderer, Rectangle2D rect, boolean antialias);
-
-	/**
 	 * Instantiates a new chart output.
 	 *
-	 * @param scope the scope
-	 * @param name the name
-	 * @param typeexp the typeexp
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 * @param typeexp
+	 *            the typeexp
 	 */
 	public ChartOutput(final IScope scope, final String name, final IExpression typeexp) {
 		final String t = typeexp == null ? IKeyword.SERIES : Cast.asString(scope, typeexp.value(scope));
-		type = IKeyword.SERIES.equals(t) ? SERIES_CHART
-				: IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
-						: IKeyword.RADAR.equals(t) ? RADAR_CHART
-								: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t)
-										? BOX_WHISKER_CHART : IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
+		type = IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
+				: IKeyword.RADAR.equals(t) ? RADAR_CHART : IKeyword.PIE.equals(t) ? PIE_CHART
+				: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART : IKeyword.SCATTER.equals(t) ? SCATTER_CHART
+				: XY_CHART;
 		axesColor = new GamaColor(Color.black);
-	}
-
-	/**
-	 * Gets the type.
-	 *
-	 * @return the type
-	 */
-	public int getType() {
-		return type;
-	}
-
-	/**
-	 * Sets the type.
-	 *
-	 * @param type the new type
-	 */
-	public void setType(final int type) {
-		this.type = type;
 	}
 
 	/**
 	 * Gets the chart cycle.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the chart cycle
 	 */
 	public int getChartCycle(final IScope scope) {
@@ -282,7 +258,8 @@ public abstract class ChartOutput {
 	/**
 	 * Step.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void step(final IScope scope) {
 		chartdataset.updatedataset(scope, getChartCycle(scope));
@@ -299,19 +276,15 @@ public abstract class ChartOutput {
 	/**
 	 * Update output.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void updateOutput(final IScope scope) {
 		if (chartdataset.doResetAll(scope, lastUpdateCycle)) {
 			clearDataSet(scope);
-			for (final String serieid : chartdataset.getDataSeriesIds(scope)) {
-				createNewSerie(scope, serieid);
-			}
+			for (final String serieid : chartdataset.getDataSeriesIds(scope)) { createNewSerie(scope, serieid); }
 			preResetSeries(scope);
-			for (final String serieid : chartdataset.getDataSeriesIds(scope)) {
-				this.resetSerie(scope, serieid);
-			}
-			resetAxes(scope);
+			for (final String serieid : chartdataset.getDataSeriesIds(scope)) { this.resetSerie(scope, serieid); }
 
 		} else {
 			final LinkedHashMap<String, Integer> toremove = chartdataset.getSerieRemovalDate();
@@ -329,13 +302,10 @@ public abstract class ChartOutput {
 				}
 			}
 			preResetSeries(scope);
-			for (final String serieid : chartdataset.getDataSeriesIds(scope)) {
-				this.resetSerie(scope, serieid);
-			}
-			resetAxes(scope);
+			for (final String serieid : chartdataset.getDataSeriesIds(scope)) { this.resetSerie(scope, serieid); }
 
 		}
-		updateImage(scope);
+		resetAxes(scope);
 
 		lastUpdateCycle = scope.getClock().getCycle();
 		// DEBUG.LOG("output last update:" + lastUpdateCycle);
@@ -344,7 +314,8 @@ public abstract class ChartOutput {
 	/**
 	 * Pre reset series.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void preResetSeries(final IScope scope) {
 
@@ -353,7 +324,8 @@ public abstract class ChartOutput {
 	/**
 	 * Reset axes.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void resetAxes(final IScope scope) {
 		// Update axes
@@ -363,27 +335,22 @@ public abstract class ChartOutput {
 	/**
 	 * Removes the serie.
 	 *
-	 * @param scope the scope
-	 * @param serieid the serieid
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
 	 */
 	public void removeSerie(final IScope scope, final String serieid) {
 
 	}
 
 	/**
-	 * Update image.
-	 *
-	 * @param scope the scope
-	 */
-	protected void updateImage(final IScope scope) {
-
-	}
-
-	/**
 	 * Reset serie.
 	 *
-	 * @param scope the scope
-	 * @param serieid the serieid
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
 	 */
 	protected void resetSerie(final IScope scope, final String serieid) {
 
@@ -392,7 +359,8 @@ public abstract class ChartOutput {
 	/**
 	 * Clear data set.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	protected void clearDataSet(final IScope scope) {
 
@@ -401,8 +369,10 @@ public abstract class ChartOutput {
 	/**
 	 * Creates the new serie.
 	 *
-	 * @param scope the scope
-	 * @param serieid the serieid
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
 	 */
 	protected void createNewSerie(final IScope scope, final String serieid) {
 
@@ -411,8 +381,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the use X source.
 	 *
-	 * @param scope the scope
-	 * @param expval the expval
+	 * @param scope
+	 *            the scope
+	 * @param expval
+	 *            the expval
 	 */
 	public void setUseXSource(final IScope scope, final IExpression expval) {
 		// if there is something to do to use custom X axis
@@ -421,8 +393,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the use X labels.
 	 *
-	 * @param scope the scope
-	 * @param expval the expval
+	 * @param scope
+	 *            the scope
+	 * @param expval
+	 *            the expval
 	 */
 	public void setUseXLabels(final IScope scope, final IExpression expval) {
 		// if there is something to do to use custom X axis
@@ -431,8 +405,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the use Y labels.
 	 *
-	 * @param scope the scope
-	 * @param expval the expval
+	 * @param scope
+	 *            the scope
+	 * @param expval
+	 *            the expval
 	 */
 	public void setUseYLabels(final IScope scope, final IExpression expval) {
 		// if there is something to do to use custom X axis
@@ -441,8 +417,10 @@ public abstract class ChartOutput {
 	/**
 	 * Inits the chart.
 	 *
-	 * @param scope the scope
-	 * @param chartname the chartname
+	 * @param scope
+	 *            the scope
+	 * @param chartname
+	 *            the chartname
 	 */
 	public void initChart(final IScope scope, final String chartname) {
 		chname = chartname;
@@ -452,7 +430,8 @@ public abstract class ChartOutput {
 	/**
 	 * Creates the chart.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void createChart(final IScope scope) {}
 
@@ -461,14 +440,13 @@ public abstract class ChartOutput {
 	 *
 	 * @return the chartdataset
 	 */
-	public ChartDataSet getChartdataset() {
-		return chartdataset;
-	}
+	public ChartDataSet getChartdataset() { return chartdataset; }
 
 	/**
 	 * Sets the chartdataset.
 	 *
-	 * @param chartdataset the new chartdataset
+	 * @param chartdataset
+	 *            the new chartdataset
 	 */
 	public void setChartdataset(final ChartDataSet chartdataset) {
 		this.chartdataset = chartdataset;
@@ -480,24 +458,22 @@ public abstract class ChartOutput {
 	 *
 	 * @return the name
 	 */
-	public String getName() {
-		return chname;
-	}
+	public String getName() { return chname; }
 
 	/**
 	 * Gets the style.
 	 *
 	 * @return the style
 	 */
-	public String getStyle() {
-		return style;
-	}
+	public String getStyle() { return style; }
 
 	/**
 	 * Sets the axes color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setAxesColorValue(final IScope scope, final GamaColor color) {
 		axesColor = color;
@@ -507,8 +483,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the tick color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setTickColorValue(final IScope scope, final GamaColor color) {
 		tickColor = color;
@@ -518,8 +496,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the background color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setBackgroundColorValue(final IScope scope, final GamaColor color) {
 		backgroundColor = color;
@@ -529,28 +509,34 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the label text color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setLabelTextColorValue(final IScope scope, final GamaColor color) {
 		labelTextColor = color;
 	}
-	
+
 	/**
 	 * Sets the label background color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setLabelBackgroundColorValue(final IScope scope, final GamaColor color) {
 		labelBackgroundColor = color;
 	}
-	
+
 	/**
 	 * Sets the color value.
 	 *
-	 * @param scope the scope
-	 * @param color the color
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
 	 */
 	public void setColorValue(final IScope scope, final GamaColor color) {
 		textColor = color;
@@ -560,56 +546,58 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the tick font face.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTickFontFace(final IScope scope, final String value) {
-		if (value != null) {
-			tickFontFace = value;
-		}
+		if (value != null) { tickFontFace = value; }
 	}
 
 	/**
 	 * Sets the label font face.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLabelFontFace(final IScope scope, final String value) {
-		if (value != null) {
-			labelFontFace = value;
-		}
+		if (value != null) { labelFontFace = value; }
 	}
 
 	/**
 	 * Sets the legend font face.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLegendFontFace(final IScope scope, final String value) {
-		if (value != null) {
-			legendFontFace = value;
-		}
+		if (value != null) { legendFontFace = value; }
 	}
 
 	/**
 	 * Sets the title font face.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTitleFontFace(final IScope scope, final String value) {
-		if (value != null) {
-			titleFontFace = value;
-		}
+		if (value != null) { titleFontFace = value; }
 	}
 
 	/**
 	 * Sets the tick font size.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTickFontSize(final IScope scope, final int value) {
 		tickFontSize = value;
@@ -618,8 +606,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the label font size.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLabelFontSize(final IScope scope, final int value) {
 		labelFontSize = value;
@@ -628,8 +618,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the legend font size.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLegendFontSize(final IScope scope, final int value) {
 		legendFontSize = value;
@@ -638,8 +630,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the title font size.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTitleFontSize(final IScope scope, final int value) {
 		titleFontSize = value;
@@ -648,8 +642,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the tick font style.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTickFontStyle(final IScope scope, final int value) {
 		tickFontStyle = value;
@@ -658,8 +654,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the label font style.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLabelFontStyle(final IScope scope, final int value) {
 		labelFontStyle = value;
@@ -668,8 +666,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the legend font style.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setLegendFontStyle(final IScope scope, final int value) {
 		legendFontStyle = value;
@@ -678,8 +678,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the title font style.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 */
 	public void setTitleFontStyle(final IScope scope, final int value) {
 		titleFontStyle = value;
@@ -688,8 +690,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X label.
 	 *
-	 * @param scope the scope
-	 * @param asString the as string
+	 * @param scope
+	 *            the scope
+	 * @param asString
+	 *            the as string
 	 */
 	public void setXLabel(final IScope scope, final String asString) {
 		xlabel = asString;
@@ -699,7 +703,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x label.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x label
 	 */
 	public String getXLabel(final IScope scope) {
@@ -710,8 +715,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y label.
 	 *
-	 * @param scope the scope
-	 * @param asString the as string
+	 * @param scope
+	 *            the scope
+	 * @param asString
+	 *            the as string
 	 */
 	public void setYLabel(final IScope scope, final String asString) {
 		ylabel = asString;
@@ -721,7 +728,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y label.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y label
 	 */
 	public String getYLabel(final IScope scope) {
@@ -732,8 +740,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y 2 label.
 	 *
-	 * @param scope the scope
-	 * @param asString the as string
+	 * @param scope
+	 *            the scope
+	 * @param asString
+	 *            the as string
 	 */
 	public void setY2Label(final IScope scope, final String asString) {
 		y2label = asString;
@@ -743,7 +753,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 label.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 label
 	 */
 	public String getY2Label(final IScope scope) {
@@ -754,7 +765,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use X range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use X range interval
 	 */
 	public boolean getUseXRangeInterval(final IScope scope) {
@@ -764,7 +776,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use X range min max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use X range min max
 	 */
 	public boolean getUseXRangeMinMax(final IScope scope) {
@@ -774,7 +787,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use Y range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use Y range interval
 	 */
 	public boolean getUseYRangeInterval(final IScope scope) {
@@ -784,7 +798,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use Y range min max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use Y range min max
 	 */
 	public boolean getUseYRangeMinMax(final IScope scope) {
@@ -794,7 +809,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use Y 2 range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use Y 2 range interval
 	 */
 	public boolean getUseY2RangeInterval(final IScope scope) {
@@ -804,7 +820,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use Y 2 range min max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use Y 2 range min max
 	 */
 	public boolean getUseY2RangeMinMax(final IScope scope) {
@@ -814,8 +831,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X range interval.
 	 *
-	 * @param scope the scope
-	 * @param doubleValue the double value
+	 * @param scope
+	 *            the scope
+	 * @param doubleValue
+	 *            the double value
 	 */
 	public void setXRangeInterval(final IScope scope, final double doubleValue) {
 		this.usexrangeinterval = true;
@@ -826,7 +845,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x range interval
 	 */
 	public double getXRangeInterval(final IScope scope) {
@@ -837,9 +857,12 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X range min max.
 	 *
-	 * @param scope the scope
-	 * @param minValue the min value
-	 * @param maxValue the max value
+	 * @param scope
+	 *            the scope
+	 * @param minValue
+	 *            the min value
+	 * @param maxValue
+	 *            the max value
 	 */
 	public void setXRangeMinMax(final IScope scope, final double minValue, final double maxValue) {
 		this.usexrangeminmax = true;
@@ -851,7 +874,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x range min.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x range min
 	 */
 	public double getXRangeMin(final IScope scope) {
@@ -862,7 +886,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x range max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x range max
 	 */
 	public double getXRangeMax(final IScope scope) {
@@ -873,7 +898,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y range interval
 	 */
 	public double getYRangeInterval(final IScope scope) {
@@ -883,8 +909,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y range interval.
 	 *
-	 * @param scope the scope
-	 * @param doubleValue the double value
+	 * @param scope
+	 *            the scope
+	 * @param doubleValue
+	 *            the double value
 	 */
 	public void setYRangeInterval(final IScope scope, final double doubleValue) {
 		this.useyrangeinterval = true;
@@ -895,9 +923,12 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y range min max.
 	 *
-	 * @param scope the scope
-	 * @param minValue the min value
-	 * @param maxValue the max value
+	 * @param scope
+	 *            the scope
+	 * @param minValue
+	 *            the min value
+	 * @param maxValue
+	 *            the max value
 	 */
 	public void setYRangeMinMax(final IScope scope, final double minValue, final double maxValue) {
 		this.useyrangeminmax = true;
@@ -909,7 +940,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y range min.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y range min
 	 */
 	public double getYRangeMin(final IScope scope) {
@@ -920,7 +952,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y range max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y range max
 	 */
 	public double getYRangeMax(final IScope scope) {
@@ -931,7 +964,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 range interval.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 range interval
 	 */
 	public double getY2RangeInterval(final IScope scope) {
@@ -941,8 +975,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y 2 range interval.
 	 *
-	 * @param scope the scope
-	 * @param doubleValue the double value
+	 * @param scope
+	 *            the scope
+	 * @param doubleValue
+	 *            the double value
 	 */
 	public void setY2RangeInterval(final IScope scope, final double doubleValue) {
 		this.usey2rangeinterval = true;
@@ -953,9 +989,12 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y 2 range min max.
 	 *
-	 * @param scope the scope
-	 * @param minValue the min value
-	 * @param maxValue the max value
+	 * @param scope
+	 *            the scope
+	 * @param minValue
+	 *            the min value
+	 * @param maxValue
+	 *            the max value
 	 */
 	public void setY2RangeMinMax(final IScope scope, final double minValue, final double maxValue) {
 		this.usey2rangeminmax = true;
@@ -967,7 +1006,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 range min.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 range min
 	 */
 	public double getY2RangeMin(final IScope scope) {
@@ -978,7 +1018,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 range max.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 range max
 	 */
 	public double getY2RangeMax(final IScope scope) {
@@ -989,8 +1030,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X tick unit.
 	 *
-	 * @param scope the scope
-	 * @param r the r
+	 * @param scope
+	 *            the scope
+	 * @param r
+	 *            the r
 	 */
 	public void setXTickUnit(final IScope scope, final double r) {
 		this.xtickunit = r;
@@ -1000,7 +1043,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x tick unit.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x tick unit
 	 */
 	public double getXTickUnit(final IScope scope) {
@@ -1011,8 +1055,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y tick unit.
 	 *
-	 * @param scope the scope
-	 * @param r the r
+	 * @param scope
+	 *            the scope
+	 * @param r
+	 *            the r
 	 */
 	public void setYTickUnit(final IScope scope, final double r) {
 		this.ytickunit = r;
@@ -1022,7 +1068,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y tick unit.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y tick unit
 	 */
 	public double getYTickUnit(final IScope scope) {
@@ -1033,8 +1080,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y 2 tick unit.
 	 *
-	 * @param scope the scope
-	 * @param r the r
+	 * @param scope
+	 *            the scope
+	 * @param r
+	 *            the r
 	 */
 	public void setY2TickUnit(final IScope scope, final double r) {
 		this.y2tickunit = r;
@@ -1044,7 +1093,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 tick unit.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 tick unit
 	 */
 	public double getY2TickUnit(final IScope scope) {
@@ -1055,8 +1105,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the gap.
 	 *
-	 * @param scope the scope
-	 * @param range the range
+	 * @param scope
+	 *            the scope
+	 * @param range
+	 *            the range
 	 */
 	public void setGap(final IScope scope, final double range) {
 		this.gap = range;
@@ -1067,16 +1119,17 @@ public abstract class ChartOutput {
 	 *
 	 * @return the JF chart
 	 */
-	public JFreeChart getJFChart() {
-		return null;
-	}
+	public JFreeChart getJFChart() { return null; }
 
 	/**
 	 * Sets the serie marker shape.
 	 *
-	 * @param scope the scope
-	 * @param serieid the serieid
-	 * @param markershape the markershape
+	 * @param scope
+	 *            the scope
+	 * @param serieid
+	 *            the serieid
+	 * @param markershape
+	 *            the markershape
 	 */
 	public void setSerieMarkerShape(final IScope scope, final String serieid, final String markershape) {
 
@@ -1085,9 +1138,12 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the default properties from type.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param type_val the type val
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param type_val
+	 *            the type val
 	 */
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
 
@@ -1096,9 +1152,12 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the use size.
 	 *
-	 * @param scope the scope
-	 * @param name the name
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 * @param b
+	 *            the b
 	 */
 	public void setUseSize(final IScope scope, final String name, final boolean b) {
 
@@ -1107,8 +1166,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the series label position.
 	 *
-	 * @param scope the scope
-	 * @param asString the as string
+	 * @param scope
+	 *            the scope
+	 * @param asString
+	 *            the as string
 	 */
 	public void setSeriesLabelPosition(final IScope scope, final String asString) {
 		series_label_position = asString;
@@ -1118,8 +1179,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the style.
 	 *
-	 * @param scope the scope
-	 * @param asString the as string
+	 * @param scope
+	 *            the scope
+	 * @param asString
+	 *            the as string
 	 */
 	public void setStyle(final IScope scope, final String asString) {
 		style = asString;
@@ -1129,7 +1192,8 @@ public abstract class ChartOutput {
 	/**
 	 * Inits the chart post data init.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void initChart_post_data_init(final IScope scope) {
 
@@ -1138,11 +1202,16 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the model coordinates info.
 	 *
-	 * @param xOnScreen the x on screen
-	 * @param yOnScreen the y on screen
-	 * @param g the g
-	 * @param positionInPixels the position in pixels
-	 * @param sb the sb
+	 * @param xOnScreen
+	 *            the x on screen
+	 * @param yOnScreen
+	 *            the y on screen
+	 * @param g
+	 *            the g
+	 * @param positionInPixels
+	 *            the position in pixels
+	 * @param sb
+	 *            the sb
 	 * @return the model coordinates info
 	 */
 	public void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
@@ -1151,8 +1220,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the reverse axis.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setReverseAxis(final IScope scope, final Boolean asBool) {
 		reverse_axes = asBool;
@@ -1161,8 +1232,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X log scale.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setX_LogScale(final IScope scope, final Boolean asBool) {
 		x_logscale = asBool;
@@ -1171,8 +1244,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y log scale.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setY_LogScale(final IScope scope, final Boolean asBool) {
 		y_logscale = asBool;
@@ -1181,7 +1256,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x log scale.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x log scale
 	 */
 	public boolean getX_LogScale(final IScope scope) {
@@ -1191,7 +1267,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y log scale.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y log scale
 	 */
 	public boolean getY_LogScale(final IScope scope) {
@@ -1201,8 +1278,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y 2 log scale.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setY2_LogScale(final IScope scope, final Boolean asBool) {
 		y2_logscale = asBool;
@@ -1211,7 +1290,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y 2 log scale.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y 2 log scale
 	 */
 	public boolean getY2_LogScale(final IScope scope) {
@@ -1222,8 +1302,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the use second Y axis.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setUseSecondYAxis(final IScope scope, final Boolean asBool) {
 
@@ -1233,7 +1315,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the use second Y axis.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the use second Y axis
 	 */
 	public boolean getUseSecondYAxis(final IScope scope) {
@@ -1245,8 +1328,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X tick value visible.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setXTickValueVisible(final IScope scope, final Boolean asBool) {
 
@@ -1256,7 +1341,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x tick value visible.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x tick value visible
 	 */
 	public boolean getXTickValueVisible(final IScope scope) {
@@ -1268,8 +1354,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y tick value visible.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setYTickValueVisible(final IScope scope, final Boolean asBool) {
 
@@ -1279,7 +1367,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y tick value visible.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y tick value visible
 	 */
 	public boolean getYTickValueVisible(final IScope scope) {
@@ -1291,8 +1380,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the title visible.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setTitleVisible(final IScope scope, final Boolean asBool) {
 
@@ -1302,7 +1393,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the title visible.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the title visible
 	 */
 	public boolean getTitleVisible(final IScope scope) {
@@ -1314,8 +1406,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the X tick line visible.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setXTickLineVisible(final IScope scope, final Boolean asBool) {
 
@@ -1325,7 +1419,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the x tick line visible.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the x tick line visible
 	 */
 	public boolean getXTickLineVisible(final IScope scope) {
@@ -1337,8 +1432,10 @@ public abstract class ChartOutput {
 	/**
 	 * Sets the Y tick line visible.
 	 *
-	 * @param scope the scope
-	 * @param asBool the as bool
+	 * @param scope
+	 *            the scope
+	 * @param asBool
+	 *            the as bool
 	 */
 	public void setYTickLineVisible(final IScope scope, final Boolean asBool) {
 
@@ -1348,7 +1445,8 @@ public abstract class ChartOutput {
 	/**
 	 * Gets the y tick line visible.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the y tick line visible
 	 */
 	public boolean getYTickLineVisible(final IScope scope) {
@@ -1360,7 +1458,8 @@ public abstract class ChartOutput {
 	/**
 	 * Dispose.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void dispose(final IScope scope) {}
 

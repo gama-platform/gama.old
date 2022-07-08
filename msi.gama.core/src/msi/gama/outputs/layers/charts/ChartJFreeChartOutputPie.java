@@ -71,10 +71,8 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	@Override
 	public void initdataset() {
 		super.initdataset();
-		if (getType() == ChartOutput.PIE_CHART) {
-			chartdataset.setCommonXSeries(true);
-			chartdataset.setByCategory(true);
-		}
+		chartdataset.setCommonXSeries(true);
+		chartdataset.setByCategory(true);
 	}
 
 	@Override
@@ -108,11 +106,9 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 			pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
 			if (axesColor != null) { pp.setLabelLinkPaint(axesColor); }
 			pp.setLabelFont(getTickFont());
-			if (labelTextColor != null) 
-				 pp.setLabelPaint(labelTextColor);
-			if (labelBackgroundColor != null)
-				pp.setLabelBackgroundPaint(this.labelBackgroundColor);
-			
+			if (labelTextColor != null) { pp.setLabelPaint(labelTextColor); }
+			if (labelBackgroundColor != null) { pp.setLabelBackgroundPaint(this.labelBackgroundColor); }
+
 		}
 		if ("none".equals(this.series_label_position)) {
 			pp.setLabelLinksVisible(false);
