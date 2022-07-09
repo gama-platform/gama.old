@@ -282,12 +282,13 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 		Geometry g = null;
 		try {
 			g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
-			g = fixesPolygonCWS(g);
-			g = geometryCollectionManagement(g);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			g = ag.getInnerGeometry();
+//			e.printStackTrace(); 
+			System.out.println(e.getMessage());
+			g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 		}
+		g = fixesPolygonCWS(g);
+		g = geometryCollectionManagement(g);
 
 		values.add(g);
 		if (ag instanceof IAgent) {
