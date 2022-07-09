@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.expressions.IExpression;
@@ -111,6 +112,10 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 		PREF_DEFINITIONS.put(key, entry.getTitle());
 		final IGamaHelper<?> get = (scope, agent, skill, values) -> GamaPreferences.get(key).getValue();
 		final IGamaHelper<?> set = (scope, agent, skill, val) -> {
+			if (agent instanceof PlatformAgent gama) {
+				// Should be in any case
+				gama.savePrefToRestore(key, GamaPreferences.get(key).getValue());
+			}
 			GamaPreferences.get(key).setValue(scope, val);
 			return this;
 		};

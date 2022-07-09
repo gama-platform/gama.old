@@ -399,6 +399,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void dispose() {
+		GAMA.getPlatformAgent().restorePrefs();
 		// DEBUG.LOG("ExperimentPlan.dipose BEGIN");
 		// Dec 2015 Addition
 		if (controller != null) { controller.dispose(); }

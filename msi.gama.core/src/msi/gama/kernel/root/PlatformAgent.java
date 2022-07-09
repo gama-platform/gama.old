@@ -1,26 +1,27 @@
 /*******************************************************************************************************
  *
- * PlatformAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PlatformAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.root;
 
-import java.net.URL;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.Pref;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -43,6 +44,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.MemoryUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.expressions.IExpression;
@@ -52,6 +54,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class PlatformAgent.
@@ -108,18 +111,24 @@ import one.util.streamex.StreamEx;
 						see = { "workspace_path" })), })
 public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpression {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The Constant WORKSPACE_PATH. */
 	public static final String WORKSPACE_PATH = "workspace_path";
-	
+
 	/** The Constant MACHINE_TIME. */
 	public static final String MACHINE_TIME = "machine_time";
-	
+
 	/** The polling. */
 	private final Timer polling = new Timer();
-	
+
+	Map<String, Object> prefsToRestore = GamaMapFactory.create();
+
 	/** The basic scope. */
 	final IScope basicScope;
-	
+
 	/** The current task. */
 	private TimerTask currentTask;
 
@@ -134,23 +143,23 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	/**
 	 * Instantiates a new platform agent.
 	 *
-	 * @param pop the pop
-	 * @param index the index
+	 * @param pop
+	 *            the pop
+	 * @param index
+	 *            the index
 	 */
 	public PlatformAgent(final IPopulation<PlatformAgent> pop, final int index) {
 		super(pop, index);
 		basicScope = new ExecutionScope(this, "Gama platform scope");
-		if (GamaPreferences.Runtime.CORE_MEMORY_POLLING.getValue()) {
-			startPollingMemory();
-		}
-		GamaPreferences.Runtime.CORE_MEMORY_POLLING.onChange((newValue) -> {
+		if (GamaPreferences.Runtime.CORE_MEMORY_POLLING.getValue()) { startPollingMemory(); }
+		GamaPreferences.Runtime.CORE_MEMORY_POLLING.onChange(newValue -> {
 			if (newValue) {
 				startPollingMemory();
 			} else {
 				stopPollingMemory();
 			}
 		});
-		GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.onChange((newValue) -> {
+		GamaPreferences.Runtime.CORE_MEMORY_FREQUENCY.onChange(newValue -> {
 			stopPollingMemory();
 			startPollingMemory();
 		});
@@ -201,19 +210,13 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public boolean isContextIndependant() {
-		return false;
-	}
+	public boolean isContextIndependant() { return false; }
 
 	@Override
-	public ITopology getTopology() {
-		return new AmorphousTopology();
-	}
+	public ITopology getTopology() { return new AmorphousTopology(); }
 
 	@Override
-	public String getName() {
-		return "gama";
-	}
+	public String getName() { return "gama"; }
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -221,33 +224,23 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public ISpecies getSpecies() {
-		return getPopulation().getSpecies();
-	}
+	public ISpecies getSpecies() { return getPopulation().getSpecies(); }
 
 	@Override
-	public SimulationClock getClock() {
-		return new SimulationClock(getScope());
-	}
+	public SimulationClock getClock() { return new SimulationClock(getScope()); }
 
 	@Override
-	public IScope getScope() {
-		return basicScope;
-	}
+	public IScope getScope() { return basicScope; }
 
 	@Override
-	public GamaColor getColor() {
-		return GamaColor.NamedGamaColor.colors.get("gamaorange");
-	}
+	public GamaColor getColor() { return GamaColor.colors.get("gamaorange"); }
 
 	@Override
-	public RandomUtils getRandomGenerator() {
-		return new RandomUtils();
-	}
+	public RandomUtils getRandomGenerator() { return new RandomUtils(); }
 
 	@Override
 	public IOutputManager getOutputManager() {
-		if (getExperiment() != null) { return getExperiment().getOutputManager(); }
+		if (getExperiment() != null) return getExperiment().getOutputManager();
 		return null;
 	}
 
@@ -264,21 +257,17 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public void executeAction(final IExecutable executable) {}
 
 	@Override
-	public boolean isOnUserHold() {
-		return false;
-	}
+	public boolean isOnUserHold() { return false; }
 
 	@Override
 	public void setOnUserHold(final boolean state) {}
 
 	@Override
-	public SimulationAgent getSimulation() {
-		return GAMA.getSimulation();
-	}
+	public SimulationAgent getSimulation() { return GAMA.getSimulation(); }
 
 	@Override
 	public IExperimentAgent getExperiment() {
-		if (GAMA.getExperiment() != null) { return GAMA.getExperiment().getAgent(); }
+		if (GAMA.getExperiment() != null) return GAMA.getExperiment().getAgent();
 		return null;
 	}
 
@@ -292,9 +281,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			initializer = true)
 	public String getWorkspacePath() {
 		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-	//Patrick : previous version: does not work well on windows (/C:/....)
-	//	final URL url = Platform.getInstanceLocation().getURL();
-	//	return url.getPath();
+		// Patrick : previous version: does not work well on windows (/C:/....)
+		// final URL url = Platform.getInstanceLocation().getURL();
+		// return url.getPath();
 	}
 
 	/**
@@ -308,7 +297,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			initializer = true)
 	public IList<String> getPluginsList() {
 		final BundleContext bc = FrameworkUtil.getBundle(getClass()).getBundleContext();
-		return StreamEx.of(bc.getBundles()).map(b -> b.getSymbolicName()).toCollection(Containers.listOf(Types.STRING));
+		return StreamEx.of(bc.getBundles()).map(Bundle::getSymbolicName).toCollection(Containers.listOf(Types.STRING));
 	}
 
 	/**
@@ -334,8 +323,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			initializer = true)
 	public long getAvailableMemory() {
 		final long allocatedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-		final long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-		return presumableFreeMemory;
+		return Runtime.getRuntime().maxMemory() - allocatedMemory;
 	}
 
 	/**
@@ -346,9 +334,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@getter (
 			value = "max_memory",
 			initializer = true)
-	public long getMaxMemory() {
-		return Runtime.getRuntime().maxMemory();
-	}
+	public long getMaxMemory() { return Runtime.getRuntime().maxMemory(); }
 
 	/**
 	 * Gets the machine time.
@@ -356,14 +342,10 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	 * @return the machine time
 	 */
 	@getter (PlatformAgent.MACHINE_TIME)
-	public Double getMachineTime() {
-		return (double) System.currentTimeMillis();
-	}
+	public Double getMachineTime() { return (double) System.currentTimeMillis(); }
 
 	@Override
-	public String getTitle() {
-		return "gama platform agent";
-	}
+	public String getTitle() { return "gama platform agent"; }
 
 	@Override
 	public String getDocumentation() {
@@ -371,9 +353,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public String getDefiningPlugin() {
-		return "msi.gama.core";
-	}
+	public String getDefiningPlugin() { return "msi.gama.core"; }
 	//
 	// @Override
 	// public void collectMetaInformation(final GamlProperties meta) {}
@@ -384,9 +364,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public boolean isConst() {
-		return false;
-	}
+	public boolean isConst() { return false; }
 
 	@Override
 	public String literalValue() {
@@ -404,7 +382,20 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	}
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.get(IKeyword.PLATFORM);
+	public IType<?> getGamlType() { return Types.get(IKeyword.PLATFORM); }
+
+	public void savePrefToRestore(final String key, final Object value) {
+		// DEBUG.OUT("Save preference to restor" + key + " with value " + value);
+		// In order to not restore a previous value if it has already been set
+		prefsToRestore.putIfAbsent(key, value);
+	}
+
+	public void restorePrefs() {
+		// DEBUG.OUT("Restoring preferences" + prefsToRestore);
+		prefsToRestore.forEach((key, value) -> {
+			Pref<?> p = GamaPreferences.get(key);
+			if (p != null) { p.setValue(basicScope, value); }
+		});
+
 	}
 }

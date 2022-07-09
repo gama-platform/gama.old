@@ -68,6 +68,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Defines an instance of a model (a simulation). Serves as the support for model species (whose metaclass is
@@ -168,10 +169,10 @@ import msi.gaml.types.IType;
 						value = "Represents the starting date of the simulation",
 						comment = "If no starting_date is provided in the model, GAMA initializes it with a zero date: 1st of January, 1970 at 00:00:00")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
-	//
-	// static {
-	// DEBUG.ON();
-	// }
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant DURATION. */
 	public static final String DURATION = "duration";
@@ -305,12 +306,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// the agents present in the spatial index
 		final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
 				|| GamaPreferences.External.QUADTREE_SYNCHRONIZATION.getValue() };
+
 		if (!parallel[0]) {
 			getSpecies().getDescription().visitMicroSpecies(s -> {
 				parallel[0] = getParallelism(scope, s.getFacetExpr(IKeyword.PARALLEL), Caller.SPECIES) > 0;
 				return !parallel[0];
 			});
 		}
+
 		if (topology != null) {
 			topology.updateEnvironment(scope, shape, parallel[0]);
 		} else {
@@ -974,8 +977,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		Double seedValue = null;
 		String rngValue = null;
-		Integer usageValue = null;		
-		
+		Integer usageValue = null;
+
 		// This list is updated during all the updateWith of the simulation.
 		// When all the agents will be created (end of this updateWith),
 		// all the references will be replaced by the corresponding agent.
@@ -993,20 +996,20 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				((IReference) attrValue).setAgentAndAttrName(this, varName);
 				if (!list_ref.contains(attrValue)) { list_ref.add((IReference) attrValue); }
 			}
-			
+
 			// If attributes are related to the RNG, we keep them to initialise the RNG later, in the proper order.
-			if(varName.equals(IKeyword.SEED)) {
+			if (IKeyword.SEED.equals(varName)) {
 				seedValue = (Double) attrValue;
-			} else if(varName.equals(IKeyword.RNG)) {
+			} else if (IKeyword.RNG.equals(varName)) {
 				rngValue = (String) attrValue;
-			} else if(varName.equals(SimulationAgent.USAGE)) {
+			} else if (SimulationAgent.USAGE.equals(varName)) {
 				usageValue = (Integer) attrValue;
 			} else {
-				this.setDirectVarValue(scope, varName, attrValue);				
+				this.setDirectVarValue(scope, varName, attrValue);
 			}
 
 		}
-		
+
 		// Update RNG
 		setRandomGenerator(new RandomUtils(seedValue, rngValue));
 		setUsage(usageValue);
