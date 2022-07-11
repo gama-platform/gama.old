@@ -101,10 +101,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if (args.length > 0) {
 			int i = 0;
 			if (args[0].contains("--launcher.defaultAction")) { i += 2; }
-			if (Arrays.asList(args).contains("-MPI")) {
-				System.out.println("MPI FLAGS ------------------------------------");
-				FLAGS.USE_MPI = true;
-			}
 			if (i < args.length) {
 				String exp = args[i];
 				if (!exp.endsWith(".gamr")) {
