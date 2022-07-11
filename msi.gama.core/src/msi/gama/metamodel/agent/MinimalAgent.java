@@ -154,7 +154,7 @@ public class MinimalAgent extends AbstractAgent {
 	
 	@Override
 	public void setUniqueID(int uID) {
-		System.out.println(this.name + " MINIMAL SETTER UNIQUEID = "+uID);
+		//System.out.println(this.name + " MINIMAL SETTER UNIQUEID = "+uID);
 		
 		if(uID == 0) // todo check why uID = 0 on some calls at init
 		{

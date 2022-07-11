@@ -32,7 +32,6 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 
 import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
-import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;

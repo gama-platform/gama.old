@@ -39,6 +39,7 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Spatial;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.serializer.factory.StreamConverter;
 
 /*
@@ -441,6 +442,12 @@ class DistributionUtils
 			
 			ArrayList<IAgent> rcvMesg = (ArrayList<IAgent>) StreamConverter.convertMPIStreamToObject(scope, new String(message));
 			System.out.println("IAgent : \n\n");
+			
+			if(rcvMesg != null)
+			{
+				rcvMesg.removeAll(Collections.singleton(null));
+			}
+			
 			for(var auto : rcvMesg)
 			{
 				System.out.println("auto class name = "+auto.getClass().getName());
@@ -490,11 +497,16 @@ public class SlaveMPI extends GamlAgent {
 	public SlaveMPI(IPopulation<? extends IAgent> s, int index) 
 	{
 		super(s, index);
-		
-
 		try 
 		{
-			System.out.println("Starting MPI");
+			System.out.println("USING MPI");
+			/*final String[] arg = {};
+			MPI.InitThread(arg, MPI.THREAD_MULTIPLE);
+			
+			System.out.println("MPI.COMM_WORLD.getRank() = "+MPI.COMM_WORLD.getRank());
+			UniqueIDProviderService.getInstance().initMPI(MPI.COMM_WORLD.getRank());*/
+			myRank = MPI.COMM_WORLD.getRank();
+	
 			
 			PrintStream fileOut = new PrintStream("filename"+myRank+".txt");
 			System.setOut(fileOut);
@@ -506,9 +518,6 @@ public class SlaveMPI extends GamlAgent {
 		{
 			System.out.println("MPIException " + e);
 		}
-		
-		// todo define this ^ in other function to be called after the init of everyone
-		// maybe with MPI.Barrier() to block all
 		
 		// get neighbors from grid in the model -> initialize SubOLZ
 	}
@@ -568,7 +577,6 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInOuterOLZ = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_OUTER_OLZ);
 		System.out.println("returning getAgentInNeighborOuterOLZ to gaml = "+agentsInOuterOLZ);
-		agentsInOuterOLZ.removeAll(Collections.singleton(null));
 		return agentsInOuterOLZ;
 	}
 	
@@ -583,8 +591,6 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInInnerOLZ = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_INNER_OLZ);
 		System.out.println("returning getAgentInNeighborInnerOLZ to gaml = "+agentsInInnerOLZ);
-		agentsInInnerOLZ.removeAll(Collections.singleton(null));
-		
 		return agentsInInnerOLZ;
 	}
 	
@@ -599,7 +605,6 @@ public class SlaveMPI extends GamlAgent {
 	{
 		ArrayList<IAgent> agentsInMain = DistributionUtils.processCommunication(scope, (int) scope.getArg(IMPISkill.NEIGHBORS_RANK, IType.INT), RequestType.GET_AGENT_IN_MAIN_AREA);
 		System.out.println("returning agentsInMain to gaml = "+agentsInMain);
-		agentsInMain.removeAll(Collections.singleton(null));
 		return agentsInMain;
 	}
 	

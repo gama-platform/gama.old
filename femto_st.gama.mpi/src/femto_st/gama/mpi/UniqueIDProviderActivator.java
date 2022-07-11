@@ -13,15 +13,12 @@ import ummisco.gama.dev.utils.FLAGS;
 public class UniqueIDProviderActivator implements BundleActivator {
 	@Override
 	public void start(final BundleContext context) throws Exception 
-	{
-		// todo load library without mpirun 
-		// or get mpiRank 
+	{	
+		final String[] arg = {};
+		MPI.InitThread(arg, MPI.THREAD_MULTIPLE); // does not work with GUI : UnsatisfiedLinkError
+		UniqueIDProviderService.getInstance().initMPI(MPI.COMM_WORLD.getRank());
 		
-		//final String[] arg = {};
-		//MPI.InitThread(arg, MPI.THREAD_MULTIPLE);
-		//UniqueIDProviderService.getInstance().initMPI(MPI.COMM_WORLD.getRank());
-		
-		//UniqueIDProviderService.getInstance().initMPI(888);
+		// todo find a way to start gama with GUI 
 	}
 
 	@Override

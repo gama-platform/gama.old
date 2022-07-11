@@ -47,7 +47,6 @@ public class AWTDisplayView extends LayeredDisplayView {
 		WorkbenchHelper.asyncRun(() -> centralPanel.forceFocus());
 	}
 
-	@Override
 	protected boolean canBeSynchronized() {
 		return true;
 	}

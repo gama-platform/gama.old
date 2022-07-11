@@ -1,6 +1,6 @@
 /**
 * Name: NewModel
-* Test of gama 
+* Moving Agent
 * Author: Lucas GROSJEAN
 * Tags: 
 */
@@ -16,6 +16,7 @@ global
 	
 	init
 	{
+		seed <- 12.0;
 		/*create standingAgent
 		{
 			self.location <- {25,27,0};

@@ -214,8 +214,8 @@
 		<module>../simtools.gaml.extensions.physics</module>  -->
 
 
-		<module>../../gama.experimental/femto_st.gama.feature.mpi</module>
-		<module>../../gama.experimental/femto_st.gama.mpi</module>
+		<module>../femto_st.gama.feature.mpi</module>
+		<module>../femto_st.gama.mpi</module>
 
 		<!-- <module>../irit.gaml.extensions.database</module>-->
 

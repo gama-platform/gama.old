@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -206,25 +205,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index){
 		super(s, index);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
-		
-		PrintStream fileOut;
-		try {
-			fileOut = new PrintStream("MPI.txt");
-			System.setOut(fileOut);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-		if(FLAGS.USE_MPI)
-		{
-			System.out.println("888888888888888888888888888888888888888888888888");
-			//setup MPI
-			UniqueIDProviderService.getInstance().initMPI(888);
-		}else
-		{
-			System.out.println("7777777777777777777777777777777777777777777777");
-		}
 		
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);

@@ -1,10 +1,9 @@
 /**
 * Name: NewModel
-* Test of gama 
+* MPI Controler of OLZ.gaml
 * Author: Lucas GROSJEAN
-* Tags: 
+* Tags: MPI, Controler
 */
-
 
 model controler
 
@@ -14,15 +13,14 @@ global
 {
 	
 	string file_name;
-	int final_step <- 10;
-	int agent_range <- 5;
+	int final_step <- 50;
 	int rank;
 	
 	init
 	{	
+		seed <- 12.0;
 		do init_sub_simulation;
 		create slave;
-		//create testMPI;
 	}
     
     action init_sub_simulation
@@ -69,55 +67,49 @@ species slave parent: SlaveMPI
 		file_name <- "log"+myRank+".txt";
 		do clearLogFile();
 		
-		ask pp.movingExp[0]
-		{
-			myself.cellule <- cell[0,myself.myRank];
-		}
-		
-		shape <- cellule.shape;
-		outer_OLZ_area <- agent_range around(self.shape);
-		inner_OLZ_area <- agent_range around(self.shape - agent_range);
-		
 		if(myRank = 0)
 		{	
+			ask pp.movingExp[0]
+			{
+				myself.cellule <- cell[0,myself.myRank];
+				myself.outer_OLZ_area <-myself.cellule.OLZ_bottom_outer;
+				myself.inner_OLZ_area <- myself.cellule.OLZ_bottom_inner;
+				myself.shape <- myself.cellule.shape;
+			}
 			neighbors <- 1;
 		}else
 		{
 			neighbors <- 0;
+			ask pp.movingExp[0]
+			{
+				myself.cellule <- cell[0,myself.myRank];
+				myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer ;
+				myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner;
+				myself.shape <- myself.cellule.shape;
+			}
 		}
-		
-		do writeLog("My shape " + shape);
 		do writeLog("My rank is " + myRank);
 		do writeLog("NetSize " + MPI_SIZE());
-		do writeLog("My cell is " + cellule);
-		do writeLog("neighbors " + neighbors);	
-		
-		do writeLog("outer_OLZ_area " + outer_OLZ_area);
-		do writeLog("inner_OLZ_area " + inner_OLZ_area);	
-		do writeLog("main_area " + shape);	
+		do writeLog("Seed = " + seed);	
 	}
 	
 	action deleteAgentsNotInMyArea
 	{
 		ask pp.movingExp[0]
 	    {
-	    	 myself.agent_inside_me <- agents; 
+			myself.agent_inside_me <- agents; 
 	    }
 	    
-		do writeLog("ALL agents in the model = "+agent_inside_me);
-		
 		inside_main <- agent_inside_me inside(shape); 
 		inside_outer_OLZ <- agent_inside_me inside(outer_OLZ_area);
 		inside_inner_OLZ <- agent_inside_me inside(inner_OLZ_area);
 		
-		do writeLog("Agents insideMain = " + string(inside_main));
-		do writeLog("Agents inside_outer_OLZ = " + string(inside_outer_OLZ));
-		do writeLog("Agents inside_inner_OLZ = " + string(inside_inner_OLZ));
-		
 		agent_inside_me <- inside_main + inside_outer_OLZ; // inner is in main
 		
 		list<agent> agent_outside_me;
-		string deleted;
+		list<movingAgent> li;
+
+		string deleted <- "";
 		ask pp.movingExp[0] 
 	    {
 	    	agent_outside_me <- agents - myself.agent_inside_me;
@@ -129,26 +121,18 @@ species slave parent: SlaveMPI
 	    			do die;
 	    		}
 	    	}
-	    	ask followingAgent
-	    	{
-	    		if(agent_outside_me contains self)
-	    		{
-	    			deleted<- deleted + ", " + self.name;
-	    			do die;
-	    		}
-	    	}
-	    	ask standingAgent
-	    	{
-	    		if(agent_outside_me contains self)
-	    		{
-	    			deleted<- deleted + ", " + self.name;
-	    			do die;
-	    		}
-	    	}
 	    }
-		do writeLog("agent deleted = "  +deleted);
-	    
-		do writeLog("Agents in INNER + MAIN + OUTER : " + agent_inside_me);
+
+		ask pp.movingExp[0]
+	    {
+			myself.agent_inside_me <- agents; 
+			li <- movingAgent;
+	    }
+		do writeLog("deleted = " + deleted);
+		do writeLog("agent_inside_me" + agent_inside_me);
+		do writeLog("inside_outer_OLZ" + inside_outer_OLZ);
+		do writeLog("inside_inner_OLZ" + inside_inner_OLZ);
+		do writeLog("NB AGENTS =  " +length(li));
 	}
 	
 	reflex routineMPI
@@ -159,19 +143,12 @@ species slave parent: SlaveMPI
 		
 		do start_listener;
 		
-		do writeLog("b1");
 		do MPI_BARRIER();
-		do writeLog("b2");
 		
-		if(myRank = 0)
-		{	
-			list<agent> t <- getAgentInNeighborInnerOLZ(neighbors);		
-			do writeLog("getAgentInNeighborInnerOLZ = "+t);
-		}
+		list<agent> t <- getAgentInNeighborInnerOLZ(neighbors);		
+		do writeLog("getAgentInNeighborInnerOLZ = "+t);
 		
-		do writeLog("b3");
 		do MPI_BARRIER();
-		do writeLog("b4");
 		
 		do stop_listener;
 	}
@@ -185,31 +162,9 @@ species slave parent: SlaveMPI
 	{
 		save "" type: text to: file_name rewrite:true;
 	}
-	
-	aspect olz
-	{
-		draw self.shape;
-		draw self.outer_OLZ_area color:#red;
-		draw self.inner_OLZ_area color:#blue;
-		
-		draw movingAgent;
-		
-		ask pp.movingExp[0]
-		{
-			draw movingAgent color:#black;
-			draw followingAgent color:#black;
-		}
-	}
 }
 
 
 experiment main
 {	
-	output
-	{
-		display "display1" type: java2D
-		{
-			species slave aspect:olz;
-		}
-	}
 }
