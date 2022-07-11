@@ -15,16 +15,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JApplet;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
-import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -46,6 +42,7 @@ public class SwingControlMac extends SwingControl {
 		super(parent, view, component, style);
 	}
 
+	@Override
 	protected void populate() {
 		if (isDisposed()) return;
 		if (!populated) {
@@ -53,10 +50,9 @@ public class SwingControlMac extends SwingControl {
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControlMac.this);
 				frame.setAlwaysOnTop(false);
-				if (linuxKeyListener != null) { frame.addKeyListener(linuxKeyListener); }
-				if (linuxMouseListener != null) { frame.addMouseMotionListener(linuxMouseListener); }
+				if (swingKeyListener != null) { frame.addKeyListener(swingKeyListener); }
+				if (swingMouseListener != null) { frame.addMouseMotionListener(swingMouseListener); }
 				frame.add(surface);
-				WorkaroundForIssue2476.installOn(frame, surface);
 
 				MouseListener ml = new MouseAdapter() {
 

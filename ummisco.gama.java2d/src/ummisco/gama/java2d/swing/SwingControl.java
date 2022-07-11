@@ -10,16 +10,11 @@
  ********************************************************************************************************/
 package ummisco.gama.java2d.swing;
 
-import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartListener2;
@@ -29,7 +24,6 @@ import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
-import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -49,22 +43,12 @@ public abstract class SwingControl extends Composite {
 		return null;
 	}
 
-	/** The applet. */
-	// JApplet applet;
-
 	/** The multi listener. */
-	KeyListener linuxKeyListener;
-	MouseMotionListener linuxMouseListener;
+	KeyListener swingKeyListener;
+	MouseMotionListener swingMouseListener;
 
 	/** The frame. */
 	Frame frame;
-
-	/**
-	 * Gets the frame.
-	 *
-	 * @return the frame
-	 */
-	public Frame getFrame() { return frame; }
 
 	/** The surface. */
 	final Java2DDisplaySurface surface;
@@ -94,14 +78,14 @@ public abstract class SwingControl extends Composite {
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					//DEBUG.OUT("Hidden event received for " + view.getTitle());
+					// DEBUG.OUT("Hidden event received for " + view.getTitle());
 					visible = false;
 				}
 			}
 
 			@Override
 			public void partVisible(final IWorkbenchPartReference partRef) {
-				//DEBUG.OUT("Visible event received for " + view.getTitle());
+				// DEBUG.OUT("Visible event received for " + view.getTitle());
 				if (partRef.getPart(false).equals(view)) { visible = true; }
 			}
 		});
@@ -125,7 +109,7 @@ public abstract class SwingControl extends Composite {
 	/**
 	 * Populate.
 	 */
-	protected abstract void populate() ;
+	protected abstract void populate();
 
 	/**
 	 * Overridden to propagate the size to the embedded Swing component.
@@ -135,9 +119,8 @@ public abstract class SwingControl extends Composite {
 		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		// See Issue #3426
-
 		super.setBounds(x, y, width, height);
-		this.privateSetDimensions(width,height);
+		this.privateSetDimensions(width, height);
 	}
 
 	protected abstract void privateSetDimensions(int width, int height);
@@ -148,8 +131,8 @@ public abstract class SwingControl extends Composite {
 	 * @param adapter
 	 *            the new key listener
 	 */
-	public void setKeyListener(final KeyListener adapter) { linuxKeyListener = adapter; }
+	public void setKeyListener(final KeyListener adapter) { swingKeyListener = adapter; }
 
-	public void setMouseListener(final MouseMotionListener adapter) { linuxMouseListener = adapter; }
+	public void setMouseListener(final MouseMotionListener adapter) { swingMouseListener = adapter; }
 
 }

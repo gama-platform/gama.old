@@ -11,16 +11,13 @@
 package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JApplet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -29,7 +26,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The Class SwingControl.
  */
 public class SwingControlLinux extends SwingControl {
-	
 
 	/**
 	 * Instantiates a new swing control.
@@ -45,8 +41,7 @@ public class SwingControlLinux extends SwingControl {
 		super(parent, view, component, style);
 	}
 
-
-	
+	@Override
 	protected void populate() {
 		if (isDisposed()) return;
 		if (!populated) {
@@ -55,7 +50,9 @@ public class SwingControlLinux extends SwingControl {
 				JApplet applet = new JApplet();
 				frame = SWT_AWT.new_Frame(SwingControlLinux.this);
 				frame.setAlwaysOnTop(false);
-				surface.setVisibility(() -> visible); 
+				if (swingKeyListener != null) { frame.addKeyListener(swingKeyListener); }
+				if (swingMouseListener != null) { applet.addMouseMotionListener(swingMouseListener); }
+				surface.setVisibility(() -> visible);
 				applet.getContentPane().add(surface);
 				frame.add(applet);
 				addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
@@ -68,10 +65,9 @@ public class SwingControlLinux extends SwingControl {
 
 		}
 	}
-	
 
 	@Override
-	protected void privateSetDimensions(int width, int height) {
+	protected void privateSetDimensions(final int width, final int height) {
 		WorkbenchHelper.asyncRun(() -> {
 			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
 			EventQueue.invokeLater(() -> {
