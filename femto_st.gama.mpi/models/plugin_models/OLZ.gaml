@@ -12,16 +12,11 @@ global
 {		
 	geometry shape <- rectangle(50,50);
 	int gridX <- 1;
-	int gridY <- 2;
+	int gridY <- 4;
 	
 	init
 	{
 		seed <- 12.0;
-		/*create standingAgent
-		{
-			self.location <- {25,27,0};
-		}*/
-
 		create movingAgent number: 5;
 	}
 }

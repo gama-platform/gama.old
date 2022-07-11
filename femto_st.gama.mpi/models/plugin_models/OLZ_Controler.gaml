@@ -53,7 +53,7 @@ global
 species slave parent: SlaveMPI
 {
 	cell cellule;
-	int neighbors;
+	list<int> neighbors;
 	
 	list<agent> agent_inside_me;
 	list<agent> inside_main;
@@ -67,34 +67,35 @@ species slave parent: SlaveMPI
 		file_name <- "log"+myRank+".txt";
 		do clearLogFile();
 		
+		
+		ask pp.movingExp[0]
+		{
+			myself.cellule <- cell[0,myself.myRank];
+			myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer + myself.cellule.OLZ_bottom_outer;
+			myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner + myself.cellule.OLZ_bottom_inner;
+			myself.shape <- myself.cellule.shape;
+		}
 		if(myRank = 0)
-		{	
-			ask pp.movingExp[0]
-			{
-				myself.cellule <- cell[0,myself.myRank];
-				myself.outer_OLZ_area <-myself.cellule.OLZ_bottom_outer;
-				myself.inner_OLZ_area <- myself.cellule.OLZ_bottom_inner;
-				myself.shape <- myself.cellule.shape;
-			}
-			neighbors <- 1;
+		{
+			neighbors <- [1];
+		}else if(myRank = MPI_SIZE() - 1)
+		{				
+			neighbors <- [myRank - 1];
 		}else
 		{
-			neighbors <- 0;
-			ask pp.movingExp[0]
-			{
-				myself.cellule <- cell[0,myself.myRank];
-				myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer ;
-				myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner;
-				myself.shape <- myself.cellule.shape;
-			}
+			neighbors <- [myRank - 1, myRank + 1];	
 		}
+		
+		
 		do writeLog("My rank is " + myRank);
 		do writeLog("NetSize " + MPI_SIZE());
 		do writeLog("Seed = " + seed);	
+		do writeLog("neighbors = " + neighbors);	
 	}
 	
 	action deleteAgentsNotInMyArea
 	{
+		do writeLog("-"+deleteAgentsNotInMyArea+"-");
 		ask pp.movingExp[0]
 	    {
 			myself.agent_inside_me <- agents; 
@@ -129,7 +130,7 @@ species slave parent: SlaveMPI
 			li <- movingAgent;
 	    }
 		do writeLog("deleted = " + deleted);
-		do writeLog("agent_inside_me" + agent_inside_me);
+		do writeLog("agent_inside_me" + inside_main);
 		do writeLog("inside_outer_OLZ" + inside_outer_OLZ);
 		do writeLog("inside_inner_OLZ" + inside_inner_OLZ);
 		do writeLog("NB AGENTS =  " +length(li));
@@ -145,10 +146,17 @@ species slave parent: SlaveMPI
 		
 		do MPI_BARRIER();
 		
-		list<agent> t <- getAgentInNeighborInnerOLZ(neighbors);		
-		do writeLog("getAgentInNeighborInnerOLZ = "+t);
+		do writeLog("Number of neigh = "+length(neighbors));
+		do writeLog("Neighs = "+neighbors);
+		loop neighbor over: neighbors
+		{
+			list<agent> t <- getAgentInNeighborInnerOLZ(neighbor);		
+			do writeLog("getAgentInNeighborInnerOLZ N°" + neighbor + "  result = " + t);
+		}
 		
 		do MPI_BARRIER();
+		
+		do deleteAgentsNotInMyArea;
 		
 		do stop_listener;
 	}
