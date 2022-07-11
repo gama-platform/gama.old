@@ -27,18 +27,9 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-
 		if (getOutput() == null) return null;
-
-		surfaceComposite = new SwingControl(parent, AWTDisplayView.this, SWT.NO_FOCUS) {
-
-			@Override
-			protected Java2DDisplaySurface createSwingComponent() {
-				return (Java2DDisplaySurface) getDisplaySurface();
-			}
-
-		};
-		surfaceComposite.setEnabled(false);
+		surfaceComposite = SwingControl.create(parent, AWTDisplayView.this, (Java2DDisplaySurface) getDisplaySurface(),
+				SWT.NO_FOCUS);
 		return surfaceComposite;
 	}
 
@@ -77,7 +68,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 			// See Issue #3426
 			SwingControl control = (SwingControl) surfaceComposite;
 			control.setKeyListener(listener.getKeyAdapterForAWT());
-			if (PlatformHelper.isLinux()) control.setMouseListener(listener.getMouseAdapterForAWT());
+			if (PlatformHelper.isLinux()) { control.setMouseListener(listener.getMouseAdapterForAWT()); }
 		}
 		return listener;
 	}

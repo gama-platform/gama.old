@@ -35,10 +35,18 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * The Class SwingControl.
  */
-public abstract class SwingControl extends Composite {
+public class SwingControl extends Composite {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
+	}
+
+	public static Composite create(final Composite parent, final AWTDisplayView view,
+			final Java2DDisplaySurface surface, final int style) {
+		if (PlatformHelper.isLinux()) return new SwingControlLinux(parent, view, surface, style);
+		if (PlatformHelper.isWindows()) return new SwingControlWin(parent, view, surface, style);
+		if (PlatformHelper.isMac()) return new SwingControlMac(parent, view, surface, style);
+		return null;
 	}
 
 	/** The applet. */
@@ -59,7 +67,7 @@ public abstract class SwingControl extends Composite {
 	public Frame getFrame() { return frame; }
 
 	/** The surface. */
-	Java2DDisplaySurface surface;
+	final Java2DDisplaySurface surface;
 
 	/** The populated. */
 	volatile boolean populated = false;
@@ -76,15 +84,17 @@ public abstract class SwingControl extends Composite {
 	 * @param style
 	 *            the style
 	 */
-	public SwingControl(final Composite parent, final AWTDisplayView view, final int style) {
+	public SwingControl(final Composite parent, final AWTDisplayView view, final Java2DDisplaySurface component,
+			final int style) {
 		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
+		setEnabled(false);
+		this.surface = component;
 		WorkbenchHelper.getPage().addPartListener(new IPartListener2() {
 
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
 					DEBUG.OUT("Hidden event received for " + view.getTitle());
-
 					visible = false;
 				}
 			}
@@ -92,7 +102,6 @@ public abstract class SwingControl extends Composite {
 			@Override
 			public void partVisible(final IWorkbenchPartReference partRef) {
 				DEBUG.OUT("Visible event received for " + view.getTitle());
-
 				if (partRef.getPart(false).equals(view)) { visible = true; }
 			}
 		});
@@ -126,7 +135,6 @@ public abstract class SwingControl extends Composite {
 				if (linuxKeyListener != null) { frame.addKeyListener(linuxKeyListener); }
 				// applet = new JApplet();
 				if (linuxMouseListener != null) { frame.addMouseMotionListener(linuxMouseListener); }
-				surface = createSwingComponent();
 				if (PlatformHelper.isWindows()) { surface.setVisibility(() -> visible); }
 				frame.add(surface);
 				WorkaroundForIssue2476.installOn(frame, surface);
@@ -158,13 +166,6 @@ public abstract class SwingControl extends Composite {
 			}));
 		}
 	}
-
-	/**
-	 * Creates the embedded Swing component. This method is called from the AWT event thread.
-	 *
-	 * @return a non-null Swing component
-	 */
-	protected abstract Java2DDisplaySurface createSwingComponent();
 
 	/**
 	 * Overridden to propagate the size to the embedded Swing component.
