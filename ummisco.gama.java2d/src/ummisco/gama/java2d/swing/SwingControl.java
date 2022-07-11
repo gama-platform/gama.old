@@ -35,7 +35,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * The Class SwingControl.
  */
-public class SwingControl extends Composite {
+public abstract class SwingControl extends Composite {
 
 	static {
 		DEBUG.OFF();
@@ -94,14 +94,14 @@ public class SwingControl extends Composite {
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false).equals(view)) {
-					DEBUG.OUT("Hidden event received for " + view.getTitle());
+					//DEBUG.OUT("Hidden event received for " + view.getTitle());
 					visible = false;
 				}
 			}
 
 			@Override
 			public void partVisible(final IWorkbenchPartReference partRef) {
-				DEBUG.OUT("Visible event received for " + view.getTitle());
+				//DEBUG.OUT("Visible event received for " + view.getTitle());
 				if (partRef.getPart(false).equals(view)) { visible = true; }
 			}
 		});
@@ -125,73 +125,22 @@ public class SwingControl extends Composite {
 	/**
 	 * Populate.
 	 */
-	protected void populate() {
-		if (isDisposed()) return;
-		if (!populated) {
-			populated = true;
-			WorkbenchHelper.asyncRun(() -> {
-				frame = SWT_AWT.new_Frame(SwingControl.this);
-				frame.setAlwaysOnTop(false);
-				if (linuxKeyListener != null) { frame.addKeyListener(linuxKeyListener); }
-				// applet = new JApplet();
-				if (linuxMouseListener != null) { frame.addMouseMotionListener(linuxMouseListener); }
-				if (PlatformHelper.isWindows()) { surface.setVisibility(() -> visible); }
-				frame.add(surface);
-				WorkaroundForIssue2476.installOn(frame, surface);
-				// frame.add(applet);
-				if (PlatformHelper.isMac()) {
-					MouseListener ml = new MouseAdapter() {
-
-						@Override
-						public void mouseExited(final MouseEvent e) {
-							if (surface.isFocusOwner() && !surface.contains(e.getPoint())) {
-								frame.setVisible(false);
-								frame.setVisible(true);
-								WorkbenchHelper.asyncRun(() -> getShell().forceActive());
-							}
-
-						}
-
-					};
-					frame.addMouseListener(ml);
-					surface.addMouseListener(ml);
-
-				}
-			});
-			addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
-				try {
-					frame.remove(surface);
-				} catch (final Exception e) {}
-
-			}));
-		}
-	}
+	protected abstract void populate() ;
 
 	/**
 	 * Overridden to propagate the size to the embedded Swing component.
 	 */
 	@Override
-	public void setBounds(final int x, final int y, final int width, final int height) {
+	public final void setBounds(final int x, final int y, final int width, final int height) {
 		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
 		populate();
 		// See Issue #3426
 
 		super.setBounds(x, y, width, height);
-		// Assignment necessary for #3313 and #3239
-		WorkbenchHelper.asyncRun(() -> {
-			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
-			if (PlatformHelper.isWindows()) { this.requestLayout(); }
-			EventQueue.invokeLater(() -> {
-				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
-				// frame.setBounds(x, y, width, height);
-				// frame.setVisible(false);
-				surface.setSize(width, height);
-				// frame.setVisible(true);
-			});
-
-		});
-
+		this.privateSetDimensions(width,height);
 	}
+
+	protected abstract void privateSetDimensions(int width, int height);
 
 	/**
 	 * Sets the key listener.

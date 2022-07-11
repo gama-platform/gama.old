@@ -11,12 +11,22 @@
 package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JApplet;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
+import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -37,30 +47,53 @@ public class SwingControlWin extends SwingControl {
 			final int style) {
 		super(parent, view, component, style);
 	}
+	
+	protected void populate() {
+		if (isDisposed()) return;
+		if (!populated) {
+			populated = true;
+			WorkbenchHelper.asyncRun(() -> {
+				JApplet applet = new JApplet();
+				frame = SWT_AWT.new_Frame(SwingControlWin.this);
+				frame.setAlwaysOnTop(false);
+				surface.setVisibility(() -> visible); 
+				applet.getContentPane().add(surface);
+				frame.add(applet);
+				addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
+					try {
+						frame.remove(applet);
+					} catch (final Exception e) {}
 
-	/**
-	 * Overridden to propagate the size to the embedded Swing component.
-	 */
-	@Override
-	public void setBounds(final int x, final int y, final int width, final int height) {
-		// DEBUG.OUT("-- SwingControl bounds set to " + x + " " + y + " | " + width + " " + height);
-		populate();
-		// See Issue #3426
-
-		super.setBounds(x, y, width, height);
-		// Assignment necessary for #3313 and #3239
-		WorkbenchHelper.asyncRun(() -> {
-			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
-			if (PlatformHelper.isWindows()) { this.requestLayout(); }
-			EventQueue.invokeLater(() -> {
-				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
-				// frame.setBounds(x, y, width, height);
-				// frame.setVisible(false);
-				surface.setSize(width, height);
-				// frame.setVisible(true);
+				}));
 			});
 
+		}
+	}
+
+	@Override
+	protected void privateSetDimensions(int width, int height) {
+		// Assignment necessary for #3313 and #3239
+		WorkbenchHelper.asyncRun(() -> {
+			if (isDisposed()) return;
+			Rectangle r = this.getBounds();
+			int  w = r.width;
+			int h = r.height;
+			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
+			if (!this.isDisposed()) this.requestLayout();
+			try {
+				EventQueue.invokeAndWait(() -> {
+					// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
+					// frame.setBounds(x, y, width, height);
+					// frame.setVisible(false);
+					surface.setSize(w,h);
+					// frame.setVisible(true);
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				e.printStackTrace();
+			}
+
 		});
+
 
 	}
 
