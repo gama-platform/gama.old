@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.AWTDisplayView;
 import ummisco.gama.java2d.Java2DDisplaySurface;
+import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -54,6 +55,7 @@ public class SwingControlLinux extends SwingControl {
 				if (swingMouseListener != null) { applet.addMouseMotionListener(swingMouseListener); }
 				surface.setVisibility(() -> visible);
 				applet.getContentPane().add(surface);
+				WorkaroundForIssue2476.installOn(applet, surface);
 				frame.add(applet);
 				addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
 					try {
