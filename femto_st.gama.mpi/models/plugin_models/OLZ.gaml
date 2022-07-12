@@ -11,8 +11,8 @@ model OLZ
 global 
 {		
 	geometry shape <- rectangle(50,50);
-	int gridX <- 1;
-	int gridY <- 4;
+	int gridX <- 2;
+	int gridY <- 2;
 	
 	init
 	{

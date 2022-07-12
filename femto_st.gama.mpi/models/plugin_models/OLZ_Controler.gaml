@@ -71,8 +71,8 @@ species slave parent: SlaveMPI
 		ask pp.movingExp[0]
 		{
 			myself.cellule <- cell[0,myself.myRank];
-			myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer + myself.cellule.OLZ_bottom_outer;
-			myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner + myself.cellule.OLZ_bottom_inner;
+			myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer + myself.cellule.OLZ_bottom_outer + myself.cellule.OLZ_left_outer + myself.cellule.OLZ_right_outer;
+			myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner + myself.cellule.OLZ_bottom_inner + myself.cellule.OLZ_left_inner + myself.cellule.OLZ_right_inner;
 			myself.shape <- myself.cellule.shape;
 		}
 		if(myRank = 0)

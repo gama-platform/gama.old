@@ -3,16 +3,14 @@
 	
 # Run models:
 - ./startMpiModel model.xml NB_PROC
+	-> GAML logs : filenameX.txt in the current directory
+	-> JAVA logs : logX.txt in the directory of the model
 
 # Directories
 
-## logs:
-- 1/rank.X : output of a simulation from processor X point of view
-- console-outputs-0.txt : output from global species
+## include (include directory)
 
-## incldude (include directory)
-
-## basic:
+## basic: (basic MPI test)
 - first_mpi.gaml: display MPI_RANK and MPI_SIZE
 - communication.gaml: sending int and list of int through MPI_SEND and receiving MPI_RECV
 
@@ -31,5 +29,9 @@
 # shapefile : (agent moving inside 2D world defined with a shapefile)
 - SHP.gaml: base model used by the controller, it implements the basic model + methods helping the controler to retrieve data from the model.
 - SHPControler.gaml: controler of SHP.gaml, it implements all the MPI function.  
+
+# plugin_models : (model to test the gama plugin)
+- OLZ.gaml: agents moving in the world, the world is divided into area, each area is processeced by a different processor
+- OLZ_Controler.gaml: controler of SHP.gaml, it implements all the MPI function. 
  
 
