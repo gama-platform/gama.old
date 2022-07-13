@@ -14,8 +14,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
@@ -215,6 +217,13 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	public void unscheduleSimulation(final SimulationAgent sim) {
 		runner.remove(sim);
 	}
+	
+	/**
+	 * Gets the number of active stepables.
+	 *
+	 * @return the number of active stepables
+	 */
+	public Set<IScopedStepable> getActiveStepables() { return runner.getStepable(); }
 
 	/**
 	 * Gets the number of active threads.

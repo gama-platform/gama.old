@@ -18,6 +18,7 @@ import static msi.gama.runtime.concurrent.GamaExecutorService.getParallelism;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -157,6 +158,15 @@ public class SimulationRunner {
 		runnables.clear();
 		if (executor != null) { executor.shutdownNow(); }
 	}
+	
+	/**
+	 * Gets the active stepables.
+	 *
+	 * @return the active stepables
+	 */
+	public Set<IScopedStepable> getStepable() {
+		return runnables.keySet();
+	}
 
 	/**
 	 * Gets the active threads.
@@ -210,5 +220,6 @@ public class SimulationRunner {
 		}
 
 	}
+	
 
 }

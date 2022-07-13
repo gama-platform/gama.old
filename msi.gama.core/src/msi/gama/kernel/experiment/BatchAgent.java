@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.DoubleStream;
 
@@ -26,6 +27,7 @@ import org.jfree.data.statistics.Statistics;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -307,7 +309,7 @@ public class BatchAgent extends ExperimentAgent {
 
 		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
 		if (numberOfCores == 0) { numberOfCores = 1; }
-
+		
 		// The values present in the solution are passed to the parameters of
 		// the experiment
 		// @Patrick What this set was for ?
@@ -320,13 +322,12 @@ public class BatchAgent extends ExperimentAgent {
 				sims.add(sim);
 			}
 		}
-
+		
 		int nb = Math.min(sims.size(), numberOfCores);
 
 		List<Map<String, Object>> simsToRun = new Vector<>();
 
 		for (int i = 0; i < nb; i++) { simsToRun.add(sims.remove(0)); }
-
 		Map<IAgent, ParametersSet> simToParameter = GamaMapFactory.create();
 		Iterator<Map<String, Object>> it = simsToRun.iterator();
 		while (it.hasNext()) { createSimulation(it.next(), simToParameter); }
@@ -334,18 +335,18 @@ public class BatchAgent extends ExperimentAgent {
 		while (pop.hasScheduledSimulations() && !dead) {
 			// We step all the simulations
 			pop.step(getScope());
-			for (final IAgent sim : pop.toArray()) {
-				final SimulationAgent agent = (SimulationAgent) sim;
+			for (final IScopedStepable st : new ArrayList<>(pop.getActiveStepables())) {
+				final SimulationAgent agent = (SimulationAgent) st;
 				ParametersSet ps = simToParameter.get(agent);
 				currentSolution = new ParametersSet(ps);
 
 				// test the condition first in case it is paused
 				final boolean stopConditionMet =
-						dead || Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim).getValue());
+						dead || Cast.asBool(agent.getScope(), agent.getScope().evaluate(stopCondition, agent).getValue());
 				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 				if (mustStop) {
 					pop.unscheduleSimulation(agent);
-
+					//pop.remove(agent);
 					IMap<String, Object> localRes = manageOutputAndCloseSimulation(agent, ps, false, simDispose);
 
 					if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
@@ -353,9 +354,9 @@ public class BatchAgent extends ExperimentAgent {
 						if (!res.get(ps).containsKey(output)) { res.get(ps).put(output, GamaListFactory.create()); }
 						res.get(ps).get(output).add(localRes.get(output));
 					}
-
+					
 					if (!sims.isEmpty()) { createSimulation(sims.remove(0), simToParameter); }
-
+				
 				}
 			}
 			// We then verify that the front scheduler has not been paused
