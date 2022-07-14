@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import static ummisco.gama.ui.resources.GamaColors.getTextColorForBackground;
+import static ummisco.gama.ui.resources.GamaColors.setBackAndForeground;
+
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +66,7 @@ public class EditorsDialog extends Dialog {
 
 	/** The color. */
 	private final Color color;
+	private final Color textColor;
 
 	private final Boolean showTitle;
 
@@ -108,11 +112,13 @@ public class EditorsDialog extends Dialog {
 		this.title = title;
 		this.font = font;
 		this.showTitle = showTitle;
-		this.color =
-				/* color == null ? IGamaColors.OK.inactive() : */ color == null ? null : GamaColors.toSwtColor(color);
+		this.color = color == null ? null : GamaColors.toSwtColor(color);
+		textColor = color == null ? null : getTextColorForBackground(this.color).color();
 		setShellStyle(showTitle ? SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP : SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
-		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
+		parameters.forEach(p -> {
+			values.put(p.getName(), p.getInitialValue(scope));
+		});
 	}
 
 	@Override
@@ -127,9 +133,14 @@ public class EditorsDialog extends Dialog {
 	 */
 	@Override
 	protected Control createContents(final Composite parent) {
-
-		// composite.setBackground(IGamaColors.WHITE.color());
 		return super.createContents(parent);
+	}
+
+	private void colorize(Control... controls) {
+		if (color == null) return;
+		for (Control control : controls) {
+			setBackAndForeground(control, color, textColor);
+		}
 	}
 
 	@Override
@@ -137,23 +148,17 @@ public class EditorsDialog extends Dialog {
 		final var above = (Composite) super.createDialogArea(parent);
 		final var composite = new EditorsGroup(above);
 		final var text = new Label(composite, SWT.None);
-
-		if (color != null) {
-			GamaColors.setBackAndForeground(parent, color, GamaColors.getTextColorForBackground(color).color());
-			GamaColors.setBackAndForeground(above, color, GamaColors.getTextColorForBackground(color).color());
-			GamaColors.setBackAndForeground(composite, color, GamaColors.getTextColorForBackground(color).color());
-			GamaColors.setBackAndForeground(text, color, GamaColors.getTextColorForBackground(color).color());
-		}
-		if (font != null) {
-			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
-		}
 		text.setText(title);
 		var data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		text.setLayoutData(data);
-		final var sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		if (font != null) {
+			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
+		}
+		final var sep = new Label(composite, SWT.NONE);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		data.heightHint = 20;
 		sep.setLayoutData(data);
+		colorize(parent, above, composite, text, sep);
 		parameters.forEach(param -> {
 			final EditorListener<?> listener = newValue -> {
 				param.setValue(scope, newValue);
@@ -167,42 +172,23 @@ public class EditorsDialog extends Dialog {
 
 	@Override
 	protected Control createButtonBar(final Composite parent) {
-		// create a layout with spacing and margins appropriate for the font
-		// size.
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 0; // this is incremented by createButton
-		layout.makeColumnsEqualWidth = true;
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
-
-		Composite composite =
-				WidgetFactory.composite(SWT.NONE).layout(layout).layoutData(data).font(parent.getFont()).create(parent);
-		if (color != null) {
-			GamaColors.setBackAndForeground(composite, color, GamaColors.getTextColorForBackground(color).color());
-		}
-
-		// Add the buttons to the button bar.
-		createButtonsForButtonBar(composite);
+		Control composite = super.createButtonBar(parent);
+		colorize(composite);
 		return composite;
 	}
 
 	@Override
-	protected Point getInitialSize() {
-		final var p = super.getInitialSize();
-		return new Point(p.x * 2, p.y);
+	protected boolean isResizable() {
+		return true;
 	}
-
-	@Override
-	protected boolean isResizable() { return true; }
 
 	/**
 	 * Gets the values.
 	 *
 	 * @return the values
 	 */
-	public Map<String, Object> getValues() { return values; }
+	public Map<String, Object> getValues() {
+		return values;
+	}
 
 }
