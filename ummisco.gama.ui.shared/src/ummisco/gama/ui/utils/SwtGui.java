@@ -16,6 +16,7 @@ import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
@@ -443,8 +444,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		final ExperimentAgent agent = exp.getAgent();
 		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
-		Symbol layout = manager.getLayout();
-		if (layout == null) { layout = manager; }
+		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
 		final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
 		final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
 		final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
@@ -452,8 +452,11 @@ public class SwtGui implements IGui {
 		final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
 		final Boolean showControls = layout.getFacetValue(scope, "controls", null);
 		final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
-		final GamaColor color = layout.getFacetValue(scope, "background", null);
-		Color background = color == null ? null : GamaColors.toSwtColor(color);
+		Supplier<Color> color = () -> {
+			final GamaColor c = layout.getFacetValue(scope, "background", null);
+			return c == null ? null : GamaColors.toSwtColor(c);
+		};
+
 		boolean showEditors;
 		if (layout.hasFacet("editors")) {
 			showEditors = layout.getFacetValue(scope, "editors", false);
@@ -483,7 +486,7 @@ public class SwtGui implements IGui {
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);
 				sd.keepTray(keepTray);
-				sd.setBackground(background);
+				sd.setBackground(color);
 			}
 		});
 

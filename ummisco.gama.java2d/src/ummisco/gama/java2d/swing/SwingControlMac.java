@@ -80,24 +80,4 @@ public class SwingControlMac extends SwingControl {
 		}
 	}
 
-	/**
-	 * Overridden to propagate the size to the embedded Swing component.
-	 */
-	@Override
-	protected void privateSetDimensions(final int width, final int height) {
-		// Assignment necessary for #3313 and #3239
-		WorkbenchHelper.asyncRun(() -> {
-			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
-			EventQueue.invokeLater(() -> {
-				// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
-				// frame.setBounds(x, y, width, height);
-				// frame.setVisible(false);
-				surface.setSize(width, height);
-				// frame.setVisible(true);
-			});
-
-		});
-
-	}
-
 }

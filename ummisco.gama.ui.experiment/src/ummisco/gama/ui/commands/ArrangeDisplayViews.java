@@ -185,11 +185,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		// DEBUG.OUT("Displays to decorate "
 		// + DEBUG.TO_STRING(StreamEx.of(displays).select(IViewPart.class).map(IViewPart::getTitle).toArray()));
 
-		if (PerspectiveHelper.getBackground() != null) {
-			ThemeHelper.changeSashBackground(PerspectiveHelper.getBackground());
-			PerspectiveHelper.getActiveSimulationPerspective().setRestoreBackground(ThemeHelper::restoreSashBackground);
-		}
-
 		displays.forEach(v -> {
 			final Boolean tb = PerspectiveHelper.keepToolbars();
 			if (tb != null) { v.showToolbar(tb); }
@@ -210,7 +205,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 		});
 		// displays.forEach((d)-> ViewsHelper.activate((IWorkbenchPart) d));
-
+		if (PerspectiveHelper.getBackground() != null) {
+			ThemeHelper.changeSashBackground(PerspectiveHelper.getBackground());
+			PerspectiveHelper.getActiveSimulationPerspective().setRestoreBackground(ThemeHelper::restoreSashBackground);
+		}
 	}
 
 	/**

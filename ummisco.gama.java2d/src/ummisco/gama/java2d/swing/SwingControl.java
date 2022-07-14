@@ -123,7 +123,7 @@ public abstract class SwingControl extends Composite {
 		this.privateSetDimensions(width, height);
 	}
 
-	protected abstract void privateSetDimensions(int width, int height);
+	protected void privateSetDimensions(final int width, final int height) {}
 
 	/**
 	 * Sets the key listener.

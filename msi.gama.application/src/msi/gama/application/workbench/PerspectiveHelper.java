@@ -12,6 +12,7 @@ package msi.gama.application.workbench;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -547,7 +548,7 @@ public class PerspectiveHelper {
 		Boolean keepTray = true;
 
 		/** The background. */
-		Color background = null;
+		Supplier<Color> background = null;
 
 		/** The restore background. */
 		private Runnable restoreBackground;
@@ -693,7 +694,7 @@ public class PerspectiveHelper {
 		 *
 		 * @return the background
 		 */
-		public Color getBackground() { return background; }
+		public Color getBackground() { return background.get(); }
 
 		/**
 		 * Sets the background.
@@ -701,7 +702,7 @@ public class PerspectiveHelper {
 		 * @param c
 		 *            the new background
 		 */
-		public void setBackground(final Color c) { background = c; }
+		public void setBackground(final Supplier<Color> c) { background = c; }
 
 	}
 

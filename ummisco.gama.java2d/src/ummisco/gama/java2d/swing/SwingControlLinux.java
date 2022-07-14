@@ -11,7 +11,6 @@
 package ummisco.gama.java2d.swing;
 
 import java.awt.EventQueue;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JApplet;
 
@@ -20,7 +19,7 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
 
 import ummisco.gama.java2d.AWTDisplayView;
-import ummisco.gama.java2d.Java2DDisplaySurface; 
+import ummisco.gama.java2d.Java2DDisplaySurface;
 import ummisco.gama.java2d.WorkaroundForIssue2476;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -67,30 +66,6 @@ public class SwingControlLinux extends SwingControl {
 			});
 
 		}
-	}
-
-	@Override
-	protected void privateSetDimensions(final int width, final int height) {
-		
-		
-		
-		
-//		WorkbenchHelper.asyncRun(() -> {
-//			// Solves a problem where the last view on HiDPI screens on Windows would be outscaled
-//			try {
-//				EventQueue.invokeAndWait(() -> {
-//					// DEBUG.OUT("Set size sent by SwingControl " + width + " " + height);
-//					// frame.setBounds(x, y, width, height);
-//					// frame.setVisible(false);
-//					surface.setSize(frame.getWidth(), frame.getHeight());
-//					// frame.setVisible(true);
-//				});
-//			} catch (InvocationTargetException | InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//		});
 	}
 
 }
