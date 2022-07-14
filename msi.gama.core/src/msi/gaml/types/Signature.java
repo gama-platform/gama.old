@@ -141,7 +141,8 @@ public class Signature {
 		for (int i = 0; i < list.length; i++) {
 			final IType ownType = list[i];
 			final IType desiredType = types[i];
-			if (!Types.intFloatCase(ownType, desiredType) && !desiredType.isAssignableFrom(ownType)) return false;
+			if (Types.intFloatCase(ownType, desiredType) || desiredType.isAssignableFrom(ownType) || (!desiredType.isNumber() && ownType == Types.NO_TYPE)) { continue; }
+			return false;
 		}
 		return true;
 	}

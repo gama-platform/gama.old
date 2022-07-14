@@ -270,7 +270,7 @@ public interface IGui {
 	 * @return the map
 	 */
 	Map<String, Object> openUserInputDialog(IScope scope, String title, List<IParameter> parameters, GamaFont font,
-			GamaColor color);
+			GamaColor color, Boolean showTitle);
 
 	/**
 	 * Open wizard.

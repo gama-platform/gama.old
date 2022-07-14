@@ -91,7 +91,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final List<IParameter> parameters, final GamaFont font, final GamaColor color) {
+			final List<IParameter> parameters, final GamaFont font, final GamaColor color, final Boolean showTitle) {
 		final Map<String, Object> initialValues = GamaMapFactory.create();
 		parameters.forEach(p -> { initialValues.put(p.getName(), p.getInitialValue(scope)); });
 		return initialValues;

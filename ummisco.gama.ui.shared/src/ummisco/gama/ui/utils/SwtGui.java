@@ -289,11 +289,11 @@ public class SwtGui implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final List<IParameter> parameters, final GamaFont font, final GamaColor color) {
+			final List<IParameter> parameters, final GamaFont font, final GamaColor color, final Boolean showTitle) {
 		final IMap<String, Object> result = GamaMapFactory.createUnordered();
 		for (final IParameter p : parameters) { result.put(p.getName(), p.getInitialValue(scope)); }
 		WorkbenchHelper.run(() -> {
-			final EditorsDialog dialog = new EditorsDialog(scope, null, parameters, title, font, color);
+			final EditorsDialog dialog = new EditorsDialog(scope, null, parameters, title, font, color, showTitle);
 			if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); }
 		});
 		return result;

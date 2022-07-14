@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EditorsDialog.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EditorsDialog.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -15,11 +15,13 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -33,7 +35,6 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -63,6 +64,8 @@ public class EditorsDialog extends Dialog {
 	/** The color. */
 	private final Color color;
 
+	private final Boolean showTitle;
+
 	/**
 	 * Instantiates a new editors dialog.
 	 *
@@ -79,7 +82,7 @@ public class EditorsDialog extends Dialog {
 	 */
 	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
 			final String title, final GamaFont font) {
-		this(scope, parentShell, parameters, title, font, GamaColors.toGamaColor(IGamaColors.OK.inactive()));
+		this(scope, parentShell, parameters, title, font, null, true);
 	}
 
 	/**
@@ -99,13 +102,15 @@ public class EditorsDialog extends Dialog {
 	 *            the color
 	 */
 	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
-			final String title, final GamaFont font, final GamaColor color) {
+			final String title, final GamaFont font, final GamaColor color, final Boolean showTitle) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
-		this.color = color == null ? IGamaColors.OK.inactive() : GamaColors.toSwtColor(color);
-		setShellStyle(SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
+		this.showTitle = showTitle;
+		this.color =
+				/* color == null ? IGamaColors.OK.inactive() : */ color == null ? null : GamaColors.toSwtColor(color);
+		setShellStyle(showTitle ? SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP : SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
 		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
 	}
@@ -130,12 +135,15 @@ public class EditorsDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		final var above = (Composite) super.createDialogArea(parent);
-		// composite.setBackground(IGamaColors.WHITE.color());
 		final var composite = new EditorsGroup(above);
-		// final var layout = (GridLayout) composite.getLayout();
-		// layout.numColumns = 2;
 		final var text = new Label(composite, SWT.None);
-		GamaColors.setBackAndForeground(text, color, GamaColors.getTextColorForBackground(color).color());
+
+		if (color != null) {
+			GamaColors.setBackAndForeground(parent, color, GamaColors.getTextColorForBackground(color).color());
+			GamaColors.setBackAndForeground(above, color, GamaColors.getTextColorForBackground(color).color());
+			GamaColors.setBackAndForeground(composite, color, GamaColors.getTextColorForBackground(color).color());
+			GamaColors.setBackAndForeground(text, color, GamaColors.getTextColorForBackground(color).color());
+		}
 		if (font != null) {
 			text.setFont(new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle()));
 		}
@@ -154,6 +162,30 @@ public class EditorsDialog extends Dialog {
 			EditorFactory.create(scope, composite, param, listener, false, false);
 		});
 		composite.layout();
+		return composite;
+	}
+
+	@Override
+	protected Control createButtonBar(final Composite parent) {
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 0; // this is incremented by createButton
+		layout.makeColumnsEqualWidth = true;
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER);
+
+		Composite composite =
+				WidgetFactory.composite(SWT.NONE).layout(layout).layoutData(data).font(parent.getFont()).create(parent);
+		if (color != null) {
+			GamaColors.setBackAndForeground(composite, color, GamaColors.getTextColorForBackground(color).color());
+		}
+
+		// Add the buttons to the button bar.
+		createButtonsForButtonBar(composite);
 		return composite;
 	}
 

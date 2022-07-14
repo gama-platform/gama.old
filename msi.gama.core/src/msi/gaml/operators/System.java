@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * System.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * System.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -135,7 +134,7 @@ public class System {
 		} catch (final Exception e1) {}
 		return false;
 	}
-	
+
 	/**
 	 * Checks if the url is reachable.
 	 *
@@ -149,48 +148,50 @@ public class System {
 			value = "is_reachable",
 			can_be_const = true,
 			concept = IConcept.TEST)
-	@doc (value = "Returns whether or not the given web address is reachable or not before a time_out time in milliseconds",
-		examples = {
-					@example (value="write sample(is_reachable(\"www.google.com\", 200));",isExecutable = false)})
-	@no_test 
-	public static Boolean is_reachable(final IScope scope, final String address, int openPort, final int timeout) {
-	    // Any Open port on other machine
-	    // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
-	    try (Socket soc = new Socket()) {
-	        soc.connect(new InetSocketAddress(address, openPort), timeout);
-	        return true;
-	    } catch (IOException ex) {
-	        return false;
-	    }
+	@doc (
+			value = "Returns whether or not the given web address is reachable or not before a time_out time in milliseconds",
+			examples = { @example (
+					value = "write sample(is_reachable(\"www.google.com\", 200));",
+					isExecutable = false) })
+	@no_test
+	public static Boolean is_reachable(final IScope scope, final String address, final int openPort,
+			final int timeout) {
+		// Any Open port on other machine
+		// openPort = 22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
+		try (Socket soc = new Socket()) {
+			soc.connect(new InetSocketAddress(address, openPort), timeout);
+			return true;
+		} catch (IOException ex) {
+			return false;
+		}
 	}
-	
+
 	@operator (
 			value = "play_sound",
 			can_be_const = true,
 			concept = IConcept.SOUND)
-	@doc (value = "Play a wave file",
-		examples = {
-					@example (value="bool sound_ok <- play_sound('beep.wav');",isExecutable = false)})
-	@no_test 
+	@doc (
+			value = "Play a wave file",
+			examples = { @example (
+					value = "bool sound_ok <- play_sound('beep.wav');",
+					isExecutable = false) })
+	@no_test
 	public static Boolean playSound(final IScope scope, final String source) {
-		 try {
-			 final String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, source, true);
-			 File f = new File(soundFilePath);
-			 if (f == null || !f.exists()) 
-				 return false;
-			 Clip clip = AudioSystem.getClip();
-		     AudioInputStream inputStream = AudioSystem.getAudioInputStream(f);
-		     clip.open(inputStream);
-		     clip.start();
-		     
-		 } catch (Exception e) {
-			 throw GamaRuntimeException.error(e.toString(), scope);
-		 }
-		 return true;
+		try {
+			final String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, source, true);
+			File f = new File(soundFilePath);
+			if (f == null || !f.exists()) return false;
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream inputStream = AudioSystem.getAudioInputStream(f);
+			clip.open(inputStream);
+			clip.start();
+
+		} catch (Exception e) {
+			throw GamaRuntimeException.error(e.toString(), scope);
+		}
+		return true;
 	}
-	
-	
-	
+
 	/**
 	 * Checks if the url is reachable.
 	 *
@@ -206,8 +207,7 @@ public class System {
 	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
 		return is_reachable(scope, address, 80, timeout);
 	}
-	
-	
+
 	/**
 	 * Console.
 	 *
@@ -656,7 +656,7 @@ public class System {
 			final IList parameters, final GamaFont font) {
 		return userInputDialog(scope, title, parameters, font, null);
 	}
-	
+
 	/**
 	 * User input deprecated.
 	 *
@@ -778,7 +778,7 @@ public class System {
 			final GamaFont font) {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
-				scope.getGui().openUserInputDialog(scope, title, parameters, font, null));
+				scope.getGui().openUserInputDialog(scope, title, parameters, font, null, true));
 	}
 
 	/**
@@ -800,7 +800,7 @@ public class System {
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
 			concept = {})
 	@doc (
-			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified",
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified as well as the background color",
 			masterDoc = true,
 			examples = {
 					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
@@ -810,9 +810,41 @@ public class System {
 	@no_test
 	public static IMap<String, Object> userInputDialog(final IScope scope, final String title, final IList parameters,
 			final GamaFont font, final GamaColor color) {
+		return userInputDialog(scope, title, parameters, font, color, true);
+	}
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
+	@SuppressWarnings ("unchecked")
+	@operator (
+			value = IKeyword.USER_INPUT_DIALOG,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
+			concept = {})
+	@doc (
+			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified, as well as the background color and whether the title and close button of the dialog should be displayed or not",
+			masterDoc = true,
+			examples = {
+					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18), #blue, true);"),
+					@example (
+							value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];",
+							isExecutable = false) })
+	@no_test
+	public static IMap<String, Object> userInputDialog(final IScope scope, final String title, final IList parameters,
+			final GamaFont font, final GamaColor color, final Boolean showTitle) {
 		parameters.removeIf(p -> !(p instanceof IParameter));
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
-				scope.getGui().openUserInputDialog(scope, title, parameters, font, color));
+				scope.getGui().openUserInputDialog(scope, title, parameters, font, color, showTitle));
 	}
 
 	/**
