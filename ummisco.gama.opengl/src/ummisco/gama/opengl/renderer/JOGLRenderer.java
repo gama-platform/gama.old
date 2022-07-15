@@ -22,6 +22,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
@@ -336,7 +337,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		if (scene == null) return null;
 		int x = getLayerWidth();
 		int y = getLayerHeight();
-		x = (int) (Math.min(x, y) * 0.80);
+		// y = x = Math.min(x, y);
+		x = (int) (Math.min(x, y) * GamaPreferences.Displays.CHART_QUALITY.getValue());
 		y = x;
 		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());

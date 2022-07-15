@@ -520,6 +520,11 @@ public class GamaPreferences {
 		/** The Constant CHART_GRIDLINES. */
 		public static final Pref<Boolean> CHART_GRIDLINES =
 				create("pref_chart_display_gridlines", "Display grid lines", true, IType.BOOL, true).in(NAME, CHARTS);
+
+		public static final Pref<Double> CHART_QUALITY = create("pref_chart_quality",
+				"Size of the chart rendering (from 0, very small but fast, to 1, best but more resource consuming)",
+				0.8, IType.FLOAT, true).in(NAME, CHARTS).between(0.1, 1.0);
+
 		/**
 		 * Drawing methods and defaults
 		 */

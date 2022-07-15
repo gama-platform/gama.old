@@ -40,6 +40,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
 
-public class AWTDisplayGraphics extends AbstractDisplayGraphics {
+public class AWTDisplayGraphics extends AbstractDisplayGraphics implements ImageObserver {
 
 	/** The normal renderer. */
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
@@ -548,13 +549,32 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics {
 	/** The chart rect. */
 	final Rectangle2D chartRect = new Rectangle2D.Double();
 
+	boolean drawChart = true;
+
+	// @Override
+	// public Rectangle2D drawChart(final ChartOutput chart) {
+	// if (!drawChart) return chartRect;
+	// Double ratio = GamaPreferences.Displays.CHART_QUALITY.getValue();
+	// final BufferedImage im = chart.getImage((int) (getLayerWidth() * ratio), (int) (getLayerHeight() * ratio),
+	// getSurface().getData().isAntialias());
+	// drawChart = currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(),
+	// getLayerWidth(), getLayerHeight(), this);
+	// return chartRect;
+	// }
+	//
 	@Override
 	public Rectangle2D drawChart(final ChartOutput chart) {
-
+		if (!drawChart) return chartRect;
 		final BufferedImage im =
 				chart.getImage(getLayerWidth(), getLayerHeight(), getSurface().getData().isAntialias());
-		currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(), null);
+		drawChart = currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(), this);
 		return chartRect;
 	}
 
+	@Override
+	public boolean imageUpdate(final Image img, final int flags, final int x, final int y, final int width,
+			final int height) {
+		drawChart = (flags & ALLBITS) == 0;
+		return drawChart;
+	}
 }
