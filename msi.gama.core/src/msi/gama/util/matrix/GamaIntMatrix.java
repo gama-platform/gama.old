@@ -13,7 +13,7 @@ package msi.gama.util.matrix;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.primitives.Ints;
 

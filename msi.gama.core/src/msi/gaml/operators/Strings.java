@@ -461,7 +461,7 @@ public class Strings {
 	public static Boolean isGamaNumber(final String s) {
 		// copright notice:
 		// original code taken from
-		// org.apache.commons.lang.NumberUtils.isNumber(String)
+		// org.apache.commons.lang3.NumberUtils.isNumber(String)
 
 		if (s == null) return false;
 		final int length = s.length();

@@ -13,7 +13,7 @@ package msi.gama.lang.gaml.ui.templates;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.text.templates.Template;
 // import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;

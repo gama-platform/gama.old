@@ -1,16 +1,16 @@
 /*******************************************************************************************************
  *
- * GamaOsmFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaOsmFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -358,38 +358,35 @@ public class GamaOsmFile extends GamaGisFile {
 			public void process(final EntityContainer entityContainer) {
 				final Entity entity = entityContainer.getEntity();
 				final boolean toFilter = filteringOptions != null && !filteringOptions.isEmpty();
-				if (entity instanceof Bound) {
-					final Bound bound = (Bound) entity;
+				if (entity instanceof Bound bound) {
 					final Envelope3D e =
 							Envelope3D.of(bound.getLeft(), bound.getRight(), bound.getBottom(), bound.getTop(), 0, 0);
 					computeProjection(scope, e);
 				} else if (returnIt) {
-					if (entity instanceof Node) {
-						final Node node = (Node) entity;
+					if (entity instanceof Node node) {
 						final Geometry g = gis == null
 								? new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry()
 								: gis.transform(
 										new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry());
 
 						// final Geometry g = new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry();
-						//env.expandToInclude(g.getCoordinate());
+						// env.expandToInclude(g.getCoordinate());
 						nodesPt.put(node.getId(), new GamaShape(g));
 						nodesFromId.put(node.getId(), node);
 						boolean keepObject = keepEntity(toFilter, entity);
 						if (!keepObject) return;
 						nodes.add(node);
-						
+
 					} else if (entity instanceof Way) {
 						boolean keepObject = keepEntity(toFilter, entity);
 						if (!keepObject) return;
 						registerHighway((Way) entity, usedNodes, intersectionNodes);
 						ways.add((Way) entity);
-						
-						
-					} else if (entity instanceof Relation) { 
+
+					} else if (entity instanceof Relation) {
 						boolean keepObject = keepEntity(toFilter, entity);
 						if (!keepObject) return;
-						relations.add((Relation) entity); 
+						relations.add((Relation) entity);
 					}
 				}
 
@@ -403,18 +400,20 @@ public class GamaOsmFile extends GamaGisFile {
 		};
 		readFile(scope, sinkImplementation, getFile(scope));
 
-		if (returnIt) { setBuffer(buildGeometries(scope, nodes, ways, relations, intersectionNodes, nodesPt, nodesFromId)); }
+		if (returnIt) {
+			setBuffer(buildGeometries(scope, nodes, ways, relations, intersectionNodes, nodesPt, nodesFromId));
+		}
 
 	}
-	 
-	boolean keepEntity(boolean toFilter, Entity entity) {
+
+	boolean keepEntity(final boolean toFilter, final Entity entity) {
 		if (toFilter) {
 			boolean keepObject = false;
 			for (final String keyN : filteringOptions.getKeys()) {
 				final IList valsPoss = filteringOptions.get(keyN);
 				for (final Tag tagN : entity.getTags()) {
-					if (keyN.equals(tagN.getKey()) && (valsPoss == null || valsPoss.isEmpty()
-							|| valsPoss.contains(tagN.getValue()))) {
+					if (keyN.equals(tagN.getKey())
+							&& (valsPoss == null || valsPoss.isEmpty() || valsPoss.contains(tagN.getValue()))) {
 						keepObject = true;
 						break;
 					}
@@ -481,13 +480,12 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @return the i list
 	 */
 	public IList<IShape> buildGeometries(final IScope scope, final Set<Node> nodes, final List<Way> ways,
-			final List<Relation> relations, final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt,  final Map<Long, Node> nodesFromId) {
+			final List<Relation> relations, final Set<Long> intersectionNodes, final Map<Long, GamaShape> nodesPt,
+			final Map<Long, Node> nodesFromId) {
 		for (final Way way : ways) {
-			for (WayNode wn : way.getWayNodes()) {
-				nodes.add(nodesFromId.get(wn.getNodeId()));
-			}
+			for (WayNode wn : way.getWayNodes()) { nodes.add(nodesFromId.get(wn.getNodeId())); }
 		}
-		
+
 		final IList<IShape> geometries = GamaListFactory.create(Types.GEOMETRY);
 		if (gis == null) {
 			computeProjection(scope, Envelope3D.of(env));
@@ -499,7 +497,7 @@ public class GamaOsmFile extends GamaGisFile {
 			}
 		}
 		final Map<Long, Entity> geomMap = new HashMap<>();
-		
+
 		for (final Node node : nodes) {
 			geomMap.put(node.getId(), node);
 			final GamaShape pt = nodesPt.get(node.getId());
@@ -507,7 +505,7 @@ public class GamaOsmFile extends GamaGisFile {
 			final Map<String, String> atts = new HashMap<>();
 			if (pt != null) {
 				env.expandToInclude(pt.getLocation());
-				
+
 				for (final Tag tg : node.getTags()) {
 					final String key = tg.getKey();
 					final Object val = tg.getValue();
@@ -517,7 +515,7 @@ public class GamaOsmFile extends GamaGisFile {
 				}
 				if (hasAttributes) {
 					geometries.add(pt);
-					
+
 					pt.forEachAttribute((att, val) -> {
 
 						if (featureTypes.contains(att)) {

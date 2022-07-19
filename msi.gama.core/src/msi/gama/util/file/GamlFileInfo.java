@@ -1,18 +1,18 @@
 /*******************************************************************************************************
  *
- * GamlFileInfo.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlFileInfo.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
 import static java.lang.String.join;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.util.Collection;
 import java.util.Collections;

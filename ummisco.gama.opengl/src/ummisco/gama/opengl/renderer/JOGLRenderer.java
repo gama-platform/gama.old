@@ -262,10 +262,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	 *
 	 */
 
-	@Override
+	// @Override
 	public boolean cannotDraw() {
-		final ModelScene scene = sceneHelper.getSceneToUpdate();
-		return scene != null && scene.cannotAdd();
+		return sceneHelper.getSceneToUpdate() == null;
 	}
 
 	@Override
@@ -338,8 +337,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		int x = getLayerWidth();
 		int y = getLayerHeight();
 		// y = x = Math.min(x, y);
-		x = (int) (Math.min(x, y) * GamaPreferences.Displays.CHART_QUALITY.getValue());
-		y = x;
+		y = x = (int) (Math.min(x, y) * GamaPreferences.Displays.CHART_QUALITY.getValue());
 		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
 		scene.addImage(im, new FileDrawingAttributes(null, true));

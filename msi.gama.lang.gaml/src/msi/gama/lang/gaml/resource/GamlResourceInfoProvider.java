@@ -11,10 +11,10 @@
 package msi.gama.lang.gaml.resource;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.deleteWhitespace;
-import static org.apache.commons.lang.StringUtils.split;
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.uncapitalize;
+import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
+import static org.apache.commons.lang3.StringUtils.split;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import java.io.BufferedReader;
 import java.io.IOException;

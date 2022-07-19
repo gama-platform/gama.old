@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DeprecatedOperators.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DeprecatedOperators.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -473,11 +473,15 @@ public class DeprecatedOperators {
 	/**
 	 * At.
 	 *
-	 * @param scope the scope
-	 * @param s the s
-	 * @param val the val
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param val
+	 *            the val
 	 * @return the i agent
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { IKeyword.AT, "@" },
@@ -1130,8 +1134,10 @@ public class DeprecatedOperators {
 	/**
 	 * Dem.
 	 *
-	 * @param scope the scope
-	 * @param demFileName the dem file name
+	 * @param scope
+	 *            the scope
+	 * @param demFileName
+	 *            the dem file name
 	 * @return the i shape
 	 */
 	@operator (
@@ -1156,9 +1162,12 @@ public class DeprecatedOperators {
 	/**
 	 * Dem.
 	 *
-	 * @param scope the scope
-	 * @param demFileName the dem file name
-	 * @param z_factor the z factor
+	 * @param scope
+	 *            the scope
+	 * @param demFileName
+	 *            the dem file name
+	 * @param z_factor
+	 *            the z factor
 	 * @return the i shape
 	 */
 	@operator (
@@ -1181,9 +1190,12 @@ public class DeprecatedOperators {
 	/**
 	 * Dem.
 	 *
-	 * @param scope the scope
-	 * @param demFile the dem file
-	 * @param textureFile the texture file
+	 * @param scope
+	 *            the scope
+	 * @param demFile
+	 *            the dem file
+	 * @param textureFile
+	 *            the texture file
 	 * @return the i shape
 	 */
 	@operator (
@@ -1206,10 +1218,14 @@ public class DeprecatedOperators {
 	/**
 	 * Dem.
 	 *
-	 * @param sc the sc
-	 * @param demFile the dem file
-	 * @param textureFile the texture file
-	 * @param z_factor the z factor
+	 * @param sc
+	 *            the sc
+	 * @param demFile
+	 *            the dem file
+	 * @param textureFile
+	 *            the texture file
+	 * @param z_factor
+	 *            the z factor
 	 * @return the i shape
 	 */
 	@operator (
@@ -1232,7 +1248,7 @@ public class DeprecatedOperators {
 		// if (!(textureFile instanceof GamaImageFile))
 		// throw GamaRuntimeException.error("" + textureFile.getPath(scope) + " is not an image", scope);
 		final IGraphics graphics = scope.getGraphics();
-		if (graphics == null || graphics.cannotDraw()) return null;
+		if (graphics == null) return null;
 		final MeshDrawingAttributes attributes = new MeshDrawingAttributes(null, null, false);
 		attributes.setHeight(z_factor);
 
@@ -1259,8 +1275,10 @@ public class DeprecatedOperators {
 	/**
 	 * Gets the dimensions of.
 	 *
-	 * @param scope the scope
-	 * @param file the file
+	 * @param scope
+	 *            the scope
+	 * @param file
+	 *            the file
 	 * @return the dimensions of
 	 */
 	private static GamaPoint getDimensionsOf(final IScope scope, final GamaFile file) {

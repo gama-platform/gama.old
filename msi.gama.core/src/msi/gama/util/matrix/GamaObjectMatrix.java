@@ -13,7 +13,7 @@ package msi.gama.util.matrix;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.collect.ImmutableList;
 
@@ -328,8 +328,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public boolean equals(final Object m) {
 		if (this == m) return true;
-		if (!(m instanceof GamaObjectMatrix)) return false;
-		final GamaObjectMatrix mat = (GamaObjectMatrix) m;
+		if (!(m instanceof GamaObjectMatrix mat)) return false;
 		return Arrays.equals(this.getMatrix(), mat.getMatrix());
 	}
 

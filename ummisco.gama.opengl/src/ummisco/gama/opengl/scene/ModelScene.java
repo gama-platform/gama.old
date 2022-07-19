@@ -165,21 +165,12 @@ public class ModelScene {
 	}
 
 	/**
-	 * Cannot add.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean cannotAdd() {
-		return currentLayer == null;
-	}
-
-	/**
 	 * Increment.
 	 *
 	 * @return true, if successful
 	 */
 	private boolean increment() {
-		if (cannotAdd()) return false;
+		if (currentLayer == null) return false;
 		objectNumber += currentLayerTrace;
 		return true;
 	}
@@ -303,25 +294,12 @@ public class ModelScene {
 		final String key = layer.getName() + layer.getDefinition().getOrder();
 		currentLayer = layers.get(key);
 		if (currentLayer == null) {
-			currentLayer = createRegularLayer(renderer, layer);
+			currentLayer =
+					layer.isOverlay() ? new OverlayLayerObject(renderer, layer) : new LayerObject(renderer, layer);
 			layers.put(key, currentLayer);
 		}
 		currentLayer.setAlpha(alpha);
 		currentLayerTrace = currentLayer.numberOfTraces();
-	}
-
-	/**
-	 * Creates the regular layer.
-	 *
-	 * @param renderer
-	 *            the renderer
-	 * @param layer
-	 *            the layer
-	 * @return the layer object
-	 */
-	protected LayerObject createRegularLayer(final IOpenGLRenderer renderer, final ILayer layer) {
-		boolean overlay = layer != null && layer.isOverlay();
-		return overlay ? new OverlayLayerObject(renderer, layer) : new LayerObject(renderer, layer);
 	}
 
 	/**

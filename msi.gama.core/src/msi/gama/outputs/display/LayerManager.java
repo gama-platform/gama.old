@@ -157,7 +157,8 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
-		if (g == null || g.cannotDraw()) return;
+		if (g == null) return;
+		// if ((g == null) || g == null || g.cannotDraw()) return;
 		final IGraphicsScope scope = surface.getScope();
 		// If the experiment is already closed
 		if (scope == null || scope.interrupted()) return;

@@ -525,10 +525,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	 */
 	public void setUntranslatedGraphics2D(final Graphics2D g) { overlayRenderer = g; }
 
-	@Override
-	public boolean cannotDraw() {
-		return false;
-	}
+	// @Override
+	// public boolean cannotDraw() {
+	// return false;
+	// }
 
 	@Override
 	public void accumulateTemporaryEnvelope(final Rectangle2D env) {

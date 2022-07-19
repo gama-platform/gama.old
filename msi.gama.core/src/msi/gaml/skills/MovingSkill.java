@@ -13,8 +13,8 @@ package msi.gaml.skills;
 import static msi.gama.common.geometry.GeometryUtils.getFirstPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getLastPointOf;
 import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
-import static org.apache.commons.lang.ArrayUtils.contains;
-import static org.apache.commons.lang.ArrayUtils.indexOf;
+import static org.apache.commons.lang3.ArrayUtils.contains;
+import static org.apache.commons.lang3.ArrayUtils.indexOf;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -523,8 +523,7 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
 			Double newHeading = null;
-			if (on instanceof GamaSpatialGraph) {
-				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
+			if (on instanceof GamaSpatialGraph graph) {
 				IMap<IShape, Double> probaDeplacement = null;
 				if (scope.hasArg("proba_edges")) {
 					probaDeplacement = (IMap<IShape, Double>) scope.getVarValue("proba_edges");
