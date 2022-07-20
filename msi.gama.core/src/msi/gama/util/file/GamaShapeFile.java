@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -432,8 +432,7 @@ public class GamaShapeFile extends GamaGisFile {
 		} catch (IOException e) {
 			return null;
 		}
-		if (fds instanceof ShapefileDataStore) {
-			ShapefileDataStore store = (ShapefileDataStore) fds;
+		if (fds instanceof ShapefileDataStore store) {
 			store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
 			store.setMemoryMapped(GamaPreferences.External.SHAPEFILES_IN_MEMORY.getValue());
 			store.setCharset(Charset.forName("UTF8"));

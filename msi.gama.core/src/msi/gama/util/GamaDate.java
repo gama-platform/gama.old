@@ -36,7 +36,7 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.WeekFields;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.kernel.simulation.SimulationAgent;

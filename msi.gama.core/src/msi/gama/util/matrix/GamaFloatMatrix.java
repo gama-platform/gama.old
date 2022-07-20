@@ -15,7 +15,7 @@ import static org.locationtech.jts.index.quadtree.IntervalSize.isZeroWidth;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.locationtech.jts.index.quadtree.IntervalSize;
 
 import com.google.common.primitives.Doubles;

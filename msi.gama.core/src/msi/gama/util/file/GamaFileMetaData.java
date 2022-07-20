@@ -13,7 +13,7 @@ package msi.gama.util.file;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import ummisco.gama.dev.utils.DEBUG;
 

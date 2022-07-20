@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveAllTokens;
+import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -32,7 +32,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.media.jai.RasterFactory;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.DataUtilities;

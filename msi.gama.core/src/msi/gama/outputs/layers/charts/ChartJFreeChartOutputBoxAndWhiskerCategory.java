@@ -13,7 +13,7 @@ package msi.gama.outputs.layers.charts;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.LogarithmicAxis;

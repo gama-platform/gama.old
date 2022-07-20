@@ -14,8 +14,7 @@ Require-Bundle: msi.gama.ext,
  com.google.guava,
  ummisco.gama.annotations
 Bundle-ActivationPolicy: lazy
-Import-Package: org.apache.commons.lang;version="2.6.0",
- org.jfree.chart,
+Import-Package: org.jfree.chart,
  org.locationtech.jts.geom
 Export-Package: 
  com.jogamp.common,
