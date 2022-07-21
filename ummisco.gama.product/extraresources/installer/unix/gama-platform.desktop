@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Gama Platform
-Comment=version 1.8.2
+Comment=version 1.8.2-RC2
 Exec=env GTK_OVERLAY_SCROLLING=0 GDK_BACKEND=x11 /opt/gama-platform/Gama
 Icon=/opt/gama-platform/icon.icns
 Terminal=false
