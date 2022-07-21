@@ -177,11 +177,11 @@ public class NetworkSkill extends MessagingSkill {
 			doc = @doc (
 					value = "Action used by a networking agent to connect to a server or to create a server.",
 					examples = { @example (" do connect  with_name:\"any_name\";"),
-							@example (" do connect to:\\\"localhost\\\" port:9876 with_name:\"any_name\";"),
-							@example (" do connect to:\\\"localhost\\\" protocol:\\\"MQTT\\\" port:9876 with_name:\"any_name\";"),
+							@example (" do connect to:\"localhost\" port:9876 with_name:\"any_name\";"),
+							@example (" do connect to:\"localhost\" protocol:\"MQTT\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
-							@example ("	do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;"),
+							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;"),
 							@example (" do connect to:\"localhost\" protocol:\"tcp_client\" port:9876;"),
 							@example (" do connect to:\"localhost\" protocol:\"tcp_server\" port:9876 raw:true;"),
 							}))
@@ -435,7 +435,7 @@ public class NetworkSkill extends MessagingSkill {
 			doc = @doc (
 					value = "leave a group of agents. The leaving agent will not receive any "
 							+ "message from the group. Overwhise, it can send messages to the left group",
-					examples = { @example (" do leave_group with_name:\"my_group\";\n") }))
+					examples = { @example (" do leave_group with_name:\"my_group\";") }))
 	public boolean leaveTheGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final String groupName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
