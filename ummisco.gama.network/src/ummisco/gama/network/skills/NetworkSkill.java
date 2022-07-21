@@ -67,7 +67,8 @@ import ummisco.gama.network.websocket.WebSocketConnector;
 		name = INetworkSkill.NETWORK_SKILL,
 		concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
 @doc ("The " + INetworkSkill.NETWORK_SKILL
-		+ " skill provides new features to let agents exchange message through network.")
+		+ " skill provides new features to let agents exchange message through network. "
+		+ "Sending and receiving data is done with the " + MessagingSkill.SKILL_NAME + " skill's actions.")
 public class NetworkSkill extends MessagingSkill {
 
 	static {
@@ -94,9 +95,7 @@ public class NetworkSkill extends MessagingSkill {
 					type = IType.STRING,
 					doc = @doc ("command to execute")) },
 			doc = @doc (
-					value = "",
-					returns = "",
-					examples = { @example ("") }))
+					returns = "The error message if any"))
 	public String systemExec(final IScope scope) {
 		// final IAgent agent = scope.getAgent();
 		final String commandToExecute = (String) scope.getArg("command", IType.STRING);
@@ -131,9 +130,11 @@ public class NetworkSkill extends MessagingSkill {
 			args = { @arg (
 					name = INetworkSkill.PROTOCOL,
 					type = IType.STRING,
-					doc = @doc ("protocol type (MQTT (by default), TCP, UDP): the possible value ares '"
+					doc = @doc ("protocol type (MQTT (by default), TCP, UDP, websocket, arduino): the possible value ares '"
 							+ INetworkSkill.UDP_SERVER + "', '" + INetworkSkill.UDP_CLIENT + "', '"
-							+ INetworkSkill.TCP_SERVER + "', '" + INetworkSkill.TCP_CLIENT
+							+ INetworkSkill.TCP_SERVER + "', '" + INetworkSkill.TCP_CLIENT + "', '"
+							+ INetworkSkill.WEBSOCKET_SERVER + "', '" + INetworkSkill.WEBSOCKET_CLIENT + "', '"
+							+ INetworkSkill.ARDUINO
 							+ "', otherwise the MQTT protocol is used.")),
 					@arg (
 							name = INetworkSkill.PORT,
@@ -174,13 +175,16 @@ public class NetworkSkill extends MessagingSkill {
 							optional = true,
 							doc = @doc ("For UDP connection, it sets the maximum size of received packets (default = 1024bits).")) },
 			doc = @doc (
-					value = "Action used by a networking agent to connect to a server or as a server.",
+					value = "Action used by a networking agent to connect to a server or to create a server.",
 					examples = { @example (" do connect  with_name:\"any_name\";"),
 							@example (" do connect to:\\\"localhost\\\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\\\"localhost\\\" protocol:\\\"MQTT\\\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
-							@example ("	do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;") }))
+							@example ("	do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;"),
+							@example (" do connect to:\"localhost\" protocol:\"tcp_client\" port:9876;"),
+							@example (" do connect to:\"localhost\" protocol:\"tcp_server\" port:9876 raw:true;"),
+							}))
 	public boolean connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getExperiment().hasAttribute(REGISTRED_SERVER)) { this.startSkill(scope); }
 		final IAgent agt = scope.getAgent();
@@ -233,7 +237,7 @@ public class NetworkSkill extends MessagingSkill {
 				connector = new TCPConnector(scope, false, raw_package);
 				connector.configure(IConnector.SERVER_URL, serverURL);
 				connector.configure(IConnector.SERVER_PORT, "" + port);
-			} else if ("arduino".equals(protocol)) {
+			} else if (INetworkSkill.ARDUINO.equals(protocol)) {
 				connector = new ArduinoConnector(scope);
 			} else if (INetworkSkill.HTTP_REQUEST.equals(protocol)) {
 				connector = new HTTPRequestConnector(scope);
@@ -308,8 +312,12 @@ public class NetworkSkill extends MessagingSkill {
 			name = INetworkSkill.FETCH_MESSAGE)
 	@doc (
 			value = "Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
-			examples = { @example ("message mess <- fetch_message();"), @example ("loop while:has_more_message(){ \n"
-					+ "	message mess <- fetch_message();" + "	write message.contents;" + "}") })
+			examples = { 
+					@example ("message mess <- fetch_message();"), 
+					@example ("loop while:has_more_message(){ \n"
+								+ "	message mess <- fetch_message();\n" 
+								+ "	write message.contents;\n" 
+								+ "}") })
 	public GamaMessage fetchMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox<GamaMessage> box = getMailbox(scope, agent);
@@ -333,8 +341,10 @@ public class NetworkSkill extends MessagingSkill {
 	@doc (
 			value = "Check whether the mailbox contains any message.",
 			examples = { @example ("bool mailbox_contain_messages <- has_more_message();"),
-					@example ("loop while:has_more_message(){ \n" + "	message mess <- fetch_message();"
-							+ "	write message.contents;" + "}") })
+					@example ("loop while:has_more_message(){ \n" 
+								+ "	message mess <- fetch_message();\n"
+								+ "	write message.contents;\n" 
+								+ "}") })
 	public boolean hasMoreMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(scope, agent);
@@ -357,10 +367,10 @@ public class NetworkSkill extends MessagingSkill {
 							optional = false,
 							doc = @doc ("name of the group")) },
 			doc = @doc (
-					value = "allow an agent to join a group of agents in order to broadcast messages to other members"
+					value = "Allow an agent to join a group of agents in order to broadcast messages to other members"
 							+ "or to receive messages sent by other members. Note that all members of the group called : \"ALL\".",
 					examples = { @example ("do join_group with_name:\"group name\";"),
-							@example ("do join_group with_name:\"group name\";"
+							@example ("do join_group with_name:\"group name\";\n"
 									+ "do send to:\"group name\" contents:\"I am new in this group\";") }))
 	public boolean registerToGroup(final IScope scope) {
 		final IAgent agent = scope.getAgent();
@@ -467,7 +477,13 @@ public class NetworkSkill extends MessagingSkill {
 			doc = @doc (
 					value = "Fetch all messages from network to mailbox. Use this in specific case only, this action is done at the end of each step. ",
 					returns = "nothing",
-					examples = { @example ("do simulate_step;\n") }))
+					examples = { @example ("do fetch_message_from_network;//forces gama to get all the new messages since the begining of the cycle\n"
+						+ "loop while:has_more_message(){ \n" 
+						+ "		message mess <- fetch_message();\n"
+						+ "		write message.contents;\n"
+						+ "}"
+						) 
+					}))
 	public boolean fetchMessagesOfAgents(final IScope scope) {
 
 		for (final IConnector connection : getRegisteredServers(scope).values()) {

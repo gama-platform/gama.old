@@ -54,7 +54,6 @@ public interface INetworkSkill {
 	String WEBSOCKET_CLIENT = "websocket_client";
 
 	/** The udp server. */
-	// CONNECTION PROTOCOL
 	String UDP_SERVER = "udp_server";
 	
 	/** The udp client. */
@@ -66,6 +65,7 @@ public interface INetworkSkill {
 	/** The tcp client. */
 	String TCP_CLIENT = "tcp_client";
 
+	String ARDUINO = "arduino";
 	/** For HTTP requests. */
 	String HTTP_REQUEST = "http";
 

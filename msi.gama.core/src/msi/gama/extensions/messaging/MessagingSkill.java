@@ -12,6 +12,7 @@ package msi.gama.extensions.messaging;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,7 +31,9 @@ import msi.gaml.types.IType;
  * The Class MessagingSkill.
  */
 @skill (
-		name = MessagingSkill.SKILL_NAME)
+		name = MessagingSkill.SKILL_NAME,
+
+		concept = {IConcept.COMMUNICATION, IConcept.SKILL })
 @doc ("A simple skill that provides agents with a mailbox than can be filled with messages")
 @vars ({ @variable (
 		name = "mailbox",
@@ -94,15 +97,17 @@ public class MessagingSkill extends Skill {
 	@action (
 			name = "send",
 			args = { @arg (
-					name = IKeyword.TO,
-					type = IType.NONE,
-					optional = true,
-					doc = @doc ("The agent, or server, to which this message will be sent to")),
+						name = IKeyword.TO,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("The agent, or server, to which this message will be sent to")),
 					@arg (
-							name = GamaMessage.CONTENTS,
-							type = IType.NONE,
-							optional = false,
-							doc = @doc ("The contents of the message, an arbitrary object")) })
+						name = GamaMessage.CONTENTS,
+						type = IType.NONE,
+						optional = false,
+						doc = @doc ("The contents of the message, an arbitrary object")
+					) 
+			})
 	public GamaMessage primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final IAgent sender = scope.getAgent();
 		Object receiver = scope.getArg("to", IType.NONE);
