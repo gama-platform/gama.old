@@ -11,7 +11,7 @@
 #define OutputDirPath ".\gama_output"
 
 #define MyAppName "Gama"
-#define MyAppVersion "1.8.2-RC1"
+#define MyAppVersion "1.8.2-RC2"
 #define MyAppPublisher "UMI 209 UMMISCO IRD/SU & Partners"
 #define MyAppURL "https://www.gama-platform.org"
 #define MyAppAssocName MyAppName + " File"
