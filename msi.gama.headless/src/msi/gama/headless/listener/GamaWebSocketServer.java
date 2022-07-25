@@ -71,8 +71,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 //		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
 		// connected
 		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-
-		String path = URI.create(handshake.getResourceDescriptor()).getPath();
+		conn.send(""+conn.hashCode());
+//		String path = URI.create(handshake.getResourceDescriptor()).getPath();
 	}
 
 	public Application getDefaultApp() {
@@ -95,7 +95,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket socket, String message) {
 		// server.get_listener().broadcast(message);
-		String socket_id = "" + socket.hashCode();
+		String socket_id ;//= "" + socket.hashCode();
 //		System.out.println(socket + ": " + message);
 		final IMap<String, Object> map;
 		try {
@@ -212,9 +212,11 @@ public class GamaWebSocketServer extends WebSocketServer {
 						String res = "{\"result\":" + Jsoner.serialize(processInput(
 								get_listener().getExperiment(socket_id, exp_id).controller.getExperiment().getAgent(),
 								map.get("expr").toString())) + "}";
-						socket.send(res); 
 						if (!wasPaused)
 							get_listener().getExperiment(socket_id, exp_id).controller.userStart(); 
+						socket.send(res); 
+				}else {
+					socket.send("Wrong socket_id or exp_id "+socket_id+" "+exp_id); 
 				}
 				break;
 			case "exit":
