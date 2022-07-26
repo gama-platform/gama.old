@@ -1449,14 +1449,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IPath getCircuit(final IScope scope) {
-		final SimpleWeightedGraph g = new SimpleWeightedGraph(null);
+		final SimpleWeightedGraph g = new SimpleWeightedGraph<V,E>(null, null);
 		Graphs.addAllEdges(g, this, edgeSet());
 		HamiltonianCycleAlgorithmBase hamilton = new PalmerHamiltonianCycle();
 		final List vertices = hamilton.getTour(this).getVertexList();
 		final int size = vertices.size();
 		final IList edges = GamaListFactory.create(getGamlType().getContentType());
 		for (int i = 0; i < size - 1; i++) { edges.add(this.getEdge(vertices.get(i), vertices.get(i + 1))); }
-		return pathFromEdges(scope, null, null, edges);
+		return pathFromEdges(scope, (V) edges.get(0), (V)edges.get(edges.size() - 1), edges);
 	}
 
 	@Override
