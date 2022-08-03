@@ -136,7 +136,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				}					
 				break;
 			case "step":
-				System.out.println("step " + exp_id);
+//				System.out.println("step " + exp_id);
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).controller.userStep();
@@ -144,7 +144,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				socket.send(cmd_type);
 				break;
 			case "stepBack":
-				System.out.println("stepBack " + exp_id);
+//				System.out.println("stepBack " + exp_id);
 				if (get_listener().getExperiment(socket_id, exp_id) != null
 						&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 					get_listener().getExperiment(socket_id, exp_id).controller.userStepBack();
@@ -189,19 +189,20 @@ public class GamaWebSocketServer extends WebSocketServer {
 					IList<? extends IShape> agents = get_listener().getExperiment(socket_id, exp_id).getSimulation()
 							.getSimulation().getPopulationFor(map.get("species").toString());
 
+					final IList ll = map.get("attributes") != null ? (IList) map.get("attributes")
+							: GamaListFactory.EMPTY_LIST;
+					final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
+					String res = "";
 					try {
-						final IList ll = map.get("attributes") != null ? (IList) map.get("attributes")
-								: GamaListFactory.EMPTY_LIST;
-						final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
-						socket.send(SaveHelper.buildGeoJSon(get_listener().getExperiment(socket_id, exp_id)
-								.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll, crs));
-					} catch (GamaRuntimeException | IOException | SchemaException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} finally {
-						if (!wasPaused)
-							get_listener().getExperiment(socket_id, exp_id).controller.userStart();
+						res = SaveHelper.buildGeoJSon(get_listener().getExperiment(socket_id, exp_id).getSimulation()
+								.getExperimentPlan().getAgent().getScope(), agents, ll, crs);
+					} catch (Exception ex) {
+						res = ex.getMessage();
 					}
+					socket.send(res);
+
+					if (!wasPaused)
+						get_listener().getExperiment(socket_id, exp_id).controller.userStart(); 
 				}
 				break;
 			case "expression":
