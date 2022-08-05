@@ -83,6 +83,9 @@ public class Application implements IApplication {
 
 	/** The Constant SOCKET_PARAMETER. */
 	final public static String SOCKET_PARAMETER = "-socket";
+	
+	/** The Constant SECURE_SSL_SOCKET_PARAMETER. */
+	final public static String SSOCKET_PARAMETER = "-ssocket";
 
 	/** The Constant TUNNELING_PARAMETER. */
 	final public static String TUNNELING_PARAMETER = "-p";
@@ -225,6 +228,13 @@ public class Application implements IApplication {
 			// Change value only if function should apply parameter
 			this.socket = apply ? Integer.parseInt(after(args, SOCKET_PARAMETER)) : -1;
 		}
+		if (args.contains(SSOCKET_PARAMETER)) {
+			size = size - 2;
+			mustContainOutFolder = mustContainInFile = false;
+
+			// Change value only if function should apply parameter
+			this.socket = apply ? Integer.parseInt(after(args, SSOCKET_PARAMETER)) : -1;
+		}
 		if (args.contains(THREAD_PARAMETER)) {
 			size = size - 2;
 
@@ -356,7 +366,10 @@ public class Application implements IApplication {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			GamaListener gl = new GamaListener(this.socket, this);
+			GamaListener gl = new GamaListener(this.socket, this, false);
+		} else if (args.contains(SSOCKET_PARAMETER)) {
+			// GamaListener.newInstance(this.socket, this);
+			GamaListener gl = new GamaListener(this.socket, this, true);
 		} else {
 			runSimulation(args);
 		}

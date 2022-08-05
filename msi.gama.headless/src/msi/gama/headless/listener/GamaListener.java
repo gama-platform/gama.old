@@ -22,7 +22,7 @@ public class GamaListener {
 
 	private static WebSocketPrintStream bufferStream;
 
-	public GamaListener(final int p, final Application a) {
+	public GamaListener(final int p, final Application a, final boolean secure) {
 		File currentJavaJarFile = new File(
 				GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
@@ -39,7 +39,7 @@ public class GamaListener {
 //		} else {
 //			System.out.println("TEMP Directory cannot be created");
 //		}
-		createSocketServer(p, a);
+		createSocketServer(p, a, secure);
 	}
 
 	void deleteFolder(File file) {
@@ -60,8 +60,8 @@ public class GamaListener {
 	 *
 	 * @throws UnknownHostException the unknown host exception
 	 */
-	public void createSocketServer(final int port, final Application a) {
-		instance = new GamaWebSocketServer(port, a, this);
+	public void createSocketServer(final int port, final Application a, final boolean ssl) {
+		instance = new GamaWebSocketServer(port, a, this, ssl);
 		instance.start();
 //		System.out.println("Gama Listener started on port: " + instance.getPort());
 		bufferStream = new WebSocketPrintStream(System.out, instance);

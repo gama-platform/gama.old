@@ -3,6 +3,7 @@ package msi.gama.headless.listener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -10,13 +11,21 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.geotools.feature.SchemaException;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.common.GamlFileExtension;
@@ -59,8 +68,40 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	private Application app;
 
-	public GamaWebSocketServer(int port, Application a, GamaListener l) {
+	public GamaWebSocketServer(int port, Application a, GamaListener l, boolean ssl) {
 		super(new InetSocketAddress(port));
+		if(ssl) {			
+			// load up the key store
+			String STORETYPE = "JKS";
+			File currentJavaJarFile = new File(
+					GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
+			
+			String KEYSTORE =currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../keystore.jks";
+			String STOREPASSWORD = "storepassword";
+			String KEYPASSWORD = "storepassword";
+			
+			KeyStore ks;
+			try {
+				ks = KeyStore.getInstance(STORETYPE);
+				File kf = new File(KEYSTORE);
+				ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+				
+				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+				kmf.init(ks, KEYPASSWORD.toCharArray());
+				TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+				tmf.init(ks);
+				
+				SSLContext sslContext = null;
+				sslContext = SSLContext.getInstance("TLS");
+				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+				
+				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		app = a;
 		_listener = l;
 	}
