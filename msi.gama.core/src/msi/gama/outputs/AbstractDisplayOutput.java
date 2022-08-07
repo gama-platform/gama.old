@@ -68,20 +68,15 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public boolean isVirtual() { return virtual; }
 
+	protected boolean shouldOpenView() {
+		return true;
+	}
+
 	@Override
 	public void open() {
 		super.open();
-		GAMA.getGui().run("Opening " + getName(), opener, false);
+		if (shouldOpenView()) { GAMA.getGui().run("Opening " + getName(), opener, false); }
 	}
-
-	/**
-	 * Should open asynchronously.
-	 *
-	 * @return true, if successful
-	 */
-	// public boolean shouldOpenAsynchronously() {
-	// return true;
-	// }
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
@@ -128,15 +123,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public boolean isUnique() { return false; }
 
-	// @Override
-	// public boolean isSynchronized() { return synchro; }
-
-	// @Override
-	// public void setSynchronized(final boolean sync) {
-	// // synchro = sync;
-	// if (view != null) { view.updateToolbarState(); }
-	// }
-
 	@Override
 	public void setPaused(final boolean pause) {
 		super.setPaused(pause);
@@ -148,15 +134,11 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public String getId() {
-		final String cName = this.getDescription().getModelDescription().getAlias();
+		IDescription desc = this.getDescription();
+		final String cName = desc == null ? null : desc.getModelDescription().getAlias();
 		if (cName != null && !"".equals(cName) && !getName().contains("#"))
 			return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName;
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 
-	// @Override
-	// public boolean isInInitPhase() { return inInitPhase; }
-	//
-	// @Override
-	// public void setInInitPhase(final boolean state) { inInitPhase = state; }
 }

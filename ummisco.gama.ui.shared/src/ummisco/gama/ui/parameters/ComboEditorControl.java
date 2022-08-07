@@ -20,9 +20,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.StringUtils;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The Class ComboEditorControl.
@@ -47,6 +50,12 @@ public class ComboEditorControl extends EditorControl<Combo> {
 	ComboEditorControl(final AbstractEditor editor, final Composite parent, final IType expectedType,
 			final List possibleValues) {
 		super(editor, new Combo(parent, SWT.READ_ONLY | SWT.DROP_DOWN));
+		// At least on macOS, the combo is colorized only in dark theme, otherwise it is white
+		GamaColors.setForeground(
+				ThemeHelper.isDark() ? GamaColors.getTextColorForBackground(control.getBackground()).color()
+						: IGamaColors.VERY_DARK_GRAY.color(),
+				control);
+
 		buildValues(expectedType, possibleValues);
 	}
 
@@ -91,6 +100,7 @@ public class ComboEditorControl extends EditorControl<Combo> {
 	/**
 	 * Update among values.
 	 */
+	@Override
 	public void updateAmongValues(final List possibleValues) {
 		buildValues(editor.getExpectedType(), possibleValues);
 	}

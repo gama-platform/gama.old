@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MonitorView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MonitorView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
@@ -30,6 +30,7 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.ValuedDisplayOutputFactory;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
@@ -74,7 +75,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public boolean addItem(final MonitorOutput output) {
 		if (output != null) {
 			createItem(getParentComposite(), output, output.getValue() == null,
-					output.getColor() == null ? null : get(output.getColor()));
+					output.getColor(null) == null ? null : get(output.getColor(null)));
 			return true;
 		}
 		return false;
@@ -90,12 +91,17 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 					update(output);
 				}).getEditor();
 
-		final IExpression expr =
-				GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(), true);
+		IExpression expr;
+		try {
+			expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(), true);
+		} catch (GamaRuntimeException e1) {
+			// The expression is maybe dedicated to experiments (and not simulations) ?
+			expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getExperiment(), true);
+		}
 
 		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
 				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, newValue -> {
-					output.setNewExpression(newValue);
+					output.setNewExpression((IExpression) newValue);
 					update(output);
 				}, Types.NO_TYPE).getEditor();
 
@@ -150,7 +156,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	/**
 	 * Gets the value as string.
 	 *
-	 * @param o the o
+	 * @param o
+	 *            the o
 	 * @return the value as string
 	 */
 	public String getValueAsString(final MonitorOutput o) {
@@ -160,13 +167,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public GamaColor getItemDisplayColor(final MonitorOutput o) {
-		return o.getColor();
+		return o.getColor(null);
 	}
 
 	/**
 	 * Creates the new monitor.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	@SuppressWarnings ("unused")
 	public static void createNewMonitor(final IScope scope) {
@@ -197,9 +205,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	}
 
 	@Override
-	public List getItems() {
-		return outputs;
-	}
+	public List getItems() { return outputs; }
 
 	@Override
 	public void updateItemValues() {}
@@ -244,22 +250,15 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		final IExpression exp = data.getValue();
 		if (exp == null) return null;
 		final IType<?> type = exp.getGamlType();
-		menu.put("Copy to clipboard", () -> {
-			WorkbenchHelper.copy(getValueAsString(data));
-		});
+		menu.put("Copy to clipboard", () -> { WorkbenchHelper.copy(getValueAsString(data)); });
 		if (type.isNumber() || type.isContainer() && type.getContentType().isNumber()) {
 			// menu.put("Open chart", () -> {});
-			menu.put("Save as CSV", () -> {
-				data.saveHistory();
-			});
+			menu.put("Save as CSV", () -> { data.saveHistory(); });
 		} else if (type.isAgentType()) {
-			menu.put("Inspect", () -> {
-				data.getScope().getGui().setSelectedAgent((IAgent) data.getLastValue());
-			});
+			menu.put("Inspect", () -> { data.getScope().getGui().setSelectedAgent((IAgent) data.getLastValue()); });
 		} else if (type.isContainer() && type.getContentType().isAgentType()) {
-			menu.put("Browse", () -> {
-				ValuedDisplayOutputFactory.browse((Collection<? extends IAgent>) data.getLastValue());
-			});
+			menu.put("Browse",
+					() -> { ValuedDisplayOutputFactory.browse((Collection<? extends IAgent>) data.getLastValue()); });
 		}
 		return menu;
 	}

@@ -284,9 +284,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	@Override
 	public void setBackground(final Color color) {
-		GamaColors.setBackground(thumb, color);
-		GamaColors.setBackground(rightRegion, color);
-		GamaColors.setBackground(leftRegion, color);
+		if (color != null) { GamaColors.setBackground(color, thumb, rightRegion, leftRegion); }
 		super.setBackground(color);
 	}
 

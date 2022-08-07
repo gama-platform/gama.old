@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UserInputStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * UserInputStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.user;
 
@@ -113,20 +113,21 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	/** The is valued. */
 	// static int index;
 	boolean isValued;
-	
+
 	/** The current value. */
 	Object initialValue, currentValue;
-	
+
 	/** The slider. */
 	IExpression min, max, among, init, slider;
-	
+
 	/** The temp var. */
 	String tempVar;
 
 	/**
 	 * Instantiates a new user input statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public UserInputStatement(final IDescription desc) {
 		super(desc);
@@ -140,14 +141,10 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public String getTitle() {
-		return description.getName();
-	}
+	public String getTitle() { return description.getName(); }
 
 	@Override
-	public String getCategory() {
-		return null;
-	}
+	public String getCategory() { return null; }
 
 	@Override
 	public String getUnitLabel(final IScope scope) {
@@ -202,9 +199,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	 *
 	 * @return the temp var name
 	 */
-	public String getTempVarName() {
-		return tempVar;
-	}
+	public String getTempVarName() { return tempVar; }
 
 	@Override
 	public List getAmongValue(final IScope scope) {
@@ -212,9 +207,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public boolean isEditable() {
-		return true;
-	}
+	public boolean isEditable() { return true; }
 
 	@Override
 	public Comparable getStepValue(final IScope scope) {
@@ -235,9 +228,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	 * @see msi.gama.kernel.experiment.IParameter#isDefined()
 	 */
 	@Override
-	public boolean isDefined() {
-		return true;
-	}
+	public boolean isDefined() { return true; }
 
 	/**
 	 * Method setDefined()
@@ -254,7 +245,12 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public List<GamaColor> getColor(final IScope scope) {
+	public List<GamaColor> getColors(final IScope scope) {
+		return null;
+	}
+
+	@Override
+	public GamaColor getColor(final IScope scope) {
 		return null;
 	}
 

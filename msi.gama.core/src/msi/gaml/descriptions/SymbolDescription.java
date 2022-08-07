@@ -443,8 +443,7 @@ public abstract class SymbolDescription implements IDescription {
 	public EObject getUnderlyingElement(final Object facet, final boolean returnFacet) {
 		if (facet == null) return element;
 		if (facet instanceof EObject) return (EObject) facet;
-		if (facet instanceof IExpressionDescription) {
-			final IExpressionDescription f = (IExpressionDescription) facet;
+		if (facet instanceof IExpressionDescription f) {
 			final EObject result = f.getTarget();
 			if (result != null) return result;
 		}

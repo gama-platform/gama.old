@@ -188,7 +188,7 @@ public class InputParameter extends ParameterAdapter {
 	public boolean isEditable() { return true; }
 
 	@Override
-	public List<GamaColor> getColor(final IScope scope) {
+	public List<GamaColor> getColors(final IScope scope) {
 		return null;
 	}
 

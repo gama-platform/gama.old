@@ -15,6 +15,7 @@ import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_
 import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -129,6 +130,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
+		// add(new ParameterDisplayOutput());
+
 		// DEBUG.OUT("ExperimentOutputManager init");
 		final Symbol layoutDefinition = layout == null ? this : layout;
 		final String definitionFacet = layout == null ? LAYOUT : IKeyword.VALUE;
@@ -136,6 +139,14 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 		super.init(scope);
 		scope.getGui().applyLayout(scope, layoutObject);
+		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
+		return true;
+	}
+
+	@Override
+	public boolean step(final IScope scope) {
+		super.step(scope);
+		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
 		return true;
 	}
 

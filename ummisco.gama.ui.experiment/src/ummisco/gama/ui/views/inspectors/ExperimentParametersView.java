@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,11 +33,18 @@ import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
+import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
+import ummisco.gama.ui.interfaces.IParameterEditor;
+import ummisco.gama.ui.parameters.AbstractEditor;
+import ummisco.gama.ui.parameters.EditorsGroup;
+import ummisco.gama.ui.parameters.MonitorDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -45,6 +55,11 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  */
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
+	private static final String MONITOR_CATEGORY = "Monitors";
+
+	/** The count. */
+	private static int count = 0;
+
 	/** The Constant ID. */
 	public static final String ID = IGui.PARAMETER_VIEW_ID;
 
@@ -53,6 +68,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/** The experiment. */
 	private IExperimentPlan experiment;
+
+	ParameterExpandItem monitorSection;
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -68,8 +85,76 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		setParentComposite(intermediate);
 	}
 
+	ExperimentsParametersList getEditorsList() { return (ExperimentsParametersList) editors; }
+
+	/**
+	 * Display items.
+	 */
 	@Override
-	public void addItem(final IExperimentPlan exp) {
+	public void displayItems() {
+		super.displayItems();
+		createMonitorSectionIfNeeded(false);
+		final Map<MonitorOutput, MonitorDisplayer> monitors = getEditorsList().getMonitors();
+		monitors.forEach((mo, md) -> {
+			md.createControls((EditorsGroup) monitorSection.getControl());
+			md.setCloser(() -> deleteMonitor(md));
+		});
+	}
+
+	private void deleteMonitorSectionIfEmpty() {
+		if (monitorSection == null || getEditorsList().hasMonitors()
+				|| getEditorsList().getItems().contains(MONITOR_CATEGORY))
+			return;
+		monitorSection.dispose();
+		monitorSection = null;
+	}
+
+	private void createMonitorSectionIfNeeded(final boolean aMonitorIsAboutToBeCreated) {
+		if (monitorSection != null || !GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()
+				|| !aMonitorIsAboutToBeCreated && !getEditorsList().hasMonitors())
+			return;
+		final EditorsGroup compo = (EditorsGroup) createItemContentsFor(MONITOR_CATEGORY);
+		monitorSection = createItem(getParentComposite(), MONITOR_CATEGORY, MONITOR_CATEGORY, compo, getViewer(),
+				GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
+	}
+
+	private void createNewMonitor() {
+		createMonitorSectionIfNeeded(true);
+		IScope scope = GAMA.getRuntimeScope();
+		MonitorOutput m = new MonitorOutput(scope, "Monitor " + count++, null);
+		MonitorDisplayer md = getEditorsList().addMonitor(m);
+		md.createControls((EditorsGroup) monitorSection.getControl());
+		monitorSection.setHeight(monitorSection.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		md.setCloser(() -> deleteMonitor(md));
+	}
+
+	private void deleteMonitor(final MonitorDisplayer md) {
+		MonitorOutput mo = md.getStatement();
+		mo.close();
+		getEditorsList().removeMonitor(mo);
+		md.dispose();
+		monitorSection.setHeight(monitorSection.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		deleteMonitorSectionIfEmpty();
+	}
+
+	@Override
+	protected Composite createItemContentsFor(final String cat) {
+		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(cat);
+		final EditorsGroup compo = new EditorsGroup(getViewer());
+		if (parameters != null) {
+			final List<AbstractEditor> list = new ArrayList(parameters.values());
+			Collections.sort(list);
+			for (final AbstractEditor<?> gpParam : list) {
+				gpParam.createControls(compo);
+				if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
+			}
+		}
+
+		return compo;
+	}
+
+	@Override
+	public void setExperiment(final IExperimentPlan exp) {
 		if (exp != null) {
 			experiment = exp;
 			if (!exp.hasParametersOrUserCommands()) return;
@@ -78,6 +163,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
 			params.addAll(exp.getTexts());
+			if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && exp.getCurrentSimulation() != null) {
+				params.addAll(exp.getCurrentSimulation().getOutputManager().getMonitors());
+			}
 			Collections.sort(params);
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
 			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
@@ -97,6 +185,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					final EditorsList<?> eds = editors;
 					if (eds != null) { eds.revertToDefaultValue(); }
 				}, SWT.RIGHT);
+		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) {
+			tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(),
+					SWT.RIGHT);
+			tb.sep(SWT.RIGHT);
+		}
+
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
 					final SimulationAgent sim =
@@ -115,6 +209,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	public boolean addItem(final String object) {
+		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_CATEGORY.equals(object)) {
+			createMonitorSectionIfNeeded(true);
+			return true;
+		}
 		createItem(getParentComposite(), object, GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
 		return true;
 	}
@@ -133,6 +231,24 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	protected GamaUIJob createUpdateJob() {
+		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && getEditorsList().hasMonitors())
+			return new GamaUIJob() {
+
+				@Override
+				protected UpdatePriority jobPriority() {
+					return UpdatePriority.LOW;
+				}
+
+				@Override
+				public IStatus runInUIThread(final IProgressMonitor monitor) {
+					if (!isOpen) return Status.CANCEL_STATUS;
+					if (getViewer() != null && !getViewer().isDisposed()) {
+						((ExperimentsParametersList) editors).updateMonitors();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+
 		return null;
 	}
 

@@ -66,8 +66,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		} else {
 			refresh = IExpressionFactory.TRUE_EXPR;
 		}
-
-		name = desc.getName();
+		if (desc != null) { name = desc.getName(); }
 		originalName = name;
 		if (name != null) {
 			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');
@@ -100,7 +99,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	protected IScope buildScopeFrom(final IScope scope) {
-		return scope.copy("of " + getDescription().getKeyword() + " " + getName());
+		String desc = description == null ? " " : description.getKeyword() + " ";
+		return scope.copy("of " + desc + getName());
 	}
 
 	@Override
@@ -178,8 +178,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	 */
 	public void setScope(final IScope scope) {
 		if (this.outputScope != null) { GAMA.releaseScope(this.outputScope); }
-		final ModelDescription micro = this.getDescription().getModelDescription();
 		if (scope.getModel() != null) {
+			final ModelDescription micro = this.getDescription().getModelDescription();
 			final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
 			final boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 			if (fromMicroModel) {

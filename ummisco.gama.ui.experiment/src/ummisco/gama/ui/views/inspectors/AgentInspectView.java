@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AgentInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AgentInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +43,7 @@ import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The Class AgentInspectView.
@@ -54,7 +53,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 	/** The Constant ID. */
 	public static final String ID = IGui.AGENT_VIEW_ID;
-	
+
 	/** The first part name. */
 	public String firstPartName = null;
 
@@ -65,8 +64,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			reset();
 			return;
 		}
-		if (!(output instanceof InspectDisplayOutput)) return;
-		final InspectDisplayOutput out = (InspectDisplayOutput) output;
+		if (!(output instanceof InspectDisplayOutput out)) return;
 		final IAgent[] agents = out.getLastValue();
 		if (agents == null || agents.length == 0) {
 			reset();
@@ -88,18 +86,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		parent.setBackground(parent.getBackground());
 		if (!outputs.isEmpty()) {
 			final IAgent[] init = getOutput().getLastValue();
-			if (init != null && init.length > 0) {
-				for (final IAgent a : init) {
-					addItem(a);
-				}
-			}
+			if (init != null && init.length > 0) { for (final IAgent a : init) { addItem(a); } }
 		}
 	}
 
 	@Override
-	public InspectDisplayOutput getOutput() {
-		return (InspectDisplayOutput) super.getOutput();
-	}
+	public InspectDisplayOutput getOutput() { return (InspectDisplayOutput) super.getOutput(); }
 
 	@Override
 	public boolean areItemsClosable() {
@@ -109,10 +101,14 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	/**
 	 * Creates the left label.
 	 *
-	 * @param parent the parent
-	 * @param title the title
-	 * @param tooltip the tooltip
-	 * @param isSubParameter the is sub parameter
+	 * @param parent
+	 *            the parent
+	 * @param title
+	 *            the title
+	 * @param tooltip
+	 *            the tooltip
+	 * @param isSubParameter
+	 *            the is sub parameter
 	 * @return the label
 	 */
 	public Label createLeftLabel(final Composite parent, final String title, final String tooltip,
@@ -144,19 +140,10 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 
 		composite.setLayout(layout);
 		final FlatButton b = FlatButton.menu(composite, IGamaColors.BLUE, "Select...");
-		b.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final Menu m = new Menu(b);
-				AgentsMenu.createMenuForAgent(m, agent, agent instanceof ITopLevelAgent, false);
-				m.setVisible(true);
-			}
-
-			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-				widgetSelected(e);
-			}
+		b.addSelectionListener((Selector) e -> {
+			final Menu m = new Menu(b);
+			AgentsMenu.createMenuForAgent(m, agent, agent instanceof ITopLevelAgent, false);
+			m.setVisible(true);
 		});
 
 		return attributes;
@@ -184,7 +171,8 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	/**
 	 * Gets the parameters to inspect.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the parameters to inspect
 	 */
 	private List<IParameter> getParametersToInspect(final IAgent agent) {
@@ -204,9 +192,12 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	/**
 	 * Builds the attribute.
 	 *
-	 * @param agent the agent
-	 * @param att the att
-	 * @param t the t
+	 * @param agent
+	 *            the agent
+	 * @param att
+	 *            the att
+	 * @param t
+	 *            the t
 	 * @return the i parameter
 	 */
 	private IParameter buildAttribute(final IAgent agent, final String att, final String t) {
@@ -218,14 +209,10 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 			}
 
 			@Override
-			public boolean isEditable() {
-				return true;
-			}
+			public boolean isEditable() { return true; }
 
 			@Override
-			public boolean isDefined() {
-				return true;
-			}
+			public boolean isDefined() { return true; }
 
 			@Override
 			public Object value() {

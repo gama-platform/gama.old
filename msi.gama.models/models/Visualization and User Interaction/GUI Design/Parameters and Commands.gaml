@@ -16,7 +16,7 @@ global {
 	int an_integer_without_limits <- 0;
 	int an_integer <-0;
 	float a_float_variable <- 0.0;
-	float another <- 10.0;
+	float another <- 10.0;	
 	bool a_boolean_variable <- true;
 	bool a_boolean_variable2 <- true;
 	bool a_boolean_variable3 <- true;
@@ -55,9 +55,10 @@ experiment "Show Parameters" type: gui {
 	// Category: Explanation	
 	//////////////////////////////////////////////
 	text "This is a simple text using default values. It adapts automatically to the light/dark themes" category: "Explanation";
-	text "This is a more elaborate text in a different color and a background" color: #white background: #violet category: "Explanation";
-	text "This is a text in a different font, in italic and a size of 12" category: "Explanation" color: #orange font: font("Helvetica",12,#italic); 
-	text "This bold red text \rspans over \r3 lines." category: "Explanation" color: #red font: font("Helvetica",12,#bold); 
+	text "This is in a different color and a background" color: #white background: #violet category: "Explanation";
+	text "This is a text in a different font, in italic and a size of 12" category: "Explanation" color: #orange font: font("Times New Roman",16,#italic); 
+	text "Texts are justified on both sides by default. There is no possiblity so far to specify a left, right or no justification" category: "Explanation" color: #lightgray background: #black font: font("Courier New",12); 
+	text "This bold light green text \rspans over \r3 lines." category: "Explanation" color: #lightgreen background: #black font: font("Helvetica",12,#bold); 
 	
 	// Category: Various types	
 	//////////////////////////////////////////////
@@ -111,7 +112,14 @@ experiment "Show Parameters" type: gui {
 	parameter "Float (with on_change listener)" category:"Interactive" var: float_on_change {write ""+float_on_change;}
 	// A user_command adds a button to the interface in order to call an action or a set of statements when it is clicked.
 	user_command "Display parameter" category: "Interactive" color:#darkblue {ask world {do writing_parameters;}}
+	user_command "Light color for commands" category: "Interactive" color:#lightgray {ask world {do writing_parameters;}}
+	user_command "Default color for commands" category: "Interactive" {ask world {do writing_parameters;}}
+	text "Monitors can now be added to the parameters view (see Preferences>Interface)" category: "Monitors" color: #gray font: font("Helvetica",14, #bold);
 
 	
-	output {}
+	output {
+		monitor "A simple random monitor" value: rnd(100) color: #red;
+		monitor "A monitor with the color of the simulation" value: 1000 + rnd(10) ;
+		monitor "A monitor on an agent" value: simulation color: #lightgray;
+	}
 }

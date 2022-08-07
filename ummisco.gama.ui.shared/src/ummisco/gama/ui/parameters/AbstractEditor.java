@@ -25,6 +25,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +46,7 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * The Class AbstractEditor.
@@ -300,7 +302,7 @@ public abstract class AbstractEditor<T>
 		// Create and initialize the toolbar associated with the value editor
 		editorToolbar = createEditorToolbar();
 		internalModification = false;
-		parent.layout();
+		parent.requestLayout();
 	}
 
 	/**
@@ -310,7 +312,7 @@ public abstract class AbstractEditor<T>
 	 */
 	Composite createValueComposite() {
 		composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getBackground());
+		GamaColors.setBackground(parent.getBackground(), composite);
 		final var data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.minimumWidth = 100;
 		composite.setLayoutData(data);
@@ -328,6 +330,14 @@ public abstract class AbstractEditor<T>
 	EditorLabel createEditorLabel() {
 		editorLabel = new EditorLabel(this, parent, name, isSubParameter);
 		return editorLabel;
+	}
+
+	Color getEditorControlBackground() {
+		return parent.getBackground(); // by default
+	}
+
+	Color getEditorControlForeground() {
+		return GamaColors.getTextColorForBackground(getEditorControlBackground()).color(); // by default
 	}
 
 	/**
@@ -419,7 +429,7 @@ public abstract class AbstractEditor<T>
 	 *
 	 * @return the parameter grid data
 	 */
-	protected GridData getParameterGridData() {
+	protected GridData getEditorControlGridData() {
 		final var d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		d.minimumWidth = 50;
 		return d;
@@ -629,6 +639,23 @@ public abstract class AbstractEditor<T>
 	 */
 	public void dontUseScope(final boolean dont) {
 		this.noScope = dont;
+	}
+
+	protected void applySave() {}
+
+	public void dispose() {
+		if (editorLabel != null && !editorLabel.isDisposed()) {
+			editorLabel.dispose();
+			editorLabel = null;
+		}
+		if (editorControl != null && !editorControl.getControl().isDisposed()) {
+			editorControl.getControl().dispose();
+			editorControl = null;
+		}
+		if (composite != null && !composite.isDisposed()) {
+			composite.dispose();
+			composite = null;
+		}
 	}
 
 }

@@ -1,23 +1,27 @@
 /*******************************************************************************************************
  *
- * MonitorOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MonitorOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.List;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
+import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -28,11 +32,13 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.file.csv.CsvWriter;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -89,32 +95,34 @@ import msi.gaml.types.Types;
 				examples = @example (
 						value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
 						isExecutable = false)) })
-public class MonitorOutput extends AbstractValuedDisplayOutput {
-	
+public class MonitorOutput extends AbstractValuedDisplayOutput implements IExperimentDisplayable {
+
 	/** The monitor folder. */
 	private static String monitorFolder = "monitors";
-	
+
 	/** The color expression. */
 	protected IExpression colorExpression = null;
-	
+
 	/** The color. */
 	protected GamaColor color = null;
-	
+
 	/** The constant color. */
 	protected GamaColor constantColor = null;
-	
+
 	/** The history. */
 	protected List<Object> history;
+
+	protected boolean shouldBeInitialized;
 
 	/**
 	 * Instantiates a new monitor output.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
 		setColor(getFacet(IKeyword.COLOR));
-
 	}
 
 	/**
@@ -124,20 +132,39 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		colorExpression = facet;
 		if (facet != null && facet.isConst()) {
 			constantColor = Types.COLOR.cast(null, facet.getConstValue(), null, false);
+			return;
 		}
+		if (colorExpression == null) {
+			final ITopLevelAgent sim = GAMA.getSimulation();
+			if (sim != null) {
+				constantColor = sim.getColor();
+			} else {
+				constantColor = new GamaColor(Color.gray);
+			}
+		}
+	}
+
+	public void setColor(final GamaColor gamaColor) {
+		color = gamaColor;
+		constantColor = gamaColor;
+		colorExpression = GAML.getExpressionFactory().createConst(gamaColor, Types.COLOR);
 	}
 
 	/**
 	 * Instantiates a new monitor output.
 	 *
-	 * @param scope the scope
-	 * @param name the name
-	 * @param expr the expr
+	 * @param scope
+	 *            the scope
+	 * @param name
+	 *            the name
+	 * @param expr
+	 *            the expr
 	 */
 	public MonitorOutput(final IScope scope, final String name, final String expr) {
-		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
+		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr == null ? "" : expr, IKeyword.NAME,
 				name == null ? expr : name));
-		setScope(scope.copy("in monitor '" + expr + "'"));
+		shouldBeInitialized = true;
+		setScope(scope.copy("in monitor '" + name + "'"));
 		setNewExpressionText(expr);
 		if (getScope().init(this).passed()) {
 			getScope().getSimulation().addOutput(this);
@@ -146,25 +173,24 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		}
 	}
 
-	@Override
-	public String getViewId() {
-		return IGui.MONITOR_VIEW_ID;
+	public boolean shouldBeInitialized() {
+		return shouldBeInitialized;
+	}
+
+	public void shouldNotBeInitialized() {
+		shouldBeInitialized = false;
 	}
 
 	@Override
-	public String getId() {
-		return getViewId() + ":" + getName();
+	protected boolean shouldOpenView() {
+		return !GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue();
 	}
 
 	@Override
-	public boolean init(final IScope scope) {
-		super.init(scope);
-		if (colorExpression == null) {
-			final ITopLevelAgent sim = scope.getRoot();
-			if (sim != null) { constantColor = sim.getColor(); }
-		}
-		return true;
-	}
+	public String getViewId() { return IGui.MONITOR_VIEW_ID; }
+
+	@Override
+	public String getId() { return getViewId() + ":" + getName(); }
 
 	@Override
 	public boolean step(final IScope scope) {
@@ -191,14 +217,14 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 	 *
 	 * @return the color
 	 */
-	public GamaColor getColor() {
+	@Override
+	public GamaColor getColor(final IScope scope) {
+
 		return constantColor == null ? color : constantColor;
 	}
 
 	@Override
-	public boolean isUnique() {
-		return true;
-	}
+	public boolean isUnique() { return true; }
 
 	@Override
 	public String getName() {
@@ -240,9 +266,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 				} else if (o instanceof List) {
 					final List<?> l = (List<?>) o;
 					strings = new String[l.size()];
-					for (int i = 0; i < strings.length; i++) {
-						strings[i] = l.get(i).toString();
-					}
+					for (int i = 0; i < strings.length; i++) { strings[i] = l.get(i).toString(); }
 				}
 				w.writeRecord(strings);
 			}
@@ -252,5 +276,27 @@ public class MonitorOutput extends AbstractValuedDisplayOutput {
 		}
 
 	}
+
+	@Override
+	public String getTitle() {
+		final StringBuilder sb = new StringBuilder(100);
+		sb.append(getName()).append(": ");
+		final Object v = getLastValue();
+		sb.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
+		if (isPaused()) { sb.append(" (paused)"); }
+		return sb.toString();
+
+	}
+
+	@Override
+	public String getUnitLabel(final IScope scope) {
+		return null;
+	}
+
+	@Override
+	public boolean isDefinedInExperiment() { return false; }
+
+	@Override
+	public String getCategory() { return "Monitors"; }
 
 }

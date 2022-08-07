@@ -125,7 +125,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 */
 	public static Control create(final Composite parent) {
 		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED | SWT.INHERIT_DEFAULT);
-		GamaColors.setBackground(composite, parent.getBackground());
+		GamaColors.setBackground(parent.getBackground(), composite);
 		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;

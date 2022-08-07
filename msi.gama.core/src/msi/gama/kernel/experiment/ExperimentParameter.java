@@ -448,10 +448,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public List<GamaColor> getColor(final IScope scope) {
+	public List<GamaColor> getColors(final IScope scope) {
 		final IExpression exp = getFacet("colors");
 		return exp == null ? null
 				: (List<GamaColor>) Types.LIST.cast(scope, exp.value(scope), null, Types.INT, Types.COLOR, false);
+	}
+
+	@Override
+	public GamaColor getColor(final IScope scope) {
+		List<GamaColor> colors = getColors(scope);
+		if (colors == null || colors.isEmpty()) return null;
+		return colors.get(0);
 	}
 
 	@Override

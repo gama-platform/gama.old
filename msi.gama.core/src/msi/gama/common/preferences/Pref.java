@@ -552,7 +552,12 @@ public class Pref<T> implements IParameter {
 	}
 
 	@Override
-	public List<GamaColor> getColor(final IScope scope) {
+	public List<GamaColor> getColors(final IScope scope) {
+		return null;
+	}
+
+	@Override
+	public GamaColor getColor(final IScope scope) {
 		return null;
 	}
 

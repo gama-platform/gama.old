@@ -1,19 +1,20 @@
 /*******************************************************************************************************
  *
- * AssertEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AssertEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -26,6 +27,7 @@ import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The Class AssertEditor.
@@ -35,8 +37,10 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 	/**
 	 * Instantiates a new assert editor.
 	 *
-	 * @param scope the scope
-	 * @param command the command
+	 * @param scope
+	 *            the scope
+	 * @param command
+	 *            the command
 	 */
 	public AssertEditor(final IScope scope, final AbstractSummary<?> command) {
 		super(scope, command, (EditorListener<Object>) null);
@@ -45,15 +49,38 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 	}
 
 	@Override
-	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
-		textBox = FlatButton.button(composite, getColor(), getText());
-		textBox.addSelectionListener(new SelectionAdapter() {
+	protected int[] getToolItems() { return new int[] { VALUE }; }
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				GAMA.getGui().editModel(null, getStatement().getURI());
+	@Override
+	EditorToolbar createEditorToolbar() {
+		editorToolbar = super.createEditorToolbar();
+		if (isSubParameter) {
+			editorToolbar.setHorizontalAlignment(SWT.LEAD);
+			Label l = editorToolbar.getItem(VALUE);
+			if (l != null && !l.isDisposed()) {
+				l.setFont(JFaceResources.getFontRegistry().getItalic(JFaceResources.DEFAULT_FONT));
+				l.setText(name);
+				l.setAlignment(SWT.LEAD);
 			}
-		});
+		}
+		return editorToolbar;
+	}
+
+	@Override
+	EditorLabel createEditorLabel() {
+		editorLabel = new EditorLabel(this, parent, isSubParameter ? " " : name, isSubParameter);
+		editorLabel.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+		return editorLabel;
+	}
+
+	@Override
+	protected FlatButton createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
+		final AbstractSummary<?> summary = getStatement();
+		String text = summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED
+				? getStatement().getState().toString() + ": " + ((AssertionSummary) getStatement()).getError()
+				: getStatement().getState().toString();
+		textBox = FlatButton.button(composite, null, text);
+		textBox.addSelectionListener((Selector) e -> GAMA.getGui().editModel(null, getStatement().getURI()));
 		return textBox;
 	}
 
@@ -62,22 +89,11 @@ public class AssertEditor extends AbstractStatementEditor<AbstractSummary<?>> {
 	 *
 	 * @return the color
 	 */
-	private GamaUIColor getColor() {
-		GamaUIColor color = GamaColors.get(getStatement().getColor());
+	@Override
+	Color getEditorControlBackground() {
+		GamaUIColor color = GamaColors.get(getStatement().getColor(getScope()));
 		if (color == null) { color = IGamaColors.NEUTRAL; }
-		return color;
-	}
-
-	/**
-	 * Gets the text.
-	 *
-	 * @return the text
-	 */
-	private String getText() {
-		final AbstractSummary<?> summary = getStatement();
-		if (summary instanceof AssertionSummary && getStatement().getState() == TestState.ABORTED)
-			return getStatement().getState().toString() + ": " + ((AssertionSummary) getStatement()).getError() + "  ";
-		return getStatement().getState().toString() + "  ";
+		return color.color();
 	}
 
 }

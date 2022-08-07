@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,10 +31,14 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 /**
  * The Class TextDisplayer.
  */
-public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
+public class TextDisplayer extends AbstractEditor<TextStatement> {
 
 	/** The text. */
 	StyledText text;
+	TextStatement statement;
+
+	final Color back, front;
+	final Font font;
 
 	/**
 	 * Instantiates a new command editor.
@@ -46,7 +51,14 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 	 *            the l
 	 */
 	public TextDisplayer(final IScope scope, final TextStatement command) {
-		super(scope, command, null);
+		super(scope, null, new InputParameter(command.getName(), null), null);
+		statement = command;
+		java.awt.Color c = command.getColor(scope);
+		java.awt.Color b = command.getBackground(scope);
+		front = c == null ? null : GamaColors.toSwtColor(c);
+		back = b == null ? null : GamaColors.toSwtColor(b);
+		GamaFont f = command.getFont(scope);
+		font = f == null ? null : new Font(WorkbenchHelper.getDisplay(), f.getFontName(), f.getSize(), f.getStyle());
 	}
 
 	@Override
@@ -69,7 +81,7 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 	@Override
 	Composite createValueComposite() {
 		composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getBackground());
+		GamaColors.setBackground(parent.getBackground(), composite);
 		final var data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.minimumWidth = 100;
 		data.horizontalSpan = 3;
@@ -81,32 +93,35 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 
 	@Override
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
-
-		java.awt.Color c = getStatement().getColor(getScope());
-		java.awt.Color b = getStatement().getBackground(getScope());
-		Color color = c == null ? null : GamaColors.toSwtColor(c);
-		Color back = b == null ? null : GamaColors.toSwtColor(b);
 		text = new StyledText(composite, SWT.WRAP | SWT.READ_ONLY);
 		text.setJustify(true);
 		text.setMargins(4, 4, 4, 4);
 		if (back != null) {
-			if (color != null) {
-				GamaColors.setBackAndForeground(text, back, color);
+			if (front != null) {
+				GamaColors.setBackAndForeground(back, front, text);
 			} else {
-				GamaColors.setBackground(text, back);
+				GamaColors.setBackground(back, text);
 			}
-		} else if (color != null) { GamaColors.setForeground(text, color); }
-		text.setText(getStatement().getText(getScope()));
-		GamaFont font = getStatement().getFont(getScope());
+		} else if (front != null) { GamaColors.setForeground(front, text); }
+		text.setText(statement.getText(getScope()));
 		if (font != null) {
 			int a = text.getCharCount();
-			Font f = new Font(WorkbenchHelper.getDisplay(), font.getFontName(), font.getSize(), font.getStyle());
 			StyleRange[] sr = new StyleRange[1];
 			sr[0] = new StyleRange();
 			sr[0].start = 0;
 			sr[0].length = a;
-			sr[0].font = f;
-			sr[0].foreground = color;
+			sr[0].font = font;
+			sr[0].foreground = front;
+			sr[0].background = back;
+			text.replaceStyleRanges(sr[0].start, sr[0].length, sr);
+		} else if (front != null || back != null) {
+			int a = text.getCharCount();
+			StyleRange[] sr = new StyleRange[1];
+			sr[0] = new StyleRange();
+			sr[0].start = 0;
+			sr[0].length = a;
+			sr[0].foreground = front;
+			sr[0].background = back;
 			text.replaceStyleRanges(sr[0].start, sr[0].length, sr);
 		}
 		composite.requestLayout();
@@ -117,6 +132,20 @@ public class TextDisplayer extends AbstractStatementEditor<TextStatement> {
 	@Override
 	EditorLabel createEditorLabel() {
 		return null;
+	}
+
+	@Override
+	Color getEditorControlBackground() { return back == null ? super.getEditorControlBackground() : back; }
+
+	@Override
+	Color getEditorControlForeground() { return front == null ? super.getEditorControlForeground() : front; }
+
+	@Override
+	protected int[] getToolItems() { return new int[0]; }
+
+	@Override
+	protected void displayParameterValue() {
+
 	}
 
 }

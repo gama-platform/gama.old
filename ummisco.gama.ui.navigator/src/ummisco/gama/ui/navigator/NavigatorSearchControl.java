@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+import static ummisco.gama.ui.resources.IGamaColors.VERY_DARK_GRAY;
+import static ummisco.gama.ui.resources.IGamaColors.VERY_LIGHT_GRAY;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,14 +37,12 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.swt.IFocusService;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.runtime.PlatformHelper;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.navigator.contents.VirtualContent;
 import ummisco.gama.ui.navigator.contents.WrappedGamaFile;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 /**
@@ -199,7 +201,7 @@ public class NavigatorSearchControl {
 			parent.setLayoutData(data);
 			final GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
-			GamaColors.setBackground(parent, c);
+			GamaColors.setBackground(c, parent);
 		}
 
 		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
@@ -212,9 +214,7 @@ public class NavigatorSearchControl {
 		find.setMessage(EMPTY);
 
 		toolbar.control(parent == toolbar ? find : parent, 100);
-		GamaColors.setBackground(find, c);
-		GamaColors.setForeground(find,
-				ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.VERY_DARK_GRAY.color());
+		GamaColors.setBackAndForeground(c, isDark() ? VERY_LIGHT_GRAY.color() : VERY_DARK_GRAY.color(), find);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
 

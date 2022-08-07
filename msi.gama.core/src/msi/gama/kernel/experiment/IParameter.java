@@ -16,7 +16,6 @@ import javax.annotation.Nonnull;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 
 /**
@@ -136,15 +135,6 @@ public interface IParameter extends IExperimentDisplayable {
 	 * @return true, if is editable
 	 */
 	boolean isEditable();
-
-	/**
-	 * Gets the color.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the color
-	 */
-	List<GamaColor> getColor(final IScope scope);
 
 	/**
 	 * Accepts slider.
@@ -294,5 +284,12 @@ public interface IParameter extends IExperimentDisplayable {
 	default String[] getLabels(final IScope scope) {
 		return SWITCH_STRINGS;
 	}
+
+	/**
+	 * Allows to know if the value of the parameter should be interpreted or kept as an expression
+	 *
+	 * @return
+	 */
+	default boolean isExpression() { return false; }
 
 }

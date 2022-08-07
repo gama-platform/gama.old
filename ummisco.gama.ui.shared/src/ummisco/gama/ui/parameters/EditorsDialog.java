@@ -18,13 +18,10 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -36,6 +33,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
+import msi.gaml.expressions.IExpression;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -65,29 +63,7 @@ public class EditorsDialog extends Dialog {
 	private final IScope scope;
 
 	/** The color. */
-	private final Color color;
-	private final Color textColor;
-
-	private final Boolean showTitle;
-
-	/**
-	 * Instantiates a new editors dialog.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param parentShell
-	 *            the parent shell
-	 * @param parameters
-	 *            the parameters
-	 * @param title
-	 *            the title
-	 * @param font
-	 *            the font
-	 */
-	public EditorsDialog(final IScope scope, final Shell parentShell, final List<IParameter> parameters,
-			final String title, final GamaFont font) {
-		this(scope, parentShell, parameters, title, font, null, true);
-	}
+	private Color color;
 
 	/**
 	 * Instantiates a new editors dialog.
@@ -111,14 +87,10 @@ public class EditorsDialog extends Dialog {
 		this.scope = scope;
 		this.title = title;
 		this.font = font;
-		this.showTitle = showTitle;
 		this.color = color == null ? null : GamaColors.toSwtColor(color);
-		textColor = color == null ? null : getTextColorForBackground(this.color).color();
 		setShellStyle(showTitle ? SWT.TITLE | SWT.RESIZE | SWT.TOOL | SWT.ON_TOP : SWT.TOOL | SWT.ON_TOP);
 		this.parameters = parameters;
-		parameters.forEach(p -> {
-			values.put(p.getName(), p.getInitialValue(scope));
-		});
+		parameters.forEach(p -> { values.put(p.getName(), p.getInitialValue(scope)); });
 	}
 
 	@Override
@@ -126,26 +98,10 @@ public class EditorsDialog extends Dialog {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
 
-	/**
-	 * Method createContents()
-	 *
-	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createContents(final Composite parent) {
-		return super.createContents(parent);
-	}
-
-	private void colorize(Control... controls) {
-		if (color == null) return;
-		for (Control control : controls) {
-			setBackAndForeground(control, color, textColor);
-		}
-	}
-
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		final var above = (Composite) super.createDialogArea(parent);
+
 		final var composite = new EditorsGroup(above);
 		final var text = new Label(composite, SWT.None);
 		text.setText(title);
@@ -158,13 +114,19 @@ public class EditorsDialog extends Dialog {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
 		data.heightHint = 20;
 		sep.setLayoutData(data);
-		colorize(parent, above, composite, text, sep);
+		if (color == null) { color = above.getBackground(); }
+		setBackAndForeground(color, getTextColorForBackground(this.color).color(), parent, above, composite, text, sep);
 		parameters.forEach(param -> {
 			final EditorListener<?> listener = newValue -> {
 				param.setValue(scope, newValue);
 				values.put(param.getName(), newValue);
 			};
-			EditorFactory.create(scope, composite, param, listener, false, false);
+			if (param.isExpression()) {
+				EditorFactory.createExpression(scope, composite, param.getName(), (IExpression) param.value(scope),
+						listener, param.getType());
+			} else {
+				EditorFactory.create(scope, composite, param, listener, false, false);
+			}
 		});
 		composite.layout();
 		return composite;
@@ -173,22 +135,18 @@ public class EditorsDialog extends Dialog {
 	@Override
 	protected Control createButtonBar(final Composite parent) {
 		Control composite = super.createButtonBar(parent);
-		colorize(composite);
+		setBackAndForeground(color, getTextColorForBackground(this.color).color(), composite);
 		return composite;
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
+	protected boolean isResizable() { return true; }
 
 	/**
 	 * Gets the values.
 	 *
 	 * @return the values
 	 */
-	public Map<String, Object> getValues() {
-		return values;
-	}
+	public Map<String, Object> getValues() { return values; }
 
 }

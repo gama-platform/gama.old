@@ -1,14 +1,18 @@
 /*******************************************************************************************************
  *
- * EditorSearchControls.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EditorSearchControls.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
+
+import static msi.gama.application.workbench.ThemeHelper.isDark;
+import static ummisco.gama.ui.resources.IGamaColors.VERY_DARK_GRAY;
+import static ummisco.gama.ui.resources.IGamaColors.VERY_LIGHT_GRAY;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
@@ -37,7 +41,6 @@ import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.runtime.PlatformHelper;
-import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -92,7 +95,7 @@ public class EditorSearchControls {
 			parent.setLayoutData(data);
 			final GridLayout layout = new GridLayout();
 			parent.setLayout(layout);
-			GamaColors.setBackground(parent, c);
+			GamaColors.setBackground(c, parent);
 		}
 		find = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
 		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
@@ -116,10 +119,9 @@ public class EditorSearchControls {
 			public void focusGained(final FocusEvent e) {
 				adjustEnablement(false, null);
 				incrementalOffset = -1;
-			} 
+			}
 		});
-		GamaColors.setBackground(find, c);
-		GamaColors.setForeground(find, ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.VERY_DARK_GRAY.color());
+		GamaColors.setBackAndForeground(c, isDark() ? VERY_LIGHT_GRAY.color() : VERY_DARK_GRAY.color(), find);
 		toolbar.control(parent == toolbar ? find : parent, 100);
 		find.addModifyListener(modifyListener);
 		find.addKeyListener(new KeyListener() {
@@ -256,9 +258,7 @@ public class EditorSearchControls {
 		if (findReplaceTarget != null) {
 			try {
 				final String findText = find.getText();
-				if (findReplaceTarget instanceof IFindReplaceTargetExtension) {
-					final IFindReplaceTargetExtension findReplaceTargetExtension =
-							(IFindReplaceTargetExtension) findReplaceTarget;
+				if (findReplaceTarget instanceof IFindReplaceTargetExtension findReplaceTargetExtension) {
 					findReplaceTargetExtension.beginSession();
 				}
 				final ISourceViewer sourceViewer = getSourceViewer();
@@ -309,9 +309,7 @@ public class EditorSearchControls {
 				}
 			} finally {
 
-				if (findReplaceTarget instanceof IFindReplaceTargetExtension) {
-					final IFindReplaceTargetExtension findReplaceTargetExtension =
-							(IFindReplaceTargetExtension) findReplaceTarget;
+				if (findReplaceTarget instanceof IFindReplaceTargetExtension findReplaceTargetExtension) {
 					findReplaceTargetExtension.endSession();
 				}
 			}

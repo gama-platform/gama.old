@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FontEditor.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FontEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -23,7 +23,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaFont;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -37,10 +36,14 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	/**
 	 * Instantiates a new font editor.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param param the param
-	 * @param l the l
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param param
+	 *            the param
+	 * @param l
+	 *            the l
 	 */
 	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaFont> l) {
 		super(scope, agent, param, l);
@@ -48,7 +51,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		edit = FlatButton.menu(compo, IGamaColors.GRAY_LABEL, "").light().small();
+		edit = FlatButton.menu(compo, null, "").light().small();
 		edit.addSelectionListener(this);
 		displayParameterValue();
 		return edit;
@@ -69,7 +72,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	/**
 	 * To gama font.
 	 *
-	 * @param fd the fd
+	 * @param fd
+	 *            the fd
 	 * @return the gama font
 	 */
 	private GamaFont toGamaFont(final FontData fd) {
@@ -79,7 +83,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	/**
 	 * To font data.
 	 *
-	 * @param gf the gf
+	 * @param gf
+	 *            the gf
 	 * @return the font data
 	 */
 	private FontData toFontData(final GamaFont gf) {
@@ -87,9 +92,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	}
 
 	@Override
-	protected int[] getToolItems() {
-		return new int[] { EDIT, REVERT };
-	}
+	protected int[] getToolItems() { return new int[] { EDIT, REVERT }; }
 
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
@@ -103,4 +106,5 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		if (data != null) { modifyAndDisplayValue(toGamaFont(data)); }
 
 	}
+
 }

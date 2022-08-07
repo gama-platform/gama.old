@@ -19,6 +19,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -28,6 +29,7 @@ import ummisco.gama.ui.interfaces.EditorListener.Command;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.parameters.MonitorDisplayer;
 
 /**
  * The Class ExperimentsParametersList.
@@ -40,6 +42,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	/** The activations. */
 	final Map<String, Boolean> activations = new HashMap<>();
+
+	final Map<MonitorOutput, MonitorDisplayer> monitors = new HashMap<>();
 
 	/**
 	 * Instantiates a new experiments parameters list.
@@ -80,7 +84,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 *            the var
 	 * @return the editor for var
 	 */
-	public IParameterEditor getEditorForVar(final String var) {
+	private IParameterEditor getEditorForVar(final String var) {
 		for (final Map<String, IParameterEditor<?>> m : categories.values()) {
 			for (final IParameterEditor<?> ed : m.values()) {
 				final IParameter param = ed.getParam();
@@ -93,9 +97,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		for (final IExperimentDisplayable var : params) {
-			final IParameterEditor gp;
 			if (var instanceof IParameter param) {
-				gp = EditorFactory.getInstance().create(scope, (IAgent) null, param, null);
+				addEditor(var, EditorFactory.getInstance().create(scope, (IAgent) null, param, null));
 				final String[] enablements = param.getEnablement();
 				final String[] disablements = param.getDisablement();
 				final String[] refreshments = param.getRefreshment();
@@ -127,24 +130,39 @@ public class ExperimentsParametersList extends EditorsList<String> {
 						}
 					});
 				}
-			} else if (var instanceof TextStatement) {
-				gp = EditorFactory.getInstance().create(scope, (TextStatement) var);
-			} else {
-				gp = EditorFactory.getInstance().create(scope, (UserCommandStatement) var,
+			} else if (var instanceof TextStatement text) {
+				addEditor(var, EditorFactory.getInstance().create(scope, text));
+			} else if (var instanceof MonitorOutput monitor) {
+				addMonitor(monitor);
+			} else if (var instanceof UserCommandStatement command) {
+				addEditor(var, EditorFactory.getInstance().create(scope, command,
 						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
-							final Object result = scope.execute((UserCommandStatement) var).getValue();
+							final Object result = scope.execute(command).getValue();
 							final IExperimentPlan exp = GAMA.getExperiment();
 							if (exp != null) { // in case the experiment is killed in the meantime
 								exp.refreshAllOutputs();
 							}
 							return result;
-						}));
+						})));
 			}
-			String cat = var.getCategory();
-			addItem(cat);
-			categories.get(cat).put(var.getName(), gp);
 
 		}
+	}
+
+	public MonitorDisplayer addMonitor(final MonitorOutput var) {
+		MonitorDisplayer result = EditorFactory.getInstance().create(scope, var);
+		monitors.put(var, result);
+		return result;
+	}
+
+	public MonitorDisplayer removeMonitor(final MonitorOutput var) {
+		return monitors.remove(var);
+	}
+
+	private void addEditor(final IExperimentDisplayable var, final IParameterEditor gp) {
+		String cat = var.getCategory();
+		addItem(cat);
+		categories.get(cat).put(var.getName(), gp);
 	}
 
 	@Override
@@ -161,6 +179,11 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			for (final IParameterEditor gp : entry.getValue().values()) { gp.updateWithValueOfParameter(false); }
 		}
+		updateMonitors();
+	}
+
+	public void updateMonitors() {
+		monitors.forEach((s, md) -> { md.updateWithValueOfParameter(false); });
 	}
 
 	/**
@@ -172,5 +195,11 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public Map<String, Runnable> handleMenu(final String data, final int x, final int y) {
 		return null;
 	}
+
+	public boolean hasMonitors() {
+		return monitors.size() > 0;
+	}
+
+	public Map<MonitorOutput, MonitorDisplayer> getMonitors() { return monitors; }
 
 }

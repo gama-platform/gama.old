@@ -35,11 +35,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.interfaces.IParameterEditor;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 
 /**
@@ -110,10 +110,12 @@ public class EditorToolbar {
 	boolean active;
 
 	/** The Constant commands. */
-	protected static final GamaCommand[] commands = new GamaCommand[9];
+	protected static final GamaCommand[] commands = new GamaCommand[10];
 
 	/** The items. */
-	protected final Item[] items = new Item[9];
+	protected final Item[] items = new Item[9]; /* 10 */
+
+	final Composite group;
 
 	static {
 		commands[REVERT] = build("small.revert", null, "Revert to original value", null);
@@ -125,6 +127,7 @@ public class EditorToolbar {
 		commands[CHANGE] = build("small.change", null, "Choose another agent", null);
 		commands[DEFINE] = build("small.undefine", null, "Set the parameter to undefined", null);
 		commands[VALUE] = build(null, "", "Value of the parameter", null);
+		// commands[SAVE] = build("small.save", null, "Save the values", null);
 	}
 
 	/**
@@ -137,15 +140,15 @@ public class EditorToolbar {
 	 */
 	EditorToolbar(final AbstractEditor editor, final Composite composite) {
 		this.editor = editor;
-		final Composite t = new Composite(composite, SWT.NONE);
+		group = new Composite(composite, SWT.NONE);
 		final GridData d = new GridData(SWT.END, SWT.CENTER, false, false);
-		t.setLayoutData(d);
+		group.setLayoutData(d);
 		final RowLayout id = RowLayoutFactory.fillDefaults().center(true).spacing(2).margins(0, 0).type(SWT.HORIZONTAL)
 				.fill(true).pack(true).extendedMargins(0, 0, 0, 0).justify(false).wrap(false).create();
 		final RowData gd = RowDataFactory.swtDefaults().create();
-		t.setLayout(id);
+		group.setLayout(id);
 		IParameter p = editor.getParam();
-		if (p != null && p.isEditable()) {
+		if (p == null || p.isEditable()) {
 			for (final int i : editor.getToolItems()) {
 				MouseListener listener = new MouseAdapter() {
 
@@ -154,16 +157,13 @@ public class EditorToolbar {
 						execute(i, 0);
 					}
 				};
-				items[i] = new Item(t, commands[i], listener);
+				items[i] = new Item(group, commands[i], listener);
 				items[i].label.setLayoutData(RowDataFactory.copyData(gd));
 			}
-			Color color = editor.parent.getBackground();
-			t.setBackground(color);
-			for (final Control c : t.getChildren()) { c.setBackground(color); }
 		}
 		Color color = editor.parent.getBackground();
-		t.setBackground(color);
-		for (final Control c : t.getChildren()) { c.setBackground(color); }
+		GamaColors.setBackground(color, group);
+		GamaColors.setBackground(color, group.getChildren());
 	}
 
 	/**
@@ -201,6 +201,8 @@ public class EditorToolbar {
 			case IParameterEditor.DEFINE:
 				editor.applyDefine();
 				break;
+			// case IParameterEditor.SAVE:
+			// editor.applySave();
 		}
 	}
 
@@ -264,6 +266,11 @@ public class EditorToolbar {
 		final var c = items[item];
 		if (c == null) return null;
 		return c.label;
+	}
+
+	public void setHorizontalAlignment(final int lead) {
+		if (group.isDisposed()) return;
+		((GridData) group.getLayoutData()).horizontalAlignment = lead;
 	}
 
 }

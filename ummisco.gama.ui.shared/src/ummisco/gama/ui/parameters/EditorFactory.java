@@ -18,6 +18,7 @@ import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.UserCommandStatement;
@@ -104,7 +105,7 @@ public class EditorFactory {
 	 * @return the expression editor
 	 */
 	public static ExpressionEditor createExpression(final IScope scope, final EditorsGroup parent, final String title,
-			final IExpression value, final EditorListener<IExpression> whenModified, final IType expectedType) {
+			final IExpression value, final EditorListener whenModified, final IType expectedType) {
 		ExpressionEditor ed =
 				new ExpressionEditor(scope, null, new InputParameter(title, value), whenModified, expectedType);
 		ed.createControls(parent);
@@ -368,5 +369,9 @@ public class EditorFactory {
 
 	public IParameterEditor create(final IScope scope, final TextStatement var) {
 		return new TextDisplayer(scope, var);
+	}
+
+	public MonitorDisplayer create(final IScope scope, final MonitorOutput var) {
+		return new MonitorDisplayer(scope, var);
 	}
 }

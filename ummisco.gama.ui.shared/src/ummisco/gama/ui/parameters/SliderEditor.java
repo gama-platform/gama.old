@@ -188,7 +188,7 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 
 	@Override
 	protected Control createCustomParameterControl(final Composite comp) throws GamaRuntimeException {
-		final List<GamaColor> colors = getParam().getColor(getScope());
+		final List<GamaColor> colors = getParam().getColors(getScope());
 		Color left = IGamaColors.OK.color();
 		Color backgroundColor = comp.getBackground();
 		Color right = isDark() ? get(backgroundColor).lighter() : get(backgroundColor).darker();
@@ -237,8 +237,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	}
 
 	@Override
-	protected GridData getParameterGridData() {
-		final GridData result = super.getParameterGridData();
+	protected GridData getEditorControlGridData() {
+		final GridData result = super.getEditorControlGridData();
 		result.heightHint = 18 /* SimpleSlider.THUMB_HEIGHT + 5 */;
 		return result;
 	}

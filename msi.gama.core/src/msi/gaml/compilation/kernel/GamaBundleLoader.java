@@ -72,7 +72,7 @@ public class GamaBundleLoader {
 
 	/** The Constant ERROR_MESSAGE. */
 	public static final String ERROR_MESSAGE = LINE
-			+ "The initialization of GAML artefacts went wrong. If you use the developer version, please clean and recompile all plugins. \nOtherwise post an issue at https://github.com/gama-platform/gama/issues"
+			+ "The initialization of GAML artifacts went wrong. If you use the developer version, please clean and recompile all plugins. \nOtherwise report an issue at https://github.com/gama-platform/gama/issues"
 			+ LINE;
 
 	/** The loaded. */

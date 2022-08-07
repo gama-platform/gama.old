@@ -195,7 +195,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 */
 	private Label label(final Composite c, final int horizontalAlign) {
 		final Label l = new Label(c, SWT.INHERIT_DEFAULT);
-		GamaColors.setForeground(l, IGamaColors.WHITE.color());
+		GamaColors.setForeground(IGamaColors.WHITE.color(), l);
 		l.setText(" ");
 		l.setLayoutData(infoData(horizontalAlign));
 		l.addMouseListener(toggleListener);

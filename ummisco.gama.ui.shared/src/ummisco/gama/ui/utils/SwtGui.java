@@ -113,6 +113,8 @@ public class SwtGui implements IGui {
 	/** The mouse location in model. */
 	private GamaPoint mouseLocationInModel;
 
+	private IGamaView parametersView = null;
+
 	static {
 		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
 		PreferencesHelper.initialize();
@@ -392,27 +394,37 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {
-
+	public void showParameterView(final IScope scope, final IExperimentPlan exp) {
+		IGamaView.Parameters[] viewArray = new IGamaView.Parameters[1];
 		WorkbenchHelper.run(() -> {
 			if (!exp.hasParametersOrUserCommands()) return;
-			final IGamaView.Parameters view =
-					(Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			view.addItem(exp);
-			view.updateItemValues();
-
+			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			if (viewArray[0] != null) { viewArray[0].setExperiment(exp); }
 		});
+		parametersView = (IGamaView) viewArray[0];
 	}
 
 	@Override
-	public void showParameterView(final IScope scope, final IExperimentPlan exp) {
-
+	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {
+		IGamaView.Parameters[] viewArray = new IGamaView.Parameters[1];
 		WorkbenchHelper.run(() -> {
 			if (!exp.hasParametersOrUserCommands()) return;
-			final IGamaView.Parameters view =
-					(Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			if (view != null) { view.addItem(exp); }
+			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+			viewArray[0].setExperiment(exp);
+			viewArray[0].updateItemValues();
+
 		});
+		parametersView = (IGamaView) viewArray[0];
+	}
+
+	/**
+	 * Regular update for the monitors
+	 *
+	 * @param scope
+	 */
+	@Override
+	public void updateParameterView(final IScope scope) {
+		if (parametersView != null) { parametersView.update(null); }
 	}
 
 	/**
@@ -473,6 +485,7 @@ public class SwtGui implements IGui {
 			}
 			if (showParameters != null && !showParameters) {
 				hideView(IGui.PARAMETER_VIEW_ID);
+				parametersView = null;
 			} else {
 				updateParameterView(scope, exp);
 			}
@@ -500,6 +513,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void cleanAfterExperiment() {
 		hideView(PARAMETER_VIEW_ID);
+		parametersView = null;
 		final IGamaView m = (IGamaView) ViewsHelper.findView(MONITOR_VIEW_ID, null, false);
 		if (m != null) {
 			m.reset();

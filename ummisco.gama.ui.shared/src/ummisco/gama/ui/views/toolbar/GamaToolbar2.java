@@ -96,11 +96,9 @@ public class GamaToolbar2 extends Composite {
 	// Necessary to have the background color "stick"
 	public void setBackgroundColor(final Color c) {
 		// DEBUG.OUT("setBackgroundColor() called by = " + DEBUG.METHOD() + " of " + DEBUG.CALLER());
-		GamaColors.setBackground(this, c);
 		// Calls super explicitly
 		super.setBackground(c);
-		if (left != null) { GamaColors.setBackground(left, c); }
-		if (right != null) { GamaColors.setBackground(right, c); }
+		GamaColors.setBackground(c, this, left, right);
 	}
 
 	@Override

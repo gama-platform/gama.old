@@ -292,7 +292,7 @@ public interface IGamaView {
 		 * @param exp
 		 *            the exp
 		 */
-		void addItem(IExperimentPlan exp);
+		void setExperiment(IExperimentPlan exp);
 
 		/**
 		 * Update item values.

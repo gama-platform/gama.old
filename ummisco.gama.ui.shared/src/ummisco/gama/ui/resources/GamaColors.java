@@ -126,6 +126,10 @@ public class GamaColors {
 		 * @return the rgb
 		 */
 		public RGB getRGB() { return active.getRGB(); }
+
+		public GamaColor gamaColor() {
+			return new GamaColor(active.getRed(), active.getGreen(), active.getBlue(), active.getAlpha());
+		}
 	}
 
 	/** The colors. */
@@ -436,12 +440,12 @@ public class GamaColors {
 	 * @param c
 	 *            the c
 	 */
-	public static void setBackground(final Control w, final Color c) {
-		w.setBackground(c);
-		if (c == null) {
-			w.setData("style", null);
-		} else {
-			w.setData("style", ThemeHelper.getCSSProperty("background-color", c));
+	public static void setBackground(final Color c, final Control... controls) {
+		String prop = ThemeHelper.getCSSProperty("background-color", c);
+		for (Control w : controls) {
+			if (w == null) { continue; }
+			w.setBackground(c);
+			w.setData("style", c == null ? null : prop);
 		}
 	}
 
@@ -453,12 +457,12 @@ public class GamaColors {
 	 * @param c
 	 *            the c
 	 */
-	public static void setForeground(final Control w, final Color c) {
-		w.setForeground(c);
-		if (c == null) {
-			w.setData("style", null);
-		} else {
-			w.setData("style", ThemeHelper.getCSSProperty("color", c));
+	public static void setForeground(final Color c, final Control... controls) {
+		String prop = ThemeHelper.getCSSProperty("color", c);
+		for (Control w : controls) {
+			if (w == null) { continue; }
+			w.setForeground(c);
+			w.setData("style", c == null ? null : prop);
 		}
 	}
 
@@ -472,16 +476,19 @@ public class GamaColors {
 	 * @param f
 	 *            the f
 	 */
-	public static void setBackAndForeground(final Control w, final Color b, final Color f) {
-		w.setBackground(b);
-		w.setForeground(f);
-		if (b == null) {
-			setForeground(w, f);
-		} else if (f == null) {
-			setBackground(w, b);
-		} else {
-			w.setData("style",
-					ThemeHelper.getCSSProperty("background-color", b) + ThemeHelper.getCSSProperty("color", f));
+	public static void setBackAndForeground(final Color b, final Color f, final Control... controls) {
+		for (Control w : controls) {
+			if (w == null) { continue; }
+			if (b == null) {
+				setForeground(f, w);
+			} else if (f == null) {
+				setBackground(b, w);
+			} else {
+				w.setBackground(b);
+				w.setForeground(f);
+				w.setData("style",
+						ThemeHelper.getCSSProperty("background-color", b) + ThemeHelper.getCSSProperty("color", f));
+			}
 		}
 	}
 

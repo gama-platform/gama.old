@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EditorLabel.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * EditorLabel.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -15,8 +15,7 @@ import static ummisco.gama.ui.utils.PreferencesHelper.CORE_EDITORS_HIGHLIGHT;
 
 import java.util.EnumSet;
 
-import javax.annotation.Nonnull;
-
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -24,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 
-import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.GAMA;
@@ -35,7 +33,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 /**
  * The Class EditorLabel.
  */
-public class EditorLabel {
+public class EditorLabel extends Label {
 
 	static {
 		DEBUG.OFF();
@@ -69,9 +67,6 @@ public class EditorLabel {
 		changed;
 	}
 
-	/** The label. */
-	@Nonnull private final Label label;
-
 	/** The states. */
 	EnumSet<State> states = EnumSet.of(State.active);
 
@@ -89,15 +84,12 @@ public class EditorLabel {
 	 */
 	public EditorLabel(final AbstractEditor ed, final Composite parent, final String title,
 			final boolean isSubParameter) {
-		label = new Label(parent, SWT.WRAP | SWT.RIGHT);
-		final var d = new GridData(SWT.END, SWT.CENTER, true, false);
-		d.minimumWidth = 40;
-		d.horizontalIndent = isSubParameter ? 30 : 0;
-		label.setLayoutData(d);
-		label.setText(title == null ? " " : title);
-		label.setToolTipText(computeLabelTooltip(ed));
-		setBackgroundColor(parent.getBackground());
-		setTextColor(ThemeHelper.isDark() ? DARK_ACTIVE : LIGHT_ACTIVE);
+		super(parent, SWT.WRAP | SWT.RIGHT);
+		GridDataFactory.swtDefaults().align(SWT.END, SWT.CENTER).grab(true, false).minSize(40, SWT.DEFAULT)
+				.indent(isSubParameter ? 30 : 0, 0).applyTo(this);
+		setText(title == null ? " " : title);
+		setToolTipText(computeLabelTooltip(ed));
+		setColors(parent.getBackground());
 	}
 
 	/**
@@ -139,17 +131,6 @@ public class EditorLabel {
 	}
 
 	/**
-	 * Text color for.
-	 *
-	 * @param background
-	 *            the background
-	 * @return the color
-	 */
-	private Color textColorFor(final Color background) {
-		return GamaColors.getTextColorForBackground(background).color();
-	}
-
-	/**
 	 * Signal changed.
 	 *
 	 * @param changed
@@ -161,7 +142,7 @@ public class EditorLabel {
 		} else {
 			states.remove(State.changed);
 		}
-		redraw();
+		reskin();
 	}
 
 	/**
@@ -170,7 +151,7 @@ public class EditorLabel {
 	public void signalErrored() {
 		if (!states.contains(State.errored)) {
 			states.add(State.errored);
-			redraw();
+			reskin();
 		}
 	}
 
@@ -180,7 +161,7 @@ public class EditorLabel {
 	public void cancelErrored() {
 		if (states.contains(State.errored)) {
 			states.remove(State.errored);
-			redraw();
+			reskin();
 		}
 	}
 
@@ -196,29 +177,26 @@ public class EditorLabel {
 		} else {
 			states.remove(State.active);
 		}
-		redraw();
+		reskin();
 	}
 
 	/**
-	 * Sets the text color.
+	 * Sets the color.
 	 *
 	 * @param c
 	 *            the new text color
 	 */
-	private void setTextColor(final Color c) {
-		label.setForeground(c);
+	private void setColors(final Color... colors) {
+		Color back = colors[0];
+		if (back == null) { back = getParent().getBackground(); }
+		setBackground(back);
+		if (colors.length <= 1) {
+			final Color background = back;
+			setForeground(GamaColors.getTextColorForBackground(background).color());
+		} else {
+			setForeground(colors[1]);
+		}
 		// Necessary to override the CSS Theming Engine
-		setCSSData();
-	}
-
-	/**
-	 * Sets the background color.
-	 *
-	 * @param c
-	 *            the new background color
-	 */
-	private void setBackgroundColor(final Color c) {
-		label.setBackground(c);
 		setCSSData();
 	}
 
@@ -226,26 +204,22 @@ public class EditorLabel {
 	 * Sets the CSS data.
 	 */
 	private void setCSSData() {
-		GamaColors.setBackAndForeground(label, label.getBackground(), label.getForeground());
+		GamaColors.setBackAndForeground(getBackground(), getForeground(), this);
 	}
 
 	/**
 	 * Redraw.
 	 */
-	private void redraw() {
-		if (label.isDisposed()) return;
+	private void reskin() {
+		if (isDisposed()) return;
 		if (states.contains(State.errored)) {
-			setBackgroundColor(ERROR);
-			setTextColor(textColorFor(ERROR));
+			setColors(ERROR);
 		} else if (states.contains(State.changed) && CORE_EDITORS_HIGHLIGHT.getValue()) {
-			setBackgroundColor(CHANGED);
-			setTextColor(textColorFor(CHANGED));
+			setColors(CHANGED);
 		} else if (states.contains(State.active)) {
-			setBackgroundColor(label.getParent().getBackground());
-			setTextColor(ThemeHelper.isDark() ? DARK_ACTIVE : LIGHT_ACTIVE);
+			setColors(getParent().getBackground());
 		} else { // Inactive
-			setBackgroundColor(label.getParent().getBackground());
-			setTextColor(INACTIVE);
+			setColors(getParent().getBackground(), INACTIVE);
 		}
 	}
 
@@ -262,9 +236,10 @@ public class EditorLabel {
 	 * @param m
 	 *            the new menu
 	 */
+	@Override
 	public void setMenu(final Menu m) {
-		if (label.isDisposed()) return;
-		label.setMenu(m);
+		if (isDisposed()) return;
+		super.setMenu(m);
 	}
 
 	/**
@@ -274,8 +249,8 @@ public class EditorLabel {
 	 *            the new horizontal alignment
 	 */
 	public void setHorizontalAlignment(final int lead) {
-		if (label.isDisposed()) return;
-		((GridData) label.getLayoutData()).horizontalAlignment = lead;
+		if (isDisposed()) return;
+		((GridData) getLayoutData()).horizontalAlignment = lead;
 	}
 
 	/**
@@ -284,8 +259,11 @@ public class EditorLabel {
 	 * @return the menu
 	 */
 	public Menu createMenu() {
-		if (label.isDisposed()) return null;
-		return new Menu(label);
+		if (isDisposed()) return null;
+		return new Menu(this);
 	}
+
+	@Override
+	protected void checkSubclass() {}
 
 }

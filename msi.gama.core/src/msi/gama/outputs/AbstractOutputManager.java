@@ -11,12 +11,14 @@
 package msi.gama.outputs;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
@@ -61,6 +63,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	/** The outputs. */
 	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
+
+	// protected final IList<MonitorOutput> monitors = GamaListFactory.create();
 
 	/** The virtual outputs. */
 	protected final IMap<String, IOutput> virtualOutputs = GamaMapFactory.create();
@@ -119,7 +123,12 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public void add(final IOutput output) {
 		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual()) {
 			virtualOutputs.put(output.getId(), output);
-		} else {
+		}
+		// else if (output instanceof MonitorOutput monitor
+		// && GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) {
+		// monitors.add(monitor);
+		// }
+		else {
 			outputs.put(output.getId(), output);
 		}
 	}
@@ -132,6 +141,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			// (when outputs remove themselves from the list)
 			GAMA.desynchronizeFrontmostExperiment();
 			for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
+			// for (final IOutput output : new ArrayList<>(monitors)) { output.dispose(); }
 			clear();
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -174,6 +184,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public void forceUpdateOutputs() {
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.update(); }
+		// if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && !monitors.isEmpty()) {
+		// GAMA.getGui().updateParameterView(monitors.get(0).getScope());
+		// }
 	}
 
 	@Override
@@ -186,27 +199,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.setPaused(false); }
 	}
 
-	// @Override
-	// public void synchronize() {
-	// // for (final IDisplayOutput o : getDisplayOutputs()) {
-	//
-	// sync = true;
-	//
-	// // /* o.setSynchronized(true); */ }
-	// }
-	//
-	// @Override
-	// public void desynchronize() {
-	// // for (final IDisplayOutput o : getDisplayOutputs()) {
-	//
-	// sync = false;
-	//
-	// // /* o.setSynchronized(false); */ }
-	// }
-
-	// @Override
-	// public boolean isSynchronized() { return sync; }
-
 	@Override
 	public void close() {
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.close(); }
@@ -215,6 +207,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public Iterable<IDisplayOutput> getDisplayOutputs() {
 		return Iterables.filter(outputs.values(), IDisplayOutput.class);
+	}
+
+	@Override
+	public Collection<MonitorOutput> getMonitors() {
+		return Lists.newArrayList(Iterables.filter(outputs.values(), MonitorOutput.class));
+
+		// return monitors;
 	}
 
 	@Override

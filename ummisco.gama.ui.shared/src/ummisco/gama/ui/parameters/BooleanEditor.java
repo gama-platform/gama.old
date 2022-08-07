@@ -73,7 +73,7 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		final var colors = getParam().getColor(getScope());
+		final var colors = getParam().getColors(getScope());
 		final String[] labels = getParam().getLabels(getScope());
 		var left = IGamaColors.OK.color();
 		var right = IGamaColors.ERROR.color();

@@ -1,28 +1,29 @@
 /*******************************************************************************************************
  *
- * IExperimentDisplayable.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IExperimentDisplayable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
 import com.google.common.primitives.Ints;
 
+import msi.gama.common.interfaces.IColored;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
 
 /**
  * The Interface IExperimentDisplayable.
  */
-public interface IExperimentDisplayable extends INamed, Comparable<IExperimentDisplayable> {
+public interface IExperimentDisplayable extends INamed, IColored, Comparable<IExperimentDisplayable> {
 
 	/** The default simulation category. */
 	String DEFAULT_SIMULATION_CATEGORY = "Simulation";
-	
+
 	/** The default experiment category. */
 	String DEFAULT_EXPERIMENT_CATEGORY = "Experiment";
 
@@ -36,7 +37,8 @@ public interface IExperimentDisplayable extends INamed, Comparable<IExperimentDi
 	/**
 	 * Gets the unit label.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the unit label
 	 */
 	String getUnitLabel(IScope scope);
@@ -44,9 +46,10 @@ public interface IExperimentDisplayable extends INamed, Comparable<IExperimentDi
 	/**
 	 * Sets the unit label.
 	 *
-	 * @param label the new unit label
+	 * @param label
+	 *            the new unit label
 	 */
-	void setUnitLabel(String label);
+	default void setUnitLabel(final String label) {}
 
 	/**
 	 * Gets the order.
@@ -58,7 +61,8 @@ public interface IExperimentDisplayable extends INamed, Comparable<IExperimentDi
 	/**
 	 * Compare to.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 * @return the int
 	 */
 	@Override

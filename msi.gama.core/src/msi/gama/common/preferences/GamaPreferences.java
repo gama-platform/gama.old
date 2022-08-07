@@ -155,6 +155,9 @@ public class GamaPreferences {
 		 */
 		public static final String SIMULATIONS = "Simulations";
 
+		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS = create("pref_monitors_in_parameters",
+				"Display monitors in the experiment parameters view", false, IType.BOOL, true).in(NAME, SIMULATIONS);
+
 		/** The Constant CORE_SIMULATION_NAME. */
 		public static final Pref<Boolean> CORE_SIMULATION_NAME = create("pref_append_simulation_name",
 				"Append the name of simulations to their outputs", false, IType.BOOL, true).in(NAME, SIMULATIONS);

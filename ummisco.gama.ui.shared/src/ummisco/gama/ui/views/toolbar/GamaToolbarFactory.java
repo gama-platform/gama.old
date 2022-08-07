@@ -292,8 +292,8 @@ public class GamaToolbarFactory {
 		layout.marginHeight = margin;
 		toolbarComposite.setLayout(layout);
 		// toolbarComposite.setBackground(IGamaColors.WHITE.color());
-		GamaColors.setBackground(toolbarComposite,
-				isDark() ? composite.getShell().getBackground() : IGamaColors.WHITE.color());
+		GamaColors.setBackground(isDark() ? composite.getShell().getBackground() : IGamaColors.WHITE.color(),
+				toolbarComposite);
 		return toolbarComposite;
 
 	}

@@ -13,6 +13,7 @@ package ummisco.gama.ui.parameters;
 import java.util.List;
 
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * The Class EditorControl.
@@ -46,8 +48,14 @@ public class EditorControl<T extends Control> {
 	EditorControl(final AbstractEditor<?> editor, final T control) {
 		this.editor = editor;
 		this.control = control;
-		control.setLayoutData(editor.getParameterGridData());
-		control.setBackground(editor.parent.getBackground());
+		control.setLayoutData(editor.getEditorControlGridData());
+		Color back = editor.getEditorControlBackground();
+		Color front = editor.getEditorControlForeground();
+		if (control instanceof FlatButton button) {
+			button.setColor(GamaColors.get(back));
+		} else {
+			GamaColors.setBackAndForeground(back, front, control);
+		}
 	}
 
 	/**
@@ -68,11 +76,6 @@ public class EditorControl<T extends Control> {
 		control.setLayoutData(data);
 	}
 
-	// public void setForeground(final Color color) {
-	// if (control.isDisposed()) return;
-	// control.setForeground(color);
-	// }
-
 	/**
 	 * Sets the text.
 	 *
@@ -81,15 +84,15 @@ public class EditorControl<T extends Control> {
 	 */
 	public void setText(final String s) {
 		if (control.isDisposed()) return;
-		if (control instanceof Text) {
-			((Text) control).setText(s);
-		} else if (control instanceof Button) {
-			((Button) control).setText(s);
-		} else if (control instanceof FlatButton) {
-			((FlatButton) control).setText(s);
-		} else if (control instanceof Label) {
-			((Label) control).setText(s);
-		} else if (control instanceof CLabel) { ((CLabel) control).setText(s); }
+		if (control instanceof Text t) {
+			t.setText(s);
+		} else if (control instanceof Button b) {
+			b.setText(s);
+		} else if (control instanceof FlatButton f) {
+			f.setText(s);
+		} else if (control instanceof Label l) {
+			l.setText(s);
+		} else if (control instanceof CLabel c) { c.setText(s); }
 	}
 
 	/**

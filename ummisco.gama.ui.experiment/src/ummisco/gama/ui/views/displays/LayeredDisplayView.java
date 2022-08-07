@@ -71,23 +71,14 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	/** The real index. */
 	protected int realIndex = -1;
 
-	// /** The form. */
-	// private Composite form;
-
 	/** The surface composite. */
 	public Composite surfaceComposite;
 
 	/** The decorator. */
 	public LayeredDisplayDecorator decorator;
 
-	/** The synchronizer. */
-	// public final IDisplaySynchronizer synchronizer = new LayeredDisplaySynchronizer();
-
 	/** The disposed. */
 	public volatile boolean disposed = false;
-
-	// /** The in init phase. */
-	// protected volatile boolean inInitPhase = true;
 
 	/** The closing. */
 	private volatile boolean closing = false;
@@ -262,18 +253,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		return new GridData(SWT.FILL, SWT.FILL, true, true);
 	}
 
-	// @Override
-	// // Creates a problem on macOS, where the opengl view would block the change of perspective if not activated once.
-	// // Now only implemented in AWTDisplayView (should be tested on Windows)
-	// public void setFocus() {
-	// // Uncommenting this method seems to fix #3325. Should be tested !
-	// // DEBUG.OUT("Part " + getTitle() + " gaining focus");
-	// if (getParentComposite() != null && !getParentComposite().isDisposed()
-	// && !getParentComposite().isFocusControl()) {
-	// getParentComposite().forceFocus(); // Necessary ?
-	// }
-	// }
-
 	/**
 	 * Creates the surface composite.
 	 *
@@ -316,13 +295,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			}
 		}
-		// synchronizer.authorizeViewUpdate();
-		// }
-		// if (updateThread != null) {
-		// updateThread.interrupt();
-		// DEBUG.OUT("Update thread disposed for " + getTitle());
-		// updateThread = null;
-		// }
 		if (decorator != null) { decorator.dispose(); }
 		super.widgetDisposed(e);
 	}
@@ -395,49 +367,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		};
 	}
 
-	// /** The update thread. */
-	// Thread updateThread;
-	//
-	// /**
-	// * Inits the update thread.
-	// */
-	// private void initUpdateThread() {
-	// updateThread = new Thread(() -> {
-	// DEBUG.OUT("UPDATE THREAD: Entering");
-	// final IDisplaySurface surface = getDisplaySurface();
-	// synchronizer.waitForSurfaceToBeRealized();
-	// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
-	//
-	// while (!disposed && !surface.isDisposed()) {
-	// try {
-	// synchronizer.waitForViewUpdateAuthorisation();
-	//
-	// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
-	// surface.updateDisplay(false);
-	// if (surface.getData().isAutosave()) { takeSnapshot(); }
-	// // inInitPhase = false;
-	//
-	// } catch (Exception e) {
-	// DEBUG.OUT("Error when updating " + this.getTitle() + ": " + e.getMessage());
-	// }
-	// }
-	// });
-	// }
-
-	@Override
-	public void update(final IDisplayOutput out) {
-		super.update(out);
-		// if (updateThread == null || !updateThread.isAlive()) {
-		// synchronizer.setSurface(getDisplaySurface());
-		// initUpdateThread();
-		// updateThread.start();
-		// }
-		// synchronizer.authorizeViewUpdate();
-		// if (/* !inInitPhase && */GAMA.getGui().isSynchronized() && canBeSynchronized()) {
-		// synchronizer.waitForRenderingToBeFinished();
-		// }
-	}
-
 	/**
 	 * Can be synchronized. Returns true if this can be synchronized: for instance, on macOS, hiding an OpenGL view will
 	 * prevent it from rendering, and the simulation should not wait for this invisible visualisation.
@@ -491,13 +420,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public void takeSnapshot() {
 		Rectangle dim = WorkbenchHelper.displaySizeOf(surfaceComposite);
 		java.awt.Rectangle r = new java.awt.Rectangle(dim.x, dim.y, dim.width, dim.height);
-		// if (dim.width == 0 || dim.height == 0) {
-		// WorkbenchHelper.run(() -> {
-		// ViewsHelper.bringToFront(this);
-		// takeSnapshot();
-		// });
-		// return;
-		// }
 		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), r);
 	}
 

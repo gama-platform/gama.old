@@ -298,8 +298,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		}
 		final Rectangle rect = new Rectangle(0, v_inset, preferredWidth - rightPadding, preferredHeight);
 		setBackground(getParent().getBackground());
-		final GamaUIColor color = GamaColors.get(colorCode);
-		final Color background = hovered ? color.lighter() : color.color();
+		GamaUIColor color = GamaColors.get(colorCode);
+		Color background = color == null ? getParent().getBackground() : hovered ? color.lighter() : color.color();
 		final Color foreground = GamaColors.getTextColorForBackground(background).color();
 		gc.setForeground(foreground);
 		gc.setBackground(background);
@@ -372,7 +372,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		if (text == null) return null;
 		final int parentWidth = getParent().getBounds().width;
 		final int width = preferredWidth;
-		if (parentWidth < width) {
+		final int textWidth = computeWidthOfText();
+		if (parentWidth < width || textWidth > width) {
 			int imageWidth = 0;
 			final Image image = getImage();
 			if (image != null) {
@@ -383,7 +384,12 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 					imageWidth = (bounds.width + imagePadding) * 2;
 				}
 			}
-			final float r = (float) (parentWidth - imageWidth) / (float) width;
+			float r;
+			if (parentWidth < width) {
+				r = (float) (parentWidth - imageWidth) / (float) width;
+			} else {
+				r = (float) (width - imageWidth) / (float) textWidth;
+			}
 			final int nbChars = text.length();
 			final int newNbChars = Math.max(0, (int) (nbChars * r));
 			return text.substring(0, newNbChars / 2) + "..." + text.substring(nbChars - newNbChars / 2, nbChars);
@@ -406,11 +412,21 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return this;
 	}
 
+	private int computeWidthOfText() {
+		if (text != null) {
+			final GC gc = new GC(this);
+			gc.setFont(getFont());
+			final Point extent = gc.textExtent(text);
+			gc.dispose();
+			return extent.x;
+		}
+		return 0;
+	}
+
 	/**
 	 * Compute preferred size.
 	 */
 	private void computePreferredSize() {
-
 		final Image image = getImage();
 		if (image != null) {
 			final Rectangle bounds = image.getBounds();
@@ -544,6 +560,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @return the flat button
 	 */
 	public FlatButton setColor(final GamaUIColor c) {
+		if (c == null) return this;
 		final RGB oldColorCode = colorCode;
 		final RGB newColorCode = c.getRGB();
 		if (newColorCode.equals(oldColorCode)) return this;

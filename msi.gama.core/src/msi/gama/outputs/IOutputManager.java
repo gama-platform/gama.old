@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
+import java.util.Collection;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IStepable;
@@ -91,21 +92,14 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	void forceUpdateOutputs();
 
 	/**
-	 * Disposes of this output manager and associated resources (invoked when the experiment or simulation closes)
-	 *
-	 * @param scope
-	 *            the scope in which this manager should be disposed
-	 */
-
-	// void dispose(IScope scope);
-
-	/**
 	 * Returns a collection of only the instances of IDisplayOutput among the outputs managed by this IOutputManager
 	 *
 	 * @return an iterable of IDisplayOutputs, which can be empty if the manager has no display outputs, but which will
 	 *         never be null
 	 */
 	Iterable<IDisplayOutput> getDisplayOutputs();
+
+	Collection<MonitorOutput> getMonitors();
 
 	/**
 	 * Asks this manager to pause its operations (outputs will not be updated until {@link IOutputManager#resume()} is
@@ -118,23 +112,6 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 * {IOutputManager{@link #dispose(IScope)} are called. Does nothing if the manager is already active.
 	 */
 	void resume();
-
-	// /**
-	// * Asks this manager to synchronize all of its display outputs with the simulation.
-	// */
-	// void synchronize();
-	//
-	// /**
-	// * Asks this manager to desynchronize all of its display outputs with the simulation.
-	// */
-	// void desynchronize();
-	//
-	// /**
-	// * Checks if is synchronized.
-	// *
-	// * @return true, if is synchronized
-	// */
-	// boolean isSynchronized();
 
 	/**
 	 * Asks this manager to close all of its outputs (see {@link IOutput#close()}

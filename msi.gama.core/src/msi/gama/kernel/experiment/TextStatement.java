@@ -107,7 +107,8 @@ public class TextStatement extends AbstractStatement implements IExperimentDispl
 		return GamaFontType.staticCast(scope, font.value(scope), false);
 	}
 
-	public Color getColor(final IScope scope) {
+	@Override
+	public GamaColor getColor(final IScope scope) {
 		GamaColor rgb = null;
 		if (color != null) { rgb = Cast.asColor(scope, color.value(scope)); }
 		return rgb;

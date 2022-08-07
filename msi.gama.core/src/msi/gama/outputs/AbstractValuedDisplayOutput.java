@@ -75,7 +75,14 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 	 */
 	public boolean setNewExpressionText(final String string) {
 		expressionText = string;
-		setValue(GAML.compileExpression(string, getScope().getSimulation(), true));
+		IExpression expr;
+		try {
+			expr = GAML.compileExpression(string, getScope().getSimulation(), true);
+		} catch (GamaRuntimeException e1) {
+			// The expression is maybe dedicated to experiments (and not simulations) ?
+			expr = GAML.compileExpression(string, getScope().getExperiment(), true);
+		}
+		setValue(expr);
 		return getScope().step(this).passed();
 	}
 

@@ -101,6 +101,8 @@ public interface IParameterEditor<T> extends IScoped {
 	/** The value. */
 	int VALUE = 8;
 
+	// int SAVE = 9;
+
 	/**
 	 * @param b
 	 */

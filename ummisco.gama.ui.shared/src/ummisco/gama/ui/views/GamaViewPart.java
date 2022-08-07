@@ -302,13 +302,7 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void update(final IDisplayOutput output) {
 		final Job job = getUpdateJob();
-		if (job != null) {
-			// if (GAMA.getGui().isSynchronized()) {
-			// job.runSynchronized();
-			// } else {
-			job.schedule();
-			// }
-		}
+		if (job != null) { job.schedule(); }
 	}
 
 	@Override

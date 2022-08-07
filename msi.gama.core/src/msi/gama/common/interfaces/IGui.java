@@ -604,6 +604,13 @@ public interface IGui {
 	default boolean isHiDPI() { return false; }
 
 	/**
+	 * Regular update for the monitors
+	 *
+	 * @param scope
+	 */
+	default void updateParameterView(final IScope scope) {}
+
+	/**
 	 * Checks if is synchronized.
 	 *
 	 * @return true, if is synchronized

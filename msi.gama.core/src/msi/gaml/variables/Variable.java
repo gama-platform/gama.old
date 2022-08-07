@@ -845,8 +845,13 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public List<GamaColor> getColor(final IScope scope) {
+	public List<GamaColor> getColors(final IScope scope) {
 		// No facet available to describe a potential color
+		return null;
+	}
+
+	@Override
+	public GamaColor getColor(final IScope scope) {
 		return null;
 	}
 

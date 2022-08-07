@@ -50,7 +50,7 @@ public class ExpressionEditor extends ExpressionBasedEditor<IExpression> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		expressionText = currentValue.serialize(true);
+		expressionText = currentValue == null ? "" : currentValue.serialize(true);
 		return super.createCustomParameterControl(comp);
 	}
 

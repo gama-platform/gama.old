@@ -14,8 +14,10 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
+import msi.gama.common.interfaces.IColored;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.COUNTER;
@@ -26,7 +28,7 @@ import ummisco.gama.dev.utils.COUNTER;
  * @param <S>
  *            the generic type
  */
-public abstract class AbstractSummary<S extends WithTestSummary<?>> implements INamed {
+public abstract class AbstractSummary<S extends WithTestSummary<?>> implements INamed, IColored {
 
 	/** The uri. */
 	private final URI uri;
@@ -104,7 +106,10 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> implements I
 	 *
 	 * @return the color
 	 */
-	public GamaColor getColor() { return getState().getColor(); }
+	@Override
+	public GamaColor getColor(final IScope scope) {
+		return getState().getColor(scope);
+	}
 
 	/**
 	 * Gets the state.

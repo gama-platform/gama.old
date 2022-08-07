@@ -64,7 +64,6 @@ import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -111,7 +110,7 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
-		textBox = FlatButton.menu(comp, IGamaColors.NEUTRAL, "").light().small();
+		textBox = FlatButton.menu(comp, null, "").light().small();
 		textBox.setText("No " + (isFolder ? "folder" : "file"));
 		textBox.addSelectionListener(this);
 		return textBox;

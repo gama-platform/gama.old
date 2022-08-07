@@ -10,17 +10,17 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.EditorListener.Command;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -46,13 +46,17 @@ public class CommandEditor extends AbstractStatementEditor<UserCommandStatement>
 	protected EditorListener.Command getListener() { return (Command) super.getListener(); }
 
 	@Override
-	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
-		GamaUIColor color = GamaColors.get(getStatement().getColor(getScope()));
-		if (color == null) { color = IGamaColors.NEUTRAL; }
-		textBox = FlatButton.button(composite, color, "");
+	protected FlatButton createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
+		textBox = FlatButton.button(composite, null, "");
 		textBox.setText(" " + getStatement().getName());
 		textBox.addSelectionListener(getListener());
 		return textBox;
+	}
+
+	@Override
+	Color getEditorControlBackground() {
+		GamaColor color = getStatement().getColor(getScope());
+		return color == null ? IGamaColors.NEUTRAL.color() : GamaColors.get(color).color();
 	}
 
 	@Override
