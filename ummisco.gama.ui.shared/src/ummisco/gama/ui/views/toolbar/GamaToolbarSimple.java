@@ -1,23 +1,23 @@
 /*******************************************************************************************************
  *
- * GamaToolbarSimple.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaToolbarSimple.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
@@ -120,12 +120,12 @@ public class GamaToolbarSimple extends ToolBar {
 		final ToolItem button = new ToolItem(this, style, getItems().length);
 		if (tip != null) { button.setToolTipText(tip); }
 		if (i != null) {
-			final Image image = GamaIcons.create(i).image();
-			button.setImage(image);
+			GamaIcon icon = GamaIcons.create(i);
+			button.setImage(icon.image());
+			button.setDisabledImage(icon.disabled());
 		}
 		if (listener != null) { button.addSelectionListener(listener); }
 		return button;
 	}
-
 
 }

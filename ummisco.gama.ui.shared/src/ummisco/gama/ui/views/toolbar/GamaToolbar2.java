@@ -33,6 +33,7 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
@@ -553,8 +554,9 @@ public class GamaToolbar2 extends Composite {
 		if (text != null && forceText) { button.setText(text); }
 		if (tip != null) { button.setToolTipText(tip); }
 		if (image != null) {
-			final var im = GamaIcons.create(image).image();
-			button.setImage(im);
+			GamaIcon icon = GamaIcons.create(image);
+			button.setImage(icon.image());
+			button.setDisabledImage(icon.disabled());
 		}
 		if (listener != null) { button.addSelectionListener(listener); }
 		if (control != null) {

@@ -217,6 +217,7 @@
                label="Common">
             <command
                   commandId="msi.gama.application.goto.modeling"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.disabled.png"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
                   label="Modeling perspective"
                   style="push"

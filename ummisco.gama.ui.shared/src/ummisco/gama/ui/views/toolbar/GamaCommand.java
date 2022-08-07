@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
+import ummisco.gama.ui.resources.GamaIcon;
+
 /**
  * The Class GamaCommand.
  */
@@ -238,7 +240,11 @@ public class GamaCommand {
 		final var i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
-		if (image != null) { i.setImage(create(image).image()); }
+		if (image != null) {
+			GamaIcon icon = create(image);
+			i.setImage(icon.image());
+			i.setDisabledImage(icon.disabled());
+		}
 		i.addSelectionListener(sel);
 		return i;
 	}
