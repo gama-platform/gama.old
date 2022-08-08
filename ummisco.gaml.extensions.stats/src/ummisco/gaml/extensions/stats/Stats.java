@@ -2246,6 +2246,30 @@ public class Stats {
 	}
 	
 	/**
+	 * Compute adjusted R²
+	 *
+	 * @param scope
+	 * 				the scope
+	 * @param regression
+	 * 				the regression
+	 * @return the adjusted R²
+	 */
+	@operator(
+			value = "rSquare",
+			type = IType.FLOAT,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
+	@doc (
+			value = "Return the value of the adjusted R square for a given regression model",
+			examples = { @example (
+					value = "rSquare(my_regression)",
+					isExecutable = false) })
+	@test ("rSquare(build(matrix([[4.0,1.0,2.0,3.0],[4.0,2.0,3.0,4.0]]))) = 0.8363636363636364")
+	public static Double rSquare(final IScope scope, final GamaRegression regression) {
+		return regression.getRSquare();
+	}
+	
+	/**
 	 * 
 	 * @param scope
 	 * @param path path of the input csv file
