@@ -130,9 +130,11 @@ public class ClientService extends Thread implements SocketService {
 			while (this.isAlive) {
 				receiver = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				String msg = receiver.readLine();
-				msg = msg.replaceAll("@n@", "\n");
-				msg = msg.replaceAll("@b@@r@", "\b\r");
-				receivedMessage(this.socket.toString(), msg);
+				if (msg != null) { //protects against NPE occurring with empty streams
+					msg = msg.replaceAll("@n@", "\n");
+					msg = msg.replaceAll("@b@@r@", "\b\r");
+					receivedMessage(this.socket.toString(), msg);					
+				}
 			}
 		} catch (final SocketTimeoutException e) {
 			DEBUG.LOG("Socket timeout");
