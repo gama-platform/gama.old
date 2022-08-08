@@ -12,6 +12,7 @@ package ummisco.gaml.extensions.stats;
 
 import static msi.gaml.operators.Containers.collect;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,8 @@ import cern.jet.math.Arithmetic;
 import cern.jet.stat.Descriptive;
 import cern.jet.stat.Gamma;
 import cern.jet.stat.Probability;
+import msi.gama.common.util.FileUtils;
+import msi.gama.kernel.batch.exploration.sobol.Sobol;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -2228,7 +2231,7 @@ public class Stats {
 			concept = {})
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, "
-					+ "the last value of each line is the y value) while using the given ordinary "
+					+ "the first value of each line is the y value) while using the given ordinary "
 					+ "least squares method. Usage: build(data)",
 			examples = { @example (
 					value = "build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]))",
@@ -2240,6 +2243,79 @@ public class Stats {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.error("The build operator is not usable for these data", scope);
 		}
+	}
+	
+	/**
+	 * Compute adjusted R²
+	 *
+	 * @param scope
+	 * 				the scope
+	 * @param regression
+	 * 				the regression
+	 * @return the adjusted R²
+	 */
+	@operator(
+			value = "rSquare",
+			type = IType.FLOAT,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
+	@doc (
+			value = "Return the value of the adjusted R square for a given regression model",
+			examples = { @example (
+					value = "rSquare(my_regression)",
+					isExecutable = false) })
+	@test ("rSquare(build(matrix([[4.0,1.0,2.0,3.0],[4.0,2.0,3.0,4.0]]))) = 0.8363636363636364")
+	public static Double rSquare(final IScope scope, final GamaRegression regression) {
+		return regression.getRSquare();
+	}
+	
+	/**
+	 * Compute the residuals for the regression
+	 *
+	 * @param scope
+	 * 				the scope
+	 * @param regression
+	 * 				the regression
+	 * @return the list of residuals
+	 */
+	@operator(
+			value = "residuals",
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
+	@doc(
+			value = "Return the list of residuals for a given regression model",
+			examples = { @example(
+					value = "residuals(my_regression)",
+					isExecutable = false)})
+	public static IList<Double> residuals(final IScope scope, final GamaRegression regression){
+		return regression.getResiduals();
+	}
+	
+	/**
+	 * 
+	 * @param scope
+	 * @param path path of the input csv file
+	 * @param report_path path to save the sobol_report.txt file
+	 * @param nb_parameters number of parameters in the model
+	 * @return
+	 */
+	@operator (
+			value = "sobolAnalysis",
+			type = IType.STRING,
+			can_be_const = true,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC },
+			expected_content_type = { IType.STRING, IType.INT })
+	@doc(
+			value = "Return a string containing the Report of the sobol analysis for the corresponding .csv file and save this report in a txt file.")
+	public static String sobolAnalysis(final IScope scope, String path, String report_path, int nb_parameters) {
+		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
+		final File f_report = new File(FileUtils.constructAbsoluteFilePath(scope, report_path, false));
+		Sobol sob = new Sobol(f, nb_parameters, scope);
+		sob.evaluate();
+		sob.saveResult(f_report);
+		return sob.buildReportString();
 	}
 
 	/**

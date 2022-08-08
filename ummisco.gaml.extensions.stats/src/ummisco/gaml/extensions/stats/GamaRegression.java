@@ -86,6 +86,7 @@ public class GamaRegression implements IValue {
 		regressionMethod.newSampleData(instances, nbInstances, nbFeatures);
 		param = regressionMethod.estimateRegressionParameters();
 		rsquare = regressionMethod.calculateAdjustedRSquared();
+		error = regressionMethod.estimateResiduals();
 	}
 
 	/**

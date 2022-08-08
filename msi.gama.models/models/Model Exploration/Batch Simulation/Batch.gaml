@@ -143,7 +143,7 @@ experiment Explicit type: batch repeat: 3 keep_seed: true until: ( time > 5000 )
 experiment Sobol type: batch keep_seed:true until:( time > 5000 ) {
 	parameter 'Infection rate' var: infection_rate min:0.0 max:1.0;
 	parameter 'Probability of dying' var:dying_proba min:0.01 max:0.25;
-	method sobol outputs:["num_dead"] sample:100 report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
+	method sobol outputs:["num_dead"] sample:100 path: "Results/saltelli.csv" report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
 }
 
 // This experiment explores two parameters with a PSO strategy,
