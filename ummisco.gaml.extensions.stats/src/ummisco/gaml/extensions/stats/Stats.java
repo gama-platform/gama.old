@@ -2270,6 +2270,29 @@ public class Stats {
 	}
 	
 	/**
+	 * Compute the residuals for the regression
+	 *
+	 * @param scope
+	 * 				the scope
+	 * @param regression
+	 * 				the regression
+	 * @return the list of residuals
+	 */
+	@operator(
+			value = "residuals",
+			type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
+	@doc(
+			value = "Return the list of residuals for a given regression model",
+			examples = { @example(
+					value = "residuals(my_regression)",
+					isExecutable = false)})
+	public static IList<Double> residuals(final IScope scope, final GamaRegression regression){
+		return regression.getResiduals();
+	}
+	
+	/**
 	 * 
 	 * @param scope
 	 * @param path path of the input csv file
