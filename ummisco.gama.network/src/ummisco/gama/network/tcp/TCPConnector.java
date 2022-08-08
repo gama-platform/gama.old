@@ -121,18 +121,21 @@ public class TCPConnector extends Connector {
 		if (!this.localMemberNames.containsKey(boxName)) {
 			this.remoteBoxName.add(boxName);
 		}
-
-		final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
-				socket.getRemoteAddress(), CommandType.NEW_GROUP, boxName);
-		this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
+		if (!this.isRaw()) {
+			final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
+					socket.getRemoteAddress(), CommandType.NEW_GROUP, boxName);
+			this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
+		}
 	}
 
 	@Override
 	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		this.remoteBoxName.remove(boxName);
-		final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
-				socket.getRemoteAddress(), CommandType.REMOVE_GROUP, boxName);
-		this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
+		if (!this.isRaw()) {
+			final CommandMessage cmd = MessageFactory.buildCommandMessage(socket.getLocalAddress(),
+					socket.getRemoteAddress(), CommandType.REMOVE_GROUP, boxName);
+			this.sendMessage(agt, socket.getRemoteAddress(), MessageFactory.packMessage(cmd));
+		}
 	}
 
 	@Override
