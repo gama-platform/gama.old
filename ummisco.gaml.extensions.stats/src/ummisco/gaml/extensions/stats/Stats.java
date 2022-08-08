@@ -12,6 +12,7 @@ package ummisco.gaml.extensions.stats;
 
 import static msi.gaml.operators.Containers.collect;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,8 @@ import cern.jet.math.Arithmetic;
 import cern.jet.stat.Descriptive;
 import cern.jet.stat.Gamma;
 import cern.jet.stat.Probability;
+import msi.gama.common.util.FileUtils;
+import msi.gama.kernel.batch.exploration.sobol.Sobol;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -2228,7 +2231,7 @@ public class Stats {
 			concept = {})
 	@doc (
 			value = "returns the regression build from the matrix data (a row = an instance, "
-					+ "the last value of each line is the y value) while using the given ordinary "
+					+ "the first value of each line is the y value) while using the given ordinary "
 					+ "least squares method. Usage: build(data)",
 			examples = { @example (
 					value = "build(matrix([[1.0,2.0,3.0,4.0],[2.0,3.0,4.0,2.0]]))",
