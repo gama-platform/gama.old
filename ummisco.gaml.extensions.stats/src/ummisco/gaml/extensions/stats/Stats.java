@@ -2241,6 +2241,32 @@ public class Stats {
 			throw GamaRuntimeException.error("The build operator is not usable for these data", scope);
 		}
 	}
+	
+	/**
+	 * 
+	 * @param scope
+	 * @param path path of the input csv file
+	 * @param report_path path to save the sobol_report.txt file
+	 * @param nb_parameters number of parameters in the model
+	 * @return
+	 */
+	@operator (
+			value = "sobolAnalysis",
+			type = IType.STRING,
+			can_be_const = true,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC },
+			expected_content_type = { IType.STRING, IType.INT })
+	@doc(
+			value = "Return a string containing the Report of the sobol analysis for the corresponding .csv file and save this report in a txt file.")
+	public static String sobolAnalysis(final IScope scope, String path, String report_path, int nb_parameters) {
+		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
+		final File f_report = new File(FileUtils.constructAbsoluteFilePath(scope, report_path, false));
+		Sobol sob = new Sobol(f, nb_parameters, scope);
+		sob.evaluate();
+		sob.saveResult(f_report);
+		return sob.buildReportString();
+	}
 
 	/**
 	 *
