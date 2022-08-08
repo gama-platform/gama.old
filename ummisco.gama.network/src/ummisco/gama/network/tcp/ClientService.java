@@ -159,10 +159,24 @@ public class ClientService extends Thread implements SocketService {
 
 	@Override
 	public void sendMessage(final String message, final String receiver) throws IOException {
+		
 		if (socket == null || !isOnline()) return;
-		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-		final String msg = message.replaceAll("\n", "@n@").replaceAll("\b\r", "@b@@r@");
-		sender.println(msg + "\n");
+		
+		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);		
+		String msg;
+		
+		//If raw connection we do not append an end of line nor escape anything
+		if (connector instanceof TCPConnector con && con.isRaw()) {
+			msg = message;
+			sender.print(msg);
+		}
+		else {
+			msg = 		message	.replaceAll("\n", "@n@")
+								.replaceAll("\b\r", "@b@@r@")
+					+ 	"\n";
+			//TODO: do we really need to append a '\n' while we already use println ?
+			sender.println(msg);
+		}
 		sender.flush();
 	}
 	
