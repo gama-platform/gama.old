@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Pragma#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Pragma#getPlugins <em>Plugins</em>}</li>
  * </ul>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getPragma()
@@ -44,5 +45,27 @@ public interface Pragma extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Plugins</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Plugins</em>' containment reference.
+   * @see #setPlugins(ExpressionList)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getPragma_Plugins()
+   * @model containment="true"
+   * @generated
+   */
+  ExpressionList getPlugins();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Pragma#getPlugins <em>Plugins</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Plugins</em>' containment reference.
+   * @see #getPlugins()
+   * @generated
+   */
+  void setPlugins(ExpressionList value);
 
 } // Pragma

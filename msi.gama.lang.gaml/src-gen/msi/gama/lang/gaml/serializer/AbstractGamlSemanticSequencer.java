@@ -368,6 +368,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	}
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Access
 	 *     BinaryOperator returns Access
@@ -399,6 +400,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (left=Access_Access_1_0 ((op='[' right=ExpressionList?) | (op='.' (right=AbstractRef | right=StringLiteral))))
+	 * </pre>
 	 */
 	protected void sequence_Access(ISerializationContext context, Access semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -406,11 +408,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ActionArguments returns ActionArguments
 	 *
 	 * Constraint:
 	 *     (args+=ArgumentDefinition args+=ArgumentDefinition*)
+	 * </pre>
 	 */
 	protected void sequence_ActionArguments(ISerializationContext context, ActionArguments semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -418,18 +422,20 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Facet returns Facet
 	 *
 	 * Constraint:
 	 *     (
-	 *         ((key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression) | 
+	 *         ((key=ClassicFacetKey | key='&lt;-' | key=SpecialFacetKey) expr=Expression) | 
 	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
-	 *         (key='->' (expr=Expression | expr=Expression)) | 
+	 *         (key='-&gt;' (expr=Expression | expr=Expression)) | 
 	 *         (key=TypeFacetKey (expr=TypeRef | expr=Expression)) | 
 	 *         (key=ActionFacetKey (expr=ActionRef | block=Block)) | 
 	 *         (key=VarFacetKey expr=VariableRef)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_ActionFacet_ClassicFacet_DefinitionFacet_FunctionFacet_TypeFacet_VarFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -437,11 +443,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ActionFacet returns Facet
 	 *
 	 * Constraint:
 	 *     (key=ActionFacetKey (expr=ActionRef | block=Block))
+	 * </pre>
 	 */
 	protected void sequence_ActionFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -449,6 +457,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns ActionFakeDefinition
 	 *     ActionDefinition returns ActionFakeDefinition
@@ -456,6 +465,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     name=Valid_ID
+	 * </pre>
 	 */
 	protected void sequence_ActionFakeDefinition(ISerializationContext context, ActionFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -469,11 +479,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ActionRef returns ActionRef
 	 *
 	 * Constraint:
 	 *     ref=[ActionDefinition|Valid_ID]
+	 * </pre>
 	 */
 	protected void sequence_ActionRef(ISerializationContext context, ActionRef semanticObject) {
 		if (errorAcceptor != null) {
@@ -487,6 +499,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     And returns BinaryOperator
 	 *     And.BinaryOperator_1_0 returns BinaryOperator
@@ -500,10 +513,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
-	 *                 op='>=' | 
-	 *                 op='<=' | 
-	 *                 op='<' | 
-	 *                 op='>'
+	 *                 op='&gt;=' | 
+	 *                 op='&lt;=' | 
+	 *                 op='&lt;' | 
+	 *                 op='&gt;'
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
@@ -512,6 +525,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -519,6 +533,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Pair.BinaryOperator_1_0 returns BinaryOperator
 	 *     If returns BinaryOperator
@@ -536,10 +551,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
-	 *                 op='>=' | 
-	 *                 op='<=' | 
-	 *                 op='<' | 
-	 *                 op='>'
+	 *                 op='&gt;=' | 
+	 *                 op='&lt;=' | 
+	 *                 op='&lt;' | 
+	 *                 op='&gt;'
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
@@ -548,6 +563,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -555,6 +571,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns BinaryOperator
 	 *     BinaryOperator returns BinaryOperator
@@ -571,10 +588,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
-	 *                 op='>=' | 
-	 *                 op='<=' | 
-	 *                 op='<' | 
-	 *                 op='>'
+	 *                 op='&gt;=' | 
+	 *                 op='&lt;=' | 
+	 *                 op='&lt;' | 
+	 *                 op='&gt;'
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
@@ -583,6 +600,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_And_Binary_Cast_Comparison_Exponentiation_Multiplication_Or_Pair(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -590,6 +608,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Cast returns BinaryOperator
 	 *
@@ -601,10 +620,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
-	 *                 op='>=' | 
-	 *                 op='<=' | 
-	 *                 op='<' | 
-	 *                 op='>'
+	 *                 op='&gt;=' | 
+	 *                 op='&lt;=' | 
+	 *                 op='&lt;' | 
+	 *                 op='&gt;'
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
@@ -613,6 +632,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_Binary_Cast_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -620,6 +640,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Cast.BinaryOperator_1_0_0 returns BinaryOperator
 	 *     Comparison returns BinaryOperator
@@ -631,10 +652,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *             (
 	 *                 op='!=' | 
 	 *                 op='=' | 
-	 *                 op='>=' | 
-	 *                 op='<=' | 
-	 *                 op='<' | 
-	 *                 op='>'
+	 *                 op='&gt;=' | 
+	 *                 op='&lt;=' | 
+	 *                 op='&lt;' | 
+	 *                 op='&gt;'
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
@@ -643,6 +664,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_Binary_Comparison_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -650,6 +672,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Comparison.BinaryOperator_1_0_0 returns BinaryOperator
 	 *     Addition returns BinaryOperator
@@ -662,6 +685,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Addition_Binary_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -669,6 +693,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ArgumentDefinition returns ArgumentDefinition
 	 *     GamlDefinition returns ArgumentDefinition
@@ -676,6 +701,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (type=TypeRef name=Valid_ID default=Expression?)
+	 * </pre>
 	 */
 	protected void sequence_ArgumentDefinition(ISerializationContext context, ArgumentDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -683,6 +709,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns ArgumentPair
 	 *     ArgumentPair returns ArgumentPair
@@ -699,6 +726,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         )? 
 	 *         right=Pair
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_ArgumentPair(ISerializationContext context, ArgumentPair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -706,12 +734,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Binary returns BinaryOperator
 	 *     Binary.BinaryOperator_1_0_0 returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
+	 * </pre>
 	 */
 	protected void sequence_Binary(ISerializationContext context, BinaryOperator semanticObject) {
 		if (errorAcceptor != null) {
@@ -731,12 +761,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Exponentiation returns BinaryOperator
 	 *     Exponentiation.BinaryOperator_1_0_0 returns BinaryOperator
 	 *
 	 * Constraint:
 	 *     ((left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit))
+	 * </pre>
 	 */
 	protected void sequence_Binary_Exponentiation(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -744,6 +776,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Multiplication returns BinaryOperator
 	 *     Multiplication.BinaryOperator_1_0_0 returns BinaryOperator
@@ -754,6 +787,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (left=Exponentiation_BinaryOperator_1_0_0 op='^' right=Binary) | 
 	 *         (left=Binary_BinaryOperator_1_0_0 op=Valid_ID right=Unit)
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Binary_Exponentiation_Multiplication(ISerializationContext context, BinaryOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -761,11 +795,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Block returns Block
 	 *
 	 * Constraint:
 	 *     statements+=Statement*
+	 * </pre>
 	 */
 	protected void sequence_Block(ISerializationContext context, Block semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -773,11 +809,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ClassicFacet returns Facet
 	 *
 	 * Constraint:
-	 *     ((key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression)
+	 *     ((key=ClassicFacetKey | key='&lt;-' | key=SpecialFacetKey) expr=Expression)
+	 * </pre>
 	 */
 	protected void sequence_ClassicFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -785,6 +823,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     DefinitionFacet returns Facet
 	 *     GamlDefinition returns Facet
@@ -792,6 +831,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=DefinitionFacetKey (name=Valid_ID | name=STRING))
+	 * </pre>
 	 */
 	protected void sequence_DefinitionFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -799,6 +839,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns EquationFakeDefinition
 	 *     EquationDefinition returns EquationFakeDefinition
@@ -806,6 +847,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     name=Valid_ID
+	 * </pre>
 	 */
 	protected void sequence_EquationFakeDefinition(ISerializationContext context, EquationFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -819,11 +861,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     EquationRef returns EquationRef
 	 *
 	 * Constraint:
 	 *     ref=[EquationDefinition|Valid_ID]
+	 * </pre>
 	 */
 	protected void sequence_EquationRef(ISerializationContext context, EquationRef semanticObject) {
 		if (errorAcceptor != null) {
@@ -837,12 +881,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Entry returns ExperimentFileStructure
 	 *     ExperimentFileStructure returns ExperimentFileStructure
 	 *
 	 * Constraint:
 	 *     exp=HeadlessExperiment
+	 * </pre>
 	 */
 	protected void sequence_ExperimentFileStructure(ISerializationContext context, ExperimentFileStructure semanticObject) {
 		if (errorAcceptor != null) {
@@ -856,6 +902,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns ExpressionList
 	 *     BinaryOperator returns ExpressionList
@@ -889,6 +936,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     ((exprs+=Expression exprs+=Expression*) | (exprs+=Parameter exprs+=Parameter*))
+	 * </pre>
 	 */
 	protected void sequence_ExpressionList(ISerializationContext context, ExpressionList semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -896,11 +944,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     FunctionFacet returns Facet
 	 *
 	 * Constraint:
-	 *     (key='->' (expr=Expression | expr=Expression))
+	 *     (key='-&gt;' (expr=Expression | expr=Expression))
+	 * </pre>
 	 */
 	protected void sequence_FunctionFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -908,6 +958,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Function
 	 *     BinaryOperator returns Function
@@ -942,6 +993,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (left=ActionRef type=TypeInfo? right=ExpressionList?)
+	 * </pre>
 	 */
 	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -949,6 +1001,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     HeadlessExperiment returns HeadlessExperiment
 	 *
@@ -961,6 +1014,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         facets+=Facet* 
 	 *         block=Block?
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_HeadlessExperiment(ISerializationContext context, HeadlessExperiment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -968,6 +1022,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns If
 	 *     BinaryOperator returns If
@@ -977,6 +1032,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (left=If_If_1_0 op='?' right=Or ifFalse=Or)
+	 * </pre>
 	 */
 	protected void sequence_If(ISerializationContext context, If semanticObject) {
 		if (errorAcceptor != null) {
@@ -999,6 +1055,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Import returns Import
 	 *     GamlDefinition returns Import
@@ -1006,6 +1063,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (importURI=STRING name=Valid_ID?)
+	 * </pre>
 	 */
 	protected void sequence_Import(ISerializationContext context, Import semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1013,11 +1071,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     ModelBlock returns Block
 	 *
 	 * Constraint:
 	 *     statements+=S_Section*
+	 * </pre>
 	 */
 	protected void sequence_ModelBlock(ISerializationContext context, Block semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1025,6 +1085,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Entry returns Model
 	 *     Model returns Model
@@ -1033,6 +1094,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (pragmas+=Pragma* name=ID imports+=Import* block=ModelBlock)
+	 * </pre>
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1040,6 +1102,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Parameter returns Parameter
 	 *
@@ -1055,6 +1118,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         ) 
 	 *         right=Expression
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_Parameter(ISerializationContext context, msi.gama.lang.gaml.gaml.Parameter semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1062,24 +1126,21 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Pragma returns Pragma
 	 *
 	 * Constraint:
-	 *     name=ID
+	 *     (name=ID plugins=ExpressionList?)
+	 * </pre>
 	 */
 	protected void sequence_Pragma(ISerializationContext context, Pragma semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.PRAGMA__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.PRAGMA__NAME));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getPragmaAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Array
 	 *     BinaryOperator returns Array
@@ -1112,6 +1173,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     exprs=ExpressionList?
+	 * </pre>
 	 */
 	protected void sequence_Primary(ISerializationContext context, Array semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1119,6 +1181,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Point
 	 *     BinaryOperator returns Point
@@ -1151,6 +1214,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (left=Expression op=',' right=Expression z=Expression?)
+	 * </pre>
 	 */
 	protected void sequence_Primary(ISerializationContext context, Point semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1158,6 +1222,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns Statement
 	 *     S_1Expr_Facets_BlockOrEnd returns Statement
@@ -1165,6 +1230,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? expr=Expression facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_1Expr_Facets_BlockOrEnd(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1172,6 +1238,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Action
 	 *     S_Declaration returns S_Action
@@ -1190,6 +1257,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         facets+=Facet* 
 	 *         block=Block?
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_S_Action(ISerializationContext context, S_Action semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1197,6 +1265,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Definition
 	 *     S_Declaration returns S_Definition
@@ -1215,6 +1284,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         facets+=Facet* 
 	 *         block=Block?
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_S_Definition(ISerializationContext context, S_Definition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1222,6 +1292,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_DirectAssignment
 	 *     S_Assignment returns S_DirectAssignment
@@ -1230,6 +1301,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (expr=Expression key=_AssignmentKey value=Expression facets+=Facet*)
+	 * </pre>
 	 */
 	protected void sequence_S_DirectAssignment(ISerializationContext context, S_DirectAssignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1237,6 +1309,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Display
 	 *     S_Display returns S_Display
@@ -1244,6 +1317,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='display' firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet* block=displayBlock)
+	 * </pre>
 	 */
 	protected void sequence_S_Display(ISerializationContext context, S_Display semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1251,6 +1325,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Do
 	 *     S_Do returns S_Do
@@ -1258,6 +1333,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_DoKey firstFacet='action:'? expr=AbstractRef facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Do(ISerializationContext context, S_Do semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1265,11 +1341,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     S_Equation returns S_Assignment
 	 *
 	 * Constraint:
 	 *     ((expr=Function | expr=VariableRef) key='=' value=Expression)
+	 * </pre>
 	 */
 	protected void sequence_S_Equation(ISerializationContext context, S_Assignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1277,6 +1355,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Equations
 	 *     S_Equations returns S_Equations
@@ -1286,6 +1365,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_EquationsKey name=Valid_ID facets+=Facet* equations+=S_Equation*)
+	 * </pre>
 	 */
 	protected void sequence_S_Equations(ISerializationContext context, S_Equations semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1293,6 +1373,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     S_Section returns S_Experiment
 	 *     S_Experiment returns S_Experiment
@@ -1301,6 +1382,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_ExperimentKey firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Experiment(ISerializationContext context, S_Experiment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1308,12 +1390,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     S_Section returns S_Global
 	 *     S_Global returns S_Global
 	 *
 	 * Constraint:
 	 *     (key='global' facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Global(ISerializationContext context, S_Global semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1321,6 +1405,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_If
 	 *     S_If returns S_If
@@ -1328,6 +1413,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='if' firstFacet='condition:'? expr=Expression block=Block (else=S_If | else=Block)?)
+	 * </pre>
 	 */
 	protected void sequence_S_If(ISerializationContext context, S_If semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1335,6 +1421,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Loop
 	 *     S_Loop returns S_Loop
@@ -1345,6 +1432,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='loop' name=ID? facets+=Facet* block=Block)
+	 * </pre>
 	 */
 	protected void sequence_S_Loop(ISerializationContext context, S_Loop semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1352,6 +1440,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Other
 	 *     S_Other returns S_Other
@@ -1359,6 +1448,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=ID facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Other(ISerializationContext context, S_Other semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1366,6 +1456,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Reflex
 	 *     S_Declaration returns S_Reflex
@@ -1376,6 +1467,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_ReflexKey (firstFacet='name:'? name=Valid_ID)? expr=Expression? block=Block)
+	 * </pre>
 	 */
 	protected void sequence_S_Reflex(ISerializationContext context, S_Reflex semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1383,6 +1475,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Return
 	 *     S_Return returns S_Return
@@ -1390,6 +1483,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='return' firstFacet='value:'? expr=Expression?)
+	 * </pre>
 	 */
 	protected void sequence_S_Return(ISerializationContext context, S_Return semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1397,6 +1491,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Set
 	 *     S_Assignment returns S_Set
@@ -1405,6 +1500,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='set' expr=Expression value=Expression)
+	 * </pre>
 	 */
 	protected void sequence_S_Set(ISerializationContext context, S_Set semanticObject) {
 		if (errorAcceptor != null) {
@@ -1424,6 +1520,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Solve
 	 *     S_Solve returns S_Solve
@@ -1431,6 +1528,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_SolveKey firstFacet='equation:'? expr=EquationRef facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Solve(ISerializationContext context, S_Solve semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1438,6 +1536,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     S_Section returns S_Species
 	 *     S_Species returns S_Species
@@ -1451,6 +1550,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_SpeciesKey firstFacet='name:'? name=ID facets+=Facet* block=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Species(ISerializationContext context, S_Species semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1458,6 +1558,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Try
 	 *     S_Try returns S_Try
@@ -1465,6 +1566,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key='try' block=Block catch=Block?)
+	 * </pre>
 	 */
 	protected void sequence_S_Try(ISerializationContext context, S_Try semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1472,6 +1574,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Statement returns S_Var
 	 *     S_Declaration returns S_Var
@@ -1482,6 +1585,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (key=_VarOrConstKey firstFacet='name:'? name=Valid_ID facets+=Facet*)
+	 * </pre>
 	 */
 	protected void sequence_S_Var(ISerializationContext context, S_Var semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1489,12 +1593,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns SkillFakeDefinition
 	 *     SkillFakeDefinition returns SkillFakeDefinition
 	 *
 	 * Constraint:
 	 *     name=ID
+	 * </pre>
 	 */
 	protected void sequence_SkillFakeDefinition(ISerializationContext context, SkillFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -1508,11 +1614,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     SkillRef returns SkillRef
 	 *
 	 * Constraint:
 	 *     ref=[SkillFakeDefinition|ID]
+	 * </pre>
 	 */
 	protected void sequence_SkillRef(ISerializationContext context, SkillRef semanticObject) {
 		if (errorAcceptor != null) {
@@ -1526,12 +1634,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Entry returns StandaloneBlock
 	 *     StandaloneBlock returns StandaloneBlock
 	 *
 	 * Constraint:
 	 *     block=Block
+	 * </pre>
 	 */
 	protected void sequence_StandaloneBlock(ISerializationContext context, StandaloneBlock semanticObject) {
 		if (errorAcceptor != null) {
@@ -1545,12 +1655,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Entry returns StringEvaluator
 	 *     StringEvaluator returns StringEvaluator
 	 *
 	 * Constraint:
 	 *     (toto=ID expr=Expression)
+	 * </pre>
 	 */
 	protected void sequence_StringEvaluator(ISerializationContext context, StringEvaluator semanticObject) {
 		if (errorAcceptor != null) {
@@ -1567,6 +1679,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns StringLiteral
 	 *     BinaryOperator returns StringLiteral
@@ -1601,6 +1714,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     op=STRING
+	 * </pre>
 	 */
 	protected void sequence_StringLiteral(ISerializationContext context, StringLiteral semanticObject) {
 		if (errorAcceptor != null) {
@@ -1614,6 +1728,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns BooleanLiteral
 	 *     BinaryOperator returns BooleanLiteral
@@ -1647,6 +1762,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     op=BOOLEAN
+	 * </pre>
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, BooleanLiteral semanticObject) {
 		if (errorAcceptor != null) {
@@ -1660,6 +1776,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns DoubleLiteral
 	 *     BinaryOperator returns DoubleLiteral
@@ -1693,6 +1810,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     op=DOUBLE
+	 * </pre>
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, DoubleLiteral semanticObject) {
 		if (errorAcceptor != null) {
@@ -1706,6 +1824,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns IntLiteral
 	 *     BinaryOperator returns IntLiteral
@@ -1739,6 +1858,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     op=INTEGER
+	 * </pre>
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, IntLiteral semanticObject) {
 		if (errorAcceptor != null) {
@@ -1752,6 +1872,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns ReservedLiteral
 	 *     BinaryOperator returns ReservedLiteral
@@ -1785,6 +1906,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     op=KEYWORD
+	 * </pre>
 	 */
 	protected void sequence_TerminalExpression(ISerializationContext context, ReservedLiteral semanticObject) {
 		if (errorAcceptor != null) {
@@ -1798,11 +1920,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     TypeFacet returns Facet
 	 *
 	 * Constraint:
 	 *     (key=TypeFacetKey (expr=TypeRef | expr=Expression))
+	 * </pre>
 	 */
 	protected void sequence_TypeFacet(ISerializationContext context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1810,6 +1934,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns TypeFakeDefinition
 	 *     TypeDefinition returns TypeFakeDefinition
@@ -1818,6 +1943,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     name=ID
+	 * </pre>
 	 */
 	protected void sequence_TypeFakeDefinition(ISerializationContext context, TypeFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -1831,11 +1957,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     TypeInfo returns TypeInfo
 	 *
 	 * Constraint:
 	 *     (first=TypeRef second=TypeRef?)
+	 * </pre>
 	 */
 	protected void sequence_TypeInfo(ISerializationContext context, TypeInfo semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1843,11 +1971,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     TypeRef returns TypeRef
 	 *
 	 * Constraint:
 	 *     ((ref=[TypeDefinition|ID] parameter=TypeInfo?) | parameter=TypeInfo)
+	 * </pre>
 	 */
 	protected void sequence_TypeRef(ISerializationContext context, TypeRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1855,6 +1985,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Unary
 	 *     BinaryOperator returns Unary
@@ -1884,6 +2015,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (((op='°' | op='#') right=UnitRef) | ((op='-' | op='!' | op='my' | op='the' | op='not') right=Unary))
+	 * </pre>
 	 */
 	protected void sequence_Unary(ISerializationContext context, Unary semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1891,12 +2023,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns UnitFakeDefinition
 	 *     UnitFakeDefinition returns UnitFakeDefinition
 	 *
 	 * Constraint:
 	 *     name=ID
+	 * </pre>
 	 */
 	protected void sequence_UnitFakeDefinition(ISerializationContext context, UnitFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -1910,11 +2044,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     UnitRef returns UnitName
 	 *
 	 * Constraint:
 	 *     ref=[UnitFakeDefinition|ID]
+	 * </pre>
 	 */
 	protected void sequence_UnitRef(ISerializationContext context, UnitName semanticObject) {
 		if (errorAcceptor != null) {
@@ -1928,6 +2064,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns Unit
 	 *     BinaryOperator returns Unit
@@ -1955,6 +2092,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     (left=Unit_Unit_1_0_0 (op='°' | op='#') right=UnitRef)
+	 * </pre>
 	 */
 	protected void sequence_Unit(ISerializationContext context, Unit semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1962,11 +2100,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     VarFacet returns Facet
 	 *
 	 * Constraint:
 	 *     (key=VarFacetKey expr=VariableRef)
+	 * </pre>
 	 */
 	protected void sequence_VarFacet(ISerializationContext context, Facet semanticObject) {
 		if (errorAcceptor != null) {
@@ -1983,6 +2123,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     GamlDefinition returns VarFakeDefinition
 	 *     VarDefinition returns VarFakeDefinition
@@ -1990,6 +2131,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     name=Valid_ID
+	 * </pre>
 	 */
 	protected void sequence_VarFakeDefinition(ISerializationContext context, VarFakeDefinition semanticObject) {
 		if (errorAcceptor != null) {
@@ -2003,6 +2145,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     Expression returns VariableRef
 	 *     BinaryOperator returns VariableRef
@@ -2037,6 +2180,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *
 	 * Constraint:
 	 *     ref=[VarDefinition|Valid_ID]
+	 * </pre>
 	 */
 	protected void sequence_VariableRef(ISerializationContext context, VariableRef semanticObject) {
 		if (errorAcceptor != null) {
@@ -2050,11 +2194,13 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     displayBlock returns Block
 	 *
 	 * Constraint:
 	 *     statements+=displayStatement*
+	 * </pre>
 	 */
 	protected void sequence_displayBlock(ISerializationContext context, Block semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -2062,12 +2208,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     displayStatement returns speciesOrGridDisplayStatement
 	 *     speciesOrGridDisplayStatement returns speciesOrGridDisplayStatement
 	 *
 	 * Constraint:
 	 *     (key=_SpeciesKey expr=Expression facets+=Facet* block=displayBlock?)
+	 * </pre>
 	 */
 	protected void sequence_speciesOrGridDisplayStatement(ISerializationContext context, speciesOrGridDisplayStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

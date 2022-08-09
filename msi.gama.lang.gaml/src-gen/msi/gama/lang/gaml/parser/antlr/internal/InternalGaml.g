@@ -450,21 +450,52 @@ rulePragma returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_1_0=RULE_ID
-				{
-					newLeafNode(lv_name_1_0, grammarAccess.getPragmaAccess().getNameIDTerminalRuleCall_1_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getPragmaRule());
+				(
+					lv_name_1_0=RULE_ID
+					{
+						newLeafNode(lv_name_1_0, grammarAccess.getPragmaAccess().getNameIDTerminalRuleCall_1_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_1_0,
-						"msi.gama.lang.gaml.Gaml.ID");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getPragmaRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_1_0,
+							"msi.gama.lang.gaml.Gaml.ID");
+					}
+				)
 			)
+			(
+				otherlv_2='['
+				{
+					newLeafNode(otherlv_2, grammarAccess.getPragmaAccess().getLeftSquareBracketKeyword_1_1_0());
+				}
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getPragmaAccess().getPluginsExpressionListParserRuleCall_1_1_1_0());
+						}
+						lv_plugins_3_0=ruleExpressionList
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getPragmaRule());
+							}
+							set(
+								$current,
+								"plugins",
+								lv_plugins_3_0,
+								"msi.gama.lang.gaml.Gaml.ExpressionList");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)?
+				otherlv_4=']'
+				{
+					newLeafNode(otherlv_4, grammarAccess.getPragmaAccess().getRightSquareBracketKeyword_1_1_2());
+				}
+			)?
 		)
 	)
 ;

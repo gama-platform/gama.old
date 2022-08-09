@@ -337,13 +337,22 @@ public interface GamlPackage extends EPackage
   int PRAGMA__NAME = 0;
 
   /**
+   * The feature id for the '<em><b>Plugins</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PRAGMA__PLUGINS = 1;
+
+  /**
    * The number of structural features of the '<em>Pragma</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PRAGMA_FEATURE_COUNT = 1;
+  int PRAGMA_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ExperimentFileStructureImpl <em>Experiment File Structure</em>}' class.
@@ -3475,6 +3484,17 @@ public interface GamlPackage extends EPackage
   EAttribute getPragma_Name();
 
   /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Pragma#getPlugins <em>Plugins</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Plugins</em>'.
+   * @see msi.gama.lang.gaml.gaml.Pragma#getPlugins()
+   * @see #getPragma()
+   * @generated
+   */
+  EReference getPragma_Plugins();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.ExperimentFileStructure <em>Experiment File Structure</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4983,6 +5003,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EAttribute PRAGMA__NAME = eINSTANCE.getPragma_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Plugins</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PRAGMA__PLUGINS = eINSTANCE.getPragma_Plugins();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ExperimentFileStructureImpl <em>Experiment File Structure</em>}' class.
