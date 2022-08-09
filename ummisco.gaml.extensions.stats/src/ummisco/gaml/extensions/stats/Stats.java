@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
@@ -37,7 +38,8 @@ import cern.jet.stat.Descriptive;
 import cern.jet.stat.Gamma;
 import cern.jet.stat.Probability;
 import msi.gama.common.util.FileUtils;
-import msi.gama.kernel.batch.exploration.sobol.Sobol;
+import msi.gama.kernel.batch.exploration.Sobol;
+import msi.gama.kernel.batch.exploration.Morris;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -2316,6 +2318,46 @@ public class Stats {
 		sob.evaluate();
 		sob.saveResult(f_report);
 		return sob.buildReportString();
+	}
+	
+	
+	/**
+	 * Add by Tom
+	 * Return the morris analysis
+	 * @param scope
+	 * @param path : path to csv file
+	 * @param nb_levels : the number of level
+	 * @param id_firstOutput : the id of the first output
+	 * @return the result of a morris analysis based on data in a CSV file
+	 *
+	 */
+	@operator (
+				value = "morrisAnalysis",
+				type= IType.STRING,
+				can_be_const = true,
+				category = {IOperatorCategory.STATISTICAL},
+				concept = {IConcept.STATISTIC},
+				expected_content_type= {IType.STRING,IType.INT})
+	@doc(
+			value= "Return a string containing the Report of the morris analysis for the corresponding CSV file")
+	public static String morrisAnalysis(final IScope scope, String path, int nb_levels,int id_firstOutput) {
+
+		String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
+		Morris momo= new Morris();
+		Map<String,List<Double>> output= momo.readSimulation(new_path, id_firstOutput,scope);
+		List<String> OutputsNames= output.keySet().stream().toList();
+		System.out.println(output.toString());
+		boolean temp= true;
+		String s="";
+		
+		for(String name: OutputsNames) {
+			momo.MorrisAggregation(nb_levels,output.get(name));
+			s=s+momo.buildResultTxt(name, temp);
+			temp=false;
+		}
+		return s;
+		
+		
 	}
 
 	/**
