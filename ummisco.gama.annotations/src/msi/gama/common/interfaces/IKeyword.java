@@ -740,6 +740,9 @@ public interface IKeyword {
 
 	/** The monitor. */
 	String MONITOR = "monitor";
+	
+	/**The Morris method */
+	String MORRIS= "morris";
 
 	/** The mouse clicked. */
 	String MOUSE_CLICKED = "mouse_click";
@@ -1387,6 +1390,6 @@ public interface IKeyword {
 	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 
 	/** The methods. */
-	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL };
+	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS };
 
 }
