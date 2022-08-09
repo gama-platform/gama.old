@@ -93,7 +93,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.postStartup();
 		FileUtils.cleanCache();
 		final String[] args = Platform.getApplicationArgs();
-		DEBUG.LOG("Arguments received by GAMA : " + DEBUG.TO_STRING(args));
+		// DEBUG.LOG("Arguments received by GAMA : " + DEBUG.TO_STRING(args));
 		if (args.length > 0) {
 			int i = 0;
 			if (args[0].contains("--launcher.defaultAction")) { i += 2; }
