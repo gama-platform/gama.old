@@ -40,7 +40,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gama.kernel.batch.exploration.sobol.Sobol;
+import msi.gama.kernel.batch.exploration.Sobol;
 import msi.gaml.types.IType;
 
 /**
