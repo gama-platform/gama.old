@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AttributesEditorsView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AttributesEditorsView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
@@ -26,7 +26,8 @@ import ummisco.gama.ui.views.ExpandableItemsView;
 /**
  * The Class AttributesEditorsView.
  *
- * @param <T> the generic type
+ * @param <T>
+ *            the generic type
  */
 public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 
@@ -93,8 +94,8 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 	}
 
 	@Override
-	public void updateItemValues() {
-		if (editors != null) { editors.updateItemValues(); }
+	public void updateItemValues(final boolean synchronously) {
+		if (editors != null) { editors.updateItemValues(synchronously); }
 	}
 
 }

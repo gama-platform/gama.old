@@ -104,7 +104,7 @@ public class GamaPreferencesView {
 		if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
 			instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 		}
-		for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(false); }
+		for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(true, false); }
 		instance.open();
 	}
 
@@ -119,7 +119,7 @@ public class GamaPreferencesView {
 				}
 
 			});
-			for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(false); }
+			for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(false, false); }
 		});
 
 	}
@@ -238,7 +238,7 @@ public class GamaPreferencesView {
 		if (!WorkbenchHelper.isDisplayThread()) return;
 		for (final String activable : e.getRefreshment()) {
 			final var ed = editors.get(activable);
-			if (ed != null && WorkbenchHelper.isDisplayThread()) { ed.updateWithValueOfParameter(false); }
+			if (ed != null && WorkbenchHelper.isDisplayThread()) { ed.updateWithValueOfParameter(false, false); }
 		}
 	}
 
@@ -323,7 +323,7 @@ public class GamaPreferencesView {
 		i2.setText("Revert to default value");
 		i2.addSelectionListener((Selector) se -> {
 			e.set(e.getInitialValue(GAMA.getRuntimeScope()));
-			ed.updateWithValueOfParameter(false);
+			ed.updateWithValueOfParameter(true, false);
 		});
 		return m;
 	}
@@ -373,7 +373,7 @@ public class GamaPreferencesView {
 				final var path = fd.open();
 				if (path == null) return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
-				for (final IParameterEditor ed : editors.values()) { ed.updateWithValueOfParameter(false); }
+				for (final IParameterEditor ed : editors.values()) { ed.updateWithValueOfParameter(true, false); }
 			}
 
 		});

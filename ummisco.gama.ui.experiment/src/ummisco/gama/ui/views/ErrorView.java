@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ErrorView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ErrorView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -48,10 +48,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	/** The id. */
 	public static String ID = IGui.ERROR_VIEW_ID;
-	
+
 	/** The number of displayed errors. */
 	int numberOfDisplayedErrors = GamaPreferences.Runtime.CORE_ERRORS_NUMBER.getValue();
-	
+
 	/** The most recent first. */
 	boolean mostRecentFirst = GamaPreferences.Runtime.CORE_RECENT.getValue();
 
@@ -105,8 +105,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	/**
 	 * Creates the stack trace.
 	 *
-	 * @param compo the compo
-	 * @param exception the exception
+	 * @param compo
+	 *            the compo
+	 * @param exception
+	 *            the exception
 	 */
 	private void createStackTrace(final ScrolledComposite compo, final GamaRuntimeException exception) {
 		final Table t = new Table(compo, SWT.H_SCROLL);
@@ -198,7 +200,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	@Override
-	public void updateItemValues() {
+	public void updateItemValues(final boolean synchronously) {
 		this.getViewer().updateItemNames();
 	}
 
@@ -220,9 +222,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
 		final Map<String, Runnable> result = new HashMap<>();
-		result.put("Copy error to clipboard", () -> {
-			WorkbenchHelper.copy(item.getAllText());
-		});
+		result.put("Copy error to clipboard", () -> { WorkbenchHelper.copy(item.getAllText()); });
 		result.put("Show in editor", () -> GAMA.getGui().editModel(null, item.getEditorContext()));
 		result.put("Report issue on GitHub", () -> this.reportError(item));
 		return result;
@@ -231,7 +231,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	/**
 	 * Report error.
 	 *
-	 * @param item the item
+	 * @param item
+	 *            the item
 	 */
 	private void reportError(final GamaRuntimeException item) {
 		// final String data = item.getAllText();

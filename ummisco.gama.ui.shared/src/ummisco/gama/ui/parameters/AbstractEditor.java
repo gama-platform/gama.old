@@ -44,9 +44,11 @@ import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class AbstractEditor.
@@ -494,13 +496,17 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public void updateWithValueOfParameter(final boolean retrieveVarValue) {
+	public void updateWithValueOfParameter(final boolean synchronously, final boolean retrieveVarValue) {
 		try {
 			final var newVal = retrieveValueOfParameter(retrieveVarValue);
 			currentValue = newVal;
-			asyncRun(() -> {
+			Runnable run = () -> {
 				internalModification = true;
 				if (!parent.isDisposed()) {
+					if (param.getName().contains("monitor")) {
+						//
+						DEBUG.OUT("");
+					}
 					editorControl.updateAmongValues(param.getAmongValue(getScope()));
 					computeMaxMinAndStepValues();
 					editorLabel.signalChanged(isValueModified());
@@ -509,7 +515,12 @@ public abstract class AbstractEditor<T>
 					composite.update();
 				}
 				internalModification = false;
-			});
+			};
+			if (synchronously) {
+				WorkbenchHelper.run(run);
+			} else {
+				WorkbenchHelper.asyncRun(run);
+			}
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);

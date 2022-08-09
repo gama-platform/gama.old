@@ -11,6 +11,7 @@ package msi.gama.common.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -609,6 +610,11 @@ public interface IGui {
 	 * @param scope
 	 */
 	default void updateParameterView(final IScope scope) {}
+
+	default void arrangeExperimentViews(final IScope myScope, final IExperimentPlan experimentPlan,
+			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showParameters,
+			final Boolean showConsoles, final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
+			final Supplier<GamaColor> color, final boolean showEditors) {}
 
 	/**
 	 * Checks if is synchronized.

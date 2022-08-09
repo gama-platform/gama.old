@@ -277,7 +277,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 	public List<AbstractSummary<?>> getItems() { return experiments; }
 
 	@Override
-	public void updateItemValues() {}
+	public void updateItemValues(final boolean synchronously) {}
 
 	@Override
 	public void reset() {

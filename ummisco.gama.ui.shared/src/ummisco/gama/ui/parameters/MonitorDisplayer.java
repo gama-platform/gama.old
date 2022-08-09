@@ -18,7 +18,6 @@ import static msi.gaml.operators.System.userInputDialog;
 import static msi.gaml.types.Types.NO_TYPE;
 import static ummisco.gama.ui.menus.GamaMenu.action;
 import static ummisco.gama.ui.menus.GamaMenu.separate;
-import static ummisco.gama.ui.utils.WorkbenchHelper.asyncRun;
 
 import java.util.Collection;
 import java.util.List;
@@ -100,7 +99,7 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 			// item.setEnabled(false); // for the moment
 			action(m, getStatement().isPaused() ? "Resume" : "Pause", ex -> {
 				getStatement().setPaused(!getStatement().isPaused());
-				updateWithValueOfParameter(false);
+				updateWithValueOfParameter(false, false);
 			});
 			action(m, "Close", ex -> {
 				closer.run();
@@ -138,16 +137,21 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 	}
 
 	@Override
-	public void updateWithValueOfParameter(final boolean retrieveVarValue) {
+	public void updateWithValueOfParameter(final boolean synchronously, final boolean retrieveVarValue) {
 		try {
-			asyncRun(() -> {
+			Runnable run = () -> {
 				internalModification = true;
 				if (!parent.isDisposed() && !textBox.isDisposed()) {
 					textBox.setText(getStatement().getTitle());
 					composite.update();
 				}
 				internalModification = false;
-			});
+			};
+			if (synchronously) {
+				WorkbenchHelper.run(run);
+			} else {
+				WorkbenchHelper.asyncRun(run);
+			}
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
@@ -177,7 +181,7 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 		getStatement().setColor((GamaColor) init.get("Color"));
 		textBox.setColor(GamaColors.get(getStatement().getColor(getScope())));
 		getStatement().setNewExpression((IExpression) init.get("Expression"));
-		updateWithValueOfParameter(false);
+		updateWithValueOfParameter(false, false);
 	}
 
 	@Override

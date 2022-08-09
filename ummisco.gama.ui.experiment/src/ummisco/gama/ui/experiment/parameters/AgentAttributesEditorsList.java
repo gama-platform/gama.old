@@ -82,10 +82,12 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	}
 
 	@Override
-	public void updateItemValues() {
+	public void updateItemValues(final boolean synchronously) {
 		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			if (!entry.getKey().dead()) {
-				for (final IParameterEditor<?> gp : entry.getValue().values()) { gp.updateWithValueOfParameter(false); }
+				for (final IParameterEditor<?> gp : entry.getValue().values()) {
+					gp.updateWithValueOfParameter(synchronously, false);
+				}
 
 			}
 		}

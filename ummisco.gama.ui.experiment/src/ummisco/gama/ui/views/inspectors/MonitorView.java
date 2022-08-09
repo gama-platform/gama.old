@@ -208,7 +208,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	public List getItems() { return outputs; }
 
 	@Override
-	public void updateItemValues() {}
+	public void updateItemValues(final boolean synchronously) {}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

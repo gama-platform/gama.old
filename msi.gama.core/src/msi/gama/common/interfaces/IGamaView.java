@@ -297,7 +297,7 @@ public interface IGamaView {
 		/**
 		 * Update item values.
 		 */
-		void updateItemValues();
+		void updateItemValues(boolean synchronously);
 	}
 
 	/**
