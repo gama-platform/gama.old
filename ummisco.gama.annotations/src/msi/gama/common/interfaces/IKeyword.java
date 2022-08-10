@@ -848,6 +848,9 @@ public interface IKeyword {
 
 	/** The origin. */
 	String ORIGIN = "**origin**";
+	
+	/** The orthogonal sampling*/
+	String ORTHOGONAL="orthogonal";
 
 	/** The orthographic projection. */
 	String ORTHOGRAPHIC_PROJECTION = "orthographic_projection";
