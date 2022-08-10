@@ -22,7 +22,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -48,7 +47,6 @@ import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -58,7 +56,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -74,7 +71,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
@@ -119,6 +115,8 @@ public class SwtGui implements IGui {
 		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
 		PreferencesHelper.initialize();
 		ImageUtils.getCachedGC();
+		initializeOpenGL();
+
 	}
 
 	/**
@@ -411,7 +409,7 @@ public class SwtGui implements IGui {
 			if (!exp.hasParametersOrUserCommands()) return;
 			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			viewArray[0].setExperiment(exp);
-			viewArray[0].updateItemValues();
+			viewArray[0].updateItemValues(false);
 
 		});
 		parametersView = (IGamaView) viewArray[0];
@@ -451,30 +449,40 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {
 		// hideScreen();
-		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-		if (initializer != null && !initializer.isDone()) { initializer.run(); }
-		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-		final ExperimentAgent agent = exp.getAgent();
-		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
-		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
-		final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
-		final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
-		final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
-		final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
-		final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
-		final Boolean showControls = layout.getFacetValue(scope, "controls", null);
-		final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
-		Supplier<Color> color = () -> {
-			final GamaColor c = layout.getFacetValue(scope, "background", null);
-			return c == null ? null : GamaColors.toSwtColor(c);
-		};
 
-		boolean showEditors;
-		if (layout.hasFacet("editors")) {
-			showEditors = layout.getFacetValue(scope, "editors", false);
-		} else {
-			showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
-		}
+		// final ExperimentAgent agent = exp.getAgent();
+		// final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
+		// Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
+		// final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
+		// final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
+		// final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
+		// final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
+		// final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
+		// final Boolean showControls = layout.getFacetValue(scope, "controls", null);
+		// final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
+		// Supplier<Color> color = () -> {
+		// final GamaColor c = layout.getFacetValue(scope, "background", null);
+		// return c == null ? null : GamaColors.toSwtColor(c);
+		// };
+		//
+		// boolean showEditors;
+		// if (layout.hasFacet("editors")) {
+		// showEditors = layout.getFacetValue(scope, "editors", false);
+		// } else {
+		// showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
+		// }
+		// arrangeExperimentViews(scope, exp, keepTabs, keepToolbars, showParameters, showConsoles, showNavigator,
+		// showControls, keepTray, color, showEditors);
+
+	}
+
+	@Override
+	public void arrangeExperimentViews(final IScope scope, final IExperimentPlan exp, final Boolean keepTabs,
+			final Boolean keepToolbars, final Boolean showParameters, final Boolean showConsoles,
+			final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
+			final Supplier<GamaColor> color, final boolean showEditors) {
+
+		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			if (showConsoles != null && !showConsoles) {
@@ -499,10 +507,17 @@ public class SwtGui implements IGui {
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);
 				sd.keepTray(keepTray);
-				sd.setBackground(color);
+				sd.setBackground(() -> {
+					GamaColor c = color.get();
+					return c == null ? null : GamaColors.toSwtColor(c);
+				});
 			}
 		});
+	}
 
+	private static void initializeOpenGL() {
+		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
+		if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
 	}
 
 	/**

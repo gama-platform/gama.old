@@ -54,7 +54,7 @@ public interface IParameterEditor<T> extends IScoped {
 	 * Update with value of parameter. The parameter, if true, forces the experiment to look for an updated value of the
 	 * targeted variable
 	 */
-	void updateWithValueOfParameter(boolean retrieveVarValue);
+	void updateWithValueOfParameter(boolean synchronously, boolean retrieveVarValue);
 
 	/**
 	 * Sets the active.

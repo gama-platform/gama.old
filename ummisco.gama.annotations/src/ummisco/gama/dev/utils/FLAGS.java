@@ -49,7 +49,7 @@ public class FLAGS {
 	private static boolean get(final String name, final boolean def) {
 		String v = System.getProperty(name);
 		if (v == null) return def;
-		DEBUG.LOG("Reading flag " + name + " with value " + v);
+		// DEBUG.LOG("Reading flag " + name + " with value " + v);
 		return Boolean.parseBoolean(v);
 	}
 

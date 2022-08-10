@@ -27,6 +27,7 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Pragma">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Pragma/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Pragma/plugins"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//ExperimentFileStructure">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ExperimentFileStructure/exp"/>

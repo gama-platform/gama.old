@@ -112,6 +112,8 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
 			builder.put(grammarAccess.getImportAccess().getGroup_2(), "rule__Import__Group_2__0");
 			builder.put(grammarAccess.getPragmaAccess().getGroup(), "rule__Pragma__Group__0");
+			builder.put(grammarAccess.getPragmaAccess().getGroup_1(), "rule__Pragma__Group_1__0");
+			builder.put(grammarAccess.getPragmaAccess().getGroup_1_1(), "rule__Pragma__Group_1_1__0");
 			builder.put(grammarAccess.getHeadlessExperimentAccess().getGroup(), "rule__HeadlessExperiment__Group__0");
 			builder.put(grammarAccess.getHeadlessExperimentAccess().getGroup_3(), "rule__HeadlessExperiment__Group_3__0");
 			builder.put(grammarAccess.getS_GlobalAccess().getGroup(), "rule__S_Global__Group__0");
@@ -248,7 +250,8 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBlockAccess().getStatementsAssignment_1(), "rule__ModelBlock__StatementsAssignment_1");
 			builder.put(grammarAccess.getImportAccess().getImportURIAssignment_1(), "rule__Import__ImportURIAssignment_1");
 			builder.put(grammarAccess.getImportAccess().getNameAssignment_2_1(), "rule__Import__NameAssignment_2_1");
-			builder.put(grammarAccess.getPragmaAccess().getNameAssignment_1(), "rule__Pragma__NameAssignment_1");
+			builder.put(grammarAccess.getPragmaAccess().getNameAssignment_1_0(), "rule__Pragma__NameAssignment_1_0");
+			builder.put(grammarAccess.getPragmaAccess().getPluginsAssignment_1_1_1(), "rule__Pragma__PluginsAssignment_1_1_1");
 			builder.put(grammarAccess.getExperimentFileStructureAccess().getExpAssignment(), "rule__ExperimentFileStructure__ExpAssignment");
 			builder.put(grammarAccess.getHeadlessExperimentAccess().getKeyAssignment_0(), "rule__HeadlessExperiment__KeyAssignment_0");
 			builder.put(grammarAccess.getHeadlessExperimentAccess().getFirstFacetAssignment_1(), "rule__HeadlessExperiment__FirstFacetAssignment_1");

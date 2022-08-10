@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
@@ -296,7 +297,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 				if (getViewer() != null && !getViewer().isDisposed()) {
 					getViewer().updateItemNames();
 					getViewer().updateItemColors();
-					updateItemValues();
+					updateItemValues(GAMA.isSynchronized());
 				}
 				return Status.OK_STATUS;
 			}
@@ -307,7 +308,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 	public abstract List<T> getItems();
 
 	@Override
-	public abstract void updateItemValues();
+	public abstract void updateItemValues(boolean synchronously);
 
 	@Override
 	public void collapseAll() {

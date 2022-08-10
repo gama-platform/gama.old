@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Application.java, in msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Application.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.application;
 
@@ -48,17 +48,15 @@ import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
 	{
-		DEBUG.ON();
-	//	if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
+		// DEBUG.ON();
+		// if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
 
-
-		}
+	}
 
 	/** The processor. */
 	public static OpenDocumentEventProcessor processor;
@@ -130,12 +128,13 @@ public class Application implements IApplication {
 	 */
 	public static void createProcessor() {
 		DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
-		System.setProperty("swt.autoScale","integer"); // cf DPIUtil
-		
+		System.setProperty("swt.autoScale", "integer"); // cf DPIUtil
+
 		final Display display = Display.getDefault();
-		
-		DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"), false);
-		System.setProperty("sun.java2d.uiScale.enabled",String.valueOf(DPIUtil.getDeviceZoom() > 100));
+
+		DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
+				false);
+		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
 		DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 
 		if (display == null) return;
@@ -250,7 +249,7 @@ public class Application implements IApplication {
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if (pick == 1 /* Window.CANCEL */ && getSelectedWorkspaceRootLocation() == null) {
 				openError(null, "Error", "The application can not start without a workspace and will now exit.");
-				//System.exit(0);
+				// System.exit(0);
 				return IApplication.EXIT_OK;
 			}
 			/* Tell Eclipse what the selected location was and continue */

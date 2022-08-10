@@ -826,6 +826,17 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   @Override
+  public EReference getPragma_Plugins()
+  {
+    return (EReference)pragmaEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getExperimentFileStructure()
   {
     return experimentFileStructureEClass;
@@ -2281,6 +2292,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     pragmaEClass = createEClass(PRAGMA);
     createEAttribute(pragmaEClass, PRAGMA__NAME);
+    createEReference(pragmaEClass, PRAGMA__PLUGINS);
 
     experimentFileStructureEClass = createEClass(EXPERIMENT_FILE_STRUCTURE);
     createEReference(experimentFileStructureEClass, EXPERIMENT_FILE_STRUCTURE__EXP);
@@ -2596,6 +2608,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(pragmaEClass, Pragma.class, "Pragma", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getPragma_Name(), ecorePackage.getEString(), "name", null, 0, 1, Pragma.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPragma_Plugins(), this.getExpressionList(), null, "plugins", null, 0, 1, Pragma.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(experimentFileStructureEClass, ExperimentFileStructure.class, "ExperimentFileStructure", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExperimentFileStructure_Exp(), this.getHeadlessExperiment(), null, "exp", null, 0, 1, ExperimentFileStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

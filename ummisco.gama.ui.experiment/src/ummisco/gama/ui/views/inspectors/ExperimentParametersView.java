@@ -243,7 +243,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				public IStatus runInUIThread(final IProgressMonitor monitor) {
 					if (!isOpen) return Status.CANCEL_STATUS;
 					if (getViewer() != null && !getViewer().isDisposed()) {
-						((ExperimentsParametersList) editors).updateMonitors();
+						((ExperimentsParametersList) editors).updateMonitors(GAMA.isSynchronized());
 					}
 					return Status.OK_STATUS;
 				}

@@ -22,12 +22,14 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GamlGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_Pragma___LeftSquareBracketKeyword_1_1_0_RightSquareBracketKeyword_1_1_2__q;
 	protected AbstractElementAlias match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__;
 	protected AbstractElementAlias match_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GamlGrammarAccess) access;
+		match_Pragma___LeftSquareBracketKeyword_1_1_0_RightSquareBracketKeyword_1_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getPragmaAccess().getLeftSquareBracketKeyword_1_1_0()), new TokenAlias(false, false, grammarAccess.getPragmaAccess().getRightSquareBracketKeyword_1_1_2()));
 		match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__ = new AlternativeAlias(false, false, new GroupAlias(false, false, new TokenAlias(false, false, grammarAccess.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0()), new TokenAlias(false, false, grammarAccess.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2())), new TokenAlias(false, false, grammarAccess.getS_EquationsAccess().getSemicolonKeyword_3_1()));
 		match_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getS_SetAccess().getLessThanSignHyphenMinusKeyword_2_1()), new TokenAlias(false, false, grammarAccess.getS_SetAccess().getValueKeyword_2_0()));
 	}
@@ -44,7 +46,9 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__.equals(syntax))
+			if (match_Pragma___LeftSquareBracketKeyword_1_1_0_RightSquareBracketKeyword_1_1_2__q.equals(syntax))
+				emit_Pragma___LeftSquareBracketKeyword_1_1_0_RightSquareBracketKeyword_1_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__.equals(syntax))
 				emit_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0.equals(syntax))
 				emit_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -53,23 +57,43 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 	}
 
 	/**
+	 * <pre>
+	 * Ambiguous syntax:
+	 *     ('[' ']')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     name=ID (ambiguity) (rule end)
+	 
+	 * </pre>
+	 */
+	protected void emit_Pragma___LeftSquareBracketKeyword_1_1_0_RightSquareBracketKeyword_1_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * <pre>
 	 * Ambiguous syntax:
 	 *     ('{' '}') | ';'
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     facets+=Facet (ambiguity) (rule end)
 	 *     name=Valid_ID (ambiguity) (rule end)
+	 
+	 * </pre>
 	 */
 	protected void emit_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
 	/**
+	 * <pre>
 	 * Ambiguous syntax:
-	 *     'value:' | '<-'
+	 *     'value:' | '&lt;-'
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     expr=Expression (ambiguity) value=Expression
+	 
+	 * </pre>
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

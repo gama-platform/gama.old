@@ -75,7 +75,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	public void pauseItem(final T name) {}
 
 	@Override
-	public abstract void updateItemValues();
+	public abstract void updateItemValues(boolean synchronously);
 
 	@Override
 	public void resumeItem(final T obj) {}

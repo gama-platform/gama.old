@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.collect.Iterables;
 
@@ -51,11 +52,13 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -647,15 +650,34 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// We add the agent as soon as possible so as to make it possible to evaluate variables in the opening of the
 		// experiment
 		myScope.push(agent);
+		prepareGui();
 		myScope.getGui().prepareForExperiment(myScope, this);
 		IScope scope = agent.getScope();
 		agent.schedule(scope);
+
 		if (isBatch()) {
 			getGui().getStatus()
 					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 			getGui().updateExperimentState(scope);
 		}
 
+	}
+
+	void prepareGui() {
+		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
+		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
+		final Boolean keepTabs = layout.getFacetValue(myScope, "tabs", true);
+		final Boolean keepToolbars = layout.getFacetValue(myScope, "toolbars", null);
+		final Boolean showParameters = layout.getFacetValue(myScope, "parameters", null);
+		final Boolean showConsoles = layout.getFacetValue(myScope, "consoles", null);
+		final Boolean showNavigator = layout.getFacetValue(myScope, "navigator", null);
+		final Boolean showControls = layout.getFacetValue(myScope, "controls", null);
+		final Boolean keepTray = layout.getFacetValue(myScope, "tray", null);
+		final Boolean showEditors = layout.hasFacet("editors") ? layout.getFacetValue(myScope, "editors", false)
+				: !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
+		Supplier<GamaColor> color = () -> layout.getFacetValue(myScope, "background", null);
+		GAMA.getGui().arrangeExperimentViews(myScope, this, keepTabs, keepToolbars, showParameters, showConsoles,
+				showNavigator, showControls, keepTray, color, showEditors);
 	}
 
 	@Override

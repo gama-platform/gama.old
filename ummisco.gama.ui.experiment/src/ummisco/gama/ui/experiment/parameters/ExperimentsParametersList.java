@@ -126,7 +126,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 					param.addChangedListener((scope, val) -> {
 						for (final String other : refreshments) {
 							final IParameterEditor ed = getEditorForVar(other);
-							if (ed != null) { ed.updateWithValueOfParameter(true); }
+							if (ed != null) { ed.updateWithValueOfParameter(false, true); }
 						}
 					});
 				}
@@ -175,15 +175,17 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	}
 
 	@Override
-	public void updateItemValues() {
+	public void updateItemValues(final boolean synchronously) {
 		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
-			for (final IParameterEditor gp : entry.getValue().values()) { gp.updateWithValueOfParameter(false); }
+			for (final IParameterEditor gp : entry.getValue().values()) {
+				gp.updateWithValueOfParameter(synchronously, false);
+			}
 		}
-		updateMonitors();
+		updateMonitors(synchronously);
 	}
 
-	public void updateMonitors() {
-		monitors.forEach((s, md) -> { md.updateWithValueOfParameter(false); });
+	public void updateMonitors(final boolean synchronously) {
+		monitors.forEach((s, md) -> { md.updateWithValueOfParameter(synchronously, false); });
 	}
 
 	/**
