@@ -259,13 +259,22 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 						}
 						break;
 						
+					case IKeyword.ORTHOGONAL:
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
+						}
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.ITERATIONS )) {
+							tmpDesc.warning("Number of Iterations not defined, will be 5 by default",IGamlIssue.MISSING_FACET);
+						}
+						break;
+						
 					case IKeyword.SOBOL:
 						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet, do you perhaps mean 'saltelli' ?",IGamlIssue.MISSING_FACET);
 						break;
 						
 						
 					default:
-						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
+						tmpDesc.error("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
 					}
 				}
 
