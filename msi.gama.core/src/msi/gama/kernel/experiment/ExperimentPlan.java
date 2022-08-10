@@ -203,9 +203,72 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			// desc.warning("The memorize experiment is still in development. It should not be used.",
 			// IGamlIssue.DEPRECATED);
 			// }
+
 			if (!BATCH.equals(type) && desc.getChildWithKeyword(METHOD) != null) {
 				desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
 						METHOD);
+			}
+			
+			if(desc.getChildWithKeyword(EXHAUSTIVE)!=null) {
+
+				IDescription tmpDesc=desc.getChildWithKeyword(EXHAUSTIVE);
+				if(tmpDesc.hasFacet(ExhaustiveSearch.METHODS)) {
+					
+					switch(tmpDesc.getLitteral(ExhaustiveSearch.METHODS)) {
+					
+					case IKeyword.MORRIS:
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+							tmpDesc.warning("levels not defined for Morris sampling, will be 4 by default",IGamlIssue.MISSING_FACET);
+						}else {
+							int levels= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.NB_LEVELS));
+							System.out.println(levels);
+							if(levels<=0) {
+								tmpDesc.error("Levels should be positive");
+							}
+						}
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
+						}else {
+							int sample= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.SAMPLE_SIZE));
+							System.out.println(sample);
+							if(sample%2!=0) {
+								tmpDesc.error("The sample size should be even");
+							}
+							
+						}
+						break;
+					case IKeyword.SALTELLI:
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
+						}else {
+							int sample= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.SAMPLE_SIZE));
+							System.out.println(sample);
+							if(!((sample & (sample-1)) ==0)) {
+								tmpDesc.error("The sample size should be a power of 2");
+							}
+							
+						}
+						if(tmpDesc.hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+							tmpDesc.warning("Saltelli sampling doesn't need the levels facet",IGamlIssue.MISSING_FACET);
+						}
+						break;
+						
+					case IKeyword.LHS:
+						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
+						}
+						break;
+						
+					case IKeyword.SOBOL:
+						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet, do you perhaps mean 'saltelli' ?",IGamlIssue.MISSING_FACET);
+						break;
+						
+						
+					default:
+						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
+					}
+				}
+
 			}
 			if (BATCH.equals(type) && !desc.hasFacet(UNTIL)) {
 				desc.warning(

@@ -630,6 +630,9 @@ public interface IKeyword {
 
 	/** The let. */
 	String LET = "let";
+	
+	/**Latin Hypercube Sampling*/
+	String LHS="latinhypercube";
 
 	/** The lighted. */
 	String LIGHTED = "lighted";
@@ -1040,6 +1043,9 @@ public interface IKeyword {
 
 	/** The rounded. */
 	String ROUNDED = "rounded";
+	
+	/** Saltelli */
+	String SALTELLI= "saltelli";
 
 	/** The save. */
 	String SAVE = "save";
