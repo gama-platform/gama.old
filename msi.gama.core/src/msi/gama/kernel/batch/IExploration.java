@@ -15,6 +15,7 @@ import java.util.List;
 import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
 import msi.gama.kernel.batch.exploration.ExplicitExploration;
 import msi.gama.kernel.batch.exploration.SobolExploration;
+import msi.gama.kernel.batch.exploration.MorrisExploration;
 import msi.gama.kernel.batch.optimization.HillClimbing;
 import msi.gama.kernel.batch.optimization.SimulatedAnnealing;
 import msi.gama.kernel.batch.optimization.Swarm;
@@ -41,7 +42,7 @@ public interface IExploration extends ISymbol {// , Runnable {
 @SuppressWarnings ("rawtypes") public static final Class[] CLASSES =
 			{ GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class, TabuSearch.class,
 					TabuSearchReactive.class, ExhaustiveSearch.class, Swarm.class, ExplicitExploration.class,
-					SobolExploration.class};
+					SobolExploration.class,MorrisExploration.class};
 
 	/**
 	 * TODO
