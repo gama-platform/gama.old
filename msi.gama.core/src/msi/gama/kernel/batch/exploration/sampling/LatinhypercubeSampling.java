@@ -7,11 +7,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 import msi.gama.kernel.batch.exploration.sampling.SamplingUtils;
-/**
- * 
- * @author tomroy
- *
- */
+
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.IParameter.Batch;
 /**
