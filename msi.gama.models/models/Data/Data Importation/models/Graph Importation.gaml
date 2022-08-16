@@ -24,25 +24,25 @@ global {
 		
 		switch type {
 			match "graphml" {
-				g <- graphml_file("../includes/simple.graphml").contents;
+				g <- graphml_file("../includes/graphs/simple.graphml").contents;
 			}
 			match "gml" {
-				g <- graphgml_file("../includes/simple.gml").contents;
+				g <- graphgml_file("../includes/graphs/simple.gml").contents;
 			}
 			match "dot" {
-				g <- graphdot_file("../includes/simple.dot").contents;
+				g <- graphdot_file("../includes/graphs/simple.dot").contents;
 			}
 			match "dimacs" {
-				g <- graphdimacs_file("../includes/simple.dimacs").contents;
+				g <- graphdimacs_file("../includes/graphs/simple.dimacs").contents;
 			}	
 			match "gexf" {
-				g <- graphgexf_file("../includes/simple.gexf").contents;
+				g <- graphgexf_file("../includes/graphs/simple.gexf").contents;
 			}
 			match "tsplib" {
-				g <- graphtsplib_file("../includes/simple.tsplib").contents;
+				g <- graphtsplib_file("../includes/graphs/simple.tsplib").contents;
 			}
 			match "graph6" {
-				g <- graph6_file("../includes/simple.g6").contents;
+				g <- graph6_file("../includes/graphs/simple.g6").contents;
 			}	
 		}
 		write g;

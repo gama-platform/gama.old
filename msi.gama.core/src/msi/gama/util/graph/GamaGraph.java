@@ -76,6 +76,8 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
+import msi.gama.util.graph.loader.GamaGraphMLEdgeImporter;
+import msi.gama.util.graph.loader.GamaGraphMLNodeImporter;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaMatrix;
@@ -322,8 +324,29 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param edgeS
 	 *            the edge S
 	 */
-	public GamaGraph(final IScope scope, final AbstractBaseGraph<String, DefaultEdge> graph, final ISpecies nodeS,
+	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final ISpecies nodeS,
 			final ISpecies edgeS) {
+		this(scope,graph,nodeS,edgeS,null,null);
+	}	
+	
+	/**
+	 * Instantiates a new gama graph, with a specified node and edge attributes to store attributes read in the graph file.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param graph
+	 *            the graph
+	 * @param nodeS
+	 *            the species of the nodes in the created GAMA graph
+	 * @param edgeS
+	 *            the species of the edges in the created GAMA graph
+	 * @param nodeAttr
+	 *            the name of the attribute in nodeS species, that will contain the attributes read in the graph file
+	 * @param edgeAttr
+	 *            the name of the attribute in edgeS species, that will contain the attributes read in the graph file        
+	 */	
+	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final ISpecies nodeS,
+			final ISpecies edgeS, String nodeAttr, String edgeAttr) {
 		this(scope, nodeS == null ? Types.STRING : Types.AGENT, edgeS == null ? Types.STRING : Types.AGENT);
 		Map<String, IAgent> verticesAg = GamaMapFactory.create();
 		for (Object v : graph.vertexSet()) {
@@ -336,24 +359,40 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				IAgent ag = listAgt.get(0);
 				if (v != null) {
 					ag.setName(v.toString());
+					if(ag.hasAttribute(nodeAttr) && v instanceof GamaGraphMLNodeImporter) {			
+						ag.setAttribute(nodeAttr, 
+							GamaMapFactory.create(scope, Types.STRING, Types.STRING, ((GamaGraphMLNodeImporter) v).getAttributes())
+						);
+					}
 					addVertex(ag);
 					verticesAg.put(v.toString(), ag);
 				}
 			}
 		}
-		for (DefaultEdge e : graph.edgeSet()) {
+		for (DefaultEdge e : (Set<DefaultEdge>)graph.edgeSet()) {
 			Object s = graph.getEdgeSource(e);
 			Object t = graph.getEdgeTarget(e);
 
 			if (edgeS == null) {
-				addEdge(s, t, e);
+				if(nodeS == null) {
+					addEdge(s.toString(),t.toString(), e);
+				} else {
+					addEdge(s, t, e);					
+				}
 				setEdgeWeight(e, graph.getEdgeWeight(e));
 			} else {
 				IList atts = GamaListFactory.create();
 				final IList<IAgent> listAgt =
 						edgeS.getPopulation(scope).createAgents(scope, 1, atts, false, true, null);
 				IAgent ag = listAgt.get(0);
-				if (e != null) { ag.setName(e.toString()); }
+				if (e != null) { 
+					ag.setName(e.toString()); 
+					if(ag.hasAttribute(edgeAttr) && e instanceof GamaGraphMLEdgeImporter) {			
+						ag.setAttribute(edgeAttr, 
+							GamaMapFactory.create(scope, Types.STRING, Types.STRING, ((GamaGraphMLEdgeImporter) e).getAttributes())
+						);
+					}	
+				}
 
 				if (nodeS != null) {
 					IAgent n1 = verticesAg.get(s.toString());
@@ -378,9 +417,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param graph
 	 *            the graph
 	 * @param nodes
-	 *            the nodes
+	 *            the list of nodes
 	 * @param edgeS
-	 *            the edge S
+	 *            the species of the edges
 	 */
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<String, DefaultEdge> graph, final IList nodes,
 			final ISpecies edgeS) {

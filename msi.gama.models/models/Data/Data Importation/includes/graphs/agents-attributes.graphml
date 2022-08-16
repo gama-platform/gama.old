@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <key id="edge_weight_key" for="edge" attr.name="weight" attr.type="double">
+        <default>1.0</default>
+    </key>
+    <key id="key0" for="all" attr.name="name" attr.type="string"/>
+    <key id="key1" for="node" attr.name="type" attr.type="string"/>
+    <key id="key2" for="node" attr.name="resources" attr.type="string"/>
+    <key id="key3" for="node" attr.name="worker" attr.type="int"/>
+    <key id="key4" for="node" attr.name="xpoint" attr.type="double"/>
+    <key id="key5" for="node" attr.name="ypoint" attr.type="double"/>
+    <key id="key6" for="edge" attr.name="prob" attr.type="float"/>
+    <key id="key7" for="edge" attr.name="cost" attr.type="double"/>
+    <graph edgedefault="directed">
+        <node id="a">
+            <data key="key0">node-a</data>
+            <data key="key1">SourceLocation</data>
+            <data key="key2">[0, 0, 0]</data>
+            <data key="key3">1</data>
+            <data key="key4">10.0</data>
+            <data key="key5">10.0</data>
+        </node>
+        <node id="b">
+            <data key="key0">node-b</data>
+            <data key="key1">TargetLocation</data>
+            <data key="key2">[0, 0, 0]</data>
+            <data key="key3">0</data>
+            <data key="key4">25.0</data>
+            <data key="key5">40.0</data>
+        </node>
+        <node id="c">
+            <data key="key0">node-c</data>
+            <data key="key1">TargetLocation</data>
+            <data key="key2">[0, 0, 0]</data>
+            <data key="key3">0</data>
+            <data key="key4">40.0</data>
+            <data key="key5">10.0</data>
+        </node>
+        <edge id="0" source="a" target="b">
+            <data key="edge_weight_key">2.0</data>
+            <data key="key0">(a : b)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">2.0</data>
+        </edge>
+        <edge id="1" source="b" target="a">
+            <data key="edge_weight_key">2.0</data>
+            <data key="key0">(b : a)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">2.0</data>
+        </edge>
+        <edge id="2" source="a" target="c">
+            <data key="edge_weight_key">5.0</data>
+            <data key="key0">(a : c)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">5.0</data>
+        </edge>
+        <edge id="3" source="c" target="a">
+            <data key="edge_weight_key">5.0</data>
+            <data key="key0">(c : a)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">5.0</data>
+        </edge>
+        <edge id="4" source="b" target="c">
+            <data key="key0">(b : c)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">1.0</data>
+        </edge>
+        <edge id="5" source="c" target="b">
+            <data key="key0">(c : b)</data>
+            <data key="key6">0.9</data>
+            <data key="key7">1.0</data>
+        </edge>
+    </graph>
+</graphml>
