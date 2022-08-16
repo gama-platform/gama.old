@@ -127,7 +127,7 @@ public class Experiment implements IExperiment {
 		if(p!=null) {				
 			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {
 				IMap<String, Object> m=(IMap<String, Object>)O;
-				String type = m.get("type").toString();
+				String type = m.get("type") != null ? m.get("type").toString() : "";
 				Object v = m.get("value");
 				if (type.equals("int"))
 					v = (Integer.valueOf("" + m.get("value")));
