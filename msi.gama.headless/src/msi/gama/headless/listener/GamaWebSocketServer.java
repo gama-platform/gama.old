@@ -386,13 +386,20 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 		File ff = new File(pathToModel);
 //		System.out.println(ff.getAbsoluteFile().toString());
+		if (!ff.exists()) {
+			System.out.println(ff.getAbsolutePath() + " does not exist");
+			socket.send("gaml file does not exist");
+			return;
+		}
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
-			System.exit(-1);
+			//System.exit(-1);
+			System.out.println(ff.getAbsolutePath() + " is not a gaml file");
+			socket.send(pathToModel + "is not a gaml file");
+			return;
 		}
 		final String argExperimentName = args.get(args.size() - 2);
 //		final String argGamlFile = args.get(args.size() - 1); 
-		if (!ff.exists())
-			return;
+
 //		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(ff.getAbsoluteFile().toString());
 		ManualExperimentJob selectedJob = null;
 //		for (final IExperimentJob j : jb) {
@@ -401,8 +408,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 //				break;
 //			}
 //		}
-		if (selectedJob == null)
-			return;
+//		if (selectedJob == null)
+//			return;
+		
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 		selectedJob.endCond=end; 
 		selectedJob.controller.directOpenExperiment();
