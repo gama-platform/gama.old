@@ -232,7 +232,7 @@ public class MinimalAgent extends AbstractAgent {
 	 *
 	 * @see GamlAgent#_step_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
-	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
+	 * @warning This method should NOT be overridden (except for some rare occasions like in SimulationAgent). Always
 	 *          override _step_(IScope) instead.
 	 */
 	@Override
