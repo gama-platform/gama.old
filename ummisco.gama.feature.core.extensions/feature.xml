@@ -3,7 +3,8 @@
       id="ummisco.gama.feature.core.extensions"
       label="Core extensions of GAMA"
       version="1.8.2.qualifier"
-      provider-name="UMMISCO, IRIT &amp; IDEES">
+      provider-name="UMMISCO, IRIT &amp; IDEES"
+      plugin="ummisco.gama.serialize">
 
    <description url="http://gama-platform.org">
       Direct extensions to the core of GAMA

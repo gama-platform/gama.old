@@ -3,7 +3,8 @@
       id="ummisco.gama.feature.core.ui"
       label="Common UI Components of GAMA"
       version="1.8.2.qualifier"
-      provider-name="UMMISCO">
+      provider-name="UMMISCO"
+      plugin="msi.gama.application">
 
    <description url="http://gama-platform.org">
       The common UI components of GAMA

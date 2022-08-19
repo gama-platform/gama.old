@@ -76,7 +76,6 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -241,6 +240,7 @@
       <plugin id="org.eclipse.ui.win32" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
+      <plugin id="org.eclipse.update.configurator"/>
       <plugin id="org.eclipse.xpand"/>
       <plugin id="org.eclipse.xtend"/>
       <plugin id="org.eclipse.xtend.lib"/>
@@ -282,12 +282,16 @@
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.8.2" />
+      <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="1" />
       <property name="eclipse.buildId" value="${build.id}" />
       <property name="org.eclipse.update.reconcile" value="false" />
+      <property name="version" value="1.8.2" />
    </configurations>
 
    <repositories>
+      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
       <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
       <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
       <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />

@@ -3,7 +3,8 @@
       id="ummisco.gama.feature.dependencies"
       label="Dependencies of GAMA"
       version="1.8.2.qualifier"
-      provider-name="UMMISCO">
+      provider-name="UMMISCO"
+      plugin="msi.gama.ext">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -1425,5 +1426,12 @@
          install-size="0"
          version="0.0.0"
          fragment="true"/>
+
+   <plugin
+         id="org.eclipse.update.configurator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

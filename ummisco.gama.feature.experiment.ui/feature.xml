@@ -3,7 +3,8 @@
       id="ummisco.gama.feature.experiment.ui"
       label="UI Components for running experiments in  GAMA"
       version="1.8.2.qualifier"
-      provider-name="UMMISCO">
+      provider-name="UMMISCO"
+      plugin="ummisco.gama.ui.experiment">
 
    <description url="http://gama-platform.org">
       The UI components for running experiments in GAMA

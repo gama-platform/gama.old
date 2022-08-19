@@ -3,7 +3,8 @@
       id="ummisco.gama.feature.modeling.ui"
       label="UI Components for designing models in  GAMA"
       version="1.8.2.qualifier"
-      provider-name="UMMISCO">
+      provider-name="UMMISCO"
+      plugin="ummisco.gama.ui.modeling">
 
    <description url="http://gama-platform.org">
       The UI Components for designing models in  GAMA
