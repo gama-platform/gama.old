@@ -34,6 +34,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.MonitorOutput;
+import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.IUnits;
@@ -55,6 +56,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  */
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
+	/** The Constant MONITOR_CATEGORY. */
 	private static final String MONITOR_CATEGORY = "Monitors";
 
 	/** The count. */
@@ -69,6 +71,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	/** The experiment. */
 	private IExperimentPlan experiment;
 
+	/** The monitor section. */
 	ParameterExpandItem monitorSection;
 
 	@Override
@@ -85,6 +88,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		setParentComposite(intermediate);
 	}
 
+	/**
+	 * Gets the editors list.
+	 *
+	 * @return the editors list
+	 */
 	ExperimentsParametersList getEditorsList() { return (ExperimentsParametersList) editors; }
 
 	/**
@@ -101,6 +109,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		});
 	}
 
+	/**
+	 * Delete monitor section if empty.
+	 */
 	private void deleteMonitorSectionIfEmpty() {
 		if (monitorSection == null || getEditorsList().hasMonitors()
 				|| getEditorsList().getItems().contains(MONITOR_CATEGORY))
@@ -109,6 +120,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		monitorSection = null;
 	}
 
+	/**
+	 * Creates the monitor section if needed.
+	 *
+	 * @param aMonitorIsAboutToBeCreated
+	 *            the a monitor is about to be created
+	 */
 	private void createMonitorSectionIfNeeded(final boolean aMonitorIsAboutToBeCreated) {
 		if (monitorSection != null || !GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()
 				|| !aMonitorIsAboutToBeCreated && !getEditorsList().hasMonitors())
@@ -118,6 +135,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
 	}
 
+	/**
+	 * Creates the new monitor.
+	 */
 	private void createNewMonitor() {
 		createMonitorSectionIfNeeded(true);
 		IScope scope = GAMA.getRuntimeScope();
@@ -128,6 +148,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		md.setCloser(() -> deleteMonitor(md));
 	}
 
+	/**
+	 * Delete monitor.
+	 *
+	 * @param md
+	 *            the md
+	 */
 	private void deleteMonitor(final MonitorDisplayer md) {
 		MonitorOutput mo = md.getStatement();
 		mo.close();
@@ -163,8 +189,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
 			params.addAll(exp.getTexts());
-			if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && exp.getCurrentSimulation() != null) {
-				params.addAll(exp.getCurrentSimulation().getOutputManager().getMonitors());
+			SimulationAgent sim = exp.getCurrentSimulation();
+			if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
+				SimulationOutputManager som = sim.getOutputManager();
+				if (som != null) { params.addAll(som.getMonitors()); }
 			}
 			Collections.sort(params);
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
