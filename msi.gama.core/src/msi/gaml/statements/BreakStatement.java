@@ -96,7 +96,7 @@ public class BreakStatement extends AbstractStatement {
 	 */
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		scope.setFlowStatus(IScope.FlowStatus.BREAK);
+		scope.setBreakStatus();
 		return null; // How to return the last object ??
 	}
 

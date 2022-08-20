@@ -122,7 +122,7 @@ public class ReturnStatement extends AbstractStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final Object result = value == null ? null : value.value(scope);
-		scope.setFlowStatus(IScope.FlowStatus.RETURN);
+		scope.setReturnStatus();
 		return result;
 	}
 	//

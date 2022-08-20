@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -252,7 +253,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 						if (sequence != null && !sequence.isEmpty()) {
 							scope.execute(sequence, capturedAgent, null);
-							if (scope.getAndClearBreakStatus() == IScope.FlowStatus.BREAK) { break; }
+							if (scope.getAndClearBreakStatus() == FlowStatus.BREAK) { break; }
 						}
 
 						capturedAgents.add(capturedAgent);

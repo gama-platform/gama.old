@@ -24,7 +24,6 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
@@ -390,7 +389,7 @@ public class ServerExperimentController implements IExperimentController {
 		scope = agent.getScope();
 		try {
 			if (!scope.init(agent).passed()) {
-				scope.setFlowStatus(FlowStatus.CLOSE);
+				scope.setDisposeStatus();
 			} else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {

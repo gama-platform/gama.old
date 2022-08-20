@@ -72,8 +72,7 @@ public class ExecutionScope implements IScope {
 	protected final SpecialContext additionalContext = new SpecialContext();
 
 	/** The errors disabled. */
-	private volatile boolean /* _interrupted, _action_halted, _loop_halted, _agent_halted, */ _trace, _in_try_mode,
-			_errors_disabled;
+	private volatile boolean _trace, _in_try_mode, _errors_disabled;
 
 	/** The flow status. */
 	private volatile FlowStatus flowStatus = FlowStatus.NORMAL;
@@ -228,7 +227,7 @@ public class ExecutionScope implements IScope {
 		agentContext = null;
 		additionalContext.clear();
 		currentSymbol = null;
-		setFlowStatus(FlowStatus.CLOSE);
+		setFlowStatus(FlowStatus.DISPOSE);
 	}
 
 	@Override
@@ -284,7 +283,7 @@ public class ExecutionScope implements IScope {
 	}
 
 	@Override
-	public final boolean isClosed() { return flowStatus == FlowStatus.CLOSE; }
+	public final boolean isClosed() { return flowStatus == FlowStatus.DISPOSE; }
 
 	// @Override
 	// public void setInterrupted() {

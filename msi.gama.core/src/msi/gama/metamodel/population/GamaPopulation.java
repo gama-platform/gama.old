@@ -62,6 +62,7 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
@@ -526,7 +527,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				for (final IAgent a : list) {
 
 					if (!scope.execute(sequence, a, null).passed()
-							|| scope.getAndClearBreakStatus() == IScope.FlowStatus.BREAK) {
+							|| scope.getAndClearBreakStatus() == FlowStatus.BREAK) {
 						break;
 					}
 				}

@@ -13,8 +13,8 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -69,10 +69,10 @@ public class RemoteSequence extends AbstractStatementSequence {
 			final ExecutionResult result = scope.execute(command);
 			if (!result.passed()) return lastResult;
 			FlowStatus fs = scope.getAndClearContinueStatus();
-			if (fs == IScope.FlowStatus.BREAK) // scope.setFlowStatus(IScope.FlowStatus.BREAK); // we set it again for
+			if (fs == FlowStatus.BREAK) // scope.setFlowStatus(IScope.FlowStatus.BREAK); // we set it again for
 												// the outer statement
 				return lastResult;
-			if (fs == IScope.FlowStatus.CONTINUE) { continue; }
+			if (fs == FlowStatus.CONTINUE) { continue; }
 			lastResult = result.getValue();
 		}
 		return lastResult;

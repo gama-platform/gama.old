@@ -97,7 +97,7 @@ public class ContinueStatement extends AbstractStatement {
 	 */
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		scope.setFlowStatus(IScope.FlowStatus.CONTINUE);
+		scope.setContinueStatus();
 		return null; // How to return the last object ??
 	}
 

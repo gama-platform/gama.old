@@ -243,7 +243,7 @@ public class BatchAgent extends ExperimentAgent {
 		// killed.
 		scope.getGui().getStatus().informStatus(endStatus());
 		// Issue #2426: the agent is killed too soon
-		getScope().setFlowStatus(IScope.FlowStatus.CLOSE);
+		getScope().setDisposeStatus();
 		// dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
@@ -652,7 +652,7 @@ public class BatchAgent extends ExperimentAgent {
 	public void closeSimulations() {
 		// We interrupt the simulation scope directly (as it cannot be
 		// interrupted by the global scheduler)
-		if (getSimulation() != null) { getSimulation().getScope().setFlowStatus(IScope.FlowStatus.CLOSE); }
+		if (getSimulation() != null) { getSimulation().getScope().setDisposeStatus(); }
 	}
 
 }

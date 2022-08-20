@@ -21,6 +21,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.benchmark.StopWatch;
@@ -329,7 +330,7 @@ public abstract class GamaExecutorService {
 			case 0:
 				for (final A agent : array) {
 					scope.execute(executable, (IAgent) agent, null);
-					if (scope.getAndClearBreakStatus() == IScope.FlowStatus.BREAK) { break; }
+					if (scope.getAndClearBreakStatus() == FlowStatus.BREAK) { break; }
 				}
 				return;
 			// Break doesnt really make sense for parallel execution

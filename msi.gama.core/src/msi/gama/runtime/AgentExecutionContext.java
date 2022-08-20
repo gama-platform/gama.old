@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AgentExecutionContext.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AgentExecutionContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -20,18 +20,30 @@ import msi.gama.metamodel.agent.IAgent;
 class AgentExecutionContext implements IDisposable {
 
 	/** The Constant POOL. */
+	// Disactivated for the moment
 	private static final PoolUtils.ObjectPool<AgentExecutionContext> POOL =
-			PoolUtils.create("Agent Execution Context", true, () -> new AgentExecutionContext(), null, null);
+			PoolUtils.create("Agent Execution Context", true, AgentExecutionContext::new, null, null);
+
+	/** The Constant POOL_ACTIVE. */
+	private static final boolean POOL_ACTIVE = false;
 
 	/**
 	 * Creates the.
 	 *
-	 * @param agent the agent
-	 * @param outer the outer
+	 * @param agent
+	 *            the agent
+	 * @param outer
+	 *            the outer
 	 * @return the agent execution context
 	 */
 	public static AgentExecutionContext create(final IAgent agent, final AgentExecutionContext outer) {
-		final AgentExecutionContext result = POOL.get();
+
+		final AgentExecutionContext result;
+		if (POOL_ACTIVE) {
+			result = POOL.get();
+		} else {
+			result = new AgentExecutionContext();
+		}
 		result.agent = agent;
 		result.outer = outer;
 		return result;
@@ -39,7 +51,7 @@ class AgentExecutionContext implements IDisposable {
 
 	/** The agent. */
 	IAgent agent;
-	
+
 	/** The outer. */
 	AgentExecutionContext outer;
 
@@ -53,9 +65,7 @@ class AgentExecutionContext implements IDisposable {
 	 *
 	 * @return the agent
 	 */
-	public IAgent getAgent() {
-		return agent;
-	}
+	public IAgent getAgent() { return agent; }
 
 	@Override
 	public String toString() {
@@ -67,15 +77,13 @@ class AgentExecutionContext implements IDisposable {
 	 *
 	 * @return the outer context
 	 */
-	public AgentExecutionContext getOuterContext() {
-		return outer;
-	}
+	public AgentExecutionContext getOuterContext() { return outer; }
 
 	@Override
 	public void dispose() {
 		agent = null;
 		outer = null;
-		POOL.release(this);
+		if (POOL_ACTIVE) { POOL.release(this); }
 	}
 
 	/**

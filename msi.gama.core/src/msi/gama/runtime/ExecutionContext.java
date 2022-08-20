@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExecutionContext.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExecutionContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -23,13 +23,19 @@ import msi.gaml.types.Types;
 public class ExecutionContext implements IExecutionContext {
 
 	/** The Constant POOL. */
+	// Disactivated for the moment as it doesnt seem to make a significant difference and might actually create problems
+	// in concurrent setups
 	private static final PoolUtils.ObjectPool<ExecutionContext> POOL =
-			PoolUtils.create("Execution Context", true, () -> new ExecutionContext(), null, null);
+			PoolUtils.create("Execution Context", true, ExecutionContext::new, null, null);
+
+	/** The Constant POOL_ACTIVE. */
+	private static final boolean POOL_ACTIVE = false;
 
 	/**
 	 * Creates the.
 	 *
-	 * @param outer the outer
+	 * @param outer
+	 *            the outer
 	 * @return the execution context
 	 */
 	public static ExecutionContext create(final IExecutionContext outer) {
@@ -39,7 +45,8 @@ public class ExecutionContext implements IExecutionContext {
 	/**
 	 * Creates the.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the execution context
 	 */
 	public static ExecutionContext create(final IScope scope) {
@@ -49,12 +56,19 @@ public class ExecutionContext implements IExecutionContext {
 	/**
 	 * Creates the.
 	 *
-	 * @param scope the scope
-	 * @param outer the outer
+	 * @param scope
+	 *            the scope
+	 * @param outer
+	 *            the outer
 	 * @return the execution context
 	 */
 	public static ExecutionContext create(final IScope scope, final IExecutionContext outer) {
-		final ExecutionContext result = POOL.get();
+		final ExecutionContext result;
+		if (POOL_ACTIVE) {
+			result = POOL.get();
+		} else {
+			result = new ExecutionContext();
+		}
 		result.scope = scope;
 		result.outer = outer;
 		return result;
@@ -62,10 +76,10 @@ public class ExecutionContext implements IExecutionContext {
 
 	/** The local. */
 	Map<String, Object> local;
-	
+
 	/** The outer. */
 	IExecutionContext outer;
-	
+
 	/** The scope. */
 	IScope scope;
 
@@ -74,13 +88,11 @@ public class ExecutionContext implements IExecutionContext {
 		local = null;
 		outer = null;
 		scope = null;
-		POOL.release(this);
+		if (POOL_ACTIVE) { POOL.release(this); }
 	}
 
 	@Override
-	public IScope getScope() {
-		return scope;
-	}
+	public IScope getScope() { return scope; }
 
 	/**
 	 * Instantiates a new execution context.
@@ -88,9 +100,7 @@ public class ExecutionContext implements IExecutionContext {
 	ExecutionContext() {}
 
 	@Override
-	public final IExecutionContext getOuterContext() {
-		return outer;
-	}
+	public final IExecutionContext getOuterContext() { return outer; }
 
 	@Override
 	public void setTempVar(final String name, final Object value) {

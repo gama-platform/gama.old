@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * DrawingAttributes.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DrawingAttributes.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
@@ -36,10 +37,33 @@ public class DrawingAttributes {
 	}
 
 	/**
+	 * The Enum Flag.
+	 */
+	public enum Flag {
+		/** The Empty. */
+		Empty,
+		/** The Selected. */
+		Selected,
+		/** The Synthetic. */
+		Synthetic,
+		/** The Lighted. */
+		Lighted,
+		/** The Use cache. */
+		UseCache,
+		/** The Grayscaled. */
+		Grayscaled,
+		/** The Triangulated. */
+		Triangulated,
+		/** The With text. */
+		WithText,
+		/** The Perspective. */
+		Perspective
+	}
+
+	/**
 	 * The Enum DrawerType.
 	 */
 	public enum DrawerType {
-
 		/** The geometry. */
 		GEOMETRY,
 		/** The string. */
@@ -59,20 +83,8 @@ public class DrawingAttributes {
 	/** The Constant SELECTED_COLOR. */
 	public static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
 
-	/** The Constant EMPTY. */
-	public static final int EMPTY = 1;
-
-	/** The Constant SELECTED. */
-	public static final int SELECTED = 2;
-
-	/** The Constant SYNTHETIC. */
-	public static final int SYNTHETIC = 4;
-
-	/** The Constant LIGHTING. */
-	public static final int LIGHTING = 8;
-
 	/** The flags. */
-	int flags = LIGHTING;
+	EnumSet<Flag> flags = EnumSet.of(Flag.Lighted);
 
 	/** The unique index. */
 	private final int uniqueIndex;
@@ -150,7 +162,7 @@ public class DrawingAttributes {
 	 *            the new synthetic
 	 */
 	public void setSynthetic(final boolean s) {
-		setFlag(SYNTHETIC, s);
+		setFlag(Flag.Synthetic, s);
 	}
 
 	/**
@@ -158,7 +170,7 @@ public class DrawingAttributes {
 	 *
 	 * @return true, if is synthetic
 	 */
-	public boolean isSynthetic() { return isSet(SYNTHETIC); }
+	public boolean isSynthetic() { return isSet(Flag.Synthetic); }
 
 	/**
 	 * Sets the lighting.
@@ -168,7 +180,7 @@ public class DrawingAttributes {
 	 */
 	public void setLighting(final Boolean lighting) {
 		if (lighting == null) return;
-		setFlag(LIGHTING, lighting);
+		setFlag(Flag.Lighted, lighting);
 	}
 
 	/**
@@ -295,7 +307,17 @@ public class DrawingAttributes {
 	 * @return true, if successful
 	 */
 	public boolean useCache() {
-		return true;
+		return isSet(Flag.UseCache);
+	}
+
+	/**
+	 * Sets the use cache.
+	 *
+	 * @param b
+	 *            the new use cache
+	 */
+	public void setUseCache(final boolean b) {
+		setFlag(Flag.UseCache, b);
 	}
 
 	/**
@@ -360,7 +382,7 @@ public class DrawingAttributes {
 		if (isSelected()) // DEBUG.OUT("Selected agent: " + getAgentIdentifier() + " / index : " + uniqueIndex);
 			return SELECTED_COLOR;
 		if (highlight != null) return highlight;
-		if (isSet(EMPTY)) return null;
+		if (isSet(Flag.Empty)) return null;
 		if (fill == null) {
 			if (textures != null) return TEXTURED_COLOR;
 			// Always returns the color as we are solid; so null cannot be an option
@@ -378,7 +400,7 @@ public class DrawingAttributes {
 	 * @return the border
 	 */
 	public GamaColor getBorder() {
-		if (isSet(EMPTY) && border == null) return fill;
+		if (isSet(Flag.Empty) && border == null) return fill;
 		return border;
 	}
 
@@ -386,14 +408,14 @@ public class DrawingAttributes {
 	 * Sets the empty.
 	 */
 	public void setEmpty() {
-		setFlag(EMPTY, true);
+		setFlag(Flag.Empty, true);
 	}
 
 	/**
 	 * Sets the filled.
 	 */
 	public void setFilled() {
-		setFlag(EMPTY, false);
+		setFlag(Flag.Empty, false);
 	}
 
 	/**
@@ -419,7 +441,7 @@ public class DrawingAttributes {
 	 *            the new lighting
 	 */
 	void setLighting(final boolean lighting) {
-		setFlag(LIGHTING, lighting);
+		setFlag(Flag.Lighted, lighting);
 	}
 
 	/**
@@ -449,7 +471,7 @@ public class DrawingAttributes {
 	 *
 	 * @return true, if is empty
 	 */
-	public boolean isEmpty() { return isSet(EMPTY); }
+	public boolean isEmpty() { return isSet(Flag.Empty); }
 
 	/**
 	 * Checks if is animated.
@@ -495,7 +517,7 @@ public class DrawingAttributes {
 	 *
 	 * @return true, if is lighting
 	 */
-	public boolean isLighting() { return isSet(LIGHTING); }
+	public boolean isLighting() { return isSet(Flag.Lighted); }
 
 	/**
 	 * Sets the highlighted.
@@ -510,7 +532,7 @@ public class DrawingAttributes {
 	 *
 	 * @return true, if is selected
 	 */
-	public boolean isSelected() { return isSet(SELECTED); }
+	public boolean isSelected() { return isSet(Flag.Selected); }
 
 	/**
 	 * Sets the selected.
@@ -519,7 +541,7 @@ public class DrawingAttributes {
 	 *            the new selected
 	 */
 	public void setSelected(final boolean b) {
-		setFlag(SELECTED, b);
+		setFlag(Flag.Selected, b);
 	}
 
 	/**
@@ -547,8 +569,8 @@ public class DrawingAttributes {
 	 *            the value
 	 * @return true, if is sets the
 	 */
-	public boolean isSet(final int value) {
-		return (flags & value) == value;
+	public boolean isSet(final Flag value) {
+		return flags.contains(value);
 	}
 
 	/**
@@ -559,8 +581,12 @@ public class DrawingAttributes {
 	 * @param b
 	 *            the b
 	 */
-	public void setFlag(final int value, final boolean b) {
-		flags = b ? flags | value : flags & ~value;
+	public void setFlag(final Flag value, final boolean b) {
+		if (b) {
+			flags.add(value);
+		} else {
+			flags.remove(value);
+		}
 	}
 
 }

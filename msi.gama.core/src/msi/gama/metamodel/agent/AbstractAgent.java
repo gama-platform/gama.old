@@ -514,7 +514,7 @@ public abstract class AbstractAgent implements IAgent {
 		if (dying) return null;
 		dying = true;
 		getSpecies().getArchitecture().abort(scope);
-		scope.setFlowStatus(IScope.FlowStatus.DIE);
+		scope.setDeathStatus();
 		dispose();
 		return null;
 	}

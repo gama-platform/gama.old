@@ -21,6 +21,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -397,7 +398,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	 *            the result
 	 * @return true, if successful
 	 */
-	protected IScope.FlowStatus loopBody(final IScope scope, final Object var, final Object[] result) {
+	protected FlowStatus loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
 		// We set it explicitely to the newly created scope
 		if (varName != null) { scope.setVarValue(varName, var, true); }

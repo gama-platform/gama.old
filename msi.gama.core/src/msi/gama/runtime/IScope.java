@@ -40,34 +40,16 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
+
+/**
+ * The Interface IScope.
+ */
 @SuppressWarnings ({ "rawtypes" })
 public interface IScope extends Closeable, IBenchmarkable {
 
-	/**
-	 * The Enum LoopStatus.
-	 */
-	enum FlowStatus {
-
-		/** The break. */
-		BREAK,
-		/** The return. */
-		RETURN,
-		/** The continue. */
-		CONTINUE,
-		/** The die status: when the agent running in the scope is dead. */
-		DIE,
-		/** The close. When the simulations/experiments are closing */
-		CLOSE,
-		/** The normal. */
-		NORMAL;
-	}
-
 	/** The interrupting statuses. */
 	EnumSet<FlowStatus> INTERRUPTING_STATUSES =
-			EnumSet.of(FlowStatus.BREAK, FlowStatus.RETURN, FlowStatus.CONTINUE, FlowStatus.DIE, FlowStatus.CLOSE);
-
-	/** The root interrupting statuses. */
-	EnumSet<FlowStatus> ROOT_INTERRUPTING_STATUSES = EnumSet.of(FlowStatus.CLOSE);
+			EnumSet.of(FlowStatus.BREAK, FlowStatus.RETURN, FlowStatus.CONTINUE, FlowStatus.DIE, FlowStatus.DISPOSE);
 
 	/**
 	 * The Interface IGraphicsScope.
@@ -851,6 +833,41 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the and clear flow status
 	 */
 	FlowStatus getAndClearFlowStatus(final FlowStatus comparison);
+
+	/**
+	 * Sets the break status.
+	 */
+	default void setBreakStatus() {
+		setFlowStatus(FlowStatus.BREAK);
+	}
+
+	/**
+	 * Sets the continue status.
+	 */
+	default void setContinueStatus() {
+		setFlowStatus(FlowStatus.CONTINUE);
+	}
+
+	/**
+	 * Sets the return status.
+	 */
+	default void setReturnStatus() {
+		setFlowStatus(FlowStatus.RETURN);
+	}
+
+	/**
+	 * Sets the death status.
+	 */
+	default void setDeathStatus() {
+		setFlowStatus(FlowStatus.DIE);
+	}
+
+	/**
+	 * Sets the release status.
+	 */
+	default void setDisposeStatus() {
+		setFlowStatus(FlowStatus.DISPOSE);
+	}
 
 	/**
 	 * Checks if is closed.

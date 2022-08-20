@@ -21,7 +21,7 @@ public class HeadlessExperimentController implements IExperimentController {
 
 	/** The experiment. */
 	private final IExperimentPlan experiment;
-	
+
 	/** The agent. */
 	private ExperimentAgent agent;
 
@@ -48,7 +48,7 @@ public class HeadlessExperimentController implements IExperimentController {
 		this.agent = agent;
 		IScope scope = agent.getScope();
 		try {
-			if (!scope.init(agent).passed()) { scope.setFlowStatus(IScope.FlowStatus.CLOSE); }
+			if (!scope.init(agent).passed()) { scope.setDisposeStatus(); }
 		} catch (final Throwable e) {
 			if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
